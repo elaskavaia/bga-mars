@@ -1,0 +1,8 @@
+x|y|r|ocean|name
+#set id=hex_{x}_{y}
+#tharsis - can do variants later
+#r - placement bonus, p - plant, s - steal, u - titanium, draw - card
+#ocean - 1 if reserved for ocean
+1|1|2p||Noctus City
+1|2|1p|1|
+2|2|draw|1|

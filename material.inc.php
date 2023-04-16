@@ -2980,6 +2980,29 @@ $this->token_types = [
   'name' => clienttranslate("Event"),
 ],
 /* --- gen php end tracker_material --- */
+/* --- gen php begin map_material --- */
+// #tharsis - can do variants later
+// #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
+// #ocean - 1 if reserved for ocean
+ 'hex_1_1' => [  //
+  'x' => 1,
+  'y' => 1,
+  'r' => '2p',
+  'name' => clienttranslate("Noctus City"),
+],
+ 'hex_1_2' => [  //
+  'x' => 1,
+  'y' => 2,
+  'r' => '1p',
+  'ocean' => 1,
+],
+ 'hex_2_2' => [  //
+  'x' => 2,
+  'y' => 2,
+  'r' => 'draw',
+  'ocean' => 1,
+],
+/* --- gen php end map_material --- */
 ];
 
 
