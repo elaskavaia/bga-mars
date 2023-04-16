@@ -11,7 +11,7 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
 * locations (see misc/loc_material.csv)
  * hand_${color} - is location for hand project cards
  * tableau_${color} - is player specific area
- * map_${x}_${y} - tile location (hex coords)
+ * hex_${x}_${y} - tile location (hex coords)
  * milestone_${x}
  * award_${x}
 * the following location will be tracked by different means

@@ -5,7 +5,7 @@ declare(strict_types=1);
 // place ocean
 class Operation_w extends AbsOperation {
     function argPrimaryInfo(string $color, array $op = null) {
-        $keys = ['map_1_2','map_2_2'];
+        $keys = ['hex_1_2','hex_2_2'];
         return $this->game->createArgInfo($color, $keys, function ($a, $b) {
             return 0;
         });
