@@ -528,6 +528,10 @@ var GameBasics = /** @class */ (function (_super) {
     };
     // INPUT CONNECTORS
     GameBasics.prototype.setActiveSlot = function (node) {
+        if (!$(node)) {
+            this.showError("Not found " + node);
+            return;
+        }
         $(node).classList.add(this.classActiveSlot);
     };
     GameBasics.prototype.setActiveSlots = function (params) {
