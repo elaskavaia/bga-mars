@@ -24,6 +24,7 @@ tracker_h|Heat|0
 tracker_o|Oxigen Level|0|'max'=>14
 tracker_t|Temperature|-30|'max'=>8,'min'=>-30
 tracker_w|Oceans|0|'max'=>9
+tracker_gen|Generations|0|'min'=>0
 
 #tags
 #set create=0

@@ -9,6 +9,7 @@ class Operation_research extends AbsOperation {
     }
 
     function effect_research() {
+        $this->game->dbResourceInc("tracker_gen",1,clienttranslate('New generation ${counter_value}'));
         $players = $this->game->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];

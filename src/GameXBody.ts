@@ -28,14 +28,31 @@ class GameXBody extends GameTokens {
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div>
         <div class='token_rules'>${displayInfo.r}</div>
-        <div class='token_descr'>${displayInfo.ac??''} ${displayInfo.tooltip}</div>
+        <div class='token_descr'>${displayInfo.tooltip}</div>
         `;
         tokenNode.appendChild(div);
 
-        tokenNode.setAttribute("data-card-type",displayInfo.t);
+        tokenNode.setAttribute("data-card-type", displayInfo.t);
 
         this.connect(tokenNode, "onclick", "onToken");
       }
+    }
+  }
+
+  updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
+    // override to generate dynamic tooltips and such
+    if (tokenDisplayInfo.mainType == "card") {
+      tokenDisplayInfo.imageTypes += " infonode";
+      tokenDisplayInfo.tooltip =
+        (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
+        this.getTr(tokenDisplayInfo.text) +
+        "<br>" +
+        _("Number: " + tokenDisplayInfo.num) +
+        (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
+    }
+
+    if (this.isLocationByType(tokenDisplayInfo.key)) {
+      tokenDisplayInfo.imageTypes += " infonode";
     }
   }
 
@@ -103,14 +120,13 @@ class GameXBody extends GameTokens {
     this.clientStateArgs.index = 0;
     this.reverseIdLookup = new Map<String, any>();
     const single = Object.keys(operations).length == 1;
-    
+
     for (const opId in operations) {
       const opInfo = operations[opId];
       const rules = this.getRulesFor("op_" + opInfo.type, "*");
       const name = this.getButtonNameForOperation(opInfo);
 
       if (rules && rules.params) {
-
         const param_name = rules.params.split(",")[0]; // XXX can be more than one
         const opargs = args.operations[opId].args;
         const paramargs = opargs[param_name];
@@ -149,7 +165,6 @@ class GameXBody extends GameTokens {
           });
       } else {
         this.addActionButton("button_" + opId, name, () => {
-  
           this.sendActionResolve(opId);
         });
       }
@@ -200,22 +215,6 @@ class GameXBody extends GameTokens {
       // add undo on every state
       if (this.on_client_state) this.addCancelButton();
       else this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper("undo"), undefined, undefined, "red");
-    }
-  }
-
-  updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
-    // override to generate dynamic tooltips and such
-    if (tokenDisplayInfo.mainType == "card") {
-      tokenDisplayInfo.imageTypes += " infonode";
-      tokenDisplayInfo.tooltip =
-        this.getTr(tokenDisplayInfo.tooltip) 
-        +   "<br>" + _("Number: " + tokenDisplayInfo.num)
-        +   (tokenDisplayInfo.tags?"<br>" + _("Tags: " + tokenDisplayInfo.tags):"")
-        ;
-    }
-
-    if (this.isLocationByType(tokenDisplayInfo.key)) {
-      tokenDisplayInfo.imageTypes += " infonode";
     }
   }
 

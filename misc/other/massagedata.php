@@ -4,17 +4,28 @@
 #Script coverts mars data from one format to another
 
 function addinc(&$rules, $value, $op) {
+    if ($value=='Ref') {
+        $rules .= " ${value}_$op";
+        return;
+    }
+
+    $r = '';
+    if (strrpos($value, 'R', -1) !== false) {//endsWith
+        $r = 'Any';
+        $value = substr($value, 0, strlen($value) - 1);
+    }
     if ($value > 0) {
-        $rules .= " ${value}${op}";
+        $rules .= " ${value}${op}${r}";
         return;
     };
     if ($value < 0) {
         $value = -$value;
-        $rules .= " ${value}n${op}";
+        $rules .= " ${value}n${op}${r}";
         return;
     };
     if (!$value) return;
-    $rules .= " ${value}_$op";
+    $rules .= " ${value}__$op";
+
 }
 
 function addpre(&$pre, $ro, $op, $min, $max) {
@@ -22,6 +33,7 @@ function addpre(&$pre, $ro, $op, $min, $max) {
         $pre .= " $op$ro";
     return;
 }
+
 function tomyformat($fields, $raw_fields) {
 
     //Card Name|Card #|Cost|Card Type|Deck|Req: Temperature|Req: Oxygen|Req: Ocean|Req: Venus|Req: Max Temperature
@@ -33,14 +45,12 @@ function tomyformat($fields, $raw_fields) {
     //|VP|Terraforming Effect|Tile/Colony Placement|# Actions and/or Effect|Depends on opponents|Affects opponents|Holds Resources|Interactions|Action or On-going Effect text|One time Effect Text
     //|Text
 
-    // new format
 
-    //num|name|t|r|cost|pre|tags|tooltip
 
     $num = $fields['Card #'];
     $deck = $fields['Deck'];
     if (!is_numeric($num)) return;
-    if ($deck != 'Basic') return;
+    if ($deck != 'Basic' && $deck != 'Corporate') return;
 
     $t = 0;
     $type = $fields['Card Type'];
@@ -98,7 +108,7 @@ function tomyformat($fields, $raw_fields) {
     $rules = trim($rules);
     $rules = implode(',', explode(' ', $rules));
 
-    $tooltip = $fields['One time Effect Text'] ;
+    $tooltip = $fields['One time Effect Text'];
     $actext = $fields['Action or On-going Effect text'];
     $tooltip = trim($tooltip);
     $php = [];
@@ -130,12 +140,17 @@ function tomyformat($fields, $raw_fields) {
 }
 
 $g_field_names = null;
+$g_header = 'num|name|t|r|cost|pre|tags|ac|text|php';
 $g_separator = "|";
 $incsv = $argv[1] ?? "./data.csv";
 $ins = fopen($incsv, "r") or die("Unable to open file! $ins");
-print('num|name|t|r|cost|pre|tags|ac|tooltip|php
+// new format
+
+print($g_header);
+print('
 #project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
 #set _tr=ac
+#set _tr=text
 #set id=card_main_{num}
 #set location=deck_main
 #set create=single
