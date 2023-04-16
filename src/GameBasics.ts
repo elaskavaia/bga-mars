@@ -828,7 +828,7 @@ class GameBasics extends GameGui {
         if (this.gamedatas_server && this.gamedatas_server.counters[name]) this.gamedatas_server.counters[name].counter_value = value;
         this.updateCountersSafe(counters);
       } else if ($(name)) {
-        $(name).setAttribute("data-state",value);
+        $(name).setAttribute("data-state",value.toString());
       }
       //  console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
     } catch (ex) {

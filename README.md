@@ -20,9 +20,10 @@ If you want both typescript and scc type
 * npm run watch
 
 To run tests you need to install phpunit-9
-* If using vscode you need to install it using composer somehwere in home directory (not in project dir!)
+* If using vscode you need to install phpunit using composer somehwere in home directory (not in project dir!)
 * Add this directory into include path for php (for vscode symbol resolution)
 * Then can run tasks from this project that runs the tests (phpunit must be in your path)
+  * If you not using vscode run: npm run test
 
 Structures of project:
 * src - source of typescript and css
@@ -36,3 +37,8 @@ Structures of project:
 * modules/* -  classes and modules of PHP server side
 * modules/tests/* - test for phpunit
 * misc/*.csv - csv files for material, need to run php script on it to inject in material file
+
+The following files are GENERATED
+mars.js - main game file generated from typescript from src dir
+mars.css - generated from scss files
+material.inc.php - content generated from csv files in misc directory

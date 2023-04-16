@@ -728,7 +728,7 @@ var GameBasics = /** @class */ (function (_super) {
                 this.updateCountersSafe(counters);
             }
             else if ($(name_1)) {
-                $(name_1).setAttribute("data-state", value);
+                $(name_1).setAttribute("data-state", value.toString());
             }
             //  console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
         }
