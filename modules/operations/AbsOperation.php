@@ -61,7 +61,7 @@ abstract class AbsOperation {
         $type = $op["type"];
         if ($type != $this->mnemonic) throw new BgaSystemException("Mismatched operation $type");
         $owner = $op["owner"];
-        $inc = $op["resolve_count"] ?? $op["count"];
+        $inc = (int) ( $op["resolve_count"] ?? $op["count"] ?? 1);
         return $this->auto($owner, $inc, $args);
     }
 

@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-// place forest
-class Operation_forest extends AbsOperation {
+class Operation_city extends AbsOperation {
     function argPrimaryInfo(string $color, array $op = null) {
         $keys = ['hex_1_1'];
         return $this->game->createArgInfo($color, $keys, function ($a, $b) {
@@ -13,8 +12,8 @@ class Operation_forest extends AbsOperation {
 
     function arg(array $op, bool $only_feasibility = false) {
         $result = parent::arg($op, $only_feasibility);
-        // free forest
-        $tile=$this->game->tokens->getTokenOfTypeInLocation("tile_1",null,0);
+        // free tile
+        $tile=$this->game->tokens->getTokenOfTypeInLocation("tile_2",null,0);
         $result['object'] = $tile['key']; 
         return $result;
     }
@@ -27,7 +26,6 @@ class Operation_forest extends AbsOperation {
         $possible_targets = $actionArgs['target'];
         $this->game->systemAssertTrue("Unathorized placement", array_search($target, $possible_targets) !== false);
         $this->game->dbSetTokenLocation($object, $target,1);
-        $this->game->effect_increaseParam($owner, "o", $inc);
         return true;
     }
 }

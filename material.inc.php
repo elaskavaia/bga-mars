@@ -2488,7 +2488,7 @@ $this->token_types = [
   'num' => 6,
   'name' => clienttranslate("City"),
   't' => 0,
-  'r' => 'city,pm',
+  'r' => 'city;pm',
   'cost' => 25,
   'text' => 'For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.',
 ],
@@ -2581,6 +2581,13 @@ $this->token_types = [
   'name' => clienttranslate("Place Forest Tile"),
   'params' => 'target',
   'prompt' => '${you} must select a location to place an forest tile, adjucent if possible',
+],
+ 'op_city' => [  //
+  'undo' => 'true',
+  'type' => 'city',
+  'name' => clienttranslate("Place City Tile"),
+  'params' => 'target',
+  'prompt' => '${you} must select a location to place a city, cannot place close to other city',
 ],
  'op_discard' => [  //
   'undo' => 'true',
