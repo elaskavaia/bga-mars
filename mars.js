@@ -528,6 +528,10 @@ var GameBasics = /** @class */ (function (_super) {
     };
     // INPUT CONNECTORS
     GameBasics.prototype.setActiveSlot = function (node) {
+        if (!$(node)) {
+            this.showError("Not found " + node);
+            return;
+        }
         $(node).classList.add(this.classActiveSlot);
     };
     GameBasics.prototype.setActiveSlots = function (params) {
@@ -1381,6 +1385,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setup = function (gamedatas) {
         this.defaultTooltipDelay = 800;
         _super.prototype.setup.call(this, gamedatas);
+        this.connectClass("hex", "onclick", "onToken");
         console.log("Ending game setup");
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {

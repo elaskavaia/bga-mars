@@ -10,7 +10,7 @@ class GameXBody extends GameTokens {
   setup(gamedatas: any) {
     this.defaultTooltipDelay = 800;
     super.setup(gamedatas);
-
+    this.connectClass("hex", "onclick", "onToken");
     console.log("Ending game setup");
   }
 

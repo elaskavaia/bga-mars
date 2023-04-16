@@ -613,6 +613,10 @@ class GameBasics extends GameGui {
   // INPUT CONNECTORS
 
   setActiveSlot(node: ElementOrId) {
+    if (!$(node)) {
+      this.showError("Not found "+node);
+      return;
+    }
     $(node).classList.add(this.classActiveSlot);
   }
 

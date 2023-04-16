@@ -19,6 +19,11 @@
     </div>
     <div id="display_main">
     </div>
+    <div id="map">
+       <div class="hex" id="map_1_1"></div>
+       <div class="hex" id="map_1_2"></div>
+       <div class="hex" id="map_2_2"></div>
+    </div>
     <div id="decks_area">
       <div id="deck_main" class="card carddeck"></div>
       <div id="discard_main" class="card carddeck"></div>

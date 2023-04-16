@@ -2572,6 +2572,7 @@ $this->token_types = [
   'undo' => 'true',
   'type' => 'w',
   'name' => clienttranslate("Place Ocean Tile"),
+  'params' => 'target',
   'prompt' => '${you} must select a location to place an ocean tile',
 ],
  'op_discard' => [  //
