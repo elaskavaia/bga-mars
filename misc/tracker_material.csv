@@ -24,3 +24,18 @@ tracker_h|Heat|0
 tracker_o|Oxigen Level|0|'max'=>14
 tracker_t|Temperature|-30|'max'=>8,'min'=>-30
 tracker_w|Oceans|0|'max'=>9
+
+#tags
+#set create=0
+tagScience|Science
+tagBuilding|Building
+tagSpace|Space
+tagMicrobe|Microbe
+tagPlant|Plant
+tagAnimal|Animal
+tagCity|City
+tagEarth|Earth
+tagJovian|Jovian
+tagEnergy|Energy
+tagVenus|Venus
+tagEvent|Event

@@ -1,8 +1,9 @@
 <?php
 
 
-function addinc(&$rules, $value, $op)
-{
+#Script coverts mars data from one format to another
+
+function addinc(&$rules, $value, $op) {
     if ($value > 0) {
         $rules .= " ${value}${op}";
         return;
@@ -16,15 +17,13 @@ function addinc(&$rules, $value, $op)
     $rules .= " ${value}_$op";
 }
 
-function addpre(&$pre, $ro, $op, $min, $max)
-{
+function addpre(&$pre, $ro, $op, $min, $max) {
     if ($ro < $max && $ro > $min)
         $pre .= " $op$ro";
     return;
 }
-function tomyformat($fields, $raw_fields)
-{
-    //num|name|t|r|cost|pre|tooltip
+function tomyformat($fields, $raw_fields) {
+
     //Card Name|Card #|Cost|Card Type|Deck|Req: Temperature|Req: Oxygen|Req: Ocean|Req: Venus|Req: Max Temperature
     //|Req: Max Oxygen|Req: Max Ocean|Req: Max Venus|Pre-requisites (Global)|Req: Science|Req: Building|Req: Space|Req: Microbe|Req: Plant|Req: Animal
     //|Req: City|Req: Earth|Req: Jovian|Req: Energy|Req: Venus|Req: Other|Pre-requisites (Non-Global)|Tag: Science|Tag: Building|Tag: Space
@@ -34,6 +33,10 @@ function tomyformat($fields, $raw_fields)
     //|VP|Terraforming Effect|Tile/Colony Placement|# Actions and/or Effect|Depends on opponents|Affects opponents|Holds Resources|Interactions|Action or On-going Effect text|One time Effect Text
     //|Text
 
+    // new format
+
+    //num|name|t|r|cost|pre|tags|tooltip
+
     $num = $fields['Card #'];
     $deck = $fields['Deck'];
     if (!is_numeric($num)) return;
@@ -41,13 +44,24 @@ function tomyformat($fields, $raw_fields)
 
     $t = 0;
     $type = $fields['Card Type'];
-    switch($type) {
-        case 'Automated': $t = 1;break;
-        case 'Event': $t = 3;break;
-        case 'Active': $t = 2;break;
-        case 'Corporation': $t = 4;break;
-        case 'Prelude': $t = 5;break;
-        default: break;
+    switch ($type) {
+        case 'Automated':
+            $t = 1;
+            break;
+        case 'Event':
+            $t = 3;
+            break;
+        case 'Active':
+            $t = 2;
+            break;
+        case 'Corporation':
+            $t = 4;
+            break;
+        case 'Prelude':
+            $t = 5;
+            break;
+        default:
+            break;
     }
 
     if ($t > 3) return;
@@ -56,7 +70,7 @@ function tomyformat($fields, $raw_fields)
     addpre($pre, $fields['Req: Oxygen'], 'o>=', 0, 14);
     addpre($pre, $fields['Req: Max Oxygen'], 'o<=', 0, 14);
     addpre($pre, $fields['Req: Temperature'], 't>=', -30, 8);
-    addpre($pre, $fields['Req: Max Temperature'], 't<=',-30, 8);
+    addpre($pre, $fields['Req: Max Temperature'], 't<=', -30, 8);
     addpre($pre, $fields['Req: Ocean'], 'w>=', 0, 9);
     addpre($pre, $fields['Req: Max Ocean'], 'w<=', 0, 9);
     $pre = trim($pre);
@@ -84,12 +98,32 @@ function tomyformat($fields, $raw_fields)
     $rules = trim($rules);
     $rules = implode(',', explode(' ', $rules));
 
-    $tooltip = $fields['One time Effect Text']." ".$fields['Action or On-going Effect text'];
+    $tooltip = $fields['One time Effect Text'] ;
+    $actext = $fields['Action or On-going Effect text'];
     $tooltip = trim($tooltip);
-    $php='';
+    $php = [];
     $vp =  $fields['VP'];
-    if ($vp && is_numeric($vp)) $php="'vp'=>$vp";
-    $line = sprintf("%d|%s|%d|%s|%d|%s|%s|%s\n", $num, $raw_fields[0], $t, $rules, $fields['Cost'], $pre, $tooltip,$php);
+    if ($vp && is_numeric($vp)) $php['vp'] = $vp;
+
+    $tags = [];
+    foreach ($fields as $key => $value) {
+        $matches = [];
+        if (preg_match("/Tag: (.*)/", $key, $matches)) {
+            if ($value == 0) continue;
+            $tag = $matches[1];
+            $tags[] = $tag;
+        }
+    }
+    $phpstr = "";
+    if (count($php) > 0) {
+        $phpstr = var_export($php, true);
+        $phpstr = preg_replace("/[\n\r]/", "", $phpstr);
+        $phpstr = preg_replace("/^array \(/", "", $phpstr);
+        $phpstr = preg_replace("/\)\s*$/", "", $phpstr);
+        $phpstr = preg_replace("/,\s*$/", "", $phpstr);
+    }
+
+    $line = sprintf("%d|%s|%d|%s|%d|%s|%s|%s|%s|%s\n", $num, $raw_fields[0], $t, $rules, $fields['Cost'], $pre, implode(' ', $tags), $actext, $tooltip, $phpstr);
     print($line);
     //if ((int)$num > 18) return false;
     return true;
@@ -97,10 +131,11 @@ function tomyformat($fields, $raw_fields)
 
 $g_field_names = null;
 $g_separator = "|";
-$incsv = "./data.csv";
+$incsv = $argv[1] ?? "./data.csv";
 $ins = fopen($incsv, "r") or die("Unable to open file! $ins");
-print('num|name|t|r|cost|pre|tooltip|php
+print('num|name|t|r|cost|pre|tags|ac|tooltip|php
 #project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
+#set _tr=ac
 #set id=card_main_{num}
 #set location=deck_main
 #set create=single

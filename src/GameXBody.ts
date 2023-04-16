@@ -28,7 +28,7 @@ class GameXBody extends GameTokens {
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div>
         <div class='token_rules'>${displayInfo.r}</div>
-        <div class='token_descr'>${displayInfo.tooltip}</div>
+        <div class='token_descr'>${displayInfo.ac??''} ${displayInfo.tooltip}</div>
         `;
         tokenNode.appendChild(div);
 
@@ -208,7 +208,10 @@ class GameXBody extends GameTokens {
     if (tokenDisplayInfo.mainType == "card") {
       tokenDisplayInfo.imageTypes += " infonode";
       tokenDisplayInfo.tooltip =
-        this.getTr(tokenDisplayInfo.tooltip) + "<br>" + _("Number: " + this.getRulesFor(tokenDisplayInfo.key, "num"));
+        this.getTr(tokenDisplayInfo.tooltip) 
+        +   "<br>" + _("Number: " + tokenDisplayInfo.num)
+        +   (tokenDisplayInfo.tags?"<br>" + _("Tags: " + tokenDisplayInfo.tags):"")
+        ;
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {

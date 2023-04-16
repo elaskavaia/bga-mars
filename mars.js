@@ -1385,6 +1385,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
+        var _b;
         if (!tokenNode.getAttribute("data-info")) {
             var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
             var classes = displayInfo.imageTypes.split(/  */);
@@ -1393,7 +1394,7 @@ var GameXBody = /** @class */ (function (_super) {
             // use this to generate some fake parts of card, remove this when use images
             if (displayInfo.mainType == "card") {
                 var div = this.createDivNode(null, "card_info_box", tokenNode.id);
-                div.innerHTML = "\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div>\n        <div class='token_rules'>").concat(displayInfo.r, "</div>\n        <div class='token_descr'>").concat(displayInfo.tooltip, "</div>\n        ");
+                div.innerHTML = "\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div>\n        <div class='token_rules'>").concat(displayInfo.r, "</div>\n        <div class='token_descr'>").concat((_b = displayInfo.ac) !== null && _b !== void 0 ? _b : '', " ").concat(displayInfo.tooltip, "</div>\n        ");
                 tokenNode.appendChild(div);
                 tokenNode.setAttribute("data-card-type", displayInfo.t);
                 this.connect(tokenNode, "onclick", "onToken");
@@ -1563,7 +1564,9 @@ var GameXBody = /** @class */ (function (_super) {
         if (tokenDisplayInfo.mainType == "card") {
             tokenDisplayInfo.imageTypes += " infonode";
             tokenDisplayInfo.tooltip =
-                this.getTr(tokenDisplayInfo.tooltip) + "<br>" + _("Number: " + this.getRulesFor(tokenDisplayInfo.key, "num"));
+                this.getTr(tokenDisplayInfo.tooltip)
+                    + "<br>" + _("Number: " + tokenDisplayInfo.num)
+                    + (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
         }
         if (this.isLocationByType(tokenDisplayInfo.key)) {
             tokenDisplayInfo.imageTypes += " infonode";

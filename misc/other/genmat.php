@@ -276,7 +276,6 @@ foreach ($args as $incsv) {
     $g_field_names = null;
     $g_field_extra = [];
     $g_index = 1;
-    $g_trans = ['name', 'tooltip', 'tooltip_action'];
     $g_separator = '|';
     $g_separator_sub = '';
     $g_noquotes = [];

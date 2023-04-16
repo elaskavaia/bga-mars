@@ -18,7 +18,7 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
  * level of production/income tracker_${restype}_${color}:tableau_${color}:${level}
  * count of resources tracker_${restype}_${color}:tableau_${color}:${count}
  * terraforming parameters  tracker_${paramtype}:display_main:${count} where paramtype o - oxigen, w - oceans (water), t - (temp)
- * TM rank - tracker_tm_${color}:tableau_${color}:${count} also tracked by score before end of game
+ * TM rank - tracker_tr_${color}:tableau_${color}:${count} also tracked by score before end of game
 * hex tiles as mapped as tile_${type}_${index} where type is forest (1), city (2) and other special type can be number
 * personal colored cubes are marker_${color}_${index}
 * other "resources" on cards resource_${color}_${index}:card_...:0
@@ -29,4 +29,5 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
 
 https://tesera.ru/images/items/2078855/FAQ_v1.7.pdf
 https://www.fryxgames.se/TerraformingMars/TMRULESFINAL.pdf
+https://ssimeonoff.github.io/cards-list
 
