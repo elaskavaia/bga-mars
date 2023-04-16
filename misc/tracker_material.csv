@@ -28,6 +28,7 @@ tracker_gen|Generations|0|'min'=>0
 
 #tags
 #set create=0
+#set type=tag
 tagScience|Science
 tagBuilding|Building
 tagSpace|Space
@@ -40,3 +41,13 @@ tagJovian|Jovian
 tagEnergy|Energy
 tagVenus|Venus
 tagEvent|Event
+
+#hex tiles
+#set create=2
+#set location=limbo
+#set count=20
+#set type=tile
+tile_2|City
+tile_1|Forest
+#set count=9
+tile_3|Ocean

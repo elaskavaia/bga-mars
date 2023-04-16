@@ -4,18 +4,21 @@
 #Script coverts mars data from one format to another
 
 function addinc(&$rules, $value, $op) {
-    if ($value=='Ref') {
+    if ($value == 'Ref') {
         $rules .= " ${value}_$op";
         return;
     }
 
     $r = '';
-    if (strrpos($value, 'R', -1) !== false) {//endsWith
+    if (strrpos($value, 'R', -1) !== false) { //endsWith
         $r = 'Any';
         $value = substr($value, 0, strlen($value) - 1);
     }
     if ($value > 0) {
-        $rules .= " ${value}${op}${r}";
+        if ($value == 1)
+            $rules .= " ${op}${r}";
+        else
+            $rules .= " ${value}${op}${r}";
         return;
     };
     if ($value < 0) {
@@ -25,7 +28,6 @@ function addinc(&$rules, $value, $op) {
     };
     if (!$value) return;
     $rules .= " ${value}__$op";
-
 }
 
 function addpre(&$pre, $ro, $op, $min, $max) {

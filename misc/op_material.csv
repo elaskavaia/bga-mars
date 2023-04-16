@@ -6,6 +6,7 @@ card|Play Card|target,payment|${you} must select a card to play
 stan|Standard Project|target,payment|${you} must select a basic project to play
 #x|Place Tile|target|${you} must select a location to place tile
 w|Place Ocean Tile|target|${you} must select a location to place an ocean tile
+forest|Place Forest Tile|target|${you} must select a location to place an forest tile, adjucent if possible
 discard|Discard Card from Hand|target|${you} must select a card to discard
 sell|Discard Card from Hand to gain MC|target|${you} must select a card to discard to gain 1 MC|
 #set undo=false

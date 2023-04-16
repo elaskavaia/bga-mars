@@ -1,5 +1,6 @@
 x|y|r|ocean|name
 #set id=hex_{x}_{y}
+#set tooltip=hex at ({x},{y})
 #tharsis - can do variants later
 #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
 #ocean - 1 if reserved for ocean

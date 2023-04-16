@@ -78,6 +78,7 @@ abstract class PGameTokens extends PGameBasic {
                 $this->fillCounters($result["counters"], [$location => $count]);
             }
             $content = $this->isContentAllowedForLocation($current_player_id, $location);
+    
             if ($content !== false) {
                 if ($content === true) {
                     $tokens = $this->tokens->getTokensInLocation($location, null, $sort);
@@ -276,7 +277,7 @@ abstract class PGameTokens extends PGameBasic {
         if ($info) {
             $type = array_get($info, "type");
             if ($type != "location") {
-                return false;
+                return true;
             }
             $scope = array_get($info, "scope");
             $content_type = array_get($info, $attr);
@@ -296,6 +297,7 @@ abstract class PGameTokens extends PGameBasic {
                 return false; // not listed as location
             }
         } else {
+         
             return true; // not listed allowed
         }
         return false;
