@@ -1,0 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+class Operation_turn extends AbsOperation {
+    function auto(string $owner, int $inc, array $args = null) {
+        $this->game->queue($owner, "card/stan/pass");
+        return true;
+    }
+}

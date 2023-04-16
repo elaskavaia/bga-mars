@@ -1,0 +1,21 @@
+.card {
+  width: 10em;
+  height: 16em;
+  /* border: black solid 1px; */
+  border-radius: 5%;
+  box-shadow: 2px 2px 3px 1px #00000080;
+}
+
+.location .card {
+  margin-right: 5px;
+}
+
+.card[data-card-type="1"] {
+   background-color: lightgreen;
+}
+.card[data-card-type="2"] {
+  background-color: lightblue;
+}
+.card[data-card-type="3"] {
+  background-color: lightyellow;
+}

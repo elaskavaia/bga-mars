@@ -1,0 +1,53 @@
+type|name|params|prompt
+#set id=op_{type}
+#set undo=true
+#set class=
+card|Play Card|target,payment|${you} must select a card to play
+stan|Standard Project|target,payment|${you} must select a basic project to play
+#x|Place Tile|target|${you} must select a location to place tile
+w|Place Ocean Tile||${you} must select a location to place an ocean tile
+discard|Discard Card from Hand|target|${you} must select a card to discard
+sell|Discard Card from Hand to gain MC|target|${you} must select a card to discard to gain 1 MC|
+#set undo=false
+pass|Pass||
+draw|Draw Card in Hand|auto
+
+#auto-resolve actions
+#set params=
+#set prompt=
+#set undo=true
+#set class=AbsOperationInc
+m|Gain M€
+s|Gain Steel
+p|Gain Plant
+e|Gain Energy
+h|Gain Heat
+u|Gain Titanium
+#set class=AbsOperationIncNeg
+nm|Pay M€
+ns|Pay Steel
+nu|Pay Titanium
+np|Pay Plant
+ne|Pay Energy
+nh|Pay Heat
+#set class=AbsOperationProd
+pm|Increase M€ Production
+pu|Increase Titanium Production
+ps|Increase Steel Production
+pp|Increase Plant Production
+pe|Increase Energy Production
+ph|Increase Heat Production
+#set class=AbsOperationProdNeg
+npm|Decrease M€ Production
+npp|Decrease Plant Production
+npe|Decrease Energy Production
+nph|Decrease Heat Production
+nps|Decrease Steel Production
+npu|Decrease Titanium Production
+#set class=
+o|Increase Oxigen Level
+t|Increase Temperature
+turn|Take a turn
+tr|Increase TR
+research|Research
+

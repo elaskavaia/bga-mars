@@ -1,0 +1,26 @@
+id|name|state|php
+#counters
+#set type=tracker
+#set create=4
+#set location=miniboard_{COLOR}
+tracker_passed|Player Passed|0
+tracker_tr|TR|20
+tracker_pm|MC Production|1|'min'=>-5
+tracker_m|MC|42
+tracker_ps|Steel Production|1|
+tracker_s|Steel|0
+tracker_pu|Titanium Production|1|
+tracker_u|Titanium|0
+tracker_pp|Plant Production|1|
+tracker_p|Plant|0
+tracker_pe|Energy Production|1|
+tracker_e|Energy|0
+tracker_ph|Heat Production|1|
+tracker_h|Heat|0
+#terraforming parameters
+#set type=param
+#set create=1
+#set location=params
+tracker_o|Oxigen Level|0|'max'=>14
+tracker_t|Temperature|-30|'max'=>8,'min'=>-30
+tracker_w|Oceans|0|'max'=>9

@@ -1,0 +1,110 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * testlav implementation : © Alena Laskavaia <laskava@gmail.com>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * GameBasics.scss
+ *
+ */
+
+@import url(../../../css/csslayer.css);
+
+/* animation */
+
+#oversurface {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+#oversurface > * {
+  position: absolute;
+  transition-property: all;
+  transition-duration: 500ms;
+  transition-timing-function: ease-in-out;
+  /* background-color: blue; */
+  transform-origin: center center;
+}
+
+.phantom {
+  animation: pulse 500ms ease-in-out;
+}
+
+/* tooltips */
+.midSizeDialog {
+  max-width: 400px;
+}
+
+.tooltipimage {
+  vertical-align: top;
+  display: inline-block;
+}
+
+.tooltiptext {
+  display: inline-block;
+  vertical-align: top;
+  padding: 10px;
+}
+
+.tooltiptitle {
+  font-weight: bold;
+  font-size: large;
+  text-transform: uppercase;
+  width: 100%;
+  background-color: antiquewhite;
+}
+
+.tundra .dijitTooltipContainer,
+.tooltipcontainer {
+  background: white;
+  color: black;
+}
+
+.tooltip-body {
+  width: 100%;
+  padding: 10px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1) !important;
+  }
+  50% {
+    transform: scale(1.2) !important;
+  }
+  100% {
+    transform: scale(1) !important;
+  }
+}
+
+.infobox {
+  position: absolute !important;
+  bottom: 0px;
+  right: 0px;
+  font-family: FontAwesome;
+  font-size: x-large;
+  width: 1em;
+  height: 1em;
+  opacity: 0.3;
+}
+
+.limbo {
+  display: none;
+  height: 0px;
+  overflow: hidden;
+}
+
+#button_undo {
+  float: right;
+  background-color: red;
+  background-image: none;
+}

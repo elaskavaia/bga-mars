@@ -1,0 +1,49 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "unit test php",
+            "type": "shell",
+            "command": "phpunit --bootstrap ./_autoload.php --colors=always tests",
+            "options": {
+                "cwd": "${workspaceFolder}/modules",
+                "env": {
+                    "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/",
+                    "XDEBUG_CONFIG": "idekey=VSCODE"
+                }
+            },
+            "problemMatcher": ["$phpunit"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "update cards",
+            "type": "shell",
+            "command": "php7.4 ./massagedata.php > ../cards_material.csv",
+            "options": {
+                "cwd": "${workspaceFolder}/misc/other"
+            },
+            "problemMatcher": ["$phpunit"],
+            "group": {
+                "kind": "none",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "update cards mat",
+            "type": "shell",
+            "command": "php7.4 ${env:HOME}/git/bga-sharedcode/misc/genmat.php misc/cards_material.csv",
+            "dependsOn": ["update cards"],
+     
+            "problemMatcher": ["$phpunit"],
+            "group": {
+                "kind": "none",
+                "isDefault": false
+            }
+        }
+    ]
+}

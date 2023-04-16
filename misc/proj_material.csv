@@ -1,0 +1,18 @@
+
+num|name|t|r|cost|pre|tooltip|php
+#corp cards
+#
+#set id=card_corp_{num}
+#set location=deck_corp
+1|Begginer Corp|4|42m|10|This is a begginer corp
+#
+#standard projects
+#
+#set id=card_stanproj_{num}
+#set location=display_main
+#set count=1
+#set create=1
+1|Sell patents|0|[1,](sell)|0||Discard X card to gain X MC
+2|Draw card|0|draw|4||Pay 4 ME draw card
+4|Aquifer|0|w|18||For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)
+5|Greenery|0|o|23||For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile

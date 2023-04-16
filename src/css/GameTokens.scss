@@ -1,0 +1,51 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * testlav implementation : © Alena Laskavaia <laskava@gmail.com>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * GameTokens.scss
+ *
+ */
+
+.location {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.hand {
+  height: 16em;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.location > * {
+  display: inline-block;
+  position: relative;
+}
+.location > .counter {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.spectatorMode .hand {
+  display: none;
+}
+
+.carddeck > .counter {
+  position: absolute;
+  top: 90%;
+  left: calc(50% - 0.5em);
+}
+
+.active_slot {
+  cursor: pointer;
+  box-shadow: 0px 0px 4px 2px #800cea !important;
+}
+
