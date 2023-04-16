@@ -14,7 +14,7 @@
       {
         "match": "misc/.*material\\.csv$",
         "isAsync": true,
-        "cmd": "php7.4 ${env.HOME}/git/bga-sharedcode//misc/genmat.php ${file}"
+        "cmd": "php7.4 misc/other/genmat.php ${file}"
       }
     ]
   },

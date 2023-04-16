@@ -36,7 +36,7 @@
         {
             "label": "update cards mat",
             "type": "shell",
-            "command": "php7.4 ${env:HOME}/git/bga-sharedcode/misc/genmat.php misc/cards_material.csv",
+            "command": "php7.4 misc/other/genmat.php misc/cards_material.csv",
             "dependsOn": ["update cards"],
      
             "problemMatcher": ["$phpunit"],
