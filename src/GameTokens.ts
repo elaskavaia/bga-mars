@@ -116,7 +116,6 @@ class GameTokens extends GameBasics {
       var location = tokenInfo.location;
       if (res.indexOf(location) < 0) res.push(location);
     }
-    console.log("locations",res);
     return res;
   }
 
@@ -396,6 +395,10 @@ class GameTokens extends GameBasics {
     if (tokenInfo.showtooltip == false) {
       return;
     }
+    if (tokenInfo.title) {
+      attachNode.setAttribute("title", this.getTr(tokenInfo.title));
+      return;
+    }
 
     if (!tokenInfo.tooltip && !tokenInfo.name) {
       return;
@@ -405,6 +408,8 @@ class GameTokens extends GameBasics {
       attachNode.setAttribute("title", this.getTr(tokenInfo.name));
       return;
     }
+
+
 
     var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
     if (main) {

@@ -888,7 +888,6 @@ var GameTokens = /** @class */ (function (_super) {
             if (res.indexOf(location) < 0)
                 res.push(location);
         }
-        console.log("locations", res);
         return res;
     };
     GameTokens.prototype.isLocationByType = function (id) {
@@ -1148,6 +1147,10 @@ var GameTokens = /** @class */ (function (_super) {
         if (tokenInfo.showtooltip == false) {
             return;
         }
+        if (tokenInfo.title) {
+            attachNode.setAttribute("title", this.getTr(tokenInfo.title));
+            return;
+        }
         if (!tokenInfo.tooltip && !tokenInfo.name) {
             return;
         }
@@ -1384,9 +1387,13 @@ var GameXBody = /** @class */ (function (_super) {
         return _super.call(this) || this;
     }
     GameXBody.prototype.setup = function (gamedatas) {
+        var _this = this;
         this.defaultTooltipDelay = 800;
         _super.prototype.setup.call(this, gamedatas);
         this.connectClass("hex", "onclick", "onToken");
+        document.querySelectorAll(".hex").forEach(function (node) {
+            _this.updateTooltip(node.id);
+        });
         console.log("Ending game setup");
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {

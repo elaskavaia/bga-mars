@@ -709,6 +709,14 @@
   background-color: rgba(255, 255, 0, 0.4);
 }
 
+.hex.active_slot {
+  background-color: rgba(86, 207, 110, 0.4);
+}
+
+.hex.active_slot:hover {
+  background-color: rgb(86, 207, 110);
+}
+
 #decks_area > * {
   display: inline-block;
 }

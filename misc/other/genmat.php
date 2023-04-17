@@ -199,7 +199,7 @@ function genbody($incsv) {
         fwrite($out, " => [ ${concomment}\n");
         $map = array_merge($g_field_extra, $fields);
         foreach ($fields as $key => $value) {
-            if ($value === null && array_key_exists($key, $g_field_extra)) {
+            if (($value === null || $value == '') && array_key_exists($key, $g_field_extra)) {
                 $map[$key] = $g_field_extra[$key];
             }
         }

@@ -11,6 +11,10 @@ class GameXBody extends GameTokens {
     this.defaultTooltipDelay = 800;
     super.setup(gamedatas);
     this.connectClass("hex", "onclick", "onToken");
+
+    document.querySelectorAll(".hex").forEach(node=>{
+      this.updateTooltip(node.id);
+    });
     console.log("Ending game setup");
   }
 
@@ -55,6 +59,7 @@ class GameXBody extends GameTokens {
       tokenDisplayInfo.imageTypes += " infonode";
     }
   }
+
 
   sendActionResolve(op: string, args?: any) {
     if (!args) args = {};
