@@ -888,6 +888,7 @@ var GameTokens = /** @class */ (function (_super) {
             if (res.indexOf(location) < 0)
                 res.push(location);
         }
+        console.log("locations", res);
         return res;
     };
     GameTokens.prototype.isLocationByType = function (id) {

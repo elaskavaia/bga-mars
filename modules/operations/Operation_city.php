@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class Operation_city extends AbsOperation {
     function argPrimaryInfo(string $color, array $op = null) {
-        $keys = ['hex_1_1'];
+        $keys = ['hex_5_3'];
         return $this->game->createArgInfo($color, $keys, function ($a, $b) {
             return 0;
         });

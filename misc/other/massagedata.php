@@ -88,7 +88,11 @@ function tomyformat($fields, $raw_fields) {
     addpre($pre, $fields['Req: Max Temperature'], 't<=', -30, 8);
     addpre($pre, $fields['Req: Ocean'], 'w>=', 0, 9);
     addpre($pre, $fields['Req: Max Ocean'], 'w<=', 0, 9);
-    $pre = trim($pre);
+    $premanual = $fields['Pre-requisites (Non-Global)'];
+    if ($premanual)
+        $pre = $premanual;
+    else
+        $pre = trim($pre);
 
     $rules = "";
     addinc($rules, $fields['Prod: Megacredit'], 'pm');

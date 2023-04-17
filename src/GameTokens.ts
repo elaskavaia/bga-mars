@@ -116,6 +116,7 @@ class GameTokens extends GameBasics {
       var location = tokenInfo.location;
       if (res.indexOf(location) < 0) res.push(location);
     }
+    console.log("locations",res);
     return res;
   }
 

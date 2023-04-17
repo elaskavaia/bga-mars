@@ -230,6 +230,8 @@ function genbody($incsv) {
                     continue;
             } else if (is_numeric($value) || array_search($key, $g_noquotes) !== false) {
                 $exp = $value;
+            } elseif (strpos($value,"'")!==false) {
+                $exp = "\"$value\"";
             } else {
                 $exp = "'$value'";
             }

@@ -6,7 +6,7 @@ num|name|t|r|cost|pre|tags|ac|text|php
 #set location=deck_main
 #set create=single
 1|Colonizer Training Camp|1||8|o<=5|Building Jovian||Oxygen must be 5% or less.|  'vp' => '2'
-2|Asteroid Mining Consortium|1|Ref_u|13||Jovian||Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step.|  'vp' => '1'
+2|Asteroid Mining Consortium|1|1nu_Any,1u|13|u >= 1|Jovian||Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step.|  'vp' => '1'
 3|Deep Well Heating|1|pe,t|13||Building Energy||Increase your energy production 1 step. Increase temperature 1 step.|
 4|Cloud Seeding|1|1npm,2pp,Ref_ph|11|w>=3|||Requires 3 ocean tiles. Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps.|
 5|Search For Life|2|Ref_m|3|o<=6|Science|Action: Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here.|Oxygen must be 6% or less. 3 VPs if you have one or more science resource here.|
@@ -119,7 +119,7 @@ num|name|t|r|cost|pre|tags|ac|text|php
 112|Bribed Committee|3|2tr|7||Earth Event||Raise your terraform rating 2 steps.|  'vp' => '-2'
 113|Solar Power|1|pe|11||Building Energy||Increase your energy production 1 step.|  'vp' => '1'
 114|Breathing Filters|1||11|o>=7|Science||Requires 7% oxygen.|  'vp' => '2'
-115|Artificial Photosynthesis|1|Ref_pp,Ref_pe|12||Science||Increase your plant production 1 step or your energy production 2 steps.|
+115|Artificial Photosynthesis|1|pp/2pe|12||Science||Increase your plant production 1 step or your energy production 2 steps.|
 116|Artificial Lake|1|w|15|t>=-6|Building||Requires -6°C or warmer. Place 1 ocean tile ON AN AREA NOT RESERVED FOR OCEAN.|  'vp' => '1'
 117|Geothermal Power|1|2pe|11||Building Energy||Increase your energy production 2 steps.|
 118|Farming|1|2pm,2pp,2p|16|t>=4|Plant||Requires +4°C or warmer. Increase your MC production 2 steps and your plant production 2 steps. Gain 2 plants.|  'vp' => '2'
@@ -133,8 +133,8 @@ num|name|t|r|cost|pre|tags|ac|text|php
 126|GHG Factories|1|1npe,4ph|11||Building||Decrease your energy production 1 step and increase your heat production 4 steps.|
 127|Subterranean Reservoir|3|w|11||Event||Place 1 ocean tile.|
 128|Ecological Zone|2||12||Plant Animal|Effect: When you play an animal or a plant tag (including these 2), add an animal to this card.|Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.|
-129|Zeppelins|1|Ref_pm|13|o>=5|||Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS.|  'vp' => '1'
-130|Worms|1|Ref_pp|8|o>=4|Microbe||Requires 4% oxygen. Increase your plant production 1 step for every 2 microbe tags you have, including this.|
+129|Zeppelins|1|'#(city)'pm|13|o>=5|||Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS.|  'vp' => '1'
+130|Worms|1|'#(tagMicrobe,/,2,-,tagMicrobe,%,2)',pp|8|o>=4|Microbe||Requires 4% oxygen. Increase your plant production 1 step for every 2 microbe tags you have, including this.|
 131|Decomposers|2||5|o>=3|Microbe|Effect: When you play an animal, plant, or microbe tag, including this, add a microbe to this card.|Requires 3# oxygen. 1 VP per 3 microbes on this card.|
 132|Fusion Power|1|3pe|14||Science Building Energy||Requires 2 power tags. Increase your energy production 3 steps.|
 133|Symbiotic Fungus|2||4|t>=-14|Microbe|Action: Add a microbe to ANOTHER card.|Requires -14°C or warmer.|
@@ -152,11 +152,11 @@ num|name|t|r|cost|pre|tags|ac|text|php
 145|Tectonic Stress Power|1|3pe|18||Building Energy||Requires 2 science tags. Increase your energy production 3 steps.|  'vp' => '1'
 146|Nitrophilic Moss|1|2pp,2np|8|w>=3|Plant||Requires 3 ocean tiles and that you lose 2 plants. Increase your plant production 2 steps.|
 147|Herbivores|2|Ref_pp|12|o>=8|Animal|Effect: When you place a greenery tile, add an animal to this card.|Requires 8% oxygen. Add 1 animal to this card. Decrease any plant production 1 step. 1 VP per 2 animals on this card.|
-148|Insects|1|Ref_pp|9|o>=6|Microbe||Requires 6% oxygen. Increase your plant production 1 step for each plant tag you have.|
+148|Insects|1|'#(tagPlant)',pp|9|o>=6|Microbe||Requires 6% oxygen. Increase your plant production 1 step for each plant tag you have.|
 149|CEO's Favourite Project|3||1||Event||Add 1 resource to a card with at least 1 resource on it.|
 150|Anti-Gravity Technology|2||14||Science|Effect: when you play a card, you pay 2 MC less for it.|Requires 7 science tags.|  'vp' => '3'
 151|Investment Loan|3|1npm,10m|3||Earth Event||Decrease your MC production 1 step. Gain 10 MC.|
-152|Insulation|1|Ref_pm,Ref_ph|2||||Decrease your heat production any number of steps and increase your MC production the same number of steps.|
+152|Insulation|1|[0,](nph:pm)|2||||Decrease your heat production any number of steps and increase your MC production the same number of steps.|
 153|Adaptation Technology|2||12||Science|Effect: Your global requirements are +2 or -2 steps, your choice in each case.||  'vp' => '1'
 154|Caretaker Contract|2|Ref_h,Ref_tr|3|t>=0||Action: Spend 8 heat to increase your terraforming rating 1 step.|Requires 0°C or warmer.|
 155|Designed Microorganisms|1|2pp|16|t<=-14|Science Microbe||It must be -14°C or colder. Increase your plant production 2 steps.|
