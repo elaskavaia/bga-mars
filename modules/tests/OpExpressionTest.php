@@ -46,6 +46,7 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("(/ (/ 0 1 a) (/ 0 1 b))", "(?a/?b)");
         $this->assertExpressionParser("(: d m)", "d:m");
         $this->assertExpressionParser("(^ 2 2 a b)", "2^(a+b)");
+        $this->assertExpressionParser("(, '#(1+2)' a)", "'#(1+2)',a");
 
         $this->assertExpressionEq("2a");
         $this->assertExpressionEq("a;b/c");
@@ -60,6 +61,7 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionEq("a/b+c");
         
         $this->assertExpressionEq('discard,m,[0,](discard,m)',"(discard,m)[0,](discard,m)");
+        $this->assertExpressionEq("'#(1+2)',a");
 
         //"1*(?a/?b/?c)"
     }
@@ -105,6 +107,8 @@ final class OpExpressionTest extends TestCase {
 
         $this->assertEquals('"m"', OpExpression::json("m"));
         $this->assertEquals('["\/",1,1,["\/","5","5","m"],"M"]', OpExpression::json("5m/M"));
+
+        $this->assertEquals('[",",1,1,"\'a\'","a"]', OpExpression::json("'a',a"));
     }
 
     private function assertTokens($expected, $input) {

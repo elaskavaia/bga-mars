@@ -167,7 +167,8 @@ class OpExpression {
     public static function parseTerminal(&$rules) {
         $tokens = OpLexer::getInstance()-> tokenize($rules);
         $op = array_shift($tokens);
-        if (OpLexer::getInstance()-> getTerminalName($op) != "T_IDENTIFIER") {
+        $ttype = OpLexer::getInstance()-> getTerminalName($op);
+        if ($ttype != "T_IDENTIFIER" && $ttype != "T_STRING") {
             throw new feException("unexpected token $op in $rules");
         }
         $rules = join("", $tokens);
@@ -371,6 +372,7 @@ class OpLexer {
         "/^(\s+)/" => "T_WHITESPACE",
         "/^(\d+)/" => "T_NUMBER",
         "/^(\w+)/" => "T_IDENTIFIER",
+        "/^('[^']*')/" => "T_STRING",
     ];
 
     protected function  __construct(){
@@ -411,7 +413,7 @@ class OpLexer {
     }
     protected function nextToken($line, $offset = 0, &$tname = null) {
         $tname = "T_EOS";
-        if ($offset >= strlen($line)) {
+        if (!$line || $offset >= strlen($line)) {
             return "";
         }
         $string = substr($line, $offset);

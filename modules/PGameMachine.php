@@ -120,14 +120,7 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function saction_resolve($type, $args) {
-        $rules = $this->getOperationRules($type);
-        $action = array_get($rules, "action", "$type");
-        $method = "uaction_$action";
-        if (method_exists($this, $method)) {
-            call_user_func_array([$this, $method], [$args]);
-        } else {
-            $this->systemAssertTrue("Not implemented action $action");
-        }
+        $this->systemAssertTrue("Not implemented resolve");
     }
 
     function saction_resolve_machine($args, $tops) {

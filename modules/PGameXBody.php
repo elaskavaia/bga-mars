@@ -3,6 +3,8 @@ require_once "PGameMachine.php";
 require_once "NotifBuilder.php";
 require_once "MathExpression.php";
 require_once "operations/AbsOperation.php";
+require_once "operations/Operation_embedded.php";
+
 
 abstract class PGameXBody extends PGameMachine {
     function __construct() {
@@ -119,7 +121,7 @@ abstract class PGameXBody extends PGameMachine {
         // check precond
         $cond = $this->getRulesFor($tokenid, "pre");
         if ($cond) {
-            $valid = $this->evaluatePrecondition($cond, $owner);
+            $valid = $this->evaluateExpression($cond, $owner);
             if (!$valid) {
                 return 2; // fail precond check
             }
@@ -137,7 +139,7 @@ abstract class PGameXBody extends PGameMachine {
         return 0;
     }
 
-    function evaluatePrecondition($cond, $owner) {
+    function evaluateExpression($cond, $owner) {
         $expr = MathExpression::parse($cond);
         $mapper = function ($x) use ($owner) {
             $create = $this->getRulesFor("tracker_$x", "create", null);
@@ -157,6 +159,10 @@ abstract class PGameXBody extends PGameMachine {
 
 
     function  getOperationInstance($type): AbsOperation {
+        if (startsWith($type,"'")) {
+            // embedded operation
+            return new Operation_embedded($type, $this);
+        }
         $rules = $this->getOperationRules($type);
         if (!$rules) {
             $this->systemAssertTrue("Operation is not defined for $type");
@@ -173,6 +179,12 @@ abstract class PGameXBody extends PGameMachine {
             return null;
         }
     }
+
+    function isPassed($color) {
+        // XXX also add zombie player
+        return $this->tokens->getTokenState("tracker_passed_${color}") > 0;
+    }
+
 
     function queue($color, $type) {
         $this->machine->queue($type, 1, 1, $color);
@@ -194,10 +206,6 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->action_resolve($args);
     }
 
-    function isPassed($color) {
-        // XXX also add zombie player
-        return $this->tokens->getTokenState("tracker_passed_${color}") > 0;
-    }
 
     function uaction_playCard($args) {
         $card_id = $args["target"];

@@ -111,14 +111,15 @@ class MathExpressionParser {
         $op = $this->pop();
         $tt = $this->lexer->getTerminalName($op);
         if ($tt != "T_IDENTIFIER" && $tt != "T_NUMBER") {
-            throw new Exception("Unexpected token $op");
+            throw new Exception("Unexpected token '$op' $tt");
         }
         return  new MathTerminalExpression($op);
     }
     function parseExpression() {
         $left = $this->parseTerm();
         $lookup = $this->peek();
-        if ($lookup === null) {
+
+        if ($lookup === null || $lookup === ')') {
             return $left;
         }
         $op = $this->pop();

@@ -33,5 +33,8 @@ final class MathExpressionTest extends TestCase {
             return 10;
         };
         assertTrue($res->evaluate($mapper));
+
+        $res = MathExpressionParser::parse("(gen)");
+        $this->assertEquals("gen", $res->__toString());
     }
 }
