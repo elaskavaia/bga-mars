@@ -1,6 +1,11 @@
+#ebd-body {
+  --card-width: 18vh;
+  --card-height: calc(var(--card-width)*1.5);
+}
+
 .card {
-  width: 10em;
-  height: 16em;
+  width: var(--card-width);
+  height: var(--card-height);
   /* border: black solid 1px; */
   border-radius: 5%;
   box-shadow: 2px 2px 3px 1px #00000080;
@@ -8,6 +13,10 @@
 
 .location .card {
   margin-right: 5px;
+}
+
+.card[data-card-type="0"] {
+  background-color: white;
 }
 
 .card[data-card-type="1"] {
@@ -18,4 +27,49 @@
 }
 .card[data-card-type="3"] {
   background-color: lightyellow;
+}
+
+.token_cost {
+  position: absolute;
+  top:0%;
+  width: calc(var(--card-width) * 0.2);
+  height: calc(var(--card-width) * 0.2);
+  background-color: gold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: calc(var(--card-width) * 0.02) solid black;
+  border-radius: 1vh;
+}
+
+.token_title{
+  position: absolute;
+  top: 16%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: calc(var(--card-width) * 0.075);
+}
+
+.token_descr{
+  position: absolute;
+  top: 50%;
+  font-size: calc(var(--card-width) * 0.07);
+  width: 96%;
+  padding: 2%;
+  height: 38%;
+  background-color: #0000000d;
+}
+
+.token_rules{
+  position: absolute;
+  top: 30%;
+  font-size: calc(var(--card-width) * 0.075);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
 }

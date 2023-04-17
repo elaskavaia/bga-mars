@@ -1,0 +1,64 @@
+#ebd-body {
+  --map-width:75vh;
+  --map-height: calc(var(--map-width)*0.92);
+}
+
+#map {
+  position: relative;
+  width: var(--map-width);
+  height: var(--map-height);
+}
+
+.map_bg {
+  background-image: url('img/map.png');
+  width: var(--map-width);
+  height:var(--map-height);
+  border:1px solid red;
+  background-size: contain;
+  position: absolute;
+}
+
+#map .hex {
+  width: calc(var(--map-width) * 0.109);
+  height: calc(var(--map-width) * 0.118);
+  border-radius: 30%;
+  outline: 1px solid black;
+  position: absolute;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  transition: 100ms ease-in-out;
+}
+
+@for $col from 1 through 9 {
+  @for $row from 1 through 9 {
+    .map_hexes #hex_#{$col}_#{$row} {
+      left: 1% + ($col - 1) * 10.9% ;
+      top: 1% + ($row - 1) * 10.3% ;
+    }
+  }
+}
+
+.hex.even{
+  margin-left: calc(var(--map-width) * -0.0553);
+}
+
+
+.outer.hex {
+  background-color: rgba(128, 128, 128, 0.66);
+}
+
+#hex_0_1 {
+  left:0%;
+  top:0%;
+}
+#hex_0_2 {
+  right:0%;
+  top:0%;
+}
+#hex_0_3 {
+  right:0%;
+  bottom:0%;
+}
+
+.hex:hover {
+  background-color: rgba(255, 255, 0, 0.4);
+}
