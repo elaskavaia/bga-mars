@@ -8,6 +8,9 @@ function addinc(&$rules, $value, $op) {
         $rules .= " ${value}_$op";
         return;
     }
+    if ($value == 'C' || $value == 0) {
+        return;
+    }
 
     $r = '';
     if (strrpos($value, 'R', -1) !== false) { //endsWith
@@ -107,7 +110,10 @@ function tomyformat($fields, $raw_fields) {
     addinc($rules, $fields['Temperature'], 't');
     addinc($rules, $fields['Ocean'], 'w');
 
+    $rules .= " ".$fields['Production'];
+
     $rules = trim($rules);
+    $rules = str_replace('’',"'",$rules);
     $rules = implode(',', explode(' ', $rules));
 
     $tooltip = $fields['One time Effect Text'];

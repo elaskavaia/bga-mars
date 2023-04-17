@@ -2920,6 +2920,12 @@ $this->token_types = [
   'state' => 0,
   'min'=>0,
 ],
+ 'tracker_city' => [  //
+  'type' => 'param',
+  'create' => 1,
+  'location' => 'params',
+  'name' => clienttranslate("Number of cities on Mars"),
+],
 // #tags
  'tagScience' => [  //
   'type' => 'tag',

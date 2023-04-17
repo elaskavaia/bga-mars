@@ -26,6 +26,7 @@ class Operation_city extends AbsOperation {
         $possible_targets = $actionArgs['target'];
         $this->game->systemAssertTrue("Unathorized placement", array_search($target, $possible_targets) !== false);
         $this->game->dbSetTokenLocation($object, $target,1);
+        $this->game->dbIncGlobalTracker('city',1);
         return true;
     }
 }

@@ -159,7 +159,7 @@ abstract class PGameXBody extends PGameMachine {
 
 
     function  getOperationInstance($type): AbsOperation {
-        if (startsWith($type,"'")) {
+        if (startsWith($type, "'")) {
             // embedded operation
             return new Operation_embedded($type, $this);
         }
@@ -185,6 +185,20 @@ abstract class PGameXBody extends PGameMachine {
         return $this->tokens->getTokenState("tracker_passed_${color}") > 0;
     }
 
+
+    function dbIncPlayerTracker(string $color, $type, $inc) {
+        if (!$color) {
+            $color = $this->getActivePlayerColor();
+        }
+        $token_id = "tracker_${type}_${color}";
+        $value = $this->tokens->incTokenState($token_id, $inc);
+        $this->notifyCounterDirect($token_id, $value, '', [], $this->getPlayerIdByColor($color));
+    }
+    function dbIncGlobalTracker($type, $inc) {
+        $token_id = "tracker_${type}";
+        $value = $this->tokens->incTokenState($token_id, $inc);
+        $this->notifyCounterDirect($token_id, $value, '');
+    }
 
     function queue($color, $type) {
         $this->machine->queue($type, 1, 1, $color);
