@@ -652,7 +652,7 @@ class DbMachine extends APP_GameClass {
         $to = $count;
         $from = $optional ? 0 : $to;
 
-        return "(/ $from $to $res)";
+        return "(! $from $to $res)";
     }
     function tofuncexpr($xop, $ops) {
         $res = "(" . $xop . " ";

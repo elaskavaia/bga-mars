@@ -5,6 +5,7 @@ declare(strict_types=1);
 abstract class AbsOperation {
     public string $mnemonic;
     public PGameXBody $game;
+    public ?string $params;
 
     public function __construct(string $op, PGameXBody $game) {
         $this->mnemonic = $op;
@@ -13,6 +14,11 @@ abstract class AbsOperation {
 
     function rules() {
         return $this->game->getOperationRules($this->mnemonic);
+    }
+
+    /** extra operation parameters */
+    function setParams($params) {
+        $this->params = $params;
     }
 
     function arg(array $op, bool $only_feasibility = false) {
@@ -33,7 +39,7 @@ abstract class AbsOperation {
     }
 
     function argPrimaryArgName() {
-        $params = array_get( $this->rules(),'params','');
+        $params = array_get($this->rules(), 'params', '');
         if (!$params) {
             return "target";
         }
@@ -61,7 +67,7 @@ abstract class AbsOperation {
         $type = $op["type"];
         if ($type != $this->mnemonic) throw new BgaSystemException("Mismatched operation $type");
         $owner = $op["owner"];
-        $inc = (int) ( $op["resolve_count"] ?? $op["count"] ?? 1);
+        $inc = (int) ($op["resolve_count"] ?? $op["count"] ?? 1);
         return $this->auto($owner, $inc, $args);
     }
 

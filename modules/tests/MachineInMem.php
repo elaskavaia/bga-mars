@@ -226,7 +226,7 @@ class MachineInMem extends DbMachine {
 
     function setCount($list, $count) {
         $ids = $this->ids($list);
-        foreach ($this->all() as &$row) {
+        foreach ($this->xtable as &$row) {
             if (array_search($row["id"], $ids) !== false) {
                 $row["count"] = $count;
             }
@@ -235,7 +235,7 @@ class MachineInMem extends DbMachine {
 
     public function validateOptional($list) {
         $ids = $this->ids($list);
-        foreach ($this->all() as &$row) {
+        foreach ($this->xtable as &$row) {
             if (array_search($row["id"], $ids) !== false) {
                 if (!$this->isOptional($row)) {
                     return false;

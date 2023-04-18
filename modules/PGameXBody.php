@@ -3,7 +3,6 @@ require_once "PGameMachine.php";
 require_once "NotifBuilder.php";
 require_once "MathExpression.php";
 require_once "operations/AbsOperation.php";
-require_once "operations/Operation_embedded.php";
 
 
 abstract class PGameXBody extends PGameMachine {
@@ -159,9 +158,12 @@ abstract class PGameXBody extends PGameMachine {
 
 
     function  getOperationInstance($type): AbsOperation {
-        if (startsWith($type, "'")) {
-            // embedded operation
-            return new Operation_embedded($type, $this);
+        $matches = null;
+        $params = null;
+        if (preg_match("/^(\w+)\((.*)\)$/", $type, $matches)) {
+            // function call
+            $params = $matches[2];
+            $type = $matches[1];
         }
         $rules = $this->getOperationRules($type);
         if (!$rules) {
@@ -172,6 +174,7 @@ abstract class PGameXBody extends PGameMachine {
         try {
             require_once "operations/$classname.php";
             $opinst = new $classname($type, $this);
+            if ($params) $opinst->setParams($params);
             return $opinst;
         } catch (Throwable $e) {
             $this->error($e->getTraceAsString());

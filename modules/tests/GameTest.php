@@ -9,6 +9,7 @@ class GameUT extends mars {
         parent::__construct();
         include "../material.inc.php";
         $this->tokens = new TokensInMem();
+        $this->machine = new MachineInMem();
     }
 
     function init(){
@@ -58,5 +59,21 @@ final class GameTest extends TestCase {
         $m->tokens->setTokenState('tracker_u_'.PCOLOR,8);
         $this->assertEquals(8,$m->evaluateExpression("u",PCOLOR));
         $this->assertEquals(1,$m->evaluateExpression("u > 1",PCOLOR));
+        $m->tokens->setTokenState('tracker_u_'.PCOLOR,7);
+        $this->assertEquals(3,$m->evaluateExpression("u/2",PCOLOR));
+    }
+
+
+    public function testCounterCall() {
+        $m = $this->game();
+
+        $m->tokens->setTokenState('tracker_u_'.PCOLOR,8);
+        $m->machine->insertRule("counter(u) m",1,1,1,PCOLOR);
+        $ops=$m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $m->executeOperationSingle($op);
+        $ops=$m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $this->assertEquals(8,$op['count']);
     }
 }

@@ -42,7 +42,8 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     public function isAtomicOperation($op) {
-        return OpExpression::parseExpression($op)->op == "!";
+        $expr = OpExpression::parseExpression($op);
+        return $expr->isAtomic();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -182,7 +183,7 @@ abstract class PGameMachine extends PGameTokens {
         $n = 20;
         while ($n-- > 0) {
             $operations = $this->machine->getTopOperations();
-            $this->debugConsole("$n: machine top: " . $this->machine->getlistexpr($operations));
+            $this->trace("$n: machine top: " . $this->machine->getlistexpr($operations));
 
             if (count($operations) == 0) {
                 $nextState = $this->machineExecuteDefault();

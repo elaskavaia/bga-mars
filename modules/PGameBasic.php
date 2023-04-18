@@ -421,7 +421,7 @@ abstract class PGameBasic extends Table {
 
     function getMostlyActivePlayerId() {
         $state = $this->gamestate->state();
-        if ($state["type"] === "multipleactiveplayer") {
+        if ($state && $state["type"] === "multipleactiveplayer") {
             return $this->getCurrentPlayerId();
         } else {
             return $this->getActivePlayerId();

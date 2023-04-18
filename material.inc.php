@@ -1498,7 +1498,7 @@ $this->token_types = [
   'num' => 129,
   'name' => clienttranslate("Zeppelins"),
   't' => 1,
-  'r' => "'#(city)'pm",
+  'r' => 'counter(city),pm',
   'cost' => 13,
   'pre' => 'o>=5',
   'text' => clienttranslate("Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS."),
@@ -1510,7 +1510,7 @@ $this->token_types = [
   'num' => 130,
   'name' => clienttranslate("Worms"),
   't' => 1,
-  'r' => "'#(tagMicrobe,/,2,-,tagMicrobe,%,2)',pp",
+  'r' => "counter('tagMicrobe/2'),pp",
   'cost' => 8,
   'pre' => 'o>=4',
   'tags' => 'Microbe',
@@ -1722,7 +1722,7 @@ $this->token_types = [
   'num' => 148,
   'name' => clienttranslate("Insects"),
   't' => 1,
-  'r' => "'#(tagPlant)',pp",
+  'r' => 'counter(tagPlant),pp',
   'cost' => 9,
   'pre' => 'o>=6',
   'tags' => 'Microbe',
@@ -2784,6 +2784,11 @@ $this->token_types = [
   'undo' => 'true',
   'type' => 'research',
   'name' => clienttranslate("Research"),
+],
+ 'op_counter' => [  //
+  'undo' => 'true',
+  'type' => 'counter',
+  'name' => clienttranslate("Special Counter"),
 ],
 /* --- gen php end op_material --- */
 
