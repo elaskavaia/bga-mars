@@ -20,8 +20,7 @@ class GameUT extends mars {
 define("PCOLOR","ff0000");
 final class GameTest extends TestCase {
     public function testGameProgression() {
-        $m = new GameUT();
-        $m->init();
+        $m = $this->game();
         $this->assertNotFalse($m);
         $this->assertEquals(0,$m->getGameProgression());
         $m->tokens->setTokenState('tracker_o',5);
@@ -33,14 +32,13 @@ final class GameTest extends TestCase {
     }
 
     public function testOps() {
-        $m = new GameUT();
-        $m->init();
+        $m = $this->game();
         $op = $m->getOperationInstance('m');
         $res = $op->auto("ff0000",1);
         $this->assertTrue($res);
     }
 
-    private function game(){
+    private function game() {
         $m = new GameUT();
         $m->init();
         return $m;
@@ -52,5 +50,13 @@ final class GameTest extends TestCase {
             return 0;
         });
         $this->assertTrue($info["a"]['rejected']==0);
+    }
+
+    public function testEvalute() {
+        $m = $this->game();
+
+        $m->tokens->setTokenState('tracker_u_'.PCOLOR,8);
+        $this->assertEquals(8,$m->evaluateExpression("u",PCOLOR));
+        $this->assertEquals(1,$m->evaluateExpression("u > 1",PCOLOR));
     }
 }

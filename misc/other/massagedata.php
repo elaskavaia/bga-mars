@@ -14,7 +14,7 @@ function addinc(&$rules, $value, $op) {
 
     $r = '';
     if (strrpos($value, 'R', -1) !== false) { //endsWith
-        $r = 'Any';
+        $r = '_Any';
         $value = substr($value, 0, strlen($value) - 1);
     }
     if ($value > 0) {

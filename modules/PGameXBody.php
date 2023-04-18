@@ -186,17 +186,19 @@ abstract class PGameXBody extends PGameMachine {
     }
 
 
-    function dbIncPlayerTracker(string $color, $type, $inc) {
+    function dbIncPlayerTracker(string $color, $type, $inc = 1) {
         if (!$color) {
             $color = $this->getActivePlayerColor();
         }
         $token_id = "tracker_${type}_${color}";
-        $value = $this->tokens->incTokenState($token_id, $inc);
+        $this->tokens->incTokenState($token_id, $inc);
+        $value =   $this->tokens->getTokenState($token_id);
         $this->notifyCounterDirect($token_id, $value, '', [], $this->getPlayerIdByColor($color));
     }
     function dbIncGlobalTracker($type, $inc) {
         $token_id = "tracker_${type}";
-        $value = $this->tokens->incTokenState($token_id, $inc);
+        $this->tokens->incTokenState($token_id, $inc);
+        $value = $this->tokens->getTokenState($token_id);
         $this->notifyCounterDirect($token_id, $value, '');
     }
 
@@ -220,6 +222,11 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->action_resolve($args);
     }
 
+    function saction_autoResolve($color, $type, $count) {
+        $opinst = $this->getOperationInstance($type);
+        return $opinst->auto($color, $count);
+    }
+
 
     function uaction_playCard($args) {
         $card_id = $args["target"];
@@ -227,26 +234,30 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getActivePlayerColor();
         $cost = $this->getRulesFor($card_id, "cost");
         $payment = $args["payment"] ?? "auto";
+        $this->machine->interrupt();
         if ($payment == "auto") {
-            $this->machine->push("nm", $cost, $cost, $color, MACHINE_FLAG_UNIQUE);
+            $this->saction_autoResolve($color, "nm", $cost);
         } else {
             $this->systemAssertTrue("Not supported payment");
         }
-        $this->machine->push($rules, 1, 1, $color);
+
         if (startsWith($card_id, "card_stanproj")) {
+            $this->machine->put($rules, 1, 1, $color);
             $this->notif()
                 ->withToken($card_id)
                 ->notifyAll(clienttranslate('${player_name} plays basic project ${token_name}'));
-        } else {
-            $this->dbSetTokenLocation(
-                $card_id,
-                "tableau_${color}",
-                0,
-                clienttranslate('${player_name} plays card ${token_name}'),
-                [],
-                $color
-            );
+            return true;
         }
+
+        $this->dbSetTokenLocation(
+            $card_id,
+            "tableau_${color}",
+            0,
+            clienttranslate('${player_name} plays card ${token_name}'),
+            [],
+            $color
+        );
+        $this->effect_cardInPlay($color, $card_id);
     }
 
     function uaction_discardCard($args) {
@@ -266,6 +277,18 @@ abstract class PGameXBody extends PGameMachine {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Effects
     ////////////
+
+    function effect_cardInPlay($color, $card_id) {
+        $rules = $this->getRulesFor($card_id, '*');
+        $ttype = $rules['t']; // type of card
+        $tags = $rules['tags'] ?? "";
+        $tagsarr = explode(' ', $tags);
+        foreach ($tagsarr as $tag) {
+            $this->dbIncPlayerTracker($color, "tag$tag");
+        }
+        $playeffect = $rules['r'];
+        if ($playeffect) $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
+    }
 
     function effect_increaseCount($color, $type, $inc, $onlyCheck = false) {
         if (!$color) {
