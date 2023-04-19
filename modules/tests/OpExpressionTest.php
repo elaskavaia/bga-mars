@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
@@ -8,7 +10,7 @@ require_once "tests/MachineInMem.php";
 final class OpExpressionTest extends TestCase {
     public function testOpExpressionPush(): void {
         $res = OpExpression::parseExpression("a1 + a2");
-    
+
         $this->assertEquals("(+ a1 a2)", $res->toFunc());
     }
     public function testOpExpressionPush1(): void {
@@ -22,6 +24,7 @@ final class OpExpressionTest extends TestCase {
         $this->assertInstanceOf(OpExpression::class, $res);
         $this->assertEquals($expected, $res->toFunc());
     }
+
     private function assertExpressionEq($expected, $input = null) {
         if ($input === null) {
             $input = $expected;
@@ -37,16 +40,19 @@ final class OpExpressionTest extends TestCase {
     public function testOpExpressionParser(): void {
         $this->assertExpressionParser("(+ a b)", "a+b");
         $this->assertExpressionParser("(, (/ a b) (/ c d))", "(a/b)(c/d)");
-        $this->assertExpressionParser("(/ 2 2 a)", "2a");
-        $this->assertExpressionParser("(/ 0 1 a)", "?a");
-        $this->assertExpressionParser("(/ 0 2 a)", "2?a");
-        $this->assertExpressionParser("(/ (/ 5 5 m) M)", "5m/M");
+        $this->assertExpressionParser("(! 2 2 a)", "2a");
+        $this->assertExpressionParser("(! 0 1 a)", "?a");
+        $this->assertExpressionParser("(! 0 2 a)", "2?a");
+        $this->assertExpressionParser("(/ (! 5 5 m) M)", "5m/M");
         $this->assertExpressionParser("(+ a b c)", "(a+b+c)");
         $this->assertExpressionParser("(+ 2 2 a b c)", "2(a+b+c)");
-        $this->assertExpressionParser("(/ (/ 0 1 a) (/ 0 1 b))", "(?a/?b)");
+        $this->assertExpressionParser("(/ (! 0 1 a) (! 0 1 b))", "(?a/?b)");
         $this->assertExpressionParser("(: d m)", "d:m");
         $this->assertExpressionParser("(^ 2 2 a b)", "2^(a+b)");
         $this->assertExpressionParser("(, '#(1+2)' a)", "'#(1+2)',a");
+        $this->assertExpressionParser("call(a)", "call(a)");
+        $this->assertExpressionParser("call(void)", "call(void)");
+        $this->assertExpressionParser("(, call(a) m)", "call(a) m");
 
         $this->assertExpressionEq("2a");
         $this->assertExpressionEq("a;b/c");
@@ -56,27 +62,30 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionEq("2^(a+b+c)");
 
         $this->assertExpressionEq("[2,4]a");
-        $this->assertExpressionEq("?4a","[0,4]a");
-        $this->assertExpressionEq("4a","[4,4]a");
+        $this->assertExpressionEq("?4a", "[0,4]a");
+        $this->assertExpressionEq("4a", "[4,4]a");
         $this->assertExpressionEq("a/b+c");
-        
-        $this->assertExpressionEq('discard,m,[0,](discard,m)',"(discard,m)[0,](discard,m)");
+
+        $this->assertExpressionEq('discard,m,[0,](discard,m)', "(discard,m)[0,](discard,m)");
         $this->assertExpressionEq("'#(1+2)',a");
 
         //"1*(?a/?b/?c)"
+        $this->assertExpressionEq("call(1)");
+
     }
-    private function assertParseRange($str,$from,$to) {
+
+    private function assertParseRange($str, $from, $to) {
         $input = $str;
-        $list=OpExpression::parseRange($input);
-        $this->assertNotFalse($list);
-        $this->assertEquals($from,$list[0]);
-        $this->assertEquals($to,$list[1]);
-        $this->assertEmpty($input);
+        $parser = new OpParser($input."a");
+        $expr = $parser->parseRangedExpression();
+    
+        $this->assertEquals($from, $expr->from);
+        $this->assertEquals($to, $expr->to);
     }
     public function testOpExpressionParserRange(): void {
-        $this->assertParseRange("[0,1]",0,1);
-        $this->assertParseRange("[0,]",0,-1);
-        $this->assertExpressionParser("(/ 0 1 a)", "[0,1]a");
+        $this->assertParseRange("[0,1]", 0, 1);
+        $this->assertParseRange("[0,]", 0, -1);
+        $this->assertExpressionParser("(! 0 1 a)", "[0,1]a");
     }
 
     public function testSplitByEmpty(): void {
@@ -103,10 +112,10 @@ final class OpExpressionTest extends TestCase {
     public function testToJson(): void {
         $input = "5m/M";
         $res = OpExpression::parseExpression($input);
-        $this->assertEquals('["\/",1,1,["\/","5","5","m"],"M"]', $res->toJson());
+        $this->assertEquals('["\/",1,1,["!","5","5","m"],"M"]', $res->toJson());
 
         $this->assertEquals('"m"', OpExpression::json("m"));
-        $this->assertEquals('["\/",1,1,["\/","5","5","m"],"M"]', OpExpression::json("5m/M"));
+        $this->assertEquals('["\/",1,1,["!","5","5","m"],"M"]', OpExpression::json("5m/M"));
 
         $this->assertEquals('[",",1,1,"\'a\'","a"]', OpExpression::json("'a',a"));
     }
@@ -127,9 +136,9 @@ final class OpExpressionTest extends TestCase {
         $this->assertTokens(["2", "a"], "2a");
         $this->assertTokens("a2", "a2");
         $this->assertTokens("22", "22");
-        $this->assertTokens(["-","a"], "-a");
+        $this->assertTokens(["-", "a"], "-a");
         $this->assertTokens(["2", "aa", "34", "+"], "  2aa 34+");
-        $this->assertTokens(["-","2","a"], "-2a");
+        $this->assertTokens(["-", "2", "a"], "-2a");
     }
 
     public function assertEqualsArr($expected, $table, $message = "") {
@@ -139,5 +148,10 @@ final class OpExpressionTest extends TestCase {
             $this->assertEquals([$expected], $table, $message);
             $this->assertEquals(1, count($table), $message);
         }
+    }
+
+    public function testAtomic() {
+        $this->assertFalse(OpExpression::parseExpression("4draw")->isAtomic());
+        $this->assertTrue(OpExpression::parseExpression("a")->isAtomic());
     }
 }

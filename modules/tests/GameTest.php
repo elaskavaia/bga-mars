@@ -9,6 +9,7 @@ class GameUT extends mars {
         parent::__construct();
         include "../material.inc.php";
         $this->tokens = new TokensInMem();
+        $this->machine = new MachineInMem();
     }
 
     function init(){
@@ -20,8 +21,7 @@ class GameUT extends mars {
 define("PCOLOR","ff0000");
 final class GameTest extends TestCase {
     public function testGameProgression() {
-        $m = new GameUT();
-        $m->init();
+        $m = $this->game();
         $this->assertNotFalse($m);
         $this->assertEquals(0,$m->getGameProgression());
         $m->tokens->setTokenState('tracker_o',5);
@@ -33,14 +33,13 @@ final class GameTest extends TestCase {
     }
 
     public function testOps() {
-        $m = new GameUT();
-        $m->init();
+        $m = $this->game();
         $op = $m->getOperationInstance('m');
         $res = $op->auto("ff0000",1);
         $this->assertTrue($res);
     }
 
-    private function game(){
+    private function game() {
         $m = new GameUT();
         $m->init();
         return $m;
@@ -52,5 +51,29 @@ final class GameTest extends TestCase {
             return 0;
         });
         $this->assertTrue($info["a"]['rejected']==0);
+    }
+
+    public function testEvalute() {
+        $m = $this->game();
+
+        $m->tokens->setTokenState('tracker_u_'.PCOLOR,8);
+        $this->assertEquals(8,$m->evaluateExpression("u",PCOLOR));
+        $this->assertEquals(1,$m->evaluateExpression("u > 1",PCOLOR));
+        $m->tokens->setTokenState('tracker_u_'.PCOLOR,7);
+        $this->assertEquals(3,$m->evaluateExpression("u/2",PCOLOR));
+    }
+
+
+    public function testCounterCall() {
+        $m = $this->game();
+
+        $m->tokens->setTokenState('tracker_u_'.PCOLOR,8);
+        $m->machine->insertRule("counter(u) m",1,1,1,PCOLOR);
+        $ops=$m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $m->executeOperationSingle($op);
+        $ops=$m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $this->assertEquals(8,$op['count']);
     }
 }

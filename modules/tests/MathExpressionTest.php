@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
+use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
@@ -20,19 +21,19 @@ final class MathExpressionTest extends TestCase {
         $mapper = function ($x) {
             return 10;
         };
-        assertFalse($res->evaluate($mapper));
+        assertEquals(0,$res->evaluate($mapper));
 
         $res = MathExpressionParser::parse("b >= 10");
         $this->assertEquals("(b >= 10)", $res->__toString());
         $mapper = function ($x) {
             return 1;
         };
-        assertFalse($res->evaluate($mapper));
+        assertEquals(0,$res->evaluate($mapper));
 
         $mapper = function ($x) {
             return 10;
         };
-        assertTrue($res->evaluate($mapper));
+        assertEquals(1,$res->evaluate($mapper));
 
         $res = MathExpressionParser::parse("(gen)");
         $this->assertEquals("gen", $res->__toString());

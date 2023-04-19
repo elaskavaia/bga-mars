@@ -170,9 +170,14 @@
   box-shadow: 0px 0px 4px 2px #800cea !important;
 }
 
+#ebd-body {
+  --card-width: 10em; /* 18vh */
+  --card-height: calc(var(--card-width)*1.5);
+}
+
 .card {
-  width: 10em;
-  height: 16em;
+  width: var(--card-width);
+  height: var(--card-height);
   /* border: black solid 1px; */
   border-radius: 5%;
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5019607843);
@@ -180,6 +185,10 @@
 
 .location .card {
   margin-right: 5px;
+}
+
+.card[data-card-type="0"] {
+  background-color: white;
 }
 
 .card[data-card-type="1"] {
@@ -192,6 +201,520 @@
 
 .card[data-card-type="3"] {
   background-color: lightyellow;
+}
+
+.token_cost {
+  position: absolute;
+  top: 0%;
+  width: calc(var(--card-width) * 0.2);
+  height: calc(var(--card-width) * 0.2);
+  background-color: gold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: calc(var(--card-width) * 0.02) solid black;
+  border-radius: 1vh;
+}
+
+.token_title {
+  position: absolute;
+  top: 16%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: calc(var(--card-width) * 0.075);
+}
+
+.token_descr {
+  position: absolute;
+  top: 50%;
+  font-size: calc(var(--card-width) * 0.07);
+  width: 96%;
+  padding: 2%;
+  height: 38%;
+  background-color: rgba(0, 0, 0, 0.0509803922);
+}
+
+.token_rules {
+  position: absolute;
+  top: 30%;
+  font-size: calc(var(--card-width) * 0.075);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#ebd-body {
+  --map-width:40em; /* 75vh */
+  --map-height: calc(var(--map-width)*0.92);
+}
+
+#map {
+  position: relative;
+  width: var(--map-width);
+  height: var(--map-height);
+}
+
+.map_bg {
+  background-image: url("img/map.png");
+  width: var(--map-width);
+  height: var(--map-height);
+  border: 1px solid red;
+  background-size: contain;
+  position: absolute;
+}
+
+#map .hex {
+  width: calc(var(--map-width) * 0.109);
+  height: calc(var(--map-width) * 0.118);
+  border-radius: 30%;
+  outline: 1px solid black;
+  position: absolute;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  transition: 100ms ease-in-out;
+}
+
+.map_hexes #hex_1_1 {
+  left: 1%;
+  top: 1%;
+}
+
+.map_hexes #hex_1_2 {
+  left: 1%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_1_3 {
+  left: 1%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_1_4 {
+  left: 1%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_1_5 {
+  left: 1%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_1_6 {
+  left: 1%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_1_7 {
+  left: 1%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_1_8 {
+  left: 1%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_1_9 {
+  left: 1%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_2_1 {
+  left: 11.9%;
+  top: 1%;
+}
+
+.map_hexes #hex_2_2 {
+  left: 11.9%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_2_3 {
+  left: 11.9%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_2_4 {
+  left: 11.9%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_2_5 {
+  left: 11.9%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_2_6 {
+  left: 11.9%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_2_7 {
+  left: 11.9%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_2_8 {
+  left: 11.9%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_2_9 {
+  left: 11.9%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_3_1 {
+  left: 22.8%;
+  top: 1%;
+}
+
+.map_hexes #hex_3_2 {
+  left: 22.8%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_3_3 {
+  left: 22.8%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_3_4 {
+  left: 22.8%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_3_5 {
+  left: 22.8%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_3_6 {
+  left: 22.8%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_3_7 {
+  left: 22.8%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_3_8 {
+  left: 22.8%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_3_9 {
+  left: 22.8%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_4_1 {
+  left: 33.7%;
+  top: 1%;
+}
+
+.map_hexes #hex_4_2 {
+  left: 33.7%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_4_3 {
+  left: 33.7%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_4_4 {
+  left: 33.7%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_4_5 {
+  left: 33.7%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_4_6 {
+  left: 33.7%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_4_7 {
+  left: 33.7%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_4_8 {
+  left: 33.7%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_4_9 {
+  left: 33.7%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_5_1 {
+  left: 44.6%;
+  top: 1%;
+}
+
+.map_hexes #hex_5_2 {
+  left: 44.6%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_5_3 {
+  left: 44.6%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_5_4 {
+  left: 44.6%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_5_5 {
+  left: 44.6%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_5_6 {
+  left: 44.6%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_5_7 {
+  left: 44.6%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_5_8 {
+  left: 44.6%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_5_9 {
+  left: 44.6%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_6_1 {
+  left: 55.5%;
+  top: 1%;
+}
+
+.map_hexes #hex_6_2 {
+  left: 55.5%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_6_3 {
+  left: 55.5%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_6_4 {
+  left: 55.5%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_6_5 {
+  left: 55.5%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_6_6 {
+  left: 55.5%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_6_7 {
+  left: 55.5%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_6_8 {
+  left: 55.5%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_6_9 {
+  left: 55.5%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_7_1 {
+  left: 66.4%;
+  top: 1%;
+}
+
+.map_hexes #hex_7_2 {
+  left: 66.4%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_7_3 {
+  left: 66.4%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_7_4 {
+  left: 66.4%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_7_5 {
+  left: 66.4%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_7_6 {
+  left: 66.4%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_7_7 {
+  left: 66.4%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_7_8 {
+  left: 66.4%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_7_9 {
+  left: 66.4%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_8_1 {
+  left: 77.3%;
+  top: 1%;
+}
+
+.map_hexes #hex_8_2 {
+  left: 77.3%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_8_3 {
+  left: 77.3%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_8_4 {
+  left: 77.3%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_8_5 {
+  left: 77.3%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_8_6 {
+  left: 77.3%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_8_7 {
+  left: 77.3%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_8_8 {
+  left: 77.3%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_8_9 {
+  left: 77.3%;
+  top: 83.4%;
+}
+
+.map_hexes #hex_9_1 {
+  left: 88.2%;
+  top: 1%;
+}
+
+.map_hexes #hex_9_2 {
+  left: 88.2%;
+  top: 11.3%;
+}
+
+.map_hexes #hex_9_3 {
+  left: 88.2%;
+  top: 21.6%;
+}
+
+.map_hexes #hex_9_4 {
+  left: 88.2%;
+  top: 31.9%;
+}
+
+.map_hexes #hex_9_5 {
+  left: 88.2%;
+  top: 42.2%;
+}
+
+.map_hexes #hex_9_6 {
+  left: 88.2%;
+  top: 52.5%;
+}
+
+.map_hexes #hex_9_7 {
+  left: 88.2%;
+  top: 62.8%;
+}
+
+.map_hexes #hex_9_8 {
+  left: 88.2%;
+  top: 73.1%;
+}
+
+.map_hexes #hex_9_9 {
+  left: 88.2%;
+  top: 83.4%;
+}
+
+.hex.even {
+  margin-left: calc(var(--map-width) * -0.0553);
+}
+
+.outer.hex {
+  background-color: rgba(128, 128, 128, 0.66);
+}
+
+#hex_0_1 {
+  left: 0%;
+  top: 0%;
+}
+
+#hex_0_2 {
+  right: 0%;
+  top: 0%;
+}
+
+#hex_0_3 {
+  right: 0%;
+  bottom: 0%;
+}
+
+.hex:hover {
+  background-color: rgba(255, 255, 0, 0.4);
+}
+
+.hex.active_slot {
+  background-color: rgba(86, 207, 110, 0.4);
+}
+
+.hex.active_slot:hover {
+  background-color: rgb(86, 207, 110);
 }
 
 #decks_area > * {
@@ -228,14 +751,6 @@
 
 .tracker_passed::before {
   content: "Passed ";
-}
-
-#map > * {
-  width: 50px;
-  height: 50px;
-  border-radius: 30%;
-  outline: 1px solid black;
-  display: inline-block;
 }
 
 .tile {

@@ -1,6 +1,7 @@
 x|y|r|ocean|name
 #set id=hex_{x}_{y}
-#set tooltip=hex at ({x},{y})
+#set name=Unnamed
+#set title={name} hex at ({x},{y}) {r}
 #tharsis - can do variants later
 #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
 #ocean - 1 if reserved for ocean
@@ -8,7 +9,6 @@ x|y|r|ocean|name
 0|1|||Stanford Torus
 0|2|||Phobos Space Haven
 0|3|||Ganymede Colony
-
 
 3|1|2s||
 4|1|2s|1|

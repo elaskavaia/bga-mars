@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /** Operators:
  * / regular or (multiple operands)
@@ -16,7 +18,7 @@ class OpExpression {
     public $from = 1;
     public $to = 1;
     public $args;
-    static $binary_operator_list = [";", ":", "/", "+", ",", "!"];
+
 
     function __construct(string $op, $args = []) {
         if (!is_string($op)) {
@@ -29,17 +31,15 @@ class OpExpression {
         $this->args = $args;
     }
 
-    public static function compareOperationRank($pop, $cop) {
-        $prank = array_search($pop, static::$binary_operator_list);
-        $crank = array_search($cop, static::$binary_operator_list);
-        return $prank <=> $crank;
+    public function isAtomic() {
+        return false;
     }
 
     public static function str($expr, $topop = ";") {
         $op = static::getop($expr);
         if ($expr instanceof OpExpression) {
-            $res = $expr->toString();
-            if (static::compareOperationRank($topop, $op) > 0) {
+            $res = $expr->__toString();
+            if (OpParser::compareOperationRank($topop, $op) > 0) {
                 $res = "($res)";
             }
         } else {
@@ -64,7 +64,7 @@ class OpExpression {
         }
         return "!";
     }
-    function toString() {
+    function __toString() {
         $op = $this->op;
         if ($op == "^") {
             $op = "+";
@@ -117,139 +117,11 @@ class OpExpression {
         return new OpExpression($o, $args);
     }
 
-    public static function parseRange(&$rules) {
-        $tokens = OpLexer::getInstance()-> tokenize($rules);
-        $op = array_shift($tokens);
-
-        if ($op == "[") {
-            $from = array_shift($tokens);
-            $zap = array_shift($tokens);
-            if ($zap != ",") {
-                throw new feException(", is expected in range $op");
-            }
-            $to = array_shift($tokens);
-            if ($to == "]") {
-                $to = -1;
-            } else {
-                $sk = array_shift($tokens);
-                if ($sk != "]") {
-                    throw new feException(", is expected in range $op");
-                }
-            }
-            $rules = join("", $tokens);
-            return [$from, $to];
-        }
-
-        $next = count($tokens) > 0 ? $tokens[0] : "";
-        if (is_numeric($op)) {
-            $to = $op;
-            $from = $op;
-            if ($next == "?") {
-                array_shift($tokens);
-                $from = 0;
-            }
-            $rules = join("", $tokens);
-            return [$from, $to];
-        }
-        if ($op == "?") {
-            $from = 0;
-            $to = 1;
-            if (is_numeric($tokens)) {
-                array_shift($tokens);
-                $to = $next;
-            }
-            $rules = join("", $tokens);
-            return [$from, $to];
-        }
-
-        return false;
-    }
-    public static function parseTerminal(&$rules) {
-        $tokens = OpLexer::getInstance()-> tokenize($rules);
-        $op = array_shift($tokens);
-        $ttype = OpLexer::getInstance()-> getTerminalName($op);
-        if ($ttype != "T_IDENTIFIER" && $ttype != "T_STRING") {
-            throw new feException("unexpected token $op in $rules");
-        }
-        $rules = join("", $tokens);
-        return OpExpressionTerminal::create($op);
-    }
-    public static function parseRangedExpression(&$rules) {
-        if (!$rules) {
-            return "";
-        }
-
-        $expr = self::parseRange($rules);
-        if ($expr) {
-            $from = $expr[0];
-            $to = $expr[1];
-        } else {
-            $from = 1;
-            $to = 1;
-        }
-
-        if (!$rules) {
-            throw new Exception("Unexpected end of expression");
-        }
-
-        $ops = OpLexer::getInstance()->bSplit($rules, "", 2);
-
-        $op = $ops[0];
-        $shared = false;
-        if ($op == "^") {
-            $shared = true;
-            array_shift($ops);
-            $op = $ops[0];
-        }
-        if ($op[0] == "(") {
-            $op = substr($op, 1, strlen($op) - 2);
-            $res = self::parseExpression($op);
-        } else {
-            $res = self::parseTerminal($op);
-        }
-
-        if (count($ops) > 1) {
-            $rules = $ops[1];
-        } else {
-            $rules = "";
-        }
-
-        return OpExpressionRanged::createRanged($from, $to, $res, $shared);
-    }
-
     public static function parseExpression($rule, $defaultOp = ",") {
-        if (!$rule) {
-            return "";
-        }
-
-        foreach (static::$binary_operator_list as $x) {
-            if ($x == "!") {
-                break;
-            }
-            $ops = OpLexer::getInstance()->bSplit($rule, $x);
-            if (count($ops) > 1) {
-                $res = OpExpression::create($x);
-                foreach ($ops as $op) {
-                    $res->push(self::parseExpression($op));
-                }
-                return $res;
-            }
-            // contunue
-        }
-
-        $res = OpExpression::create($defaultOp);
-        while (strlen($rule) > 0) {
-            $expr = self::parseRangedExpression($rule);
-            if (!$expr) {
-                break;
-            }
-            $res->push($expr);
-        }
-
-        if ($res instanceof OpExpression && count($res->args) == 1) {
-            return $res->args[0];
-        }
-        return $res;
+        return OpParser::parse($rule, $defaultOp);
+    }
+    function toUnranged() {
+        return OpExpression::create($this->op, $this->args);
     }
 }
 
@@ -258,7 +130,7 @@ class OpExpressionTerminal extends OpExpression {
         parent::__construct("!");
         $this->push($expr);
     }
-    public function toString() {
+    public function __toString() {
         return $this->args[0];
     }
     public function toFunc() {
@@ -269,7 +141,11 @@ class OpExpressionTerminal extends OpExpression {
     }
 
     public function toJson($options = 0) {
-        return '"' . $this->toString() . '"';
+        return '"' . $this->__toString() . '"';
+    }
+
+    public function isAtomic() {
+        return true;
     }
 
     public static function create($expr, $args = []) {
@@ -278,7 +154,7 @@ class OpExpressionTerminal extends OpExpression {
 }
 class OpExpressionRanged extends OpExpression {
     function __construct($from, $to, $expr = null) {
-        parent::__construct("/");
+        parent::__construct("!");
         $this->from = $from;
         $this->to = $to;
         if ($expr) {
@@ -323,12 +199,9 @@ class OpExpressionRanged extends OpExpression {
         return $res;
     }
 
-    function toUnranged() {
-        return OpExpression::create($this->op, $this->args);
-    }
 
-    function toString() {
-        $res = parent::toString();
+    function __toString() {
+        $res = parent::__toString();
         if (count($this->args) > 1) {
             $res = "($res)";
         }
@@ -375,8 +248,7 @@ class OpLexer {
         "/^('[^']*')/" => "T_STRING",
     ];
 
-    protected function  __construct(){
-
+    public function  __construct() {
     }
 
     public static function getInstance() {
@@ -466,5 +338,187 @@ class OpLexer {
         }
         $parts[] = $current;
         return $parts;
+    }
+}
+
+class OpParser {
+    private $tokens;
+    private $lexer;
+    public $defaultOp = ",";
+
+    static $binary_operator_priority = [
+        ";" => 1,
+        ":" => 2,
+        "/" => 3,
+        "+" => 4,
+        "," => 5,
+        "!" => 6
+    ];
+
+    public static function compareOperationRank($pop, $cop) {
+        $prank = $binary_operator_priority[$pop] ?? 0;
+        $crank = $binary_operator_priority[$cop] ?? 0;
+        return $prank <=> $crank;
+    }
+
+    function __construct($str) {
+        $this->lexer = new OpLexer();
+        $tokens = $this->lexer->tokenize($str);
+        $this->tokens = $tokens;
+    }
+    public function parseError($text) {
+        throw new Exception($text);
+    }
+    static function parse($str, $defaultOp = ",") {
+        $parser = new OpParser($str);
+        $parser->defaultOp = $defaultOp;
+        return $parser->parseExpression();
+    }
+    function peek() {
+        if ($this->isEos()) {
+            return null;
+        }
+        $pop = $this->tokens[0];
+        return $pop;
+    }
+    function eos() {
+        if (!$this->isEos()) {
+            throw new Exception("Unexpected token " . $this->peek());
+        }
+    }
+    function isEos() {
+        return (count($this->tokens) == 0);
+    }
+
+    function pop() {
+        if ($this->isEos()) {
+            throw new Exception("Cannot shift");
+        }
+        $pop = array_shift($this->tokens);
+        return $pop;
+    }
+    function consume($bip) {
+        $pop = $this->pop();
+        if ($bip != $pop) {
+            throw new Exception("Expected $bip but got $pop");
+        }
+    }
+    function parseTerm() {
+        $lookup = $this->peek();
+        if ($lookup === null) {
+            $this->parseError("Unexpected end of expression");
+        }
+        if ($lookup == "(") {
+            $this->consume("(");
+            $expr = $this->parseExpression();
+            $this->consume(")");
+            return $expr;
+        }
+        $op = $this->pop();
+        $tt = $this->lexer->getTerminalName($op);
+
+        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING") {
+            throw new Exception("Unexpected token '$op' $tt");
+        }
+        if ($tt == "T_IDENTIFIER") {
+            $lookup = $this->peek();
+            if ($lookup == '(') {
+                // function all
+                $this->consume("(");
+                $parms = $this->parseExpression();
+                $this->consume(")");
+                $args = $parms->__toString();
+                return OpExpressionTerminal::create("$op($args)");
+            }
+        }
+
+        return  OpExpressionTerminal::create($op);
+    }
+
+
+    public function parseRangedExpression() {
+        if ($this->isEos()) {
+            $this->parseError('Expected expression');
+        }
+
+        $from = 1;
+        $to = 1;
+        $shared = false;
+        $optional = false;
+
+        while (!$this->isEos()) {
+            $op = $this->peek();
+            if ($op == "[") {
+                $this->pop();
+                $from =  $this->pop();
+                $this->consume(',');
+                $to =  $this->pop();
+                if ($to == "]") {
+                    $to = -1;
+                } else {
+                    $this->consume(']');
+                }
+                continue;
+            }
+            if (is_numeric($op)) {
+                $this->pop();
+                $to = $op;
+                $from = $op;
+                continue;
+            }
+            if ($op == "?") {
+                $this->pop();
+                $optional = true;
+                continue;
+            }
+            if ($op == "^") {
+                $this->pop();
+                $shared = true;
+                continue;
+            }
+            break;
+        }
+        if ($optional) $from = 0;
+        $node = self::parseTerm();
+        return OpExpressionRanged::createRanged($from, $to, $node, $shared);
+    }
+
+    function parseExpression($min_priority = 1) {
+        $node = $this->parseRangedExpression();
+
+        while (!$this->isEos()) {
+            $val = $this->peek();
+            $pr = static::$binary_operator_priority[$val] ?? null;
+            $has_op = false;
+            if ($pr) { // binary operation
+                $has_op = true;
+            } else if ($val == ')') {
+                break;
+            } else {
+                $val = $this->defaultOp;
+                $pr = static::$binary_operator_priority[$val];
+            }
+            if ($pr < $min_priority) {
+                return $node;
+            }
+            if ($has_op)
+                $this->pop();
+            $rnode = $this->parseExpression($pr + 1);
+            if ($rnode === false) {
+                $this->parseError('Expected expression at the right side of ' . $val . ' operator');
+            }
+            if ($val != '!') {
+                $prevop = OpExpression::getop($node);
+                if ($prevop == $val) {
+                    // append
+                    $node->push($rnode);
+                } else {
+                    $node = OpExpression::create($val, [$node, $rnode]);
+                }
+            } else {
+                $node = OpExpression::create($this->defaultOp, [$node, $rnode]);
+            }
+        }
+        return $node;
     }
 }

@@ -291,7 +291,7 @@ class DbTokens extends APP_GameClass {
         self::checkState($by);
         self::checkKey($token_key);
         $sql = "UPDATE " . $this->table;
-        $sql .= " SET token_state += $by";
+        $sql .= " SET token_state = token_state + $by";
         $sql .= " WHERE token_key='$token_key'";
         self::DbQuery($sql);
         return;

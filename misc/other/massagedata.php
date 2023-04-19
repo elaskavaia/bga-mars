@@ -8,10 +8,13 @@ function addinc(&$rules, $value, $op) {
         $rules .= " ${value}_$op";
         return;
     }
+    if ($value == 'C' || $value == 0) {
+        return;
+    }
 
     $r = '';
     if (strrpos($value, 'R', -1) !== false) { //endsWith
-        $r = 'Any';
+        $r = '_Any';
         $value = substr($value, 0, strlen($value) - 1);
     }
     if ($value > 0) {
@@ -85,7 +88,11 @@ function tomyformat($fields, $raw_fields) {
     addpre($pre, $fields['Req: Max Temperature'], 't<=', -30, 8);
     addpre($pre, $fields['Req: Ocean'], 'w>=', 0, 9);
     addpre($pre, $fields['Req: Max Ocean'], 'w<=', 0, 9);
-    $pre = trim($pre);
+    $premanual = $fields['Pre-requisites (Non-Global)'];
+    if ($premanual)
+        $pre = $premanual;
+    else
+        $pre = trim($pre);
 
     $rules = "";
     addinc($rules, $fields['Prod: Megacredit'], 'pm');
@@ -107,7 +114,10 @@ function tomyformat($fields, $raw_fields) {
     addinc($rules, $fields['Temperature'], 't');
     addinc($rules, $fields['Ocean'], 'w');
 
+    $rules .= " ".$fields['Production'];
+
     $rules = trim($rules);
+    $rules = str_replace('’',"'",$rules);
     $rules = implode(',', explode(' ', $rules));
 
     $tooltip = $fields['One time Effect Text'];

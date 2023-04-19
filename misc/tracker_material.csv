@@ -25,6 +25,7 @@ tracker_o|Oxigen Level|0|'max'=>14
 tracker_t|Temperature|-30|'max'=>8,'min'=>-30
 tracker_w|Oceans|0|'max'=>9
 tracker_gen|Generations|0|'min'=>0
+tracker_city|Number of cities on Mars
 
 #tags
 #set create=0
@@ -41,6 +42,23 @@ tagJovian|Jovian
 tagEnergy|Energy
 tagVenus|Venus
 tagEvent|Event
+
+#set type=tracker
+#set create=4
+#set location=miniboard_{COLOR}
+
+tracker_tagScience|Count of Science tags
+tracker_tagBuilding|Count of Building tags
+tracker_tagSpace|Count of Space tags
+tracker_tagMicrobe|Count of Microbe tags
+tracker_tagPlant|Count of Plant tags
+tracker_tagAnimal|Count of Animal tags
+tracker_tagCity|Count of City tags
+tracker_tagEarth|Count of Earth tags
+tracker_tagJovian|Count of Jovian tags
+tracker_tagEnergy|Count of Energy tags
+tracker_tagVenus|Count of Venus tags
+tracker_tagEvent|Count of Event tags
 
 #hex tiles
 #set create=2

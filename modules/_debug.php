@@ -22,14 +22,10 @@ function getMachine($input) {
 require_once "tests/GameTest.php";
 
  $x=new GameTest();
- $x->testOps();
+ $x->testCounterCall();
 
-//  $m = getMachine("a/b/c;d");
-//  echo ($m->gettableexpr());
-//  $resolve = "a";
-//  $index = $m->findByType($resolve);
-//  $ret = $m->resolve($index, 1);
-//  echo ($m->gettableexpr());
- //OpExpression::json("m");
+
+//  $res = OpExpression::parseExpression("call(a),m");
+//  echo ($res->toFunc());
 
 

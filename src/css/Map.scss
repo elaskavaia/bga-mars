@@ -1,5 +1,5 @@
 #ebd-body {
-  --map-width:75vh;
+  --map-width:40em; /* 75vh */
   --map-height: calc(var(--map-width)*0.92);
 }
 
@@ -61,4 +61,11 @@
 
 .hex:hover {
   background-color: rgba(255, 255, 0, 0.4);
+}
+
+.hex.active_slot {
+  background-color: rgba(86, 207, 110, 0.4);
+}
+.hex.active_slot:hover {
+  background-color: rgba(86, 207, 110);
 }

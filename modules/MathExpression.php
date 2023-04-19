@@ -60,7 +60,8 @@ class MathBinaryExpression extends MathExpression {
         $left = $this->left->evaluate($mapper);
         $right = $this->right->evaluate($mapper);
         $op = $this->op;
-        return eval("return $left $op $right;");
+        $res = eval("return $left $op $right;");
+        return (int)($res);
     }
 }
 
@@ -77,19 +78,25 @@ class MathExpressionParser {
         return $parser->parseExpression();
     }
     function peek() {
-        if (count($this->tokens) == 0) {
+        if ($this->isEos()) {
             return null;
         }
         $pop = $this->tokens[0];
         return $pop;
     }
     function eos() {
-        if (count($this->tokens) != 0) {
+        if (!$this->isEos()) {
             throw new Exception("Unexpected tokens");
         }
     }
+    function isEos() {
+        return (count($this->tokens) == 0);
+    }
 
     function pop() {
+        if ($this->isEos()) {
+            throw new Exception("Cannot shift");
+        }
         $pop = array_shift($this->tokens);
         return $pop;
     }
