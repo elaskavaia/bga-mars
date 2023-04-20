@@ -292,8 +292,9 @@ abstract class PGameXBody extends PGameMachine {
         if ($playeffect) $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
     }
 
-    function effect_incCount(string $color, string $type, int $inc, array $options = []) {
+    function effect_incCount(string $color, string $type, int $inc = 1, array $options = []) {
         $message = array_get($options, 'message', '*');
+        unset($options['message']);
         $token_id = $this->getTrackerId($color, $type);
         $this->dbResourceInc(
             $token_id,
@@ -305,7 +306,7 @@ abstract class PGameXBody extends PGameMachine {
         );
     }
 
-    function effect_incProduction(string $color, $type, $inc, $options = []) {
+    function effect_incProduction(string $color, $type, $inc = 1, $options = []) {
         $token_id = $this->getTrackerId($color, $type);
         $min = $this->getRulesFor($token_id, 'min', 0);
         $current = $this->tokens->getTokenState($token_id);
@@ -349,7 +350,7 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         $value = $this->tokens->setTokenState($token_id, $current + $inc);
-        $message = clienttranslate('${player_name} increases ${token_name} by ${inc} step/s');
+        $message = clienttranslate('${player_name} increases ${token_name} by ${inc} step/s to a value of ${counter_value}');
 
         $this->notifyCounterDirect($token_id, $value, $message, [
             "inc" => $inc,
@@ -394,7 +395,7 @@ abstract class PGameXBody extends PGameMachine {
                     // energy to heat
                     $curr = $this->tokens->getTokenState("tracker_${p}_${color}");
                     if ($curr) {
-                        $this->effect_incCount($color, 'h', $curr, clienttranslate('${player_name} gains ${inc_resource} due to heat transfer'));
+                        $this->effect_incCount($color, 'h', $curr, [ 'message'=> clienttranslate('${player_name} gains ${inc_resource} due to heat transfer')]);
                     }
                 } elseif ($p == 'm') {
                     $curr = $this->tokens->getTokenState("tracker_tr_${color}");

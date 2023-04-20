@@ -419,6 +419,7 @@ var GameBasics = /** @class */ (function (_super) {
         else if (location) {
             console.error("Cannot find location [" + location + "] for ", div);
         }
+        console.log('id', id, 'has been created at', location);
         return div;
     };
     GameBasics.prototype.getTooptipHtml = function (name, message, imgTypes, action) {
@@ -1098,6 +1099,7 @@ var GameTokens = /** @class */ (function (_super) {
                 };
             }
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
+            this.renderSpecificToken(tokenNode);
             if (this.instantaneousMode) {
                 // skip counters update
             }
@@ -1267,6 +1269,8 @@ var GameTokens = /** @class */ (function (_super) {
         this.updateTokenDisplayInfo(tokenInfo);
         return tokenInfo;
     };
+    GameTokens.prototype.renderSpecificToken = function (tokenNode) {
+    };
     GameTokens.prototype.getTokenPresentaton = function (type, tokenKey) {
         return this.getTokenName(tokenKey); // just a name for now
     };
@@ -1392,6 +1396,11 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setup = function (gamedatas) {
         var _this = this;
         this.defaultTooltipDelay = 800;
+        //custom destinations for tokens
+        this.custom_placement = {
+            'tracker_t': 'temperature_map',
+            'tracker_o': 'oxygen_map'
+        };
         _super.prototype.setup.call(this, gamedatas);
         this.connectClass("hex", "onclick", "onToken");
         document.querySelectorAll(".hex").forEach(function (node) {
@@ -1416,6 +1425,28 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
     };
+    GameXBody.prototype.renderSpecificToken = function (tokenNode) {
+        var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
+        if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
+            var originalHtml = tokenNode.outerHTML;
+            console.log("checking", tokenNode.id, 'maintype', displayInfo.mainType, 'location inc', displayInfo.location.includes('miniboard_'));
+            if (displayInfo.mainType == 'tracker' && displayInfo.location.includes('miniboard_')) {
+                var rpDiv = document.createElement('div');
+                rpDiv.classList.add('outer_tracker', 'outer_' + displayInfo.typeKey);
+                rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
+                tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
+            }
+        }
+    };
+    //finer control on how to place things
+    GameXBody.prototype.createDivNode = function (id, classes, location) {
+        console.log("placing ", id);
+        if (id && location && this.custom_placement[id]) {
+            location = this.custom_placement[id];
+            console.log("placing id elsewhere: ", id, 'at location ', location);
+        }
+        return _super.prototype.createDivNode.call(this, id, classes, location);
+    };
     GameXBody.prototype.updateTokenDisplayInfo = function (tokenDisplayInfo) {
         // override to generate dynamic tooltips and such
         if (tokenDisplayInfo.mainType == "card") {
@@ -1433,8 +1464,11 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.getPlaceRedirect = function (tokenInfo) {
         var result = _super.prototype.getPlaceRedirect.call(this, tokenInfo);
-        if (tokenInfo.key.startsWith('tracker') && $(tokenInfo.key)) {
-            result.location = $(tokenInfo.key).parentNode.id;
+        if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
+            result.location = this.getDomTokenLocation(tokenInfo.key);
+        }
+        else if (this.custom_placement[tokenInfo.key]) {
+            result.location = this.custom_placement[tokenInfo.key];
         }
         return result;
     };

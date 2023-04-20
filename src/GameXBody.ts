@@ -105,11 +105,10 @@ class GameXBody extends GameTokens {
     }
   }
 
-
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     let result = super.getPlaceRedirect(tokenInfo);
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
-      result.location = ($(tokenInfo.key).parentNode as HTMLElement).id;
+      result.location = this.getDomTokenLocation(tokenInfo.key);
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location=this.custom_placement[tokenInfo.key];
     }

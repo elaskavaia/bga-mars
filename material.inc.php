@@ -2800,6 +2800,16 @@ $this->token_types = [
   'type' => 'counter',
   'name' => clienttranslate("Special Counter"),
 ],
+ 'op_convh' => [  //
+  'undo' => 'true',
+  'type' => 'convh',
+  'name' => clienttranslate("Convert heat into temperature"),
+],
+ 'op_convp' => [  //
+  'undo' => 'true',
+  'type' => 'convp',
+  'name' => clienttranslate("Convert plants into greenery"),
+],
 /* --- gen php end op_material --- */
 
 /* --- gen php begin tracker_material --- */

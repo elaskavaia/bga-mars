@@ -16,6 +16,8 @@ Random notes on todo items
 
 ## Client
 
+* Player picker
+
 ## Assets
 
 * All of it...

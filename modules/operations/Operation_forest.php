@@ -6,7 +6,7 @@ declare(strict_types=1);
 class Operation_forest extends AbsOperation {
     function argPrimaryInfo(string $color, array $op = null) {
         $keys = ['hex_5_4'];
-        return $this->game->createArgInfo($color, $keys, function ($a, $b) {
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             return 0;
         });
     }
