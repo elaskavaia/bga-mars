@@ -60,6 +60,13 @@ class GameXBody extends GameTokens {
     }
   }
 
+  getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
+    const result = super.getPlaceRedirect(tokenInfo);
+    if (tokenInfo.key.startsWith('tracker') && $(tokenInfo.key)) {
+      result.location = ($(tokenInfo.key).parentNode as HTMLElement).id;
+    }
+    return result;
+  }
   sendActionResolve(op: string, args?: any) {
     if (!args) args = {};
     this.ajaxuseraction("resolve", {

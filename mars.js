@@ -732,13 +732,16 @@ var GameBasics = /** @class */ (function (_super) {
                 this.updateCountersSafe(counters);
             }
             else if ($(name_1)) {
-                $(name_1).setAttribute("data-state", value.toString());
+                this.setDomTokenState(name_1, value);
             }
             //  console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
         }
         catch (ex) {
             console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
         }
+    };
+    GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
+        // XXX it should not be here
     };
     GameBasics.prototype.notif_score = function (notif) {
         var args = notif.args;
@@ -1427,6 +1430,13 @@ var GameXBody = /** @class */ (function (_super) {
         if (this.isLocationByType(tokenDisplayInfo.key)) {
             tokenDisplayInfo.imageTypes += " infonode";
         }
+    };
+    GameXBody.prototype.getPlaceRedirect = function (tokenInfo) {
+        var result = _super.prototype.getPlaceRedirect.call(this, tokenInfo);
+        if (tokenInfo.key.startsWith('tracker') && $(tokenInfo.key)) {
+            result.location = $(tokenInfo.key).parentNode.id;
+        }
+        return result;
     };
     GameXBody.prototype.sendActionResolve = function (op, args) {
         if (!args)
