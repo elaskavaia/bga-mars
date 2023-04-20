@@ -16,7 +16,18 @@ Random notes on todo items
 
 ## Client
 
+* Badges
 * Player picker
+* Hex tiles
+* Payment selector
+
+### Bonus
+
+* Card refernce
+* Player mats with cubes
+* Sounds
+* Flip animation
+* Log scratch on undo
 
 ## Assets
 
