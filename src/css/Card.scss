@@ -38,8 +38,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: calc(var(--card-width) * 0.02) solid black;
-  border-radius: 1vh;
+  border: calc(var(--card-width) * 0.015) solid black;
+  border-radius: calc(var(--card-width) * 0.08);
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+  background-position: -300% 0;
 }
 
 .token_title{

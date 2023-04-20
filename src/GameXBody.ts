@@ -2,21 +2,37 @@
 
 class GameXBody extends GameTokens {
   private reverseIdLookup: any;
+  private custom_placement:any;
 
   constructor() {
+
+
     super();
   }
 
   setup(gamedatas: any) {
     this.defaultTooltipDelay = 800;
+
+    //custom destinations for tokens
+    this.custom_placement={
+      'tracker_t':'temperature_map',
+      'tracker_o':'oxygen_map'
+    }
+
     super.setup(gamedatas);
     this.connectClass("hex", "onclick", "onToken");
+
+
 
     document.querySelectorAll(".hex").forEach(node=>{
       this.updateTooltip(node.id);
     });
+
+
     console.log("Ending game setup");
   }
+
+
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
     if (!tokenNode.getAttribute("data-info")) {
@@ -42,6 +58,47 @@ class GameXBody extends GameTokens {
       }
     }
   }
+
+  renderSpecificToken(tokenNode: HTMLElement) {
+
+    const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
+    if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
+      const originalHtml=tokenNode.outerHTML;
+      console.log("checking",tokenNode.id,'maintype',displayInfo.mainType,'location inc', displayInfo.location.includes('miniboard_'));
+      if (displayInfo.mainType=='tracker' && displayInfo.location.includes('miniboard_')) {
+        const  rpDiv = document.createElement('div');
+        rpDiv.classList.add('outer_tracker','outer_'+displayInfo.typeKey);
+        rpDiv.innerHTML = '<div class="token_img '+displayInfo.typeKey+'"></div>'+originalHtml;
+        tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
+
+      }
+    }
+  }
+
+  getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
+    let result = super.getPlaceRedirect(tokenInfo);
+    if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
+      console.log('succes in interceptiong ',tokenInfo.key,'to', result.location );
+      result.location = ($(tokenInfo.key).parentNode as HTMLElement).id;
+    } else if (this.custom_placement[tokenInfo.key]) {
+      result.location=this.custom_placement[tokenInfo.key];
+    }
+    console.log('redirecting ',tokenInfo.key,'to', result.location );
+    return result;
+  }
+
+  //finer control on how to place things
+  createDivNode(id?: string | undefined, classes?: string, location?: string):HTMLDivElement {
+
+    console.log("placing ",id);
+    if (id && location && this.custom_placement[id]) {
+
+      location = this.custom_placement[id];
+      console.log("placing id elsewhere: ",id,'at location ',location);
+    }
+    return super.createDivNode(id,classes,location);
+  }
+
 
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such

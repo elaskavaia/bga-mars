@@ -490,6 +490,7 @@ class GameBasics extends GameGui {
     else if (location) {
       console.error("Cannot find location [" + location + "] for ", div);
     }
+    console.log('id',id,'has been created at',location);
     return div;
   }
 

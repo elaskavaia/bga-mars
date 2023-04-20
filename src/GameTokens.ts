@@ -309,6 +309,7 @@ class GameTokens extends GameBasics {
       }
       this.syncTokenDisplayInfo(tokenNode);
 
+
       var state = 0;
       if (tokenInfo) state = tokenInfo.state;
       this.setDomTokenState(tokenNode, state);
@@ -316,6 +317,7 @@ class GameTokens extends GameBasics {
       if (dojo.hasClass(tokenNode, "infonode")) {
         this.placeInfoBox(tokenNode);
       }
+
 
       if (!$(location)) {
         console.error("Unknown place " + location + " for " + tokenInfo.key + " " + token);
@@ -344,6 +346,7 @@ class GameTokens extends GameBasics {
       }
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
 
+      this.renderSpecificToken(tokenNode);
       if (this.instantaneousMode) {
         // skip counters update
       } else {
@@ -528,7 +531,12 @@ class GameTokens extends GameBasics {
     return tokenInfo;
   }
 
-  getTokenPresentaton(type: string, tokenKey: string): string {
+  renderSpecificToken(tokenNode: HTMLElement) {
+
+  }
+
+
+   getTokenPresentaton(type: string, tokenKey: string): string {
       return this.getTokenName(tokenKey); // just a name for now
   }
 

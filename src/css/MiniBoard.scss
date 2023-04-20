@@ -1,0 +1,156 @@
+.miniboard {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+
+.miniboard > * {
+  display: flex;
+  width: 55px;
+  justify-content: normal;
+  align-items: center;
+  font-weight: bold;
+  order: 99;
+}
+
+ .token_img {
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+  width : 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.outer_tracker {
+  border: 1px solid;
+}
+
+.outer_tracker_m{
+  order: 0;
+}
+.outer_tracker_pm {
+  order: 1;
+  background-color: rgba(232, 127, 44, 0.43);
+}
+
+.outer_tracker_s{
+  order: 2;
+}
+.outer_tracker_ps {
+  order: 3;
+  background-color: rgba(232, 127, 44, 0.43);
+}
+
+.outer_tracker_u{
+  order: 4;
+}
+.outer_tracker_pu {
+  order: 5;
+  background-color: rgba(232, 127, 44, 0.43);
+}
+
+.outer_tracker_p {
+  order: 6;
+}
+.outer_tracker_pp {
+  order: 7;
+  background-color: rgba(232, 127, 44, 0.43);
+}
+
+.outer_tracker_e{
+  order: 8;
+}
+.outer_tracker_pe {
+  order: 9;
+  background-color: rgba(232, 127, 44, 0.43);
+}
+
+.outer_tracker_h{
+  order: 10;
+}
+.outer_tracker_ph {
+  order: 11;
+  background-color: rgba(232, 127, 44, 0.43);
+}
+
+.outer_tracker_tr {
+  order: 12;
+}
+
+.token_img.tracker_p{
+  background-position: 0 0;
+}
+.token_img.tracker_h{
+  background-position: -200% 0;
+}
+.token_img.tracker_m {
+  background-position: -300% 0;
+}
+.token_img.tracker_e{
+  background-position: -500% 0;
+}
+.token_img.tracker_s{
+  background-position: -700% 0;
+}
+.token_img.tracker_u {
+  background-position: -800% 0;
+}
+.token_img.tracker_pp{
+  background-position: 0 0;
+}
+.token_img.tracker_ph{
+  background-position: -200% 0;
+}
+.token_img.tracker_pm {
+  background-position: -300% 0;
+}
+.token_img.tracker_pe{
+  background-position: -500% 0;
+}
+.token_img.tracker_ps{
+  background-position: -700% 0;
+}
+.token_img.tracker_pu {
+  background-position: -800% 0;
+}
+
+.token_img.tracker_tr {
+  background-position: -900% 0;
+}
+
+
+.token_img.tracker_passed {
+  background-image: revert;
+  background-size: revert;
+  background-origin: revert;
+
+}
+.token_img.tracker_passed::after {
+  content:"[P]";
+}
+
+.tracker_passed[data-state="0"]::after{
+  content:"☐";
+}
+.tracker_passed[data-state="1"]::after{
+  content:"☑";
+}
+
+/*
+.tracker_pm::before {
+  content: "prod MC ";
+}
+
+.tracker_m::before {
+  content: "MC ";
+}
+
+.tracker_passed::before {
+  content: "Passed ";
+}*/
