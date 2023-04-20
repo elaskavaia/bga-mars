@@ -230,6 +230,7 @@ abstract class PGameMachine extends PGameTokens {
 
         if (!$this->isAtomicOperation($type)) {
             $this->machine->hide($op);
+            $this->machine->interrupt();
             $this->machine->expandOp($op);
             // sanity to prevent recursion
             $operations = $this->machine->getTopOperations();

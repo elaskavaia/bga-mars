@@ -19,13 +19,11 @@ class Operation_w extends AbsOperation {
         return $result;
     }
 
-    function auto(string $owner, int $inc, array $args = null) {
+    function auto(string $owner, int $inc, array $args = null): bool {
         if ($args === null) return false; // cannot auto resolve
-        $target = $args['target'];
-        $actionArgs = $this->arg($args['op_info']);
+        $target = $this->getCheckedArg('target', $args);
+        $actionArgs = $this->getStateArgsFromUserArgs($args);
         $object = $actionArgs['object'];
-        $possible_targets = $actionArgs['target'];
-        $this->game->systemAssertTrue("Unathorized placement", array_search($target, $possible_targets) !== false);
         $this->game->dbSetTokenLocation($object, $target,1);
         $this->game->effect_increaseParam($owner, "w", $inc);
         return true;

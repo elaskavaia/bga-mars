@@ -30,7 +30,7 @@ final class OpExpressionTest extends TestCase {
             $input = $expected;
         }
         $res = OpExpression::parseExpression($input);
-        $this->assertEquals($expected, OpExpression::str($res));
+        $this->assertEquals($expected,$res->__toString());
     }
     private function assertExpressionFail($input = null) {
         $this->expectException(Exception::class);
@@ -52,7 +52,10 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("(, '#(1+2)' a)", "'#(1+2)',a");
         $this->assertExpressionParser("call(a)", "call(a)");
         $this->assertExpressionParser("call(void)", "call(void)");
+        $this->assertExpressionParser("call(1+2)", "call(1 + 2)");
         $this->assertExpressionParser("(, call(a) m)", "call(a) m");
+        $this->assertExpressionParser("0x2f", "0x2f");
+        $this->assertExpressionParser("pl(0x2f)", "pl(0x2f)");
 
         $this->assertExpressionEq("2a");
         $this->assertExpressionEq("a;b/c");
@@ -71,6 +74,7 @@ final class OpExpressionTest extends TestCase {
 
         //"1*(?a/?b/?c)"
         $this->assertExpressionEq("call(1)");
+        $this->assertExpressionEq("pl(0x0000ff)");
 
     }
 
@@ -88,26 +92,6 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("(! 0 1 a)", "[0,1]a");
     }
 
-    public function testSplitByEmpty(): void {
-        $this->assertTSplit(["abc", "(de)"], "abc(de)");
-    }
-    public function testSplitOr(): void {
-        $this->assertTSplit(["a", "(c/d)"], "a/(c/d)", "/");
-        $this->assertTSplit(["(c/d)"], "(c/d)", "/");
-    }
-
-    public function testSplitOrTokenizer(): void {
-        $this->assertTSplit(["a", "b", "(c/d)"], "a/b/(c/d)", "/");
-        $this->assertTSplit(["a", "b", "(c/d)"], "a b(c/d)", "");
-    }
-
-    private function assertTSplit($expected, $input, $sep = "") {
-        $res = OpLexer::getInstance()->bSplit($input, $sep);
-        $this->assertEquals($expected, $res);
-    }
-    public function testSplitGroup(): void {
-        $this->assertTSplit(["(a/b)", "(c/d)", "aa"], "(a/b)(c/d)aa");
-    }
 
     public function testToJson(): void {
         $input = "5m/M";

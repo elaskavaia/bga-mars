@@ -1484,6 +1484,36 @@ var GameXBody = /** @class */ (function (_super) {
             _this.ajaxuseraction("confirm");
         });
     };
+    GameXBody.prototype.activateSlots = function (param_name, paramargs, opId) {
+        var _this = this;
+        if (param_name == "target") {
+            this.setActiveSlots(paramargs);
+            if (opId)
+                paramargs.forEach(function (tid) {
+                    _this.reverseIdLookup.set(tid, {
+                        op: opId,
+                        param_name: param_name,
+                    });
+                });
+        }
+        else if (param_name == "player") {
+            paramargs.forEach(function (tid) {
+                // XXX need to be pretty
+                var divId = "button_" + tid;
+                _this.addActionButton(divId, tid, function () {
+                    _this.clientStateArgs.ops[_this.clientStateArgs.index] = {
+                        op: opId,
+                    };
+                    _this.clientStateArgs.ops[_this.clientStateArgs.index][param_name] = tid;
+                    _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
+                });
+                _this.reverseIdLookup.set(divId, {
+                    op: opId,
+                    param_name: param_name,
+                });
+            });
+        }
+    };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
         var operations = args.operations;
@@ -1503,13 +1533,7 @@ var GameXBody = /** @class */ (function (_super) {
                 if (!paramargs_1) {
                     console.error("Missing ".concat(param_name_1, " arg in args for ").concat(opInfo.type));
                 }
-                this_1.setActiveSlots(paramargs_1);
-                paramargs_1.forEach(function (tid) {
-                    _this.reverseIdLookup.set(tid, {
-                        op: opId,
-                        param_name: param_name_1,
-                    });
-                });
+                this_1.activateSlots(param_name_1, paramargs_1, opId);
                 if (single) {
                     this_1.setDescriptionOnMyTurn(rules.prompt);
                 }
@@ -1521,8 +1545,9 @@ var GameXBody = /** @class */ (function (_super) {
                         var clstate = "client_" + opInfo.type;
                         _this.setClientStateUpdOn(clstate, function (args) {
                             // on update action buttons
+                            _this.reverseIdLookup = new Map();
                             _this.setDescriptionOnMyTurn(rules.prompt);
-                            _this.setActiveSlots(paramargs_1);
+                            _this.activateSlots(param_name_1, paramargs_1, opId);
                         }, function (id) {
                             // onToken
                             _this.clientStateArgs.ops[_this.clientStateArgs.index][param_name_1] = id;
@@ -1535,7 +1560,7 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.sendActionResolve(opId);
                 });
             }
-            // add done (skip)
+            // add done (skip) when optional
             if (single) {
                 if (opInfo.mcount <= 0)
                     this_1.addActionButton("button_skip", _("Stop Here"), function () {
@@ -1588,12 +1613,16 @@ var GameXBody = /** @class */ (function (_super) {
     };
     // on click hooks
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
-        var _a, _b;
+        var _a;
         var info = this.reverseIdLookup.get(tid);
         if (info) {
-            var index = (_a = this.clientStateArgs.index) !== null && _a !== void 0 ? _a : 0;
+            if (!this.clientStateArgs.ops) {
+                this.clientStateArgs.ops = [];
+                this.clientStateArgs.index = 0;
+            }
+            var index = this.clientStateArgs.index;
             this.clientStateArgs.index = index;
-            var curload = (_b = this.clientStateArgs.ops[index]) !== null && _b !== void 0 ? _b : undefined;
+            var curload = (_a = this.clientStateArgs.ops[index]) !== null && _a !== void 0 ? _a : undefined;
             if (curload && curload.op != info.op) {
                 this.clientStateArgs.index++;
                 index = this.clientStateArgs.index;

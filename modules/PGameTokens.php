@@ -78,7 +78,7 @@ abstract class PGameTokens extends PGameBasic {
                 $this->fillCounters($result["counters"], [$location => $count]);
             }
             $content = $this->isContentAllowedForLocation($current_player_id, $location);
-    
+
             if ($content !== false) {
                 if ($content === true) {
                     $tokens = $this->tokens->getTokensInLocation($location, null, $sort);
@@ -297,7 +297,7 @@ abstract class PGameTokens extends PGameBasic {
                 return false; // not listed as location
             }
         } else {
-         
+
             return true; // not listed allowed
         }
         return false;
@@ -462,13 +462,27 @@ abstract class PGameTokens extends PGameBasic {
      *            - optional $place, only used in notification to show where "resource"
      *            is gain or where it "goes" when its paid, used in client for animation
      */
-    function dbResourceInc($token_id, $num, $message = "*", $args = [], $player_id = null) {
+    function dbResourceInc($token_id, $num, $message = "*", $args = [], $player_id = null, $options = []) {
         $current = $this->tokens->getTokenState($token_id);
-        $value = $this->tokens->setTokenState($token_id, $current + $num);
+        $value = $current + $num;
 
-        if ($value < 0 && array_get($args,'vcheck',true)) {
-            $this->userAssertTrue(self::_("Not enough resources to pay $token_id $current + $num >= 0"));
+        $min = array_get($options, 'min', 0);
+        $check = array_get($options, 'check', true);
+        $ifpossible = array_get($options, 'ifpossible', false);
+
+        if ($num < 0) {
+            if ($value < $min && $ifpossible) {
+                $num -= ($min - $value);
+                $value = $min;
+            } else if ($value < $min && $check) {
+                $this->userAssertTrue(self::_("Not enough resources to pay $token_id $current + $num >= 0")); // XXX fix error
+            }
         }
+        if (array_get($options,'onlyCheck')) {
+            return;
+        }
+        $this->tokens->setTokenState($token_id, $value);
+
         if ($message == "*") {
             if ($num < 0) {
                 $message = clienttranslate('${player_name} pays ${inc_resource}');
@@ -491,6 +505,7 @@ abstract class PGameTokens extends PGameBasic {
         $this->notifyCounterDirect($token_id, $value, $message, $args, $player_id);
     }
 
+
     function notifyCounterChanged($location, $notifyArgs = null) {
         $key = $this->counterNameOf($location);
         $value = $this->tokens->countTokensInLocation($location);
@@ -499,14 +514,6 @@ abstract class PGameTokens extends PGameBasic {
 
     function notifyCounterDirect($key, $value, $message, $notifyArgs = null, $player_id = null) {
         $args = ["counter_name" => $key, "counter_value" => $value];
-        if ($notifyArgs != null) {
-            $args = array_merge($notifyArgs, $args);
-        }
-        $this->notifyWithName("counter", $message, $args, $player_id);
-    }
-
-    function notifyCounterInc($key, $value, $message, $notifyArgs = null, $player_id = null) {
-        $args = ["counter_name" => $key, "counter_inc" => $value];
         if ($notifyArgs != null) {
             $args = array_merge($notifyArgs, $args);
         }

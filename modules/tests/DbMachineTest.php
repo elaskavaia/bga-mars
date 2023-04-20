@@ -48,7 +48,7 @@ final class DbMachineTest extends TestCase {
     }
 
     public function testInsertRuleForNegativeOp() {
-        $this->assertInsertRule("1|1|na||2|2|/|", "2na");
+        $this->assertInsertRule("1|1|na||2|2|,|", "2na");
     }
     public function testInsertRuleOrNum() {
         $m = $this->getMachine("5m/M;x");
@@ -57,7 +57,7 @@ final class DbMachineTest extends TestCase {
         $top = $m->getTopOperations();
         $this->assertEqualsArr(["1|1|5m||1|1|/|", "2|1|M||1|1|/|"], $m->gettablearr($top));
 
-        $this->assertInsertRule("1|1|a||2|2|/|", "2a");
+        $this->assertInsertRule("1|1|a||2|2|,|", "2a");
     }
 
     public function testTable5m() {
@@ -120,7 +120,7 @@ final class DbMachineTest extends TestCase {
         $this->assertInsert("a+b+c", ["a", "b", "c"], MACHINE_OP_AND);
         $this->assertInsert("2(a/b/c)", ["a", "b", "c"], MACHINE_OP_OR, 2);
         $this->assertInsert("?(a/b)", ["a", "b"], MACHINE_OP_OR, 1,0);
-        $this->assertInsert("[1,]d", ["d"], MACHINE_OP_OR, -1,1);
+        $this->assertInsert("[1,]d", ["d"], MACHINE_OP_SEQ, -1,1);
     }
 
     public function testSimpleAnd() {
@@ -140,8 +140,14 @@ final class DbMachineTest extends TestCase {
         $this->assertResolve("d:m", "d", null, "m", 1);    
         $this->assertResolve("d:m;d:m", "d", null, "m;d:m", 1);   
 
-        $this->assertEqualsArr(['1|1|d||-1|0|/|'], $this->getInsertTable("[0,]d"));
+        $this->assertEqualsArr(['1|1|d||-1|0|,|'], $this->getInsertTable("[0,]d"));
         $this->assertResolve("[0,]d", "d", null, "[0,]d", 1); 
 //        $this->assertResolve("[0,](d:m)", "d:m", null, "[0,](d:m)", -1);   
+    }
+
+    public function testSimpleOrd(){
+        $this->assertResolve("2s,2np_Any,o", "2s", null, "2np_Any,o",1);
+        $this->assertInsert("2s,2np_Any,o", ["2s", "2np_Any", "o"], MACHINE_OP_SEQ);
+        
     }
 }

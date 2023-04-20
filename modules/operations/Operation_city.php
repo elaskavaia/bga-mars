@@ -13,20 +13,18 @@ class Operation_city extends AbsOperation {
     function arg(array $op, bool $only_feasibility = false) {
         $result = parent::arg($op, $only_feasibility);
         // free tile
-        $tile=$this->game->tokens->getTokenOfTypeInLocation("tile_2",null,0);
-        $result['object'] = $tile['key']; 
+        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_2", null, 0);
+        $result['object'] = $tile['key'];
         return $result;
     }
 
-    function auto(string $owner, int $inc, array $args = null) {
+    function auto(string $owner, int $inc, array $args = null): bool {
         if ($args === null) return false; // cannot auto resolve
-        $target = $args['target'];
-        $actionArgs = $this->arg($args['op_info']);
+        $target = $this->getCheckedArg('target', $args);
+        $actionArgs = $this->getStateArgsFromUserArgs($args);
         $object = $actionArgs['object'];
-        $possible_targets = $actionArgs['target'];
-        $this->game->systemAssertTrue("Unathorized placement", array_search($target, $possible_targets) !== false);
-        $this->game->dbSetTokenLocation($object, $target,1);
-        $this->game->dbIncGlobalTracker('city',1);
+        $this->game->dbSetTokenLocation($object, $target, 1);
+        $this->game->setTrackerValue('','city');
         return true;
     }
 }

@@ -2,6 +2,7 @@ type|name|params|prompt
 #set id=op_{type}
 #set undo=true
 #set class=
+#set prompt=Hmm
 card|Play Card|target,payment|${you} must select a card to play
 stan|Standard Project|target,payment|${you} must select a basic project to play
 #x|Place Tile|target|${you} must select a location to place tile
@@ -13,6 +14,9 @@ sell|Discard Card from Hand to gain MC|target|${you} must select a card to disca
 #set undo=false
 pass|Pass||
 draw|Draw Card in Hand|auto
+
+#set class=AbsOperationIncNegAny
+np_Any|Pay Plant (Any Player)|player|${you} must select a player who will loose the resouces (or none)
 
 #auto-resolve actions
 #set params=
@@ -46,6 +50,9 @@ npe|Decrease Energy Production
 nph|Decrease Heat Production
 nps|Decrease Steel Production
 npu|Decrease Titanium Production
+
+
+
 #set class=
 o|Increase Oxigen Level
 t|Increase Temperature

@@ -243,6 +243,7 @@ class OpLexer {
     protected static $instance;
     protected $terminals = [
         "/^(\s+)/" => "T_WHITESPACE",
+        "/^(0x[0-9A-Fa-f]+)/" => "T_NUMBER",
         "/^(\d+)/" => "T_NUMBER",
         "/^(\w+)/" => "T_IDENTIFIER",
         "/^('[^']*')/" => "T_STRING",
@@ -297,47 +298,6 @@ class OpLexer {
         }
         $tname = $string[0];
         return $string[0];
-    }
-
-    public function bSplit($str, $separators, $limit = -1) {
-        if (is_string($str)) {
-            $tokens = $this->tokenize($str);
-        } elseif (is_array($str)) {
-            $tokens = $str;
-        } else {
-            throw new Exception("Unsupported for arg for bSplit");
-        }
-        $parts = [];
-        $current = "";
-        $count = 0;
-        foreach ($tokens as $tok) {
-            if ($separators && strpos($separators, $tok) !== false) {
-                $is_sep = true;
-                $break = true;
-            } else {
-                $is_sep = false;
-                $break = false;
-            }
-            if (!$separators && $current) {
-                $break = true;
-            }
-            if ($count == 0 && $break && ($limit == -1 || count($parts) < $limit - 1)) {
-                // separator
-                $parts[] = $current;
-                $current = "";
-            }
-            if ($tok == "(" || $tok == "[") {
-                $count++;
-            }
-            if ($tok == ")" || $tok == "]") {
-                $count--;
-            }
-            if (!$is_sep || $count > 0) {
-                $current .= $tok;
-            }
-        }
-        $parts[] = $current;
-        return $parts;
     }
 }
 
@@ -417,7 +377,7 @@ class OpParser {
         $op = $this->pop();
         $tt = $this->lexer->getTerminalName($op);
 
-        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING") {
+        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING"  && $tt != "T_NUMBER") {
             throw new Exception("Unexpected token '$op' $tt");
         }
         if ($tt == "T_IDENTIFIER") {
@@ -445,39 +405,52 @@ class OpParser {
         $to = 1;
         $shared = false;
         $optional = false;
+        $numeric = false;
 
-        while (!$this->isEos()) {
-            $op = $this->peek();
-            if ($op == "[") {
-                $this->pop();
-                $from =  $this->pop();
-                $this->consume(',');
-                $to =  $this->pop();
-                if ($to == "]") {
-                    $to = -1;
-                } else {
-                    $this->consume(']');
-                }
-                continue;
+        $op = $this->peek();
+        if ($op == "[") {
+            $this->pop();
+            $from =  $this->pop();
+            $this->consume(',');
+            $to =  $this->pop();
+            if ($to == "]") {
+                $to = -1;
+            } else {
+                $this->consume(']');
             }
+            $op = $this->peek();
+            if ($op == "^") {
+                $this->pop();
+                $shared = true;
+                $op = $this->peek();
+            }
+        } else {
             if (is_numeric($op)) {
                 $this->pop();
                 $to = $op;
                 $from = $op;
-                continue;
+                $numeric = true;
+                $op = $this->peek();
             }
             if ($op == "?") {
                 $this->pop();
                 $optional = true;
-                continue;
+                $op = $this->peek();
             }
             if ($op == "^") {
                 $this->pop();
                 $shared = true;
-                continue;
+                $op = $this->peek();
             }
-            break;
         }
+        $pr = static::$binary_operator_priority[$op] ?? null;
+        if ($pr!==null || $op==')') {
+            if ($numeric)
+                return OpExpressionTerminal::create($to);
+            else
+                $this->parseError("Unexpected token $op");
+        }
+
         if ($optional) $from = 0;
         $node = self::parseTerm();
         return OpExpressionRanged::createRanged($from, $to, $node, $shared);

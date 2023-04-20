@@ -12,7 +12,7 @@ class GameXBody extends GameTokens {
     super.setup(gamedatas);
     this.connectClass("hex", "onclick", "onToken");
 
-    document.querySelectorAll(".hex").forEach(node=>{
+    document.querySelectorAll(".hex").forEach((node) => {
       this.updateTooltip(node.id);
     });
     console.log("Ending game setup");
@@ -59,7 +59,6 @@ class GameXBody extends GameTokens {
       tokenDisplayInfo.imageTypes += " infonode";
     }
   }
-
 
   sendActionResolve(op: string, args?: any) {
     if (!args) args = {};
@@ -118,6 +117,34 @@ class GameXBody extends GameTokens {
     });
   }
 
+  activateSlots(param_name: string, paramargs: any, opId?: string) {
+    if (param_name == "target") {
+      this.setActiveSlots(paramargs);
+      if (opId)
+        paramargs.forEach((tid: string) => {
+          this.reverseIdLookup.set(tid, {
+            op: opId,
+            param_name: param_name,
+          });
+        });
+    } else if (param_name == "player") {
+      paramargs.forEach((tid: string) => {
+        // XXX need to be pretty
+        const divId= "button_" + tid;
+        this.addActionButton(divId, tid, ()=>{
+          this.clientStateArgs.ops[this.clientStateArgs.index] = {
+            op: opId,
+          };
+          this.clientStateArgs.ops[this.clientStateArgs.index][param_name] = tid;
+          this.ajaxuseraction(this.clientStateArgs.call, this.clientStateArgs);
+        });
+        this.reverseIdLookup.set(divId, {
+          op: opId,
+          param_name: param_name,
+        });
+      });
+    }
+  }
   onUpdateActionButtons_playerTurnChoice(args) {
     let operations = args.operations;
     this.clientStateArgs.call = "resolve";
@@ -138,13 +165,7 @@ class GameXBody extends GameTokens {
         if (!paramargs) {
           console.error(`Missing ${param_name} arg in args for ${opInfo.type}`);
         }
-        this.setActiveSlots(paramargs);
-        paramargs.forEach((tid: string) => {
-          this.reverseIdLookup.set(tid, {
-            op: opId,
-            param_name: param_name,
-          });
-        });
+        this.activateSlots(param_name, paramargs, opId);
         if (single) {
           this.setDescriptionOnMyTurn(rules.prompt);
         } else
@@ -158,8 +179,9 @@ class GameXBody extends GameTokens {
               clstate,
               (args) => {
                 // on update action buttons
+                this.reverseIdLookup = new Map<String, any>();
                 this.setDescriptionOnMyTurn(rules.prompt);
-                this.setActiveSlots(paramargs);
+                this.activateSlots(param_name, paramargs, opId);
               },
               (id: string) => {
                 // onToken
@@ -173,7 +195,7 @@ class GameXBody extends GameTokens {
           this.sendActionResolve(opId);
         });
       }
-      // add done (skip)
+      // add done (skip) when optional
       if (single) {
         if (opInfo.mcount <= 0)
           this.addActionButton("button_skip", _("Stop Here"), () => {
@@ -227,7 +249,11 @@ class GameXBody extends GameTokens {
   onToken_playerTurnChoice(tid: string) {
     const info = this.reverseIdLookup.get(tid);
     if (info) {
-      let index = this.clientStateArgs.index ?? 0;
+      if (!this.clientStateArgs.ops) {
+        this.clientStateArgs.ops = [];
+        this.clientStateArgs.index = 0;
+      }
+      let index = this.clientStateArgs.index;
       this.clientStateArgs.index = index;
       let curload = this.clientStateArgs.ops[index] ?? undefined;
       if (curload && curload.op != info.op) {

@@ -7,7 +7,7 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
 
 ## DbTokens mapping
 
-* cards are mapped as card_${exp}_${cardnum} - where expansion is expansion key, and cardnum can printed on the card. If card can occur more than one can add _${uniquenum} at the end (not sure its the case for TM)
+* cards are mapped as card_${exp}_${cardnum} - where expansion is expansion key, and cardnum can printed on the card.
 * locations (see misc/loc_material.csv)
  * hand_${color} - is location for hand project cards
  * tableau_${color} - is player specific area
@@ -23,7 +23,9 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
 * personal colored cubes are marker_${color}_${index}
 * other "resources" on cards resource_${color}_${index}:card_...:0
 
+## Inteructions
 
+* Machine is action machine, is kind of state machine of bga but with stack, docs in modules/MACHINE.md
 
 # Links
 
