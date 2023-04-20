@@ -16,7 +16,11 @@ pass|Pass||
 draw|Draw Card in Hand|auto
 
 #set class=AbsOperationIncNegAny
-np_Any|Pay Plant (Any Player)|player|${you} must select a player who will loose the resouces (or none)
+np_Any|Loose Plant (Any Player or None)|player|${you} must select a player who will loose the resouces (or none)
+#set class=AbsOperationProdNegAny
+npm_Any|Loose Megacredit Production (Any Player - Mandatory)|player|${you} must select a player who will loose the production
+npp_Any|Loose Plant Production (Any Player - Mandatory)|player|${you} must select a player who will loose the production
+npe_Any|Loose Energy Production (Any Player - Mandatory)|player|${you} must select a player who will loose the production
 
 #auto-resolve actions
 #set params=

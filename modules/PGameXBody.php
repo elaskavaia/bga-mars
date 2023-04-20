@@ -85,6 +85,12 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->normalize();
         $this->gamestate->nextState("next");
     }
+
+    function debug_drawCard($num){
+        $token = "card_main_$num";
+        $color = $this->getCurrentPlayerColor();
+        $this->dbSetTokenLocation($token,"hand_$color");
+    }
     function debug_dumpMachine() {
         $this->debugConsole("",$this->machine->gettableexpr());
     }
