@@ -21,12 +21,12 @@ abstract class AbsOperation {
         $this->params = $params;
     }
 
-    function arg(array $op, bool $only_feasibility = false) {
+    function arg(array $op, bool $only_feasibility = false){
         $result = [];
         $color = $op["owner"];
         $result["void"] = false;
 
-        $primary = $this->argPrimaryArgName();
+        $primary = $this->getPrimaryArgName();
 
         $result["info"] = $this->argPrimaryInfo($color, $op);
         $result[$primary] = [];
@@ -38,7 +38,18 @@ abstract class AbsOperation {
         return $result;
     }
 
-    function argPrimaryArgName() {
+    function getCheckedArg($key, $args) {
+        $target = $args[$key];
+        $actionArgs = $this->getStateArgsFromUserArgs($args);
+        $possible_targets = $actionArgs[$key];
+        $this->game->systemAssertTrue("Unathorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
+        return $target;
+    }
+    function getStateArgsFromUserArgs($args) {
+        return $this->arg($args['op_info']);
+    }
+
+    function getPrimaryArgName() {
         $params = array_get($this->rules(), 'params', '');
         if (!$params) {
             return "target";
@@ -53,9 +64,9 @@ abstract class AbsOperation {
     }
 
 
-    function isVoid($op, $args = null) {
+    function isVoid($op, $args = null): bool {
         if (!$args) $args = $this->arg($op, true);
-        $primary = $this->argPrimaryArgName();
+        $primary = $this->getPrimaryArgName();
         return count($args[$primary]) == 0;
     }
 
@@ -71,7 +82,7 @@ abstract class AbsOperation {
         return $this->auto($owner, $inc, $args);
     }
 
-    function auto(string $owner, int $count, array $args = null) {
+    function auto(string $owner, int $count, array $args = null): bool  {
         return false; // cannot resolve automatically
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "OpExpression.php";
 /*
@@ -27,9 +29,9 @@ CREATE TABLE IF NOT EXISTS `machine` (
  */
 define("MACHINE_OP_RESOLVE_DEFAULT", 1 << 2);
 
-define("MACHINE_FLAG_UNIQUE", 1 << 3);
-define("MACHINE_FLAG_SHARED_COUNTER", 1 << 2);
-define("MACHINE_FLAG_ORDERED", 1 << 1);
+define("MACHINE_FLAG_UNIQUE", 1 << 3); // 8
+define("MACHINE_FLAG_SHARED_COUNTER", 1 << 2); // 4
+define("MACHINE_FLAG_ORDERED", 1 << 1); // 2
 
 define("MACHINE_OP_ALL_MASK", MACHINE_FLAG_UNIQUE | MACHINE_FLAG_SHARED_COUNTER | MACHINE_FLAG_ORDERED);
 define("MACHINE_OP_OR", MACHINE_FLAG_SHARED_COUNTER);
@@ -103,6 +105,8 @@ class DbMachine extends APP_GameClass {
         $pool = "main"
     ) {
         $op = $this->createOperation($type, $rank, $mincount, $count, $owner, $resolve, $parent, $data, $pool);
+
+        $this->warn($this->getlistexpr([$op]));
         return $this->insertOp($rank, $op);
     }
 
@@ -519,6 +523,8 @@ class DbMachine extends APP_GameClass {
                 return MACHINE_OP_SEQ;
             case ",":
                 return MACHINE_OP_SEQ;
+            case "!":
+                return MACHINE_OP_SEQ;
             default:
                 return 0;
         }
@@ -568,14 +574,14 @@ class DbMachine extends APP_GameClass {
         switch ($op) {
             case "!":
                 $main = $expr->args[0];
-                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_FLAG_SHARED_COUNTER);
+                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ);
                 break;
             case "+":
             case ",":
             case ":":
                 $this->interrupt($rank, 1);
                 if ($mcount == 0) {
-                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_FLAG_SHARED_COUNTER);
+                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ);
                 } else {
                     foreach ($expr->args as $subrule) {
                         $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag);
@@ -613,11 +619,14 @@ class DbMachine extends APP_GameClass {
         } else {
             if ($count === null) {
                 $count = $info["count"];
+                if ($count < 0) {
+                    $count = 1;
+                }
             }
             $this->subtract($info, $count);
         }
 
-        if ($this->isUnique($info)) {
+        if ($this->isUnique($info) &&  $info["count"] != -1) {
             $this->hide($operation_id);
         }
         $this->prune();

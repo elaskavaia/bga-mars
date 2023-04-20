@@ -85,6 +85,9 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->normalize();
         $this->gamestate->nextState("next");
     }
+    function debug_dumpMachine() {
+        $this->debugConsole("",$this->machine->gettableexpr());
+    }
     public function getPlayerNameById($player_id) {
         if (!is_numeric($player_id)) throw new feException("invalid player id $player_id");
         $players = self::loadPlayersBasicInfos();
@@ -103,7 +106,7 @@ abstract class PGameXBody extends PGameMachine {
 
         // badges and resources XXX
         try {
-            $this->effect_increaseCount($owner, "m", -$cost, true);
+            $this->effect_incCount($owner, "m", -$cost, ['onlyCheck' => true]);
         } catch (Exception $e) {
             return false;
         }
@@ -185,24 +188,31 @@ abstract class PGameXBody extends PGameMachine {
 
     function isPassed($color) {
         // XXX also add zombie player
-        return $this->tokens->getTokenState("tracker_passed_${color}") > 0;
+        return $this->getTrackerValue($color, 'passed') > 0;
     }
 
 
-    function dbIncPlayerTracker(string $color, $type, $inc = 1) {
-        if (!$color) {
-            $color = $this->getActivePlayerColor();
-        }
-        $token_id = "tracker_${type}_${color}";
+    function setTrackerValue(string $color, $type, $inc = 1) {
+        $token_id = $this->getTrackerId($color, $type);
         $this->tokens->incTokenState($token_id, $inc);
         $value =   $this->tokens->getTokenState($token_id);
-        $this->notifyCounterDirect($token_id, $value, '', [], $this->getPlayerIdByColor($color));
-    }
-    function dbIncGlobalTracker($type, $inc) {
-        $token_id = "tracker_${type}";
-        $this->tokens->incTokenState($token_id, $inc);
-        $value = $this->tokens->getTokenState($token_id);
         $this->notifyCounterDirect($token_id, $value, '');
+    }
+
+    function getTrackerId(string $color, string $type) {
+        if ($color === '') {
+            $token_id = "tracker_${type}";
+        } else {
+            if (!$color) {
+                $color = $this->getActivePlayerColor();
+            }
+            $token_id = "tracker_${type}_${color}";
+        }
+        return $token_id;
+    }
+    function getTrackerValue(string $color, string $type) {
+        $value = $this->tokens->getTokenState($this->getTrackerId($color, $type));
+        return $value;
     }
 
     function queue($color, $type) {
@@ -263,18 +273,6 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_cardInPlay($color, $card_id);
     }
 
-    function uaction_discardCard($args) {
-        $card_id = $args["token"];
-        $op = $args["op_info"];
-        $type = $op["type"];
-        $owner = $op["owner"];
-        $this->dbSetTokenLocation($card_id, "discard_main", 0, clienttranslate('${player_name} discards ${token_name}'), [], $owner);
-
-        if ($type == "sell") {
-            $this->effect_increaseCount($owner, "m", 1);
-        }
-    }
-
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -287,49 +285,48 @@ abstract class PGameXBody extends PGameMachine {
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
         foreach ($tagsarr as $tag) {
-            $this->dbIncPlayerTracker($color, "tag$tag");
+            $this->setTrackerValue($color, "tag$tag");
         }
         $playeffect = $rules['r'];
+        $this->debugConsole("machine effect $playeffect");
         if ($playeffect) $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
     }
 
-    function effect_increaseCount($color, $type, $inc, $onlyCheck = false) {
-        if (!$color) {
-            $color = $this->getActivePlayerColor();
-        }
-        $counter = "tracker_${type}_${color}";
-        if ($onlyCheck) {
-            $good = $inc >= 0 ? true : $this->tokens->getTokenState($counter) > -$inc;
-            if (!$good) {
-                throw new Exception("Not enough resources to pay");
-            }
-            return;
-        }
-        $this->dbResourceInc($counter, $inc, '*', [], $this->getPlayerIdByColor($color));
+    function effect_incCount(string $color, string $type, int $inc, array $options = []) {
+        $message = array_get($options, 'message', '*');
+        $token_id = $this->getTrackerId($color, $type);
+        $this->dbResourceInc(
+            $token_id,
+            $inc,
+            $message,
+            [],
+            $this->getPlayerIdByColor($color),
+            $options
+        );
     }
-    function effect_increaseProduction(string $color, $type, $inc, $onlyCheck = false) {
-        if (!$color) {
-            $color = $this->getActivePlayerColor();
-        }
-        $token_id = "tracker_${type}_${color}";
+
+    function effect_incProduction(string $color, $type, $inc, $options = []) {
+        $token_id = $this->getTrackerId($color, $type);
         $min = $this->getRulesFor($token_id, 'min', 0);
         $current = $this->tokens->getTokenState($token_id);
         $cando = $inc >= 0 ? true : $current + $inc >= $min;
         if (!$cando) {
-            throw new Exception("Not enough production to decrease");
+            throw new feException("Not enough production to decrease");
         }
-        if ($onlyCheck) {
-            return true;
+        if (array_get($options, 'onlyCheck')) {
+            return;
         }
 
         $value = $this->tokens->setTokenState($token_id, $current + $inc);
+        $mod = $inc;
         if ($inc > 0)
-            $message = clienttranslate('${player_name} increases ${token_name} by ${inc}');
-        else
-            $message = clienttranslate('${player_name} decreases ${token_name} by ${inc}');
-
+            $message = clienttranslate('${player_name} increases ${token_name} by ${mod}');
+        else {
+            $message = clienttranslate('${player_name} decreases ${token_name} by ${mod}');
+            $mod = -$inc;
+        }
         $this->notifyCounterDirect($token_id, $value, $message, [
-            "inc" => $inc,
+            "mod" => $mod,
             "token_name" => $token_id,
         ], $this->getPlayerIdByColor($color));
     }
@@ -365,7 +362,7 @@ abstract class PGameXBody extends PGameMachine {
                 ->notifyAll('Parameter ${token_name} is at max');
         }
 
-        $this->effect_increaseProduction($color, "tr", $inc);
+        $this->effect_incProduction($color, "tr", $inc);
         return true;
     }
 
@@ -379,8 +376,8 @@ abstract class PGameXBody extends PGameMachine {
             [
                 "place_name" => $deck,
                 "token_count" => count($tokens),
-            ],
-            $color
+                "player_id" => $this->getPlayerIdByColor($color)
+            ]
         );
     }
 
@@ -396,19 +393,14 @@ abstract class PGameXBody extends PGameMachine {
                 if ($p == 'e') {
                     // energy to heat
                     $curr = $this->tokens->getTokenState("tracker_${p}_${color}");
-                    if ($curr)
-                        $this->dbResourceInc(
-                            "tracker_h_${color}",
-                            $curr,
-                            clienttranslate('${player_name} gains ${inc_resource} due to heat transfer'),
-                            [],
-                            $this->getPlayerIdByColor($color)
-                        );
+                    if ($curr) {
+                        $this->effect_incCount($color, 'h', $curr, clienttranslate('${player_name} gains ${inc_resource} due to heat transfer'));
+                    }
                 } elseif ($p == 'm') {
                     $curr = $this->tokens->getTokenState("tracker_tr_${color}");
                     $prod += $curr;
                 }
-                if ($prod) $this->effect_increaseCount($color, $p, $prod);
+                if ($prod) $this->effect_incCount($color, $p, $prod);
             }
         }
     }

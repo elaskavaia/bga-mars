@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This class contains more useful method which is missing from Table class.
  * To use extend this instead instead of Table, i.e
@@ -144,7 +145,7 @@ abstract class PGameBasic extends Table {
             return;
         }
         $this->dumpError($log);
-        throw new BgaUserException($this->_("Internal Error. That should not have happened. Please raise a bug.").$log);
+        throw new BgaUserException($this->_("Internal Error. That should not have happened. Please raise a bug.") . $log);
     }
 
     /**
@@ -348,6 +349,7 @@ abstract class PGameBasic extends Table {
      * @return integer player id based on hex $color
      */
     function getPlayerIdByColor($color) {
+        if (!$color) return $this->getActivePlayerId();
         $players = $this->loadPlayersBasicInfos();
         if (!isset($this->player_colors)) {
             $this->player_colors = [];
@@ -428,7 +430,7 @@ abstract class PGameBasic extends Table {
         }
     }
 
-    protected function getPlayerColors() {
+    public function getPlayerColors() {
         $players_basic = $this->loadPlayersBasicInfos();
         $colors = [];
         foreach ($players_basic as $player_id => $player_info) {

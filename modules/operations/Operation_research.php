@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 class Operation_research extends AbsOperation {
-    function auto(string $owner, int $inc, array $args = null) {
+    function auto(string $owner, int $inc, array $args = null):bool {
         $this->effect_research();
         return true;
     }

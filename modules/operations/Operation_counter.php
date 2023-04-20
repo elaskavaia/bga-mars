@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 class Operation_counter extends AbsOperation {
 
-    function isVoid($op, $args = null) {
+    function isVoid($op, $args = null) : bool{
         return false;
     }
 
-    function auto(string $owner, int $inc, array $args = null) {
+    function auto(string $owner, int $inc, array $args = null): bool {
         // counter function, followed by expression
         // result of experssion is set as counter for top rank operation
         $par = $this->params ?? '';

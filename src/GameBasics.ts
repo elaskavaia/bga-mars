@@ -833,12 +833,16 @@ class GameBasics extends GameGui {
         if (this.gamedatas_server && this.gamedatas_server.counters[name]) this.gamedatas_server.counters[name].counter_value = value;
         this.updateCountersSafe(counters);
       } else if ($(name)) {
-        $(name).setAttribute("data-state",value.toString());
+        this.setDomTokenState(name, value);
       }
       //  console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
     } catch (ex) {
       console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
     }
+  }
+
+  setDomTokenState(tokenId: ElementOrId, newState: any) {
+    // XXX it should not be here
   }
 
   notif_score(notif: Notif) {
