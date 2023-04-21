@@ -126,6 +126,14 @@ function tomyformat($fields, $raw_fields) {
     $php = [];
     $vp =  $fields['VP'];
     if ($vp && is_numeric($vp)) $php['vp'] = $vp;
+    $hold = $fields['Holds Resources'];
+    if ($hold && $hold != 'No') $php['holds'] = $hold;
+    $eff = $fields['# Actions and/or Effect'];
+    if ($eff && $eff != 'No') {
+        if ($eff=='Eff') $php['e'] = $rules;
+        else  $php['a'] = $rules;
+        $rules = '';
+    }
 
     $tags = [];
     foreach ($fields as $key => $value) {

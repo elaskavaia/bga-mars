@@ -106,3 +106,11 @@ dist
 # Elcipse configs
 .settings/
 .project
+
+#Other gen files
+src/css/*.css
+src/css/*.map
+
+#Locks
+**/.~lock*
+**/*.swp

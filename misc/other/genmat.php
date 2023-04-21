@@ -107,7 +107,7 @@ function genbody($incsv) {
             continue;
         if (startsWith($line, '#')) {
             //special comment
-            if (preg_match("/#set  *(?P<name>\w+)=(?P<value>.*)/", $line, $matches)) {
+            if (preg_match("/#set  *(?P<name>\w+)=(?P<value>[^$g_separator]*)/", $line, $matches)) {
                 $key = $matches['name'];
                 $value = trim($matches['value']);
                 switch ($key) {
