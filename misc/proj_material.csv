@@ -3,6 +3,7 @@ num|name|t|r|cost|pre|text|php
 #
 #set id=card_corp_{num}
 #set location=deck_corp
+#set _tr=text
 1|Begginer Corp|4|42m|10|This is a begginer corp
 #
 #standard projects
@@ -17,3 +18,21 @@ num|name|t|r|cost|pre|text|php
 4|Aquifer|0|w|18||For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)
 5|Greenery|0|forest|23||For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile
 6|City|0|city;pm|25||For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.
+
+#Milestones
+#set id=milestone_{num}
+#set php='vp'=>5
+1|Terraformer|7||8|(tr>=35)|Having a terraform rating of at least 35|
+2|Mayor|7||8|(city>=3)|Owning at least 3 city tiles|
+3|Gardener|7||8|(forest>=3)|Owning at least 3 greenery tiles|
+4|Builder|7||8|(tagBuilding>=8)|Having at least 8 building tags in play|
+5|Planner|7||8|(chand>=16)|Having at least 16 cards in your hand when you claim this milestone|
+
+#Awards
+#set id=award_{num}
+#set php=
+1|Landlord|8||20||Owning the most tiles in play.
+2|Banker|8||20||Having the highest M€ production.
+3|Scientist|8||20||Having the most science tags in play.
+4|Thermalist|8||20||Having the most heat resource cubes.
+5|Miner|8||20||Having the most steel and titanium resource cubes.

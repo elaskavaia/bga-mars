@@ -20,14 +20,16 @@ Random notes on todo items
 * Player picker
 * Hex tiles
 * Payment selector
+* Stacking played cards
 
-### Bonus
+### Client Bonus Features
 
 * Card refernce
 * Player mats with cubes
 * Sounds
 * Flip animation
 * Log scratch on undo
+* Hand sorting
 
 ## Assets
 

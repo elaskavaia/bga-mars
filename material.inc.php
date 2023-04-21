@@ -18,9 +18,23 @@
  * are available everywhere in your game logic code.
  * 
  * 
- * GENERATED CODE DO NOT EDIT MANAULLY
+ * GENERATED CODE DO NOT EDIT MANAULLY (except constants and template tags)
  *
  */
+
+ if (!defined("MA_GAME")) {
+  // guard since this included multiple times
+  define("MA_GAME", 1);
+  #project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
+  define("MA_CARD_TYPE_STANDARD_PROJECT", 0);
+  define("MA_CARD_TYPE_GREEN", 1);
+  define("MA_CARD_TYPE_BLUE", 2);
+  define("MA_CARD_TYPE_EVENT", 3);
+  define("MA_CARD_TYPE_CORP", 4);
+  define("MA_CARD_TYPE_PRELUDE", 5);
+  define("MA_CARD_TYPE_MILESTONE", 7);
+  define("MA_CARD_TYPE_AWARD", 8);
+}
 
 $this->token_types = [
 /* --- gen php begin cards_material --- */
@@ -2436,7 +2450,7 @@ $this->token_types = [
   't' => 0,
   'r' => '[1,](sell)',
   'cost' => 0,
-  'text' => 'Discard X card to gain X MC',
+  'text' => clienttranslate("Discard X card to gain X MC"),
 ],
  'card_stanproj_2' => [  //
   'location' => 'display_main',
@@ -2447,7 +2461,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'pe',
   'cost' => 11,
-  'text' => 'For 11 M€ you get to increase your energy production 1 step',
+  'text' => clienttranslate("For 11 M€ you get to increase your energy production 1 step"),
 ],
  'card_stanproj_3' => [  //
   'location' => 'display_main',
@@ -2458,7 +2472,7 @@ $this->token_types = [
   't' => 0,
   'r' => 't',
   'cost' => 14,
-  'text' => 'For 14 M€ you get to increase temperature 1 step (and your TR)',
+  'text' => clienttranslate("For 14 M€ you get to increase temperature 1 step (and your TR)"),
 ],
  'card_stanproj_4' => [  //
   'location' => 'display_main',
@@ -2469,7 +2483,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'w',
   'cost' => 18,
-  'text' => 'For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)',
+  'text' => clienttranslate("For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)"),
 ],
  'card_stanproj_5' => [  //
   'location' => 'display_main',
@@ -2480,7 +2494,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'forest',
   'cost' => 23,
-  'text' => 'For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile',
+  'text' => clienttranslate("For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile"),
 ],
  'card_stanproj_6' => [  //
   'location' => 'display_main',
@@ -2491,7 +2505,119 @@ $this->token_types = [
   't' => 0,
   'r' => 'city;pm',
   'cost' => 25,
-  'text' => 'For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.',
+  'text' => clienttranslate("For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step."),
+],
+// #Milestones
+ 'milestone_1' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'vp'=>5,
+  'num' => 1,
+  'name' => clienttranslate("Terraformer"),
+  't' => 7,
+  'cost' => 8,
+  'pre' => '(tr>=35)',
+  'text' => clienttranslate("Having a terraform rating of at least 35"),
+],
+ 'milestone_2' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'vp'=>5,
+  'num' => 2,
+  'name' => clienttranslate("Mayor"),
+  't' => 7,
+  'cost' => 8,
+  'pre' => '(city>=3)',
+  'text' => clienttranslate("Owning at least 3 city tiles"),
+],
+ 'milestone_3' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'vp'=>5,
+  'num' => 3,
+  'name' => clienttranslate("Gardener"),
+  't' => 7,
+  'cost' => 8,
+  'pre' => '(forest>=3)',
+  'text' => clienttranslate("Owning at least 3 greenery tiles"),
+],
+ 'milestone_4' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'vp'=>5,
+  'num' => 4,
+  'name' => clienttranslate("Builder"),
+  't' => 7,
+  'cost' => 8,
+  'pre' => '(tagBuilding>=8)',
+  'text' => clienttranslate("Having at least 8 building tags in play"),
+],
+ 'milestone_5' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'vp'=>5,
+  'num' => 5,
+  'name' => clienttranslate("Planner"),
+  't' => 7,
+  'cost' => 8,
+  'pre' => '(chand>=16)',
+  'text' => clienttranslate("Having at least 16 cards in your hand when you claim this milestone"),
+],
+// #Awards
+ 'award_1' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'num' => 1,
+  'name' => clienttranslate("Landlord"),
+  't' => 8,
+  'cost' => 20,
+  'text' => clienttranslate("Owning the most tiles in play."),
+],
+ 'award_2' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'num' => 2,
+  'name' => clienttranslate("Banker"),
+  't' => 8,
+  'cost' => 20,
+  'text' => clienttranslate("Having the highest M€ production."),
+],
+ 'award_3' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'num' => 3,
+  'name' => clienttranslate("Scientist"),
+  't' => 8,
+  'cost' => 20,
+  'text' => clienttranslate("Having the most science tags in play."),
+],
+ 'award_4' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'num' => 4,
+  'name' => clienttranslate("Thermalist"),
+  't' => 8,
+  'cost' => 20,
+  'text' => clienttranslate("Having the most heat resource cubes."),
+],
+ 'award_5' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'num' => 5,
+  'name' => clienttranslate("Miner"),
+  't' => 8,
+  'cost' => 20,
+  'text' => clienttranslate("Having the most steel and titanium resource cubes."),
 ],
 /* --- gen php end proj_material --- */
 /* --- gen php begin loc_material --- */
@@ -2616,6 +2742,20 @@ $this->token_types = [
   'type' => 'draw',
   'name' => clienttranslate("Draw Card in Hand"),
   'params' => 'auto',
+],
+ 'op_claim' => [  //
+  'undo' => 'false',
+  'prompt' => '${you} must select a Milestone to claim',
+  'type' => 'claim',
+  'name' => clienttranslate("Claim a milestone"),
+  'params' => 'target',
+],
+ 'op_award' => [  //
+  'undo' => 'false',
+  'prompt' => '${you} must select an Award to fund',
+  'type' => 'award',
+  'name' => clienttranslate("Fund an award"),
+  'params' => 'target',
 ],
  'op_np_Any' => [  //
   'undo' => 'false',

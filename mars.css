@@ -968,6 +968,11 @@
   margin-bottom: calc(var(--stan-height) * 0.1);
 }
 
+#display_main .milestone {
+  width: var(--stan-width);
+  height: var(--stan-height);
+}
+
 #main_area .card .token_descr {
   display: none;
 }
@@ -989,6 +994,11 @@
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5019607843);
   font-size: calc(var(--stan-width) * 0.07);
   margin-bottom: calc(var(--stan-height) * 0.1);
+}
+
+#decks_area .milestone, #decks_area .award {
+  width: calc(var(--stan-width) * 0.4);
+  height: calc(var(--stan-width) * 0.5);
 }
 
 #deck_main {

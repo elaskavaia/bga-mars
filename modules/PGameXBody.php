@@ -86,19 +86,26 @@ abstract class PGameXBody extends PGameMachine {
         $this->gamestate->nextState("next");
     }
 
-    function debug_drawCard($num){
+    function debug_drawCard($num) {
         $token = "card_main_$num";
         $color = $this->getCurrentPlayerColor();
-        $this->dbSetTokenLocation($token,"hand_$color");
+        $this->dbSetTokenLocation($token, "hand_$color");
     }
     function debug_dumpMachine() {
-        $this->debugConsole("",$this->machine->gettableexpr());
+        $this->debugConsole("", $this->machine->gettableexpr());
     }
-    public function getPlayerNameById($player_id) {
-        if (!is_numeric($player_id)) throw new feException("invalid player id $player_id");
-        $players = self::loadPlayersBasicInfos();
-        return $players[$player_id]['player_name'];
+
+    function createPlayerMarker($color) {
+        $token = "marker_${color}";
+        $key = $this->tokens->createTokenAutoInc($token, "miniboard_${color}");
+        return $key;
     }
+
+    // public function getPlayerNameById($player_id) {
+    //     if (!is_numeric($player_id)) throw new feException("invalid player id $player_id");
+    //     $players = self::loadPlayersBasicInfos();
+    //     return $players[$player_id]['player_name'];
+    // }
     function notif($player_id = null) {
         $builder = new NotifBuilder($this);
         if ($player_id) {
@@ -268,14 +275,7 @@ abstract class PGameXBody extends PGameMachine {
             return true;
         }
 
-        $this->dbSetTokenLocation(
-            $card_id,
-            "tableau_${color}",
-            0,
-            clienttranslate('${player_name} plays card ${token_name}'),
-            [],
-            $color
-        );
+
         $this->effect_cardInPlay($color, $card_id);
     }
 
@@ -288,14 +288,38 @@ abstract class PGameXBody extends PGameMachine {
     function effect_cardInPlay($color, $card_id) {
         $rules = $this->getRulesFor($card_id, '*');
         $ttype = $rules['t']; // type of card
+        $faceup = 0;
+        if ($ttype == MA_CARD_TYPE_EVENT) {
+            $faceup = 1;
+        }
+        $this->dbSetTokenLocation(
+            $card_id,
+            "tableau_${color}",
+            $faceup,
+            clienttranslate('${player_name} plays card ${token_name}'),
+            [],
+            $color
+        );
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
-        foreach ($tagsarr as $tag) {
-            $this->setTrackerValue($color, "tag$tag");
+        if ($ttype != MA_CARD_TYPE_EVENT) {
+            foreach ($tagsarr as $tag) {
+                $this->setTrackerValue($color, "tag$tag");
+            }
         }
         $playeffect = $rules['r'];
-        $this->debugConsole("machine effect $playeffect");
+        $this->debugConsole("-come in play effect $playeffect");
         if ($playeffect) $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
+        foreach ($tagsarr as $tag) {
+            $this->notifyEffect($color, "playTag", "tag$tag");
+        }
+        $this->notifyEffect($color, "playCard", $card_id);
+    }
+
+    function notifyEffect($owner,$event,$arg){
+          // load all active effect listeners
+          // filter for listener for specific effect
+          // TODO
     }
 
     function effect_incCount(string $color, string $type, int $inc = 1, array $options = []) {
@@ -401,7 +425,7 @@ abstract class PGameXBody extends PGameMachine {
                     // energy to heat
                     $curr = $this->tokens->getTokenState("tracker_${p}_${color}");
                     if ($curr) {
-                        $this->effect_incCount($color, 'h', $curr, [ 'message'=> clienttranslate('${player_name} gains ${inc_resource} due to heat transfer')]);
+                        $this->effect_incCount($color, 'h', $curr, ['message' => clienttranslate('${player_name} gains ${inc_resource} due to heat transfer')]);
                     }
                 } elseif ($p == 'm') {
                     $curr = $this->tokens->getTokenState("tracker_tr_${color}");
