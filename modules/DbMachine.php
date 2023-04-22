@@ -106,13 +106,17 @@ class DbMachine extends APP_GameClass {
     ) {
         $op = $this->createOperation($type, $rank, $mincount, $count, $owner, $resolve, $parent, $data, $pool);
 
-        $this->warn($this->getlistexpr([$op]));
+        //$this->warn($this->getlistexpr([$op]));
         return $this->insertOp($rank, $op);
     }
 
     function insertOp($rank, $op) {
         $this->insertList($rank, [$op]);
         return $this->DbGetLastId();
+    }
+
+    function createOperationSimple(string $type, string $color) {
+        return $this->createOperation($type, 1, 1, 1, $color, MACHINE_OP_RESOLVE_DEFAULT);
     }
 
     function createOperation(
@@ -455,7 +459,7 @@ class DbMachine extends APP_GameClass {
 
     function prune() {
         $set = $this->getUpdateQuery();
-        $sql = "$set rank = -1 WHERE count = 0 AND rank > 0";
+        $sql = "$set rank = -1 WHERE count = 0 AND rank >= 0";
         self::DbQuery($sql);
     }
 

@@ -100,21 +100,33 @@ abstract class PGameMachine extends PGameTokens {
         $tops = $this->machine->getTopOperations();
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
-            // automatic pre-resolve that playes with stack
-            $info = $this->saction_resolve_machine($args, $tops);
+            $operation_id = $args["op"];
+            $info = $this->machine->info($operation_id);
+            $this->debugConsole("- resolve op " . $info['type'], $args);
+
+     
+            $color = $info["owner"];
+            if ($color === null) {
+                $color = $this->getActivePlayerColor(); // XXX?
+                $info["owner"] = $color;
+            }
+            $count = $args["count"] ?? $info["count"] ?? 1;
+            $info["resolve_count"] = $count;
             // now we will call method for specific user action
             $args["op_info"] = $info;
             $type = $info["type"];
-            $rules = $this->getOperationRules($type);
-            if (!$rules) {
-                if ($this->isAtomicOperation($type)) {
-                    $this->systemAssertTrue("Cannot find operation type $type", $rules);
-                } else {
-                    $this->machine->expandOp($info, $info["rank"]);
-                }
-                continue;
-            }
+            // $rules = $this->getOperationRules($type);
+            // if (!$rules) {
+            //     if ($this->isAtomicOperation($type)) {
+            //         $this->systemAssertTrue("Cannot find operation type $type", $rules);
+            //     } else {
+            //         $this->machine->expandOp($info, $info["rank"]);
+            //     }
+            //     continue;
+            // }
             $this->saction_resolve($type, $args);
+            // stack operations
+            $this->saction_stack($count, $info, $tops);
         }
         $this->machine->normalize();
         $this->gamestate->nextState("next");
@@ -124,33 +136,21 @@ abstract class PGameMachine extends PGameTokens {
         $this->systemAssertTrue("Not implemented resolve");
     }
 
-    function saction_resolve_machine($args, $tops) {
-        $operation_id = $args["op"];
-        $this->debugConsole("args $operation_id", $args);
-        $count = $args["count"] ?? null;
-        $info = $this->machine->info($operation_id);
-
+    function saction_stack(int $count, array $info, ?array $tops = null) {
+        if ($tops == null) $tops = [$info];
+  
         if ($this->machine->isSharedCounter($info)) {
-            $this->machine->subtract($tops, 1);
-            $count = 1;
+            $this->machine->subtract($tops, $count);
         } else {
-            if ($count === null) {
-                $count = $info["count"];
-            }
             $this->machine->subtract($info, $count);
         }
 
         if ($this->machine->isUnique($info)) {
-            $this->machine->hide($operation_id);
+            $this->machine->hide($info);
         }
         $this->machine->prune();
-        $info["resolve_count"] = $count;
-        $color = $info["owner"];
-        if ($color === null) {
-            $color = $this->getActivePlayerColor(); // XXX?
-            $info["owner"] = $color;
-        }
-        return $info;
+
+        return;
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ abstract class PGameMachine extends PGameTokens {
         $n = 20;
         while ($n-- > 0) {
             $operations = $this->machine->getTopOperations();
-            $this->trace("$n: machine top: " . $this->machine->getlistexpr($operations));
+            $this->warn("$n: machine top: " . $this->machine->getlistexpr($operations));
 
             if (count($operations) == 0) {
                 $nextState = $this->machineExecuteDefault();

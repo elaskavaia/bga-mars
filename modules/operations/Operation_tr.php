@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-class Operation_turn extends AbsOperation {
+class Operation_tr extends AbsOperation {
     function auto(string $owner, int $inc, array $args = null): bool {
-        $this->game->queue($owner, "card/stan/convh/convp/claim/fund/pass");
+        $this->game->effect_incTerraformingRank($owner, $inc);
         return true;
     }
 }

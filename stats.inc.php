@@ -52,11 +52,13 @@ $stats_type = array(
     // Statistics global to table
     "table" => array(
 
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
+        "turns_number" => array(
+            "id" => 10,
+            "name" => totranslate("Number of turns"),
+            "type" => "int"
+        ),
 
-/*
+        /*
         Examples:
 
 
@@ -67,29 +69,59 @@ $stats_type = array(
         "table_teststat2" => array(   "id"=> 11,
                                 "name" => totranslate("table test stat 2"), 
                                 "type" => "float" )
-*/  
+*/
     ),
-    
+
     // Statistics existing for each player
     "player" => array(
 
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-    
-/*
+        "turns_number" => array(
+            "id" => 10,
+            "name" => totranslate("Number of turns"),
+            "type" => "int"
+        ),
+        "game_vp_cards" => array(
+            "id" => 11,
+            "name" => totranslate("VP from cards"),
+            "type" => "int"
+        ),
+        "game_vp_cities" => [
+            "id" => 12,
+            "name" => totranslate("VP from cities"),
+            "type" => "int"
+        ],
+        "game_vp_forest" => [
+            "id" => 13,
+            "name" => totranslate("VP from forest"),
+            "type" => "int"
+        ],
+        "game_vp_tr" => [
+            "id" => 14,
+            "name" => totranslate("VP from Terraforming Rank"),
+            "type" => "int"
+        ],
+        "game_vp_ms" => [
+            "id" => 15,
+            "name" => totranslate("VP from Milestones"),
+            "type" => "int"
+        ],
+        "game_vp_award" => [
+            "id" => 16,
+            "name" => totranslate("VP from Awards"),
+            "type" => "int"
+        ],
+
+        /*
         Examples:    
         
         
-        "player_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("player test stat 1"), 
-                                "type" => "int" ),
+
                                 
         "player_teststat2" => array(   "id"=> 11,
                                 "name" => totranslate("player test stat 2"), 
                                 "type" => "float" )
 
-*/    
+*/
     )
 
 );

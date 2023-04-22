@@ -344,6 +344,29 @@ abstract class PGameBasic extends Table {
         return $this->getPlayerColorById($this->getActivePlayerId());
     }
 
+    function isRealPlayer($player_id) {
+        $players = $this->loadPlayersBasicInfos();
+        return (isset($players [$player_id]));
+    }
+
+    function isZombiePlayer($player_id) {
+        $players = $this->loadPlayersBasicInfos();
+        if (isset($players [$player_id])) {
+            if ($players [$player_id] ['player_zombie'] == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function isPlayerEliminated($player_id) {
+        $players = self::loadPlayersBasicInfos();
+        if (isset($players [$player_id])) {
+            return $players [$player_id] ['player_eliminated'] == 1;
+        }
+        return false;
+    }
+
     /**
      *
      * @return integer player id based on hex $color
@@ -490,10 +513,7 @@ abstract class PGameBasic extends Table {
      *            - name of the player statistic to update (points source)
      * @return number - current score after increase/descrease
      */
-    function dbIncScoreValueAndNotify($player_id, $inc, $notif = "*", $stat = "", $args = null) {
-        if ($args == null) {
-            $args = [];
-        }
+    function dbIncScoreValueAndNotify($player_id, $inc, $notif = "*", $stat = "", $args = []) {
         $count = $this->dbIncScore($player_id, $inc);
         if ($notif == "*") {
             if ($inc >= 0) {

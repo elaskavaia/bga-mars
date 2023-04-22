@@ -968,7 +968,7 @@
   margin-bottom: calc(var(--stan-height) * 0.1);
 }
 
-#display_main .milestone {
+#display_main .milestone, #display_main .award {
   width: var(--stan-width);
   height: var(--stan-height);
 }

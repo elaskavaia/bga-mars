@@ -86,7 +86,7 @@ class MathExpressionParser {
     }
     function eos() {
         if (!$this->isEos()) {
-            throw new Exception("Unexpected tokens");
+            throw new Exception("Unexpected tokens ".join(" ",$this->tokens));
         }
     }
     function isEos() {
@@ -112,7 +112,6 @@ class MathExpressionParser {
             $this->consume("(");
             $expr = $this->parseExpression();
             $this->consume(")");
-            $this->eos();
             return $expr;
         }
         $op = $this->pop();

@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 
-class Operation_claim extends AbsOperation {
+class Operation_fund extends AbsOperation {
+    // XXX
     function auto(string $color, int $inc, array $args = null): bool {
         if ($args == null) return false;
         $marker = $this->game->createPlayerMarker($color);

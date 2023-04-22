@@ -122,16 +122,20 @@ function tomyformat($fields, $raw_fields) {
 
     $tooltip = $fields['One time Effect Text'];
     $actext = $fields['Action or On-going Effect text'];
+    if ($actext && $tooltip) $tooltip = trim($tooltip."; ".$actext);
+    else if ($actext) $tooltip = $actext;
     $tooltip = trim($tooltip);
     $php = [];
     $vp =  $fields['VP'];
-    if ($vp && is_numeric($vp)) $php['vp'] = $vp;
+
     $hold = $fields['Holds Resources'];
     if ($hold && $hold != 'No') $php['holds'] = $hold;
     $eff = $fields['# Actions and/or Effect'];
+    $action = "";
+    $effect = "";
     if ($eff && $eff != 'No') {
-        if ($eff=='Eff') $php['e'] = $rules;
-        else  $php['a'] = $rules;
+        if ($eff=='Eff')  $effect = $rules;
+        else  $action = $rules;
         $rules = '';
     }
 
@@ -153,22 +157,23 @@ function tomyformat($fields, $raw_fields) {
         $phpstr = preg_replace("/,\s*$/", "", $phpstr);
     }
 
-    $line = sprintf("%d|%s|%d|%s|%d|%s|%s|%s|%s|%s\n", $num, $raw_fields[0], $t, $rules, $fields['Cost'], $pre, implode(' ', $tags), $actext, $tooltip, $phpstr);
+    $line = sprintf("%d|%s|%d|%s|%s|%s|%d|%s|%s|%s|%s|%s\n", $num, $raw_fields[0], $t, $rules, $action,$effect, $fields['Cost'], $pre, implode(' ', $tags),$vp,$tooltip, $phpstr);
     print($line);
     //if ((int)$num > 18) return false;
     return true;
 }
 
 $g_field_names = null;
-$g_header = 'num|name|t|r|cost|pre|tags|ac|text|php';
+$g_header = 'num|name|t|r|a|e|cost|pre|tags|vp|text|php';
 $g_separator = "|";
 $incsv = $argv[1] ?? "./data.csv";
 $ins = fopen($incsv, "r") or die("Unable to open file! $ins");
 // new format
 
+#t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
 print($g_header);
 print('
-#project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
+#project cards
 #set _tr=ac
 #set _tr=text
 #set id=card_main_{num}

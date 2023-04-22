@@ -307,11 +307,11 @@ abstract class PGameTokens extends PGameBasic {
         return $this->isContentAllowedForLocation($player_id, $location, "counter");
     }
 
-    function dbSetTokenState($token_id, $state = null, $notif = "*", $args = [], $color = null) {
-        $this->dbSetTokenLocation($token_id, null, $state, $notif, $args, $color);
+    function dbSetTokenState($token_id, $state = null, $notif = "*", $args = [],  int $player_id = 0) {
+        $this->dbSetTokenLocation($token_id, null, $state, $notif, $args, $player_id);
     }
 
-    function dbSetTokenLocation($token_id, $place_id, $state = null, $notif = "*", $args = [], $color = null) {
+    function dbSetTokenLocation($token_id, $place_id, $state = null, $notif = "*", $args = [], int $player_id = 0) {
         $this->systemAssertTrue("token_id is null/empty $token_id, $place_id $notif", $token_id != null && $token_id != "");
         if ($notif === "*") {
             $notif = clienttranslate('${player_name} moves ${token_name} into ${place_name}');
@@ -334,8 +334,8 @@ abstract class PGameTokens extends PGameBasic {
         ];
         $args = array_merge($notifyArgs, $args);
         //$this->warn("$type $notif ".$args['token_id']." -> ".$args['place_id']."|");
-        if ($color != null) {
-            $player_id = $this->getPlayerIdByColor($color);
+        if ($player_id != 0) {
+            // use it
         } elseif (array_key_exists("player_id", $args)) {
             $player_id = $args["player_id"];
         } else {

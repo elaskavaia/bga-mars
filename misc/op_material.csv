@@ -15,7 +15,7 @@ sell|Discard Card from Hand to gain MC|target|${you} must select a card to disca
 pass|Pass||
 draw|Draw Card in Hand|auto
 claim|Claim a milestone|target|${you} must select a Milestone to claim
-award|Fund an award|target|${you} must select an Award to fund
+fund|Fund an award|target|${you} must select an Award to fund
 
 #set class=AbsOperationIncNegAny
 np_Any|Loose Plant (Any Player or None)|player|${you} must select a player who will loose the resouces (or none)
@@ -68,4 +68,6 @@ research|Research
 counter|Special Counter
 convh|Convert heat into temperature
 convp|Convert plants into greenery
+finalscoring|Final Scoring
+lastforest|Last Forest
 

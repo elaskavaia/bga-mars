@@ -11,7 +11,7 @@ class Operation_stan extends AbsOperation {
         return true;
     }
 
-    function argPrimaryInfo(string $color, array $op = null) {
+    function argPrimaryDetails(string $color, array $op = null, array &$result = null) {
         $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_stanproj", "display_main"));
         return $this->game->filterPlayable($color, $keys);
     }

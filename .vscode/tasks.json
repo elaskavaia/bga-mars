@@ -23,7 +23,7 @@
         {
             "label": "update cards",
             "type": "shell",
-            "command": "php7.4 ./massagedata.php > ../cards_material.csv",
+            "command": "php7.4 ./massagedata.php > ../cards_material_new.csv",
             "options": {
                 "cwd": "${workspaceFolder}/misc/other"
             },

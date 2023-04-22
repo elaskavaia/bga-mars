@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 class AbsOperationIncNegAny extends AbsOperation {
 
-    function argPrimaryInfo(string $color, array $op = null) {
+    function argPrimary(string $color, array $op = null, array &$result = null) {
         $keys = $this->game->getPlayerColors();
-        return $this->game->createArgInfo($color, $keys, function ($color, $key) {
-            return 0;
-        });
+        return $keys;
     }
 
     function auto(string $owner, int $inc, array $args = null): bool {

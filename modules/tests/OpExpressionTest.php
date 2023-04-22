@@ -137,5 +137,6 @@ final class OpExpressionTest extends TestCase {
     public function testAtomic() {
         $this->assertFalse(OpExpression::parseExpression("4draw")->isAtomic());
         $this->assertTrue(OpExpression::parseExpression("a")->isAtomic());
+        $this->assertFalse(OpExpression::parseExpression("2a")->isAtomic());
     }
 }

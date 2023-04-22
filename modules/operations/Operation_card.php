@@ -10,7 +10,7 @@ class Operation_card extends AbsOperation {
         return true;
     }
 
-    function argPrimaryInfo(string $color, array $op = null) {
+    function argPrimaryDetails(string $color, array $op = null, array &$result = null) {
         $keys = array_keys($this->game->tokens->getTokensInLocation("hand_${color}"));
         return $this->game->filterPlayable($color, $keys);
     }

@@ -12,7 +12,7 @@ class Operation_convp extends AbsOperation {
     }
 
 
-    function argPrimaryInfo(string $color, array $op = null) {
+    function argPrimaryDetails(string $color, array $op = null, array &$result = null) {
         $heat = $this->game->getTrackerValue($color, 'p');
         $id = $this->game->getTrackerId($color, 'p');
         $keys = [$id];

@@ -286,7 +286,7 @@ class OpLexer {
     }
     protected function nextToken($line, $offset = 0, &$tname = null) {
         $tname = "T_EOS";
-        if (!$line || $offset >= strlen($line)) {
+        if ($line==='' || $offset >= strlen($line)) {
             return "";
         }
         $string = substr($line, $offset);

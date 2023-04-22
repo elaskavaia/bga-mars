@@ -98,6 +98,9 @@ class GameXBody extends GameTokens {
         "<br>" +
         _("Number: " + tokenDisplayInfo.num) +
         (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
+      if (tokenDisplayInfo.vp) {
+        tokenDisplayInfo.tooltip += "<br>VP:"+tokenDisplayInfo.vp;
+      }
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
