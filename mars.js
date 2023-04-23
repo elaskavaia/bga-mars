@@ -1398,8 +1398,8 @@ var GameXBody = /** @class */ (function (_super) {
         this.defaultTooltipDelay = 800;
         //custom destinations for tokens
         this.custom_placement = {
-            'tracker_t': 'temperature_map',
-            'tracker_o': 'oxygen_map'
+            tracker_t: "temperature_map",
+            tracker_o: "oxygen_map",
         };
         _super.prototype.setup.call(this, gamedatas);
         // hexes are not moved so manually connect
@@ -1436,10 +1436,10 @@ var GameXBody = /** @class */ (function (_super) {
         var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
         if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
             var originalHtml = tokenNode.outerHTML;
-            console.log("checking", tokenNode.id, 'maintype', displayInfo.mainType, 'location inc', displayInfo.location.includes('miniboard_'));
-            if (displayInfo.mainType == 'tracker' && displayInfo.location.includes('miniboard_')) {
-                var rpDiv = document.createElement('div');
-                rpDiv.classList.add('outer_tracker', 'outer_' + displayInfo.typeKey);
+            console.log("checking", tokenNode.id, "maintype", displayInfo.mainType, "location inc", displayInfo.location.includes("miniboard_"));
+            if (displayInfo.mainType == "tracker" && displayInfo.location.includes("miniboard_")) {
+                var rpDiv = document.createElement("div");
+                rpDiv.classList.add("outer_tracker", "outer_" + displayInfo.typeKey);
                 rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
                 tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
             }
@@ -1450,7 +1450,7 @@ var GameXBody = /** @class */ (function (_super) {
         console.log("placing ", id);
         if (id && location && this.custom_placement[id]) {
             location = this.custom_placement[id];
-            console.log("placing id elsewhere: ", id, 'at location ', location);
+            console.log("placing id elsewhere: ", id, "at location ", location);
         }
         return _super.prototype.createDivNode.call(this, id, classes, location);
     };
@@ -1538,76 +1538,84 @@ var GameXBody = /** @class */ (function (_super) {
             _this.ajaxuseraction("confirm");
         });
     };
-    GameXBody.prototype.activateSlots = function (param_name, paramargs, opId) {
+    GameXBody.prototype.sendActionResolveWithTarget = function (opId, target) {
+        this.sendActionResolve(opId, {
+            target: target,
+        });
+        return;
+    };
+    GameXBody.prototype.activateSlots = function (opargs, opId, single) {
         var _this = this;
-        if (param_name == "target") {
-            this.setActiveSlots(paramargs);
-            if (opId)
-                paramargs.forEach(function (tid) {
-                    _this.reverseIdLookup.set(tid, {
-                        op: opId,
-                        param_name: param_name,
-                    });
+        var paramargs = opargs.target;
+        var ttype = opargs.ttype;
+        if (single) {
+            this.setDescriptionOnMyTurn(opargs.title, opargs);
+            if (paramargs.length == 1)
+                this.addActionButton("button_" + opId, _("Confirm"), function () {
+                    _this.sendActionResolve(opId);
                 });
         }
-        else if (param_name == "player") {
+        if (ttype == "token") {
+            paramargs.forEach(function (tid) {
+                if (tid == "none") {
+                    _this.addActionButton("button_none", _("None"), function () {
+                        _this.sendActionResolveWithTarget(opId, "none");
+                    });
+                }
+                else
+                    _this.setActiveSlot(tid);
+                if (opId)
+                    _this.reverseIdLookup.set(tid, {
+                        op: opId,
+                        param_name: "target",
+                    });
+            });
+        }
+        else if (ttype == "player") {
             paramargs.forEach(function (tid) {
                 // XXX need to be pretty
                 var divId = "button_" + tid;
                 _this.addActionButton(divId, tid, function () {
-                    _this.clientStateArgs.ops[_this.clientStateArgs.index] = {
+                    _this.onSelectTarget(opId, tid);
+                });
+                if (opId)
+                    _this.reverseIdLookup.set(divId, {
                         op: opId,
-                    };
-                    _this.clientStateArgs.ops[_this.clientStateArgs.index][param_name] = tid;
-                    _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
-                });
-                _this.reverseIdLookup.set(divId, {
-                    op: opId,
-                    param_name: param_name,
-                });
+                        param_name: "target",
+                    });
             });
         }
+    };
+    GameXBody.prototype.clearReverseIdMap = function () {
+        this.reverseIdLookup = new Map();
     };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
         var operations = args.operations;
         this.clientStateArgs.call = "resolve";
         this.clientStateArgs.ops = [];
-        this.clientStateArgs.index = 0;
-        this.reverseIdLookup = new Map();
+        this.clearReverseIdMap();
         var single = Object.keys(operations).length == 1;
-        var _loop_1 = function (opId) {
+        var _loop_1 = function (opIdS) {
+            var opId = parseInt(opIdS);
             var opInfo = operations[opId];
-            var rules = this_1.getRulesFor("op_" + opInfo.type, "*");
+            var opargs = opInfo.args;
             var name_3 = this_1.getButtonNameForOperation(opInfo);
-            if (rules && rules.params) {
-                var param_name_1 = rules.params.split(",")[0]; // XXX can be more than one
-                var opargs = args.operations[opId].args;
-                var paramargs_1 = opargs[param_name_1];
-                if (!paramargs_1) {
-                    console.error("Missing ".concat(param_name_1, " arg in args for ").concat(opInfo.type));
-                }
-                this_1.activateSlots(param_name_1, paramargs_1, opId);
-                if (single) {
-                    this_1.setDescriptionOnMyTurn(rules.prompt);
-                }
-                else
+            var paramargs = opargs.target;
+            if (paramargs && paramargs.length > 0) {
+                this_1.activateSlots(opargs, opId, single);
+                if (!single) {
                     this_1.addActionButton("button_" + opId, name_3, function () {
-                        _this.clientStateArgs.ops[_this.clientStateArgs.index] = {
-                            op: opId,
-                        };
-                        var clstate = "client_" + opInfo.type;
-                        _this.setClientStateUpdOn(clstate, function (args) {
+                        _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
-                            _this.reverseIdLookup = new Map();
-                            _this.setDescriptionOnMyTurn(rules.prompt);
-                            _this.activateSlots(param_name_1, paramargs_1, opId);
+                            _this.clearReverseIdMap();
+                            _this.activateSlots(opargs, opId, true);
                         }, function (id) {
                             // onToken
-                            _this.clientStateArgs.ops[_this.clientStateArgs.index][param_name_1] = id;
-                            _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
+                            _this.onSelectTarget(opId, id);
                         });
                     });
+                }
             }
             else {
                 this_1.addActionButton("button_" + opId, name_3, function () {
@@ -1617,21 +1625,21 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (single) {
                 if (opInfo.mcount <= 0)
-                    this_1.addActionButton("button_skip", _("Stop Here"), function () {
+                    this_1.addActionButton("button_skip", _("Skip"), function () {
                         _this.sendActionSkip();
                     });
             }
         };
         var this_1 = this;
-        for (var opId in operations) {
-            _loop_1(opId);
+        for (var opIdS in operations) {
+            _loop_1(opIdS);
         }
     };
     GameXBody.prototype.clientCollectParams = function (opInfo, param_name) {
         var _this = this;
         if (param_name == "payment") {
             // get id of the selected card
-            var id = this.clientStateArgs.ops[this.clientStateArgs.index].target;
+            var id = this.clientStateArgs.ops[0].target;
             // get cost
             var cost_1 = this.getRulesFor(id, "cost");
             var overridecost = opInfo.args.cost;
@@ -1645,13 +1653,12 @@ var GameXBody = /** @class */ (function (_super) {
                 // on update action buttons
                 _this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + _this.getButtonNameForOperationExp(["/", cost_1, cost_1, "nm"]));
                 _this.addActionButton("button_confirm", _("Confirm"), function () {
-                    _this.clientStateArgs.ops[_this.clientStateArgs.index].payment = "auto";
+                    _this.clientStateArgs.ops[0].payment = "auto";
                     _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
                 });
             }, function (id) {
                 // onToken as payment - remove its not a thing
-                _this.clientStateArgs.ops[_this.clientStateArgs.index][param_name] = id;
-                _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
+                _this.showMoveUnauthorized();
             });
         }
         else {
@@ -1668,38 +1675,35 @@ var GameXBody = /** @class */ (function (_super) {
                 this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper("undo"); }, undefined, undefined, "red");
         }
     };
+    GameXBody.prototype.onSelectTarget = function (opId, target) {
+        var opInfo = this.gamedatas.gamestate.args.operations[opId];
+        var rules = this.getOperationRules(opInfo);
+        if (rules && rules.params != "target") {
+            // more params
+            var params = rules.params.split(",");
+            var nextparam = params[1];
+            this.clientStateArgs.ops[0] = {
+                op: opId,
+                target: target,
+            };
+            this.clientCollectParams(opInfo, nextparam);
+        }
+        else {
+            return this.sendActionResolveWithTarget(opId, target);
+        }
+    };
     // on click hooks
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
-        var _a;
         var info = this.reverseIdLookup.get(tid);
         if (info) {
-            if (!this.clientStateArgs.ops) {
-                this.clientStateArgs.ops = [];
-                this.clientStateArgs.index = 0;
-            }
-            var index = this.clientStateArgs.index;
-            this.clientStateArgs.index = index;
-            var curload = (_a = this.clientStateArgs.ops[index]) !== null && _a !== void 0 ? _a : undefined;
-            if (curload && curload.op != info.op) {
-                this.clientStateArgs.index++;
-                index = this.clientStateArgs.index;
-                curload = this.clientStateArgs.ops[index];
-            }
-            if (!curload)
-                curload = this.clientStateArgs.ops[index] = { op: info.op };
-            curload[info.param_name] = tid;
-            var opInfo = this.gamedatas.gamestate.args.operations[info.op];
-            var rules = this.getOperationRules(opInfo);
-            if (rules.params != info.param_name) {
-                // more params
-                var params = rules.params.split(",");
-                var curindex = params.indexOf(info.param_name);
-                var nextparam = params[curindex + 1];
-                this.clientCollectParams(opInfo, nextparam);
-            }
-            else {
-                this.ajaxuseraction(this.clientStateArgs.call, this.clientStateArgs);
-            }
+            var opId = info.op;
+            if (info.param_name == "target")
+                this.onSelectTarget(opId, tid);
+            else
+                this.showError("Not implemented");
+        }
+        else {
+            this.showMoveUnauthorized();
         }
     };
     // notifications

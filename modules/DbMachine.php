@@ -586,24 +586,24 @@ class DbMachine extends APP_GameClass {
         switch ($op) {
             case "!":
                 $main = $expr->args[0];
-                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ);
+                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
                 break;
             case "+":
             case ",":
             case ":":
                 $this->interrupt($rank, 1);
                 if ($mcount == 0) {
-                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ);
+                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
                 } else {
                     foreach ($expr->args as $subrule) {
-                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag);
+                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
                     }
                 }
                 break;
             case ";":
                 $this->interrupt($rank, count($expr->args));
                 foreach ($expr->args as $subrule) {
-                    $this->insertRule($subrule, $rank, 1, 1, $owner, $opflag);
+                    $this->insertRule($subrule, $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
                     $rank += 1;
                 }
                 break;
@@ -611,7 +611,7 @@ class DbMachine extends APP_GameClass {
             case "/":
                 $this->interrupt($rank, 1);
                 foreach ($expr->args as $subrule) {
-                    $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag);
+                    $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent, $pool);
                 }
                 break;
 

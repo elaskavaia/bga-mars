@@ -55,15 +55,22 @@ abstract class AbsOperation {
         $this->color =  $op["owner"];
 
         $result["void"] = false;
+        $result['count'] = $op['count'] ?? 1;
         $result["ttype"] = $this->getPrimaryArgType(); // type of parameter to collect, default is token, can be player or someting else i.e. number
         $result["info"] = $this->argPrimaryDetails(); // detals map of primary param with explanation why it cannot be done, and extra stuff
         $result['target'] = $this->argPrimary(); // primary list of parameter to choose from in case of emum param (such as token)
         $result["void"] = $this->isVoid($op); // if action requires params but cannot be perform operation is void, depends on engine it either deail breaker or skip
+        $result["title"] = $this->getPrompt();
         return $result;
     }
 
     public function getPrimaryArgType() {
         return 'token';
+    }
+
+    public function getPrompt() {
+        $rules = $this->rules();
+        return  $rules['prompt'] ?? '${you} must confirm';
     }
 
     function argPrimaryDetails() {
@@ -81,10 +88,14 @@ abstract class AbsOperation {
     function getCheckedArg($key) {
         $args = $this->user_args;
         $this->game->systemAssertTrue("Missing user args", $args);
-        $this->game->systemAssertTrue("Missing argument $key", array_key_exists($key, $args));
-        $target = $args[$key];
         $possible_targets = $this->getStateArg($key, $args);
-        $this->game->systemAssertTrue("Unathorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
+        if (array_key_exists($key, $args)) {
+            $target = $args[$key];
+            $this->game->systemAssertTrue("Unathorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
+        } else {
+            if (is_array($possible_targets)) return array_shift($possible_targets);
+            return $possible_targets;
+        }
         return $target;
     }
 
@@ -111,6 +122,14 @@ abstract class AbsOperation {
     }
 
 
+    function getContext() {
+        return $this->op_info['data'] ?? ''; // context of effect
+    }
+
+    function getMinCount() {
+        return $this->op_info['mcount'] ?? $this->op_info['count'] ?? 1;
+    }
+
     function isVoid($op): bool {
         $this->arg($op);
         return count($this->argresult['target']) == 0;
@@ -122,6 +141,14 @@ abstract class AbsOperation {
     function action_resolve(array $args): int {
         $op = $args["op_info"];
         $type = $op["type"];
+
+        if (preg_match("/^(\w+)\((.*)\)$/", $type, $matches)) {
+            // function call
+            $params = $matches[2];
+            $type = $matches[1];
+            $this->params = $params;
+        }
+
         if ($type != $this->mnemonic) throw new BgaSystemException("Mismatched operation $type");
         // the actual acting player
         $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());

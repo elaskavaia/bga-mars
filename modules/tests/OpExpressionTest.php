@@ -56,6 +56,7 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("(, call(a) m)", "call(a) m");
         $this->assertExpressionParser("0x2f", "0x2f");
         $this->assertExpressionParser("pl(0x2f)", "pl(0x2f)");
+        $this->assertExpressionParser("(! 0 2 ores(Microbe))", "2?ores(Microbe)");
 
         $this->assertExpressionEq("2a");
         $this->assertExpressionEq("a;b/c");
@@ -75,6 +76,7 @@ final class OpExpressionTest extends TestCase {
         //"1*(?a/?b/?c)"
         $this->assertExpressionEq("call(1)");
         $this->assertExpressionEq("pl(0x0000ff)");
+        $this->assertExpressionEq("2?ores(Microbe),pp,3ph");
 
     }
 

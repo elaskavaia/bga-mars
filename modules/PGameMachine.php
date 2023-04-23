@@ -45,6 +45,10 @@ abstract class PGameMachine extends PGameTokens {
         $expr = OpExpression::parseExpression($op);
         return $expr->isAtomic();
     }
+    public function isSimpleOperation($op) {
+        $expr = OpExpression::parseExpression($op);
+        return $expr->op=="!";
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Player actions

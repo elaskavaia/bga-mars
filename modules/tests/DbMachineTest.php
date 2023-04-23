@@ -120,7 +120,8 @@ final class DbMachineTest extends TestCase {
         $this->assertInsert("a+b+c", ["a", "b", "c"], MACHINE_OP_AND);
         $this->assertInsert("2(a/b/c)", ["a", "b", "c"], MACHINE_OP_OR, 2);
         $this->assertInsert("?(a/b)", ["a", "b"], MACHINE_OP_OR, 1,0);
-        $this->assertInsert("[1,]d", ["d"], MACHINE_OP_SEQ, -1,1);
+        $this->assertInsert("2?ores(Microbe)", ["ores(Microbe)"], MACHINE_OP_SEQ, 2,0);
+        $this->assertInsert("?2ores(Microbe)", ["ores(Microbe)"], MACHINE_OP_SEQ, 2,0);
     }
 
     public function testSimpleAnd() {

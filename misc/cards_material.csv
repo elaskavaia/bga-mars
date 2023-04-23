@@ -23,12 +23,12 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 16|Domed Crater|1|3pm,1npe,3p|||24|o<=7|Building City|1|Oxygen must be 7% or less. Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps.|
 17|Noctis City|1|3pm,1npe|||18||Building City|0|Decrease your energy production 1 step and increase your MC production 3 steps. Place a tile ON THE RESERVED AREA, disregarding normal placement restrictions.|
 18|Methane From Titan|1|2pp,2ph|||28|o>=2|Space Jovian|2|Requires 2% oxygen. Increase your heat production 2 steps and your plant production 2 steps.|
-19|Imported Hydrogen|3|3p/3 res(Microbe)/3 res(Animal);w|||16||Space Earth Event|0|Gain 3 plants, or add 3 microbes or 2 animals to ANOTHER card. Place an ocean tile.|
+19|Imported Hydrogen|3|3p/3ores(Microbe)/3ores(Animal);w|||16||Space Earth Event|0|Gain 3 plants, or add 3 microbes or 2 animals to ANOTHER card. Place an ocean tile.|
 20|Research Outpost|2||||18||Science Building City|0|Place a city tile NEXT TO NO OTHER TILE.; Effect: When you play a card, you pay 1 MC less for it.|
 21|Phobos Space Haven|1|pu|||25||Space City|3|Increase your titanium production 1 step and place a city tile ON THE RESERVED AREA.|
 22|Black Polar Dust|1|2npm,3ph,w|||15|||0|Place an ocean tile. Decrease your MC production 2 steps and increase your heat production 3 steps.|
 23|Arctic Algae|2|||Ref_p|12|t<=-12|Plant|0|It must be -12°C or colder to play. Gain 1 plant.; Effect: When anyone places an ocean tile, gain 2 plants.|
-24|Predators|2||nres(Animal):res||14|o>=11|Animal|resCard|Requires 11% oxygen. 1 VP per animal on this card.; Action: Remove 1 animal from any card and add it to this card.|  'holds' => 'Animal'
+24|Predators|2||nores(Animal):res||14|o>=11|Animal|resCard|Requires 11% oxygen. 1 VP per animal on this card.; Action: Remove 1 animal from any card and add it to this card.|  'holds' => 'Animal'
 25|Space Station|2||||10||Space|1|Effect: When you play a space card, you pay 2 MC less for it.|
 26|Eos Chasma National Park|1|2pm,3p|||16|t>=-12|Building Plant|1|Requires -128°C  or warmer. Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps.|
 27|Interstellar Colony Ship|3||||24||Space Earth Event|4|Requires 5 science tags.|
@@ -137,8 +137,8 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 130|Worms|1|counter(tagMicrobe/2),pp|||8|o>=4|Microbe|0|Requires 4% oxygen. Increase your plant production 1 step for every 2 microbe tags you have, including this.|
 131|Decomposers|2||||5|o>=3|Microbe|Ref|Requires 3# oxygen. 1 VP per 3 microbes on this card.; Effect: When you play an animal, plant, or microbe tag, including this, add a microbe to this card.|  'holds' => 'Microbe'
 132|Fusion Power|1|3pe|||14||Science Building Energy|0|Requires 2 power tags. Increase your energy production 3 steps.|
-133|Symbiotic Fungus|2||res(Microbe)||4|t>=-14|Microbe|0|Requires -14°C or warmer.; Action: Add a microbe to ANOTHER card.|
-134|Extreme-Cold Fungus|2||p/2res(Microbe)||13|t<=-10|Microbe|0|It must be -10°C or colder.; Action: Gain 1 plant or add 2 microbes to ANOTHER card.|
+133|Symbiotic Fungus|2||ores(Microbe)||4|t>=-14|Microbe|0|Requires -14°C or warmer.; Action: Add a microbe to ANOTHER card.|
+134|Extreme-Cold Fungus|2||p/2ores(Microbe)||13|t<=-10|Microbe|0|It must be -10°C or colder.; Action: Gain 1 plant or add 2 microbes to ANOTHER card.|
 135|Advanced Ecosystems|1||||11||Microbe Plant Animal|3|Requires a plant tag, a microbe tag, and an animal tag.|
 136|Great Dam|1|2pe|||12|w>=4|Building Energy|1|Requires 4 ocean tiles. Increase your energy production 2 steps.|
 137|Cartel|1|Ref_pm|||8||Earth|0|Increase your MC production 1 step for each Earth tag you have, including this.|
@@ -161,7 +161,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|It must be -14°C or colder. Increase your plant production 2 steps.|
 156|Standard Technology|2||||6||Science|0|Effect: After you pay for a standard project, except selling patents, you gain 3 MC.|
-157|Nitrite Reducing Bacteria|2||res/(3nres:tr)||11||Microbe|0|Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|  'holds' => 'Microbe'
+157|Nitrite Reducing Bacteria|2|3res|res/(3nres:tr)||11||Microbe|0|Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|  'holds' => 'Microbe'
 158|Industrial Microbes|1|ps,pe|||12||Building Microbe|0|Increase your energy production and your steel production 1 step each.|
 159|Lichen|1|pp|||7|t>=-24|Plant|0|Requires -24°C or warmer. Increase your plant production 1 step.|
 160|Power Supply Consortium|1|1npe_Any|||5||Energy|0|Requires 2 power tags. Decrease any energy production 1 step and increase your own 1 step.|
@@ -174,9 +174,9 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 167|Import of Advanced GHG|3|2ph|||9||Space Earth Event||Increase your heat production 2 steps.|
 168|Windmills|1|pe|||6|o>=7|Building Energy|1|Requires 7% oxygen. Increase your energy production 1 step.|
 169|Tundra Farming|1|2pm,pp,p|||16|t>=-6|Plant|2|Requires -6°C or warmer. Increase your plant production 1 step and your MC production 2 steps. Gain 1 plant.|
-170|Aerobraked Ammonia Asteroid|3|2res(Microbe),pp,3ph|||26||Space Event|0|Add 2 microbes to ANOTHER card. Increase your heat production 3 steps and your plant production 1 step.|
+170|Aerobraked Ammonia Asteroid|3|2ores(Microbe),pp,3ph|||26||Space Event|0|Add 2 microbes to ANOTHER card. Increase your heat production 3 steps and your plant production 1 step.|
 171|Magnetic Field Dome|1|pp,2npe,tr|||5||Building|0|Decrease your energy production 2 steps and increase your plant production 1 step. Raise your terraform rating 1 step.|
-172|Pets|2||||10||Animal Earth|Ref|Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card.|  'holds' => 'Animal'
+172|Pets|2|res||Ref|10||Animal Earth|count(res/2)|Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card.|  'holds' => 'Animal'
 173|Protected Habitats|2||||5|||0|[Effect: ]Opponents may not remove your [plants, animals or microbes]|
 174|Protected Valley|1|2pm,o|||23||Building Plant|0|Increase your MC production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.|
 175|Satellites|1|Ref_pm|||10||Space|0|Increase your MC production 1 step for each space tag you have, including this one.|
@@ -204,7 +204,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 197|Terraforming Ganymede|1|Ref_tr|||33||Space Jovian|2|Raise your TR 1 step for each Jovian tag you have, including this.|
 198|Immigration Shuttles|1|5pm|||31||Space Earth|Ref|Increase your MC production 5 steps. 1 VP for every 3rd city in play.|
 199|Restricted Area|2||2nm:draw||11||Science|0|Place [the restricted area] tile.; Action: Spend 2MC to draw a card.|
-200|Immigrant City|2|||Ref_pm,1npe|13||Building City|0|Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.; Effect: Each time a city tile is placed, including this, increase your MC production 1 step.|
+200|Immigrant City|2|npe,2npm||Ref|13||Building City|0|Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.; Effect: Each time a city tile is placed, including this, increase your MC production 1 step.|
 201|Energy Tapping|1|1npe_Any|||3||Energy|-1|Decrease any energy production 1 step and increase your own 1 step.|
 202|Underground Detonations|2||10nm:2ph||6||Building|0|Action: Spend 10 MC to increase your heat production 2 steps.|
 203|Soletta|1|7ph|||35||Space|0|Increase your heat production 7 steps.|

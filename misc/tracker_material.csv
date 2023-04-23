@@ -72,3 +72,12 @@ tile_2|City
 tile_1|Forest
 #set count=9
 tile_3|Ocean
+
+#hex tiles
+#set create=3
+#set location=limbo
+#set count=0
+#set type=resource
+resource|Resource
+#set type=marker
+marker|Resource

@@ -107,6 +107,12 @@ abstract class PGameXBody extends PGameMachine {
         return $key;
     }
 
+    function createPlayerResource($color) {
+        $token = "resource_${color}";
+        $key = $this->tokens->createTokenAutoInc($token, "miniboard_${color}");
+        return $key;
+    }
+
     function getPlanetMap() {
         $res = [];
         foreach ($this->token_types as $key => $rules) {
@@ -251,6 +257,24 @@ abstract class PGameXBody extends PGameMachine {
         return $value;
     }
 
+    function  getCardsWithResource($par, $cardlike = "card_%") {
+        $tokens = $this->tokens->getTokensOfTypeInLocation("resource", $cardlike);
+        $keys = [];
+        foreach ($tokens as $info) {
+            $card = $info['location'];
+            $holds = $this->getRulesFor($card, 'holds', '');
+            if (!$holds) continue;
+            if ($par && $holds != $par) continue;
+            if (array_key_exists($keys, $card)) {
+                $keys[$card]++;
+            } else {
+                $keys[$card] = 1;
+            }
+        }
+        return $keys;
+    }
+
+
     function queue($color, $type) {
         $this->machine->queue($type, 1, 1, $color, MACHINE_OP_SEQ);
     }
@@ -329,7 +353,7 @@ abstract class PGameXBody extends PGameMachine {
 
         if ($playeffect) {
             $this->debugConsole("-come in play effect $playeffect");
-            $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
+            $this->machine->push($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
         foreach ($tagsarr as $tag) {
             $this->notifyEffect($color, "playTag", "tag$tag");
@@ -528,8 +552,11 @@ abstract class PGameXBody extends PGameMachine {
 
     function arg_operation($op) {
         $type = $op["type"];
-        $opinst = $this->getOperationInstance($type);
-        return $opinst->arg($op);
+        if ($this->isSimpleOperation($type)) {
+            $opinst = $this->getOperationInstance($type);
+            return $opinst->arg($op);
+        }
+        return [];
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -542,8 +569,11 @@ abstract class PGameXBody extends PGameMachine {
 
     public function isVoid($op) {
         $type = $op["type"];
-        $opinst = $this->getOperationInstance($type);
-        return $opinst->isVoid($op);
+        if ($this->isSimpleOperation($type)) {
+            $opinst = $this->getOperationInstance($type);
+            return $opinst->isVoid($op);
+        }
+        return false;
     }
 
     function saction_resolve($type, $args): int {

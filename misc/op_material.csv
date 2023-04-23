@@ -16,10 +16,15 @@ city|Place City Tile|${you} must select a location to place a city, cannot place
 discard|Discard Card from Hand|${you} must select a card to discard
 sell|Discard Card from Hand to gain MC|${you} must select a card to discard to gain 1 MC|
 activate|Activate Card|${you} must select a card to activate
+ores|Add resource to another card|${you} must select a card to add resource/s
+nores|Remove resource from another card (Optional)|${you} must select a card to remove resource/s
+res|Add resource to this card
+nres|Remove resource from this card
 
 #set undo=false
 #set params=
 pass|Pass|${you} must confirm Pass for this generation
+skipsec|Skip Second Action|${you} must confirm skipping second action
 draw|Draw Card in Hand
 
 #set undo=true
@@ -69,8 +74,10 @@ turn|Take a turn
 tr|Increase TR
 research|Research
 counter|Special Counter
-convh|Convert heat into temperature
+convh|Convert heat into temperature|${you} must confirm spent 8 heat to increase temperature by 1 step
 convp|Convert plants into greenery
 finalscoring|Final Scoring
 lastforest|Last Forest
+
+
 

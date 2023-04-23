@@ -5,5 +5,6 @@ deck_corp|Corp Deck|limbo|global|hidden|hidden|
 discard_main|Main Discard|main_area|global|public|public|
 hand|Hand|hand_area|player|public|private|
 tableau|Player Area|tableau_area|player|public|public|
+miniboard|Player Area Mini|tableau_area|player|hidden|public|
 display_main|Display|main_area|global|public|public|
 limbo|Limbo||global|hidden|hidden|

@@ -219,12 +219,13 @@ class OpExpressionRanged extends OpExpression {
             $res = "[$from,]" . $res;
             return $res;
         }
-        if ($count != 1) {
-            $res = $count . $res;
-        }
         if ($optional) {
             $res = "?$res";
         }
+        if ($count != 1) {
+            $res = $count . $res;
+        }
+     
         return $res;
     }
 
@@ -436,6 +437,14 @@ class OpParser {
                 $this->pop();
                 $optional = true;
                 $op = $this->peek();
+
+                if (is_numeric($op)) {
+                    $this->pop();
+                    $to = $op;
+                    $from = $op;
+                    $numeric = true;
+                    $op = $this->peek();
+                }
             }
             if ($op == "^") {
                 $this->pop();
