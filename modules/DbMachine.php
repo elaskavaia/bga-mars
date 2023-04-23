@@ -116,7 +116,15 @@ class DbMachine extends APP_GameClass {
     }
 
     function createOperationSimple(string $type, string $color) {
-        return $this->createOperation($type, 1, 1, 1, $color, MACHINE_OP_RESOLVE_DEFAULT);
+        $expr = OpExpression::parseExpression($type);
+        $from = 1;
+        $to = 1;
+        if ($expr->op=='!') {
+            $from = $expr->from;
+            $to = $expr->to;
+            $type = OpExpression::str($expr->toUnranged());
+        }
+        return $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_RESOLVE_DEFAULT);
     }
 
     function createOperation(

@@ -22,7 +22,7 @@ function getMachine($input) {
 require_once "tests/GameTest.php";
 
  $x=new GameTest();
- $x->testOps();
+ $x->testResolveAcivate();
 
 
 //  $res = OpExpression::parseExpression("call(a),m");

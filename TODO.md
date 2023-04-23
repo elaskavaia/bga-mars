@@ -7,12 +7,10 @@ Random notes on todo items
 
 ## Server
 
-* Awards
-* Milestones
+* Awards - scoring
 * Activate effects
 * Static effects
 * Complex cards
-** Reduce any player effects
 
 ## Client
 

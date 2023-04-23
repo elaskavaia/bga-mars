@@ -303,14 +303,17 @@ abstract class PGameXBody extends PGameMachine {
     function effect_cardInPlay($color, $card_id) {
         $rules = $this->getRulesFor($card_id, '*');
         $ttype = $rules['t']; // type of card
-        $faceup = 1;
+        $state = 1;
         if ($ttype == MA_CARD_TYPE_EVENT) {
-            $faceup = 0;
+            $state = 0;
+        }
+        if (isset($rules['a'])) {
+            $state = 2; // activatable cars
         }
         $this->dbSetTokenLocation(
             $card_id,
             "tableau_${color}",
-            $faceup,
+            $state,
             clienttranslate('${player_name} plays card ${token_name}'),
             [],
             $this->getPlayerIdByColor($color)
@@ -322,9 +325,12 @@ abstract class PGameXBody extends PGameMachine {
                 $this->incTrackerValue($color, "tag$tag");
             }
         }
-        $playeffect = $rules['r'];
-        $this->debugConsole("-come in play effect $playeffect");
-        if ($playeffect) $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
+        $playeffect =  array_get($rules, 'r', '');
+
+        if ($playeffect) {
+            $this->debugConsole("-come in play effect $playeffect");
+            $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE);
+        }
         foreach ($tagsarr as $tag) {
             $this->notifyEffect($color, "playTag", "tag$tag");
         }
@@ -540,7 +546,7 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->isVoid($op);
     }
 
-    function saction_resolve($type, $args):int {
+    function saction_resolve($type, $args): int {
         $opinst = $this->getOperationInstance($type);
         return $opinst->action_resolve($args);
     }

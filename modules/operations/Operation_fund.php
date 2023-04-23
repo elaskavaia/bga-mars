@@ -11,7 +11,7 @@ class Operation_fund extends AbsOperation {
         $marker = $this->game->createPlayerMarker($color);
         $milestone = $this->getCheckedArg('target');
         $cost = $this->getStateArg('cost');
-        $this->game->effect_incCount($color, 'm', $cost);
+        $this->game->effect_incCount($color, 'm', -$cost);
         $no = $this->getPlayerNo();
         $this->game->tokens->setTokenState($milestone, $no);
         $this->game->dbSetTokenLocation($marker, $milestone, 1, clienttranslate('${player_name} funds ${place_name} award'), [],  $this->game->getPlayerIdByColor($color));
@@ -22,8 +22,8 @@ class Operation_fund extends AbsOperation {
         $color = $this->color;
         $map = $this->game->tokens->getTokensOfTypeInLocation("award", null, null);
         $keys = array_keys($map);
-        $claimed = $this->game->tokens->countTokensInLocation("award", null);
-        $costs = [8, 14, 20];
+        $claimed = $this->game->tokens->countTokensInLocation("award%", null);
+        $costs = [8, 14, 20, 0];
         $cost = $costs[$claimed];
         $this->argresult['cost'] = $cost;
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {

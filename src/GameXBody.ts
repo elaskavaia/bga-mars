@@ -42,11 +42,15 @@ class GameXBody extends GameTokens {
 
       // use this to generate some fake parts of card, remove this when use images
       if (displayInfo.mainType == "card") {
+        let rules = displayInfo.r ?? "";
+        if (displayInfo.a) rules+=";a:"+displayInfo.a;
+        if (displayInfo.e) rules+=";e:"+displayInfo.e;
+
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
         div.innerHTML = `
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div>
-        <div class='token_rules'>${displayInfo.r}</div>
+        <div class='token_rules'>${rules}</div>
         <div class='token_descr'>${displayInfo.tooltip}</div>
         `;
         tokenNode.appendChild(div);

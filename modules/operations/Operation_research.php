@@ -9,11 +9,22 @@ class Operation_research extends AbsOperation {
     }
 
     function effect_research() {
-        $this->game->dbResourceInc("tracker_gen",1,clienttranslate('New generation ${counter_value}'));
+        $this->game->dbResourceInc("tracker_gen", 1, clienttranslate('New generation ${counter_value}'));
         $players = $this->game->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
+            // un-pass
             $this->game->dbSetTokenState("tracker_passed_${color}", 0);
+            // untap
+            $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card","tableau_${color}"));
+            foreach ($keys as $cardid) {
+                $rules = $this->game->getRulesFor($cardid, '*');
+                if (isset($rules['a'])) {
+                    $state = 2; // activatable cards
+                    $this->game->dbSetTokenState($cardid, $state);
+                }
+            }
+            // draw
             $this->game->queue($color, "4 draw"); // XXX
         }
     }

@@ -92,4 +92,20 @@ final class GameTest extends TestCase {
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(2, $value);
     }
+
+    public function testResolveAcivate() {
+        $m = $this->game();
+        $m->incTrackerValue(PCOLOR, 'e', 4);
+        $value = $m->getTrackerValue(PCOLOR, 'e');
+        $this->assertEquals(4, $value);
+        $card = 'card_main_101';
+        $m->tokens->moveToken($card,"tableau_".PCOLOR,2);
+        $op = $m->machine->createOperationSimple('activate',PCOLOR);
+        $args = ['target'=>$card,'op_info'=>$op];
+        $count= $m->saction_resolve('activate',$args);
+        $m->st_gameDispatch();
+        $this->assertEquals(1, $count);
+        $value = $m->getTrackerValue(PCOLOR, 's');
+        $this->assertEquals(1, $value);
+    }
 }

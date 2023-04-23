@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Stub class for tokens overriding db function to be in memory
@@ -23,8 +25,8 @@ class TokensInMem extends DbTokens {
         foreach ($values as $row) {
             $rec = static::record($row);
             $key = $rec["key"];
-            if (array_key_exists($key,$this->keyindex)) {
-                throw new Exception("Dupicate key $key in ".toJson($row));
+            if (array_key_exists($key, $this->keyindex)) {
+                throw new Exception("Dupicate key $key in " . toJson($row));
             }
 
             $this->keyindex[$key] = $rec;
@@ -36,5 +38,33 @@ class TokensInMem extends DbTokens {
         self::checkKey($token_key);
         $this->keyindex[$token_key]["state"] = $state;
         return $state;
+    }
+
+    function incTokenState($token_key, $by) {
+        self::checkState($by);
+        self::checkKey($token_key);
+        $this->keyindex[$token_key]["state"] =   $this->keyindex[$token_key]["state"] + $by;
+        return;
+    }
+
+    function moveToken($token_key, $location, $state = 0) {
+        self::checkLocation($location);
+        self::checkState($state, true);
+        self::checkKey($token_key);
+        $this->keyindex[$token_key]["location"] = $location;
+        if ($state !== null) $this->keyindex[$token_key]["state"] = $state;
+    }
+
+    function getTokensOfTypeInLocation($type, $location = null, $state = null, $order_by = null) {
+        $result = [];
+        foreach ($this->keyindex as $key => $rec) {
+
+            if ($type && !startsWith($key, $type)) continue;
+            if ($location && !startsWith($rec['location'], $location)) continue;
+            if ($state !== null && $rec['state'] != $state) continue;
+            $result[$key] = $rec;
+        }
+
+        return $result;
     }
 }

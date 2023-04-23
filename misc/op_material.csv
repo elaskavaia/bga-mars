@@ -15,6 +15,7 @@ forest|Place Forest Tile|${you} must select a location to place an forest tile, 
 city|Place City Tile|${you} must select a location to place a city, cannot place close to other city
 discard|Discard Card from Hand|${you} must select a card to discard
 sell|Discard Card from Hand to gain MC|${you} must select a card to discard to gain 1 MC|
+activate|Activate Card|${you} must select a card to activate
 
 #set undo=false
 #set params=
