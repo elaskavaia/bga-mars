@@ -124,7 +124,7 @@ abstract class PGameMachine extends PGameTokens {
             //     }
             //     continue;
             // }
-            $this->saction_resolve($type, $args);
+            $count = $this->saction_resolve($type, $args);
             // stack operations
             $this->saction_stack($count, $info, $tops);
         }
@@ -132,8 +132,9 @@ abstract class PGameMachine extends PGameTokens {
         $this->gamestate->nextState("next");
     }
 
-    function saction_resolve($type, $args) {
+    function saction_resolve($type, $args): int {
         $this->systemAssertTrue("Not implemented resolve");
+        return 0;
     }
 
     function saction_stack(int $count, array $info, ?array $tops = null) {

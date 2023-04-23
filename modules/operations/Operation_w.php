@@ -14,10 +14,10 @@ class Operation_w extends AbsOperationTile {
         return 3;
     }
 
-    function auto(string $owner, int $inc, array $args = null): bool {
-        if ($args === null) return false; // cannot auto resolve
-        $this->effect_placeTile($args);
-        $this->game->effect_increaseParam($owner, "w", $inc);
-        return true;
+    function effect(string $owner, int $inc): int  {
+        if ($inc != 1) throw new feException("Cannot use counter $inc for this operation");
+        $this->effect_placeTile();
+        $this->game->effect_increaseParam($owner, "w", 1);
+        return 1;
     }
 }

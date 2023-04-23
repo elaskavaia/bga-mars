@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 
 class Operation_convp extends AbsOperation {
-    function auto(string $color, int $inc, array $args = null): bool {
-        if ($args === null) return false; // cannot auto-play
+    function effect(string $color, int $inc): int {
         $this->game->effect_incCount($color, 'p', -8);
         $this->game->push($color, 'forest');
-        return true;
+        return 1;
     }
 
 
-    function argPrimaryDetails(string $color, array $op = null, array &$result = null) {
+    function argPrimaryDetails() {
+        $color = $this->color;
         $heat = $this->game->getTrackerValue($color, 'p');
         $id = $this->game->getTrackerId($color, 'p');
         $keys = [$id];

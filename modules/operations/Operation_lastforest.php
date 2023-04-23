@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 class Operation_lastforest extends AbsOperation {
-    function auto(string $owner, int $inc, array $args = null): bool {
+    function effect(string $owner, int $inc): int  {
         // TODO can they decline?
         $players = $this->game->getPlayersInOrder($this->game->getCurrentStartingPlayer());
         foreach ($players as $player) {
@@ -15,6 +15,6 @@ class Operation_lastforest extends AbsOperation {
             $this->game->machine->put('lastforest');
         }
 
-        return true;
+        return 1;
     }
 }

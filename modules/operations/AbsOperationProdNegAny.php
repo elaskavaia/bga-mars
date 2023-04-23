@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 class AbsOperationIncNegAny extends AbsOperation {
 
-    function argPrimary(string $color, array $op = null, array &$result = null) {
+    function argPrimary() {
         $keys = $this->game->getPlayerColors();
         return $keys;
     }
 
-    function auto(string $owner, int $inc, array $args = null): bool {
-        if ($args === null) return false;
-        $owner = $this->getCheckedArg('player', $args);
+    public function getPrimaryArgType() {
+        return 'player';
+    }
+
+    function effect(string $owner, int $inc): int  {
+        $owner = $this->getCheckedArg('target');
         $opwithoutN = substr($this->mnemonic, 1);
         $this->game->effect_incProduction($owner, $opwithoutN, -$inc);
-        return true;
+        return $inc;
     }
 }

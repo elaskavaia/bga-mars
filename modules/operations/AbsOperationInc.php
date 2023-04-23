@@ -7,9 +7,9 @@ class AbsOperationInc extends AbsOperation {
     function isVoid($op, $args = null): bool {
         return false;
     }
-    
-    function auto(string $owner, int $inc, array $args = null): bool {
+
+    function effect(string $owner, int $inc): int {
         $this->game->effect_incCount($owner, $this->mnemonic, $inc);
-        return true;
+        return $inc;
     }
 }

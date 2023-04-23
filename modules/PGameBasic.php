@@ -340,19 +340,23 @@ abstract class PGameBasic extends Table {
         return $players[$player_id]["player_color"];
     }
 
+    public function getCurrentPlayerId($bReturnNullIfNotLogged = false) {
+        return parent::getCurrentPlayerId($bReturnNullIfNotLogged);
+    }
+
     function getActivePlayerColor() {
         return $this->getPlayerColorById($this->getActivePlayerId());
     }
 
     function isRealPlayer($player_id) {
         $players = $this->loadPlayersBasicInfos();
-        return (isset($players [$player_id]));
+        return (isset($players[$player_id]));
     }
 
     function isZombiePlayer($player_id) {
         $players = $this->loadPlayersBasicInfos();
-        if (isset($players [$player_id])) {
-            if ($players [$player_id] ['player_zombie'] == 1) {
+        if (isset($players[$player_id])) {
+            if ($players[$player_id]['player_zombie'] == 1) {
                 return true;
             }
         }
@@ -361,8 +365,8 @@ abstract class PGameBasic extends Table {
 
     function isPlayerEliminated($player_id) {
         $players = self::loadPlayersBasicInfos();
-        if (isset($players [$player_id])) {
-            return $players [$player_id] ['player_eliminated'] == 1;
+        if (isset($players[$player_id])) {
+            return $players[$player_id]['player_eliminated'] == 1;
         }
         return false;
     }

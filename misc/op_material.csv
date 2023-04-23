@@ -1,33 +1,37 @@
-type|name|params|prompt
+type|name|prompt
 #set id=op_{type}
 #set undo=true
 #set class=
 #set prompt=Hmm
-card|Play Card|target,payment|${you} must select a card to play
-stan|Standard Project|target,payment|${you} must select a basic project to play
-#x|Place Tile|target|${you} must select a location to place tile
-w|Place Ocean Tile|target|${you} must select a location to place an ocean tile
-forest|Place Forest Tile|target|${you} must select a location to place an forest tile, adjucent if possible
-city|Place City Tile|target|${you} must select a location to place a city, cannot place close to other city
-discard|Discard Card from Hand|target|${you} must select a card to discard
-sell|Discard Card from Hand to gain MC|target|${you} must select a card to discard to gain 1 MC|
-#set undo=false
-pass|Pass||
-draw|Draw Card in Hand|auto
-claim|Claim a milestone|target|${you} must select a Milestone to claim
-fund|Fund an award|target|${you} must select an Award to fund
+#set params=target,payment
+card|Play Card|${you} must select a card to play
+stan|Standard Project|${you} must select a basic project to play
+claim|Claim a milestone|${you} must select a Milestone to claim
+fund|Fund an award|${you} must select an Award to fund
 
+#set params=target
+w|Place Ocean Tile|${you} must select a location to place an ocean tile
+forest|Place Forest Tile|${you} must select a location to place an forest tile, adjucent if possible
+city|Place City Tile|${you} must select a location to place a city, cannot place close to other city
+discard|Discard Card from Hand|${you} must select a card to discard
+sell|Discard Card from Hand to gain MC|${you} must select a card to discard to gain 1 MC|
+
+#set undo=false
+#set params=
+pass|Pass|${you} must confirm Pass for this generation
+draw|Draw Card in Hand
+
+#set undo=true
 #set class=AbsOperationIncNegAny
-np_Any|Loose Plant (Any Player or None)|player|${you} must select a player who will loose the resouces (or none)
+np_Any|Loose Plant (Any Player or None)|${you} must select a player who will loose the resouces (or none)
 #set class=AbsOperationProdNegAny
-npm_Any|Loose Megacredit Production (Any Player - Mandatory)|player|${you} must select a player who will loose the production
-npp_Any|Loose Plant Production (Any Player - Mandatory)|player|${you} must select a player who will loose the production
-npe_Any|Loose Energy Production (Any Player - Mandatory)|player|${you} must select a player who will loose the production
+npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+npp_Any|Loose Plant Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+npe_Any|Loose Energy Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 
 #auto-resolve actions
-#set params=
 #set prompt=
-#set undo=true
+#set params=
 #set class=AbsOperationInc
 m|Gain M€
 s|Gain Steel
@@ -56,8 +60,6 @@ npe|Decrease Energy Production
 nph|Decrease Heat Production
 nps|Decrease Steel Production
 npu|Decrease Titanium Production
-
-
 
 #set class=
 o|Increase Oxigen Level

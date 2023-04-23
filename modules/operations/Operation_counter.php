@@ -8,7 +8,7 @@ class Operation_counter extends AbsOperation {
         return false;
     }
 
-    function auto(string $owner, int $inc, array $args = null): bool {
+    function effect(string $owner, int $inc): int {
         // counter function, followed by expression
         // result of experssion is set as counter for top rank operation
         $par = $this->params ?? '';
@@ -20,6 +20,6 @@ class Operation_counter extends AbsOperation {
         $this->game->debugConsole("-evaluted to $count");
         $tops = $this->game->machine->getTopOperations();
         $this->game->machine->setCount($tops, $count);
-        return true;
+        return 1;
     }
 }

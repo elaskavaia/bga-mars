@@ -36,14 +36,16 @@
   define("MA_CARD_TYPE_AWARD", 8);
 
   // error codes
+
+  define("MA_ERR_COST", 1);
+  define("MA_ERR_PREREQ", 2);
+  define("MA_ERR_MANDATORYEFFECT", 3);
   define("MA_ERR_OCCUPIED", 7);
   define("MA_ERR_RESERVED", 6);
   define("MA_ERR_NOTRESERVED", 5);
   define("MA_ERR_CITYPLACEMENT", 8);
   define("MA_ERR_FORESTPLACEMENT", 9);
-  define("MA_ERR_MC", 1);
-  define("MA_ERR_PREREQ", 2);
-  define("MA_ERR_MANDATORYEFFECT", 3);
+  define("MA_ERR_MAXREACHED", 10);
 
   // tile types
   define("MA_TILE_FOREST", 1);
@@ -283,7 +285,7 @@ $this->token_types = [
   'num' => 19,
   'name' => clienttranslate("Imported Hydrogen"),
   't' => 3,
-  'r' => 'Ref_p,w',
+  'r' => '3p/3 res(Microbe)/3 res(Animal);w',
   'cost' => 16,
   'tags' => 'Space Earth Event',
   'vp' => 0,
@@ -345,9 +347,9 @@ $this->token_types = [
   'cost' => 14,
   'pre' => 'o>=11',
   'tags' => 'Animal',
-  'vp' => 'Ref',
+  'vp' => 'resCard',
   'text' => clienttranslate("Requires 11% oxygen. 1 VP per animal on this card.; Action: Remove 1 animal from any card and add it to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_25' => [  //
   'location' => 'deck_main',
@@ -395,7 +397,7 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 'Ref',
   'text' => clienttranslate("1 VP for each fighter resource on this card.; Action: Spend 1 titanium to add 1 fighter resource to this card."),
-    'holds' => 'Fighters',
+    'holds' => 'Fighter',
 ],
  'card_main_29' => [  //
   'location' => 'deck_main',
@@ -456,7 +458,7 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'text' => clienttranslate("Action: Add 1 microbe to this card, or remove 2 microbe from this card to raise oxygen level 1 step."),
-    'holds' => 'Microbes',
+    'holds' => 'Microbe',
 ],
  'card_main_34' => [  //
   'location' => 'deck_main',
@@ -470,7 +472,7 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'text' => clienttranslate("Requires 4% oxygen.; Action: Add 1 microbe to this card, or remove 2 microbes to raise temperature 1 step."),
-    'holds' => 'Microbes',
+    'holds' => 'Microbe',
 ],
  'card_main_35' => [  //
   'location' => 'deck_main',
@@ -483,7 +485,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 4% oxygen. 1 VP per 2 microbes on this card.; Action: Remove 1 microbe from any card to add 1 to this card."),
-    'holds' => 'Microbes',
+    'holds' => 'Microbe',
 ],
  'card_main_36' => [  //
   'location' => 'deck_main',
@@ -654,7 +656,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 'Ref',
   'text' => clienttranslate("1 VP per 4 microbes on this card.; Action: Add 1 microbe to this card."),
-    'holds' => 'Microbes',
+    'holds' => 'Microbe',
 ],
  'card_main_50' => [  //
   'location' => 'deck_main',
@@ -691,7 +693,7 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 2°C or warmer. Decrease any plant production 1 step. 1 VP for each animal on this card.; Action: Add 1 animal to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_53' => [  //
   'location' => 'deck_main',
@@ -717,7 +719,7 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 6% oxygen. Decrease any plant production 1 step. 1 VP per 2 animals on this card.; Action: Add 1 animal to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_55' => [  //
   'location' => 'deck_main',
@@ -934,7 +936,7 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 13% oxygen. Decrease any plant production 2 steps. 1 VP for each animal on this card; Action: Add an animal to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_73' => [  //
   'location' => 'deck_main',
@@ -1602,7 +1604,7 @@ $this->token_types = [
   'tags' => 'Plant Animal',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.; Effect: When you play an animal or a plant tag (including these 2), add an animal to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_129' => [  //
   'location' => 'deck_main',
@@ -1640,7 +1642,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 3# oxygen. 1 VP per 3 microbes on this card.; Effect: When you play an animal, plant, or microbe tag, including this, add a microbe to this card."),
-    'holds' => 'Microbes',
+    'holds' => 'Microbe',
 ],
  'card_main_132' => [  //
   'location' => 'deck_main',
@@ -1837,7 +1839,7 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 8% oxygen. Add 1 animal to this card. Decrease any plant production 1 step. 1 VP per 2 animals on this card.; Effect: When you place a greenery tile, add an animal to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_148' => [  //
   'location' => 'deck_main',
@@ -1955,7 +1957,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'text' => clienttranslate("Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step."),
-    'holds' => 'Microbes',
+    'holds' => 'Microbe',
 ],
  'card_main_158' => [  //
   'location' => 'deck_main',
@@ -2109,7 +2111,7 @@ $this->token_types = [
   'num' => 170,
   'name' => clienttranslate("Aerobraked Ammonia Asteroid"),
   't' => 3,
-  'r' => 'pp,3ph',
+  'r' => '2 res(Microbe),pp,3ph',
   'cost' => 26,
   'tags' => 'Space Event',
   'vp' => 0,
@@ -2137,7 +2139,7 @@ $this->token_types = [
   'tags' => 'Animal Earth',
   'vp' => 'Ref',
   'text' => clienttranslate("Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_173' => [  //
   'location' => 'deck_main',
@@ -2285,7 +2287,7 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'Ref',
   'text' => clienttranslate("Requires 9% oxygen. Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card.; Action: Add 1 animal to this card."),
-    'holds' => 'Animals',
+    'holds' => 'Animal',
 ],
  'card_main_185' => [  //
   'location' => 'deck_main',
@@ -2827,56 +2829,69 @@ $this->token_types = [
  'op_card' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a card to play',
+  'params' => 'target,payment',
   'type' => 'card',
   'name' => clienttranslate("Play Card"),
-  'params' => 'target,payment',
 ],
  'op_stan' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a basic project to play',
+  'params' => 'target,payment',
   'type' => 'stan',
   'name' => clienttranslate("Standard Project"),
-  'params' => 'target,payment',
 ],
-// #x|Place Tile|target|${you} must select a location to place tile
+ 'op_claim' => [  //
+  'undo' => 'true',
+  'prompt' => '${you} must select a Milestone to claim',
+  'params' => 'target,payment',
+  'type' => 'claim',
+  'name' => clienttranslate("Claim a milestone"),
+],
+ 'op_fund' => [  //
+  'undo' => 'true',
+  'prompt' => '${you} must select an Award to fund',
+  'params' => 'target,payment',
+  'type' => 'fund',
+  'name' => clienttranslate("Fund an award"),
+],
  'op_w' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a location to place an ocean tile',
+  'params' => 'target',
   'type' => 'w',
   'name' => clienttranslate("Place Ocean Tile"),
-  'params' => 'target',
 ],
  'op_forest' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a location to place an forest tile, adjucent if possible',
+  'params' => 'target',
   'type' => 'forest',
   'name' => clienttranslate("Place Forest Tile"),
-  'params' => 'target',
 ],
  'op_city' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a location to place a city, cannot place close to other city',
+  'params' => 'target',
   'type' => 'city',
   'name' => clienttranslate("Place City Tile"),
-  'params' => 'target',
 ],
  'op_discard' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a card to discard',
+  'params' => 'target',
   'type' => 'discard',
   'name' => clienttranslate("Discard Card from Hand"),
-  'params' => 'target',
 ],
  'op_sell' => [  //
   'undo' => 'true',
   'prompt' => '${you} must select a card to discard to gain 1 MC|',
+  'params' => 'target',
   'type' => 'sell',
   'name' => clienttranslate("Discard Card from Hand to gain MC"),
-  'params' => 'target',
 ],
  'op_pass' => [  //
   'undo' => 'false',
-  'prompt' => 'Hmm',
+  'prompt' => '${you} must confirm Pass for this generation',
   'type' => 'pass',
   'name' => clienttranslate("Pass"),
 ],
@@ -2885,53 +2900,34 @@ $this->token_types = [
   'prompt' => 'Hmm',
   'type' => 'draw',
   'name' => clienttranslate("Draw Card in Hand"),
-  'params' => 'auto',
-],
- 'op_claim' => [  //
-  'undo' => 'false',
-  'prompt' => '${you} must select a Milestone to claim',
-  'type' => 'claim',
-  'name' => clienttranslate("Claim a milestone"),
-  'params' => 'target',
-],
- 'op_fund' => [  //
-  'undo' => 'false',
-  'prompt' => '${you} must select an Award to fund',
-  'type' => 'fund',
-  'name' => clienttranslate("Fund an award"),
-  'params' => 'target',
 ],
  'op_np_Any' => [  //
-  'undo' => 'false',
+  'undo' => 'true',
   'class' => 'AbsOperationIncNegAny',
   'prompt' => '${you} must select a player who will loose the resouces (or none)',
   'type' => 'np_Any',
   'name' => clienttranslate("Loose Plant (Any Player or None)"),
-  'params' => 'player',
 ],
  'op_npm_Any' => [  //
-  'undo' => 'false',
+  'undo' => 'true',
   'class' => 'AbsOperationProdNegAny',
   'prompt' => '${you} must select a player who will loose the production',
   'type' => 'npm_Any',
   'name' => clienttranslate("Loose Megacredit Production (Any Player - Mandatory)"),
-  'params' => 'player',
 ],
  'op_npp_Any' => [  //
-  'undo' => 'false',
+  'undo' => 'true',
   'class' => 'AbsOperationProdNegAny',
   'prompt' => '${you} must select a player who will loose the production',
   'type' => 'npp_Any',
   'name' => clienttranslate("Loose Plant Production (Any Player - Mandatory)"),
-  'params' => 'player',
 ],
  'op_npe_Any' => [  //
-  'undo' => 'false',
+  'undo' => 'true',
   'class' => 'AbsOperationProdNegAny',
   'prompt' => '${you} must select a player who will loose the production',
   'type' => 'npe_Any',
   'name' => clienttranslate("Loose Energy Production (Any Player - Mandatory)"),
-  'params' => 'player',
 ],
 // #auto-resolve actions
  'op_m' => [  //

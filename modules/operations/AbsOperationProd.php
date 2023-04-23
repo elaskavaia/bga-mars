@@ -7,8 +7,8 @@ class AbsOperationProd extends AbsOperation {
         return false;
     }
     
-    function auto(string $owner, int $inc, array $args = null): bool {
+    function effect(string $owner, int $inc): int  {
         $this->game->effect_incProduction($owner, $this->mnemonic, $inc);
-        return true;
+        return $inc;
     }
 }

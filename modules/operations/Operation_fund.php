@@ -3,20 +3,36 @@
 declare(strict_types=1);
 
 
+// Fund an award
 class Operation_fund extends AbsOperation {
-    // XXX
-    function auto(string $color, int $inc, array $args = null): bool {
-        if ($args == null) return false;
+
+    function effect(string $color, int $inc): int {
+        if (!$this->canResolveAutomatically()) return false;
         $marker = $this->game->createPlayerMarker($color);
-        $milestone = $this->getStateArgsFromUserArgs('target', $args);
-        $this->game->effect_incCount($color, 'm', -8);
-        $this->game->dbSetTokenLocation($marker, $milestone, 1, clienttranslate('${player_name} claims milestone ${token_name}'), [],  $this->game->getPlayerIdByColor($color));
-        return true;
+        $milestone = $this->getCheckedArg('target');
+        $cost = $this->getStateArg('cost');
+        $this->game->effect_incCount($color, 'm', $cost);
+        $no = $this->getPlayerNo();
+        $this->game->tokens->setTokenState($milestone, $no);
+        $this->game->dbSetTokenLocation($marker, $milestone, 1, clienttranslate('${player_name} funds ${place_name} award'), [],  $this->game->getPlayerIdByColor($color));
+        return 1;
     }
 
-    function argPrimary(string $color, array $op = null, array &$result = null) {
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("milestone", null, 0));
-        if (count($keys) <= 2) $keys = []; // 3 already claimed
-        return $keys;
+    function argPrimaryDetails() {
+        $color = $this->color;
+        $map = $this->game->tokens->getTokensOfTypeInLocation("award", null, null);
+        $keys = array_keys($map);
+        $claimed = $this->game->tokens->countTokensInLocation("award", null);
+        $costs = [8, 14, 20];
+        $cost = $costs[$claimed];
+        $this->argresult['cost'] = $cost;
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {
+            if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
+
+            if (!$this->game->canAfford($color, $tokenId, $cost)) return MA_ERR_COST;
+            $info = $map[$tokenId];
+            if ($info['state'] > 0) return MA_ERR_OCCUPIED;
+            return 0;
+        });
     }
 }

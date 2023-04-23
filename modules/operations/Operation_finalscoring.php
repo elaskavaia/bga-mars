@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 class Operation_finalscoring extends AbsOperation {
-    function auto(string $owner, int $inc, array $args = null): bool {
+    function effect(string $owner, int $inc): int  {
         // TODO
 
         $this->game->debugConsole("-- final scoring --");
@@ -33,7 +33,7 @@ class Operation_finalscoring extends AbsOperation {
         foreach ($players as $player) {
             $this->scoreCards($player["player_color"]);
         }
-        return true;
+        return 1;
     }
     function scoreMap(string $owner) {
     }

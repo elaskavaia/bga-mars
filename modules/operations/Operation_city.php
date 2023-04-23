@@ -14,11 +14,10 @@ class Operation_city extends AbsOperationTile {
         return 2;
     }
 
-    function auto(string $owner, int $inc, array $args = null): bool {
-        if ($args === null) return false; // cannot auto resolve
-        $this->effect_placeTile($args);
+    function effect(string $owner, int $inc): int  {
+        $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'city');
         $this->game->incTrackerValue($owner, 'land');
-        return true;
+        return 1;
     }
 }

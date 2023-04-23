@@ -15,11 +15,10 @@ class Operation_forest extends AbsOperationTile {
         return 1;
     }
 
-    function auto(string $owner, int $inc, array $args = null): bool {
-        if ($args === null) return false; // cannot auto resolve
-        $this->effect_placeTile($args);
+    function effect(string $owner, int $inc): int  {
+        $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'land');
         $this->game->effect_increaseParam($owner, "o", $inc);
-        return true;
+        return 1;
     }
 }

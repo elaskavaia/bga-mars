@@ -1402,6 +1402,7 @@ var GameXBody = /** @class */ (function (_super) {
             'tracker_o': 'oxygen_map'
         };
         _super.prototype.setup.call(this, gamedatas);
+        // hexes are not moved so manually connect
         this.connectClass("hex", "onclick", "onToken");
         document.querySelectorAll(".hex").forEach(function (node) {
             _this.updateTooltip(node.id);
@@ -1421,8 +1422,8 @@ var GameXBody = /** @class */ (function (_super) {
                 div.innerHTML = "\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div>\n        <div class='token_rules'>").concat(displayInfo.r, "</div>\n        <div class='token_descr'>").concat(displayInfo.tooltip, "</div>\n        ");
                 tokenNode.appendChild(div);
                 tokenNode.setAttribute("data-card-type", displayInfo.t);
-                this.connect(tokenNode, "onclick", "onToken");
             }
+            this.connect(tokenNode, "onclick", "onToken");
         }
     };
     GameXBody.prototype.renderSpecificToken = function (tokenNode) {
@@ -1627,6 +1628,9 @@ var GameXBody = /** @class */ (function (_super) {
             var id = this.clientStateArgs.ops[this.clientStateArgs.index].target;
             // get cost
             var cost_1 = this.getRulesFor(id, "cost");
+            var overridecost = opInfo.args.cost;
+            if (overridecost !== undefined)
+                cost_1 = overridecost;
             // check if can be auto
             var auto = true;
             // create payment prompt
@@ -1639,7 +1643,7 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
                 });
             }, function (id) {
-                // onToken
+                // onToken as payment - remove its not a thing
                 _this.clientStateArgs.ops[_this.clientStateArgs.index][param_name] = id;
                 _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
             });

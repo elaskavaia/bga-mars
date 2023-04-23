@@ -29,6 +29,12 @@
   background-color: lightyellow;
 }
 
+
+/* effects face down */
+.tableau .card[data-state="0"] {
+   filter: grayscale(1);
+}
+
 .token_cost {
   position: absolute;
   top:0%;

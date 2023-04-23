@@ -134,9 +134,7 @@ abstract class PGameXBody extends PGameMachine {
         return $builder;
     }
 
-    function canAfford($owner, $tokenid) {
-        $cost = $this->getRulesFor($tokenid, "cost");
-
+    function canAfford($owner, $tokenid, $cost) {
         // badges and resources XXX
         try {
             $this->effect_incCount($owner, "m", -$cost, ['onlyCheck' => true]);
@@ -150,23 +148,24 @@ abstract class PGameXBody extends PGameMachine {
         if (!$owner) {
             $owner == $this->getActivePlayerColor();
         }
-        if (!$this->canAfford($owner, $tokenid)) {
-            return 1;
+        $cost = $this->getRulesFor($tokenid, "cost");
+        if (!$this->canAfford($owner, $tokenid, $cost)) {
+            return MA_ERR_COST;
         }
         // check precond
         $cond = $this->getRulesFor($tokenid, "pre");
         if ($cond) {
             $valid = $this->evaluateExpression($cond, $owner);
             if (!$valid) {
-                return 2; // fail precond check
+                return MA_ERR_PREREQ; // fail prereq check
             }
         }
         // check immediate effect affordability
 
-        // special project XXX
+        // special project sell XXX
         if (startsWith($tokenid, "card_stanproj_1")) {
-            if ($this->arg_operation(["type" => "sell", "owner" => $owner], true)["void"]) {
-                return 3;
+            if ($this->isVoid(["type" => "sell", "owner" => $owner])) {
+                return MA_ERR_MANDATORYEFFECT;
             }
         }
         // TODO check rule affordability
@@ -177,6 +176,9 @@ abstract class PGameXBody extends PGameMachine {
     function evaluateExpression($cond, $owner, $context = null) {
         $expr = MathExpression::parse($cond);
         $mapper = function ($x) use ($owner) {
+            if ($x == 'chand') {
+                return $this->tokens->countTokensInLocation("hand_$owner");
+            }
             $create = $this->getRulesFor("tracker_$x", "create", null);
             if ($create === null) {
                 throw new feException("Cannot evalute $x");
@@ -538,7 +540,7 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->isVoid($op);
     }
 
-    function saction_resolve($type, $args) {
+    function saction_resolve($type, $args):int {
         $opinst = $this->getOperationInstance($type);
         return $opinst->action_resolve($args);
     }
@@ -566,8 +568,10 @@ abstract class PGameXBody extends PGameMachine {
             "operation_name" => $this->getOperationName($type),
         ]);
         $opinst = $this->getOperationInstance($type);
-        if ($opinst->auto($op["owner"], $op["count"])) {
-            $this->saction_stack($op["count"], $op);
+        $opinst->setOpInfo($op);
+        $count = $op["count"];
+        if ($opinst->auto($op["owner"], $count)) {
+            $this->saction_stack($count, $op);
             return true;
         }
         return false;

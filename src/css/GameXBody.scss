@@ -98,9 +98,15 @@
   font-size: calc(var(--stan-width) * 0.07);
   margin-bottom:calc(var(--stan-height) * 0.1); ;
 }
-#display_main .milestone,#display_main .award  {
+.milestone, .award  {
   width: var(--stan-width);
   height: var(--stan-height);
+  outline: 1px dashed green;
+}
+.token.marker {
+  width: 10px;
+  height: 10px;
+  outline: 1px dashed black;
 }
 
 #main_area .card .token_descr{

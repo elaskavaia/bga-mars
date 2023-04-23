@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 class Operation_turn extends AbsOperation {
-    function auto(string $owner, int $inc, array $args = null): bool {
+    function effect(string $owner, int $inc): int  {
         $this->game->queue($owner, "card/stan/convh/convp/claim/fund/pass");
-        return true;
+        return 1;
     }
 }

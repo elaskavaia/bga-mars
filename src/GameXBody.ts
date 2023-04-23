@@ -20,6 +20,7 @@ class GameXBody extends GameTokens {
     }
 
     super.setup(gamedatas);
+    // hexes are not moved so manually connect
     this.connectClass("hex", "onclick", "onToken");
 
     document.querySelectorAll(".hex").forEach((node) => {
@@ -52,8 +53,9 @@ class GameXBody extends GameTokens {
 
         tokenNode.setAttribute("data-card-type", displayInfo.t);
 
-        this.connect(tokenNode, "onclick", "onToken");
+     
       }
+      this.connect(tokenNode, "onclick", "onToken");
     }
   }
 
@@ -268,7 +270,9 @@ class GameXBody extends GameTokens {
       // get id of the selected card
       const id = this.clientStateArgs.ops[this.clientStateArgs.index].target;
       // get cost
-      const cost = this.getRulesFor(id, "cost");
+      let cost = this.getRulesFor(id, "cost");
+      const overridecost = opInfo.args.cost;
+      if (overridecost!==undefined) cost = overridecost;
       // check if can be auto
       const auto = true;
       // create payment prompt
@@ -285,7 +289,7 @@ class GameXBody extends GameTokens {
           });
         },
         (id: string) => {
-          // onToken
+          // onToken as payment - remove its not a thing
           this.clientStateArgs.ops[this.clientStateArgs.index][param_name] = id;
           this.ajaxuseraction(this.clientStateArgs.call, this.clientStateArgs);
         }
