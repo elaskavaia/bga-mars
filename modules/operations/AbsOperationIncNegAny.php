@@ -6,7 +6,7 @@ class AbsOperationIncNegAny extends AbsOperation {
 
     function argPrimary() {
         $keys = $this->game->getPlayerColors();
-        $keys [] = 'none';
+        $keys[] = 'none';
         return $keys;
     }
 
@@ -14,9 +14,14 @@ class AbsOperationIncNegAny extends AbsOperation {
         return 'player';
     }
 
-    function effect(string $owner, int $inc): int  {
+    function canResolveAutomatically() {
+        return false;
+    }
+
+
+    function effect(string $owner, int $inc): int {
         $owner = $this->getCheckedArg('target');
-        if ($owner == 'none') return true; // skipped, this is ok for resources
+        if ($owner == 'none') return $inc; // skipped, this is ok for resources
         $opwithoutN = substr($this->mnemonic, 1);
         $this->game->effect_incCount($owner, $opwithoutN, -$inc, ['ifpossible' => true]);
         return $inc;

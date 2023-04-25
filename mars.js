@@ -1662,7 +1662,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         var opInfo = this.gamedatas.gamestate.args.operations[opId];
         var rules = this.getOperationRules(opInfo);
-        if (rules && rules.params != "target") {
+        if (rules && rules.params && rules.params != "target") {
             // more params
             var params = rules.params.split(",");
             var nextparam = params[1];

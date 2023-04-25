@@ -16,6 +16,7 @@ class Operation_nores extends Operation_res {
             return 0;
         });
     }
+
     function arg() {
         $result = parent::arg();
         $par = $this->params ?? 'Unknown';

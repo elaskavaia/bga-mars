@@ -291,7 +291,7 @@ class GameXBody extends GameTokens {
   onSelectTarget(opId: number, target: string) {
     const opInfo = this.gamedatas.gamestate.args.operations[opId];
     const rules = this.getOperationRules(opInfo);
-    if (rules && rules.params != "target") {
+    if (rules && rules.params && rules.params != "target") {
       // more params
       const params = rules.params.split(",");
       const nextparam = params[1];

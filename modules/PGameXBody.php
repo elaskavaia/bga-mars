@@ -98,6 +98,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->push($color, $type);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
+    function debug_money() {
+        $color = $this->getCurrentPlayerColor();
+        $this->effect_incCount($color,'m',40);
+    }
 
     function debug_opc($type) {
         $color = $this->getCurrentPlayerColor();

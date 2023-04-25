@@ -104,7 +104,8 @@ abstract class AbsOperation {
 
     protected function getCheckedArg($key) {
         $args = $this->user_args;
-        $this->game->systemAssertTrue("Missing user args", $args);
+        $type = $this->mnemonic;
+        $this->game->systemAssertTrue("Missing user args for $type", $args);
         $possible_targets = $this->getStateArg($key);
         if (array_key_exists($key, $args)) {
             $target = $args[$key];

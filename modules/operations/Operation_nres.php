@@ -20,7 +20,7 @@ class Operation_nres extends Operation_res {
         });
     }
 
-    function isAutomatic() {
+    function   canResolveAutomatically() {
         return !$this->isVoid();
     }
 
@@ -33,7 +33,7 @@ class Operation_nres extends Operation_res {
         $holds = $this->game->getRulesFor($card, 'holds', '');
         if (!$holds) throw new feException("Card '$card' cannot hold resources");
 
-        $resources = $this->game->tokens->getTokensOfTypeInLocation("resource",$card);
+        $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
         $num = $inc;
         foreach ($resources as $key => $info) {
             $num--;
