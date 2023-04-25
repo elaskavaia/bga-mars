@@ -88,7 +88,7 @@ class DbMachine extends APP_GameClass {
     }
 
     function put($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "") {
-        $rank = 1;//$this->getExtremeRank(false);
+        $rank = 1; //$this->getExtremeRank(false);
         $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data);
         return $this->insertOp($rank, $op);
     }
@@ -119,7 +119,7 @@ class DbMachine extends APP_GameClass {
         $expr = OpExpression::parseExpression($type);
         $from = 1;
         $to = 1;
-        if ($expr->op=='!') {
+        if ($expr->op == '!') {
             $from = $expr->from;
             $to = $expr->to;
             $type = OpExpression::str($expr->toUnranged());
@@ -191,7 +191,7 @@ class DbMachine extends APP_GameClass {
 
     final function checkInt($key) {
         if ($key === null || $key === false) {
-            throw new feException("must be integer number");
+            throw new feException("must be integer number but was null/false");
         }
         if (is_numeric($key)) {
             return (int) $key;
@@ -314,6 +314,13 @@ class DbMachine extends APP_GameClass {
         return is_flag_set($this->getFlags($resolve), MACHINE_FLAG_UNIQUE);
     }
 
+    public function isInf($info) {
+        if (is_array($info)) {
+            $info = $info["count"];
+        }
+        return $info < 0;
+    }
+
     public function isSharedCounter($resolve) {
         return is_flag_set($this->getFlags($resolve), MACHINE_FLAG_SHARED_COUNTER);
     }
@@ -355,6 +362,10 @@ class DbMachine extends APP_GameClass {
     }
 
     function info($op) {
+        if (is_array($op) && array_get($op,'id')>0) {
+            return $op;
+        } 
+
         $arr = $this->infos($op);
         if (count($arr) == 0) {
             return null;
@@ -386,7 +397,7 @@ class DbMachine extends APP_GameClass {
         return $result;
     }
 
-    function interrupt($from = 1, $count = 1) {
+    function interrupt($from = 0, $count = 1) {
         $set = $this->getUpdateQuery();
         $this->DBQuery("$set rank = rank + $count WHERE rank >= $from");
     }
@@ -395,7 +406,7 @@ class DbMachine extends APP_GameClass {
         $top = $this->getTopRank();
         if ($top > 1) {
             $set = $this->getUpdateQuery();
-            $this->DBQuery("$set rank = rank - $top WHERE rank >= $top");
+            $this->DBQuery("$set rank = rank - $top + 1 WHERE rank >= $top");
         }
     }
 
@@ -485,6 +496,10 @@ class DbMachine extends APP_GameClass {
         $this->DBQuery("$set rank = $rank WHERE $ids");
     }
 
+    function clear() {
+        $set = $this->getUpdateQuery();
+        $this->DBQuery("$set rank = -1 WHERE 1");
+    }
 
     public function validateOptional($list) {
         $sel = $this->getSelectQuery();
@@ -591,7 +606,7 @@ class DbMachine extends APP_GameClass {
             case "+":
             case ",":
             case ":":
-                $this->interrupt($rank, 1);
+                $this->interrupt($rank);
                 if ($mcount == 0) {
                     $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
                 } else {
@@ -609,7 +624,7 @@ class DbMachine extends APP_GameClass {
                 break;
             case "^":
             case "/":
-                $this->interrupt($rank, 1);
+                $this->interrupt($rank);
                 foreach ($expr->args as $subrule) {
                     $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent, $pool);
                 }
@@ -621,25 +636,21 @@ class DbMachine extends APP_GameClass {
         return;
     }
 
-    function resolve($op_info, $count = 1) {
+    function resolve($op_info, $count = 1, ?array $tops = null) {
         $info = $this->info($op_info);
-        $operation_id = $info["id"];
-
+        
         if ($this->isSharedCounter($info)) {
-            $this->subtract($this->getTopOperations(), 1);
-            $count = 1;
+            if ($tops == null) $tops = $this->getTopOperations();
+            if ($count === null) $count = 1;
+            $this->subtract($tops, $count);
         } else {
-            if ($count === null) {
-                $count = $info["count"];
-                if ($count < 0) {
-                    $count = 1;
-                }
-            }
+            if ($count === null) $count=$info['count'];
+            if ($count == -1) $count = 1;
             $this->subtract($info, $count);
         }
 
-        if ($this->isUnique($info) &&  $info["count"] != -1) {
-            $this->hide($operation_id);
+        if ($this->isUnique($info) && !$this->isInf($info)) {
+            $this->hide($info);
         }
         $this->prune();
         $this->normalize();
@@ -650,7 +661,9 @@ class DbMachine extends APP_GameClass {
     /** Debug functions */
 
     function gettablearr() {
-        return [];
+        $sel = $this->getSelectQuery();
+        $arr = $this->getCollectionFromDB("$sel WHERE rank >=0");
+        return array_values( $arr);
     }
 
     function getrowexpr($row) {

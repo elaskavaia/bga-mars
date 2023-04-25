@@ -110,9 +110,6 @@ abstract class PGameXBody extends PGameMachine {
         return $inst->arg();
     }
 
-    function debug_dumpMachine() {
-        $this->debugConsole("", $this->machine->gettableexpr());
-    }
 
     function createPlayerMarker($color) {
         $token = "marker_${color}";
@@ -609,6 +606,8 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->action_resolve($args);
     }
 
+
+
     function executeImmediately($color, $type, $count) {
         // this does not go on stack - so no stack clean up
         $opinst = $this->getOperationInstanceFromType($type, $color, $count);
@@ -633,8 +632,9 @@ abstract class PGameXBody extends PGameMachine {
         ]);
         $opinst = $this->getOperationInstance($op);
         $count = $op["count"];
+        $tops = $this->machine->getTopOperations();
         if ($opinst->auto($op["owner"], $count)) {
-            $this->saction_stack($count, $op);
+            $this->saction_stack($count, $op, $tops);
             return true;
         }
         return false;

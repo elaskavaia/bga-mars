@@ -94,7 +94,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 87|Grass|1|pp,3p|||11|t>=-16|Plant|0|Requires -16°C or warmer. Increase your plant production 1 step. Gain 3 plants.|
 88|Heather|1|pp,p|||6|t>=-14|Plant|0|Requires -14°C or warmer. Increase your plant production 1 step. Gain 1 plant.|
 89|Peroxide Power|1|1npm,2pe|||7||Building Energy|0|Decrease your MC production 1 step and increase your energy production 2 steps.|
-90|Research|1||||11||Science|1|Counts as playing 2 science cards. Draw 2 cards.|
+90|Research|1|2draw|||11||Science Science|1|Counts as playing 2 science cards. Draw 2 cards.|
 91|Gene Repair|1|2pm|||12||Science|2|Requires 3 science tags. Increase your MC production 2 steps.|
 92|Io Mining Industries|1|2pm,2pu|||41||Space Jovian|Ref|Increase your titanium production 2 steps and your MC production 2 steps. 1 VP per Jovian tag you have.|
 93|Bushes|1|2pp,2p|||10|t>=-10|Plant|0|Requires -10°C or warmer. Increase your plant production 2 steps. Gain 2 plants.|
@@ -128,7 +128,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 121|Sabotage|3|Ref_m,Ref_s,Ref_u|||1||Event|0|Remove up to 3 titanium from any player, or 4 steel, or 7 MC.|
 122|Moss|1|pp,1np|||4|w>=3|Plant|0|Requires 3 ocean tiles and that you lose 1 plant. Increase your plant production 1 step.|
 123|Industrial Center|2||7nm:ps||4||Building|0|Place [the Industrial Center] tile ADJACENT TO A CITY TILE.; Action: Spend 7 MC to increase your steel production 1 step.|
-124|Hired Raiders|3|Ref_m,Ref_s|||1||Event|0|Steal up to 2 steel, or 3MC from any player.|
+124|Hired Raiders|3|(2ns_Any:2s)/(3nm_Any:3m)|||1||Event|0|Steal up to 2 steel, or 3MC from any player.|
 125|Hackers|1|2npm_Any,1npe,2pm|||3|||-1|Decrease your energy production 1 step and any MC production 2 steps. Increase your MC production 2 steps.|
 126|GHG Factories|1|1npe,4ph|||11||Building|0|Decrease your energy production 1 step and increase your heat production 4 steps.|
 127|Subterranean Reservoir|3|w|||11||Event||Place 1 ocean tile.|
@@ -165,7 +165,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 158|Industrial Microbes|1|ps,pe|||12||Building Microbe|0|Increase your energy production and your steel production 1 step each.|
 159|Lichen|1|pp|||7|t>=-24|Plant|0|Requires -24°C or warmer. Increase your plant production 1 step.|
 160|Power Supply Consortium|1|1npe_Any|||5||Energy|0|Requires 2 power tags. Decrease any energy production 1 step and increase your own 1 step.|
-161|Convoy From Europa|3|w|||15||Space Event|0|Place 1 ocean tile and draw 1 card.|
+161|Convoy From Europa|3|w,draw|||15||Space Event|0|Place 1 ocean tile and draw 1 card.|
 162|Imported GHG|3|ph,3h|||7||Space Earth Event|0|Increase your heat production 1 step and gain 3 hear.|
 163|Imported Nitrogen|3|4p,tr|||23||Space Earth Event|0|Raise your TR 1 step and gain 4 plants. Add 3 microbes to ANOTHER card and 2 animals to ANOTHER card.|
 164|Micro-Mills|1|ph|||3|||0|Increase your heat production 1 step.|
@@ -200,16 +200,16 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 193|Plantation|1|o|||15||Plant|0|Requires 2 science tags. Place a greenery tile and raise oxygen 1 step.|
 194|Power Infrastructure|2||[0,]ne:m||4||Building Energy|0|Action: Spend any amount of energy to gain that amount of MC.|
 195|Indentured Workers|3||||0||Event|-1|The next card you play this generation costs 8MC less.|
-196|Lagrange Observatory|1||||9||Science Space|1|Draw 1 card.|
-197|Terraforming Ganymede|1|Ref_tr|||33||Space Jovian|2|Raise your TR 1 step for each Jovian tag you have, including this.|
+196|Lagrange Observatory|1|draw|||9||Science Space|1|Draw 1 card.|
+197|Terraforming Ganymede|1|count(tagJovian)tr|||33||Space Jovian|2|Raise your TR 1 step for each Jovian tag you have, including this.|
 198|Immigration Shuttles|1|5pm|||31||Space Earth|Ref|Increase your MC production 5 steps. 1 VP for every 3rd city in play.|
 199|Restricted Area|2||2nm:draw||11||Science|0|Place [the restricted area] tile.; Action: Spend 2MC to draw a card.|
 200|Immigrant City|2|npe,2npm||Ref|13||Building City|0|Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.; Effect: Each time a city tile is placed, including this, increase your MC production 1 step.|
 201|Energy Tapping|1|1npe_Any|||3||Energy|-1|Decrease any energy production 1 step and increase your own 1 step.|
 202|Underground Detonations|2||10nm:2ph||6||Building|0|Action: Spend 10 MC to increase your heat production 2 steps.|
 203|Soletta|1|7ph|||35||Space|0|Increase your heat production 7 steps.|
-204|Technology Demonstration|3||||5||Science Space Event|0|Draw 2 cards.|
+204|Technology Demonstration|3|2draw|||5||Science Space Event|0|Draw 2 cards.|
 205|Rad-Chem Factory|1|1npe,2tr|||8||Building|0|Decrease your energy production 1 step. Raise your terraform rating 2 steps.|
 206|Special Design|3||||4||Science Event|0|The next card you play this generation is +2 or -2 in global requirements, your choice.|
 207|Medical Lab|1|Ref_pm|||13||Science Building|1|Increase your MC production 1 step for every 2 building tags you have, including this.|
-208|AI Central|2|1npe|2 draw||21||Science Building|1|Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards.|
+208|AI Central|2|1npe|2draw||21||Science Building|1|Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards.|

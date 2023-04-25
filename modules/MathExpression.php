@@ -38,6 +38,26 @@ class MathTerminalExpression extends MathExpression {
         return $this->left;
     }
 }
+class MathUnaryExpression extends MathExpression {
+    public $op;
+    public $right;
+    function __construct(string $op, $right) {
+        if (!is_string($op)) {
+            throw new Exception("Operator should be string");
+        }
+        $this->op = $op;
+        $this->right = $right;
+    }
+    public function __toString() {
+        return sprintf("(%s(%s))", $this->op, $this->right);
+    }
+    public function evaluate($mapper) {
+        $right = $this->right->evaluate($mapper);
+        $op = $this->op;
+        $res = eval("return $op($right);");
+        return (int)($res);
+    }
+}
 class MathBinaryExpression extends MathExpression {
     public $op;
     public $left;

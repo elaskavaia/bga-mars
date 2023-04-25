@@ -13,10 +13,7 @@ class AbsOperationIncNegAny extends AbsOperation {
         return 'player';
     }
 
-    function canResolveAutomatically() {
-        return false;
-    }
-
+ 
     function effect(string $owner, int $inc): int  {
         $owner = $this->getCheckedArg('target');
         $opwithoutN = substr($this->mnemonic, 1);

@@ -30,6 +30,8 @@ draw|Draw Card in Hand
 #set undo=true
 #set class=AbsOperationIncNegAny
 np_Any|Loose Plant (Any Player or None)|${you} must select a player who will loose the resouces (or none)
+ns_Any|Loose Steel (Any Player or None)|${you} must select a player who will loose the resouces (or none)
+nm_Any|Loose MC (Any Player or None)|${you} must select a player who will loose the resouces (or none)
 #set class=AbsOperationProdNegAny
 npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 npp_Any|Loose Plant Production (Any Player - Mandatory)|${you} must select a player who will loose the production
@@ -71,6 +73,7 @@ npu|Decrease Titanium Production
 o|Increase Oxigen Level
 t|Increase Temperature
 turn|Take a turn
+turn2|Take a second action
 tr|Increase TR
 research|Research
 counter|Special Counter

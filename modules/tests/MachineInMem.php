@@ -173,33 +173,9 @@ class MachineInMem extends DbMachine {
         $top = $this->getTopRank();
         if ($top > 1) {
             foreach ($this->xtable as &$row) {
-                if ($row["rank"] > 0) {
-                    $row["rank"] = $row["rank"] - $top;
+                if ($row["rank"] >= $top) {
+                    $row["rank"] = $row["rank"] - $top +1;
                 }
-            }
-        }
-        // $this->normalizeTop();
-    }
-
-    function normalizeTop() {
-        $ops = $this->getTopOperations();
-        if (count($ops) == 0) {
-            return;
-        }
-        $first = reset($ops);
-        $mop = $first["flags"];
-        $count = $first["count"];
-        if ($count == 1 && is_flag_set($mop, MACHINE_FLAG_UNIQUE) && is_flag_set($mop, MACHINE_FLAG_SHARED_COUNTER)) {
-            foreach ($ops as &$op) {
-                $op["flags"] &= ~MACHINE_FLAG_UNIQUE;
-                $this->xtable[$op["id"] - 1] = $op;
-                // $expr = OpExpression::parseExpression($op['type']);
-                // $subop = OpExpression::getop($expr);
-                // if ($subop=='*') {
-                //     $op["type"] = $expr->args[2];
-                //     $op["count"] = $expr->args[1];
-                //     $op["count"] = $expr->args[1];
-                // }
             }
         }
     }

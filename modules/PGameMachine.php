@@ -50,6 +50,11 @@ abstract class PGameMachine extends PGameTokens {
         return $expr->op=="!";
     }
 
+    function debug_dumpMachine() {
+        $this->debugConsole("", ["all stack",$this->machine->gettableexpr()]);
+    }
+
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Player actions
     ////////////
@@ -116,12 +121,15 @@ abstract class PGameMachine extends PGameTokens {
             }
             // now we will call method for specific user action
 
-
+            //$this->debug_dumpMachine();
             $count = $this->saction_resolve($info, $args);
             // stack operations
             $this->saction_stack($count, $info, $tops);
+            //$this->debug_dumpMachine();
+           // $this->debugConsole("",           $this->machine->gettablearr());
         }
         $this->machine->normalize();
+        $this->debugConsole("- done resolve", $this->machine->gettableexpr());
         $this->gamestate->nextState("next");
     }
 
@@ -130,19 +138,9 @@ abstract class PGameMachine extends PGameTokens {
         return 0;
     }
 
-    function saction_stack(int $count, array $info, ?array $tops = null) {
-        if ($tops == null) $tops = [$info];
-  
-        if ($this->machine->isSharedCounter($info)) {
-            $this->machine->subtract($tops, $count);
-        } else {
-            $this->machine->subtract($info, $count);
-        }
 
-        if ($this->machine->isUnique($info)) {
-            $this->machine->hide($info);
-        }
-        $this->machine->prune();
+    function saction_stack(int $count, array $info, array $tops) {
+        $this->machine->resolve($info,$count,$tops);
 
         return;
     }
