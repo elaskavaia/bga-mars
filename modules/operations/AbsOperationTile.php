@@ -9,16 +9,21 @@ abstract class AbsOperationTile extends AbsOperation {
         $map = $this->game->getPlanetMap();
         $keys = array_keys($map);
 
-        // free tile
-        $type = $this->getTileType();
-        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_$type", null, 0);
-        $result['object'] = $tile['key'];
+
 
         return $this->game->createArgInfo($color, $keys, function ($color, $hex) use ($map) {
             $info = $map[$hex];
             if (array_key_exists('tile', $info)) return MA_ERR_OCCUPIED;
             return $this->checkPlacement($color, $hex, $info);
         });
+    }
+    function arg() {
+        $result = parent::arg();
+        // free tile
+        $type = $this->getTileType();
+        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_$type", null, 0);
+        $result['object'] = $tile['key'];
+        return $result;
     }
 
     function checkPlacement($color, $location, $info) {

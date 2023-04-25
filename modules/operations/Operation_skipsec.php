@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 class Operation_skipsec extends AbsOperation {
-    function isVoid($op, $args = null): bool {
+    function isVoid(): bool {
         return false; // cannot auto-resolve this
     }
 

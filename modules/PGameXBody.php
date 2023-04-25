@@ -3,6 +3,8 @@ require_once "PGameMachine.php";
 require_once "NotifBuilder.php";
 require_once "MathExpression.php";
 require_once "operations/AbsOperation.php";
+require_once "operations/ComplexOperation.php";
+require_once "operations/DelegatedOperation.php";
 
 
 abstract class PGameXBody extends PGameMachine {
@@ -95,6 +97,13 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $this->push($color, $type);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+    }
+
+    function debug_opc($type) {
+        $color = $this->getCurrentPlayerColor();
+        $inst = $this->getOperationInstanceFromType($type,$color);
+        $this->debugConsole("",$inst->arg());
+        return $inst->arg();
     }
 
     function debug_dumpMachine() {
@@ -202,7 +211,21 @@ abstract class PGameXBody extends PGameMachine {
     }
 
 
-    function  getOperationInstance($type): AbsOperation {
+
+    function getOperationInstance(array $opinfo): AbsOperation {
+        $type = $opinfo['type'];
+        $expr = OpExpression::parseExpression($type);
+        $issimple = $expr->isSimple();
+        if ($issimple && !$expr->isAtomic()) {
+            $opinst = new DelegatedOperation($opinfo, $this);
+            return $opinst;
+
+        } else if (!$issimple){
+            // too complex
+            $opinst = new ComplexOperation($opinfo, $this);
+            return $opinst;
+        }
+
         $matches = null;
         $params = null;
         if (preg_match("/^(\w+)\((.*)\)$/", $type, $matches)) {
@@ -210,23 +233,32 @@ abstract class PGameXBody extends PGameMachine {
             $params = $matches[2];
             $type = $matches[1];
         }
+
         $rules = $this->getOperationRules($type);
         if (!$rules) {
-            $this->systemAssertTrue("Operation is not defined for $type");
-            return null;
+            throw new BgaSystemException("Operation is not defined for $type");
         }
         $classname = array_get($rules, "class", "Operation_$type");
         try {
             require_once "operations/$classname.php";
-            $opinst = new $classname($type, $this);
+            $opinst = new $classname($type, $opinfo, $this);
             if ($params) $opinst->setParams($params);
             return $opinst;
         } catch (Throwable $e) {
-            $this->error($e->getTraceAsString());
-            $this->systemAssertTrue("Cannot create operation for $type");
-            return null;
+            $this->dumpError($e);
+            throw new BgaSystemException("Cannot instantate $classname for $type");
         }
     }
+    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1) {
+        $opinfo = [
+            'type' => $type,
+            'owner' => $color,
+            'mcount' => $count,
+            'count' => $count
+        ];
+        return self::getOperationInstance($opinfo);
+    }
+
 
     function isPassed($color) {
         $playerId = $this->getPlayerIdByColor($color);
@@ -265,7 +297,7 @@ abstract class PGameXBody extends PGameMachine {
             $holds = $this->getRulesFor($card, 'holds', '');
             if (!$holds) continue;
             if ($par && $holds != $par) continue;
-            if (array_key_exists($keys, $card)) {
+            if (array_key_exists($card, $keys)) {
                 $keys[$card]++;
             } else {
                 $keys[$card] = 1;
@@ -307,10 +339,10 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         if (startsWith($card_id, "card_stanproj")) {
-            $this->put($color, $rules);
+            $this->push($color, $rules);
             $this->notif()
                 ->withToken($card_id)
-                ->notifyAll(clienttranslate('${player_name} plays basic project ${token_name}'));
+                ->notifyAll(clienttranslate('${player_name} plays standard project ${token_name}'));
             return true;
         }
 
@@ -551,12 +583,8 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function arg_operation($op) {
-        $type = $op["type"];
-        if ($this->isSimpleOperation($type)) {
-            $opinst = $this->getOperationInstance($type);
-            return $opinst->arg($op);
-        }
-        return [];
+        $opinst = $this->getOperationInstance($op);
+        return $opinst->arg();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -568,22 +596,18 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     public function isVoid($op) {
-        $type = $op["type"];
-        if ($this->isSimpleOperation($type)) {
-            $opinst = $this->getOperationInstance($type);
-            return $opinst->isVoid($op);
-        }
-        return false;
+        $opinst = $this->getOperationInstance($op);
+        return $opinst->isVoid();
     }
 
-    function saction_resolve($type, $args): int {
-        $opinst = $this->getOperationInstance($type);
+    function saction_resolve($opinfo, $args): int {
+        $opinst = $this->getOperationInstance($opinfo);
         return $opinst->action_resolve($args);
     }
 
     function executeImmediately($color, $type, $count) {
         // this does not go on stack - so no stack clean up
-        $opinst = $this->getOperationInstance($type);
+        $opinst = $this->getOperationInstanceFromType($type, $color, $count);
         return $opinst->auto($color, $count);
     }
     function executeOperationsMultiple($operations) {
@@ -603,8 +627,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyMessage(clienttranslate('${player_name} executes ${operation_name}'), [
             "operation_name" => $this->getOperationName($type),
         ]);
-        $opinst = $this->getOperationInstance($type);
-        $opinst->setOpInfo($op);
+        $opinst = $this->getOperationInstance($op);
         $count = $op["count"];
         if ($opinst->auto($op["owner"], $count)) {
             $this->saction_stack($count, $op);

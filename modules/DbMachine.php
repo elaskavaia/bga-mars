@@ -88,7 +88,7 @@ class DbMachine extends APP_GameClass {
     }
 
     function put($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "") {
-        $rank = $this->getExtremeRank(false);
+        $rank = 1;//$this->getExtremeRank(false);
         $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data);
         return $this->insertOp($rank, $op);
     }

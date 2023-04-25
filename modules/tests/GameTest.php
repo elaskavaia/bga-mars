@@ -102,7 +102,7 @@ final class GameTest extends TestCase {
         $m->tokens->moveToken($card,"tableau_".PCOLOR,2);
         $op = $m->machine->createOperationSimple('activate',PCOLOR);
         $args = ['target'=>$card,'op_info'=>$op];
-        $count= $m->saction_resolve('activate',$args);
+        $count= $m->saction_resolve($op,$args);
         $m->st_gameDispatch();
         $this->assertEquals(1, $count);
         $value = $m->getTrackerValue(PCOLOR, 's');

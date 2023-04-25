@@ -23,7 +23,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 16|Domed Crater|1|3pm,1npe,3p|||24|o<=7|Building City|1|Oxygen must be 7% or less. Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps.|
 17|Noctis City|1|3pm,1npe|||18||Building City|0|Decrease your energy production 1 step and increase your MC production 3 steps. Place a tile ON THE RESERVED AREA, disregarding normal placement restrictions.|
 18|Methane From Titan|1|2pp,2ph|||28|o>=2|Space Jovian|2|Requires 2% oxygen. Increase your heat production 2 steps and your plant production 2 steps.|
-19|Imported Hydrogen|3|3p/3ores(Microbe)/3ores(Animal);w|||16||Space Earth Event|0|Gain 3 plants, or add 3 microbes or 2 animals to ANOTHER card. Place an ocean tile.|
+19|Imported Hydrogen|3|3p/3ores(Microbe)/2ores(Animal);w|||16||Space Earth Event|0|Gain 3 plants, or add 3 microbes or 2 animals to ANOTHER card. Place an ocean tile.|
 20|Research Outpost|2||||18||Science Building City|0|Place a city tile NEXT TO NO OTHER TILE.; Effect: When you play a card, you pay 1 MC less for it.|
 21|Phobos Space Haven|1|pu|||25||Space City|3|Increase your titanium production 1 step and place a city tile ON THE RESERVED AREA.|
 22|Black Polar Dust|1|2npm,3ph,w|||15|||0|Place an ocean tile. Decrease your MC production 2 steps and increase your heat production 3 steps.|

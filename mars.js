@@ -1498,34 +1498,16 @@ var GameXBody = /** @class */ (function (_super) {
         this.ajaxuseraction("skip", {});
     };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
-        if (op.typeexpr)
-            return this.getButtonNameForOperationExp(op.typeexpr);
+        if (op.args.button)
+            return this.format_string_recursive(op.args.button, op.args.args);
         else
             return this.getButtonNameForOperationExp(op.type);
     };
-    GameXBody.prototype.getButtonNameForOperationExp = function (opex) {
-        var _a;
-        if (typeof opex !== "object") {
-            var op = opex;
-            var rules = this.getRulesFor("op_" + op, "*");
-            if (rules && rules.name)
-                return this.getTr(rules.name);
-            return op;
-        }
-        var xop = (_a = opex[0]) !== null && _a !== void 0 ? _a : "!";
-        if (xop != "!") {
-            // multiplier
-            var count = opex[2];
-            var mincount = opex[1];
-            if (count == 1)
-                return opex;
-            var name_2 = this.getButtonNameForOperationExp(opex[3]);
-            return this.format_string_recursive("${op} x ${count}", {
-                op: name_2,
-                count: count,
-            });
-        }
-        return opex; // XXX create combined
+    GameXBody.prototype.getButtonNameForOperationExp = function (op) {
+        var rules = this.getRulesFor("op_" + op, "*");
+        if (rules && rules.name)
+            return this.getTr(rules.name);
+        return op;
     };
     GameXBody.prototype.getOperationRules = function (opInfo) {
         if (typeof opInfo == "string")
@@ -1549,7 +1531,7 @@ var GameXBody = /** @class */ (function (_super) {
         var paramargs = opargs.target;
         var ttype = opargs.ttype;
         if (single) {
-            this.setDescriptionOnMyTurn(opargs.title, opargs);
+            this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
             if (paramargs.length == 1)
                 this.addActionButton("button_" + opId, _("Confirm"), function () {
                     _this.sendActionResolve(opId);
@@ -1558,9 +1540,11 @@ var GameXBody = /** @class */ (function (_super) {
         if (ttype == "token") {
             paramargs.forEach(function (tid) {
                 if (tid == "none") {
-                    _this.addActionButton("button_none", _("None"), function () {
-                        _this.sendActionResolveWithTarget(opId, "none");
-                    });
+                    if (single) {
+                        _this.addActionButton("button_none", _("None"), function () {
+                            _this.sendActionResolveWithTarget(opId, "none");
+                        });
+                    }
                 }
                 else
                     _this.setActiveSlot(tid);
@@ -1600,12 +1584,12 @@ var GameXBody = /** @class */ (function (_super) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opargs = opInfo.args;
-            var name_3 = this_1.getButtonNameForOperation(opInfo);
+            var name_2 = this_1.getButtonNameForOperation(opInfo);
             var paramargs = opargs.target;
             if (paramargs && paramargs.length > 0) {
                 this_1.activateSlots(opargs, opId, single);
                 if (!single) {
-                    this_1.addActionButton("button_" + opId, name_3, function () {
+                    this_1.addActionButton("button_" + opId, name_2, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
@@ -1618,7 +1602,7 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             }
             else {
-                this_1.addActionButton("button_" + opId, name_3, function () {
+                this_1.addActionButton("button_" + opId, name_2, function () {
                     _this.sendActionResolve(opId);
                 });
             }
@@ -1651,7 +1635,7 @@ var GameXBody = /** @class */ (function (_super) {
             var clstate = "client_payment";
             this.setClientStateUpdOn(clstate, function (args) {
                 // on update action buttons
-                _this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + _this.getButtonNameForOperationExp(["/", cost_1, cost_1, "nm"]));
+                _this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + _this.getButtonNameForOperationExp("nm") + " x " + cost_1);
                 _this.addActionButton("button_confirm", _("Confirm"), function () {
                     _this.clientStateArgs.ops[0].payment = "auto";
                     _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);

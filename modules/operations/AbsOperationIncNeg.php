@@ -8,7 +8,8 @@ class AbsOperationIncNeg extends AbsOperation {
         return $inc;
     }
 
-    public function isVoid($op): bool {
+    public function isVoid(): bool {
+        $op = $this->op_info;
         $count = $op['mcount'];
         try {
             $this->game->effect_incCount($op['owner'], substr($this->mnemonic, 1), -$count, ['onlyCheck' => true]);

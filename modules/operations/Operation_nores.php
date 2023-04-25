@@ -16,10 +16,10 @@ class Operation_nores extends Operation_res {
             return 0;
         });
     }
-    function arg(array $op) {
-        $result = parent::arg($op);
+    function arg() {
+        $result = parent::arg();
         $par = $this->params ?? 'Unknown';
-        $result['restype_name'] = $par;
+        $result['args']['restype_name'] = $par;
         $result['target'][] = 'none';
         return $result;
     }

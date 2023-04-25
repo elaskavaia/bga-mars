@@ -123,6 +123,10 @@ class OpExpression {
     function toUnranged() {
         return OpExpression::create($this->op, $this->args);
     }
+
+    function isSimple() {
+        return $this->op == "!";
+    }
 }
 
 class OpExpressionTerminal extends OpExpression {
@@ -225,7 +229,7 @@ class OpExpressionRanged extends OpExpression {
         if ($count != 1) {
             $res = $count . $res;
         }
-     
+
         return $res;
     }
 
@@ -287,7 +291,7 @@ class OpLexer {
     }
     protected function nextToken($line, $offset = 0, &$tname = null) {
         $tname = "T_EOS";
-        if ($line==='' || $offset >= strlen($line)) {
+        if ($line === '' || $offset >= strlen($line)) {
             return "";
         }
         $string = substr($line, $offset);
@@ -453,7 +457,7 @@ class OpParser {
             }
         }
         $pr = static::$binary_operator_priority[$op] ?? null;
-        if ($pr!==null || $op==')') {
+        if ($pr !== null || $op == ')') {
             if ($numeric)
                 return OpExpressionTerminal::create($to);
             else

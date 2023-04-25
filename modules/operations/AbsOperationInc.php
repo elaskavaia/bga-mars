@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 class AbsOperationInc extends AbsOperation {
-    function isVoid($op, $args = null): bool {
+    function isVoid(): bool {
         return false;
     }
 

@@ -17,10 +17,10 @@ class Operation_ores extends Operation_res {
         });
     }
 
-    function arg(array $op) {
-        $par = $this->params ?? '';
-        $result = parent::arg($op);
-        $result['restype_name'] = $par;
+    function arg() {
+        $par = $this->params;
+        $result = parent::arg();
+        $result['args']['restype_name'] = $par;
         $result['target'][] = 'none';
         return $result;
     }

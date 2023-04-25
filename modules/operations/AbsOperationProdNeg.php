@@ -8,10 +8,11 @@ class AbsOperationProdNeg extends AbsOperation {
         return $inc;
     }
 
-    public function isVoid($op): bool {
+    public function isVoid(): bool {
+        $op = $this->op_info;
         $count = $op['mcount'];
         try {
-            $this->game->effect_incProduction($op['owner'], substr($this->mnemonic, 1), -$count, ['onlyCheck' => true]);
+            $this->game->effect_incProduction($this->color, substr($this->mnemonic, 1), -$count, ['onlyCheck' => true]);
         } catch (Exception $e) {
             return true;
         }

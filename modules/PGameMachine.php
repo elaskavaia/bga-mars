@@ -114,21 +114,10 @@ abstract class PGameMachine extends PGameTokens {
                 $color = $this->getActivePlayerColor(); // XXX?
                 $info["owner"] = $color;
             }
-            $count = $args["count"] ?? $info["count"] ?? 1;
-            $info["resolve_count"] = $count;
             // now we will call method for specific user action
-            $args["op_info"] = $info;
-            $type = $info["type"];
-            // $rules = $this->getOperationRules($type);
-            // if (!$rules) {
-            //     if ($this->isAtomicOperation($type)) {
-            //         $this->systemAssertTrue("Cannot find operation type $type", $rules);
-            //     } else {
-            //         $this->machine->expandOp($info, $info["rank"]);
-            //     }
-            //     continue;
-            // }
-            $count = $this->saction_resolve($type, $args);
+
+
+            $count = $this->saction_resolve($info, $args);
             // stack operations
             $this->saction_stack($count, $info, $tops);
         }
@@ -136,7 +125,7 @@ abstract class PGameMachine extends PGameTokens {
         $this->gamestate->nextState("next");
     }
 
-    function saction_resolve($type, $args): int {
+    function saction_resolve($opinfo, $args): int {
         $this->systemAssertTrue("Not implemented resolve");
         return 0;
     }
@@ -231,10 +220,17 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function executeOperationSingle($op) {
-        $type = $op["type"];
-
-        if (!$this->isAtomicOperation($type)) {
+        if ($this->expandOperation($op)) {
             $this->machine->hide($op);
+            return null;
+        }
+        return $this->executeOperationSingleAtomic($op);
+    }
+
+    function expandOperation($op) {
+        $type = $op["type"];
+        if (!$this->isAtomicOperation($type)) {
+          
             $this->machine->interrupt();
             $this->machine->expandOp($op);
             // sanity to prevent recursion
@@ -246,9 +242,9 @@ abstract class PGameMachine extends PGameTokens {
             if ($op["type"] == $type) {
                 $this->systemAssertTrue("Failed expand for $type. Recursion");
             }
-            return null;
+            return true;
         }
-        return $this->executeOperationSingleAtomic($op);
+        return false;
     }
 
     abstract public function executeOperationsMultiple($operations);

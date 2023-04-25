@@ -127,34 +127,14 @@ class GameXBody extends GameTokens {
   }
 
   getButtonNameForOperation(op: any) {
-    if (op.typeexpr) return this.getButtonNameForOperationExp(op.typeexpr);
+    if (op.args.button) return this.format_string_recursive(op.args.button, op.args.args);
     else return this.getButtonNameForOperationExp(op.type);
   }
 
-  getButtonNameForOperationExp(opex: any) {
-    if (typeof opex !== "object") {
-      const op = opex;
-      const rules = this.getRulesFor("op_" + op, "*");
-      if (rules && rules.name) return this.getTr(rules.name);
-      return op;
-    }
-
-    const xop = opex[0] ?? "!";
-
-    if (xop != "!") {
-      // multiplier
-
-      const count = opex[2];
-      const mincount = opex[1];
-      if (count == 1) return opex;
-      const name = this.getButtonNameForOperationExp(opex[3]);
-      return this.format_string_recursive("${op} x ${count}", {
-        op: name,
-        count: count,
-      });
-    }
-
-    return opex; // XXX create combined
+  getButtonNameForOperationExp(op: string) {
+    const rules = this.getRulesFor("op_" + op, "*");
+    if (rules && rules.name) return this.getTr(rules.name);
+    return op;
   }
   getOperationRules(opInfo: string | Operation) {
     if (typeof opInfo == "string") return this.getRulesFor("op_" + opInfo, "*");
@@ -178,7 +158,7 @@ class GameXBody extends GameTokens {
     const paramargs = opargs.target;
     const ttype = opargs.ttype;
     if (single) {
-      this.setDescriptionOnMyTurn(opargs.title, opargs);
+      this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
       if (paramargs.length == 1)
         this.addActionButton("button_" + opId, _("Confirm"), () => {
           this.sendActionResolve(opId);
@@ -187,9 +167,11 @@ class GameXBody extends GameTokens {
     if (ttype == "token") {
       paramargs.forEach((tid: string) => {
         if (tid == "none") {
-          this.addActionButton("button_none", _("None"), () => {
-            this.sendActionResolveWithTarget(opId, "none");
-          });
+          if (single) {
+            this.addActionButton("button_none", _("None"), () => {
+              this.sendActionResolveWithTarget(opId, "none");
+            });
+          }
         } else this.setActiveSlot(tid);
         if (opId)
           this.reverseIdLookup.set(tid, {
@@ -231,7 +213,6 @@ class GameXBody extends GameTokens {
       const opargs = opInfo.args;
       const name = this.getButtonNameForOperation(opInfo);
       const paramargs = opargs.target;
-  
 
       if (paramargs && paramargs.length > 0) {
         this.activateSlots(opargs, opId, single);
@@ -283,7 +264,7 @@ class GameXBody extends GameTokens {
         (args) => {
           // on update action buttons
 
-          this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + this.getButtonNameForOperationExp(["/", cost, cost, "nm"]));
+          this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + this.getButtonNameForOperationExp("nm") + " x " + cost);
           this.addActionButton("button_confirm", _("Confirm"), () => {
             this.clientStateArgs.ops[0].payment = "auto";
             this.ajaxuseraction(this.clientStateArgs.call, this.clientStateArgs);

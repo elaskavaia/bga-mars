@@ -20,16 +20,20 @@ class Operation_nres extends Operation_res {
         });
     }
 
+    function isAutomatic() {
+        return !$this->isVoid();
+    }
+
 
     function effect(string $owner, int $inc): int {
-        $card = $this->getCheckedArg('target');
+        $card = $this->getContext();
         if (!$card) throw new feException("Context is not defined for operation");
 
 
         $holds = $this->game->getRulesFor($card, 'holds', '');
         if (!$holds) throw new feException("Card '$card' cannot hold resources");
 
-        $resources = $this->game->tokens->getTokenOnLocation($card);
+        $resources = $this->game->tokens->getTokensOfTypeInLocation("resource",$card);
         $num = $inc;
         foreach ($resources as $key => $info) {
             $num--;
