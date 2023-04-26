@@ -100,13 +100,13 @@ abstract class PGameXBody extends PGameMachine {
     }
     function debug_money() {
         $color = $this->getCurrentPlayerColor();
-        $this->effect_incCount($color,'m',40);
+        $this->effect_incCount($color, 'm', 40);
     }
 
     function debug_opc($type) {
         $color = $this->getCurrentPlayerColor();
-        $inst = $this->getOperationInstanceFromType($type,$color);
-        $this->debugConsole("",$inst->arg());
+        $inst = $this->getOperationInstanceFromType($type, $color);
+        $this->debugConsole("", $inst->arg());
         return $inst->arg();
     }
 
@@ -191,26 +191,42 @@ abstract class PGameXBody extends PGameMachine {
 
     function evaluateExpression($cond, $owner, $context = null) {
         $expr = MathExpression::parse($cond);
-        $mapper = function ($x) use ($owner) {
-            if ($x == 'chand') {
-                return $this->tokens->countTokensInLocation("hand_$owner");
-            }
-            $create = $this->getRulesFor("tracker_$x", "create", null);
-            if ($create === null) {
-                throw new feException("Cannot evalute $x");
-            }
-            # TODO: special processing with _all
-            if ($create == 4) {
-                // per player counter XXX _all
-                $value = $this->tokens->getTokenState("tracker_${x}_${owner}");
-            } else {
-                $value = $this->tokens->getTokenState("tracker_${x}");
-            }
-            return $value;
+        $mapper = function ($x) use ($owner, $context) {
+            return $this->evaluateTerm($x, $owner, $context);
         };
         return $expr->evaluate($mapper);
     }
 
+    function evaluateTerm($x, $owner, $context = null) {
+        if ($x == 'chand') {
+            return $this->tokens->countTokensInLocation("hand_$owner");
+        }
+        if ($x == 'tagEvent') {
+            // tagEvent is not counted as tag since its not face up
+            return $this->tokens->countTokensInLocation("hand_$owner",0);
+        }
+        if (startsWith($x, 'all_')) {
+            $x = substr($x, 4);
+            $colors = $this->getPlayerColors();
+            $value = 0;
+            foreach ($colors as $color) {
+                $value += $this->evaluateTerm($x, $color, $context);
+            }
+            return $value;
+        }
+        $create = $this->getRulesFor("tracker_$x", "create", null);
+        if ($create === null) {
+            throw new feException("Cannot evalute $x");
+        }
+        # TODO: special processing with _all
+        if ($create == 4) {
+            // per player counter XXX _all
+            $value = $this->tokens->getTokenState("tracker_${x}_${owner}");
+        } else {
+            $value = $this->tokens->getTokenState("tracker_${x}");
+        }
+        return $value;
+    }
 
 
     function getOperationInstance(array $opinfo): AbsOperation {
@@ -220,8 +236,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($issimple && !$expr->isAtomic()) {
             $opinst = new DelegatedOperation($opinfo, $this);
             return $opinst;
-
-        } else if (!$issimple){
+        } else if (!$issimple) {
             // too complex
             $opinst = new ComplexOperation($opinfo, $this);
             return $opinst;
@@ -360,12 +375,12 @@ abstract class PGameXBody extends PGameMachine {
     function effect_cardInPlay($color, $card_id) {
         $rules = $this->getRulesFor($card_id, '*');
         $ttype = $rules['t']; // type of card
-        $state = 1;
+        $state = MA_CARD_STATE_TAGUP;
         if ($ttype == MA_CARD_TYPE_EVENT) {
-            $state = 0;
+            $state = MA_CARD_STATE_FACEDOWN;
         }
         if (isset($rules['a'])) {
-            $state = 2; // activatable cars
+            $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cars
         }
         $this->dbSetTokenLocation(
             $card_id,

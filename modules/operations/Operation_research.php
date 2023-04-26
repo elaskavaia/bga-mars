@@ -20,7 +20,7 @@ class Operation_research extends AbsOperation {
             foreach ($keys as $cardid) {
                 $rules = $this->game->getRulesFor($cardid, '*');
                 if (isset($rules['a'])) {
-                    $state = 2; // activatable cards
+                    $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cards
                     $this->game->dbSetTokenState($cardid, $state);
                 }
             }

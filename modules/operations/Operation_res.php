@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 class Operation_res extends AbsOperation {
     function effect(string $owner, int $inc): int {
-        $card = $this->getCheckedArg('target');
+        $card = $this->getContext();
         if (!$card) throw new feException("Context is not defined for operation");
-        if ($card === 'none') return $inc; // skipped, this is ok for resources
 
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
@@ -14,6 +13,9 @@ class Operation_res extends AbsOperation {
         }
 
         return $inc;
+    }
+    function   canResolveAutomatically() {
+        return !$this->isVoid();
     }
 
     function argPrimaryDetails() {

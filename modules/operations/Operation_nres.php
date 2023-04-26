@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once "Operation_res.php";
 
-class Operation_nres extends Operation_res {
+class Operation_nres extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;

@@ -17,6 +17,25 @@ class Operation_nores extends Operation_res {
         });
     }
 
+    function effect(string $owner, int $inc): int {
+        $card = $this->getCheckedArg('target');
+        if ($card === 'none') return $inc; // skipped, this is ok for resources
+
+        $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
+        $num = $inc;
+        foreach ($resources as $key => $info) {
+            $num--;
+            $this->game->dbSetTokenLocation($key, 'miniboard_' . $owner, 0);
+            if ($num == 0) break;
+        }
+        if ($num > 0) throw new feException("Insufficient number of resources on $card");
+        return $inc;
+    }
+
+    function   canResolveAutomatically() {
+        return false;
+    }
+
     function arg() {
         $result = parent::arg();
         $par = $this->params ?? 'Unknown';

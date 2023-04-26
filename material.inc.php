@@ -53,6 +53,12 @@
   define("MA_TILE_FOREST", 1);
   define("MA_TILE_CITY", 2);
   define("MA_TILE_OCEAN", 3);
+
+  // card states in hand
+  define("MA_CARD_STATE_FACEDOWN", 0);
+  define("MA_CARD_STATE_TAGUP", 1);
+  define("MA_CARD_STATE_ACTION_UNUSED", 2);
+  define("MA_CARD_STATE_ACTION_USED", 3);
 }
 
 $this->token_types = [
@@ -1352,7 +1358,7 @@ $this->token_types = [
   'num' => 107,
   'name' => clienttranslate("Media Archives"),
   't' => 1,
-  'r' => 'Ref_m',
+  'r' => 'counter(all_tagEvent)m',
   'cost' => 8,
   'tags' => 'Earth',
   'vp' => 0,
@@ -1878,6 +1884,7 @@ $this->token_types = [
   'name' => clienttranslate("Anti-Gravity Technology"),
   't' => 2,
   'cost' => 14,
+  'pre' => 'tagScience>=7',
   'tags' => 'Science',
   'vp' => 3,
   'text' => clienttranslate("Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it."),
