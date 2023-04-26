@@ -657,6 +657,7 @@ class GameBasics extends GameGui {
    * @param classes - list of classes separated by space
    */
   removeAllClasses(classes: string) {
+    if (!classes) return;
     const classesList = classes.split(/  */);
     classesList.forEach((className) => {
       document.querySelectorAll(`.${className}`).forEach((node) => {

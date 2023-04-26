@@ -409,8 +409,8 @@ var GameBasics = /** @class */ (function (_super) {
         var div = document.createElement("div");
         if (id)
             div.id = id;
-        if (classes) {
-            var classesList = classes.split(/  */);
+        if (classes && classes.trim()) {
+            var classesList = classes.trim().split(/  */);
             (_a = div.classList).add.apply(_a, classesList);
         }
         var parentNode = location ? document.getElementById(location) : null;
@@ -569,6 +569,8 @@ var GameBasics = /** @class */ (function (_super) {
      * @param classes - list of classes separated by space
      */
     GameBasics.prototype.removeAllClasses = function (classes) {
+        if (!classes)
+            return;
         var classesList = classes.split(/  */);
         classesList.forEach(function (className) {
             document.querySelectorAll(".".concat(className)).forEach(function (node) {
@@ -1262,7 +1264,7 @@ var GameTokens = /** @class */ (function (_super) {
         var declaredTypes = tokenInfo.type || "token";
         tokenInfo.typeKey = tokenKey; // this is key in token_types structure
         tokenInfo.mainType = getPart(tokenId, 0); // first type
-        tokenInfo.imageTypes = "".concat(tokenInfo.mainType, " ").concat(declaredTypes, " ").concat(imageTypes); // other types used for div
+        tokenInfo.imageTypes = "".concat(tokenInfo.mainType, " ").concat(declaredTypes, " ").concat(imageTypes).trim(); // other types used for div
         if (!tokenInfo.key) {
             tokenInfo.key = tokenId;
         }

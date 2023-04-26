@@ -19,6 +19,7 @@ Random notes on todo items
 * Hex tiles
 * Payment selector
 * Stacking played cards
+* Show decoded error on when something cannot be selected/played
 
 ### Client Bonus Features
 

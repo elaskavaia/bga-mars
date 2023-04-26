@@ -520,7 +520,8 @@ class GameTokens extends GameBasics {
 
     tokenInfo.typeKey = tokenKey; // this is key in token_types structure
     tokenInfo.mainType = getPart(tokenId, 0); // first type
-    tokenInfo.imageTypes = `${tokenInfo.mainType} ${declaredTypes} ${imageTypes}`; // other types used for div
+    tokenInfo.imageTypes = `${tokenInfo.mainType} ${declaredTypes} ${imageTypes}`.trim(); // other types used for div
+
 
     if (!tokenInfo.key) {
       tokenInfo.key = tokenId;

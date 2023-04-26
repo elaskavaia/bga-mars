@@ -8,6 +8,7 @@ require_once "operations/DelegatedOperation.php";
 
 
 abstract class PGameXBody extends PGameMachine {
+    protected $eventListners; // cache
     function __construct() {
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
@@ -106,7 +107,6 @@ abstract class PGameXBody extends PGameMachine {
     function debug_opc($type) {
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color);
-        $this->debugConsole("", $inst->arg());
         return $inst->arg();
     }
 
@@ -189,7 +189,8 @@ abstract class PGameXBody extends PGameMachine {
         return 0;
     }
 
-    function evaluateExpression($cond, $owner, $context = null) {
+    function evaluateExpression($cond, $owner = 0, $context = null) {
+        if (!$owner) $owner = $this->getActivePlayerColor();
         $expr = MathExpression::parse($cond);
         $mapper = function ($x) use ($owner, $context) {
             return $this->evaluateTerm($x, $owner, $context);
@@ -203,7 +204,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         if ($x == 'tagEvent') {
             // tagEvent is not counted as tag since its not face up
-            return $this->tokens->countTokensInLocation("hand_$owner",0);
+            return $this->tokens->countTokensInLocation("tableau_$owner", 0);
         }
         if (startsWith($x, 'all_')) {
             $x = substr($x, 4);
@@ -333,6 +334,74 @@ abstract class PGameXBody extends PGameMachine {
         $this->machine->put($type, 1, 1, $color, MACHINE_OP_SEQ);
     }
 
+    function getActiveEventListeners() {
+        if (!$this->eventListners) {
+            $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_%");
+            $this->eventListners = [];
+            foreach ($cards as $key => $info) {
+                $e = $this->getRulesFor($key, 'e');
+                if (!$e) continue;
+                $info['e'] = $e;
+                $info['owner'] = substr($info['location'],strlen('tableau_'));
+                $this->eventListners[$key] = $info;
+            }
+        }
+        return $this->eventListners;
+    }
+
+    function notifyEffect($owner, $event, $card_context) {
+        // load all active effect listeners
+        $cards = $this->getActiveEventListeners();
+        // filter for listener for specific effect
+        foreach ($cards as $info) {
+            $e = $info['e'];
+            $ret = [];
+            if ($this->mtMatchEvent($e,$info['owner'],$event,$owner,$ret)) {
+                $outcome = $ret['outcome'];
+                $context = $ret['context'];
+                $card = $info['key'];
+                $this->debugConsole("-come in play effect $outcome triggered by $card for $card_context");
+                $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context==='that'? $card_context: $card);
+            }
+        }
+
+    }
+
+    /**
+     * Triggered action syntax:
+     * <list> ::=   <trigger_rule>  || <trigger_rule> ';' <list>
+     * <trigger_rule> ::= <trigger> ':' <outcome> | <trigger> ':' <outcome> ':' 'that'
+     * 
+     * <event> ::= <trigger>
+     *
+     * @param string $declared
+     * Effect: When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD.
+     *                  - play_tagPlant: (p/res): that; play_tagMicrobe: (p/res): that
+     * 
+     * @param string $event-
+     *            what actually happen, play_tagMicrobe
+     * @param array $splits
+     * @return boolean
+     */
+    function mtMatchEvent($trigger_rule, $trigger_owner, $event, $event_owner, &$splits = []) {
+        if (!$trigger_rule) return false;
+        $expr = OpExpression::parseExpression($trigger_rule);
+        if ($expr->op != ';') $args = [ $expr];
+        else $args = $expr->args ;
+        foreach ($args as $arg) {
+            if ($arg->op != ':') throw new BgaSystemException("Cannot parser $trigger_rule missing : ".OpExpression::str($arg));
+            $declareevent = OpExpression::str($arg->args[0]) ;
+            $all = OpExpression::str(array_get($arg->args, 3, ''));
+            if ($declareevent === $event && ($trigger_owner === $event_owner || $all === 'all' )) { // for now only listen to own events
+                $splits['outcome'] = $arg->args[1]->__toString();
+                $splits['context'] = OpExpression::str(array_get($arg->args, 2, '')); // can be 'that' - meaning context of card that triggered the event vs event handler
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Player actions
     ////////////
@@ -401,19 +470,14 @@ abstract class PGameXBody extends PGameMachine {
 
         if ($playeffect) {
             $this->debugConsole("-come in play effect $playeffect");
-            $this->machine->push($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
+            $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
         foreach ($tagsarr as $tag) {
-            $this->notifyEffect($color, "playTag", "tag$tag");
+            $this->notifyEffect($color, "play_tag$tag", $card_id);
         }
         $this->notifyEffect($color, "playCard", $card_id);
     }
 
-    function notifyEffect($owner, $event, $arg) {
-        // load all active effect listeners
-        // filter for listener for specific effect
-        // TODO
-    }
 
     function effect_incCount(string $color, string $type, int $inc = 1, array $options = []) {
         $message = array_get($options, 'message', '*');

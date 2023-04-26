@@ -27,4 +27,19 @@ class Operation_res extends AbsOperation {
             return 0;
         });
     }
+
+
+    protected function getOpName() {
+        $card = $this->getContext();
+        $par = $this->game->getRulesFor($card, 'holds', '');
+        return ['log' => clienttranslate('Add ${restype_name} to ${card_name}'),  "args" => [
+            "card_name" => $this->game->getTokenName($card),
+            'restype_name' => $par,
+            'i18n' => ['card_name', 'restype_name']
+        ]];
+    }
+
+    protected function getPrompt() {
+        return '${name}?';
+    }
 }

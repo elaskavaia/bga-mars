@@ -129,7 +129,7 @@ abstract class PGameMachine extends PGameTokens {
            // $this->debugConsole("",           $this->machine->gettablearr());
         }
         $this->machine->normalize();
-        $this->debugConsole("- done resolve", $this->machine->gettableexpr());
+        $this->debugConsole("- done resolve",[$this->machine->gettableexpr()]);
         $this->gamestate->nextState("next");
     }
 

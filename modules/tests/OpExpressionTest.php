@@ -57,6 +57,8 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("0x2f", "0x2f");
         $this->assertExpressionParser("pl(0x2f)", "pl(0x2f)");
         $this->assertExpressionParser("(! 0 2 ores(Microbe))", "2?ores(Microbe)");
+        $this->assertExpressionParser("(: play_tagPlant (/ p res) that)","play_tagPlant:p/res:that");
+        //
 
         $this->assertExpressionEq("2a");
         $this->assertExpressionEq("a;b/c");
