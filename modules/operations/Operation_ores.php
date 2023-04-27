@@ -44,4 +44,14 @@ class Operation_ores extends  AbsOperation {
     public function getPrompt() {
         return clienttranslate('${you} must select a card to add ${count} ${restype_name} resource/s');
     }
+
+    protected function getOpName() {
+        $card = $this->getContext();
+        $par = $this->game->getRulesFor($card, 'holds', '');
+        return ['log' => clienttranslate('Add ${restype_name} to another card'),  "args" => [
+            'restype_name' => $par,
+            'i18n' => ['restype_name']
+        ]];
+    }
+
 }

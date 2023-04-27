@@ -511,6 +511,14 @@ class DbMachine extends APP_GameClass {
         return true;
     }
 
+    public function checkValidCountForOp(array $op, int $count){
+        $min = $op['mcount'];
+        $max = $op['count'];
+        if ($count < $min) throw new BgaUserException("Illegal count $count, minimum value is $min");
+        if ($count > $max && $max != -1) throw new BgaUserException("Illegal count $count, maximum value is $max");
+        return true;
+    }
+
     public function toStringFlags($flags) {
         $strflags = "";
 

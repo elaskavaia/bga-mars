@@ -178,6 +178,11 @@ abstract class AbsOperation {
         return $this->effect($owner, $inc, $args);
     }
 
+    function getUserCount(){
+        if (!$this->user_args) return null;
+        return  (int) ($this->user_args ["count"] ??  $this->op_info["count"] ?? 1);
+    }
+
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically

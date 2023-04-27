@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "OpExpression.php";
 
@@ -34,7 +36,7 @@ class MathTerminalExpression extends MathExpression {
         }
         throw new Exception("Failed to resolved '$value'");
     }
-     public function __toString() {
+    public function __toString() {
         return $this->left;
     }
 }
@@ -106,7 +108,7 @@ class MathExpressionParser {
     }
     function eos() {
         if (!$this->isEos()) {
-            throw new Exception("Unexpected tokens ".join(" ",$this->tokens));
+            throw new Exception("Unexpected tokens " . join(" ", $this->tokens));
         }
     }
     function isEos() {
@@ -173,5 +175,18 @@ class MathLexer extends OpLexer {
         }
 
         return self::$instance;
+    }
+
+    static function toregex(string $str) {
+        if ($str[0]=='\'') {
+            $str = static::unquote($str);
+        } 
+
+        if ($str[0]=='/') return $str;
+        return "/^${str}\$/";
+    }
+
+    static function unquote(string $str) {
+        return stripslashes(substr(substr($str, 1), 0, -1));
     }
 }

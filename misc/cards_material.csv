@@ -77,7 +77,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 70|Earth Catapult|2||||23||Earth|2|Effect: when you play a card, you pay 2 MC less for it.|
 71|Advanced Alloys|2||||9||Science|0|Effect: Each titanium you have is worth 1MC extra. Each steel you have is worth 1 MC extra.|
 72|Birds|2||2npp_Any||10|o>=13|Animal|Ref|Requires 13% oxygen. Decrease any plant production 2 steps. 1 VP for each animal on this card; Action: Add an animal to this card.|  'holds' => 'Animal'
-73|Mars University|2||||8||Science Building|1|Effect: When you play a science tag, including this, you may discard a card from hand to draw a card.|
+73|Mars University|2|||play_tagScience:?(discard:draw)|8||Science Building|1|Effect: When you play a science tag, including this, you may discard a card from hand to draw a card.|
 74|Viral Enhancers|2|||play_tagPlant:p/res:that;play_tagMicrobe:p/res:that;play_tagAnimal:p/res:that|9||Science Microbe|0|Effect: When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD.|
 75|Towing a Comet|3|2p,o,w|||23||Space Event|0|Gain 2 plants. Raise oxygen level 1 step and place an ocean tile.|
 76|Space Mirrors|2||Ref_pe,Ref_m||3||Space Energy|0|Action: Spend 7MC to increase your energy production 1 step.|

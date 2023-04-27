@@ -155,11 +155,11 @@ class GameXBody extends GameTokens {
   }
 
   activateSlots(opargs: any, opId: number, single: boolean) {
-    const paramargs = opargs.target;
-    const ttype = opargs.ttype;
+    const paramargs = opargs.target ?? [];
+    const ttype = opargs.ttype ?? "none";
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-      if (paramargs.length == 1)
+      if (paramargs.length <= 1)
         this.addActionButton("button_" + opId, _("Confirm"), () => {
           this.sendActionResolve(opId);
         });
@@ -204,19 +204,24 @@ class GameXBody extends GameTokens {
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();
+    const xop = args.op;
 
     const single = Object.keys(operations).length == 1;
+    const ordered = xop == "," && !single;
 
+    let i = 0;
     for (const opIdS in operations) {
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
       const opargs = opInfo.args;
       const name = this.getButtonNameForOperation(opInfo);
-      const paramargs = opargs.target;
+      const paramargs = opargs.target ?? [];
+      const singleOrFirst = single || (ordered && i == 0);
 
-      if (paramargs && paramargs.length > 0) {
-        this.activateSlots(opargs, opId, single);
-        if (!single) {
+      this.activateSlots(opargs, opId, singleOrFirst);
+      if (!single && !ordered) {
+        // xxx add something for remaining ops in ordered case?
+        if (paramargs.length > 0) {
           this.addActionButton("button_" + opId, name, () => {
             this.setClientStateUpdOn(
               "client_collect",
@@ -231,19 +236,20 @@ class GameXBody extends GameTokens {
               }
             );
           });
+        } else {
+          this.addActionButton("button_" + opId, name, () => {
+            this.sendActionResolve(opId);
+          });
         }
-      } else {
-        this.addActionButton("button_" + opId, name, () => {
-          this.sendActionResolve(opId);
-        });
       }
       // add done (skip) when optional
-      if (single) {
+      if (singleOrFirst) {
         if (opInfo.mcount <= 0)
           this.addActionButton("button_skip", _("Skip"), () => {
             this.sendActionSkip();
           });
       }
+      i = i + 1;
     }
   }
 

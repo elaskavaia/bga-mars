@@ -58,16 +58,22 @@ class ComplexOperation extends AbsOperation {
 
 
     protected function getPrompt() {
-        return  clienttranslate('${you} must confirm');
+        return  clienttranslate('${you} must confirm ${name}');
     }
 
-    function action_resolve(array $args): int {
-        if ($this->game->expandOperation($this->op_info)) {
+
+    protected function effect(string $owner, int $count): int {
+        $userCount = $this->getUserCount();
+        if ($this->game->expandOperation($this->op_info, $userCount)) {
             return 1;
         }
-        return 0; // XXX?
+        $type = $this->op_info['type'];
+        throw new BgaSystemException("Cannot auto-resove $type");
     }
 
+    function canResolveAutomatically() {
+        return false;
+    }
 
     function isVoid(): bool {
         return false;

@@ -94,6 +94,12 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $this->dbSetTokenLocation($token, "hand_$color");
     }
+    //
+    function debug_op1() {
+        $color = $this->getCurrentPlayerColor();
+        $this->push($color, "?(discard:draw)");
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+    }
     function debug_op($type) {
         $color = $this->getCurrentPlayerColor();
         $this->push($color, $type);
@@ -342,7 +348,7 @@ abstract class PGameXBody extends PGameMachine {
                 $e = $this->getRulesFor($key, 'e');
                 if (!$e) continue;
                 $info['e'] = $e;
-                $info['owner'] = substr($info['location'],strlen('tableau_'));
+                $info['owner'] = substr($info['location'], strlen('tableau_'));
                 $this->eventListners[$key] = $info;
             }
         }
@@ -356,15 +362,14 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($cards as $info) {
             $e = $info['e'];
             $ret = [];
-            if ($this->mtMatchEvent($e,$info['owner'],$event,$owner,$ret)) {
+            if ($this->mtMatchEvent($e, $info['owner'], $event, $owner, $ret)) {
                 $outcome = $ret['outcome'];
                 $context = $ret['context'];
                 $card = $info['key'];
                 $this->debugConsole("-come in play effect $outcome triggered by $card for $card_context");
-                $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context==='that'? $card_context: $card);
+                $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
             }
         }
-
     }
 
     /**
@@ -386,16 +391,20 @@ abstract class PGameXBody extends PGameMachine {
     function mtMatchEvent($trigger_rule, $trigger_owner, $event, $event_owner, &$splits = []) {
         if (!$trigger_rule) return false;
         $expr = OpExpression::parseExpression($trigger_rule);
-        if ($expr->op != ';') $args = [ $expr];
-        else $args = $expr->args ;
+        if ($expr->op != ';') $args = [$expr];
+        else $args = $expr->args;
         foreach ($args as $arg) {
-            if ($arg->op != ':') throw new BgaSystemException("Cannot parser $trigger_rule missing : ".OpExpression::str($arg));
-            $declareevent = OpExpression::str($arg->args[0]) ;
+            if ($arg->op != ':') throw new BgaSystemException("Cannot parse $trigger_rule missing : " . OpExpression::str($arg));
             $all = OpExpression::str(array_get($arg->args, 3, ''));
-            if ($declareevent === $event && ($trigger_owner === $event_owner || $all === 'all' )) { // for now only listen to own events
-                $splits['outcome'] = $arg->args[1]->__toString();
-                $splits['context'] = OpExpression::str(array_get($arg->args, 2, '')); // can be 'that' - meaning context of card that triggered the event vs event handler
-                return true;
+            if (($trigger_owner === $event_owner || $all === 'all')) { // for now only listen to own events
+                $declareevent = OpExpression::str($arg->args[0]);
+                $regex = MathLexer::toregex($declareevent);
+         
+                if (preg_match($regex, $event)==1) {
+                    $splits['outcome'] = $arg->args[1]->__toString();
+                    $splits['context'] = OpExpression::str(array_get($arg->args, 2, '')); // can be 'that' - meaning context of card that triggered the event vs event handler
+                    return true;
+                }
             }
         }
         return false;
@@ -472,10 +481,16 @@ abstract class PGameXBody extends PGameMachine {
             $this->debugConsole("-come in play effect $playeffect");
             $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
+        $tagMap = [];
         foreach ($tagsarr as $tag) {
             $this->notifyEffect($color, "play_tag$tag", $card_id);
+            $tagMap[$tag] = 1;
         }
+        $uniqueTags = array_keys($tagMap);
+        sort($uniqueTags);
+        // play tag effect is not the same as play card effects
         $this->notifyEffect($color, "playCard", $card_id);
+        $this->notifyEffect($color, "playCard_".implode('_',$uniqueTags), $card_id);
     }
 
 
@@ -638,9 +653,6 @@ abstract class PGameXBody extends PGameMachine {
      * These methods function is to return some additional information that is specific to the current
      * game state.
      */
-    function arg_playerTurnB() {
-        return ["otherplayer" => $this->getActivePlayerName(), "otherplayer_id" => $this->getActivePlayerId()];
-    }
 
     function arg_playerTurnChoice() {
         $result = [];

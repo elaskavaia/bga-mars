@@ -47,11 +47,11 @@ abstract class PGameMachine extends PGameTokens {
     }
     public function isSimpleOperation($op) {
         $expr = OpExpression::parseExpression($op);
-        return $expr->op=="!";
+        return $expr->op == "!";
     }
 
     function debug_dumpMachine() {
-        $this->debugConsole("", ["all stack",$this->machine->gettableexpr()]);
+        $this->debugConsole("", ["all stack", $this->machine->gettableexpr()]);
     }
 
 
@@ -113,7 +113,7 @@ abstract class PGameMachine extends PGameTokens {
             $info = $this->machine->info($operation_id);
             $this->debugConsole("- resolve op " . $info['type'], $args);
 
-     
+
             $color = $info["owner"];
             if ($color === null) {
                 $color = $this->getActivePlayerColor(); // XXX?
@@ -126,10 +126,10 @@ abstract class PGameMachine extends PGameTokens {
             // stack operations
             $this->saction_stack($count, $info, $tops);
             //$this->debug_dumpMachine();
-           // $this->debugConsole("",           $this->machine->gettablearr());
+            // $this->debugConsole("",           $this->machine->gettablearr());
         }
         $this->machine->normalize();
-        $this->debugConsole("- done resolve",[$this->machine->gettableexpr()]);
+        $this->debugConsole("- done resolve", [$this->machine->gettableexpr()]);
         $this->gamestate->nextState("next");
     }
 
@@ -140,7 +140,7 @@ abstract class PGameMachine extends PGameTokens {
 
 
     function saction_stack(int $count, array $info, array $tops) {
-        $this->machine->resolve($info,$count,$tops);
+        $this->machine->resolve($info, $count, $tops);
 
         return;
     }
@@ -153,6 +153,11 @@ abstract class PGameMachine extends PGameTokens {
         if (!$operations) {
             $operations = $this->machine->getTopOperations();
         }
+        $one = reset($operations);
+        $flags = $this->machine->getResolveType($one);
+        $xop = $this->machine->toStringFlags($flags);
+
+        $result["op"]= $xop;
         foreach ($operations as $id => $op) {
             $result["operations"][$id] = $op;
             $result["operations"][$id]["args"] = $this->arg_operation($op);
@@ -218,26 +223,33 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function executeOperationSingle($op) {
-        if ($this->expandOperation($op)) {
+        if ($this->expandOperation($op, null)) {
             $this->machine->hide($op);
             return null;
         }
         return $this->executeOperationSingleAtomic($op);
     }
 
-    function expandOperation($op) {
+    function expandOperation($op, $count) {
         $type = $op["type"];
-        if (!$this->isAtomicOperation($type)) {
-          
+        if ($count!==null) {
+            // user resolved the count
+            $this->machine->checkValidCountForOp($op,$count);
+            $op['count'] = $count;
+            $op['mcount'] = $count;
+        }
+        if (!$this->isAtomicOperation($type) && $op['count'] == $op['mcount']) {
+
             $this->machine->interrupt();
             $this->machine->expandOp($op);
+            //$this->machine->hide($op);
             // sanity to prevent recursion
             $operations = $this->machine->getTopOperations();
             if (count($operations) == 0) {
                 $this->systemAssertTrue("Failed expand for $type. Nothing");
             }
-            $op = array_shift($operations);
-            if ($op["type"] == $type) {
+            $nop = array_shift($operations);
+            if ($nop["type"] == $type && $nop['mcount'] == $op['mcount'] && $nop['count'] == $op['count']) {
                 $this->systemAssertTrue("Failed expand for $type. Recursion");
             }
             return true;

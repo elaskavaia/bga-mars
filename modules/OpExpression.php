@@ -127,6 +127,8 @@ class OpExpression {
     function isSimple() {
         return $this->op == "!";
     }
+
+
 }
 
 class OpExpressionTerminal extends OpExpression {

@@ -112,4 +112,14 @@ final class GameTest extends TestCase {
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(1, $value);
     }
+
+    public function testEffectMatch(){
+        $m = $this->game();
+        $res=[];
+        $this->assertTrue($m->mtMatchEvent("a:x",PCOLOR,"a",PCOLOR,$res));
+        $this->assertFalse($m->mtMatchEvent("a:x",PCOLOR,"ab",PCOLOR,$res));
+
+        $this->assertTrue($m->mtMatchEvent("'/play_.*b/':x",PCOLOR,"play_a_b",PCOLOR,$res));
+        $this->assertFalse($m->mtMatchEvent("'/play_.*c/':x",PCOLOR,"play_a_b",PCOLOR,$res));
+    }
 }

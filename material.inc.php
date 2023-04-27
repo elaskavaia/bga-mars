@@ -953,6 +953,7 @@ $this->token_types = [
   'num' => 73,
   'name' => clienttranslate("Mars University"),
   't' => 2,
+  'e' => 'play_tagScience:?(discard:draw)',
   'cost' => 8,
   'tags' => 'Science Building',
   'vp' => 1,

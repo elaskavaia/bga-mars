@@ -409,8 +409,8 @@ var GameBasics = /** @class */ (function (_super) {
         var div = document.createElement("div");
         if (id)
             div.id = id;
-        if (classes && classes.trim()) {
-            var classesList = classes.trim().split(/  */);
+        if (classes) {
+            var classesList = classes.split(/  */);
             (_a = div.classList).add.apply(_a, classesList);
         }
         var parentNode = location ? document.getElementById(location) : null;
@@ -1530,11 +1530,12 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.activateSlots = function (opargs, opId, single) {
         var _this = this;
-        var paramargs = opargs.target;
-        var ttype = opargs.ttype;
+        var _a, _b;
+        var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
+        var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
         if (single) {
             this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-            if (paramargs.length == 1)
+            if (paramargs.length <= 1)
                 this.addActionButton("button_" + opId, _("Confirm"), function () {
                     _this.sendActionResolve(opId);
                 });
@@ -1577,20 +1578,26 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
+        var _a;
         var operations = args.operations;
         this.clientStateArgs.call = "resolve";
         this.clientStateArgs.ops = [];
         this.clearReverseIdMap();
+        var xop = args.op;
         var single = Object.keys(operations).length == 1;
+        var ordered = xop == "," && !single;
+        var i = 0;
         var _loop_1 = function (opIdS) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opargs = opInfo.args;
             var name_2 = this_1.getButtonNameForOperation(opInfo);
-            var paramargs = opargs.target;
-            if (paramargs && paramargs.length > 0) {
-                this_1.activateSlots(opargs, opId, single);
-                if (!single) {
+            var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
+            var singleOrFirst = single || (ordered && i == 0);
+            this_1.activateSlots(opargs, opId, singleOrFirst);
+            if (!single && !ordered) {
+                // xxx add something for remaining ops in ordered case?
+                if (paramargs.length > 0) {
                     this_1.addActionButton("button_" + opId, name_2, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
@@ -1602,19 +1609,20 @@ var GameXBody = /** @class */ (function (_super) {
                         });
                     });
                 }
-            }
-            else {
-                this_1.addActionButton("button_" + opId, name_2, function () {
-                    _this.sendActionResolve(opId);
-                });
+                else {
+                    this_1.addActionButton("button_" + opId, name_2, function () {
+                        _this.sendActionResolve(opId);
+                    });
+                }
             }
             // add done (skip) when optional
-            if (single) {
+            if (singleOrFirst) {
                 if (opInfo.mcount <= 0)
                     this_1.addActionButton("button_skip", _("Skip"), function () {
                         _this.sendActionSkip();
                     });
             }
+            i = i + 1;
         };
         var this_1 = this;
         for (var opIdS in operations) {
