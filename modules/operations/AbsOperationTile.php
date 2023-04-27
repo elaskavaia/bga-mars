@@ -43,5 +43,6 @@ abstract class AbsOperationTile extends AbsOperation {
             $this->game->debugConsole("-placement bonus $bonus");
             $this->game->put($this->getOwner(), $bonus);
         }
+        return $object;
     }
 }

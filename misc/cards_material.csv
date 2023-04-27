@@ -35,14 +35,14 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 28|Security Fleet|2||u:res||12||Space|Ref|1 VP for each fighter resource on this card.; Action: Spend 1 titanium to add 1 fighter resource to this card.|  'holds' => 'Fighter'
 29|Cupola City|1|3pm,1npe|||16|o<=9|Building City|0|Oxygen must be 9% or less. Place a city tile. Decrease your energy production 1 step and increase your MC production 3 steps.|
 30|Lunar Beam|1|2npm,2pe,2ph|||13||Earth Energy|0|Decrease your MC production 2 steps and increase your heat production and energy production 2 steps each.|
-31|Optimal Aerobraking|2||||7||Space|0|Effect: When you place a space event, you gain 3 MC and 3 heat.|
+31|Optimal Aerobraking|2|||'/^playCard_.*Event.*Space/':3m,3h|7||Space|0|Effect: When you play a space event, you gain 3 MC and 3 heat.|
 32|Underground City|1|2ps,2npe|||18||Building City|0|Place a city tile. Decrease your energy production 2 steps and increase your steel production 2 steps.|
 33|Regolith Eaters|2||res/(2nres:o)||13||Science Microbe|0|Action: Add 1 microbe to this card, or remove 2 microbe from this card to raise oxygen level 1 step.|  'holds' => 'Microbe'
 34|GHG Producing Bacteria|2||res/(2nres:t)||8|o>=4|Science Microbe|0|Requires 4% oxygen.; Action: Add 1 microbe to this card, or remove 2 microbes to raise temperature 1 step.|  'holds' => 'Microbe'
 35|Ants|2||||9|o>=4|Microbe|Ref|Requires 4% oxygen. 1 VP per 2 microbes on this card.; Action: Remove 1 microbe from any card to add 1 to this card.|  'holds' => 'Microbe'
 36|Release of Inert Gases|3|2tr|||14||Event|0|Raise your terraform rating 2 steps.|
 37|Nitrogen-Rich Asteroid|3|Ref_pp,2tr,t|||31||Space Event|0|Raise your terraforming rating 2 steps and temperature 1 step. Increase your plant production 1 step, or 4 steps if you have 3 plant tags.|
-38|Rover Construction|2|||Ref_m|8||Building|1|Effect: When any city tile is placed, gain 2 MC|
+38|Rover Construction|2|||place_city:2m:this:any|8||Building|1|Effect: When any city tile is placed, gain 2 MC|
 39|Deimos Down|3|4s,8np_Any,3t|||31||Space Event|0|Raise temperature 3 steps and gain 4 steel. Remove up to 8 plants from any player.|
 40|Asteroid Mining|1|2pu|||30||Space Jovian|2|Increase your titanium production 2 steps.|
 41|Food Factory|1|4pm,1npp|||12||Building|1|Decrease your plant production 1 step and increase your MC production 4 steps.|

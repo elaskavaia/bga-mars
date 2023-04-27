@@ -15,9 +15,10 @@ class Operation_city extends AbsOperationTile {
     }
 
     function effect(string $owner, int $inc): int  {
-        $this->effect_placeTile();
+        $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'city');
         $this->game->incTrackerValue($owner, 'land');
+        $this->game->notifyEffect($owner,'place_city',$tile);
         return 1;
     }
 }

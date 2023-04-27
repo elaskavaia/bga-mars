@@ -359,6 +359,7 @@ abstract class PGameXBody extends PGameMachine {
         // load all active effect listeners
         $cards = $this->getActiveEventListeners();
         // filter for listener for specific effect
+        $this->debugConsole("-notify $event for $card_context");
         foreach ($cards as $info) {
             $e = $info['e'];
             $ret = [];
@@ -366,7 +367,7 @@ abstract class PGameXBody extends PGameMachine {
                 $outcome = $ret['outcome'];
                 $context = $ret['context'];
                 $card = $info['key'];
-                $this->debugConsole("-come in play effect $outcome triggered by $card for $card_context");
+                $this->debugConsole("-come in play effect $outcome triggered by $card");
                 $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
             }
         }

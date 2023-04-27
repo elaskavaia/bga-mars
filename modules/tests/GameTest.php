@@ -76,7 +76,7 @@ final class GameTest extends TestCase {
 
     public function testCounterCall() {
         $m = $this->game();
-        $m->tokens->setTokenState('tracker_u_' . PCOLOR, 8);
+        $m->incTrackerValue(PCOLOR, 'u', 8);
         // $m->incTrackerValue(PCOLOR,'u',8);
         $m->machine->insertRule("counter(u) m", 1, 1, 1, PCOLOR);
         $ops = $m->machine->getTopOperations();

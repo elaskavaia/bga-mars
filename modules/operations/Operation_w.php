@@ -15,9 +15,11 @@ class Operation_w extends AbsOperationTile {
     }
 
     function effect(string $owner, int $inc): int  {
-        if ($inc != 1) throw new feException("Cannot use counter $inc for this operation");
-        $this->effect_placeTile();
+        //if ($inc != 1) throw new feException("Cannot use counter $inc for this operation");
+        $tile = $this->effect_placeTile();
         $this->game->effect_increaseParam($owner, "w", 1);
+        $this->game->notifyEffect($owner,'place_ocean',$tile);
+
         return 1;
     }
 }
