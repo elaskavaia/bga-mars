@@ -38,8 +38,9 @@ class ComplexOperation extends AbsOperation {
     protected function getOpName() {
         $rules = $this->rules();
         if ($rules) return $rules['name'];
+        $op=$this->operation;
 
-        switch ($this->operation) {
+        switch ($op) {
             case ':':
                 $pay = $this->delegates[0];
                 $gain = $this->delegates[1];
@@ -47,6 +48,19 @@ class ComplexOperation extends AbsOperation {
                     "pay" => ["log" => $pay->getButtonName(), "args" => $pay->getVisargs()],
                     "gain" => ["log" => $gain->getButtonName(), "args" => $gain->getVisargs()]
                 ]];
+            case ',':
+            case '/':
+            case ';':
+            case '+':
+                $args = [];
+                $pars = [];
+                foreach($this->delegates as $i=>$sub) {
+                    $pars[]="p$i";
+                    $args["p$i"]=["log" => $sub->getButtonName(), "args" => $sub->getVisargs()];
+                }
+                $log = implode("$op ",array_map(function ($a){return '${'.$a.'}';},$pars));
+                $args["i18n"] = $pars;
+                return  ['log' => $log, 'args'=>$args ];
 
             case '!':
                 $gain = $this->delegates[0];
