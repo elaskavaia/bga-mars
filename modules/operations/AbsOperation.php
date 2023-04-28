@@ -13,7 +13,7 @@ abstract class AbsOperation {
     protected ?array $user_args;
 
     public function __construct(string $type, array $opinfo, PGameXBody $game) {
-        $this->mnemonic = $type;
+        $this->mnemonic =  stripslashes($type);
         $this->game = $game;
         $this->argresult = null;
         $this->user_args = null;

@@ -7,9 +7,10 @@ class DelegatedOperation extends AbsOperation {
     public AbsOperation $delegate;
     public function __construct(array $opinfo, PGameXBody $game) {
         parent::__construct($opinfo['type'], $opinfo, $game);
-        $type = $opinfo['type'];
-        $newop = $this->game->machine->createOperationSimple($type, $opinfo['owner']);
-        if ($newop['type'] == $type) throw new BgaSystemException("Cannot create delete for $type");
+        $type = $this->mnemonic;
+        $newop = $this->game->machine->createOperationSimple($type, $this->color);
+        if ($newop['type'] == $opinfo['type']) throw new BgaSystemException("Cannot create delete for $type");
+        $newop['data']=$opinfo['data'];
         $this->delegate = $this->game->getOperationInstance($newop);
     }
 

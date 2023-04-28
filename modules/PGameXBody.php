@@ -208,6 +208,10 @@ abstract class PGameXBody extends PGameMachine {
         if ($x == 'chand') {
             return $this->tokens->countTokensInLocation("hand_$owner");
         }
+
+        if ($x == 'resCard') {
+            return $this->tokens->countTokensInLocation("$context"); // number of resources on the card
+        }
         if ($x == 'tagEvent') {
             // tagEvent is not counted as tag since its not face up
             return $this->tokens->countTokensInLocation("tableau_$owner", 0);
@@ -237,38 +241,42 @@ abstract class PGameXBody extends PGameMachine {
 
 
     function getOperationInstance(array $opinfo): AbsOperation {
-        $type = $opinfo['type'];
-        $expr = OpExpression::parseExpression($type);
-        $issimple = $expr->isSimple();
-        if ($issimple && !$expr->isAtomic()) {
-            $opinst = new DelegatedOperation($opinfo, $this);
-            return $opinst;
-        } else if (!$issimple) {
-            // too complex
-            $opinst = new ComplexOperation($opinfo, $this);
-            return $opinst;
-        }
-
-        $matches = null;
-        $params = null;
-        if (preg_match("/^(\w+)\((.*)\)$/", $type, $matches)) {
-            // function call
-            $params = $matches[2];
-            $type = $matches[1];
-        }
-
-        $rules = $this->getOperationRules($type);
-        if (!$rules) {
-            throw new BgaSystemException("Operation is not defined for $type");
-        }
-        $classname = array_get($rules, "class", "Operation_$type");
+        $type = stripslashes($opinfo['type']);
+        $classname = 'xxx';
         try {
+            $expr = OpExpression::parseExpression($type);
+            $issimple = $expr->isSimple();
+            if ($issimple && !$expr->isAtomic()) {
+                $classname = "DelegatedOperation";
+                $opinst = new DelegatedOperation($opinfo, $this);
+                return $opinst;
+            } else if (!$issimple) {
+                // too complex
+                $classname = "ComplexOperation";
+                $opinst = new ComplexOperation($opinfo, $this);
+                return $opinst;
+            }
+
+            $matches = null;
+            $params = null;
+            if (preg_match("/^(\w+)\((.*)\)$/", $type, $matches)) {
+                // function call
+                $params = $matches[2];
+                $type = $matches[1];
+            }
+
+            $rules = $this->getOperationRules($type);
+            if (!$rules) {
+                throw new BgaSystemException("Operation is not defined for $type");
+            }
+            $classname = array_get($rules, "class", "Operation_$type");
+
             require_once "operations/$classname.php";
             $opinst = new $classname($type, $opinfo, $this);
             if ($params) $opinst->setParams($params);
             return $opinst;
         } catch (Throwable $e) {
-            $this->dumpError($e);
+            $this->error($e);
             throw new BgaSystemException("Cannot instantate $classname for $type");
         }
     }
@@ -400,8 +408,8 @@ abstract class PGameXBody extends PGameMachine {
             if (($trigger_owner === $event_owner || $all === 'all')) { // for now only listen to own events
                 $declareevent = OpExpression::str($arg->args[0]);
                 $regex = MathLexer::toregex($declareevent);
-         
-                if (preg_match($regex, $event)==1) {
+
+                if (preg_match($regex, $event) == 1) {
                     $splits['outcome'] = $arg->args[1]->__toString();
                     $splits['context'] = OpExpression::str(array_get($arg->args, 2, '')); // can be 'that' - meaning context of card that triggered the event vs event handler
                     return true;
@@ -491,7 +499,7 @@ abstract class PGameXBody extends PGameMachine {
         sort($uniqueTags);
         // play tag effect is not the same as play card effects
         $this->notifyEffect($color, "playCard", $card_id);
-        $this->notifyEffect($color, "playCard_".implode('_',$uniqueTags), $card_id);
+        $this->notifyEffect($color, "playCard_" . implode('_', $uniqueTags), $card_id);
     }
 
 

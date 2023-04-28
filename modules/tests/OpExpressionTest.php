@@ -59,6 +59,7 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("(! 0 2 ores(Microbe))", "2?ores(Microbe)");
         $this->assertExpressionParser("(: play_tagPlant (/ p res) that)","play_tagPlant:p/res:that");
         $this->assertExpressionParser("(: 0 1 discard draw)","?(discard:draw)");
+        $this->assertExpressionParser("(, (! 2 2 tr) t (/ pp (, counter('(tagPlant>=3)*4') pp)))","2tr,t,(pp/counter('(tagPlant>=3)*4') pp)");
         //
 
         $this->assertExpressionEq("2a");
@@ -80,6 +81,7 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionEq("call(1)");
         $this->assertExpressionEq("pl(0x0000ff)");
         $this->assertExpressionEq("2?ores(Microbe),pp,3ph");
+        $this->assertExpressionEq("2tr,t,(pp/counter('(tagPlant>=3)*4') pp)");
 
     }
 

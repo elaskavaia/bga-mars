@@ -8,14 +8,14 @@ class ComplexOperation extends AbsOperation {
     private string $operation;
     public function __construct(array $opinfo, PGameXBody $game) {
         parent::__construct($opinfo['type'], $opinfo, $game);
-
-        $type = $opinfo['type'];
+        $type = $this->mnemonic;
         $expr = OpExpression::parseExpression($type);
         $this->operation = $expr->op;
         $this->delegates = [];
         foreach ($expr->args as $arg) {
-            $newop = $this->game->machine->createOperationSimple(OpExpression::str($arg), $opinfo['owner']);
-            if ($newop['type'] == $type) throw new BgaSystemException("Cannot create delegate for $type");
+            $newop = $this->game->machine->createOperationSimple(OpExpression::str($arg), $this->color);
+            $newop['data']=$opinfo['data'];
+            if ($newop['type'] == $opinfo['type']) throw new BgaSystemException("Cannot create delegate for $type");
             $this->delegates[] = $this->game->getOperationInstance($newop);
         }
     }
@@ -34,37 +34,37 @@ class ComplexOperation extends AbsOperation {
         return $result;
     }
 
+    private function getRecName($join) {
+        $args = [];
+        $pars = [];
+        foreach ($this->delegates as $i => $sub) {
+            $pars[] = "p$i";
+            $args["p$i"] = ["log" => $sub->getButtonName(), "args" => $sub->getVisargs()];
+        }
+        $log = implode($join, array_map(function ($a) {
+            return '${' . $a . '}';
+        }, $pars));
+        $args["i18n"] = $pars;
+        return  ['log' => $log, 'args' => $args];
+    }
 
     protected function getOpName() {
         $rules = $this->rules();
         if ($rules) return $rules['name'];
-        $op=$this->operation;
+        $op = $this->operation;
 
         switch ($op) {
             case ':':
-                $pay = $this->delegates[0];
-                $gain = $this->delegates[1];
-                return ['log' => '${pay} => ${gain}', 'args' => [
-                    "pay" => ["log" => $pay->getButtonName(), "args" => $pay->getVisargs()],
-                    "gain" => ["log" => $gain->getButtonName(), "args" => $gain->getVisargs()]
-                ]];
+                return $this->getRecName(" => ");
             case ',':
-            case '/':
             case ';':
+                return $this->getRecName("$op ");
+            case '/':
             case '+':
-                $args = [];
-                $pars = [];
-                foreach($this->delegates as $i=>$sub) {
-                    $pars[]="p$i";
-                    $args["p$i"]=["log" => $sub->getButtonName(), "args" => $sub->getVisargs()];
-                }
-                $log = implode("$op ",array_map(function ($a){return '${'.$a.'}';},$pars));
-                $args["i18n"] = $pars;
-                return  ['log' => $log, 'args'=>$args ];
+                return $this->getRecName(" $op ");
 
             case '!':
-                $gain = $this->delegates[0];
-                return ['log' => $gain->getButtonName(),  "args" => $gain->getVisargs()];
+                return $this->getRecName("")['args']['p0'];
         }
 
         return $this->mnemonic;

@@ -21,7 +21,7 @@ class Operation_research extends AbsOperation {
                 $rules = $this->game->getRulesFor($cardid, '*');
                 if (isset($rules['a'])) {
                     $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cards
-                    $this->game->dbSetTokenState($cardid, $state);
+                    $this->game->dbSetTokenState($cardid, $state,'');
                 }
             }
             // draw

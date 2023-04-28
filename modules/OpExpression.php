@@ -367,7 +367,7 @@ class OpParser {
     function consume($bip) {
         $pop = $this->pop();
         if ($bip != $pop) {
-            throw new Exception("Expected $bip but got $pop");
+            throw new feException("Expected $bip but got $pop");
         }
     }
     function parseTerm() {
@@ -384,8 +384,8 @@ class OpParser {
         $op = $this->pop();
         $tt = $this->lexer->getTerminalName($op);
 
-        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING"  && $tt != "T_NUMBER") {
-            throw new Exception("Unexpected token '$op' $tt");
+        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING"  && $tt != "T_NUMBER"  && $tt != "T_STRING") {
+            throw new feException("Unexpected token '$op' $tt");
         }
         if ($tt == "T_IDENTIFIER") {
             $lookup = $this->peek();
