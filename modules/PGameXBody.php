@@ -490,16 +490,27 @@ abstract class PGameXBody extends PGameMachine {
             $this->debugConsole("-come in play effect $playeffect");
             $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
+        $events = $this->getPlayCardEvents($tagsarr);
+        foreach ($events as $event) {
+            $this->notifyEffect($color, $event, $card_id);
+        }
+    }
+
+    function getPlayCardEvents(array $tagsarr): array {
         $tagMap = [];
         foreach ($tagsarr as $tag) {
-            $this->notifyEffect($color, "play_tag$tag", $card_id);
+            $events[] = "play_tag$tag";
             $tagMap[$tag] = 1;
         }
+        $events = [];
+        if ($tagMap['Space'] && $tagMap['Event']) $events[] = 'play_cardSpaceEvent';
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
-        // play tag effect is not the same as play card effects
-        $this->notifyEffect($color, "playCard", $card_id);
-        $this->notifyEffect($color, "playCard_" . implode('_', $uniqueTags), $card_id);
+        foreach ($uniqueTags as $tag) {
+            $events[] = "play_card$tag";
+        }
+        $events[] = "play_card";
+        return $events;
     }
 
 

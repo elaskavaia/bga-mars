@@ -8,13 +8,20 @@ Random notes on todo items
 ## Server
 
 * Awards - scoring
-* Activate effects
 * Static effects
+ * pay discounts onPay_...
+ * pay with tit/s (nmt and nms)
+ * steel and titanimum exchange rate (ers and eru)
 * Complex cards
+ * requirement +2/-2 (paramreq)
+ * copy_Building
+ * defense for res removal (global:defense)
+ * effect on next played card
+* Corporations
 
 ## Client
 
-* Badges
+* Tag
 * Player picker
 * Hex tiles
 * Payment selector
