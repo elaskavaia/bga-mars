@@ -18,6 +18,7 @@ Random notes on todo items
  * defense for res removal (global:defense)
  * effect on next played card
 * Corporations
+* Hex placement effects
 
 ## Client
 

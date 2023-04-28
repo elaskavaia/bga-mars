@@ -225,6 +225,10 @@ abstract class PGameXBody extends PGameMachine {
             }
             return $value;
         }
+        if (startsWith($x, 'adj_')) {
+            return 1;// XXX TODO
+        }
+ 
         $create = $this->getRulesFor("tracker_$x", "create", null);
         if ($create === null) {
             throw new feException("Cannot evalute $x");
@@ -503,7 +507,7 @@ abstract class PGameXBody extends PGameMachine {
             $tagMap[$tag] = 1;
         }
         $events = [];
-        if ($tagMap['Space'] && $tagMap['Event']) $events[] = 'play_cardSpaceEvent';
+        if (array_get($tagMap,'Space') && array_get($tagMap,'Event')) $events[] = 'play_cardSpaceEvent';
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
         foreach ($uniqueTags as $tag) {
