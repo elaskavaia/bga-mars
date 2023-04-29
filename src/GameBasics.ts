@@ -490,7 +490,7 @@ class GameBasics extends GameGui {
     else if (location) {
       console.error("Cannot find location [" + location + "] for ", div);
     }
-    console.log('id',id,'has been created at',location);
+    console.log("id", id, "has been created at", location);
     return div;
   }
 
@@ -615,7 +615,7 @@ class GameBasics extends GameGui {
 
   setActiveSlot(node: ElementOrId) {
     if (!$(node)) {
-      this.showError("Not found "+node);
+      this.showError("Not found " + node);
       return;
     }
     $(node).classList.add(this.classActiveSlot);
@@ -762,6 +762,16 @@ class GameBasics extends GameGui {
 
   getPlayerColor(playerId: number) {
     return this.gamedatas.players[playerId] ?? "000000";
+  }
+
+  getPlayerIdByColor(color: string) {
+    for (var playerId in this.gamedatas.players) {
+      var playerInfo = this.gamedatas.players[playerId];
+      if (color === playerInfo.color) {
+        return playerId;
+      }
+    }
+    return undefined;
   }
 
   isReadOnly() {

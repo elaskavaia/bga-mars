@@ -97,8 +97,8 @@ abstract class PGameXBody extends PGameMachine {
     //
     function debug_op1() {
         $color = $this->getCurrentPlayerColor();
-        $this->push($color, "?(discard:draw)");
-        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $payment_inst = $this->getOperationInstanceFromType("17nmu", $color);
+        if ($payment_inst->isVoid()) throw new BgaUserException(self::_('Insufficient resources for payment'));
     }
     function debug_op($type) {
         $color = $this->getCurrentPlayerColor();
@@ -156,13 +156,14 @@ abstract class PGameXBody extends PGameMachine {
         return $builder;
     }
 
-    function canAfford($owner, $tokenid, $cost) {
-        // badges and resources XXX
-        try {
-            $this->effect_incCount($owner, "m", -$cost, ['onlyCheck' => true]);
-        } catch (Exception $e) {
-            return false;
+    function canAfford($color, $tokenid, $cost = null) {
+        if ($cost !== null) {
+            $mc = $this->getTrackerValue($color, 'm');
+            return $mc >= $cost;
         }
+        $payment_op = $this->getPayment($color, $tokenid);
+        $payment_inst = $this->getOperationInstanceFromType($payment_op, $color);
+        if ($payment_inst->isVoid()) return false;
         return true;
     }
 
@@ -170,8 +171,8 @@ abstract class PGameXBody extends PGameMachine {
         if (!$owner) {
             $owner == $this->getActivePlayerColor();
         }
-        $cost = $this->getRulesFor($tokenid, "cost");
-        if (!$this->canAfford($owner, $tokenid, $cost)) {
+
+        if (!$this->canAfford($owner, $tokenid)) {
             return MA_ERR_COST;
         }
         // check precond
@@ -226,9 +227,9 @@ abstract class PGameXBody extends PGameMachine {
             return $value;
         }
         if (startsWith($x, 'adj_')) {
-            return 1;// XXX TODO
+            return 1; // XXX TODO
         }
- 
+
         $create = $this->getRulesFor("tracker_$x", "create", null);
         if ($create === null) {
             throw new feException("Cannot evalute $x");
@@ -261,6 +262,8 @@ abstract class PGameXBody extends PGameMachine {
                 return $opinst;
             }
 
+            $type = $expr->toUnranged(); // only things left is 1,1
+
             $matches = null;
             $params = null;
             if (preg_match("/^(\w+)\((.*)\)$/", $type, $matches)) {
@@ -289,7 +292,9 @@ abstract class PGameXBody extends PGameMachine {
             'type' => $type,
             'owner' => $color,
             'mcount' => $count,
-            'count' => $count
+            'count' => $count,
+            'data' => '',
+            'flags' => 0
         ];
         return self::getOperationInstance($opinfo);
     }
@@ -342,14 +347,14 @@ abstract class PGameXBody extends PGameMachine {
     }
 
 
-    function queue($color, $type) {
-        $this->machine->queue($type, 1, 1, $color, MACHINE_OP_SEQ);
+    function queue($color, $type, $data = '') {
+        $this->machine->queue($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
-    function push($color, $type) {
-        $this->machine->push($type, 1, 1, $color, MACHINE_OP_SEQ);
+    function push($color, $type, $data = '') {
+        $this->machine->push($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
-    function put($color, $type) {
-        $this->machine->put($type, 1, 1, $color, MACHINE_OP_SEQ);
+    function put($color, $type, $data = '') {
+        $this->machine->put($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
 
     function getActiveEventListeners() {
@@ -437,15 +442,10 @@ abstract class PGameXBody extends PGameMachine {
         $rules = $this->getRulesFor($card_id);
         $color = $this->getActivePlayerColor();
         $cost = $this->getRulesFor($card_id, "cost");
-        $payment = $args["payment"] ?? "auto";
         $this->machine->interrupt();
-        if ($payment == "auto") {
-            $this->executeImmediately($color, "nm", $cost);
-        } else {
-            $this->systemAssertTrue("Not supported payment");
-        }
 
         if (startsWith($card_id, "card_stanproj")) {
+            $this->executeImmediately($color, "nm", $cost);
             $this->push($color, $rules);
             $this->notif()
                 ->withToken($card_id)
@@ -454,10 +454,22 @@ abstract class PGameXBody extends PGameMachine {
             return true;
         }
 
-
-        $this->effect_cardInPlay($color, $card_id);
+        $payment_op = $this->getPayment($color, $card_id);
+        $payment_inst = $this->getOperationInstanceFromType($payment_op, $color);
+        if ($payment_inst->isVoid()) throw new BgaUserException(self::_("Insufficient resources for payment"));
+        $this->push($color, $payment_op, $card_id);
+        $this->put($color, 'cardx', $card_id);
+        return true;
     }
+    function getPayment($color, $card_id): string {
+        $costm = $this->getRulesFor($card_id, "cost", 0);
+        $tags = $this->getRulesFor($card_id, "tags", '');
+        // XXX discounts onPay
+        if (strstr($tags, "Building")) return "${costm}nms";
 
+        if (strstr($tags, "Space")) return "${costm}nmu";
+        return "${costm}nm";
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -508,7 +520,7 @@ abstract class PGameXBody extends PGameMachine {
             $tagMap[$tag] = 1;
         }
         $events = [];
-        if (array_get($tagMap,'Space') && array_get($tagMap,'Event')) $events[] = 'play_cardSpaceEvent';
+        if (array_get($tagMap, 'Space') && array_get($tagMap, 'Event')) $events[] = 'play_cardSpaceEvent';
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
         foreach ($uniqueTags as $tag) {
@@ -743,9 +755,9 @@ abstract class PGameXBody extends PGameMachine {
 
     function executeAttemptAutoResolve($op) {
         $type = $op["type"];
-        $this->notifyMessage(clienttranslate('${player_name} executes ${operation_name}'), [
-            "operation_name" => $this->getOperationName($type),
-        ]);
+        // $this->notifyMessage(clienttranslate('${player_name} executes ${operation_name}'), [
+        //     "operation_name" => $this->getOperationName($type),
+        // ]);
         $opinst = $this->getOperationInstance($op);
         $count = $op["count"];
         $tops = $this->machine->getTopOperations();

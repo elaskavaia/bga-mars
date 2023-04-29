@@ -115,7 +115,7 @@ class DbMachine extends APP_GameClass {
         return $this->DbGetLastId();
     }
 
-    function createOperationSimple(string $type, string $color) {
+    function createOperationSimple(string $type, string $color, string $data = '') {
         $expr = OpExpression::parseExpression($type);
         $from = 1;
         $to = 1;
@@ -124,7 +124,7 @@ class DbMachine extends APP_GameClass {
             $to = $expr->to;
             $type = OpExpression::str($expr->toUnranged());
         }
-        return $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_RESOLVE_DEFAULT);
+        return $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_SEQ, 0, $data);
     }
 
     function createOperation(

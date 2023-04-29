@@ -419,7 +419,7 @@ var GameBasics = /** @class */ (function (_super) {
         else if (location) {
             console.error("Cannot find location [" + location + "] for ", div);
         }
-        console.log('id', id, 'has been created at', location);
+        console.log("id", id, "has been created at", location);
         return div;
     };
     GameBasics.prototype.getTooptipHtml = function (name, message, imgTypes, action) {
@@ -668,6 +668,15 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.getPlayerColor = function (playerId) {
         var _a;
         return (_a = this.gamedatas.players[playerId]) !== null && _a !== void 0 ? _a : "000000";
+    };
+    GameBasics.prototype.getPlayerIdByColor = function (color) {
+        for (var playerId in this.gamedatas.players) {
+            var playerInfo = this.gamedatas.players[playerId];
+            if (color === playerInfo.color) {
+                return playerId;
+            }
+        }
+        return undefined;
     };
     GameBasics.prototype.isReadOnly = function () {
         return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
@@ -1540,7 +1549,6 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.sendActionResolve(opId);
                 });
         }
-        debugger;
         if (ttype == "token") {
             paramargs.forEach(function (tid) {
                 if (tid == "none") {
@@ -1552,43 +1560,50 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 else
                     _this.setActiveSlot(tid);
-                if (opId)
-                    _this.reverseIdLookup.set(tid, {
-                        op: opId,
-                        param_name: "target",
-                    });
+                _this.setReverseIdMap(tid, opId, tid);
             });
         }
         else if (ttype == "player") {
             paramargs.forEach(function (tid) {
                 // XXX need to be pretty
-                var divId = "button_" + tid;
-                _this.addActionButton(divId, tid, function () {
-                    _this.onSelectTarget(opId, tid);
-                });
-                if (opId)
-                    _this.reverseIdLookup.set(divId, {
-                        op: opId,
-                        param_name: "target",
+                var playerId = _this.getPlayerIdByColor(tid);
+                // here divId can be like player name on miniboard
+                var divId = "player_name_".concat(playerId);
+                if (single) {
+                    var buttonId = "button_" + tid;
+                    _this.addActionButton(buttonId, tid, function () {
+                        _this.onSelectTarget(opId, tid);
                     });
+                }
+                _this.setReverseIdMap(divId, opId, tid);
             });
         }
         else if (ttype == "enum") {
             paramargs.forEach(function (tid, i) {
-                var divId = "button_" + i;
-                _this.addActionButton(divId, tid, function () {
-                    _this.onSelectTarget(opId, tid);
-                });
-                if (opId)
-                    _this.reverseIdLookup.set(divId, {
-                        op: opId,
-                        param_name: "target",
+                if (single) {
+                    var divId = "button_" + i;
+                    _this.addActionButton(divId, tid, function () {
+                        _this.onSelectTarget(opId, tid);
                     });
+                }
             });
         }
     };
     GameXBody.prototype.clearReverseIdMap = function () {
         this.reverseIdLookup = new Map();
+    };
+    GameXBody.prototype.setReverseIdMap = function (divId, opId, target, param_name) {
+        var prev = this.reverseIdLookup.get(divId);
+        if (prev && prev.opId != opId) {
+            // ambiguous lookup
+            this.reverseIdLookup.set(divId, 0);
+            return;
+        }
+        this.reverseIdLookup.set(divId, {
+            op: opId,
+            param_name: param_name !== null && param_name !== void 0 ? param_name : "target",
+            target: target !== null && target !== void 0 ? target : divId,
+        });
     };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
@@ -1643,36 +1658,6 @@ var GameXBody = /** @class */ (function (_super) {
             _loop_1(opIdS);
         }
     };
-    GameXBody.prototype.clientCollectParams = function (opInfo, param_name) {
-        var _this = this;
-        if (param_name == "payment") {
-            // get id of the selected card
-            var id = this.clientStateArgs.ops[0].target;
-            // get cost
-            var cost_1 = this.getRulesFor(id, "cost");
-            var overridecost = opInfo.args.cost;
-            if (overridecost !== undefined)
-                cost_1 = overridecost;
-            // check if can be auto
-            var auto = true;
-            // create payment prompt
-            var clstate = "client_payment";
-            this.setClientStateUpdOn(clstate, function (args) {
-                // on update action buttons
-                _this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + _this.getButtonNameForOperationExp("nm") + " x " + cost_1);
-                _this.addActionButton("button_confirm", _("Confirm"), function () {
-                    _this.clientStateArgs.ops[0].payment = "auto";
-                    _this.ajaxuseraction(_this.clientStateArgs.call, _this.clientStateArgs);
-                });
-            }, function (id) {
-                // onToken as payment - remove its not a thing
-                _this.showMoveUnauthorized();
-            });
-        }
-        else {
-            throw new Error("Not supported param: " + param_name);
-        }
-    };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
@@ -1684,29 +1669,17 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
-        var opInfo = this.gamedatas.gamestate.args.operations[opId];
-        var rules = this.getOperationRules(opInfo);
-        if (rules && rules.params && rules.params != "target") {
-            // more params
-            var params = rules.params.split(",");
-            var nextparam = params[1];
-            this.clientStateArgs.ops[0] = {
-                op: opId,
-                target: target,
-            };
-            this.clientCollectParams(opInfo, nextparam);
-        }
-        else {
-            return this.sendActionResolveWithTarget(opId, target);
-        }
+        // can add prompt
+        return this.sendActionResolveWithTarget(opId, target);
     };
     // on click hooks
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
+        var _a;
         var info = this.reverseIdLookup.get(tid);
-        if (info) {
+        if (info && info !== "0") {
             var opId = info.op;
             if (info.param_name == "target")
-                this.onSelectTarget(opId, tid);
+                this.onSelectTarget(opId, (_a = info.target) !== null && _a !== void 0 ? _a : tid);
             else
                 this.showError("Not implemented");
         }

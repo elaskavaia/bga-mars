@@ -1,7 +1,7 @@
 /** Game class */
 
 class GameXBody extends GameTokens {
-  private reverseIdLookup: any;
+  private reverseIdLookup: Map<String, any>;
   private custom_placement: any;
 
   constructor() {
@@ -164,7 +164,7 @@ class GameXBody extends GameTokens {
           this.sendActionResolve(opId);
         });
     }
-    debugger;
+
     if (ttype == "token") {
       paramargs.forEach((tid: string) => {
         if (tid == "none") {
@@ -174,42 +174,50 @@ class GameXBody extends GameTokens {
             });
           }
         } else this.setActiveSlot(tid);
-        if (opId)
-          this.reverseIdLookup.set(tid, {
-            op: opId,
-            param_name: "target",
-          });
+        this.setReverseIdMap(tid, opId, tid);
       });
     } else if (ttype == "player") {
       paramargs.forEach((tid: string) => {
         // XXX need to be pretty
-        const divId = "button_" + tid;
-        this.addActionButton(divId, tid, () => {
-          this.onSelectTarget(opId, tid);
-        });
-        if (opId)
-          this.reverseIdLookup.set(divId, {
-            op: opId,
-            param_name: "target",
+        const playerId = this.getPlayerIdByColor(tid);
+        // here divId can be like player name on miniboard
+        const divId = `player_name_${playerId}`;
+        if (single) {
+          const buttonId = "button_" + tid;
+          this.addActionButton(buttonId, tid, () => {
+            this.onSelectTarget(opId, tid);
           });
+        }
+
+        this.setReverseIdMap(divId, opId, tid);
       });
     } else if (ttype == "enum") {
       paramargs.forEach((tid: string, i: number) => {
-        const divId = "button_" + i;
-        this.addActionButton(divId, tid, () => {
-          this.onSelectTarget(opId, tid);
-        });
-        if (opId)
-          this.reverseIdLookup.set(divId, {
-            op: opId,
-            param_name: "target",
+        if (single) {
+          const divId = "button_" + i;
+          this.addActionButton(divId, tid, () => {
+            this.onSelectTarget(opId, tid);
           });
+        }
       });
     }
   }
 
   clearReverseIdMap() {
     this.reverseIdLookup = new Map<String, any>();
+  }
+  setReverseIdMap(divId: string, opId: number, target?: string, param_name?: string) {
+    const prev = this.reverseIdLookup.get(divId);
+    if (prev && prev.opId != opId) {
+      // ambiguous lookup
+      this.reverseIdLookup.set(divId,0);
+      return;
+    }
+    this.reverseIdLookup.set(divId, {
+      op: opId,
+      param_name: param_name ?? "target",
+      target: target ?? divId,
+    });
   }
 
   onUpdateActionButtons_playerTurnChoice(args) {
@@ -266,39 +274,6 @@ class GameXBody extends GameTokens {
     }
   }
 
-  clientCollectParams(opInfo, param_name) {
-    if (param_name == "payment") {
-      // get id of the selected card
-      const id = this.clientStateArgs.ops[0].target;
-      // get cost
-      let cost = this.getRulesFor(id, "cost");
-      const overridecost = opInfo.args.cost;
-      if (overridecost !== undefined) cost = overridecost;
-      // check if can be auto
-      const auto = true;
-      // create payment prompt
-      const clstate = "client_payment";
-      this.setClientStateUpdOn(
-        clstate,
-        (args) => {
-          // on update action buttons
-
-          this.setDescriptionOnMyTurn(_("Confirm payment") + ": " + this.getButtonNameForOperationExp("nm") + " x " + cost);
-          this.addActionButton("button_confirm", _("Confirm"), () => {
-            this.clientStateArgs.ops[0].payment = "auto";
-            this.ajaxuseraction(this.clientStateArgs.call, this.clientStateArgs);
-          });
-        },
-        (id: string) => {
-          // onToken as payment - remove its not a thing
-          this.showMoveUnauthorized();
-        }
-      );
-    } else {
-      throw new Error("Not supported param: " + param_name);
-    }
-  }
-
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
       // add undo on every state
@@ -308,28 +283,17 @@ class GameXBody extends GameTokens {
   }
 
   onSelectTarget(opId: number, target: string) {
-    const opInfo = this.gamedatas.gamestate.args.operations[opId];
-    const rules = this.getOperationRules(opInfo);
-    if (rules && rules.params && rules.params != "target") {
-      // more params
-      const params = rules.params.split(",");
-      const nextparam = params[1];
-      this.clientStateArgs.ops[0] = {
-        op: opId,
-        target: target,
-      };
-      this.clientCollectParams(opInfo, nextparam);
-    } else {
-      return this.sendActionResolveWithTarget(opId, target);
-    }
+    // can add prompt
+    return this.sendActionResolveWithTarget(opId, target);
   }
 
   // on click hooks
   onToken_playerTurnChoice(tid: string) {
+  
     const info = this.reverseIdLookup.get(tid);
-    if (info) {
+    if (info && info !== "0") {
       const opId = info.op;
-      if (info.param_name == "target") this.onSelectTarget(opId, tid);
+      if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
     } else {
       this.showMoveUnauthorized();

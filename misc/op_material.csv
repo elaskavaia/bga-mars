@@ -22,6 +22,8 @@ nores|Remove resource from another card (Optional)|${you} must select a card to 
 res|Add resource to this card
 nres|Remove resource from this card
 
+
+
 #set undo=false
 #set params=
 pass|Pass|${you} must confirm Pass for this generation
@@ -31,16 +33,22 @@ draw|Draw Card in Hand
 
 #set undo=true
 #set class=AbsOperationIncNegAny
-np_Any|Loose Plant (Any Player or None)|${you} must select a player who will loose the resouces (or none)
-ns_Any|Loose Steel (Any Player or None)|${you} must select a player who will loose the resouces (or none)
-nm_Any|Loose MC (Any Player or None)|${you} must select a player who will loose the resouces (or none)
+np_Any|Remove Plant (Any Player or None)|${you} must select a player who will loose the resouces (or none)
+ns_Any|Remove Steel (Any Player or None)|${you} must select a player who will loose the resouces (or none)
+nm_Any|Remove MC (Any Player or None)|${you} must select a player who will loose the resouces (or none)
+
+#set class=AbsOperationIncSteal
+steal_p|Steal Plant|${you} must select a player who will loose the resouces 
+steal_s|Steal Steel|${you} must select a player who will loose the resouces 
+steal_m|Steal MC|${you} must select a player who will loose the resouces 
+
 #set class=AbsOperationProdNegAny
 npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 npp_Any|Loose Plant Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 npe_Any|Loose Energy Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 
-
 #set class=AbsOperationPayWithRes
+#set params=target
 nmu|Pay (possibly with Titanium)|${you} must select a payment choice
 nms|Pay (possibly with Steel)|${you} must select a payment choice
 
@@ -75,6 +83,9 @@ npe|Decrease Energy Production
 nph|Decrease Heat Production
 nps|Decrease Steel Production
 npu|Decrease Titanium Production
+#set class=AbsOperationInc
+eru|Increase Titanium Exchange Rate
+ers|Increase Steel Exchange Rate
 
 #set class=
 o|Increase Oxigen Level
@@ -89,6 +100,6 @@ convp|Convert plants into greenery
 finalscoring|Final Scoring
 lastforest|Last Forest
 confirm|Confirm|${you} must confirm
-
+cardx|Play Card
 
 

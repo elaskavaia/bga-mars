@@ -31,16 +31,16 @@ abstract class AbsOperation {
         $this->params = $params;
     }
 
-    function isAutomatic() {
+    function isFullyAutomated() {
         $rules = $this->rules();
         if (isset($rules['params'])) return false;
         return true;
     }
 
     function canResolveAutomatically() {
-        if ($this->isAutomatic()) return true;
-        if ($this->user_args === null) return false;
-        return true;
+        if ($this->isFullyAutomated()) return true;
+        if ($this->isOneChoice()) return true; // can be perf for prompt
+        return false;
     }
 
     function arg() {
@@ -60,13 +60,17 @@ abstract class AbsOperation {
         return $result;
     }
 
+    protected function isOneChoice(): bool {
+        $result  = $this->arg();
+        return count($result['target']) == 1;
+    }
+
     protected function getVisargs() {
 
         return [
             "name" => $this->getOpName(),
-            'count'=> $this->getCount(),
+            'count' => $this->getCount(),
         ];
-   
     }
 
 
@@ -105,14 +109,16 @@ abstract class AbsOperation {
     protected function getCheckedArg($key) {
         $args = $this->user_args;
         $type = $this->mnemonic;
-        $this->game->systemAssertTrue("Missing user args for $type", $args);
+
         $possible_targets = $this->getStateArg($key);
-        if (array_key_exists($key, $args)) {
+        if ($args && array_key_exists($key, $args)) {
             $target = $args[$key];
             $this->game->systemAssertTrue("Unathorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
-        } else {
+        } else if ($this->isOneChoice()) {
             if (is_array($possible_targets)) return array_shift($possible_targets);
             return $possible_targets;
+        } else {
+            $this->game->systemAssertTrue("Missing user args for $type", $args);
         }
         return $target;
     }
@@ -154,8 +160,7 @@ abstract class AbsOperation {
     }
 
     function isVoid(): bool {
-        $this->arg();
-        return count($this->argresult['target']) == 0;
+        return count($this->arg()['target']) == 0;
     }
 
     /**
@@ -170,17 +175,16 @@ abstract class AbsOperation {
         // the actual acting player
         $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
         $inc = (int) ($args["count"] ?? $op["count"] ?? 1);
-        $this->argresult = null;
-        $this->op_info =  $op;
+        $this->argresult = null; // XXX not sure
         $this->color =  $owner;
         $this->user_args =  $args;
 
         return $this->effect($owner, $inc, $args);
     }
 
-    function getUserCount(){
+    function getUserCount() {
         if (!$this->user_args) return null;
-        return  (int) ($this->user_args ["count"] ??  $this->op_info["count"] ?? 1);
+        return  (int) ($this->user_args["count"] ??  $this->op_info["count"] ?? 1);
     }
 
     function auto(string $owner, int &$count): bool {

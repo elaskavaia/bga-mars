@@ -8,9 +8,8 @@ class DelegatedOperation extends AbsOperation {
     public function __construct(array $opinfo, PGameXBody $game) {
         parent::__construct($opinfo['type'], $opinfo, $game);
         $type = $this->mnemonic;
-        $newop = $this->game->machine->createOperationSimple($type, $this->color);
-        if ($newop['type'] == $opinfo['type']) throw new BgaSystemException("Cannot create delete for $type");
-        $newop['data']=$opinfo['data'];
+        $newop = $this->game->machine->createOperationSimple($type, $this->color, $opinfo['data']);
+        if ($newop['type'] == $opinfo['type']) throw new BgaSystemException("Cannot create delegate for $type");
         $this->delegate = $this->game->getOperationInstance($newop);
     }
 
@@ -24,7 +23,7 @@ class DelegatedOperation extends AbsOperation {
     }
 
     function auto(string $owner, int &$count): bool {
-        $loccount = $this->delegate->getCount(); 
+        $loccount = $this->delegate->getCount();
         $count =  $this->getCount();
         return $this->delegate->auto($owner, $loccount);
     }
@@ -32,7 +31,11 @@ class DelegatedOperation extends AbsOperation {
     function isVoid(): bool {
         return $this->delegate->isVoid();
     }
-    function isAutomatic() {
-        return $this->delegate->isAutomatic(); 
+    function isFullyAutomated() {
+        return $this->delegate->isFullyAutomated();
+    }
+
+    function canResolveAutomatically() {
+        return $this->delegate->canResolveAutomatically();
     }
 }

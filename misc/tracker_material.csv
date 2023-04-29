@@ -20,6 +20,9 @@ tracker_h|Heat|0
 tracker_city|Number of cities on Mars
 tracker_forest|Number of forest on Mars
 tracker_land|Number of owned land
+tracker_eru|Titanium Exchange Rate
+tracker_ers|Steel Exchange Rate
+
 #terraforming parameters
 #set type=param
 #set create=1

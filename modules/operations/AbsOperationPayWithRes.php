@@ -8,9 +8,6 @@ class AbsOperationPayWithRes extends AbsOperation {
         return 'enum';
     }
 
-    function canResolveAutomatically() {
-        return false; // for now
-    }
 
     protected function argPrimaryDetails() {
         $count = $this->getCount();
@@ -21,20 +18,26 @@ class AbsOperationPayWithRes extends AbsOperation {
         if ($typecount * $er + $mcount < $count) return [];
         $info = [];
         $maxres = (int)floor($count / $er);
+        $maxres = min($maxres, $typecount);
+        $this->addProposal($info, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
         $this->addProposal($info, $mcount, $typecount, $er, $count, 0);
+        $this->addProposal($info, $mcount, $typecount, $er, $count - ($maxres - 1) * $er, ($maxres - 1));
         $this->addProposal($info, $mcount, $typecount, $er, 0, $maxres);
         $this->addProposal($info, $mcount, $typecount, $er, 0, 1);
-        $this->addProposal($info, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
         return $info;
     }
 
     private function addProposal(array &$info,   int $mc_count, int $type_count, int $er, int $mc_try, int $type_try) {
+        if ($mc_try < 0) return;
+        if ($type_try < 0) return;
+        if ($type_try == 0 && $mc_try == 0) return;
         $q = 0;
-        if ($mc_try >= $mc_count || $type_try >= $type_count) {
+        if ($mc_try > $mc_count || $type_try > $type_count) {
             $q = MA_ERR_COST;
         }
         $type = $this->getType();
         $proposal = "${mc_try}m${type_try}${type}";
+        if (array_get($info, $proposal)) return;
         $info["$proposal"] = [
             'q' => $q,
             'count' => $mc_try + $type_try * $er,
@@ -42,7 +45,6 @@ class AbsOperationPayWithRes extends AbsOperation {
             $type => $type_try
         ];
     }
-
 
     function effect(string $owner, int $inc): int {
         $value = $this->getCheckedArg('target');

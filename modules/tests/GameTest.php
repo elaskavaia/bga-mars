@@ -122,4 +122,13 @@ final class GameTest extends TestCase {
         $this->assertTrue($m->mtMatchEvent("'/play_.*b/':x",PCOLOR,"play_a_b",PCOLOR,$res));
         $this->assertFalse($m->mtMatchEvent("'/play_.*c/':x",PCOLOR,"play_a_b",PCOLOR,$res));
     }
+
+    public function testInstanciate(){
+        $m = $this->game();
+        $m -> getOperationInstanceFromType("1m",PCOLOR);
+        $this->assertNotNull($m);
+
+        $m -> getOperationInstanceFromType("9nmu",PCOLOR);
+        $this->assertNotNull($m);
+    }
 }
