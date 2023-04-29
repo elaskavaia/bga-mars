@@ -319,8 +319,8 @@ abstract class PGameXBody extends PGameMachine {
         }
         return $token_id;
     }
-    function getTrackerValue(string $color, string $type) {
-        $value = $this->tokens->getTokenState($this->getTrackerId($color, $type));
+    function getTrackerValue(string $color, string $type): int {
+        $value = (int) $this->tokens->getTokenState($this->getTrackerId($color, $type));
         return $value;
     }
 
@@ -371,7 +371,7 @@ abstract class PGameXBody extends PGameMachine {
         // load all active effect listeners
         $cards = $this->getActiveEventListeners();
         // filter for listener for specific effect
-        $this->debugConsole("-notify $event for $card_context");
+        $this->debugLog("-notify $event for $card_context");
         foreach ($cards as $info) {
             $e = $info['e'];
             $ret = [];
@@ -379,7 +379,7 @@ abstract class PGameXBody extends PGameMachine {
                 $outcome = $ret['outcome'];
                 $context = $ret['context'];
                 $card = $info['key'];
-                $this->debugConsole("-come in play effect $outcome triggered by $card");
+                $this->debugLog("-come in play effect $outcome triggered by $card");
                 $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
             }
         }
@@ -450,6 +450,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->notif()
                 ->withToken($card_id)
                 ->notifyAll(clienttranslate('${player_name} plays standard project ${token_name}'));
+            $this->notifyEffect($color, "play_stan", $card_id); // XXX except sell
             return true;
         }
 
@@ -491,19 +492,19 @@ abstract class PGameXBody extends PGameMachine {
         $playeffect =  array_get($rules, 'r', '');
 
         if ($playeffect) {
-            $this->debugConsole("-come in play effect $playeffect");
+            $this->debugLog("-come in play effect $playeffect");
             $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
         $events = $this->getPlayCardEvents($tagsarr);
         foreach ($events as $event) {
-            $this->notifyEffect($color, $event, $card_id);
+            $this->notifyEffect($color, "play_$event", $card_id);
         }
     }
 
     function getPlayCardEvents(array $tagsarr): array {
         $tagMap = [];
         foreach ($tagsarr as $tag) {
-            $events[] = "play_tag$tag";
+            $events[] = "tag$tag";
             $tagMap[$tag] = 1;
         }
         $events = [];
@@ -511,9 +512,9 @@ abstract class PGameXBody extends PGameMachine {
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
         foreach ($uniqueTags as $tag) {
-            $events[] = "play_card$tag";
+            $events[] = "card$tag";
         }
-        $events[] = "play_card";
+        $events[] = "card";
         return $events;
     }
 

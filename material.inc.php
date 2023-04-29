@@ -206,7 +206,7 @@ $this->token_types = [
   'num' => 12,
   'name' => clienttranslate("Water Import From Europa"),
   't' => 2,
-  'a' => '12nmt:w',
+  'a' => '12nmu:w',
   'cost' => 25,
   'tags' => 'Space Jovian',
   'vp' => 'tagJovian',
@@ -3047,6 +3047,20 @@ $this->token_types = [
   'prompt' => '${you} must select a player who will loose the production',
   'type' => 'npe_Any',
   'name' => clienttranslate("Loose Energy Production (Any Player - Mandatory)"),
+],
+ 'op_nmu' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationPayWithRes',
+  'prompt' => '${you} must select a payment choice',
+  'type' => 'nmu',
+  'name' => clienttranslate("Pay (possibly with Titanium)"),
+],
+ 'op_nms' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationPayWithRes',
+  'prompt' => '${you} must select a payment choice',
+  'type' => 'nms',
+  'name' => clienttranslate("Pay (possibly with Steel)"),
 ],
 // #auto-resolve actions
  'op_m' => [  //

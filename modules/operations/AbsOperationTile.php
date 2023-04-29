@@ -40,7 +40,7 @@ abstract class AbsOperationTile extends AbsOperation {
         $this->game->dbSetTokenLocation($object, $target, $no);
         $bonus = $this->game->getRulesFor($target, 'r');
         if ($bonus) {
-            $this->game->debugConsole("-placement bonus $bonus");
+            $this->game->debugLog("-placement bonus $bonus");
             $this->game->put($this->getOwner(), $bonus);
         }
         return $object;

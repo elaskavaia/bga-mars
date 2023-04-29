@@ -144,11 +144,11 @@ abstract class AbsOperation {
         return $this->op_info['data'] ?? ''; // context of effect
     }
 
-    protected function getMinCount() {
+    protected function getMinCount(): int {
         return (int) ($this->op_info['mcount'] ?? $this->getCount());
     }
 
-    protected function getCount() {
+    protected function getCount(): int {
         $count =  (int) ($this->op_info['count'] ?? 1);
         return $count;
     }

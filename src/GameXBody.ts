@@ -164,6 +164,7 @@ class GameXBody extends GameTokens {
           this.sendActionResolve(opId);
         });
     }
+    debugger;
     if (ttype == "token") {
       paramargs.forEach((tid: string) => {
         if (tid == "none") {
@@ -183,6 +184,18 @@ class GameXBody extends GameTokens {
       paramargs.forEach((tid: string) => {
         // XXX need to be pretty
         const divId = "button_" + tid;
+        this.addActionButton(divId, tid, () => {
+          this.onSelectTarget(opId, tid);
+        });
+        if (opId)
+          this.reverseIdLookup.set(divId, {
+            op: opId,
+            param_name: "target",
+          });
+      });
+    } else if (ttype == "enum") {
+      paramargs.forEach((tid: string, i: number) => {
+        const divId = "button_" + i;
         this.addActionButton(divId, tid, () => {
           this.onSelectTarget(opId, tid);
         });

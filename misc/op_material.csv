@@ -39,6 +39,11 @@ npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select 
 npp_Any|Loose Plant Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 npe_Any|Loose Energy Production (Any Player - Mandatory)|${you} must select a player who will loose the production
 
+
+#set class=AbsOperationPayWithRes
+nmu|Pay (possibly with Titanium)|${you} must select a payment choice
+nms|Pay (possibly with Steel)|${you} must select a payment choice
+
 #auto-resolve actions
 #set prompt=
 #set params=

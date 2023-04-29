@@ -51,7 +51,7 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function debug_dumpMachine() {
-        $this->debugConsole("", ["all stack", $this->machine->gettableexpr()]);
+        $this->debugLog("all stack", ["t"=>$this->machine->gettableexpr()]);
     }
 
 
@@ -111,7 +111,7 @@ abstract class PGameMachine extends PGameTokens {
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
             $info = $this->machine->info($operation_id);
-            $this->debugConsole("- resolve op " . $info['type'], $args);
+            $this->debugLog("- resolve op " . $info['type'], $args);
 
 
             $color = $info["owner"];
@@ -129,7 +129,7 @@ abstract class PGameMachine extends PGameTokens {
             // $this->debugConsole("",           $this->machine->gettablearr());
         }
         $this->machine->normalize();
-        $this->debugConsole("- done resolve", [$this->machine->gettableexpr()]);
+        $this->debugLog("- done resolve", ["t"=>$this->machine->gettableexpr()]);
         $this->gamestate->nextState("next");
     }
 
@@ -209,7 +209,7 @@ abstract class PGameMachine extends PGameTokens {
 
                 if ($this->isVoid($op)) {
                     $type = $op["type"];
-                    $this->debugConsole("-removed $type as void");
+                    $this->debugLog("-removed $type as void");
                     $this->machine->hide($op);
                     return null;
                 }

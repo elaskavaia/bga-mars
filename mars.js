@@ -1540,6 +1540,7 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.sendActionResolve(opId);
                 });
         }
+        debugger;
         if (ttype == "token") {
             paramargs.forEach(function (tid) {
                 if (tid == "none") {
@@ -1562,6 +1563,19 @@ var GameXBody = /** @class */ (function (_super) {
             paramargs.forEach(function (tid) {
                 // XXX need to be pretty
                 var divId = "button_" + tid;
+                _this.addActionButton(divId, tid, function () {
+                    _this.onSelectTarget(opId, tid);
+                });
+                if (opId)
+                    _this.reverseIdLookup.set(divId, {
+                        op: opId,
+                        param_name: "target",
+                    });
+            });
+        }
+        else if (ttype == "enum") {
+            paramargs.forEach(function (tid, i) {
+                var divId = "button_" + i;
                 _this.addActionButton(divId, tid, function () {
                     _this.onSelectTarget(opId, tid);
                 });

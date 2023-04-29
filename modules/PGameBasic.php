@@ -235,6 +235,10 @@ abstract class PGameBasic extends Table {
         $this->notifyAllPlayers("log", $info, $args);
         $this->warn($info);
     }
+    function debugLog($info, $args = []) {
+        $this->notifyAllPlayers("log", '', $args+['info'=>$info]);
+        $this->warn($info);
+    }
 
     // ------ NOTIFICATIONS ----------
     /**
