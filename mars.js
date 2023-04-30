@@ -1583,11 +1583,20 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "enum") {
             paramargs.forEach(function (tid, i) {
+                var _a;
                 if (single) {
+                    var detailsInfo = (_a = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _a === void 0 ? void 0 : _a[tid];
+                    var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
+                    //console.log("enum details "+tid,detailsInfo);
+                    var buttonColor = undefined;
+                    if (sign < 0)
+                        buttonColor = 'gray';
+                    if (sign > 0)
+                        buttonColor = 'red';
                     var divId = "button_" + i;
                     _this.addActionButton(divId, tid, function () {
                         _this.onSelectTarget(opId, tid);
-                    });
+                    }, undefined, false, buttonColor);
                 }
             });
         }

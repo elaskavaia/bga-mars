@@ -45,7 +45,7 @@ tagAnimal|Animal
 tagCity|City
 tagEarth|Earth
 tagJovian|Jovian
-tagEnergy|Energy
+tagEnergy|Power
 tagVenus|Venus
 tagEvent|Event
 
@@ -62,7 +62,7 @@ tracker_tagAnimal|Count of Animal tags
 tracker_tagCity|Count of City tags
 tracker_tagEarth|Count of Earth tags
 tracker_tagJovian|Count of Jovian tags
-tracker_tagEnergy|Count of Energy tags
+tracker_tagEnergy|Count of Power tags
 tracker_tagVenus|Count of Venus tags
 tracker_tagEvent|Count of Event tags
 
@@ -91,5 +91,6 @@ tile_199|Restricted Area|0|'tt'=>4
 #set count=0
 #set type=resource
 resource|Resource
+
 #set type=marker
-marker|Resource
+marker|Marker

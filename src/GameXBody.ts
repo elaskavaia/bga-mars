@@ -194,10 +194,16 @@ class GameXBody extends GameTokens {
     } else if (ttype == "enum") {
       paramargs.forEach((tid: string, i: number) => {
         if (single) {
+          const detailsInfo = this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+          const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
+          //console.log("enum details "+tid,detailsInfo);
+          let buttonColor = undefined;
+          if (sign<0) buttonColor = 'gray';
+          if (sign>0) buttonColor = 'red';
           const divId = "button_" + i;
           this.addActionButton(divId, tid, () => {
             this.onSelectTarget(opId, tid);
-          });
+          }, undefined, false, buttonColor);
         }
       });
     }

@@ -434,6 +434,32 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
+    function collectDiscounts($owner, $card_id) {
+        // event will be onPay_card or similar
+        // load all active effect listeners
+        $cards = $this->getActiveEventListeners();
+        $events = $this->getPlayCardEvents($card_id);
+        $discount = 0;
+
+        // filter for listener for specific effect
+        foreach ($cards as $info) {
+            $e = $info['e'];
+            $ret = [];
+            foreach ($events as $event_ps) {
+                $event = "onPay_$event_ps";
+
+                if ($this->mtMatchEvent($e, $info['owner'], $event, $owner, $ret)) {
+                    $outcome = $ret['outcome'];
+                    // at this point only discounts are MC
+                    $opexpr = OpExpression::parseExpression($outcome);
+                    $this->systemAssertTrue("Not expecting other payment options", $opexpr->args[0] == 'm');
+                    $discount += $opexpr->to;
+                }
+            }
+        }
+        return $discount;
+    }
+
     /**
      * Triggered action syntax:
      * <list> ::=   <trigger_rule>  || <trigger_rule> ';' <list>
@@ -508,9 +534,9 @@ abstract class PGameXBody extends PGameMachine {
     function getPayment($color, $card_id): string {
         $costm = $this->getRulesFor($card_id, "cost", 0);
         $tags = $this->getRulesFor($card_id, "tags", '');
-        // XXX discounts onPay
+        $discount = $this->collectDiscounts($color,$card_id);
+        $costm = max(0, $costm - $discount);
         if (strstr($tags, "Building")) return "${costm}nms";
-
         if (strstr($tags, "Space")) return "${costm}nmu";
         return "${costm}nm";
     }
@@ -551,13 +577,16 @@ abstract class PGameXBody extends PGameMachine {
             $this->debugLog("-come in play effect $playeffect");
             $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
-        $events = $this->getPlayCardEvents($tagsarr);
+        $events = $this->getPlayCardEvents($card_id);
         foreach ($events as $event) {
             $this->notifyEffect($color, "play_$event", $card_id);
         }
     }
 
-    function getPlayCardEvents(array $tagsarr): array {
+    function getPlayCardEvents($card_id): array {
+        $rules = $this->getRulesFor($card_id, '*');
+        $tags = $rules['tags'] ?? "";
+        $tagsarr = explode(' ', $tags);
         $events = [];
         $tagMap = [];
         foreach ($tagsarr as $tag) {

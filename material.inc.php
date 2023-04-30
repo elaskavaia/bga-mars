@@ -3581,7 +3581,7 @@ $this->token_types = [
   'type' => 'tag',
   'create' => 0,
   'location' => 'params',
-  'name' => clienttranslate("Energy"),
+  'name' => clienttranslate("Power"),
 ],
  'tagVenus' => [  //
   'type' => 'tag',
@@ -3653,7 +3653,7 @@ $this->token_types = [
   'type' => 'tracker',
   'create' => 4,
   'location' => 'miniboard_{COLOR}',
-  'name' => clienttranslate("Count of Energy tags"),
+  'name' => clienttranslate("Count of Power tags"),
 ],
  'tracker_tagVenus' => [  //
   'type' => 'tracker',
@@ -3780,7 +3780,7 @@ $this->token_types = [
   'create' => 3,
   'location' => 'limbo',
   'count' => 0,
-  'name' => clienttranslate("Resource"),
+  'name' => clienttranslate("Marker"),
 ],
 /* --- gen php end tracker_material --- */
 /* --- gen php begin map_material --- */
