@@ -10,15 +10,14 @@ Random notes on todo items
 * Awards - scoring
 * Static effects
  * pay discounts onPay_...
- * pay with tit/s (nmt and nms)
- * steel and titanimum exchange rate (ers and eru)
 * Complex cards
  * requirement +2/-2 (paramreq)
  * copy_Building
  * defense for res removal (global:defense)
  * effect on next played card
+ * predraw,?keep
+ * scoring adj_ effects for tiles
 * Corporations
-* Hex placement effects
 
 ## Client
 

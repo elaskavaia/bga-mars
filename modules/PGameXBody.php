@@ -94,12 +94,7 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $this->dbSetTokenLocation($token, "hand_$color");
     }
-    //
-    function debug_op1() {
-        $color = $this->getCurrentPlayerColor();
-        $payment_inst = $this->getOperationInstanceFromType("17nmu", $color);
-        if ($payment_inst->isVoid()) throw new BgaUserException(self::_('Insufficient resources for payment'));
-    }
+
     function debug_op($type) {
         $color = $this->getCurrentPlayerColor();
         $this->push($color, $type);
@@ -116,6 +111,53 @@ abstract class PGameXBody extends PGameMachine {
         return $inst->arg();
     }
 
+    function getAdjecentHexes($coords, $valid_coords = null) {
+        if ($valid_coords == null)
+            $valid_coords = $this->getPlanetMap(false);
+        $axis = explode("_", $coords);
+        $neighbours = array();
+        $x = $axis[1];
+        $y = $axis[2];
+        if ($x == 0) return []; // space areas
+        $dx = ($y % 2) - 1;
+        $trylist = [
+            [$x + $dx, $y - 1],
+            [$x + $dx + 1, $y - 1],
+            [$x - 1, $y],
+            [$x + 1, $y],
+            [$x + $dx, $y + 1],
+            [$x + $dx + 1, $y + 1],
+        ];
+        foreach ($trylist as $newax) {
+            if ($newax[0] == 0) continue; // space areas
+            $new_coords = "hex_" . ($newax[0]) . "_" . ($newax[1]);
+            if (array_key_exists($new_coords, $valid_coords))
+                $neighbours[] = $new_coords;
+        }
+        return $neighbours;
+    }
+
+
+    function getAdjecentHexesOfType($map, $what, $towhat = 0, $ownwer = null) {
+        $adj = $this->getAdjecentHexes($what, $map);
+        $res = [];
+        foreach ($adj as $hex) {
+            $tile = array_get($map[$hex], 'tile');
+            if ($tile) {
+                $tt = $this->getRulesFor($tile, 'tt');
+                if ($towhat > 0 && $tt != $towhat) {
+                    continue;
+                }
+                if ($ownwer !== null) {
+                    $tileowner = array_get($map[$hex], 'owner');
+                    if ($tileowner != $ownwer) continue;
+                }
+                $res[] = $hex;
+            }
+        }
+        return $res;
+    }
+
 
     function createPlayerMarker($color) {
         $token = "marker_${color}";
@@ -129,16 +171,18 @@ abstract class PGameXBody extends PGameMachine {
         return $key;
     }
 
-    function getPlanetMap() {
+    function getPlanetMap($load = true) {
         $res = [];
         foreach ($this->token_types as $key => $rules) {
             if (startsWith($key, 'hex')) $res[$key] = $rules;
         }
+        if (!$load) return $res;
         $tokens = $this->tokens->getTokensInLocation("hex%");
         foreach ($tokens as $key => $rec) {
             $loc = $rec['location'];
             $res[$loc]['tile'] = $key;
             $res[$loc]['owno'] = $rec['state']; // for now XXX
+            $res[$loc]['owner'] = $this->getPlayerColorByNo($res[$loc]['owno']);
         }
         return $res;
     }

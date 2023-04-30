@@ -19,11 +19,13 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info = [];
         $maxres = (int)floor($count / $er);
         $maxres = min($maxres, $typecount);
-        $this->addProposal($info, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
-        $this->addProposal($info, $mcount, $typecount, $er, $count, 0);
-        $this->addProposal($info, $mcount, $typecount, $er, $count - ($maxres - 1) * $er, ($maxres - 1));
-        $this->addProposal($info, $mcount, $typecount, $er, 0, $maxres);
+        //$this->addProposal($info, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
+
         $this->addProposal($info, $mcount, $typecount, $er, 0, 1);
+        $this->addProposal($info, $mcount, $typecount, $er, 0, ($maxres - 1));
+        $this->addProposal($info, $mcount, $typecount, $er, 0, $maxres);
+        $this->addProposal($info, $mcount, $typecount, $er, $count, 0);
+
         return $info;
     }
 
@@ -36,7 +38,9 @@ class AbsOperationPayWithRes extends AbsOperation {
             $q = MA_ERR_COST;
         }
         $type = $this->getType();
-        $proposal = "${mc_try}m${type_try}${type}";
+        $proposal = '';
+        if ($mc_try) $proposal .= "${mc_try}m";
+        if ($type_try) $proposal = "${type_try}${type}";
         if (array_get($info, $proposal)) return;
         $info["$proposal"] = [
             'q' => $q,

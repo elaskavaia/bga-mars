@@ -344,6 +344,14 @@ abstract class PGameBasic extends Table {
         return $players[$player_id]["player_color"];
     }
 
+    function getPlayerColorByNo(int $no) {
+        $players = $this->loadPlayersBasicInfos();
+        foreach ($players as $player_id => $player_info) {
+            if ($player_info["player_no"]==$no) return $player_info["player_color"];
+        }
+        return null;
+    }
+
     public function getCurrentPlayerId($bReturnNullIfNotLogged = false) {
         return parent::getCurrentPlayerId($bReturnNullIfNotLogged);
     }

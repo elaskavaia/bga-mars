@@ -28,6 +28,9 @@ abstract class AbsOperation {
 
     /** extra operation parameters passed statically, i.e. some(arg1) */
     function setParams($params) {
+        if ($params && startsWith($params,"'")) {
+            $params = MathLexer::unquote($params);
+        }
         $this->params = $params;
     }
 

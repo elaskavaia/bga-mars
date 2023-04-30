@@ -5,20 +5,42 @@ declare(strict_types=1);
 require_once "AbsOperationTile.php";
 
 class Operation_city extends AbsOperationTile {
-    function checkPlacement($color, $location, $info) {
+    function checkPlacement($color, $ohex, $info, $map) {
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        $reservename = $this->getReservedArea();
+        if (!$reservename) {
+            $adj = $this->game->getAdjecentHexes($ohex, $map);
+            foreach ($adj as $hex) {
+                $tile = array_get($map[$hex], 'tile');
+                if ($tile) {
+                    $tt = $this->game->getRulesFor($tile, 'tt');
+                    if ($tt == MA_TILE_CITY) {
+                        return MA_ERR_CITYPLACEMENT;
+                    }
+                }
+            }
+        } else {
+            $reshexes = $this->findReservedAreas($reservename);
+            if (count($reshexes)==0) {
+                return MA_ERR_ALREADYUSED;
+            }
+            if (array_search($ohex,$reshexes)===false) {
+                return MA_ERR_NOTRESERVED;
+            }
+
+        }
         return 0;
     }
 
     function getTileType(): int {
-        return 2;
+        return MA_TILE_CITY;
     }
 
-    function effect(string $owner, int $inc): int  {
+    function effect(string $owner, int $inc): int {
         $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'city');
         $this->game->incTrackerValue($owner, 'land');
-        $this->game->notifyEffect($owner,'place_city',$tile);
+        $this->game->notifyEffect($owner, 'place_city', $tile);
         return 1;
     }
 }

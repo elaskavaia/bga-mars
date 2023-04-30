@@ -962,7 +962,12 @@
 .tile_3 {
   background-color: blue;
 }
-
+.tile_1 {
+  background-color: green;
+}
+.tile_2 {
+  background-color: gray;
+}
 /* standard projects */
 #display_main .card {
   width: var(--stan-width);

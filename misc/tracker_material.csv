@@ -71,10 +71,19 @@ tracker_tagEvent|Count of Event tags
 #set location=limbo
 #set count=20
 #set type=tile
-tile_2|City
-tile_1|Forest
+tile_2|City|0|'tt'=>2
+tile_1|Forest|0|'tt'=>1
 #set count=9
-tile_3|Ocean
+tile_3|Ocean|0|'tt'=>3
+#set count=1
+tile_8|Capital|0|'tt'=>2
+tile_64|Mining|0|'tt'=>5
+tile_67|Mining|0|'tt'=>5
+tile_85|Commercial District|0|'tt'=>4
+tile_97|Nuclear Zone|0|'tt'=>4
+tile_123|Industrial Center|0|'tt'=>4
+tile_142|Mohole Area|0|'tt'=>4
+tile_199|Restricted Area|0|'tt'=>4
 
 #hex tiles
 #set create=3
