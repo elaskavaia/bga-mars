@@ -40,6 +40,7 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->tokens->pickTokensForLocation(4, "deck_main", "hand_${color}");
+                $this->dbSetScore($player_id,20,'');
             }
         } catch (Exception $e) {
             $this->error($e);
@@ -682,7 +683,17 @@ abstract class PGameXBody extends PGameMachine {
                 ->notifyAll('Parameter ${token_name} is at max');
         }
 
-        $this->effect_incTerraformingRank($color, $inc);
+        // check bonus
+        $nvalue = $value>=0?$value:"n".(-$value);
+
+        $bounus_name = "param_${type}_${nvalue}";
+        $bonus = $this->getRulesFor($bounus_name,'r');
+        if ($bonus) {
+            $this->debugLog("-param bonus $bonus");
+            $this->put($color, $bonus);
+        }
+
+        $this->effect_incTerraformingRank($color, $steps);
         return true;
     }
 

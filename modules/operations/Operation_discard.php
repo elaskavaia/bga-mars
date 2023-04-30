@@ -10,6 +10,11 @@ class Operation_discard extends AbsOperation {
         return 1;
     }
 
+    function canResolveAutomatically() {
+        return false;
+    }
+
+
     function argPrimary() {
         $color = $this->color;
         $keys = array_keys($this->game->tokens->getTokensInLocation("hand_${color}"));

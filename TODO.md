@@ -8,9 +8,7 @@ Random notes on todo items
 ## Server
 
 * Awards - scoring
-* Global param bonuses
-* Static effects
- * pay discounts onPay_...
+* Static effects - DONE?
 * Complex cards
  * requirement +2/-2 (paramreq)
  * copy_Building

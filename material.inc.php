@@ -65,6 +65,28 @@
 }
 
 $this->token_types = [
+  /* this stuff is added manual untl gen php tag */
+#parameters bonuses
+  'param_o_8' => [
+    'r' => 't',
+    'param' => 'o',
+    'value' => 8
+  ],
+  'param_t_0' => [
+    'r' => 'w',
+    'param' => 't',
+    'value' => 0
+  ],
+  'param_t_n24' => [
+    'r' => 'ph',
+    'param' => 't',
+    'value' => -24
+  ],
+  'param_t_n20' => [
+    'r' => 'ph',
+    'param' => 't',
+    'value' => -20
+  ],
 /* --- gen php begin cards_material --- */
 // #project cards|||||||||||
  'card_main_1' => [  //
