@@ -157,9 +157,10 @@ class GameXBody extends GameTokens {
   activateSlots(opargs: any, opId: number, single: boolean) {
     const paramargs = opargs.target ?? [];
     const ttype = opargs.ttype ?? "none";
+    const first = paramargs[0] ?? undefined;
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-      if (paramargs.length <= 1)
+      if (paramargs.length == 0)
         this.addActionButton("button_" + opId, _("Confirm"), () => {
           this.sendActionResolve(opId);
         });
@@ -173,8 +174,17 @@ class GameXBody extends GameTokens {
               this.sendActionResolveWithTarget(opId, "none");
             });
           }
-        } else this.setActiveSlot(tid);
-        this.setReverseIdMap(tid, opId, tid);
+        } else {
+          this.setActiveSlot(tid);
+          this.setReverseIdMap(tid, opId, tid);
+          if (single) {
+            if (paramargs.length <= 3) {
+              this.addActionButton("button_" + opId, this.getTokenName(tid), () => {
+                this.sendActionResolveWithTarget(opId, tid);
+              });
+            }
+          }
+        }
       });
     } else if (ttype == "player") {
       paramargs.forEach((tid: string) => {
@@ -198,12 +208,19 @@ class GameXBody extends GameTokens {
           const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
           //console.log("enum details "+tid,detailsInfo);
           let buttonColor = undefined;
-          if (sign<0) buttonColor = 'gray';
-          if (sign>0) buttonColor = 'red';
+          if (sign < 0) buttonColor = "gray";
+          if (sign > 0) buttonColor = "red";
           const divId = "button_" + i;
-          this.addActionButton(divId, tid, () => {
-            this.onSelectTarget(opId, tid);
-          }, undefined, false, buttonColor);
+          this.addActionButton(
+            divId,
+            tid,
+            () => {
+              this.onSelectTarget(opId, tid);
+            },
+            undefined,
+            false,
+            buttonColor
+          );
         }
       });
     }
@@ -216,7 +233,7 @@ class GameXBody extends GameTokens {
     const prev = this.reverseIdLookup.get(divId);
     if (prev && prev.opId != opId) {
       // ambiguous lookup
-      this.reverseIdLookup.set(divId,0);
+      this.reverseIdLookup.set(divId, 0);
       return;
     }
     this.reverseIdLookup.set(divId, {
@@ -295,7 +312,6 @@ class GameXBody extends GameTokens {
 
   // on click hooks
   onToken_playerTurnChoice(tid: string) {
-  
     const info = this.reverseIdLookup.get(tid);
     if (info && info !== "0") {
       const opId = info.op;

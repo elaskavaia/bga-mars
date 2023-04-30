@@ -14,27 +14,24 @@ class Operation_res extends AbsOperation {
 
         return $inc;
     }
-    function   canResolveAutomatically() {
+    function canResolveAutomatically() {
         return !$this->isVoid();
     }
 
-    function argPrimaryDetails() {
-        $color = $this->color;
-        $keys = [$this->getContext()];
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
-            $holds = $this->game->getRulesFor($tokenId, 'holds', '');
-            if (!$holds) return MA_ERR_NOTAPPLICABLE;
-            return 0;
-        });
+    function isVoid(): bool {
+        $card = $this->getContext();
+        if (!$card) return true;
+        $holds = $this->game->getRulesFor($card, 'holds', '');
+        if (!$holds) return true;
+        return false;
     }
-
 
     protected function getOpName() {
         $card = $this->getContext();
         $par = $this->game->getRulesFor($card, 'holds', '');
         return ['log' => clienttranslate('Add ${restype_name} to ${card_name}'),  "args" => [
             "card_name" => $this->game->getTokenName($card),
-            'restype_name' => $par,
+            'restype_name' => $this->game->getTokenName("tag$par"),
             'i18n' => ['card_name', 'restype_name']
         ]];
     }

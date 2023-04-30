@@ -11,7 +11,7 @@ class Operation_skipsec extends AbsOperation {
         return false;
     }
 
-    function effect(string $color, int $inc, ?array $args = null): int {
+    function effect(string $color, int $inc): int {
         $this->game->notifyMessage(clienttranslate('${player_name} skips second action'));
         return 1;
     }

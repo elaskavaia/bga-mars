@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-require_once "Operation_res.php";
-
-class Operation_nores extends Operation_res {
+class Operation_nores extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
         $par = $this->params;
@@ -19,7 +17,6 @@ class Operation_nores extends Operation_res {
 
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
-        if ($card === 'none') return $inc; // skipped, this is ok for resources
 
         $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
         $num = $inc;
@@ -36,15 +33,25 @@ class Operation_nores extends Operation_res {
         return false;
     }
 
-    function arg() {
-        $result = parent::arg();
-        $par = $this->params ?? 'Unknown';
-        $result['args']['restype_name'] = $par;
-        $result['target'][] = 'none';
-        return $result;
+    protected function getVisargs() {
+        $par = $this->params;
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'restype_name' => $this->game->getTokenName("tag$par"),
+            'i18n' => ['restype_name']
+        ];
+    }
+
+    protected function getOpName() {
+        $par = $this->params;
+        return ['log' => clienttranslate('Remove ${restype_name} from another card'),  "args" => [
+            'restype_name' => $this->game->getTokenName("tag$par"),
+            'i18n' => ['restype_name']
+        ]];
     }
 
     public function getPrompt() {
-        return clienttranslate('${you} must select a card to remove up to ${count} ${restype_name} resource/s');
+        return clienttranslate('${you} must select a card to remove ${count} ${restype_name} resource/s');
     }
 }

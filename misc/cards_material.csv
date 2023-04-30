@@ -54,7 +54,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 47|Algae|1|2pp,p|||10|w>=5|Plant|0|Requires 5 ocean tiles. Gain 1 plant and increase your plant production 2 steps.|
 48|Adapted Lichen|1|pp|||9||Plant|0|Increase your plant production 1 step.|
 49|Tardigrades|2||res||4||Microbe|resCard/4|1 VP per 4 microbes on this card.; Action: Add 1 microbe to this card.|  'holds' => 'Microbe'
-50|Virus|3|2nores(Animal)/5np_Any|||1||Microbe Event|0|Remove up to 2 animals or 5 plants from any player.|
+50|Virus|3|2nores(Animal)/5np_Any/nop|||1||Microbe Event|0|Remove up to 2 animals or 5 plants from any player.|
 51|Miranda Resort|1|counter(tagEarth),m|||12||Space Jovian|1|Increase your MC production 1 step for each Earth tag you have.|
 52|Fish|2|npp_Any|res||9|t>=2|Animal|resCard|Requires 2°C or warmer. Decrease any plant production 1 step. 1 VP for each animal on this card.; Action: Add 1 animal to this card.|  'holds' => 'Animal'
 53|Lake Marineris|1|2w|||18|t>=0||2|Requires 0°C or warmer. Place 2 ocean tiles.|
@@ -132,7 +132,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 125|Hackers|1|2npm_Any,1npe,2pm|||3|||-1|Decrease your energy production 1 step and any MC production 2 steps. Increase your MC production 2 steps.|
 126|GHG Factories|1|1npe,4ph|||11||Building|0|Decrease your energy production 1 step and increase your heat production 4 steps.|
 127|Subterranean Reservoir|3|w|||11||Event||Place 1 ocean tile.|
-128|Ecological Zone|2|tile(adj_forest)||play_tagPlant:res;play_tagAnimal:res|12||Plant Animal|resCard/2|Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.; Effect: When you play an animal or a plant tag (including these 2), add an animal to this card.|  'holds' => 'Animal'
+128|Ecological Zone|2|tile(adj_forest)||play_tagPlant:res;play_tagAnimal:res|12|forest>0|Plant Animal|resCard/2|Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.; Effect: When you play an animal or a plant tag (including these 2), add an animal to this card.|  'holds' => 'Animal'
 129|Zeppelins|1|counter(city_all),pm|||13|o>=5||1|Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS.|
 130|Worms|1|counter(tagMicrobe/2),pp|||8|o>=4|Microbe|0|Requires 4% oxygen. Increase your plant production 1 step for every 2 microbe tags you have, including this.|
 131|Decomposers|2|||play_tagPlant:res;play_tagMicrobe:res;play_tagAnimal:res|5|o>=3|Microbe|resCard/3|Requires 3% oxygen. 1 VP per 3 microbes on this card.; Effect: When you play an animal, plant, or microbe tag, including this, add a microbe to this card.|  'holds' => 'Microbe'

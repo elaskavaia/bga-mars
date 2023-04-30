@@ -29,29 +29,29 @@ class Operation_ores extends  AbsOperation {
         return $inc;
     }
 
-    function   canResolveAutomatically() {
+    function canResolveAutomatically() {
         return false;
-    }
-
-    function arg() {
-        $par = $this->params;
-        $result = parent::arg();
-        $result['args']['restype_name'] = $par;
-        $result['target'][] = 'none';
-        return $result;
     }
 
     public function getPrompt() {
         return clienttranslate('${you} must select a card to add ${count} ${restype_name} resource/s');
     }
 
+    protected function getVisargs() {
+        $par = $this->params;
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'restype_name' => $this->game->getTokenName("tag$par"),
+            'i18n' => ['restype_name']
+        ];
+    }
+
     protected function getOpName() {
-        $card = $this->getContext();
-        $par = $this->game->getRulesFor($card, 'holds', '');
+        $par = $this->params;
         return ['log' => clienttranslate('Add ${restype_name} to another card'),  "args" => [
-            'restype_name' => $par,
+            'restype_name' => $this->game->getTokenName("tag$par"),
             'i18n' => ['restype_name']
         ]];
     }
-
 }

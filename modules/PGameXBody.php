@@ -1,6 +1,5 @@
 <?php
 require_once "PGameMachine.php";
-require_once "NotifBuilder.php";
 require_once "MathExpression.php";
 require_once "operations/AbsOperation.php";
 require_once "operations/ComplexOperation.php";
@@ -9,6 +8,8 @@ require_once "operations/DelegatedOperation.php";
 
 abstract class PGameXBody extends PGameMachine {
     protected $eventListners; // cache
+    protected $map; // cache
+
     function __construct() {
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
@@ -40,7 +41,7 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->tokens->pickTokensForLocation(4, "deck_main", "hand_${color}");
-                $this->dbSetScore($player_id,20,'');
+                $this->dbSetScore($player_id, 20, '');
             }
         } catch (Exception $e) {
             $this->error($e);
@@ -112,6 +113,8 @@ abstract class PGameXBody extends PGameMachine {
         return $inst->arg();
     }
 
+    // HEX MATH
+
     function getAdjecentHexes($coords, $valid_coords = null) {
         if ($valid_coords == null)
             $valid_coords = $this->getPlanetMap(false);
@@ -139,7 +142,11 @@ abstract class PGameXBody extends PGameMachine {
     }
 
 
-    function getAdjecentHexesOfType($map, $what, $towhat = 0, $ownwer = null) {
+    function getAdjecentHexesOfType($what, $towhat = 0, $ownwer = null) {
+        $map = $this->getPlanetMap();
+        if (startsWith($what, 'tile')) {
+            $what = $this->tokens->getTokenLocation($what);
+        }
         $adj = $this->getAdjecentHexes($what, $map);
         $res = [];
         foreach ($adj as $hex) {
@@ -159,6 +166,26 @@ abstract class PGameXBody extends PGameMachine {
         return $res;
     }
 
+    function evaluateAdj($color, $ohex, $rule) {
+        if (!$rule) return 0;
+        switch ($rule) {
+            case 'adj_city':
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));
+            case 'adj_city_2':
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY)) >= 2;
+            case 'adj_forest':
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_FOREST));
+            case 'adj_ocean':
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_OCEAN));
+            case 'adj_own':
+                return count($this->getAdjecentHexesOfType($ohex, 0, $color));
+            case 'adj_no':
+                return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
+            default:
+                throw new BgaSystemException("Unknown adj rule $rule");
+        }
+    }
+
 
     function createPlayerMarker($color) {
         $token = "marker_${color}";
@@ -173,6 +200,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getPlanetMap($load = true) {
+        if ($this->map) return $this->map;
         $res = [];
         foreach ($this->token_types as $key => $rules) {
             if (startsWith($key, 'hex')) $res[$key] = $rules;
@@ -185,20 +213,16 @@ abstract class PGameXBody extends PGameMachine {
             $res[$loc]['owno'] = $rec['state']; // for now XXX
             $res[$loc]['owner'] = $this->getPlayerColorByNo($res[$loc]['owno']);
         }
+        $this->map = $res; // only cache full map
         return $res;
     }
 
-    // public function getPlayerNameById($player_id) {
-    //     if (!is_numeric($player_id)) throw new feException("invalid player id $player_id");
-    //     $players = self::loadPlayersBasicInfos();
-    //     return $players[$player_id]['player_name'];
-    // }
-    function notif($player_id = null) {
-        $builder = new NotifBuilder($this);
-        if ($player_id) {
-            $builder = $builder->withPlayer($player_id);
+    function notifyMessageWithTokenName($message, $card_id, $player_color = null, $args = []) {
+        if (is_array($card_id)) {
+            $card_id = $card_id["token_key"];
         }
-        return $builder;
+        $args['token_name'] = $card_id;
+        return $this->notifyMessage($message, $args, $this->getPlayerIdByColor($player_color));
     }
 
     function canAfford($color, $tokenid, $cost = null) {
@@ -272,7 +296,9 @@ abstract class PGameXBody extends PGameMachine {
             return $value;
         }
         if (startsWith($x, 'adj_')) {
-            return 1; // XXX TODO
+            $cardNum = $this->getRulesFor($context, 'num');
+            $tileId = "tile_$cardNum";
+            return $this->evaluateAdj($owner, $tileId, $x);
         }
 
         $create = $this->getRulesFor("tracker_$x", "create", null);
@@ -417,20 +443,27 @@ abstract class PGameXBody extends PGameMachine {
         return $this->eventListners;
     }
 
-    function notifyEffect($owner, $event, $card_context) {
+    function notifyEffect($owner, $events, $card_context) {
         // load all active effect listeners
         $cards = $this->getActiveEventListeners();
-        // filter for listener for specific effect
-        $this->debugLog("-notify $event for $card_context");
+        if (!is_array($events)) {
+            $events = [$events];
+        }
+
         foreach ($cards as $info) {
             $e = $info['e'];
-            $ret = [];
-            if ($this->mtMatchEvent($e, $info['owner'], $event, $owner, $ret)) {
-                $outcome = $ret['outcome'];
-                $context = $ret['context'];
-                $card = $info['key'];
-                $this->debugLog("-come in play effect '$outcome' triggered by $card");
-                $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
+            $lisowner = $info['owner'];
+            foreach ($events as $event) {
+                $this->debugLog("-notify $event for $card_context");
+                $ret = [];
+                // filter for listener for specific effect
+                if ($this->mtMatchEvent($e, $lisowner, $event, $owner, $ret)) {
+                    $outcome = $ret['outcome'];
+                    $context = $ret['context'];
+                    $card = $info['key'];
+                    $this->debugLog("-come in play effect '$outcome' triggered by $card");
+                    $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
+                }
             }
         }
     }
@@ -439,17 +472,16 @@ abstract class PGameXBody extends PGameMachine {
         // event will be onPay_card or similar
         // load all active effect listeners
         $cards = $this->getActiveEventListeners();
-        $events = $this->getPlayCardEvents($card_id);
+        $events = $this->getPlayCardEvents($card_id, 'onPay_');
         $discount = 0;
 
-        // filter for listener for specific effect
         foreach ($cards as $info) {
             $e = $info['e'];
-            $ret = [];
-            foreach ($events as $event_ps) {
-                $event = "onPay_$event_ps";
-
-                if ($this->mtMatchEvent($e, $info['owner'], $event, $owner, $ret)) {
+            $lisowner = $info['owner'];
+            foreach ($events as $event) {
+                $ret = [];
+                // filter for listener for specific effect
+                if ($this->mtMatchEvent($e, $lisowner, $event, $owner, $ret)) {
                     $outcome = $ret['outcome'];
                     // at this point only discounts are MC
                     $opexpr = OpExpression::parseExpression($outcome);
@@ -499,48 +531,38 @@ abstract class PGameXBody extends PGameMachine {
         return false;
     }
 
+    function getPayment($color, $card_id): string {
+        $costm = $this->getRulesFor($card_id, "cost", 0);
+        $tags = $this->getRulesFor($card_id, "tags", '');
+        $discount = $this->collectDiscounts($color, $card_id);
+        $costm = max(0, $costm - $discount);
+        if (strstr($tags, "Building")) return "${costm}nms";
+        if (strstr($tags, "Space")) return "${costm}nmu";
+        return "${costm}nm";
+    }
+
+    function getCurrentStartingPlayer() {
+        $loc = $this->tokens->getTokenLocation('starting_player');
+        if (!$loc) return $this->getFirstPlayer();
+        $color = getPart($loc, 1);
+        return $this->getPlayerIdByColor($color);
+    }
+
+    function setCurrentStartingPlayer(int $playerId) {
+        $color = $this->getPlayerColorById($playerId);
+        $this->gamestate->changeActivePlayer($playerId);
+        $this->dbSetTokenLocation('starting_player', "tableau_$color", 0, clienttranslate('${player_name} is starting player for this generation'), [], $playerId);
+    }
+
+    function isEndOfGameAchived() {
+        return $this->getGameProgression() >= 100;
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Player actions
     ////////////
 
 
-
-
-
-    function uaction_playCard($args) {
-        $card_id = $args["target"];
-        $rules = $this->getRulesFor($card_id);
-        $color = $this->getActivePlayerColor();
-        $cost = $this->getRulesFor($card_id, "cost");
-        $this->machine->interrupt();
-
-        if (startsWith($card_id, "card_stanproj")) {
-            $this->executeImmediately($color, "nm", $cost);
-            $this->push($color, $rules);
-            $this->notif()
-                ->withToken($card_id)
-                ->notifyAll(clienttranslate('${player_name} plays standard project ${token_name}'));
-            $this->notifyEffect($color, "play_stan", $card_id); // XXX except sell
-            return true;
-        }
-
-        $payment_op = $this->getPayment($color, $card_id);
-        $payment_inst = $this->getOperationInstanceFromType($payment_op, $color);
-        if ($payment_inst->isVoid()) throw new BgaUserException(self::_("Insufficient resources for payment"));
-        $this->push($color, $payment_op, $card_id);
-        $this->put($color, 'cardx', $card_id);
-        return true;
-    }
-    function getPayment($color, $card_id): string {
-        $costm = $this->getRulesFor($card_id, "cost", 0);
-        $tags = $this->getRulesFor($card_id, "tags", '');
-        $discount = $this->collectDiscounts($color,$card_id);
-        $costm = max(0, $costm - $discount);
-        if (strstr($tags, "Building")) return "${costm}nms";
-        if (strstr($tags, "Space")) return "${costm}nmu";
-        return "${costm}nm";
-    }
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -565,6 +587,8 @@ abstract class PGameXBody extends PGameMachine {
             [],
             $this->getPlayerIdByColor($color)
         );
+        $this->eventListners = null; // clear cache since card came into play
+
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
         if ($ttype != MA_CARD_TYPE_EVENT) {
@@ -578,20 +602,46 @@ abstract class PGameXBody extends PGameMachine {
             $this->debugLog("-come in play effect $playeffect");
             $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
         }
-        $events = $this->getPlayCardEvents($card_id);
-        foreach ($events as $event) {
-            $this->notifyEffect($color, "play_$event", $card_id);
-        }
+        $events = $this->getPlayCardEvents($card_id, 'play_');
+        $this->notifyEffect($color, $events, $card_id);
     }
 
-    function getPlayCardEvents($card_id): array {
+    function effect_placeTile($color, $object, $target) {
+        $player_id = $this->getPlayerIdByColor($color);
+        $otype =  $this->getRulesFor($object, 'tt');
+        $no = $this->getPlayerNoById($player_id);
+        if ($otype == MA_TILE_OCEAN) $no = -1;
+        $this->dbSetTokenLocation(
+            $object,
+            $target,
+            $no,
+            clienttranslate('${player_name} places tile ${token_name} into ${place_name}'), // XXX
+            [],
+            $this->getPlayerIdByColor($color)
+        );
+
+        $this->map = null; // clear map cache since tile came into play ! important
+        // hex bonus
+        $bonus = $this->getRulesFor($target, 'r');
+        if ($bonus) {
+            $this->debugLog("-placement bonus $bonus");
+            $this->put($color, $bonus);
+        }
+        // ocean bonus
+        $oceans = $this->getAdjecentHexesOfType($target, MA_TILE_OCEAN);
+        $c = count($oceans);
+        if ($c) $this->put($color, "${c}m"); // 2 MC per ocean
+        return $object;
+    }
+
+    function getPlayCardEvents($card_id, $prefix = ''): array {
         $rules = $this->getRulesFor($card_id, '*');
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
         $events = [];
         $tagMap = [];
         foreach ($tagsarr as $tag) {
-            $events[] = "tag$tag";
+            $events[] = "${prefix}tag$tag";
             $tagMap[$tag] = 1;
         }
 
@@ -599,9 +649,9 @@ abstract class PGameXBody extends PGameMachine {
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
         foreach ($uniqueTags as $tag) {
-            $events[] = "card$tag";
+            $events[] = "${prefix}card$tag";
         }
-        $events[] = "card";
+        $events[] = "${prefix}card";
         return $events;
     }
 
@@ -662,9 +712,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($current + $inc > $max) {
             $inc = $max - $current;
             if ($inc == 0) {
-                $this->notif($color)
-                    ->withToken($token_id)
-                    ->notifyAll('Parameter ${token_name} is at max, can no longer increase');
+                $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max, can no longer increase'), $token_id);
                 return false;
             }
         }
@@ -678,16 +726,14 @@ abstract class PGameXBody extends PGameMachine {
         ], $this->getPlayerIdByColor($color));
 
         if ($value == $max) {
-            $this->notif($color)
-                ->withToken($token_id)
-                ->notifyAll('Parameter ${token_name} is at max');
+            $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max'), $token_id);
         }
 
         // check bonus
-        $nvalue = $value>=0?$value:"n".(-$value);
+        $nvalue = $value >= 0 ? $value : "n" . (-$value);
 
         $bounus_name = "param_${type}_${nvalue}";
-        $bonus = $this->getRulesFor($bounus_name,'r');
+        $bonus = $this->getRulesFor($bounus_name, 'r');
         if ($bonus) {
             $this->debugLog("-param bonus $bonus");
             $this->put($color, $bonus);
@@ -756,21 +802,92 @@ abstract class PGameXBody extends PGameMachine {
         return null;
     }
 
-    function getCurrentStartingPlayer() {
-        $loc = $this->tokens->getTokenLocation('starting_player');
-        if (!$loc) return $this->getFirstPlayer();
-        $color = getPart($loc, 1);
-        return $this->getPlayerIdByColor($color);
+
+
+    function effect_finalScoring(): int {
+        $this->debugConsole("-- final scoring --");
+        $players = $this->loadPlayersBasicInfos();
+
+        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award%");
+        foreach ($markers as $id => $rec) {
+            $loc = $rec['location']; // milestone_x
+            $color = explode('_', $id)[1];
+            $player_id = $this->getPlayerIdByColor($color);
+            // XXX determine the winner
+            $this->dbIncScoreValueAndNotify($player_id, 5, '*', "game_vp_award", ['place' => $loc]);
+        }
+        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone%");
+        foreach ($markers as $id => $rec) {
+            $loc = $rec['location']; // milestone_x
+            $color = explode('_', $id)[1];
+            $player_id = $this->getPlayerIdByColor($color);
+            $this->dbIncScoreValueAndNotify($player_id, 5, '*', "game_vp_ms", ['place' => $loc]);
+        }
+        // score map, this is split per type for animation effects
+        foreach ($players as $player) {
+            $this->scoreMap($player["player_color"]);
+        }
+
+        foreach ($players as $player) {
+            $this->scoreCards($player["player_color"]);
+        }
+        return 1;
     }
 
-    function setCurrentStartingPlayer(int $playerId) {
-        $color = $this->getPlayerColorById($playerId);
-        $this->gamestate->changeActivePlayer($playerId);
-        $this->dbSetTokenLocation('starting_player', "tableau_$color", 0, clienttranslate('${player_name} is starting player for this generation'), [], $playerId);
+    function scoreMap(string $owner) {
+        $map = $this->getPlanetMap();
+        $player_id = $this->getPlayerIdByColor($owner);
+        $greenery = 0;
+        $cities = 0;
+        foreach ($map as $hex => $info) {
+            $hexowner = $info['owner'] ?? '';
+            if ($hexowner !== $owner) continue;
+            $tile = $info['tile'];
+            $this->systemAssertTrue("should be tile here", $tile);
+            $tt = $this->getRulesFor($tile, 'tt');
+            if ($tt == MA_TILE_CITY) {
+                $cf = count($this->getAdjecentHexesOfType($hex, MA_TILE_FOREST));
+                $this->dbIncScoreValueAndNotify(
+                    $player_id,
+                    $cf,
+                    clienttranslate('${player_name} scores ${inc} point/s for city tile at ${place_name}'),
+                    "game_vp_cities",
+                    ['place' => $hex, 'place_name' => $this->getTokenName($hex)]
+                );
+                $cities += 1;
+            }
+            if ($tt == MA_TILE_FOREST) {
+                $this->dbIncScoreValueAndNotify($player_id, 1, '', "game_vp_forest", ['place' => $hex]);
+                $greenery += 1;
+            }
+        }
+        $this->notifyWithName('message', clienttranslate('${player_name} scores ${inc} points for Greenery tiles'), ['inc' => $greenery]);
     }
 
-    function isEndOfGameAchived() {
-        return $this->getGameProgression() >= 100;
+    function scoreCards(string $owner) {
+        // get all cards, calculate VP field
+        $player_id = $this->getPlayerIdByColor($owner);
+        $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_$owner");
+        foreach ($cards as $card => $cardrec) {
+            $vp  = $this->getRulesFor($card, 'vp');
+            //$this->debugConsole(" $card -> $vp");
+            if (!$vp) continue;
+            if (is_numeric($vp)) {
+                $this->dbIncScoreValueAndNotify($player_id, $vp, '*', "game_vp_cards", ['place' => $card]);
+                continue;
+            }
+            try {
+                $value = $this->evaluateExpression($vp, $owner, $card);
+                if ($value) {
+                    $this->dbIncScoreValueAndNotify($player_id, $value, '*', "game_vp_cards", ['place' => $card]);
+                    continue;
+                }
+            } catch (Exception $e) {
+                $this->debugConsole("error during expression eval $card=>'$vp'");
+                $this->error("error during expression eval $vp");
+                $this->error($e);
+            }
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////

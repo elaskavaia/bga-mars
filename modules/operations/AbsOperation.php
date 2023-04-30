@@ -22,13 +22,17 @@ abstract class AbsOperation {
         $this->params =  '';
     }
 
+    function _($str) {
+        return $this->game->_($str);
+    }
+
     function rules() {
         return $this->game->getOperationRules($this->mnemonic);
     }
 
     /** extra operation parameters passed statically, i.e. some(arg1) */
     function setParams($params) {
-        if ($params && startsWith($params,"'")) {
+        if ($params && startsWith($params, "'")) {
             $params = MathLexer::unquote($params);
         }
         $this->params = $params;
@@ -163,6 +167,7 @@ abstract class AbsOperation {
     }
 
     function isVoid(): bool {
+        if ($this->isFullyAutomated()) return false;
         return count($this->arg()['target']) == 0;
     }
 
@@ -170,22 +175,21 @@ abstract class AbsOperation {
      * This is user call, validate all parameters
      */
     function action_resolve(array $args): int {
-        $op = $this->op_info;
-
-
-
-        //if ($op['type'] != $this->mnemonic) throw new BgaSystemException("Mismatched operation $type");
-        // the actual acting player
-        $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
-        $inc = (int) ($args["count"] ?? $op["count"] ?? 1);
-        $this->argresult = null; // XXX not sure
-        $this->color =  $owner;
         $this->user_args =  $args;
 
-        return $this->effect($owner, $inc, $args);
+        // the actual acting player
+        $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
+        if ($this->color && $this->color !== $owner) {
+            $this->game->systemAssertTrue("Not autorized for this operation");
+        }
+        $this->argresult = null; // XXX not sure
+        $this->color =  $owner;
+        $op = $this->mnemonic;
+        $this->game->systemAssertTrue("Operation cannot be executed '$op'", !$this->isVoid()); // XXX add details
+        return $this->effect($owner, $this->getUserCount(), $args);
     }
 
-    function getUserCount() {
+    function getUserCount(): ?int {
         if (!$this->user_args) return null;
         return  (int) ($this->user_args["count"] ??  $this->op_info["count"] ?? 1);
     }
@@ -193,6 +197,8 @@ abstract class AbsOperation {
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        $op = $this->mnemonic;
+        $this->game->systemAssertTrue("Operation cannot be executed '$op'", !$this->isVoid()); // XXX add details
         $count = $this->effect($owner, $count, null);
         return true;
     }

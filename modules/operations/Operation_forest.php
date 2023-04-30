@@ -56,6 +56,7 @@ class Operation_forest extends AbsOperationTile {
     function effect(string $owner, int $inc): int {
         $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'land');
+        $this->game->incTrackerValue($owner, 'forest');
         $this->game->effect_increaseParam($owner, "o", $inc);
         $this->game->notifyEffect($owner, 'place_forest', $tile);
         return 1;

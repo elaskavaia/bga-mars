@@ -1542,12 +1542,13 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.activateSlots = function (opargs, opId, single) {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
         var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
+        var first = (_c = paramargs[0]) !== null && _c !== void 0 ? _c : undefined;
         if (single) {
             this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-            if (paramargs.length <= 1)
+            if (paramargs.length == 0)
                 this.addActionButton("button_" + opId, _("Confirm"), function () {
                     _this.sendActionResolve(opId);
                 });
@@ -1561,9 +1562,17 @@ var GameXBody = /** @class */ (function (_super) {
                         });
                     }
                 }
-                else
+                else {
                     _this.setActiveSlot(tid);
-                _this.setReverseIdMap(tid, opId, tid);
+                    _this.setReverseIdMap(tid, opId, tid);
+                    if (single) {
+                        if (paramargs.length <= 3) {
+                            _this.addActionButton("button_" + opId, _this.getTokenName(tid), function () {
+                                _this.sendActionResolveWithTarget(opId, tid);
+                            });
+                        }
+                    }
+                }
             });
         }
         else if (ttype == "player") {
@@ -1590,9 +1599,9 @@ var GameXBody = /** @class */ (function (_super) {
                     //console.log("enum details "+tid,detailsInfo);
                     var buttonColor = undefined;
                     if (sign < 0)
-                        buttonColor = 'gray';
+                        buttonColor = "gray";
                     if (sign > 0)
-                        buttonColor = 'red';
+                        buttonColor = "red";
                     var divId = "button_" + i;
                     _this.addActionButton(divId, tid, function () {
                         _this.onSelectTarget(opId, tid);

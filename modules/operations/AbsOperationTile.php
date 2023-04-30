@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // place an abstract tile
 abstract class AbsOperationTile extends AbsOperation {
-    protected $map = null;
+
     function argPrimaryDetails() {
         $color = $this->color;
         $map = $this->getPlanetMap();
@@ -22,9 +22,7 @@ abstract class AbsOperationTile extends AbsOperation {
     }
 
     protected function getPlanetMap() {
-        if ($this->map != null) return $this->map;
-        $this->map = $this->game->getPlanetMap();
-        return $this->map;
+        return $this->game->getPlanetMap();
     }
 
     protected function getTileId() {
@@ -42,29 +40,15 @@ abstract class AbsOperationTile extends AbsOperation {
     }
 
     protected function getAdjecentHexesOfType($what, $towhat = 0, $ownwer = null) {
-        $map = $this->getPlanetMap();
-        return $this->game->getAdjecentHexesOfType($map, $what, $towhat, $ownwer);
+        return $this->game->getAdjecentHexesOfType($what, $towhat, $ownwer);
     }
 
 
     protected function checkAdjRulesPasses($ohex, $color, $rule) {
         if (!$rule) return true;
-        switch ($rule) {
-            case 'adj_city':
-                return $this->isAdjecentHexesOfType($ohex, MA_TILE_CITY);
-            case 'adj_city_2':
-                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY)) >= 2;
-            case 'adj_forest':
-                return $this->isAdjecentHexesOfType($ohex, MA_TILE_FOREST);
-            case 'adj_ocean':
-                return $this->isAdjecentHexesOfType($ohex, MA_TILE_OCEAN);
-            case 'adj_own':
-                return $this->isAdjecentHexesOfType($ohex, 0, $color);
-            case 'adj_no':
-                return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
-            default:
-                throw new BgaSystemException("Unknown rule $rule");
-        }
+        $count = $this->game->evaluateAdj($color, $ohex, $rule);
+        if (!$count) return false;
+        return true;
     }
 
 
@@ -91,27 +75,9 @@ abstract class AbsOperationTile extends AbsOperation {
     abstract function getTileType(): int;
 
     function effect_placeTile() {
-        $no = $this->getPlayerNo();
         $target = $this->getCheckedArg('target');
         $object = $this->getStateArg('object');
-        $otype = getPart($object, 1);
-        if ($otype == MA_TILE_OCEAN) $no = -1;
-        $this->game->dbSetTokenLocation($object, $target, $no);
-        $bonus = $this->game->getRulesFor($target, 'r');
-        if ($bonus) {
-            $this->game->debugLog("-placement bonus $bonus");
-            $this->game->put($this->getOwner(), $bonus);
-        }
-
-        $map = $this->getPlanetMap();
-        $adj = $this->game->getAdjecentHexes($target, $map);
-
-        foreach ($adj as $hex) {
-            if (array_get($map[$hex], 'owno') == -1) {
-                // ocean bonus
-                $this->game->put($this->getOwner(), "2m");
-            }
-        }
+        $this->game->effect_placeTile($this->color, $object, $target);
         return $object;
     }
 }

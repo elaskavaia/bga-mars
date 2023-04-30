@@ -495,19 +495,19 @@ abstract class PGameBasic extends Table {
     }
 
     // ------ DB ----------
-    function dbGetScore($player_id) {
+    function dbGetScore(int $player_id) {
         return $this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id='$player_id'");
     }
 
-    function dbSetScore($player_id, $count) {
+    function dbSetScore(int $player_id, int $count) {
         $this->DbQuery("UPDATE player SET player_score='$count' WHERE player_id='$player_id'");
     }
 
-    function dbSetAuxScore($player_id, $score) {
+    function dbSetAuxScore(int $player_id, int $score) {
         $this->DbQuery("UPDATE player SET player_score_aux=$score WHERE player_id='$player_id'");
     }
 
-    function dbIncScore($player_id, $inc) {
+    function dbIncScore(int $player_id, int $inc): int {
         $count = $this->dbGetScore($player_id);
         if ($inc != 0) {
             $count += $inc;
@@ -519,17 +519,17 @@ abstract class PGameBasic extends Table {
     /**
      * Changes the player scrore and sends notification, also update statistic if provided
      *
-     * @param number $player_id
+     * @param int $player_id
      *            - player id
-     * @param number $inc
+     * @param int $inc
      *            - increment of score, can be negative
      * @param string $notif
      *            - notification string, '*' - for default notification, '' - for none
      * @param string $stat
      *            - name of the player statistic to update (points source)
-     * @return number - current score after increase/descrease
+     * @return int - current score after increase/descrease
      */
-    function dbIncScoreValueAndNotify($player_id, $inc, $notif = "*", $stat = "", $args = []) {
+    function dbIncScoreValueAndNotify($player_id, int $inc, $notif = "*", $stat = "", $args = []): int {
         $count = $this->dbIncScore($player_id, $inc);
         if ($notif == "*") {
             if ($inc >= 0) {
