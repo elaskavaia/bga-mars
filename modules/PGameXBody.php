@@ -358,13 +358,13 @@ abstract class PGameXBody extends PGameMachine {
             throw new BgaSystemException("Cannot instantate $classname for $type");
         }
     }
-    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1) {
+    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = '') {
         $opinfo = [
             'type' => $type,
             'owner' => $color,
             'mcount' => $count,
             'count' => $count,
-            'data' => '',
+            'data' => $data,
             'flags' => 0
         ];
         return self::getOperationInstance($opinfo);
@@ -937,12 +937,15 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->isVoid();
     }
 
+    public function isVoidSingle(string $type, string $color, ?int $count = 1, string $data = '') {
+        $opinst = $this->getOperationInstanceFromType($type, $color, $count, $data);
+        return $opinst->isVoid();
+    }
+
     function saction_resolve($opinfo, $args): int {
         $opinst = $this->getOperationInstance($opinfo);
         return $opinst->action_resolve($args);
     }
-
-
 
     function executeImmediately($color, $type, $count) {
         // this does not go on stack - so no stack clean up

@@ -3,7 +3,7 @@ type|name|prompt
 #set undo=true
 #set class=
 #set prompt=Hmm
-#set params=target,payment
+#set params=target
 card|Play Card|${you} must select a card to play
 stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
@@ -32,8 +32,8 @@ nop|Do nothing
 #set params=
 pass|Pass|${you} must confirm Pass for this generation
 skipsec|Skip Second Action|${you} must confirm skipping second action
-draw|Draw Card in Hand
-predraw|Draw Card
+draw|Draw Card in Hand|${you} must confirm draw ${count} card/s, cannot be undone
+predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 
 #set undo=true
 #set class=AbsOperationIncNegAny

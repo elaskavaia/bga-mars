@@ -176,7 +176,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 169|Tundra Farming|1|2pm,pp,p|||16|t>=-6|Plant|2|Requires -6°C or warmer. Increase your plant production 1 step and your MC production 2 steps. Gain 1 plant.|
 170|Aerobraked Ammonia Asteroid|3|2ores(Microbe),pp,3ph|||26||Space Event|0|Add 2 microbes to ANOTHER card. Increase your heat production 3 steps and your plant production 1 step.|
 171|Magnetic Field Dome|1|pp,2npe,tr|||5||Building|0|Decrease your energy production 2 steps and increase your plant production 1 step. Raise your terraform rating 1 step.|
-172|Pets|2|res||play_city:res:this:any|10||Animal Earth|count(res/2)|Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card.|  'holds' => 'Animal'
+172|Pets|2|res||play_city:res:this:any|10||Animal Earth|res/2|Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card.|  'holds' => 'Animal'
 173|Protected Habitats|2|||global:defense|5|||0|[Effect: ]Opponents may not remove your [plants, animals or microbes]|
 174|Protected Valley|1|2pm,o,forest(ocean)|||23||Building Plant|0|Increase your MC production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.|
 175|Satellites|1|counter(tagSpace)pm|||10||Space|0|Increase your MC production 1 step for each space tag you have, including this one.|
@@ -201,7 +201,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 194|Power Infrastructure|2||[0,]ne:m||4||Building Energy|0|Action: Spend any amount of energy to gain that amount of MC.|
 195|Indentured Workers|3||||0||Event|-1|The next card you play this generation costs 8MC less.|
 196|Lagrange Observatory|1|draw|||9||Science Space|1|Draw 1 card.|
-197|Terraforming Ganymede|1|count(tagJovian)tr|||33||Space Jovian|2|Raise your TR 1 step for each Jovian tag you have, including this.|
+197|Terraforming Ganymede|1|counter(tagJovian)tr|||33||Space Jovian|2|Raise your TR 1 step for each Jovian tag you have, including this.|
 198|Immigration Shuttles|1|5pm|||31||Space Earth|all_city/3|Increase your MC production 5 steps. 1 VP for every 3rd city in play.|
 199|Restricted Area|2|tile|2nm:draw||11||Science|0|Place [the restricted area] tile.; Action: Spend 2MC to draw a card.|
 200|Immigrant City|2|npe,2npm,city||place_city:pm:this:any|13||Building City|0|Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.; Effect: Each time a city tile is placed, including this, increase your MC production 1 step.|

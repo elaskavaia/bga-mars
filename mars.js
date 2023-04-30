@@ -1566,7 +1566,7 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.setActiveSlot(tid);
                     _this.setReverseIdMap(tid, opId, tid);
                     if (single) {
-                        if (paramargs.length <= 3) {
+                        if (paramargs.length <= 5) { // magic number?
                             _this.addActionButton("button_" + opId, _this.getTokenName(tid), function () {
                                 _this.sendActionResolveWithTarget(opId, tid);
                             });
@@ -1636,6 +1636,8 @@ var GameXBody = /** @class */ (function (_super) {
         var xop = args.op;
         var single = Object.keys(operations).length == 1;
         var ordered = xop == "," && !single;
+        if (ordered)
+            this.setDescriptionOnMyTurn('${you} must choose order of operations');
         var i = 0;
         var _loop_1 = function (opIdS) {
             var opId = parseInt(opIdS);

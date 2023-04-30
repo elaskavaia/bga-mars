@@ -178,7 +178,7 @@ class GameXBody extends GameTokens {
           this.setActiveSlot(tid);
           this.setReverseIdMap(tid, opId, tid);
           if (single) {
-            if (paramargs.length <= 3) {
+            if (paramargs.length <= 5) { // magic number?
               this.addActionButton("button_" + opId, this.getTokenName(tid), () => {
                 this.sendActionResolveWithTarget(opId, tid);
               });
@@ -252,6 +252,7 @@ class GameXBody extends GameTokens {
 
     const single = Object.keys(operations).length == 1;
     const ordered = xop == "," && !single;
+    if (ordered) this.setDescriptionOnMyTurn('${you} must choose order of operations');
 
     let i = 0;
     for (const opIdS in operations) {
