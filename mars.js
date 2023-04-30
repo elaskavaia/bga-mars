@@ -697,11 +697,14 @@ var GameBasics = /** @class */ (function (_super) {
         dojo.subscribe("log", this, "notif_log");
     };
     GameBasics.prototype.notif_log = function (notif) {
-        console.log(notif.log, notif.args);
         if (notif.log) {
+            console.log(notif.log, notif.args);
             var message = this.format_string_recursive(notif.log, notif.args);
             if (message != notif.log)
                 console.log(message);
+        }
+        else {
+            console.log("hidden log", notif.args);
         }
     };
     GameBasics.prototype.notif_message_warning = function (notif) {

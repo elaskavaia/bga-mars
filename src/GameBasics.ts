@@ -796,10 +796,13 @@ class GameBasics extends GameGui {
   }
 
   notif_log(notif: Notif) {
-    console.log(notif.log, notif.args);
+
     if (notif.log) {
+      console.log(notif.log, notif.args);
       var message = this.format_string_recursive(notif.log, notif.args);
       if (message != notif.log) console.log(message);
+    } else {
+      console.log("hidden log", notif.args);
     }
   }
 

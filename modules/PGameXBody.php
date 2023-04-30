@@ -75,7 +75,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($info != null) {
             return $info;
         }
-        $info = $this->getRulesFor($token,'*');
+        $info = $this->getRulesFor($token, '*');
         $id = $info['_key'];
         $this->createTokenFromInfo($id, $info);
         return $info;
@@ -428,7 +428,7 @@ abstract class PGameXBody extends PGameMachine {
                 $outcome = $ret['outcome'];
                 $context = $ret['context'];
                 $card = $info['key'];
-                $this->debugLog("-come in play effect $outcome triggered by $card");
+                $this->debugLog("-come in play effect '$outcome' triggered by $card");
                 $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
             }
         }
@@ -558,12 +558,13 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getPlayCardEvents(array $tagsarr): array {
+        $events = [];
         $tagMap = [];
         foreach ($tagsarr as $tag) {
             $events[] = "tag$tag";
             $tagMap[$tag] = 1;
         }
-        $events = [];
+
         if (array_get($tagMap, 'Space') && array_get($tagMap, 'Event')) $events[] = 'play_cardSpaceEvent';
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
@@ -580,7 +581,7 @@ abstract class PGameXBody extends PGameMachine {
         unset($options['message']);
         $token_id = $this->getTrackerId($color, $type);
 
-       
+
         $this->debug_createCounterToken($this->getTrackerId($color, $type));
 
         $this->dbResourceInc(
