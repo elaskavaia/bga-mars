@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 class Operation_claim extends AbsOperation {
     function effect(string $color, int $inc): int {
         $marker = $this->game->createPlayerMarker($color);

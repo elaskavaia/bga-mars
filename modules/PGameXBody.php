@@ -20,12 +20,12 @@ abstract class PGameXBody extends PGameMachine {
         parent::__construct();
         self::initGameStateLabels(
             [
-                //    "my_second_global_variable" => 11,
+                "gameended" => 11,
                 //      ...
                 //    "my_first_game_variant" => 100,
                 //    "my_second_game_variant" => 101,
                 //      ...
-            ] //    "my_first_global_variable" => 10,
+            ] 
         );
     }
 
@@ -740,6 +740,9 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         $this->effect_incTerraformingRank($color, $steps);
+        if ($this->isEndOfGameAchived()) {
+            $this->notifyWithName('message_warning', clienttranslate("You have done it!!!"));
+        }
         return true;
     }
 
@@ -789,10 +792,14 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_endOfTurn() {
+        if ($this->getGameStateValue('gameended') == 1) {
+            return STATE_END_GAME;
+        }
         $this->effect_production();
         if ($this->isEndOfGameAchived()) {
             $this->machine->queue("lastforest");
             $this->machine->queue("finalscoring");
+            $this->machine->queue("confirm");
             return null;
         }
         $player_id = $this->getCurrentStartingPlayer();
@@ -814,14 +821,14 @@ abstract class PGameXBody extends PGameMachine {
             $color = explode('_', $id)[1];
             $player_id = $this->getPlayerIdByColor($color);
             // XXX determine the winner
-            $this->dbIncScoreValueAndNotify($player_id, 5, '*', "game_vp_award", ['place' => $loc]);
+            $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s for award'), "game_vp_award", ['place' => $loc]);
         }
         $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone%");
         foreach ($markers as $id => $rec) {
             $loc = $rec['location']; // milestone_x
             $color = explode('_', $id)[1];
             $player_id = $this->getPlayerIdByColor($color);
-            $this->dbIncScoreValueAndNotify($player_id, 5, '*', "game_vp_ms", ['place' => $loc]);
+            $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s for milestone'), "game_vp_ms", ['place' => $loc]);
         }
         // score map, this is split per type for animation effects
         foreach ($players as $player) {
@@ -831,6 +838,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($players as $player) {
             $this->scoreCards($player["player_color"]);
         }
+        $this->setGameStateValue('gameended', 1);
         return 1;
     }
 
@@ -868,18 +876,32 @@ abstract class PGameXBody extends PGameMachine {
         // get all cards, calculate VP field
         $player_id = $this->getPlayerIdByColor($owner);
         $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_$owner");
+        $vpdirect = 0;
         foreach ($cards as $card => $cardrec) {
             $vp  = $this->getRulesFor($card, 'vp');
             //$this->debugConsole(" $card -> $vp");
             if (!$vp) continue;
             if (is_numeric($vp)) {
-                $this->dbIncScoreValueAndNotify($player_id, $vp, '*', "game_vp_cards", ['place' => $card]);
+                $this->dbIncScoreValueAndNotify(
+                    $player_id,
+                    $vp,
+                    '',
+                    "game_vp_cards",
+                    ['place' => $card]
+                );
+                $vpdirect += $vp;
                 continue;
             }
             try {
                 $value = $this->evaluateExpression($vp, $owner, $card);
                 if ($value) {
-                    $this->dbIncScoreValueAndNotify($player_id, $value, '*', "game_vp_cards", ['place' => $card]);
+                    $this->dbIncScoreValueAndNotify(
+                        $player_id,
+                        $value,
+                        clienttranslate('${player_name} scores ${inc} point/s for card ${token_name}'),
+                        "game_vp_cards",
+                        ['place' => $card, 'token_name' => $card]
+                    );
                     continue;
                 }
             } catch (Exception $e) {
@@ -888,6 +910,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->error($e);
             }
         }
+        $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with implicit points'), ['inc' => $vpdirect]);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -980,6 +1003,9 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function machineExecuteDefault() {
+        if ($this->getGameStateValue('gameended') == 1) {
+            return STATE_END_GAME;
+        }
         // check end of game
         $player_id = $this->getActivePlayerId(); // xxx turn owner?
         $n = $this->getPlayersNumber();

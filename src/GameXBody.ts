@@ -179,7 +179,7 @@ class GameXBody extends GameTokens {
           this.setReverseIdMap(tid, opId, tid);
           if (single) {
             if (paramargs.length <= 5) { // magic number?
-              this.addActionButton("button_" + opId, this.getTokenName(tid), () => {
+              this.addActionButton("button_" + tid, this.getTokenName(tid), () => {
                 this.sendActionResolveWithTarget(opId, tid);
               });
             }

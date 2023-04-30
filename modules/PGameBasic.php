@@ -533,9 +533,9 @@ abstract class PGameBasic extends Table {
         $count = $this->dbIncScore($player_id, $inc);
         if ($notif == "*") {
             if ($inc >= 0) {
-                $notif = clienttranslate('${player_name} scores ${inc} point(s)');
+                $notif = clienttranslate('${player_name} scores ${inc} point/s');
             } else {
-                $notif = clienttranslate('${player_name} loses ${mod} point(s)');
+                $notif = clienttranslate('${player_name} loses ${mod} point/s');
             }
         }
         $this->notifyWithName(

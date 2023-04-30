@@ -1567,7 +1567,7 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.setReverseIdMap(tid, opId, tid);
                     if (single) {
                         if (paramargs.length <= 5) { // magic number?
-                            _this.addActionButton("button_" + opId, _this.getTokenName(tid), function () {
+                            _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
                                 _this.sendActionResolveWithTarget(opId, tid);
                             });
                         }
