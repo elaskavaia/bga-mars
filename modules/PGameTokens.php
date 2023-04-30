@@ -204,6 +204,7 @@ abstract class PGameTokens extends PGameBasic {
             $data = array_get($tt, $key, null);
             if ($data) {
                 if ($field === "*") {
+                    $data['_key']=$key;
                     return $data;
                 }
                 return array_get($data, $field, $default);
@@ -231,42 +232,44 @@ abstract class PGameTokens extends PGameBasic {
      */
     protected function createTokens() {
         foreach ($this->token_types as $id => $info) {
-            $create_type = array_get($info, "create", 0);
-            if (!$create_type) {
-                continue;
-            }
-            $count = array_get($info, "count", 1);
-
-            if (!$count) {
-                continue;
-            }
-
-            $token_id = $id;
-            if ($create_type === 1 || $create_type === "single") {
-                $token_id = $id;
-            } elseif ($create_type === 2 || $create_type === "index") {
-                $token_id = "${id}_{INDEX}";
-            } elseif ($create_type === 3 || $create_type === "color_index") {
-                $token_id = "${id}_{COLOR}_{INDEX}";
-            } elseif ($create_type === 4 || $create_type === "color") {
-                $token_id = "${id}_{COLOR}";
-            } elseif ($create_type === 5 || $create_type === "index_color") {
-                $token_id = "${id}_{INDEX}_{COLOR}";
-            }
-            if (strpos($token_id, "{INDEX}") === false) {
-                $count = 1;
-            }
-            $location = array_get($info, "location", "limbo");
-            $state = array_get($info, "state", 0);
-            $token_id = preg_replace("/\{COLOR\}/", "{TYPE}", $token_id);
-            $location = preg_replace("/\{COLOR\}/", "{TYPE}", $location);
-            if (strpos($token_id, "{TYPE}") === false) {
-                $this->tokens->createTokensPack($token_id, $location, $count, 1, null, $state);
-            } else {
-                $this->tokens->createTokensPack($token_id, $location, $count, 1, $this->getPlayerColors(), $state);
-            }
+            $this->createTokenFromInfo($id, $info);
         }
-        return;
+    }
+    protected function createTokenFromInfo($id, $info) {
+        $create_type = array_get($info, "create", 0);
+        if (!$create_type) {
+            return;
+        }
+        $count = array_get($info, "count", 1);
+
+        if (!$count) {
+            return;
+        }
+
+        $token_id = $id;
+        if ($create_type === 1 || $create_type === "single") {
+            $token_id = $id;
+        } elseif ($create_type === 2 || $create_type === "index") {
+            $token_id = "${id}_{INDEX}";
+        } elseif ($create_type === 3 || $create_type === "color_index") {
+            $token_id = "${id}_{COLOR}_{INDEX}";
+        } elseif ($create_type === 4 || $create_type === "color") {
+            $token_id = "${id}_{COLOR}";
+        } elseif ($create_type === 5 || $create_type === "index_color") {
+            $token_id = "${id}_{INDEX}_{COLOR}";
+        }
+        if (strpos($token_id, "{INDEX}") === false) {
+            $count = 1;
+        }
+        $location = array_get($info, "location", "limbo");
+        $state = array_get($info, "state", 0);
+        $token_id = preg_replace("/\{COLOR\}/", "{TYPE}", $token_id);
+        $location = preg_replace("/\{COLOR\}/", "{TYPE}", $location);
+        if (strpos($token_id, "{TYPE}") === false) {
+            $this->tokens->createTokensPack($token_id, $location, $count, 1, null, $state);
+        } else {
+            $this->tokens->createTokensPack($token_id, $location, $count, 1, $this->getPlayerColors(), $state);
+        }
     }
 
     protected function isContentAllowedForLocation($player_id, $location, $attr = "content") {
@@ -478,7 +481,7 @@ abstract class PGameTokens extends PGameBasic {
                 $this->userAssertTrue(self::_("Not enough resources to pay $token_id $current + $num >= 0")); // XXX fix error
             }
         }
-        if (array_get($options,'onlyCheck')) {
+        if (array_get($options, 'onlyCheck')) {
             return;
         }
         $this->tokens->setTokenState($token_id, $value);

@@ -68,6 +68,7 @@ class AbsOperationPayWithRes extends AbsOperation {
 
     private function getExchangeRate(): int {
         $type = $this->getType();
+
         $er = $this->game->getTrackerValue($this->color, "er$type");
         if ($er == 0) {
             if ($type == 's')

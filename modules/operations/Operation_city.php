@@ -9,25 +9,19 @@ class Operation_city extends AbsOperationTile {
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
         $reservename = $this->getReservedArea();
         if (!$reservename) {
-            $adj = $this->game->getAdjecentHexes($ohex, $map);
-            foreach ($adj as $hex) {
-                $tile = array_get($map[$hex], 'tile');
-                if ($tile) {
-                    $tt = $this->game->getRulesFor($tile, 'tt');
-                    if ($tt == MA_TILE_CITY) {
-                        return MA_ERR_CITYPLACEMENT;
-                    }
-                }
-            }
+            $others = count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));;
+            if ($others > 0) return MA_ERR_CITYPLACEMENT;
         } else {
             $reshexes = $this->findReservedAreas($reservename);
-            if (count($reshexes)==0) {
+            if (count($reshexes) == 0) {
+                if ($this->checkAdjRulesPasses($ohex, $color, $reservename)) {
+                    return 0;
+                }
                 return MA_ERR_ALREADYUSED;
             }
-            if (array_search($ohex,$reshexes)===false) {
+            if (array_search($ohex, $reshexes) === false) {
                 return MA_ERR_NOTRESERVED;
             }
-
         }
         return 0;
     }

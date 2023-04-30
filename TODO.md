@@ -8,6 +8,7 @@ Random notes on todo items
 ## Server
 
 * Awards - scoring
+* Global param bonuses
 * Static effects
  * pay discounts onPay_...
 * Complex cards
@@ -15,16 +16,15 @@ Random notes on todo items
  * copy_Building
  * defense for res removal (global:defense)
  * effect on next played card
- * predraw,?keep
  * scoring adj_ effects for tiles
 * Corporations
 
 ## Client
 
-* Tag
+* Tags
 * Player picker
 * Hex tiles
-* Payment selector
+* Payment picker (icons)
 * Stacking played cards
 * Show decoded error on when something cannot be selected/played
 

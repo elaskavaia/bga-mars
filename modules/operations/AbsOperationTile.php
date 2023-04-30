@@ -46,6 +46,28 @@ abstract class AbsOperationTile extends AbsOperation {
         return $this->game->getAdjecentHexesOfType($map, $what, $towhat, $ownwer);
     }
 
+
+    protected function checkAdjRulesPasses($ohex, $color, $rule) {
+        if (!$rule) return true;
+        switch ($rule) {
+            case 'adj_city':
+                return $this->isAdjecentHexesOfType($ohex, MA_TILE_CITY);
+            case 'adj_city_2':
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY)) >= 2;
+            case 'adj_forest':
+                return $this->isAdjecentHexesOfType($ohex, MA_TILE_FOREST);
+            case 'adj_ocean':
+                return $this->isAdjecentHexesOfType($ohex, MA_TILE_OCEAN);
+            case 'adj_own':
+                return $this->isAdjecentHexesOfType($ohex, 0, $color);
+            case 'adj_no':
+                return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
+            default:
+                throw new BgaSystemException("Unknown rule $rule");
+        }
+    }
+
+
     protected function findReservedAreas($names): array {
         $res = [];
         $map = $this->getPlanetMap();

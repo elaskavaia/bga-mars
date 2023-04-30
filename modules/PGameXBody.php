@@ -75,9 +75,9 @@ abstract class PGameXBody extends PGameMachine {
         if ($info != null) {
             return $info;
         }
-        $color = getPart($token, 2);
-        $this->tokens->createToken($token, "miniboard_${color}");
-        $info = $this->tokens->getTokenInfo($token);
+        $info = $this->getRulesFor($token,'*');
+        $id = $info['_key'];
+        $this->createTokenFromInfo($id, $info);
         return $info;
     }
 
@@ -579,6 +579,10 @@ abstract class PGameXBody extends PGameMachine {
         $message = array_get($options, 'message', '*');
         unset($options['message']);
         $token_id = $this->getTrackerId($color, $type);
+
+       
+        $this->debug_createCounterToken($this->getTrackerId($color, $type));
+
         $this->dbResourceInc(
             $token_id,
             $inc,
@@ -615,11 +619,12 @@ abstract class PGameXBody extends PGameMachine {
         ], $this->getPlayerIdByColor($color));
     }
 
-    function effect_increaseParam($color, $type, $inc) {
+    function effect_increaseParam($color, $type, $steps, $perstep = 1) {
         if (!$color) {
             $color = $this->getActivePlayerColor();
         }
         $token_id = "tracker_$type";
+        $inc = $steps * $perstep;
         $max = $this->getRulesFor($token_id, 'max', 30);
 
         $current = $this->tokens->getTokenState($token_id);
@@ -633,10 +638,11 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         $value = $this->tokens->setTokenState($token_id, $current + $inc);
-        $message = clienttranslate('${player_name} increases ${token_name} by ${inc} step/s to a value of ${counter_value}');
+        $message = clienttranslate('${player_name} increases ${token_name} by ${steps} step/s to a value of ${counter_value}');
 
         $this->notifyCounterDirect($token_id, $value, $message, [
             "inc" => $inc,
+            "steps" => $steps,
             "token_name" => $token_id,
         ], $this->getPlayerIdByColor($color));
 

@@ -17,12 +17,14 @@ tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
 sell|Discard Card from Hand to gain MC|${you} must select a card to discard to gain 1 MC|
 activate|Activate Card|${you} must select a card to activate
-ores|Add resource to another card|${you} must select a card to add resource/s
+ores|Add resource to another card|${you} must select a card to add resource/s to
 nores|Remove resource from another card (Optional)|${you} must select a card to remove resource/s
+keep|Keep Card|${you} must select a card to add keep
+
 #set params=
 res|Add resource to this card
 nres|Remove resource from this card
-
+prediscard|Discard
 
 
 #set undo=false
@@ -30,7 +32,7 @@ nres|Remove resource from this card
 pass|Pass|${you} must confirm Pass for this generation
 skipsec|Skip Second Action|${you} must confirm skipping second action
 draw|Draw Card in Hand
-
+predraw|Draw Card
 
 #set undo=true
 #set class=AbsOperationIncNegAny
