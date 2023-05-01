@@ -165,6 +165,8 @@ class DbTokens extends APP_GameClass {
         $like = "LIKE";
         if (strpos($location, "%") === false) {
             $like = "=";
+        } else {
+            $location = preg_replace('/_/','\\_',$location);
         }
         $sql .= " WHERE token_location $like '$location' ";
         if ($token_key != null) {
@@ -172,6 +174,8 @@ class DbTokens extends APP_GameClass {
             $like = "LIKE";
             if (strpos($token_key, "%") === false) {
                 $like = "=";
+            } else {
+                $token_key = preg_replace('/_/','\\_',$token_key);
             }
             $sql .= " AND token_key $like '$token_key' ";
         }
@@ -412,6 +416,7 @@ class DbTokens extends APP_GameClass {
                 $type .= "%";
             }
             self::checkType($type);
+            $type = preg_replace('/_/','\\_',$type);
             $sql .= " AND token_key LIKE '$type'";
         }
         if ($location !== null) {
@@ -419,6 +424,8 @@ class DbTokens extends APP_GameClass {
             $like = "LIKE";
             if (strpos($location, "%") === false) {
                 $like = "=";
+            } else {
+                $location = preg_replace('/_/','\\_',$location);
             }
             $sql .= " AND token_location $like '$location' ";
         }
@@ -502,6 +509,8 @@ class DbTokens extends APP_GameClass {
         $like = "LIKE";
         if (strpos($location, "%") === false) {
             $like = "=";
+        } else {
+            $location = preg_replace('/_/','\\_',$location);
         }
         $sql = "SELECT COUNT( token_key ) cnt FROM " . $this->table;
         $sql .= " WHERE token_location $like '$location' ";

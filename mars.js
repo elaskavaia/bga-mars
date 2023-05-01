@@ -1428,6 +1428,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.custom_placement = {
             tracker_t: "temperature_map",
             tracker_o: "oxygen_map",
+            tracker_w: "oceans_pile",
         };
         _super.prototype.setup.call(this, gamedatas);
         // hexes are not moved so manually connect
@@ -1436,6 +1437,14 @@ var GameXBody = /** @class */ (function (_super) {
             _this.updateTooltip(node.id);
         });
         console.log("Ending game setup");
+    };
+    GameXBody.prototype.setupPlayer = function (playerInfo) {
+        _super.prototype.setupPlayer.call(this, playerInfo);
+        //move own player board in main zone
+        if (playerInfo.id == this.player_id) {
+            var board = $("player_area_".concat(playerInfo.color));
+            $("thisplayer_zone").appendChild(board);
+        }
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
@@ -1452,8 +1461,16 @@ var GameXBody = /** @class */ (function (_super) {
                     rules += ";a:" + displayInfo.a;
                 if (displayInfo.e)
                     rules += ";e:" + displayInfo.e;
+                //tags
+                var tagshtm = "";
+                if (displayInfo.tags && displayInfo.tags != "") {
+                    for (var _i = 0, _c = displayInfo.tags.split(' '); _i < _c.length; _i++) {
+                        var tag = _c[_i];
+                        tagshtm += '<div class="badge tag_' + tag + '"></div>';
+                    }
+                }
                 var div = this.createDivNode(null, "card_info_box", tokenNode.id);
-                div.innerHTML = "\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div>\n        <div class='token_rules'>").concat(rules, "</div>\n        <div class='token_descr'>").concat(displayInfo.tooltip, "</div>\n        ");
+                div.innerHTML = "\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div>\n        <div class='token_badges'>").concat(tagshtm, "</div>\n        <div class='token_rules'>").concat(rules, "</div>\n        <div class='token_descr'>").concat(displayInfo.tooltip, "</div>\n        ");
                 tokenNode.appendChild(div);
                 tokenNode.setAttribute("data-card-type", displayInfo.t);
             }
@@ -1504,6 +1521,12 @@ var GameXBody = /** @class */ (function (_super) {
         var result = _super.prototype.getPlaceRedirect.call(this, tokenInfo);
         if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
             result.location = this.getDomTokenLocation(tokenInfo.key);
+        }
+        else if (tokenInfo.key.startsWith("award")) {
+            result.location = 'awardslist';
+        }
+        else if (tokenInfo.key.startsWith("milestone")) {
+            result.location = 'milestoneslist';
         }
         else if (this.custom_placement[tokenInfo.key]) {
             result.location = this.custom_placement[tokenInfo.key];
