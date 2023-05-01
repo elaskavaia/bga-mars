@@ -56,6 +56,7 @@
   define("MA_TILE_CITY", 2);
   define("MA_TILE_OCEAN", 3);
   define("MA_TILE_SPECIAL", 4);
+  define("MA_TILE_MINING", 5);
 
   // card states in hand
   define("MA_CARD_STATE_FACEDOWN", 0);
@@ -882,8 +883,8 @@ $this->token_types = [
   'create' => 'single',
   'num' => 64,
   'name' => clienttranslate("Mining Area"),
-  't' => '1,tile(adj_own)',
-  'r' => 'ps/pu',
+  't' => 1,
+  'r' => 'tile(adj_own)',
   'cost' => 4,
   'tags' => 'Building',
   'vp' => 0,
@@ -917,8 +918,8 @@ $this->token_types = [
   'create' => 'single',
   'num' => 67,
   'name' => clienttranslate("Mining Rights"),
-  't' => '1,tile',
-  'r' => 'ps/pu',
+  't' => 1,
+  'r' => 'tile',
   'cost' => 9,
   'tags' => 'Building',
   'vp' => 0,

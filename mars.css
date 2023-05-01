@@ -1531,6 +1531,7 @@
   border: 0.4vh solid var(--plcolor);
   position: relative;
   border-radius: 1vh;
+  max-width: 1200px;
 }
 
 .playerboard {

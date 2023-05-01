@@ -182,6 +182,9 @@ abstract class PGameXBody extends PGameMachine {
                 return count($this->getAdjecentHexesOfType($ohex, 0, $color));
             case 'adj_no':
                 return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
+            case 'has_su':
+                $bonus=$this->getRulesFor($ohex,'r','');
+                return strpos($bonus,'s')!==false || strpos($bonus,'u')!==false;
             default:
                 throw new BgaSystemException("Unknown adj rule $rule");
         }
@@ -645,14 +648,14 @@ abstract class PGameXBody extends PGameMachine {
         $bonus = $this->getRulesFor($target, 'r');
         if ($bonus) {
             $this->debugLog("-placement bonus $bonus");
-            $this->machine->put($bonus, 1, 1, $color, MACHINE_FLAG_UNIQUE,  $object);
+            $this->putInEffectPool($color, $bonus, $object);
         }
         // ocean bonus
         $oceans = $this->getAdjecentHexesOfType($target, MA_TILE_OCEAN);
         $c = count($oceans);
         if ($c) {
             $bonus = "${c}m"; // 2 MC per ocean
-            $this->machine->put($bonus, 1, 1, $color, MACHINE_FLAG_UNIQUE,  $object);
+            $this->putInEffectPool($color, $bonus, $object);
         }
         return $object;
     }

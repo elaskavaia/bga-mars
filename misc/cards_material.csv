@@ -68,10 +68,10 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 61|Great Escarpment Consortium|1|nps_Any:ps|||6|ps>0||0|Requires that you have steel production. Decrease any steel production 1 step and increase your own 1 step|
 62|Mineral Deposit|3|5s|||5||Event|0|Gain 5 steel.|
 63|Mining Expedition|3|2s,2np_Any,o|||12||Event|0|Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.|
-64|Mining Area|1,tile(adj_own)|ps/pu|||4||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step. TODO|
+64|Mining Area|1|tile(adj_own)|||4||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step. TODO|
 65|Building Industries|1|2ps,1npe|||6||Building|0|Decrease your energy production 1 step and increase your steel production 2 steps.|
 66|Land Claim|3||||1||Event|0|Place your marker on a non-reserved area. Only you may place a tile here|
-67|Mining Rights|1,tile|ps/pu|||9||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus. Increase that production 1 step. TODO|
+67|Mining Rights|1|tile|||9||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus. Increase that production 1 step. TODO|
 68|Sponsors|1|2pm|||6||Earth|0|Increase your MC production 2  steps.|
 69|Electro Catapult|2|npe|(p/s):7m||17|o<=8|Building|1|Oxygen must be 8% or less. Decrease your energy production 1 step.; Action: Spend 1 plant or 1 steel to gain 7 MC|
 70|Earth Catapult|2|||onPay_card:2m|23||Earth|2|Effect: when you play a card, you pay 2 MC less for it.|
