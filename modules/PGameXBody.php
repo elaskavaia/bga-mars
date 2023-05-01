@@ -949,6 +949,11 @@ abstract class PGameXBody extends PGameMachine {
         return $result + $this->arg_operations();
     }
 
+    function arg_multiplayerTurnChoice() {
+        $result = [];
+        return $result + $this->arg_operations();
+    }
+
     function createArgInfo(string $color, array $keys, callable $filter) {
         $res = [];
         foreach ($keys as $tokenid) {

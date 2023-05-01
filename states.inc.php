@@ -51,7 +51,7 @@
 
 if (!defined("STATE_END_GAME")) {
     // guard since this included multiple times
-    define("STATE_MPLAYER_TURN_B", 4);
+    define("STATE_MULTIPLAYER_TURN_CHOICE", 4);
     define("STATE_GAME_DISPATCH", 10);
     define("STATE_PLAYER_TURN_CHOICE", 11);
     define("STATE_PLAYER_CONFIRM", 12);
@@ -71,7 +71,7 @@ $machinestates = [
     STATE_PLAYER_CONFIRM => [
         "name" => "playerConfirm",
         "description" => clienttranslate(
-            '${actplayer} must confirm'
+            '${actplayer} must confirm or undo'
         ),
         "descriptionmyturn" => clienttranslate(
             '${you} must confirm'
@@ -93,7 +93,7 @@ $machinestates = [
         "transitions" => [
             "next" => STATE_PLAYER_TURN_CHOICE,
             "loopback" => STATE_GAME_DISPATCH,
-            "mnext" => STATE_MPLAYER_TURN_B,
+            "mnext" => STATE_MULTIPLAYER_TURN_CHOICE,
             "last" => STATE_END_GAME,
         ],
     ],
@@ -115,22 +115,22 @@ $machinestates = [
     ],
 
 
-    STATE_MPLAYER_TURN_B => [
-        "name" => "playerTurnB",
+    STATE_MULTIPLAYER_TURN_CHOICE => [
+        "name" => "multiplayerTurnChoice",
         "type" => "multipleactiveplayer",
         "action" => "stMakeEveryoneActive",
         "description" => clienttranslate(
-            'Other players must choose to support ${otherplayer} or oppose'
+            'Other players makes their choices'
         ),
         "descriptionmyturn" => clienttranslate(
-            '${you} must choose to support ${otherplayer} or oppose'
+            '${you} must choose'
         ),
-        "possibleactions" => ["playSupport", "playOppose", "playWait"],
+        "possibleactions" => ["choose", "resolve", "decline", "skip", "undo"],
         "transitions" => [
             "next" => STATE_PLAYER_CONFIRM,
-            "loopback" => STATE_MPLAYER_TURN_B,
+            "loopback" => STATE_MULTIPLAYER_TURN_CHOICE,
         ],
-        "args" => "arg_playerTurnB",
+        "args" => "arg_multiplayerTurnChoice",
     ],
 
     // Final state.
