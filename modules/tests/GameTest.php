@@ -19,6 +19,10 @@ class GameUT extends mars {
     function init() {
         $this->createTokens();
     }
+
+    function setListerts(array $l) {
+        $this->eventListners = $l;
+    }
     // override/stub methods here that access db and stuff
 }
 
@@ -60,9 +64,9 @@ final class GameTest extends TestCase {
     public function testEvalute() {
         $m = $this->game();
 
-    
-        $m->incTrackerValue(PCOLOR,'u',8);
-        $m->incTrackerValue(BCOLOR,'u',2);
+
+        $m->incTrackerValue(PCOLOR, 'u', 8);
+        $m->incTrackerValue(BCOLOR, 'u', 2);
         $this->assertEquals(8, $m->evaluateExpression("u", PCOLOR));
         $this->assertEquals(1, $m->evaluateExpression("u > 1", PCOLOR));
         $m->tokens->setTokenState('tracker_u_' . PCOLOR, 7);
@@ -91,7 +95,7 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(0, $value);
-        $m->put(PCOLOR, "2s");
+        $m->putInEffectPool(PCOLOR, "2s");
         $m->st_gameDispatch();
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(2, $value);
@@ -103,32 +107,54 @@ final class GameTest extends TestCase {
         $value = $m->getTrackerValue(PCOLOR, 'e');
         $this->assertEquals(4, $value);
         $card = 'card_main_101';
-        $m->tokens->moveToken($card,"tableau_".PCOLOR,2);
-        $op = $m->machine->createOperationSimple('activate',PCOLOR);
-        $args = ['target'=>$card,'op_info'=>$op];
-        $count= $m->saction_resolve($op,$args);
+        $m->tokens->moveToken($card, "tableau_" . PCOLOR, 2);
+        $op = $m->machine->createOperationSimple('activate', PCOLOR);
+        $args = ['target' => $card, 'op_info' => $op];
+        $count = $m->saction_resolve($op, $args);
         $m->st_gameDispatch();
         $this->assertEquals(1, $count);
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(1, $value);
     }
 
-    public function testEffectMatch(){
+    public function testEffectMatch() {
         $m = $this->game();
-        $res=[];
-        $this->assertTrue($m->mtMatchEvent("a:x",PCOLOR,"a",PCOLOR,$res));
-        $this->assertFalse($m->mtMatchEvent("a:x",PCOLOR,"ab",PCOLOR,$res));
+        $res = [];
+        $this->assertTrue($m->mtMatchEvent("a:x", PCOLOR, "a", PCOLOR, $res));
+        $this->assertFalse($m->mtMatchEvent("a:x", PCOLOR, "ab", PCOLOR, $res));
 
-        $this->assertTrue($m->mtMatchEvent("'/play_.*b/':x",PCOLOR,"play_a_b",PCOLOR,$res));
-        $this->assertFalse($m->mtMatchEvent("'/play_.*c/':x",PCOLOR,"play_a_b",PCOLOR,$res));
+        $this->assertTrue($m->mtMatchEvent("'/play_.*b/':x", PCOLOR, "play_a_b", PCOLOR, $res));
+        $this->assertFalse($m->mtMatchEvent("'/play_.*c/':x", PCOLOR, "play_a_b", PCOLOR, $res));
     }
 
-    public function testInstanciate(){
+    public function testInstanciate() {
         $m = $this->game();
-        $m -> getOperationInstanceFromType("1m",PCOLOR);
+        $m->getOperationInstanceFromType("1m", PCOLOR);
         $this->assertNotNull($m);
 
-        $m -> getOperationInstanceFromType("9nmu",PCOLOR);
+        $m->getOperationInstanceFromType("9nmu", PCOLOR);
         $this->assertNotNull($m);
+    }
+
+    public function testListeners() {
+        $m = $this->game();
+        $m->setListerts([
+            'card_1' => ['e' => 'play_card:nop;onPay_card:2m', 'owner' => PCOLOR, 'key' => 'card_1'],
+            'card_2' => ['e' => 'onPay_cardSpaceEvent:2m', 'owner' => PCOLOR, 'key' => 'card_2']
+        ]);
+        $res = $m->collectListeners(PCOLOR, "play_card", "xxx");
+        $this->assertNotNull($res);
+        $this->assertEquals(1, count($res));
+        $this->assertEquals('nop', $res[0]['outcome']);
+
+        $dis = $m->collectDiscounts(PCOLOR, "card_main_1");
+        $this->assertEquals(2, $dis);
+
+        $dis = $m->collectDiscounts(PCOLOR, "card_main_9");
+        $this->assertEquals(4, $dis);
+
+        $m->effect_cardInPlay(PCOLOR,"card_main_173");
+        $res = $m->collectListeners(BCOLOR, "defense");
+        $this->assertEquals(1, count($res));
     }
 }

@@ -7,6 +7,19 @@ class AbsOperationPayWithRes extends AbsOperation {
     protected function getPrimaryArgType() {
         return 'enum';
     }
+    protected function getPrompt() {
+        return  clienttranslate('${you} must pay ${count} MC (can use ${res_name}) for ${card_name}');
+    }
+    protected function getVisargs() {
+        $type = $this->getType();
+        $ttoken = $this->game->getTrackerId('', $type );
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'res_name' => $this->game->getTokenName($ttoken),
+            'card_name' => $this->game->getTokenName($this->getContext())
+        ];
+    }
 
 
     protected function argPrimaryDetails() {
@@ -19,8 +32,7 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info = [];
         $maxres = (int)floor($count / $er);
         $maxres = min($maxres, $typecount);
-        //$this->addProposal($info, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
-
+        $this->addProposal($info, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
         $this->addProposal($info, $mcount, $typecount, $er, 0, 1);
         $this->addProposal($info, $mcount, $typecount, $er, 0, ($maxres - 1));
         $this->addProposal($info, $mcount, $typecount, $er, 0, $maxres);
@@ -40,13 +52,15 @@ class AbsOperationPayWithRes extends AbsOperation {
         $type = $this->getType();
         $proposal = '';
         if ($mc_try) $proposal .= "${mc_try}m";
-        if ($type_try) $proposal = "${type_try}${type}";
+        if ($type_try) $proposal .= "${type_try}${type}";
         if (array_get($info, $proposal)) return;
+        $tryc = $mc_try + $type_try * $er;
         $info["$proposal"] = [
             'q' => $q,
-            'count' => $mc_try + $type_try * $er,
+            'count' => $tryc,
             'm' => $mc_try,
-            $type => $type_try
+            $type => $type_try,
+            'sign' => $tryc <=> $this->getCount()
         ];
     }
 

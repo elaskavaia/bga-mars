@@ -5,19 +5,12 @@ declare(strict_types=1);
 
 class Operation_convp extends AbsOperation {
     function effect(string $color, int $inc): int {
-        $this->game->effect_incCount($color, 'p', -8);
-        $this->game->push($color, 'forest');
+        $this->game->push($color, '8np:forest');
         return 1;
     }
 
-
-    function argPrimaryDetails() {
+    function isVoid(): bool {
         $color = $this->color;
-        $heat = $this->game->getTrackerValue($color, 'p');
-        $id = $this->game->getTrackerId($color, 'p');
-        $keys = [$id];
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($heat) {
-            return $heat >= 8 ? 0 : 1;
-        });
+        return $this->game->isVoidSingle("8np", $color) || $this->game->isVoidSingle("forest", $color);
     }
 }

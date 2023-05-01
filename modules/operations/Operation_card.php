@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
-
 class Operation_card extends AbsOperation {
     function effect(string $color, int $inc): int {
-        $this->game->uaction_playCard($this->user_args); // XXX
+        $card_id = $this->getCheckedArg('target');
+        $payment_op = $this->game->getPayment($color, $card_id);
+        $payment_inst = $this->game->getOperationInstanceFromType($payment_op, $color);
+        if ($payment_inst->isVoid()) throw new BgaUserException(self::_("Insufficient resources for payment"));
+        $this->game->push($color, $payment_op, $card_id);
+        $this->game->put($color, 'cardx', $card_id);
         return 1;
     }
 

@@ -8,14 +8,12 @@ class AbsOperationIncNeg extends AbsOperation {
         return $inc;
     }
 
+    protected function getType() {
+        return substr($this->mnemonic, 1);
+    }
+
     public function isVoid(): bool {
-        $op = $this->op_info;
-        $count = $op['mcount'];
-        try {
-            $this->game->effect_incCount($op['owner'], substr($this->mnemonic, 1), -$count, ['onlyCheck' => true]);
-        } catch (Exception $e) {
-            return true;
-        }
-        return false;
+        $value = $this->game->getTrackerValue($this->color, $this->getType());
+        return $value - $this->getMinCount() < 0;
     }
 }

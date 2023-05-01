@@ -22,13 +22,17 @@ abstract class AbsOperation {
         $this->params =  '';
     }
 
+    function _($str) {
+        return $this->game->_($str);
+    }
+
     function rules() {
         return $this->game->getOperationRules($this->mnemonic);
     }
 
     /** extra operation parameters passed statically, i.e. some(arg1) */
     function setParams($params) {
-        if ($params && startsWith($params,"'")) {
+        if ($params && startsWith($params, "'")) {
             $params = MathLexer::unquote($params);
         }
         $this->params = $params;
@@ -37,10 +41,13 @@ abstract class AbsOperation {
     function isFullyAutomated() {
         $rules = $this->rules();
         if (isset($rules['params'])) return false;
+
         return true;
     }
 
     function canResolveAutomatically() {
+        if ($this->getMinCount() == 0) return false;
+        if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->isFullyAutomated()) return true;
         if ($this->isOneChoice()) return true; // can be perf for prompt
         return false;
@@ -163,29 +170,47 @@ abstract class AbsOperation {
     }
 
     function isVoid(): bool {
-        return count($this->arg()['target']) == 0;
+        if ($this->getMinCount() == 0) return false;
+        if ($this->noValidTargets()) return true;
+        return false;
+    }
+
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['info']) > 0 && count($arg['target']) == 0;
     }
 
     /**
      * This is user call, validate all parameters
      */
     function action_resolve(array $args): int {
-        $op = $this->op_info;
-
-
-
-        //if ($op['type'] != $this->mnemonic) throw new BgaSystemException("Mismatched operation $type");
-        // the actual acting player
-        $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
-        $inc = (int) ($args["count"] ?? $op["count"] ?? 1);
-        $this->argresult = null; // XXX not sure
-        $this->color =  $owner;
         $this->user_args =  $args;
 
-        return $this->effect($owner, $inc, $args);
+        // the actual acting player
+        $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
+        if ($this->color && $this->color !== $owner) {
+            $this->game->systemAssertTrue("Not autorized for this operation");
+        }
+        $this->argresult = null; // XXX not sure
+        $this->color =  $owner;
+
+        $this->checkVoid();
+        return $this->effect($owner, $this->getUserCount(), $args);
     }
 
-    function getUserCount() {
+    protected function checkVoid() {
+        if ($this->isVoid()) {
+            $op = $this->mnemonic;
+            $usertarget = $args['target'] ?? '';
+            $this->game->systemAssertTrue("Operation cannot be executed '$op'",  $usertarget);
+            $info = $this->arg()['target'];
+            $infotarget = array_get($info, $usertarget);
+            $err = $infotarget['q'];
+            $this->game->userAssertTrue("Operation cannot be executed, err code $err"); /// XXX proper strings
+        }
+    }
+
+    function getUserCount(): ?int {
         if (!$this->user_args) return null;
         return  (int) ($this->user_args["count"] ??  $this->op_info["count"] ?? 1);
     }
@@ -193,6 +218,7 @@ abstract class AbsOperation {
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        $this->checkVoid();
         $count = $this->effect($owner, $count, null);
         return true;
     }

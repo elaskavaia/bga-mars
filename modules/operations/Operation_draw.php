@@ -7,4 +7,9 @@ class Operation_draw extends AbsOperation {
         $this->game->effect_draw($color, "deck_main", "hand_${color}", $inc);
         return $inc;
     }
+
+    function canResolveAutomatically() {
+        if ($this->params === 'auto') return true;
+        return false;
+    }
 }

@@ -8,15 +8,11 @@ Random notes on todo items
 ## Server
 
 * Awards - scoring
-* Global param bonuses
-* Static effects
- * pay discounts onPay_...
+* Static effects - DONE?
 * Complex cards
  * requirement +2/-2 (paramreq)
  * copy_Building
- * defense for res removal (global:defense)
  * effect on next played card
- * scoring adj_ effects for tiles
 * Corporations
 
 ## Client
@@ -30,7 +26,7 @@ Random notes on todo items
 
 ### Client Bonus Features
 
-* Card refernce
+* Card reference
 * Player mats with cubes
 * Sounds
 * Flip animation
@@ -39,4 +35,4 @@ Random notes on todo items
 
 ## Assets
 
-* All of it...
+* Got them?

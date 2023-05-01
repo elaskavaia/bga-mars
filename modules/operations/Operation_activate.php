@@ -8,7 +8,7 @@ class Operation_activate extends AbsOperation {
         $tokenId = $this->getCheckedArg('target');
         $r = $this->game->getRulesFor($tokenId, 'a');
         $this->game->machine->push($r, 1, 1, $color, MACHINE_FLAG_UNIQUE, $tokenId);
-        $this->game->dbSetTokenState($tokenId, MA_CARD_STATE_ACTION_USED); // used
+        $this->game->dbSetTokenState($tokenId, MA_CARD_STATE_ACTION_USED, clienttranslate('${player_name} activates ${token_name}')); // used
         return 1;
     }
 
@@ -17,16 +17,11 @@ class Operation_activate extends AbsOperation {
         $map = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_${color}");
         $keys = array_keys($map);
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map) {
-            $rules = $this->game->getRulesFor($tokenId, '*');
-            if (!isset($rules['a'])) return MA_ERR_NOTAPPLICABLE;
+            $r = $this->game->getRulesFor($tokenId, 'a');
+            if (!$r) return MA_ERR_NOTAPPLICABLE;
             $info = $map[$tokenId];
             if ($info['state'] == 3) return MA_ERR_ALREADYUSED;
-            $r = $this->game->getRulesFor($tokenId, 'a');
-            $expr = OpExpression::parseExpression($r);
-            $cost = $expr->args[0];
-            if ($expr->op != ":") return 0;
-            $costop = $this->game->machine->createOperationSimple(OpExpression::str($cost), $color);
-            if ($this->game->isVoid($costop)) return MA_ERR_MANDATORYEFFECT;
+            if ($this->game->isVoidSingle($r, $color)) return MA_ERR_MANDATORYEFFECT;
             return 0;
         });
     }

@@ -14,7 +14,7 @@ class ComplexOperation extends AbsOperation {
         $this->delegates = [];
         foreach ($expr->args as $arg) {
             $newop = $this->game->machine->createOperationSimple(OpExpression::str($arg), $this->color);
-            $newop['data']=$opinfo['data'];
+            $newop['data'] = $opinfo['data'];
             if ($newop['type'] == $opinfo['type']) throw new BgaSystemException("Cannot create delegate for $type");
             $this->delegates[] = $this->game->getOperationInstance($newop);
         }
@@ -90,6 +90,25 @@ class ComplexOperation extends AbsOperation {
     }
 
     function isVoid(): bool {
-        return false;
+        if ($this->getMinCount() == 0) return false;
+        $op = $this->operation;
+        $subvoid = false;
+        foreach ($this->delegates as $i => $sub) {
+            $subvoid = $sub->isVoid();
+            switch ($op) {
+                case '/':
+                    if ($subvoid == false) return false;
+                    break;
+                case ':':
+                case ',':
+                case ';':
+                case '+':
+                    if ($subvoid == true) return true;
+                    break;
+                case '!':
+                    break;
+            }
+        }
+        return $subvoid;
     }
 }

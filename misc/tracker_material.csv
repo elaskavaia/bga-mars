@@ -33,6 +33,8 @@ tracker_w|Oceans|0|'max'=>9
 tracker_gen|Generations|0|'min'=>0
 
 
+
+
 #tags
 #set create=0
 #set type=tag
@@ -45,7 +47,7 @@ tagAnimal|Animal
 tagCity|City
 tagEarth|Earth
 tagJovian|Jovian
-tagEnergy|Energy
+tagEnergy|Power
 tagVenus|Venus
 tagEvent|Event
 
@@ -62,7 +64,7 @@ tracker_tagAnimal|Count of Animal tags
 tracker_tagCity|Count of City tags
 tracker_tagEarth|Count of Earth tags
 tracker_tagJovian|Count of Jovian tags
-tracker_tagEnergy|Count of Energy tags
+tracker_tagEnergy|Count of Power tags
 tracker_tagVenus|Count of Venus tags
 tracker_tagEvent|Count of Event tags
 
@@ -82,6 +84,7 @@ tile_67|Mining|0|'tt'=>5
 tile_85|Commercial District|0|'tt'=>4
 tile_97|Nuclear Zone|0|'tt'=>4
 tile_123|Industrial Center|0|'tt'=>4
+tile_128|Ecological Zone|0|'tt'=>4
 tile_142|Mohole Area|0|'tt'=>4
 tile_199|Restricted Area|0|'tt'=>4
 
@@ -91,5 +94,6 @@ tile_199|Restricted Area|0|'tt'=>4
 #set count=0
 #set type=resource
 resource|Resource
+
 #set type=marker
-marker|Resource
+marker|Marker

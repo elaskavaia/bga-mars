@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 class Operation_claim extends AbsOperation {
     function effect(string $color, int $inc): int {
         $marker = $this->game->createPlayerMarker($color);
@@ -19,7 +18,7 @@ class Operation_claim extends AbsOperation {
         $color = $this->color;
         $map = $this->game->tokens->getTokensOfTypeInLocation("milestone", null, null);
         $keys = array_keys($map);
-        $claimed = $this->game->tokens->countTokensInLocation("award", null);
+        $claimed = $this->game->tokens->countTokensInLocation("milestone%", null);
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $claimed) {
             if ($claimed>=3) return MA_ERR_MAXREACHED;// 3 already claimed
         

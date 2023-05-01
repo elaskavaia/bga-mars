@@ -24,22 +24,6 @@ class Operation_tile extends AbsOperationTile {
         return 0;
     }
 
-    protected function checkAdjRulesPasses($ohex, $color, $rule) {
-        if (!$rule) return true;
-        switch ($rule) {
-            case 'adj_city':
-                return $this->isAdjecentHexesOfType($ohex, MA_TILE_CITY);
-            case 'adj_forest':
-                return $this->isAdjecentHexesOfType($ohex, MA_TILE_FOREST);
-            case 'adj_ocean':
-                return $this->isAdjecentHexesOfType($ohex, MA_TILE_OCEAN);
-            case 'adj_own':
-                return $this->isAdjecentHexesOfType($ohex, 0, $color);
-            default:
-                throw new BgaSystemException("Unknown rule $rule");
-        }
-    }
-
     protected function getTileId() {
         $card = $this->getContext();
         if ($card) {

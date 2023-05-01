@@ -1,7 +1,7 @@
 x|y|r|ocean|name
 #set id=hex_{x}_{y}
-#set name=Unnamed
-#set title={name} hex at ({x},{y}) {r}
+#set name=Hex at ({x},{y})
+#set title={name} at ({x},{y}) {r}
 #tharsis - can do variants later
 #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
 #ocean - 1 if reserved for ocean

@@ -623,6 +623,7 @@ class GameTokens extends GameBasics {
   }
 
   notif_tokenMoved(notif: Notif) {
+    this.onNotif(notif);
     //	console.log('notif_tokenMoved', notif);
     if (notif.args.list !== undefined) {
       // move bunch of tokens

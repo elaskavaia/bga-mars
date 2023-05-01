@@ -679,6 +679,9 @@ class GameBasics extends GameGui {
   }
 
   // ASSORTED UTILITY
+  setDomTokenState(tokenId: ElementOrId, newState: any) {
+    // XXX it should not be here
+  }
 
   /** @Override onScriptError from gameui */
   onScriptError(msg, url, linenumber) {
@@ -786,20 +789,23 @@ class GameBasics extends GameGui {
     this.notifqueue.setSynchronous("counter", 100);
     dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
     dojo.subscribe("score", this, "notif_score");
-    this.notifqueue.setSynchronous("score", 500);
+    this.notifqueue.setSynchronous("score", 50); // XXX
     dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
     dojo.subscribe("message_warning", this, "notif_message_warning");
     dojo.subscribe("message_info", this, "notif_message_info");
+    dojo.subscribe("message", this, "notif_message");
     dojo.subscribe("speechBubble", this, "notif_speechBubble");
     this.notifqueue.setSynchronous("speechBubble", 5000);
     dojo.subscribe("log", this, "notif_log");
   }
 
   notif_log(notif: Notif) {
-    console.log(notif.log, notif.args);
     if (notif.log) {
+      console.log(notif.log, notif.args);
       var message = this.format_string_recursive(notif.log, notif.args);
       if (message != notif.log) console.log(message);
+    } else {
+      console.log("hidden log", notif.args);
     }
   }
 
@@ -808,12 +814,23 @@ class GameBasics extends GameGui {
       var message = this.format_string_recursive(notif.log, notif.args);
       this.showMessage(_("Warning:") + " " + message, "warning");
     }
+    this.onNotif(notif);
   }
 
   notif_message_info(notif: Notif) {
     if (!this.isReadOnly() && !this.instantaneousMode) {
       var message = this.format_string_recursive(notif.log, notif.args);
       this.showMessage(_("Announcement:") + " " + message, "info");
+    }
+    this.onNotif(notif);
+  }
+  notif_message(notif: Notif) {
+    this.onNotif(notif);
+  }
+
+  onNotif(notif: Notif) {
+    if (!this.instantaneousMode && notif.log) {
+      this.setDescriptionOnMyTurn(notif.log, notif.args);
     }
   }
 
@@ -826,6 +843,8 @@ class GameBasics extends GameGui {
 
   notif_counter(notif: Notif) {
     try {
+
+      this.onNotif(notif);
       const name = notif.args.counter_name;
       let value: number;
       if (notif.args.counter_value !== undefined) {
@@ -852,11 +871,8 @@ class GameBasics extends GameGui {
     }
   }
 
-  setDomTokenState(tokenId: ElementOrId, newState: any) {
-    // XXX it should not be here
-  }
-
   notif_score(notif: Notif) {
+    this.onNotif(notif);
     const args = notif.args;
     console.log(notif);
     const prev = this.scoreCtrl[args.player_id].getValue();

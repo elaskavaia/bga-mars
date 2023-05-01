@@ -3,9 +3,24 @@
 declare(strict_types=1);
 
 class AbsOperationIncSteal extends AbsOperation {
-    function argPrimary() {
+    function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
-        return $keys;
+        $count = $this->getMinCount();
+        $type = $this->getType();
+        $protected = [];
+        if ($type == 'p') {
+            $listeners = $this->game->collectListeners($this->color, ["defensePlant"]);
+            foreach ($listeners as $lisinfo) {
+                $protected[$lisinfo['owner']] = 1;
+            }
+        }
+        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count, $type, $protected) {
+            if ($color === $other_player_color) return MA_ERR_RESERVED;
+            if (array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
+            $value = $this->game->getTrackerValue($other_player_color, $type);
+            if ($value < $count) return MA_ERR_PREREQ;
+            return 0;
+        });
     }
 
     public function getPrimaryArgType() {

@@ -591,6 +591,9 @@ var GameBasics = /** @class */ (function (_super) {
         setTimeout(function () { return _this.setClientState(name, args); }, 1);
     };
     // ASSORTED UTILITY
+    GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
+        // XXX it should not be here
+    };
     /** @Override onScriptError from gameui */
     GameBasics.prototype.onScriptError = function (msg, url, linenumber) {
         if (gameui.page_is_unloading) {
@@ -688,20 +691,24 @@ var GameBasics = /** @class */ (function (_super) {
         this.notifqueue.setSynchronous("counter", 100);
         dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
         dojo.subscribe("score", this, "notif_score");
-        this.notifqueue.setSynchronous("score", 500);
+        this.notifqueue.setSynchronous("score", 50); // XXX
         dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
         dojo.subscribe("message_warning", this, "notif_message_warning");
         dojo.subscribe("message_info", this, "notif_message_info");
+        dojo.subscribe("message", this, "notif_message");
         dojo.subscribe("speechBubble", this, "notif_speechBubble");
         this.notifqueue.setSynchronous("speechBubble", 5000);
         dojo.subscribe("log", this, "notif_log");
     };
     GameBasics.prototype.notif_log = function (notif) {
-        console.log(notif.log, notif.args);
         if (notif.log) {
+            console.log(notif.log, notif.args);
             var message = this.format_string_recursive(notif.log, notif.args);
             if (message != notif.log)
                 console.log(message);
+        }
+        else {
+            console.log("hidden log", notif.args);
         }
     };
     GameBasics.prototype.notif_message_warning = function (notif) {
@@ -709,11 +716,21 @@ var GameBasics = /** @class */ (function (_super) {
             var message = this.format_string_recursive(notif.log, notif.args);
             this.showMessage(_("Warning:") + " " + message, "warning");
         }
+        this.onNotif(notif);
     };
     GameBasics.prototype.notif_message_info = function (notif) {
         if (!this.isReadOnly() && !this.instantaneousMode) {
             var message = this.format_string_recursive(notif.log, notif.args);
             this.showMessage(_("Announcement:") + " " + message, "info");
+        }
+        this.onNotif(notif);
+    };
+    GameBasics.prototype.notif_message = function (notif) {
+        this.onNotif(notif);
+    };
+    GameBasics.prototype.onNotif = function (notif) {
+        if (!this.instantaneousMode && notif.log) {
+            this.setDescriptionOnMyTurn(notif.log, notif.args);
         }
     };
     GameBasics.prototype.notif_speechBubble = function (notif) {
@@ -724,6 +741,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.notif_counter = function (notif) {
         try {
+            this.onNotif(notif);
             var name_1 = notif.args.counter_name;
             var value = void 0;
             if (notif.args.counter_value !== undefined) {
@@ -752,10 +770,8 @@ var GameBasics = /** @class */ (function (_super) {
             console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
         }
     };
-    GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
-        // XXX it should not be here
-    };
     GameBasics.prototype.notif_score = function (notif) {
+        this.onNotif(notif);
         var args = notif.args;
         console.log(notif);
         var prev = this.scoreCtrl[args.player_id].getValue();
@@ -1367,6 +1383,7 @@ var GameTokens = /** @class */ (function (_super) {
         dojo.subscribe("tokenMovedAsync", this, "notif_tokenMoved"); // same as tokenMoved but no delay
     };
     GameTokens.prototype.notif_tokenMoved = function (notif) {
+        this.onNotif(notif);
         //	console.log('notif_tokenMoved', notif);
         if (notif.args.list !== undefined) {
             // move bunch of tokens
@@ -1537,17 +1554,45 @@ var GameXBody = /** @class */ (function (_super) {
         });
         return;
     };
-    GameXBody.prototype.activateSlots = function (opargs, opId, single) {
+    GameXBody.prototype.activateSlots = function (opInfo, opId, single) {
         var _this = this;
         var _a, _b;
+        var opargs = opInfo.args;
         var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
         var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
+        var from = opInfo.mcount;
+        var count = opInfo.count;
         if (single) {
             this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-            if (paramargs.length <= 1)
-                this.addActionButton("button_" + opId, _("Confirm"), function () {
-                    _this.sendActionResolve(opId);
-                });
+            if (paramargs.length == 0) {
+                if (count == from || from == 0) {
+                    this.addActionButton("button_" + opId, _("Confirm"), function () {
+                        _this.sendActionResolve(opId);
+                    });
+                }
+                else {
+                    // counter select stub for now
+                    if (from > 0)
+                        this.addActionButton("button_" + opId + "_0", from, function () {
+                            _this.sendActionResolve(opId, {
+                                count: from,
+                            });
+                        });
+                    if (from == 0 && count > 1) {
+                        this.addActionButton("button_" + opId + "_1", "1", function () {
+                            _this.sendActionResolve(opId, {
+                                count: 1,
+                            });
+                        });
+                    }
+                    this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
+                        // XXX
+                        _this.sendActionResolve(opId, {
+                            count: count,
+                        });
+                    });
+                }
+            }
         }
         if (ttype == "token") {
             paramargs.forEach(function (tid) {
@@ -1558,9 +1603,18 @@ var GameXBody = /** @class */ (function (_super) {
                         });
                     }
                 }
-                else
+                else {
                     _this.setActiveSlot(tid);
-                _this.setReverseIdMap(tid, opId, tid);
+                    _this.setReverseIdMap(tid, opId, tid);
+                    if (single) {
+                        if (paramargs.length <= 5) {
+                            // magic number?
+                            _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
+                                _this.sendActionResolveWithTarget(opId, tid);
+                            });
+                        }
+                    }
+                }
             });
         }
         else if (ttype == "player") {
@@ -1580,11 +1634,20 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "enum") {
             paramargs.forEach(function (tid, i) {
+                var _a;
                 if (single) {
+                    var detailsInfo = (_a = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _a === void 0 ? void 0 : _a[tid];
+                    var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
+                    //console.log("enum details "+tid,detailsInfo);
+                    var buttonColor = undefined;
+                    if (sign < 0)
+                        buttonColor = "gray";
+                    if (sign > 0)
+                        buttonColor = "red";
                     var divId = "button_" + i;
                     _this.addActionButton(divId, tid, function () {
                         _this.onSelectTarget(opId, tid);
-                    });
+                    }, undefined, false, buttonColor);
                 }
             });
         }
@@ -1615,6 +1678,8 @@ var GameXBody = /** @class */ (function (_super) {
         var xop = args.op;
         var single = Object.keys(operations).length == 1;
         var ordered = xop == "," && !single;
+        if (ordered)
+            this.setDescriptionOnMyTurn("${you} must choose order of operations");
         var i = 0;
         var _loop_1 = function (opIdS) {
             var opId = parseInt(opIdS);
@@ -1623,7 +1688,7 @@ var GameXBody = /** @class */ (function (_super) {
             var name_2 = this_1.getButtonNameForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
-            this_1.activateSlots(opargs, opId, singleOrFirst);
+            this_1.activateSlots(opInfo, opId, singleOrFirst);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
@@ -1631,7 +1696,7 @@ var GameXBody = /** @class */ (function (_super) {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
-                            _this.activateSlots(opargs, opId, true);
+                            _this.activateSlots(opInfo, opId, true);
                         }, function (id) {
                             // onToken
                             _this.onSelectTarget(opId, id);

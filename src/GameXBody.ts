@@ -179,15 +179,43 @@ class GameXBody extends GameTokens {
     return;
   }
 
-  activateSlots(opargs: any, opId: number, single: boolean) {
+  activateSlots(opInfo: any, opId: number, single: boolean) {
+    const opargs = opInfo.args;
     const paramargs = opargs.target ?? [];
     const ttype = opargs.ttype ?? "none";
+    const from = opInfo.mcount;
+    const count = opInfo.count;
+
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-      if (paramargs.length <= 1)
-        this.addActionButton("button_" + opId, _("Confirm"), () => {
-          this.sendActionResolve(opId);
-        });
+      if (paramargs.length == 0) {
+        if (count == from || from == 0) {
+          this.addActionButton("button_" + opId, _("Confirm"), () => {
+            this.sendActionResolve(opId);
+          });
+        } else {
+          // counter select stub for now
+          if (from > 0)
+            this.addActionButton("button_" + opId + "_0", from, () => {
+              this.sendActionResolve(opId, {
+                count: from,
+              });
+            });
+          if (from == 0 && count > 1) {
+            this.addActionButton("button_" + opId + "_1", "1", () => {
+              this.sendActionResolve(opId, {
+                count: 1,
+              });
+            });
+          }
+          this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
+            // XXX
+            this.sendActionResolve(opId, {
+              count: count,
+            });
+          });
+        }
+      }
     }
 
     if (ttype == "token") {
@@ -198,8 +226,18 @@ class GameXBody extends GameTokens {
               this.sendActionResolveWithTarget(opId, "none");
             });
           }
-        } else this.setActiveSlot(tid);
-        this.setReverseIdMap(tid, opId, tid);
+        } else {
+          this.setActiveSlot(tid);
+          this.setReverseIdMap(tid, opId, tid);
+          if (single) {
+            if (paramargs.length <= 5) {
+              // magic number?
+              this.addActionButton("button_" + tid, this.getTokenName(tid), () => {
+                this.sendActionResolveWithTarget(opId, tid);
+              });
+            }
+          }
+        }
       });
     } else if (ttype == "player") {
       paramargs.forEach((tid: string) => {
@@ -219,10 +257,23 @@ class GameXBody extends GameTokens {
     } else if (ttype == "enum") {
       paramargs.forEach((tid: string, i: number) => {
         if (single) {
+          const detailsInfo = this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+          const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
+          //console.log("enum details "+tid,detailsInfo);
+          let buttonColor = undefined;
+          if (sign < 0) buttonColor = "gray";
+          if (sign > 0) buttonColor = "red";
           const divId = "button_" + i;
-          this.addActionButton(divId, tid, () => {
-            this.onSelectTarget(opId, tid);
-          });
+          this.addActionButton(
+            divId,
+            tid,
+            () => {
+              this.onSelectTarget(opId, tid);
+            },
+            undefined,
+            false,
+            buttonColor
+          );
         }
       });
     }
@@ -235,7 +286,7 @@ class GameXBody extends GameTokens {
     const prev = this.reverseIdLookup.get(divId);
     if (prev && prev.opId != opId) {
       // ambiguous lookup
-      this.reverseIdLookup.set(divId,0);
+      this.reverseIdLookup.set(divId, 0);
       return;
     }
     this.reverseIdLookup.set(divId, {
@@ -254,6 +305,7 @@ class GameXBody extends GameTokens {
 
     const single = Object.keys(operations).length == 1;
     const ordered = xop == "," && !single;
+    if (ordered) this.setDescriptionOnMyTurn("${you} must choose order of operations");
 
     let i = 0;
     for (const opIdS in operations) {
@@ -264,7 +316,7 @@ class GameXBody extends GameTokens {
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
-      this.activateSlots(opargs, opId, singleOrFirst);
+      this.activateSlots(opInfo, opId, singleOrFirst);
       if (!single && !ordered) {
         // xxx add something for remaining ops in ordered case?
         if (paramargs.length > 0) {
@@ -274,7 +326,7 @@ class GameXBody extends GameTokens {
               (args) => {
                 // on update action buttons
                 this.clearReverseIdMap();
-                this.activateSlots(opargs, opId, true);
+                this.activateSlots(opInfo, opId, true);
               },
               (id: string) => {
                 // onToken
@@ -314,7 +366,6 @@ class GameXBody extends GameTokens {
 
   // on click hooks
   onToken_playerTurnChoice(tid: string) {
-  
     const info = this.reverseIdLookup.get(tid);
     if (info && info !== "0") {
       const opId = info.op;

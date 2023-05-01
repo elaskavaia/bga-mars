@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 // Fund an award
 class Operation_fund extends AbsOperation {
-
     function effect(string $color, int $inc): int {
         if (!$this->canResolveAutomatically()) return false;
         $marker = $this->game->createPlayerMarker($color);

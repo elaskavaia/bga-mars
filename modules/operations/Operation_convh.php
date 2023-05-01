@@ -10,14 +10,11 @@ class Operation_convh extends AbsOperation {
         return 1;
     }
 
-
-    function argPrimaryDetails() {
-        $color = $this->color;
-        $heat = $this->game->getTrackerValue($color, 'h');
-        $id = $this->game->getTrackerId($color, 'h');
-        $keys = [$id];
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($heat) {
-            return $heat >= 8 ? 0 : 1;
-        });
+    function isVoid(): bool {
+        $temp = $this->game->getTrackerValue('', 't');
+        if ($temp >= 8) return true; // void
+        $heat = $this->game->getTrackerValue($this->color, 'h');
+        if ($heat < 8) return true; // not enough
+        return false;
     }
 }

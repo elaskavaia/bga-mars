@@ -362,9 +362,9 @@ class DbMachine extends APP_GameClass {
     }
 
     function info($op) {
-        if (is_array($op) && array_get($op,'id')>0) {
+        if (is_array($op) && array_get($op, 'id') > 0) {
             return $op;
-        } 
+        }
 
         $arr = $this->infos($op);
         if (count($arr) == 0) {
@@ -482,11 +482,14 @@ class DbMachine extends APP_GameClass {
         self::DbQuery($sql);
     }
 
-    function setCount($list, $count) {
+    function setCount($list, $count, $mcount = null) {
         $count = $this->checkInt($count);
         $set = $this->getUpdateQuery();
         $ids = $this->getIdsWhereExpr($list);
-        $sql = "$set count = $count WHERE $ids";
+        if ($mcount !== null)
+            $other = ", mcount = $mcount";
+        else $other  = '';
+        $sql = "$set count = $count $other WHERE $ids";
         self::DbQuery($sql);
     }
 
@@ -511,7 +514,7 @@ class DbMachine extends APP_GameClass {
         return true;
     }
 
-    public function checkValidCountForOp(array $op, int $count){
+    public function checkValidCountForOp(array $op, int $count) {
         $min = $op['mcount'];
         $max = $op['count'];
         if ($count < $min) throw new BgaUserException("Illegal count $count, minimum value is $min");
@@ -646,13 +649,13 @@ class DbMachine extends APP_GameClass {
 
     function resolve($op_info, $count = 1, ?array $tops = null) {
         $info = $this->info($op_info);
-        
+
         if ($this->isSharedCounter($info)) {
             if ($tops == null) $tops = $this->getTopOperations();
             if ($count === null) $count = 1;
             $this->subtract($tops, $count);
         } else {
-            if ($count === null) $count=$info['count'];
+            if ($count === null) $count = $info['count'];
             if ($count == -1) $count = 1;
             $this->subtract($info, $count);
         }
@@ -671,7 +674,7 @@ class DbMachine extends APP_GameClass {
     function gettablearr() {
         $sel = $this->getSelectQuery();
         $arr = $this->getCollectionFromDB("$sel WHERE rank >=0");
-        return array_values( $arr);
+        return array_values($arr);
     }
 
     function getrowexpr($row) {
