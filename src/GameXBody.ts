@@ -15,6 +15,7 @@ class GameXBody extends GameTokens {
     this.custom_placement = {
       tracker_t: "temperature_map",
       tracker_o: "oxygen_map",
+      tracker_w: "oceans_pile",
     };
 
     super.setup(gamedatas);
@@ -26,6 +27,17 @@ class GameXBody extends GameTokens {
     });
 
     console.log("Ending game setup");
+  }
+
+  setupPlayer(playerInfo: any) {
+    super.setupPlayer(playerInfo);
+
+    //move own player board in main zone
+    if (playerInfo.id==this.player_id) {
+      const board = $(`player_area_${playerInfo.color}`);
+      $("thisplayer_zone").appendChild(board);
+    }
+
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -41,10 +53,19 @@ class GameXBody extends GameTokens {
         if (displayInfo.a) rules += ";a:" + displayInfo.a;
         if (displayInfo.e) rules += ";e:" + displayInfo.e;
 
+        //tags
+        let tagshtm="";
+        if (displayInfo.tags && displayInfo.tags!="") {
+          for (let tag of displayInfo.tags.split(' ')) {
+            tagshtm+='<div class="badge tag_'+tag+'"></div>';
+          }
+        }
+
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
         div.innerHTML = `
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div>
+        <div class='token_badges'>${tagshtm}</div>
         <div class='token_rules'>${rules}</div>
         <div class='token_descr'>${displayInfo.tooltip}</div>
         `;
@@ -104,7 +125,11 @@ class GameXBody extends GameTokens {
     let result = super.getPlaceRedirect(tokenInfo);
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
       result.location = this.getDomTokenLocation(tokenInfo.key);
-    } else if (this.custom_placement[tokenInfo.key]) {
+    } else if(tokenInfo.key.startsWith("award") ) {
+      result.location ='awardslist';
+    } else if(tokenInfo.key.startsWith("milestone") ) {
+      result.location ='milestoneslist';
+    }else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     }
     return result;

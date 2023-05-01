@@ -1,6 +1,8 @@
+/*card bg ratio : 1.40658174*/
+
 #ebd-body {
   --card-width: 10em; /* 18vh */
-  --card-height: calc(var(--card-width)*1.5);
+  --card-height: calc(var(--card-width)*1.40658174);
 }
 
 .card {
@@ -9,24 +11,35 @@
   /* border: black solid 1px; */
   border-radius: 5%;
   box-shadow: 2px 2px 3px 1px #00000080;
+  background-image: url("img/cards_bg.jpg");
+  background-size: 300% 100%;
 }
 
 .location .card {
   margin-right: 5px;
+
 }
 
 .card[data-card-type="0"] {
   background-color: white;
+  background-image:revert;
+
+}
+#discard_main{
+  background-image:revert;
 }
 
 .card[data-card-type="1"] {
    background-color: lightgreen;
+  background-position-x: 0;
 }
 .card[data-card-type="2"] {
   background-color: lightblue;
+  background-position-x: -200%;
 }
 .card[data-card-type="3"] {
   background-color: lightyellow;
+  background-position-x: -100%;
 }
 
 
@@ -36,15 +49,29 @@
 }
 
 .token_cost {
+  font-family: "Prototype";
   position: absolute;
-  top:0%;
-  width: calc(var(--card-width) * 0.2);
-  height: calc(var(--card-width) * 0.2);
-  background-color: gold;
+  top: 0%;
+  width: calc(var(--card-width) * 0.19);
+  height: calc(var(--card-width) * 0.19);
   display: flex;
   justify-content: center;
   align-items: center;
-  border: calc(var(--card-width) * 0.015) solid black;
+  font-size: calc(var(--card-width) * 0.09);
+  /*
+     width: calc(var(--card-width) * 0.2);
+    height: calc(var(--card-width) * 0.2);
+    background-color: gold;
+    border: calc(var(--card-width) * 0.015) solid black;
+    border-radius: calc(var(--card-width) * 0.08);
+    background-image: url("img/resources.png");
+    background-size: 1000% 200%;
+    background-position: -300% 0;
+   */
+
+}
+
+#display_main  .token_cost {
   border-radius: calc(var(--card-width) * 0.08);
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
@@ -52,15 +79,15 @@
 }
 
 .token_title{
+  font-family: "Prototype";
   position: absolute;
-  top: 16%;
+  top: 10.3%;
   left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
-  font-weight: bold;
   text-transform: uppercase;
-  font-size: calc(var(--card-width) * 0.075);
+  font-size: calc(var(--card-width) * 0.070);
 }
 
 .token_descr{
@@ -70,7 +97,7 @@
   width: 96%;
   padding: 2%;
   height: 38%;
-  background-color: #0000000d;
+  background-color: rgba(249, 249, 249, 0.84);
 }
 
 .token_rules{
@@ -81,4 +108,33 @@
   display: flex;
   justify-content: center;
   overflow-wrap: anywhere;
+  background-color: #80808040;
 }
+
+.token_badges {
+  display: flex;
+  position: absolute;
+  top:0;
+  right: 0;
+  flex-direction: row-reverse;
+}
+
+.badge{
+  width: calc(var(--card-width) * 0.15);
+  height: calc(var(--card-width) * 0.15);
+  background-image: url("img/badges.png");
+  background-size: 1200% 100%;
+}
+
+.badge.tag_City{ background-position-x: 0;}
+.badge.tag_Event{ background-position-x: -100%;}
+.badge.tag_Earth{ background-position-x: -200%;}
+.badge.tag_EventAggro{ background-position-x: -300%;}
+.badge.tag_Plant{ background-position-x: -400%;}
+.badge.tag_Space{ background-position-x: -500%;}
+.badge.tag_Jovian{ background-position-x: -600%;}
+.badge.tag_Science{ background-position-x: -700%;}
+.badge.tag_Building{ background-position-x: -800%;}
+.badge.tag_Energy{ background-position-x: -900%;}
+.badge.tag_Microbe{ background-position-x: -1000%;}
+.badge.tag_Animal{ background-position-x: -1100%;}

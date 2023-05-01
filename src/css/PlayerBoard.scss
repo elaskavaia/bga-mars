@@ -1,0 +1,58 @@
+#ebd-body {
+  /* --pb_cellsize:8vh; */
+  --pb_cellsize:4.5em;
+}
+
+.player_area {
+  border: 0.4vh solid var(--plcolor);
+  position: relative;
+  border-radius: 1vh;
+}
+
+.playerboard {
+  position: relative;
+  width:100%;
+  height: fit-content;
+  display: flex;
+  --resourcesize:3vh;
+  font-family: "Prototype";
+}
+
+.playerboard_group {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.playerboard_own{
+  width: var(--pb_cellsize);
+  height: calc(var(--pb_cellsize) *0.5);
+  border:0.2vh solid black;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.mini .playerboard_own {
+  width: calc(var(--pb_cellsize) *0.8);
+}
+
+.playerboard_produce{
+  width: var(--pb_cellsize);
+  height: calc(var(--pb_cellsize) *0.5);
+  border:0.2vh solid black;
+  background-image: url('img/prodtexture.png');
+  background-size: 100% 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  color:white;
+}
+
+.player_area .location {
+  width: revert;
+}

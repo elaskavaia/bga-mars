@@ -3,6 +3,7 @@
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
+  --resourcesize:30px;
 }
 
 
@@ -15,11 +16,11 @@
   order: 99;
 }
 
- .token_img {
+.token_img {
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
-  width : 30px;
-  height: 30px;
+  width : var(--resourcesize);
+  height:  var(--resourcesize);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -119,7 +120,6 @@
 .token_img.tracker_pu {
   background-position: -800% 0;
 }
-
 .token_img.tracker_tr {
   background-position: -900% 0;
 }
