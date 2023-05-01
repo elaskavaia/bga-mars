@@ -20,6 +20,7 @@ activate|Activate Card|${you} must select a card to activate
 ores|Add resource to another card|${you} must select a card to add resource/s to
 nores|Remove resource from another card|${you} must select a card to remove resource/s
 keep|Keep Card|${you} must select a card to add keep
+buycard|Buy Card|${you} must select a card to buy for 3 MC
 
 #set params=
 res|Add resource to this card

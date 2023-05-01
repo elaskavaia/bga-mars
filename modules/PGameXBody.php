@@ -108,9 +108,9 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_incCount($color, 'm', 40);
     }
 
-    function debug_oparg($type,$data='') {
+    function debug_oparg($type, $data = '') {
         $color = $this->getCurrentPlayerColor();
-        $inst = $this->getOperationInstanceFromType($type, $color,1,$data);
+        $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
         return $inst->arg();
     }
 
@@ -293,11 +293,13 @@ abstract class PGameXBody extends PGameMachine {
             // tagEvent is not counted as tag since its not face up
             return $this->tokens->countTokensInLocation("tableau_$owner", 0);
         }
-        if (startsWith($x, 'all_')) {
+        $opp = startsWith($x, 'opp_');
+        if (startsWith($x, 'all_') || $opp) {
             $x = substr($x, 4);
             $colors = $this->getPlayerColors();
             $value = 0;
             foreach ($colors as $color) {
+                if ($opp && $color === $owner) continue;
                 $value += $this->evaluateTerm($x, $color, $context);
             }
             return $value;

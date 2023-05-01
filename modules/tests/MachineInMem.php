@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Test class for machine overriding db function to be in memory
@@ -174,7 +176,7 @@ class MachineInMem extends DbMachine {
         if ($top > 1) {
             foreach ($this->xtable as &$row) {
                 if ($row["rank"] >= $top) {
-                    $row["rank"] = $row["rank"] - $top +1;
+                    $row["rank"] = $row["rank"] - $top + 1;
                 }
             }
         }
@@ -200,11 +202,12 @@ class MachineInMem extends DbMachine {
         }
     }
 
-    function setCount($list, $count) {
+    function setCount($list, $count, $mcount = null) {
         $ids = $this->ids($list);
         foreach ($this->xtable as &$row) {
             if (array_search($row["id"], $ids) !== false) {
                 $row["count"] = $count;
+                if ($mcount !== null)         $row["mcount"] = $mcount;
             }
         }
     }

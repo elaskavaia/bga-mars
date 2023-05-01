@@ -7,7 +7,7 @@ class Operation_nores extends AbsOperation {
         $color = $this->color;
         $par = $this->params;
         $keys = array_keys($this->game->getCardsWithResource($par));
-        $listeners = $this->game->collectListeners($color, "defense"); // generic now could be per tag
+        $listeners = $this->game->collectListeners($color, ["defense$par"]); 
         $protected = [];
         foreach ($listeners as $lisinfo) {
             $protected[$lisinfo['owner']] = 1;

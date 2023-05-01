@@ -6,9 +6,17 @@ class AbsOperationIncSteal extends AbsOperation {
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
         $count = $this->getMinCount();
-        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count) {
+        $type = $this->getType();
+        $protected = [];
+        if ($type == 'p') {
+            $listeners = $this->game->collectListeners($this->color, ["defensePlant"]);
+            foreach ($listeners as $lisinfo) {
+                $protected[$lisinfo['owner']] = 1;
+            }
+        }
+        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count, $type, $protected) {
             if ($color === $other_player_color) return MA_ERR_RESERVED;
-            $type = $this->getType();
+            if (array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
             $value = $this->game->getTrackerValue($other_player_color, $type);
             if ($value < $count) return MA_ERR_PREREQ;
             return 0;

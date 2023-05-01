@@ -41,10 +41,13 @@ abstract class AbsOperation {
     function isFullyAutomated() {
         $rules = $this->rules();
         if (isset($rules['params'])) return false;
+
         return true;
     }
 
     function canResolveAutomatically() {
+        if ($this->getMinCount() == 0) return false;
+        if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->isFullyAutomated()) return true;
         if ($this->isOneChoice()) return true; // can be perf for prompt
         return false;
@@ -167,7 +170,6 @@ abstract class AbsOperation {
     }
 
     function isVoid(): bool {
-        //if ($this->isFullyAutomated()) return false;
         if ($this->getMinCount() == 0) return false;
         if ($this->noValidTargets()) return true;
         return false;

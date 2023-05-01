@@ -1554,18 +1554,45 @@ var GameXBody = /** @class */ (function (_super) {
         });
         return;
     };
-    GameXBody.prototype.activateSlots = function (opargs, opId, single) {
+    GameXBody.prototype.activateSlots = function (opInfo, opId, single) {
         var _this = this;
-        var _a, _b, _c;
+        var _a, _b;
+        var opargs = opInfo.args;
         var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
         var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
-        var first = (_c = paramargs[0]) !== null && _c !== void 0 ? _c : undefined;
+        var from = opInfo.mcount;
+        var count = opInfo.count;
         if (single) {
             this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-            if (paramargs.length == 0)
-                this.addActionButton("button_" + opId, _("Confirm"), function () {
-                    _this.sendActionResolve(opId);
-                });
+            if (paramargs.length == 0) {
+                if (count == from || from == 0) {
+                    this.addActionButton("button_" + opId, _("Confirm"), function () {
+                        _this.sendActionResolve(opId);
+                    });
+                }
+                else {
+                    // counter select stub for now
+                    if (from > 0)
+                        this.addActionButton("button_" + opId + "_0", from, function () {
+                            _this.sendActionResolve(opId, {
+                                count: from,
+                            });
+                        });
+                    if (from == 0 && count > 1) {
+                        this.addActionButton("button_" + opId + "_1", "1", function () {
+                            _this.sendActionResolve(opId, {
+                                count: 1,
+                            });
+                        });
+                    }
+                    this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
+                        // XXX
+                        _this.sendActionResolve(opId, {
+                            count: count,
+                        });
+                    });
+                }
+            }
         }
         if (ttype == "token") {
             paramargs.forEach(function (tid) {
@@ -1580,7 +1607,8 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.setActiveSlot(tid);
                     _this.setReverseIdMap(tid, opId, tid);
                     if (single) {
-                        if (paramargs.length <= 5) { // magic number?
+                        if (paramargs.length <= 5) {
+                            // magic number?
                             _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
                                 _this.sendActionResolveWithTarget(opId, tid);
                             });
@@ -1651,7 +1679,7 @@ var GameXBody = /** @class */ (function (_super) {
         var single = Object.keys(operations).length == 1;
         var ordered = xop == "," && !single;
         if (ordered)
-            this.setDescriptionOnMyTurn('${you} must choose order of operations');
+            this.setDescriptionOnMyTurn("${you} must choose order of operations");
         var i = 0;
         var _loop_1 = function (opIdS) {
             var opId = parseInt(opIdS);
@@ -1660,7 +1688,7 @@ var GameXBody = /** @class */ (function (_super) {
             var name_2 = this_1.getButtonNameForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
-            this_1.activateSlots(opargs, opId, singleOrFirst);
+            this_1.activateSlots(opInfo, opId, singleOrFirst);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
@@ -1668,7 +1696,7 @@ var GameXBody = /** @class */ (function (_super) {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
-                            _this.activateSlots(opargs, opId, true);
+                            _this.activateSlots(opInfo, opId, true);
                         }, function (id) {
                             // onToken
                             _this.onSelectTarget(opId, id);

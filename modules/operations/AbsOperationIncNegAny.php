@@ -4,10 +4,21 @@ declare(strict_types=1);
 
 class AbsOperationIncNegAny extends AbsOperation {
 
-    function argPrimary() {
+    function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
         $keys[] = 'none';
-        return $keys;
+        $type = $this->getType();
+        $protected = [];
+        if ($type == 'p') {
+            $listeners = $this->game->collectListeners($this->color, ["defensePlant"]);
+            foreach ($listeners as $lisinfo) {
+                $protected[$lisinfo['owner']] = 1;
+            }
+        }
+        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($protected) {
+            if (array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
+            return 0;
+        });
     }
 
     public function getPrimaryArgType() {

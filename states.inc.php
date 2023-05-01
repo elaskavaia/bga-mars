@@ -78,7 +78,7 @@ $machinestates = [
         ),
         "type" => "activeplayer",
         "args" => "arg_playerTurnChoice",
-        "possibleactions" => [ "confirm"],
+        "possibleactions" => [ "confirm", "undo"],
         "transitions" => [
             "next" => STATE_GAME_DISPATCH,
         ],

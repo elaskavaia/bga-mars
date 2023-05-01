@@ -27,7 +27,7 @@ abstract class AbsOperationTile extends AbsOperation {
 
     protected function getTileId() {
         $type = $this->getTileType();
-        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_$type", null, 0);
+        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
         return $tile['key'];
     }
 

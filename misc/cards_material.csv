@@ -10,7 +10,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 3|Deep Well Heating|1|pe,t|||13||Building Energy|0|Increase your energy production 1 step. Increase temperature 1 step.|
 4|Cloud Seeding|1|npm,nph_Any,2pp|||11|w>=3||0|Requires 3 ocean tiles. Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps.|
 5|Search For Life|2||m:acard5||3|o<=6|Science|(resCard>0)*3|Oxygen must be 6% or less. 3 VPs if you have one or more science resource here.; Action: Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here.|  'holds' => 'Science'
-6|Inventors' Guild|2||predraw,?(3nm:keep),prediscard||9||Science|0|Action: Look at the top card and either buy it or discard it|
+6|Inventors' Guild|2||predraw,?buycard,prediscard||9||Science|0|Action: Look at the top card and either buy it or discard it|
 7|Martian Rails|2||e:counter(all_city),m||13||Building|0|Action: Spend 1 energy to gain 1 MC for each city tile ON MARS.|
 8|Capital|1|5pm,2npe,tile|||26|w>=4|Building City|adj_ocean|Requires 4 ocean tiles. Place [the capital city] tile. Decrease your energy production 2 steps and increase your MC production 5 steps. 1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE.|
 9|Asteroid|3|2u,3np_Any,t|||14||Space Event|0|Raise temperature 1 step and gain 2 titanium. Remove up to 3 plants from any player.|
@@ -43,7 +43,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 36|Release of Inert Gases|3|2tr|||14||Event|0|Raise your terraform rating 2 steps.|
 37|Nitrogen-Rich Asteroid|3|2tr,t,(pp/counter('(tagPlant>=3)*4') pp)|||31||Space Event|0|Raise your terraforming rating 2 steps and temperature 1 step. Increase your plant production 1 step, or 4 steps if you have 3 plant tags.|
 38|Rover Construction|2|||place_city:2m:this:any|8||Building|1|Effect: When any city tile is placed, gain 2 MC|
-39|Deimos Down|3|4s,8np_Any,3t|||31||Space Event|0|Raise temperature 3 steps and gain 4 steel. Remove up to 8 plants from any player.|
+39|Deimos Down|3|3t,4s,8np_Any|||31||Space Event|0|Raise temperature 3 steps and gain 4 steel. Remove up to 8 plants from any player.|
 40|Asteroid Mining|1|2pu|||30||Space Jovian|2|Increase your titanium production 2 steps.|
 41|Food Factory|1|4pm,1npp|||12||Building|1|Decrease your plant production 1 step and increase your MC production 4 steps.|
 42|Archaebacteria|1|pp|||6|t<=-18|Microbe|0|It must be -18°C or colder. Increase your plant production 1 step.|
@@ -103,7 +103,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 96|Greenhouses|1|counter(all_city) p|||6||Building Plant|0|Gain 1 plant for each city tile in play.|
 97|Nuclear Zone|1|2t,tile|||10||Earth|-2|Place [the nuclear zone] tile and raise the temperature 2 steps.|
 98|Tropical Resort|1|3pm,2nph|||13||Building|2|Decrease your heat production 2 steps and increase your MC production 3 steps.|
-99|Toll Station|1|counter(opp_tagSpace) m|||12||Space|0|Increase your MC production 1 step for each space tag your OPPONENTS have.|
+99|Toll Station|1|counter(opp_tagSpace) pm|||12||Space|0|Increase your MC production 1 step for each space tag your OPPONENTS have.|
 100|Fueled Generators|1|1npm,pe|||1||Building Energy|0|Decrease your MC production 1 step and increase your energy production 1 step.|
 101|Ironworks|2||4ne:s,o||11||Building|0|Action: Spend 4 energy to gain 1 steel and increase oxygen 1 step.|
 102|Power Grid|1|counter(tagEnergy):pe|||18||Energy|0|Increase your energy production 1 step for each power tag you have, including this.|
@@ -114,7 +114,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 107|Media Archives|1|counter(all_tagEvent)m|||8||Earth|0|Gain 1 MC for each event EVER PLAYED by all players|
 108|Open City|1|4pm,1npe,2p|||23|o>=12|Building City|1|Requires 12% oxygen. Decrease your energy production 1 step and increase your MC production 4 steps. Gain 2 plants and place a city tile.|
 109|Media Group|2|||play_cardEvent:3m|6||Earth|0|Effect: After you play an event card, you gain 3MC|
-110|Business Network|2|1npm|predraw,?(3nm:keep),prediscard||4||Earth|0|Decrease your MC production 1 step.; Action: Look at the top card and either buy it or discard it|
+110|Business Network|2|1npm|predraw,?buycard,prediscard||4||Earth|0|Decrease your MC production 1 step.; Action: Look at the top card and either buy it or discard it|
 111|Business Contacts|3|4predraw,2keep,prediscard|||7||Earth Event|0|Look at the top 4 cards from the deck. Take 2 of them into hand and discard the other 2|
 112|Bribed Committee|3|2tr|||7||Earth Event|-2|Raise your terraform rating 2 steps.|
 113|Solar Power|1|pe|||11||Building Energy|1|Increase your energy production 1 step.|
@@ -177,7 +177,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 170|Aerobraked Ammonia Asteroid|3|2ores(Microbe),pp,3ph|||26||Space Event|0|Add 2 microbes to ANOTHER card. Increase your heat production 3 steps and your plant production 1 step.|
 171|Magnetic Field Dome|1|pp,2npe,tr|||5||Building|0|Decrease your energy production 2 steps and increase your plant production 1 step. Raise your terraform rating 1 step.|
 172|Pets|2|res||play_city:res:this:any|10||Animal Earth|res/2|Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card.|  'holds' => 'Animal'
-173|Protected Habitats|2|||defense:nop:this:any|5|||0|Effect: Opponents may not remove your [plants, animals or microbes]|
+173|Protected Habitats|2|||defensePlant:nop:this:any;defenseAnimal:nop:this:any;defenseMicrobe:nop:this:any|5|||0|Effect: Opponents may not remove your [plants, animals or microbes]|
 174|Protected Valley|1|2pm,o,forest(ocean)|||23||Building Plant|0|Increase your MC production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.|
 175|Satellites|1|counter(tagSpace)pm|||10||Space|0|Increase your MC production 1 step for each space tag you have, including this one.|
 176|Noctis Farming|1|pm,2p|||10|t>=-20|Building Plant|1|Requires -20°C or warmer. Increase your MC production 1 step and gain 2 plants.|
@@ -198,7 +198,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 191|Permafrost extraction|3||||8|t>=-8|Event|0|Requires -8°C or warmer. Place 1 ocean tile.|
 192|Invention Contest|3|3predraw,keep,prediscard|||2||Science Event|0|Look at the top 3 cards from the deck. Take 1 of them into hand and discard the other 2|
 193|Plantation|1|o|||15|tagScience>=2|Plant|0|Requires 2 science tags. Place a greenery tile and raise oxygen 1 step.|
-194|Power Infrastructure|2||[0,]ne:m||4||Building Energy|0|Action: Spend any amount of energy to gain that amount of MC.|
+194|Power Infrastructure|2||counter(e,0),(ne:m)||4||Building Energy|0|Action: Spend any amount of energy to gain that amount of MC.|
 195|Indentured Workers|3||||0||Event|-1|The next card you play this generation costs 8MC less.|
 196|Lagrange Observatory|1|draw|||9||Science Space|1|Draw 1 card.|
 197|Terraforming Ganymede|1|counter(tagJovian)tr|||33||Space Jovian|2|Raise your TR 1 step for each Jovian tag you have, including this.|
