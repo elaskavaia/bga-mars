@@ -25,7 +25,7 @@ abstract class PGameXBody extends PGameMachine {
                 //    "my_first_game_variant" => 100,
                 //    "my_second_game_variant" => 101,
                 //      ...
-            ] 
+            ]
         );
     }
 
@@ -77,6 +77,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($info != null) {
             return $info;
         }
+        $this->systemAssertTrue("Not found $token");
         $info = $this->getRulesFor($token, '*');
         $id = $info['_key'];
         $this->createTokenFromInfo($id, $info);
@@ -107,9 +108,9 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_incCount($color, 'm', 40);
     }
 
-    function debug_opc($type) {
+    function debug_oparg($type,$data='') {
         $color = $this->getCurrentPlayerColor();
-        $inst = $this->getOperationInstanceFromType($type, $color);
+        $inst = $this->getOperationInstanceFromType($type, $color,1,$data);
         return $inst->arg();
     }
 
@@ -253,6 +254,12 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         // check immediate effect affordability
+        $r = $this->getRulesFor($tokenid, "r");
+        if ($r) {
+            if ($this->isVoidSingle($r, $owner, 1, $tokenid)) {
+                return MA_ERR_MANDATORYEFFECT;
+            }
+        }
 
         // special project sell XXX
         if (startsWith($tokenid, "card_stanproj_1")) {
@@ -260,7 +267,7 @@ abstract class PGameXBody extends PGameMachine {
                 return MA_ERR_MANDATORYEFFECT;
             }
         }
-        // TODO check rule affordability
+
 
         return 0;
     }
@@ -427,6 +434,9 @@ abstract class PGameXBody extends PGameMachine {
     function put($color, $type, $data = '') {
         $this->machine->put($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
+    function putInEffectPool($owner, $type, $data = '') {
+        $this->machine->put($type, 1, 1, $owner, MACHINE_FLAG_UNIQUE,  $data);
+    }
 
     function getActiveEventListeners() {
         if (!$this->eventListners) {
@@ -444,54 +454,62 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function notifyEffect($owner, $events, $card_context) {
-        // load all active effect listeners
-        $cards = $this->getActiveEventListeners();
-        if (!is_array($events)) {
-            $events = [$events];
-        }
+        $listeners = $this->collectListeners($owner, $events, $card_context);
 
-        foreach ($cards as $info) {
-            $e = $info['e'];
-            $lisowner = $info['owner'];
-            foreach ($events as $event) {
-                $this->debugLog("-notify $event for $card_context");
-                $ret = [];
-                // filter for listener for specific effect
-                if ($this->mtMatchEvent($e, $lisowner, $event, $owner, $ret)) {
-                    $outcome = $ret['outcome'];
-                    $context = $ret['context'];
-                    $card = $info['key'];
-                    $this->debugLog("-come in play effect '$outcome' triggered by $card");
-                    $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $context === 'that' ? $card_context : $card);
-                }
-            }
+        foreach ($listeners as $lisinfo) {
+            $outcome = $lisinfo['outcome'];
+            $card = $lisinfo['card'];
+            $this->notifyMessageWithTokenName(clienttranslate('${player_name} triggered effect of ${token_name}'), $card, $owner);
+            // these goes in the pull where player can pick the sequence
+            $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE,  $lisinfo['target']);
         }
     }
 
     function collectDiscounts($owner, $card_id) {
         // event will be onPay_card or similar
         // load all active effect listeners
-        $cards = $this->getActiveEventListeners();
         $events = $this->getPlayCardEvents($card_id, 'onPay_');
         $discount = 0;
+        $listeners = $this->collectListeners($owner, $events);
 
+        foreach ($listeners as $lisinfo) {
+            $outcome = $lisinfo['outcome'];
+            // at this point only discounts are MC
+            $opexpr = OpExpression::parseExpression($outcome);
+            $this->systemAssertTrue("Not expecting other payment options", $opexpr->args[0] == 'm');
+            $discount += $opexpr->to;
+        }
+        return $discount;
+    }
+
+
+    function collectListeners($owner, $events, $card_context = null) {
+        // load all active effect listeners
+        $cards = $this->getActiveEventListeners();
+        if (!is_array($events)) {
+            $events = [$events];
+        }
+        $res = [];
         foreach ($cards as $info) {
             $e = $info['e'];
+            $card = $info['key'];
             $lisowner = $info['owner'];
             foreach ($events as $event) {
                 $ret = [];
                 // filter for listener for specific effect
                 if ($this->mtMatchEvent($e, $lisowner, $event, $owner, $ret)) {
-                    $outcome = $ret['outcome'];
-                    // at this point only discounts are MC
-                    $opexpr = OpExpression::parseExpression($outcome);
-                    $this->systemAssertTrue("Not expecting other payment options", $opexpr->args[0] == 'm');
-                    $discount += $opexpr->to;
+                    $context = $ret['context'];
+                    $ret['card'] = $card;
+                    $ret['owner'] = $lisowner;
+                    $ret['event'] = $event;
+                    $ret['target'] = $context === 'that' ? $card_context : $card;
+                    $res[] = $ret;
                 }
             }
         }
-        return $discount;
+        return $res;
     }
+
 
     /**
      * Triggered action syntax:
@@ -517,7 +535,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($args as $arg) {
             if ($arg->op != ':') throw new BgaSystemException("Cannot parse $trigger_rule missing : " . OpExpression::str($arg));
             $all = OpExpression::str(array_get($arg->args, 3, ''));
-            if (($trigger_owner === $event_owner || $all === 'all')) { // for now only listen to own events
+            if (($trigger_owner === $event_owner || $all === 'any')) { // for now only listen to own events
                 $declareevent = OpExpression::str($arg->args[0]);
                 $regex = MathLexer::toregex($declareevent);
 
@@ -591,7 +609,7 @@ abstract class PGameXBody extends PGameMachine {
 
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
-        if ($ttype != MA_CARD_TYPE_EVENT) {
+        if ($ttype != MA_CARD_TYPE_EVENT && $tags) {
             foreach ($tagsarr as $tag) {
                 $this->incTrackerValue($color, "tag$tag");
             }
@@ -625,12 +643,15 @@ abstract class PGameXBody extends PGameMachine {
         $bonus = $this->getRulesFor($target, 'r');
         if ($bonus) {
             $this->debugLog("-placement bonus $bonus");
-            $this->put($color, $bonus);
+            $this->machine->put($bonus, 1, 1, $color, MACHINE_FLAG_UNIQUE,  $object);
         }
         // ocean bonus
         $oceans = $this->getAdjecentHexesOfType($target, MA_TILE_OCEAN);
         $c = count($oceans);
-        if ($c) $this->put($color, "${c}m"); // 2 MC per ocean
+        if ($c) {
+            $bonus = "${c}m"; // 2 MC per ocean
+            $this->machine->put($bonus, 1, 1, $color, MACHINE_FLAG_UNIQUE,  $object);
+        }
         return $object;
     }
 
@@ -640,12 +661,13 @@ abstract class PGameXBody extends PGameMachine {
         $tagsarr = explode(' ', $tags);
         $events = [];
         $tagMap = [];
-        foreach ($tagsarr as $tag) {
-            $events[] = "${prefix}tag$tag";
-            $tagMap[$tag] = 1;
-        }
+        if ($tags)
+            foreach ($tagsarr as $tag) {
+                $events[] = "${prefix}tag$tag";
+                $tagMap[$tag] = 1;
+            }
 
-        if (array_get($tagMap, 'Space') && array_get($tagMap, 'Event')) $events[] = 'play_cardSpaceEvent';
+        if (array_get($tagMap, 'Space') && array_get($tagMap, 'Event')) $events[] = "${prefix}cardSpaceEvent";
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
         foreach ($uniqueTags as $tag) {
@@ -660,9 +682,7 @@ abstract class PGameXBody extends PGameMachine {
         $message = array_get($options, 'message', '*');
         unset($options['message']);
         $token_id = $this->getTrackerId($color, $type);
-
-
-        $this->debug_createCounterToken($this->getTrackerId($color, $type));
+        $this->debug_createCounterToken($token_id);
 
         $this->dbResourceInc(
             $token_id,
@@ -736,7 +756,7 @@ abstract class PGameXBody extends PGameMachine {
         $bonus = $this->getRulesFor($bounus_name, 'r');
         if ($bonus) {
             $this->debugLog("-param bonus $bonus");
-            $this->put($color, $bonus);
+            $this->putInEffectPool($color, $bonus);
         }
 
         $this->effect_incTerraformingRank($color, $steps);
@@ -975,31 +995,41 @@ abstract class PGameXBody extends PGameMachine {
         $opinst = $this->getOperationInstanceFromType($type, $color, $count);
         return $opinst->auto($color, $count);
     }
+
     function executeOperationsMultiple($operations) {
         $this->systemAssertTrue("Wrong operation count", count($operations) > 1);
+        $op = reset($operations);
+        $this->switchActivePlayerIfNeeded($op["owner"]);
         return STATE_PLAYER_TURN_CHOICE;
     }
 
     function executeOperationSingleAtomic($op) {
         if (!$this->executeAttemptAutoResolve($op)) {
+            $this->switchActivePlayerIfNeeded($op["owner"]);
             return STATE_PLAYER_TURN_CHOICE; // player has to provide input
         }
         return null;
     }
 
     function executeAttemptAutoResolve($op) {
-        $type = $op["type"];
-        // $this->notifyMessage(clienttranslate('${player_name} executes ${operation_name}'), [
-        //     "operation_name" => $this->getOperationName($type),
-        // ]);
         $opinst = $this->getOperationInstance($op);
-        $count = $op["count"];
+        $count = $op["count"]; // XXX mcount?
         $tops = $this->machine->getTopOperations();
         if ($opinst->auto($op["owner"], $count)) {
             $this->saction_stack($count, $op, $tops);
             return true;
         }
         return false;
+    }
+
+    function switchActivePlayerIfNeeded($player_color) {
+        if (!$player_color) return;
+        $player_id = $this->getPlayerIdByColor($player_color);
+        if (!$player_id) return;
+        if ($this->getActivePlayerId() != $player_id) {
+            $this->setNextActivePlayerCustom($player_id);
+            $this->undoSavepoint();
+        }
     }
 
     function machineExecuteDefault() {

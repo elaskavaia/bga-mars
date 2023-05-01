@@ -25,7 +25,8 @@ class Operation_research extends AbsOperation {
                 }
             }
             // draw
-            $this->game->queue($color, "4 draw"); // XXX
+            $this->game->queue($color, "4draw(auto)"); 
+            //$this->game->queue($color, "4predraw,4?buy,prediscard"); 
         }
     }
 }

@@ -3,9 +3,16 @@
 declare(strict_types=1);
 
 class AbsOperationIncSteal extends AbsOperation {
-    function argPrimary() {
+    function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
-        return $keys;
+        $count = $this->getMinCount();
+        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count) {
+            if ($color === $other_player_color) return MA_ERR_RESERVED;
+            $type = $this->getType();
+            $value = $this->game->getTrackerValue($other_player_color, $type);
+            if ($value < $count) return MA_ERR_PREREQ;
+            return 0;
+        });
     }
 
     public function getPrimaryArgType() {

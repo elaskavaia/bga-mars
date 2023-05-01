@@ -591,6 +591,9 @@ var GameBasics = /** @class */ (function (_super) {
         setTimeout(function () { return _this.setClientState(name, args); }, 1);
     };
     // ASSORTED UTILITY
+    GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
+        // XXX it should not be here
+    };
     /** @Override onScriptError from gameui */
     GameBasics.prototype.onScriptError = function (msg, url, linenumber) {
         if (gameui.page_is_unloading) {
@@ -688,10 +691,11 @@ var GameBasics = /** @class */ (function (_super) {
         this.notifqueue.setSynchronous("counter", 100);
         dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
         dojo.subscribe("score", this, "notif_score");
-        this.notifqueue.setSynchronous("score", 500);
+        this.notifqueue.setSynchronous("score", 50); // XXX
         dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
         dojo.subscribe("message_warning", this, "notif_message_warning");
         dojo.subscribe("message_info", this, "notif_message_info");
+        dojo.subscribe("message", this, "notif_message");
         dojo.subscribe("speechBubble", this, "notif_speechBubble");
         this.notifqueue.setSynchronous("speechBubble", 5000);
         dojo.subscribe("log", this, "notif_log");
@@ -712,11 +716,21 @@ var GameBasics = /** @class */ (function (_super) {
             var message = this.format_string_recursive(notif.log, notif.args);
             this.showMessage(_("Warning:") + " " + message, "warning");
         }
+        this.onNotif(notif);
     };
     GameBasics.prototype.notif_message_info = function (notif) {
         if (!this.isReadOnly() && !this.instantaneousMode) {
             var message = this.format_string_recursive(notif.log, notif.args);
             this.showMessage(_("Announcement:") + " " + message, "info");
+        }
+        this.onNotif(notif);
+    };
+    GameBasics.prototype.notif_message = function (notif) {
+        this.onNotif(notif);
+    };
+    GameBasics.prototype.onNotif = function (notif) {
+        if (!this.instantaneousMode && notif.log) {
+            this.setDescriptionOnMyTurn(notif.log, notif.args);
         }
     };
     GameBasics.prototype.notif_speechBubble = function (notif) {
@@ -727,6 +741,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.notif_counter = function (notif) {
         try {
+            this.onNotif(notif);
             var name_1 = notif.args.counter_name;
             var value = void 0;
             if (notif.args.counter_value !== undefined) {
@@ -755,10 +770,8 @@ var GameBasics = /** @class */ (function (_super) {
             console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
         }
     };
-    GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
-        // XXX it should not be here
-    };
     GameBasics.prototype.notif_score = function (notif) {
+        this.onNotif(notif);
         var args = notif.args;
         console.log(notif);
         var prev = this.scoreCtrl[args.player_id].getValue();
@@ -1370,6 +1383,7 @@ var GameTokens = /** @class */ (function (_super) {
         dojo.subscribe("tokenMovedAsync", this, "notif_tokenMoved"); // same as tokenMoved but no delay
     };
     GameTokens.prototype.notif_tokenMoved = function (notif) {
+        this.onNotif(notif);
         //	console.log('notif_tokenMoved', notif);
         if (notif.args.list !== undefined) {
             // move bunch of tokens

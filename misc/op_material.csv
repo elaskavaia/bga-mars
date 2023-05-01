@@ -39,6 +39,7 @@ predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 #set class=AbsOperationIncNegAny
 np_Any|Remove Plant (Any Player)|${you} must select a player who will loose the resouces (or none)
 ns_Any|Remove Steel (Any Player)|${you} must select a player who will loose the resouces (or none)
+nu_Any|Remove Titanium (Any Player)|${you} must select a player who will loose the resouces (or none)
 nm_Any|Remove MC (Any Player)|${you} must select a player who will loose the resouces (or none)
 
 #set class=AbsOperationIncSteal
@@ -104,7 +105,7 @@ convh|Convert heat into temperature|${you} must confirm spent 8 heat to increase
 convp|Convert plants into greenery
 finalscoring|Final Scoring
 lastforest|Last Forest
-confirm|Confirm|${you} must confirm
+confirm|Confirm|${you} must confirm or undo
 cardx|Play Card
 
 

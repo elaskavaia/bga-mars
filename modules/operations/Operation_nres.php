@@ -20,8 +20,14 @@ class Operation_nres extends AbsOperation {
         });
     }
 
-    function   canResolveAutomatically() {
-        return !$this->isVoid();
+    protected function getOpName() {
+        $card = $this->getContext();
+        $par = $this->game->getRulesFor($card, 'holds', '');
+        return ['log' => clienttranslate('Remove ${restype_name} from ${card_name}'),  "args" => [
+            "card_name" => $this->game->getTokenName($card),
+            'restype_name' => $this->game->getTokenName("tag$par"),
+            'i18n' => ['card_name', 'restype_name']
+        ]];
     }
 
 
@@ -40,7 +46,7 @@ class Operation_nres extends AbsOperation {
             $this->game->dbSetTokenLocation($key, 'miniboard_' . $owner, 0);
             if ($num == 0) break;
         }
-        if ($num > 0) throw new feException("Insufficient number of resources on $card");
+        if ($num > 0) throw new BgaUserException("Insufficient number of resources");
         return $inc;
     }
 }

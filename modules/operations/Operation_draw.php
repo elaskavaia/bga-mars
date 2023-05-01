@@ -9,6 +9,7 @@ class Operation_draw extends AbsOperation {
     }
 
     function canResolveAutomatically() {
+        if ($this->params === 'auto') return true;
         return false;
     }
 }

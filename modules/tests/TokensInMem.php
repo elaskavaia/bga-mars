@@ -57,6 +57,7 @@ class TokensInMem extends DbTokens {
 
     function getTokensOfTypeInLocation($type, $location = null, $state = null, $order_by = null) {
         $result = [];
+        if (endsWith($location,'%')) $location=substr($location,0,strlen($location)-1);
         foreach ($this->keyindex as $key => $rec) {
 
             if ($type && !startsWith($key, $type)) continue;

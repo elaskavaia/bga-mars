@@ -212,7 +212,7 @@ abstract class PGameBasic extends Table {
                 if (is_scalar($ret)) {
                     $retval = $ret;
                 } elseif (!$ret) {
-                    $retval = $ret;
+                    $retval = 'falsy';
                 } else {
                     $retval = "arr";
                 }

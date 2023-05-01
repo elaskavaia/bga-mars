@@ -167,8 +167,15 @@ abstract class AbsOperation {
     }
 
     function isVoid(): bool {
-        if ($this->isFullyAutomated()) return false;
-        return count($this->arg()['target']) == 0;
+        //if ($this->isFullyAutomated()) return false;
+        if ($this->getMinCount() == 0) return false;
+        if ($this->noValidTargets()) return true;
+        return false;
+    }
+
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['info']) > 0 && count($arg['target']) == 0;
     }
 
     /**
@@ -184,9 +191,21 @@ abstract class AbsOperation {
         }
         $this->argresult = null; // XXX not sure
         $this->color =  $owner;
-        $op = $this->mnemonic;
-        $this->game->systemAssertTrue("Operation cannot be executed '$op'", !$this->isVoid()); // XXX add details
+
+        $this->checkVoid();
         return $this->effect($owner, $this->getUserCount(), $args);
+    }
+
+    protected function checkVoid() {
+        if ($this->isVoid()) {
+            $op = $this->mnemonic;
+            $usertarget = $args['target'] ?? '';
+            $this->game->systemAssertTrue("Operation cannot be executed '$op'",  $usertarget);
+            $info = $this->arg()['target'];
+            $infotarget = array_get($info, $usertarget);
+            $err = $infotarget['q'];
+            $this->game->userAssertTrue("Operation cannot be executed, err code $err"); /// XXX proper strings
+        }
     }
 
     function getUserCount(): ?int {
@@ -197,8 +216,7 @@ abstract class AbsOperation {
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
-        $op = $this->mnemonic;
-        $this->game->systemAssertTrue("Operation cannot be executed '$op'", !$this->isVoid()); // XXX add details
+        $this->checkVoid();
         $count = $this->effect($owner, $count, null);
         return true;
     }

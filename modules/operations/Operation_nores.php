@@ -7,7 +7,13 @@ class Operation_nores extends AbsOperation {
         $color = $this->color;
         $par = $this->params;
         $keys = array_keys($this->game->getCardsWithResource($par));
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($par) {
+        $listeners = $this->game->collectListeners($color, "defense"); // generic now could be per tag
+        $protected = [];
+        foreach ($listeners as $lisinfo) {
+            $protected[$lisinfo['owner']] = 1;
+        }
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($par, $protected) {
+            if (array_get($protected, $color)) return MA_ERR_RESERVED;
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par) return MA_ERR_NOTAPPLICABLE;
@@ -29,7 +35,7 @@ class Operation_nores extends AbsOperation {
         return $inc;
     }
 
-    function   canResolveAutomatically() {
+    function canResolveAutomatically() {
         return false;
     }
 

@@ -12,7 +12,6 @@ Random notes on todo items
 * Complex cards
  * requirement +2/-2 (paramreq)
  * copy_Building
- * defense for res removal (global:defense)
  * effect on next played card
 * Corporations
 
