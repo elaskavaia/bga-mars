@@ -52,7 +52,7 @@ tagEnergy|Power
 tagVenus|Venus
 tagEvent|Event
 
-#set type=tracker
+#set type=tracker bagde 
 #set create=4
 #set location=tableau_{COLOR}
 
@@ -73,19 +73,25 @@ tracker_tagEvent|Count of Event tags
 #set create=2
 #set location=limbo
 #set count=20
-#set type=tile
+#set type=tile tile_2
 tile_2|City|0|'tt'=>2
+#set type=tile tile_1
 tile_1|Forest|0|'tt'=>1
 #set count=9
+#set type=tile tile_3
 tile_3|Ocean|0|'tt'=>3
 #set count=1
+#set type=tile tile_2
 tile_8|Capital|0|'tt'=>2
+#set type=tile tile_5
 tile_64|Mining|0|'tt'=>5
 tile_67|Mining|0|'tt'=>5
+#set type=tile tile_4
 tile_85|Commercial District|0|'tt'=>4
 tile_97|Nuclear Zone|0|'tt'=>4
 tile_123|Industrial Center|0|'tt'=>4
 tile_128|Ecological Zone|0|'tt'=>4
+tile_140|Lava Flows|0|'tt'=>4
 tile_142|Mohole Area|0|'tt'=>4
 tile_199|Restricted Area|0|'tt'=>4
 

@@ -14,8 +14,15 @@ class Operation_tile extends AbsOperationTile {
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
 
         if ($reservename) {
-            if (!$this->checkAdjRulesPasses($ohex, $color, $reservename)) {
-                return MA_ERR_PLACEMENT;
+            $reshexes = $this->findReservedAreas($reservename);
+            if (count($reshexes) == 0) {
+                if (!$this->checkAdjRulesPasses($ohex, $color, $reservename)) {
+                    return MA_ERR_ALREADYUSED;
+                }
+          
+            }
+            if (array_search($ohex, $reshexes) === false) {
+                return MA_ERR_NOTRESERVED;
             }
         }
         if ($this->getTileType() == MA_TILE_MINING) {

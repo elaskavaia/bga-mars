@@ -37,8 +37,6 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
-    // move
-    $(`miniboard_${playerInfo.color}`).appendChild( $(`playerboard_${playerInfo.color}`));
    
   }
 

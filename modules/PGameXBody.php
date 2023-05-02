@@ -111,7 +111,10 @@ abstract class PGameXBody extends PGameMachine {
     function debug_oparg($type, $data = '') {
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
-        return $inst->arg();
+        return [
+            "type" => $type, "args" => $inst->arg(), "can" => $inst->canResolveAutomatically(),
+            "auto" => $inst->isFullyAutomated()
+        ];
     }
 
     // HEX MATH
@@ -183,8 +186,8 @@ abstract class PGameXBody extends PGameMachine {
             case 'adj_no':
                 return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
             case 'has_su':
-                $bonus=$this->getRulesFor($ohex,'r','');
-                return strpos($bonus,'s')!==false || strpos($bonus,'u')!==false;
+                $bonus = $this->getRulesFor($ohex, 'r', '');
+                return strpos($bonus, 's') !== false || strpos($bonus, 'u') !== false;
             default:
                 throw new BgaSystemException("Unknown adj rule $rule");
         }

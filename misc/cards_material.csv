@@ -68,10 +68,10 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 61|Great Escarpment Consortium|1|nps_Any:ps|||6|ps>0||0|Requires that you have steel production. Decrease any steel production 1 step and increase your own 1 step|
 62|Mineral Deposit|3|5s|||5||Event|0|Gain 5 steel.|
 63|Mining Expedition|3|2s,2np_Any,o|||12||Event|0|Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.|
-64|Mining Area|1|tile(adj_own)|||4||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step. TODO|
+64|Mining Area|1|tile(adj_own)|||4||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step.|
 65|Building Industries|1|2ps,1npe|||6||Building|0|Decrease your energy production 1 step and increase your steel production 2 steps.|
 66|Land Claim|3||||1||Event|0|Place your marker on a non-reserved area. Only you may place a tile here|
-67|Mining Rights|1|tile|||9||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus. Increase that production 1 step. TODO|
+67|Mining Rights|1|tile|||9||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus. Increase that production 1 step.|
 68|Sponsors|1|2pm|||6||Earth|0|Increase your MC production 2  steps.|
 69|Electro Catapult|2|npe|(p/s):7m||17|o<=8|Building|1|Oxygen must be 8% or less. Decrease your energy production 1 step.; Action: Spend 1 plant or 1 steel to gain 7 MC|
 70|Earth Catapult|2|||onPay_card:2m|23||Earth|2|Effect: when you play a card, you pay 2 MC less for it.|
@@ -80,7 +80,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 73|Mars University|2|||play_tagScience:?(discard:draw)|8||Science Building|1|Effect: When you play a science tag, including this, you may discard a card from hand to draw a card.|
 74|Viral Enhancers|2|||play_tagPlant:p/res:that;play_tagMicrobe:p/res:that;play_tagAnimal:p/res:that|9||Science Microbe|0|Effect: When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD.|
 75|Towing a Comet|3|2p,o,w|||23||Space Event|0|Gain 2 plants. Raise oxygen level 1 step and place an ocean tile.|
-76|Space Mirrors|2||7m:pe||3||Space Energy|0|Action: Spend 7MC to increase your energy production 1 step.|
+76|Space Mirrors|2||7nm:pe||3||Space Energy|0|Action: Spend 7MC to increase your energy production 1 step.|
 77|Solar Wind Power|1|pe,2u|||11||Science Space Energy|0|Increase your energy production 1 step and gain 2 titanium.|
 78|Ice Asteroid|3|2w|||23||Space Event|0|Place 2 ocean tiles.|
 79|Quantum Extractor|2|4pe||onPay_cardSpace:2m|13|tagScience>=4|Science Energy|0|Effect: When you play a space card, you pay 2 MC less for it|
@@ -139,12 +139,12 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 132|Fusion Power|1|3pe|||14|tagEnergy>=2|Science Building Energy|0|Requires 2 power tags. Increase your energy production 3 steps.|
 133|Symbiotic Fungus|2||ores(Microbe)||4|t>=-14|Microbe|0|Requires -14°C or warmer.; Action: Add a microbe to ANOTHER card.|
 134|Extreme-Cold Fungus|2||p/2ores(Microbe)||13|t<=-10|Microbe|0|It must be -10°C or colder.; Action: Gain 1 plant or add 2 microbes to ANOTHER card.|
-135|Advanced Ecosystems|1||||11||Microbe Plant Animal|3|Requires a plant tag, a microbe tag, and an animal tag.|
+135|Advanced Ecosystems|1||||11|tagMicrobe>0 & tagAnimal> 0 & tagPlant>0|Microbe Plant Animal|3|Requires a plant tag, a microbe tag, and an animal tag.|
 136|Great Dam|1|2pe|||12|w>=4|Building Energy|1|Requires 4 ocean tiles. Increase your energy production 2 steps.|
 137|Cartel|1|counter(tagEarth) pm|||8||Earth|0|Increase your MC production 1 step for each Earth tag you have, including this.|
 138|Strip Mine|1|2ps,pu,2npe,2o|||25||Building|0|Decrease your energy production 2 steps. Increase your steel production 2 steps and your titanium production 1 step. Raise oxygen 2 steps.|
 139|Wave Power|1|pe|||8|w>=3|Energy|1|Requires 3 ocean tiles. Increase your energy production 1 step.|
-140|Lava Flows|3|2t|||18||Event|0|Raise the temperature 2 steps and place this [the Lava Flow] tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS.|
+140|Lava Flows|3|2t,tile('Ascraeus Mons,Pavonis Mons,Arsia Mons,Tharsis Tholus')|||18||Event|0|Raise the temperature 2 steps and place this [the Lava Flow] tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS.|
 141|Power Plant|1|pe|||4||Building Energy|0|Increase your energy production 1 step.|
 142|Mohole Area|1|4ph,tile(ocean)|||20||Building|0|Increase your heat production 4 steps. Place [the Mohole Area] tile ON AN AREA RESERVED FOR OCEAN.|
 143|Large Convoy|3|w,2draw,(5p/ores(Animal))|||36||Space Earth Event|2|Place an ocean tile and draw 2 cards. Gain 5 plants, or add 4 animals to ANOTHER card.|
@@ -157,7 +157,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it.|
 151|Investment Loan|3|1npm,10m|||3||Earth Event|0|Decrease your MC production 1 step. Gain 10 MC.|
 152|Insulation|1|[0,](nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
-153|Adaptation Technology|2|2paramreq|||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case.|
+153|Adaptation Technology|2||||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case. TODO 2paramreq|
 154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|It must be -14°C or colder. Increase your plant production 2 steps.|
 156|Standard Technology|2|||play_stan:3m|6||Science|0|Effect: After you pay for a standard project, except selling patents, you gain 3 MC.|
@@ -189,7 +189,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 182|Corporate Stronghold|1|3pm,1npe,city|||11||Building City|-2|Decrease your energy production 1 step and increase your MC production 3 steps. Place a city tile.|
 183|Biomass Combustors|1|1npp_Any,2pe|||4|o>=6|Building Energy|-1|Requires 6% oxygen. Decrease any plant production 1 step and increase your energy production 2 steps.|
 184|Livestock|2|2pm,1npp|res||13|o>=9|Animal|resCard|Requires 9% oxygen. Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card.; Action: Add 1 animal to this card.|  'holds' => 'Animal'
-185|Olympus Conference|2|||play_tagScience:(res/nres:draw)|10||Science Building Earth|1|Effect: When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.|  'holds' => 'Science'
+185|Olympus Conference|2|||play_tagScience:((nres,draw)/res)|10||Science Building Earth|1|Effect: When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.|  'holds' => 'Science'
 186|Rad-Suits|1|pm|||6|||1|Requires 2 cities in play. Increase your MC production 1 step.|
 187|Aquifer Pumping|2||8nms:w||18||Building|0|Action: Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card.|
 188|Flooding|3|w|||7||Event|-1|Place an ocean tile. IF THERE ARE TILES ADJACENT TO THIS OCEAN TILE, YOU MAY REMOVE 4 MC FROM THE OWNER OF ONE OF THOSE TILES. TODO|

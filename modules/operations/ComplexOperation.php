@@ -89,6 +89,14 @@ class ComplexOperation extends AbsOperation {
         return false;
     }
 
+    function isFullyAutomated() {
+        foreach ($this->delegates as $i => $sub) {
+            $subvalue = $sub->isFullyAutomated();
+            if (!$subvalue) return false;
+        }
+        return $subvalue;
+    }
+
     function isVoid(): bool {
         if ($this->getMinCount() == 0) return false;
         $op = $this->operation;
