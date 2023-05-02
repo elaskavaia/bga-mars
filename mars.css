@@ -138,10 +138,11 @@
 }
 
 .hand {
-  height: 16em;
+  min-height: var(--card-height);
   display: flex;
   flex-direction: row;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .location > * {
