@@ -51,6 +51,8 @@ tagJovian|Jovian
 tagEnergy|Power
 tagVenus|Venus
 tagEvent|Event
+#this is not a real tag but wheatever
+tagFighter|Fighter
 
 #set type=tracker bagde 
 #set create=4

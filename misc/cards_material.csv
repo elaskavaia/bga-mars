@@ -70,10 +70,10 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 63|Mining Expedition|3|2s,2np_Any,o|||12||Event|0|Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.|
 64|Mining Area|1|tile(adj_own)|||4||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step.|
 65|Building Industries|1|2ps,1npe|||6||Building|0|Decrease your energy production 1 step and increase your steel production 2 steps.|
-66|Land Claim|3||||1||Event|0|Place your marker on a non-reserved area. Only you may place a tile here|
+66|Land Claim|3||||1||Event|0|Place your marker on a non-reserved area. Only you may place a tile here TODO|
 67|Mining Rights|1|tile|||9||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus. Increase that production 1 step.|
 68|Sponsors|1|2pm|||6||Earth|0|Increase your MC production 2  steps.|
-69|Electro Catapult|2|npe|(p/s):7m||17|o<=8|Building|1|Oxygen must be 8% or less. Decrease your energy production 1 step.; Action: Spend 1 plant or 1 steel to gain 7 MC|
+69|Electro Catapult|2|npe|(np:7m)/(ns:7m)||17|o<=8|Building|1|Oxygen must be 8% or less. Decrease your energy production 1 step.; Action: Spend 1 plant or 1 steel to gain 7 MC|
 70|Earth Catapult|2|||onPay_card:2m|23||Earth|2|Effect: when you play a card, you pay 2 MC less for it.|
 71|Advanced Alloys|2|eru,ers|||9||Science|0|Effect: Each titanium you have is worth 1MC extra. Each steel you have is worth 1 MC extra.|
 72|Birds|2|2npp_Any|res||10|o>=13|Animal|resCard|Requires 13% oxygen. Decrease any plant production 2 steps. 1 VP for each animal on this card; Action: Add an animal to this card.|  'holds' => 'Animal'
@@ -133,7 +133,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 126|GHG Factories|1|1npe,4ph|||11||Building|0|Decrease your energy production 1 step and increase your heat production 4 steps.|
 127|Subterranean Reservoir|3|w|||11||Event||Place 1 ocean tile.|
 128|Ecological Zone|2|tile(adj_forest)||play_tagPlant:res;play_tagAnimal:res|12|forest>0|Plant Animal|resCard/2|Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.; Effect: When you play an animal or a plant tag (including these 2), add an animal to this card.|  'holds' => 'Animal'
-129|Zeppelins|1|counter(city_all),pm|||13|o>=5||1|Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS.|
+129|Zeppelins|1|counter(all_city),pm|||13|o>=5||1|Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS.|
 130|Worms|1|counter(tagMicrobe/2),pp|||8|o>=4|Microbe|0|Requires 4% oxygen. Increase your plant production 1 step for every 2 microbe tags you have, including this.|
 131|Decomposers|2|||play_tagPlant:res;play_tagMicrobe:res;play_tagAnimal:res|5|o>=3|Microbe|resCard/3|Requires 3% oxygen. 1 VP per 3 microbes on this card.; Effect: When you play an animal, plant, or microbe tag, including this, add a microbe to this card.|  'holds' => 'Microbe'
 132|Fusion Power|1|3pe|||14|tagEnergy>=2|Science Building Energy|0|Requires 2 power tags. Increase your energy production 3 steps.|
@@ -190,7 +190,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 183|Biomass Combustors|1|1npp_Any,2pe|||4|o>=6|Building Energy|-1|Requires 6% oxygen. Decrease any plant production 1 step and increase your energy production 2 steps.|
 184|Livestock|2|2pm,1npp|res||13|o>=9|Animal|resCard|Requires 9% oxygen. Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card.; Action: Add 1 animal to this card.|  'holds' => 'Animal'
 185|Olympus Conference|2|||play_tagScience:((nres,draw)/res)|10||Science Building Earth|1|Effect: When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.|  'holds' => 'Science'
-186|Rad-Suits|1|pm|||6|||1|Requires 2 cities in play. Increase your MC production 1 step.|
+186|Rad-Suits|1|pm|||6|all_city>=2||1|Requires 2 cities in play. Increase your MC production 1 step.|
 187|Aquifer Pumping|2||8nms:w||18||Building|0|Action: Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card.|
 188|Flooding|3|w|||7||Event|-1|Place an ocean tile. IF THERE ARE TILES ADJACENT TO THIS OCEAN TILE, YOU MAY REMOVE 4 MC FROM THE OWNER OF ONE OF THOSE TILES. TODO|
 189|Energy Saving|1|counter(all_city)pe|||15||Energy|0|Increase your energy production 1 step for each city tile in play.|

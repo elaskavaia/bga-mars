@@ -911,7 +911,7 @@ $this->token_types = [
   'cost' => 1,
   'tags' => 'Event',
   'vp' => 0,
-  'text' => clienttranslate("Place your marker on a non-reserved area. Only you may place a tile here"),
+  'text' => clienttranslate("Place your marker on a non-reserved area. Only you may place a tile here TODO"),
 ],
  'card_main_67' => [  //
   'location' => 'deck_main',
@@ -944,7 +944,7 @@ $this->token_types = [
   'name' => clienttranslate("Electro Catapult"),
   't' => 2,
   'r' => 'npe',
-  'a' => '(p/s):7m',
+  'a' => '(np:7m)/(ns:7m)',
   'cost' => 17,
   'pre' => 'o<=8',
   'tags' => 'Building',
@@ -1680,7 +1680,7 @@ $this->token_types = [
   'num' => 129,
   'name' => clienttranslate("Zeppelins"),
   't' => 1,
-  'r' => 'counter(city_all),pm',
+  'r' => 'counter(all_city),pm',
   'cost' => 13,
   'pre' => 'o>=5',
   'vp' => 1,
@@ -2394,6 +2394,7 @@ $this->token_types = [
   't' => 1,
   'r' => 'pm',
   'cost' => 6,
+  'pre' => 'all_city>=2',
   'vp' => 1,
   'text' => clienttranslate("Requires 2 cities in play. Increase your MC production 1 step."),
 ],
@@ -3648,6 +3649,13 @@ $this->token_types = [
   'create' => 0,
   'location' => 'params',
   'name' => clienttranslate("Event"),
+],
+// #this is not a real tag but wheatever
+ 'tagFighter' => [  //
+  'type' => 'tag',
+  'create' => 0,
+  'location' => 'params',
+  'name' => clienttranslate("Fighter"),
 ],
  'tracker_tagScience' => [  //
   'type' => 'tracker bagde',
