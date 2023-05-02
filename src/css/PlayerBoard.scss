@@ -15,8 +15,10 @@
   width:100%;
   height: fit-content;
   display: flex;
-  --resourcesize:3vh;
+  --resourcesize: 2em;
+  --producesize: 1.6em;
   font-family: "Prototype";
+  flex-wrap: wrap;
 }
 
 .playerboard_group {
@@ -32,7 +34,6 @@
 .playerboard_own{
   width: var(--pb_cellsize);
   height: calc(var(--pb_cellsize) *0.5);
-  border:0.2vh solid black;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -45,7 +46,6 @@
 .playerboard_produce{
   width: var(--pb_cellsize);
   height: calc(var(--pb_cellsize) *0.5);
-  border:0.2vh solid black;
   background-image: url('img/prodtexture.png');
   background-size: 100% 100%;
   display: flex;

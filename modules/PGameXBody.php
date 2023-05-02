@@ -654,6 +654,7 @@ abstract class PGameXBody extends PGameMachine {
         $oceans = $this->getAdjecentHexesOfType($target, MA_TILE_OCEAN);
         $c = count($oceans);
         if ($c) {
+            $c = $c * 2;
             $bonus = "${c}m"; // 2 MC per ocean
             $this->putInEffectPool($color, $bonus, $object);
         }

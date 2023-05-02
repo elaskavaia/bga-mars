@@ -28,6 +28,11 @@
   margin-right: 4px;
 }
 
+.playerboard_produce .token_img {
+  width: var(--producesize);
+  height: var(--producesize);
+}
+
 .outer_tracker {
  /* border: 1px solid; */
 }

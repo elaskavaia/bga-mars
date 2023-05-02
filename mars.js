@@ -1445,6 +1445,8 @@ var GameXBody = /** @class */ (function (_super) {
             var board = $("player_area_".concat(playerInfo.color));
             $("thisplayer_zone").appendChild(board);
         }
+        // move
+        $("miniboard_".concat(playerInfo.color)).appendChild($("playerboard_".concat(playerInfo.color)));
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
