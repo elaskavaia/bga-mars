@@ -346,7 +346,7 @@
 }
 
 #ebd-body {
-  --map-width:40em; /* 75vh */
+  --map-width: 75vh;
   --map-height: calc(var(--map-width)*0.92);
 }
 
@@ -1537,7 +1537,6 @@
   border: 0.4vh solid var(--plcolor);
   position: relative;
   border-radius: 1vh;
-  max-width: 1200px;
 }
 
 .playerboard {
@@ -1584,6 +1583,13 @@
 
 .player_area .location {
   width: revert;
+}
+
+.mfull .player_area {
+  max-width: 1024px;
+}
+.mfull #ebd-body {
+  --map-width:40em; /* 75vh */
 }
 
 @font-face {
