@@ -51,11 +51,14 @@
 
 if (!defined("STATE_END_GAME")) {
     // guard since this included multiple times
-    define("STATE_MULTIPLAYER_TURN_CHOICE", 4);
+    define("STATE_MULTIPLAYER_DISPATCH", 4);
     define("STATE_GAME_DISPATCH", 10);
     define("STATE_PLAYER_TURN_CHOICE", 11);
     define("STATE_PLAYER_CONFIRM", 12);
+    define("STATE_MULTIPLAYER_CHOICE", 6);
     define("STATE_END_GAME", 99);
+
+    define("ABORT_DISPATCH", 98);
 }
 
 $machinestates = [
@@ -93,7 +96,8 @@ $machinestates = [
         "transitions" => [
             "next" => STATE_PLAYER_TURN_CHOICE,
             "loopback" => STATE_GAME_DISPATCH,
-            "mnext" => STATE_MULTIPLAYER_TURN_CHOICE,
+            "multiplayer" => STATE_MULTIPLAYER_DISPATCH,
+            "confirm" => STATE_PLAYER_CONFIRM,
             "last" => STATE_END_GAME,
         ],
     ],
@@ -115,23 +119,38 @@ $machinestates = [
     ],
 
 
-    STATE_MULTIPLAYER_TURN_CHOICE => [
-        "name" => "multiplayerTurnChoice",
+    STATE_MULTIPLAYER_DISPATCH => [
+        "name" => "multiplayerDispatch",
         "type" => "multipleactiveplayer",
-        "action" => "stMakeEveryoneActive",
+        "action" => "st_gameDispatchMultiplayer",
         "description" => clienttranslate(
             'Other players makes their choices'
         ),
         "descriptionmyturn" => clienttranslate(
             '${you} must choose'
         ),
+        "initialprivate" => STATE_MULTIPLAYER_CHOICE,
+        "possibleactions" => [ "undo"], // ??
+        "transitions" => [
+            "next" => STATE_GAME_DISPATCH,
+            "loopback" => STATE_MULTIPLAYER_DISPATCH,
+            "confirm" => STATE_PLAYER_CONFIRM,
+        ],
+      //  "args" => "arg_multiplayerTurnChoice",
+    ],
+
+    STATE_MULTIPLAYER_CHOICE => [
+        "name" => "multiplayerChoice",
+        "descriptionmyturn" => clienttranslate('${you} must choose'),
+        "type" => "private", 
+        "args" => "arg_multiplayerChoice", //this method will be called with playerId as a parametar and is used to calculate arguments for this action for specific player
+        "action" => "st_multiplayerChoice", // this method will be called with playerId as a parameter and can be used to make some changes when player enters this private state
         "possibleactions" => ["choose", "resolve", "decline", "skip", "undo"],
         "transitions" => [
-            "next" => STATE_PLAYER_CONFIRM,
-            "loopback" => STATE_MULTIPLAYER_TURN_CHOICE,
-        ],
-        "args" => "arg_multiplayerTurnChoice",
-    ],
+            "next" => STATE_GAME_DISPATCH,
+            "loopback" => STATE_MULTIPLAYER_CHOICE,
+        ]
+      ],
 
     // Final state.
     // Please do not modify.

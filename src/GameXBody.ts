@@ -306,6 +306,7 @@ class GameXBody extends GameTokens {
 
   onUpdateActionButtons_playerTurnChoice(args) {
     let operations = args.operations;
+    if (!operations) return;// XXX
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();

@@ -48,8 +48,15 @@ $game_options = array(
                         )
             )
 
-    */
-
-);
-
-
+    */);
+$game_preferences = [
+    100 => [
+        'name' => totranslate('Layout and Theme'),
+        'needReload' => true, // after user changes this preference game interface would auto-reload
+        'values' => array(
+            1 => ['name' => totranslate('Compact'), 'cssPref' => 'mcompact'],
+            2 => ['name' => totranslate('Full'), 'cssPref' => 'mfull'],
+        ),
+        'default' => 1
+    ]
+];

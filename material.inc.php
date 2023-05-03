@@ -25,6 +25,7 @@
  if (!defined("MA_GAME")) {
   // guard since this included multiple times
   define("MA_GAME", 1);
+  define("MA_GAME_DISPATCH_MAX", 100);
   #project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
   define("MA_CARD_TYPE_STANDARD_PROJECT", 0);
   define("MA_CARD_TYPE_GREEN", 1);

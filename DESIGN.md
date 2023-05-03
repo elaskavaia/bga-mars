@@ -25,7 +25,7 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
 
 ## Interactions
 
-* Machine is action machine, is kind of state machine of bga but with stack, docs in modules/MACHINE.md. Machine use operation expressions which essentially describe effects on cards and things you can do and choices you have to make, i.e. a/b - you pick a or b, etc
+* Machine is action machine, is kind of state machine of bga but with stack, docs in modules/DbMachine.md. Machine use operation expressions which essentially describe effects on cards and things you can do and choices you have to make, i.e. a/b - you pick a or b, etc
 * We use MathExpression which is what you expect, like a > b. This is used for card pre-conditions, vp complex calculations (i.e. vp equal half of cards in your hand), counter complex calculation (gain number of MC equal to number of Science tags you player), effect conditions
  * MathExpression is evaluted in context, usually it involved the player, but also can involve a card or some custom context provider (which resolves the variables in the expression)
 

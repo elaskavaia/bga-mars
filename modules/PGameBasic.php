@@ -107,6 +107,17 @@ abstract class PGameBasic extends Table {
         }
     }
 
+    public function getStateIdByTransitionName($action) {
+        $state = $this->gamestate->state();
+        foreach ($state['transitions'] as $possible_action => $possible_next_state) {
+            if ($action == $possible_action) {
+
+                return $possible_next_state;
+            }
+        }
+        return 0; // not found
+    }
+
     // ------ ERROR HANDLING ----------
     /**
      * This will throw an exception if condition is false.
@@ -236,7 +247,7 @@ abstract class PGameBasic extends Table {
         $this->warn($info);
     }
     function debugLog($info, $args = []) {
-        $this->notifyAllPlayers("log", '', $args+['info'=>$info]);
+        $this->notifyAllPlayers("log", '', $args + ['info' => $info]);
         $this->warn($info);
     }
 
@@ -347,7 +358,7 @@ abstract class PGameBasic extends Table {
     function getPlayerColorByNo(int $no) {
         $players = $this->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player_info) {
-            if ($player_info["player_no"]==$no) return $player_info["player_color"];
+            if ($player_info["player_no"] == $no) return $player_info["player_color"];
         }
         return null;
     }
