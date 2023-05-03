@@ -2900,7 +2900,7 @@ $this->token_types = [
   'name' => clienttranslate("Look"),
   'location' => 'hand_area',
   'scope' => 'player',
-  'counter' => 'private',
+  'counter' => 'hidden',
   'content' => 'private',
 ],
  'tableau' => [  //
