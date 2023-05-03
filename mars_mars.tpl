@@ -201,8 +201,11 @@
   <div id="players_area">
     <!-- BEGIN player_board -->
     <div id="player_area_{PLAYER_COLOR}" class="player_area" style="--plcolor:#{PLAYER_COLOR};">
+      <div id="player_tags_{PLAYER_COLOR}" class="player_tags">
 
+      </div>
       <div id="tableau_{PLAYER_COLOR}" class="whiteblock"></div>
+
 
     </div>
 	<div id="miniboard_{PLAYER_COLOR}">

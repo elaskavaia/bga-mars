@@ -129,7 +129,15 @@ class GameXBody extends GameTokens {
       result.location ='awardslist';
     } else if(tokenInfo.key.startsWith("milestone") ) {
       result.location ='milestoneslist';
-    }else if (this.custom_placement[tokenInfo.key]) {
+    } else if(tokenInfo.key.startsWith("tracker_tag")
+      || tokenInfo.key.startsWith('tracker_city_')
+      || tokenInfo.key.startsWith('tracker_ers_')
+      || tokenInfo.key.startsWith('tracker_eru_')
+      || tokenInfo.key.startsWith('tracker_forest_')
+      || tokenInfo.key.startsWith('tracker_land_')) {
+      result.location=tokenInfo.location.replace('tableau','player_tags');
+    //  console.log('info for ',tokenInfo.key,'is',tokenInfo);
+    } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     }
     return result;

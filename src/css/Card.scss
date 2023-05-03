@@ -119,7 +119,7 @@
   flex-direction: row-reverse;
 }
 
-.badge{
+.card .badge{
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);
   background-image: url("img/badges.png");
