@@ -33,11 +33,10 @@ class GameXBody extends GameTokens {
     super.setupPlayer(playerInfo);
 
     //move own player board in main zone
-    if (playerInfo.id==this.player_id) {
+    if (playerInfo.id == this.player_id) {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
-   
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -54,10 +53,10 @@ class GameXBody extends GameTokens {
         if (displayInfo.e) rules += ";e:" + displayInfo.e;
 
         //tags
-        let tagshtm="";
-        if (displayInfo.tags && displayInfo.tags!="") {
-          for (let tag of displayInfo.tags.split(' ')) {
-            tagshtm+='<div class="badge tag_'+tag+'"></div>';
+        let tagshtm = "";
+        if (displayInfo.tags && displayInfo.tags != "") {
+          for (let tag of displayInfo.tags.split(" ")) {
+            tagshtm += '<div class="badge tag_' + tag + '"></div>';
           }
         }
 
@@ -78,27 +77,37 @@ class GameXBody extends GameTokens {
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {
+    /* It seems duplicates the other stuff which is already there, disabled for now
     const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
     if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
       const originalHtml = tokenNode.outerHTML;
-      console.log("checking", tokenNode.id, "maintype", displayInfo.mainType, "location inc", displayInfo.location.includes("miniboard_"));
+      this.darhflog(
+        "checking",
+        tokenNode.id,
+        "maintype",
+        displayInfo.mainType,
+        "location inc",
+        displayInfo.location.includes("miniboard_")
+      );
       if (displayInfo.mainType == "tracker" && displayInfo.location.includes("miniboard_")) {
         const rpDiv = document.createElement("div");
         rpDiv.classList.add("outer_tracker", "outer_" + displayInfo.typeKey);
         rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
         tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
       }
-    }
+    }*/
   }
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: string): HTMLDivElement {
-    console.log("placing ", id);
+    this.darhflog("placing ", id);
     if (id && location && this.custom_placement[id]) {
       location = this.custom_placement[id];
-      console.log("placing id elsewhere: ", id, "at location ", location);
+      this.darhflog("placing id elsewhere: ", id, "at location ", location);
     }
-    return super.createDivNode(id, classes, location);
+    const div = super.createDivNode(id, classes, location);
+    this.darhflog(`id ${div.id} has been created at ${(div.parentNode as HTMLElement)?.id}`);
+    return div;
   }
 
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
@@ -124,15 +133,27 @@ class GameXBody extends GameTokens {
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     let result = super.getPlaceRedirect(tokenInfo);
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
-      result.location = this.getDomTokenLocation(tokenInfo.key);
-    } else if(tokenInfo.key.startsWith("award") ) {
-      result.location ='awardslist';
-    } else if(tokenInfo.key.startsWith("milestone") ) {
-      result.location ='milestoneslist';
-    }else if (this.custom_placement[tokenInfo.key]) {
+      result.nop = true; // do not relocate or do anyting
+    } else if (tokenInfo.key.startsWith("award")) {
+      result.location = "awardslist";
+    } else if (tokenInfo.key.startsWith("milestone")) {
+      result.location = "milestoneslist";
+    } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     }
+    if (!result.location) // if failed to find revert to server one
+      result.location = tokenInfo.location;
     return result;
+  }
+
+  isLayoutVariant(num: number) {
+    return this.prefs[100].value == num;
+  }
+
+  darhflog(...args: any) {
+    if (this.isLayoutVariant(1)) {
+      console.log(...args);
+    }
   }
 
   sendActionResolve(op: number, args?: any) {
@@ -298,7 +319,7 @@ class GameXBody extends GameTokens {
 
   onUpdateActionButtons_playerTurnChoice(args) {
     let operations = args.operations;
-    if (!operations) return;// XXX
+    if (!operations) return; // XXX
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();

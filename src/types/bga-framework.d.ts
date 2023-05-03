@@ -79,6 +79,7 @@ declare class GameGui {
   on_client_state: boolean;
   tooltips: string[];
   is_client_only: boolean;
+  prefs: any[];
 
   isCurrentPlayerActive(): boolean;
   getActivePlayerId(): number;

@@ -27,6 +27,7 @@ interface TokenMoveInfo extends Token {
   onClick?: eventhandler;
   animtime?: number;
   relation?: string;
+  nop?: boolean;
 }
 
 class GameTokens extends GameBasics {
@@ -56,10 +57,10 @@ class GameTokens extends GameBasics {
 
     this.instantaneousMode = true;
 
-    this.gamedatas.tokens['limbo'] = {
-      key: 'limbo',
+    this.gamedatas.tokens["limbo"] = {
+      key: "limbo",
       state: 0,
-      location: 'thething',
+      location: "thething",
     };
     this.limbo = this.placeToken("limbo");
 
@@ -93,9 +94,9 @@ class GameTokens extends GameBasics {
     super.cancelLocalStateEffects();
   }
 
-  addCancelButton () {
-    if (!$('button_cancel')) {
-      this.addActionButton('button_cancel', _('Cancel'), () => this.cancelLocalStateEffects(), null, null, 'red');
+  addCancelButton() {
+    if (!$("button_cancel")) {
+      this.addActionButton("button_cancel", _("Cancel"), () => this.cancelLocalStateEffects(), null, null, "red");
     }
   }
 
@@ -120,12 +121,12 @@ class GameTokens extends GameBasics {
   }
 
   isLocationByType(id: string) {
-    return this.hasType(id, 'location');
+    return this.hasType(id, "location");
   }
 
   hasType(id: string, type: string): boolean {
-    const loc = this.getRulesFor(id, "type", '');
-    const split = loc.split(' ');
+    const loc = this.getRulesFor(id, "type", "");
+    const split = loc.split(" ");
     return split.indexOf(type) >= 0;
   }
 
@@ -232,7 +233,7 @@ class GameTokens extends GameBasics {
   createToken(placeInfo: TokenMoveInfo) {
     const tokenId = placeInfo.key;
     var info = this.getTokenDisplayInfo(tokenId);
-    var place = this.getRulesFor(tokenId, "location") || placeInfo.location;
+    var place = placeInfo.location ?? this.getRulesFor(tokenId, "location");
     const tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
 
     if (placeInfo.onClick) {
@@ -309,7 +310,6 @@ class GameTokens extends GameBasics {
       }
       this.syncTokenDisplayInfo(tokenNode);
 
-
       var state = 0;
       if (tokenInfo) state = tokenInfo.state;
       this.setDomTokenState(tokenNode, state);
@@ -318,8 +318,13 @@ class GameTokens extends GameBasics {
         this.placeInfoBox(tokenNode);
       }
 
+      if (placeInfo.nop) {
+        // no placement
+        return;
+      }
 
       if (!$(location)) {
+        debugger;
         console.error("Unknown place " + location + " for " + tokenInfo.key + " " + token);
         return;
       }
@@ -344,6 +349,7 @@ class GameTokens extends GameBasics {
           top: placeInfo.y + "px",
         };
       }
+ 
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
 
       this.renderSpecificToken(tokenNode);
@@ -411,8 +417,6 @@ class GameTokens extends GameBasics {
       attachNode.setAttribute("title", this.getTr(tokenInfo.name));
       return;
     }
-
-
 
     var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
     if (main) {
@@ -482,7 +486,7 @@ class GameTokens extends GameBasics {
       if (info === undefined) {
         key = getParentParts(key);
         if (!key) {
-          console.error("Undefined info for " + tokenId);
+          //console.error("Undefined info for " + tokenId);
           return def;
         }
         chain.push(key);
@@ -512,16 +516,14 @@ class GameTokens extends GameBasics {
       tokenInfo = dojo.clone(tokenInfo);
     }
 
-    const imageTypes = tokenInfo._chain ?? tokenId ?? '';
-    const ita = imageTypes.split(' ');
-    const tokenKey = ita[ita.length-1];
+    const imageTypes = tokenInfo._chain ?? tokenId ?? "";
+    const ita = imageTypes.split(" ");
+    const tokenKey = ita[ita.length - 1];
     const declaredTypes = tokenInfo.type || "token";
-
 
     tokenInfo.typeKey = tokenKey; // this is key in token_types structure
     tokenInfo.mainType = getPart(tokenId, 0); // first type
     tokenInfo.imageTypes = `${tokenInfo.mainType} ${declaredTypes} ${imageTypes}`.trim(); // other types used for div
-
 
     if (!tokenInfo.key) {
       tokenInfo.key = tokenId;
@@ -532,13 +534,10 @@ class GameTokens extends GameBasics {
     return tokenInfo;
   }
 
-  renderSpecificToken(tokenNode: HTMLElement) {
+  renderSpecificToken(tokenNode: HTMLElement) {}
 
-  }
-
-
-   getTokenPresentaton(type: string, tokenKey: string): string {
-      return this.getTokenName(tokenKey); // just a name for now
+  getTokenPresentaton(type: string, tokenKey: string): string {
+    return this.getTokenName(tokenKey); // just a name for now
   }
 
   /** @Override */
