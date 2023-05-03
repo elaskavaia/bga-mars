@@ -8,7 +8,8 @@ declare(strict_types=1);
 class MachineInMem extends DbMachine {
     var $xtable;
 
-    function __construct() {
+    function __construct($game = null, $table = "machine", $pool = "main") {
+        parent::__construct($game, $table, $pool);
         $this->xtable = [];
     }
 
@@ -20,18 +21,20 @@ class MachineInMem extends DbMachine {
         return $string;
     }
 
-    function getExtremeRank($getMax) {
+    function getExtremeRank($getMax, $owner = null) {
         $extrime = $getMax ? 0 : PHP_INT_MAX;
         foreach ($this->xtable as $row) {
             $rank = $row["rank"];
-            if ($rank > 0) {
-                if ($getMax) {
-                    if ($rank > $extrime) {
-                        $extrime = $rank;
-                    }
-                } else {
-                    if ($rank < $extrime) {
-                        $extrime = $rank;
+            if (($owner === null || $row["owner"] == $owner)) {
+                if ($rank > 0) {
+                    if ($getMax) {
+                        if ($rank > $extrime) {
+                            $extrime = $rank;
+                        }
+                    } else {
+                        if ($rank < $extrime) {
+                            $extrime = $rank;
+                        }
                     }
                 }
             }
@@ -43,15 +46,15 @@ class MachineInMem extends DbMachine {
         return $this->xtable;
     }
 
-    function getOperationsByRank($rank = null) {
+    function getOperationsByRank($rank = null, $owner = null) {
         if ($rank === null) {
-            $rank = $this->getTopRank();
+            $rank = $this->getTopRank($owner);
         }
         $this->checkInt($rank);
 
         $arr = $this->xtable;
-        return array_filter($arr, function ($elem) use ($rank) {
-            return $elem["rank"] == $rank;
+        return array_filter($arr, function ($elem) use ($rank, $owner) {
+            return $elem["rank"] == $rank && ($owner === null || $elem["owner"] == $owner);
         });
     }
 
@@ -83,6 +86,8 @@ class MachineInMem extends DbMachine {
                 $row["id"] = $this->DbGetLastId() + 1;
             }
             $row["rank"] = $rank;
+            if (!$row['pool']) 
+            throw new feException("");
             $this->xtable[] = $row;
         }
 

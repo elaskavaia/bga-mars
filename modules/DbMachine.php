@@ -43,10 +43,12 @@ define("MACHINE_OP_SEQ", MACHINE_FLAG_ORDERED);
 class DbMachine extends APP_GameClass {
     var $table;
     var $game;
+    public $pool;
 
-    function __construct($game, $table = "machine") {
+    function __construct($game, $table = "machine", $pool = "main") {
         $this->table = $table;
         $this->game = $game;
+        $this->pool = $pool;
     }
 
     function _($text) {
@@ -57,9 +59,12 @@ class DbMachine extends APP_GameClass {
         return ["id", "rank", "type", "owner", "count", "mcount", "flags", "parent", "data", "pool"];
     }
 
-    function getSelectQuery() {
-        $sql = "SELECT * ";
-        $sql .= " FROM " . $this->table;
+    function getSelectQuery($expr = '') {
+        return $this->getSelectQueryLimited('*', $expr);
+    }
+
+    function getSelectQueryLimited($field, $expr = '') {
+        $sql = "SELECT $field FROM " . $this->table . " WHERE pool = '" . $this->pool . "' AND $expr";
         return $sql;
     }
 
@@ -101,10 +106,9 @@ class DbMachine extends APP_GameClass {
         $owner = null,
         $resolve = MACHINE_OP_RESOLVE_DEFAULT,
         $data = "",
-        $parent = 0,
-        $pool = "main"
+        $parent = 0
     ) {
-        $op = $this->createOperation($type, $rank, $mincount, $count, $owner, $resolve, $parent, $data, $pool);
+        $op = $this->createOperation($type, $rank, $mincount, $count, $owner, $resolve, $parent, $data);
 
         //$this->warn($this->getlistexpr([$op]));
         return $this->insertOp($rank, $op);
@@ -135,9 +139,9 @@ class DbMachine extends APP_GameClass {
         $owner = null,
         $flags = MACHINE_OP_RESOLVE_DEFAULT,
         $parent = 0,
-        $data = "",
-        $pool = "main"
+        $data = ""
     ) {
+        if (!$this->pool) throw new feException("no pool");
         $record = [
             "type" => $this->escapeStringForDB($type),
             "rank" => $this->checkInt($rank),
@@ -147,7 +151,7 @@ class DbMachine extends APP_GameClass {
             "flags" => $this->checkInt($flags),
             "parent" => $this->checkInt($parent),
             "data" => $this->escapeStringForDB($data),
-            "pool" => $this->escapeStringForDB($pool),
+            "pool" => $this->pool,
         ];
         return $record;
     }
@@ -177,6 +181,7 @@ class DbMachine extends APP_GameClass {
         foreach ($fields as $key) {
             $flat[] = $map[$key];
         }
+
         return $this->dbInsert($fields, $flat);
     }
 
@@ -278,14 +283,15 @@ class DbMachine extends APP_GameClass {
     }
 
     // Get max on min state on the specific location
-    function getExtremeRank($getMax) {
+    function getExtremeRank($getMax, $owner = null) {
         if ($getMax) {
-            $sql = "SELECT MAX(`rank`) res ";
+            $min = "MAX(`rank`) res ";
         } else {
-            $sql = "SELECT MIN(`rank`) res ";
+            $min = "MIN(`rank`) res ";
         }
-        $sql .= "FROM " . $this->table;
-        $sql .= " WHERE `rank` > 0";
+        $andowner = '';
+        if ($owner) $andowner = " AND owner = '$owner'";
+        $sql = $this->getSelectQueryLimited("$min", "rank > 0 $andowner");
         $dbres = self::DbQuery($sql);
         $row = mysql_fetch_assoc($dbres);
         if ($row) {
@@ -295,8 +301,8 @@ class DbMachine extends APP_GameClass {
         }
     }
 
-    function getTopRank() {
-        return $this->getExtremeRank(false);
+    function getTopRank($owner = null) {
+        return $this->getExtremeRank(false, $owner);
     }
 
     public function getFlags($resolve) {
@@ -349,16 +355,18 @@ class DbMachine extends APP_GameClass {
         return $info;
     }
 
-    function getTopOperations() {
-        return $this->getOperationsByRank();
+    function getTopOperations($owner = null) {
+        return $this->getOperationsByRank(null, $owner);
     }
 
-    function getOperationsByRank($rank = null) {
+    function getOperationsByRank($rank = null, $owner = null) {
         if ($rank === null) {
-            $rank = $this->getTopRank();
+            $rank = $this->getTopRank($owner);
         }
         $this->checkInt($rank);
-        return $this->getCollectionFromDB($this->getSelectQuery() . " WHERE rank = $rank");
+        $andowner = '';
+        if ($owner) $andowner = " AND owner = '$owner'";
+        return $this->getCollectionFromDB($this->getSelectQuery("rank = $rank $andowner"));
     }
 
     function info($op) {
@@ -381,8 +389,7 @@ class DbMachine extends APP_GameClass {
         if (count($keys) == 0) {
             return [];
         }
-        $sql = $this->getSelectQuery();
-        $sql .= " WHERE id IN ('" . implode("','", $keys) . "') ";
+        $sql = $this->getSelectQuery("id IN ('" . implode("','", $keys) . "')");
         $dbres = self::DbQuery($sql);
         $result = [];
         while ($row = mysql_fetch_assoc($dbres)) {
@@ -505,9 +512,8 @@ class DbMachine extends APP_GameClass {
     }
 
     public function validateOptional($list) {
-        $sel = $this->getSelectQuery();
         $ids = $this->getIdsWhereExpr($list);
-        $sql = "$sel WHERE mcount > 0 AND $ids";
+        $sql = $this->getSelectQuery("mcount > 0 AND $ids");
         if (count($this->getCollectionFromDB($sql)) > 0) {
             return false;
         }
@@ -591,8 +597,7 @@ class DbMachine extends APP_GameClass {
         $owner = null,
         $resolve = MACHINE_OP_SEQ,
         $data = "",
-        $parent = 0,
-        $pool = "main"
+        $parent = 0
     ) {
         if (!$rule) {
             return;
@@ -612,24 +617,24 @@ class DbMachine extends APP_GameClass {
         switch ($op) {
             case "!":
                 $main = $expr->args[0];
-                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
+                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent);
                 break;
             case "+":
             case ",":
             case ":":
                 $this->interrupt($rank);
                 if ($mcount == 0) {
-                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
+                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent);
                 } else {
                     foreach ($expr->args as $subrule) {
-                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
+                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag, $data, $parent);
                     }
                 }
                 break;
             case ";":
                 $this->interrupt($rank, count($expr->args));
                 foreach ($expr->args as $subrule) {
-                    $this->insertRule($subrule, $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
+                    $this->insertRule($subrule, $rank, 1, 1, $owner, $opflag, $data, $parent);
                     $rank += 1;
                 }
                 break;
@@ -637,7 +642,7 @@ class DbMachine extends APP_GameClass {
             case "/":
                 $this->interrupt($rank);
                 foreach ($expr->args as $subrule) {
-                    $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent, $pool);
+                    $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent);
                 }
                 break;
 
@@ -672,8 +677,7 @@ class DbMachine extends APP_GameClass {
     /** Debug functions */
 
     function gettablearr() {
-        $sel = $this->getSelectQuery();
-        $arr = $this->getCollectionFromDB("$sel WHERE rank >=0");
+        $arr = $this->getCollectionFromDB($this->getSelectQuery("rank >= 0"));
         return array_values($arr);
     }
 

@@ -986,7 +986,15 @@ abstract class PGameXBody extends PGameMachine {
     ////////////
 
     function st_gameDispatch() {
-        $this->machineDistpatch(STATE_GAME_DISPATCH, STATE_PLAYER_CONFIRM);
+        $this->machineDistpatch();
+    }
+
+    function st_gameDispatchMultiplayer() {
+        $this->machineMultiplayerDistpatch();
+    }
+
+    function st_multiplayerChoice($player_id) {
+        $this->machineMultiplayerDistpatchPrivate($player_id);
     }
 
     public function isVoid($op) {
@@ -1018,18 +1026,20 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function executeOperationSingleAtomic($op) {
+        $owner = $op["owner"];
         if (!$this->executeAttemptAutoResolve($op)) {
-            $this->switchActivePlayerIfNeeded($op["owner"]);
+            $this->switchActivePlayerIfNeeded($owner);
             return STATE_PLAYER_TURN_CHOICE; // player has to provide input
         }
         return null;
     }
 
     function executeAttemptAutoResolve($op) {
+        $owner = $op["owner"];
         $opinst = $this->getOperationInstance($op);
         $count = $op["count"]; // XXX mcount?
-        $tops = $this->machine->getTopOperations();
-        if ($opinst->auto($op["owner"], $count)) {
+        $tops = $this->machine->getTopOperations($owner);
+        if ($opinst->auto($owner, $count)) {
             $this->saction_stack($count, $op, $tops);
             return true;
         }
@@ -1039,6 +1049,10 @@ abstract class PGameXBody extends PGameMachine {
     function switchActivePlayerIfNeeded($player_color) {
         if (!$player_color) return;
         $player_id = $this->getPlayerIdByColor($player_color);
+        if ($this->isInMultiplayerMasterState()) {
+            return;
+        }
+
         if (!$player_id) return;
         if ($this->getActivePlayerId() != $player_id) {
             $this->setNextActivePlayerCustom($player_id);

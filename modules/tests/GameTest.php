@@ -8,12 +8,16 @@ require_once "../mars.game.php";
 require_once "TokensInMem.php";
 
 class GameUT extends mars {
+
+
     function __construct() {
         parent::__construct();
         include "../material.inc.php";
         include "../states.inc.php";
+        $this->gamestate = new GameState($machinestates);
+
         $this->tokens = new TokensInMem();
-        $this->machine = new MachineInMem();
+        $this->machine = new MachineInMem($this);
     }
 
     function init() {
@@ -22,6 +26,10 @@ class GameUT extends mars {
 
     function setListerts(array $l) {
         $this->eventListners = $l;
+    }
+
+    function getMultiMachine(){
+        return new MachineInMem($this,'machine','multi');
     }
     // override/stub methods here that access db and stuff
 }
@@ -96,6 +104,7 @@ final class GameTest extends TestCase {
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(0, $value);
         $m->putInEffectPool(PCOLOR, "2s");
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $value = $m->getTrackerValue(PCOLOR, 's');
         $this->assertEquals(2, $value);
@@ -111,6 +120,7 @@ final class GameTest extends TestCase {
         $op = $m->machine->createOperationSimple('activate', PCOLOR);
         $args = ['target' => $card, 'op_info' => $op];
         $count = $m->saction_resolve($op, $args);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $count);
         $value = $m->getTrackerValue(PCOLOR, 's');

@@ -1695,6 +1695,8 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = this;
         var _a;
         var operations = args.operations;
+        if (!operations)
+            return; // XXX
         this.clientStateArgs.call = "resolve";
         this.clientStateArgs.ops = [];
         this.clearReverseIdMap();
