@@ -13,6 +13,7 @@
 <div id="thething">
   <div id="hand_area" class="whiteblock">
     <div class="hand" id="hand_{CURRENT_PLAYER_COLOR}"></div>
+    <div class="draw" id="draw_{CURRENT_PLAYER_COLOR}"></div>
   </div>
   <div id="main_area">
     <div id="main_board">
@@ -50,7 +51,7 @@
         </div>
         <div id="map">
           <div class="map_bg"></div>
-          <div class="map_hexes">
+          <div id="map_hexes" class="map_hexes">
 
             <div class="hex" id="hex_3_1"></div>
             <div class="hex" id="hex_4_1"></div>
@@ -210,6 +211,7 @@
     </div>
 	<div id="miniboard_{PLAYER_COLOR}">
 		      <div id="counter_hand_{PLAYER_COLOR}"></div>
+          <div id="counter_draw_{PLAYER_COLOR}"></div>
           <div id="tracker_tr_{PLAYER_COLOR}"></div>
           <div id="playerboard_{PLAYER_COLOR}" class="playerboard">
             <div class="playerboard_group">

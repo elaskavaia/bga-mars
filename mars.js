@@ -419,7 +419,6 @@ var GameBasics = /** @class */ (function (_super) {
         else if (location) {
             console.error("Cannot find location [" + location + "] for ", div);
         }
-        console.log("id", id, "has been created at", location);
         return div;
     };
     GameBasics.prototype.getTooptipHtml = function (name, message, imgTypes, action) {
@@ -862,10 +861,10 @@ var GameTokens = /** @class */ (function (_super) {
         }
         this.clientStateArgs = {}; // collector of client state arguments
         this.instantaneousMode = true;
-        this.gamedatas.tokens['limbo'] = {
-            key: 'limbo',
+        this.gamedatas.tokens["limbo"] = {
+            key: "limbo",
             state: 0,
-            location: 'thething',
+            location: "thething",
         };
         this.limbo = this.placeToken("limbo");
         // Setting up player boards
@@ -897,8 +896,8 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.addCancelButton = function () {
         var _this = this;
-        if (!$('button_cancel')) {
-            this.addActionButton('button_cancel', _('Cancel'), function () { return _this.cancelLocalStateEffects(); }, null, null, 'red');
+        if (!$("button_cancel")) {
+            this.addActionButton("button_cancel", _("Cancel"), function () { return _this.cancelLocalStateEffects(); }, null, null, "red");
         }
     };
     GameTokens.prototype.setupPlayer = function (playerInfo) {
@@ -922,11 +921,11 @@ var GameTokens = /** @class */ (function (_super) {
         return res;
     };
     GameTokens.prototype.isLocationByType = function (id) {
-        return this.hasType(id, 'location');
+        return this.hasType(id, "location");
     };
     GameTokens.prototype.hasType = function (id, type) {
-        var loc = this.getRulesFor(id, "type", '');
-        var split = loc.split(' ');
+        var loc = this.getRulesFor(id, "type", "");
+        var split = loc.split(" ");
         return split.indexOf(type) >= 0;
     };
     GameTokens.prototype.setupTokens = function () {
@@ -1022,9 +1021,10 @@ var GameTokens = /** @class */ (function (_super) {
         return parseInt($(tokenId).parentNode.getAttribute("data-state") || "0");
     };
     GameTokens.prototype.createToken = function (placeInfo) {
+        var _a;
         var tokenId = placeInfo.key;
         var info = this.getTokenDisplayInfo(tokenId);
-        var place = this.getRulesFor(tokenId, "location") || placeInfo.location;
+        var place = (_a = placeInfo.location) !== null && _a !== void 0 ? _a : this.getRulesFor(tokenId, "location");
         var tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
         if (placeInfo.onClick) {
             this.connect(info.key, "onclick", placeInfo.onClick);
@@ -1100,7 +1100,12 @@ var GameTokens = /** @class */ (function (_super) {
             if (dojo.hasClass(tokenNode, "infonode")) {
                 this.placeInfoBox(tokenNode);
             }
+            if (placeInfo.nop) {
+                // no placement
+                return;
+            }
             if (!$(location_1)) {
+                debugger;
                 console.error("Unknown place " + location_1 + " for " + tokenInfo.key + " " + token);
                 return;
             }
@@ -1253,7 +1258,7 @@ var GameTokens = /** @class */ (function (_super) {
             if (info === undefined) {
                 key = getParentParts(key);
                 if (!key) {
-                    console.error("Undefined info for " + tokenId);
+                    //console.error("Undefined info for " + tokenId);
                     return def;
                 }
                 chain.push(key);
@@ -1283,8 +1288,8 @@ var GameTokens = /** @class */ (function (_super) {
         else {
             tokenInfo = dojo.clone(tokenInfo);
         }
-        var imageTypes = (_b = (_a = tokenInfo._chain) !== null && _a !== void 0 ? _a : tokenId) !== null && _b !== void 0 ? _b : '';
-        var ita = imageTypes.split(' ');
+        var imageTypes = (_b = (_a = tokenInfo._chain) !== null && _a !== void 0 ? _a : tokenId) !== null && _b !== void 0 ? _b : "";
+        var ita = imageTypes.split(" ");
         var tokenKey = ita[ita.length - 1];
         var declaredTypes = tokenInfo.type || "token";
         tokenInfo.typeKey = tokenKey; // this is key in token_types structure
@@ -1296,8 +1301,7 @@ var GameTokens = /** @class */ (function (_super) {
         this.updateTokenDisplayInfo(tokenInfo);
         return tokenInfo;
     };
-    GameTokens.prototype.renderSpecificToken = function (tokenNode) {
-    };
+    GameTokens.prototype.renderSpecificToken = function (tokenNode) { };
     GameTokens.prototype.getTokenPresentaton = function (type, tokenKey) {
         return this.getTokenName(tokenKey); // just a name for now
     };
@@ -1464,7 +1468,7 @@ var GameXBody = /** @class */ (function (_super) {
                 //tags
                 var tagshtm = "";
                 if (displayInfo.tags && displayInfo.tags != "") {
-                    for (var _i = 0, _c = displayInfo.tags.split(' '); _i < _c.length; _i++) {
+                    for (var _i = 0, _c = displayInfo.tags.split(" "); _i < _c.length; _i++) {
                         var tag = _c[_i];
                         tagshtm += '<div class="badge tag_' + tag + '"></div>';
                     }
@@ -1478,26 +1482,37 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.renderSpecificToken = function (tokenNode) {
-        var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
+        /* It seems duplicates the other stuff which is already there, disabled for now
+        const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
         if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
-            var originalHtml = tokenNode.outerHTML;
-            console.log("checking", tokenNode.id, "maintype", displayInfo.mainType, "location inc", displayInfo.location.includes("miniboard_"));
-            if (displayInfo.mainType == "tracker" && displayInfo.location.includes("miniboard_")) {
-                var rpDiv = document.createElement("div");
-                rpDiv.classList.add("outer_tracker", "outer_" + displayInfo.typeKey);
-                rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
-                tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
-            }
-        }
+          const originalHtml = tokenNode.outerHTML;
+          this.darhflog(
+            "checking",
+            tokenNode.id,
+            "maintype",
+            displayInfo.mainType,
+            "location inc",
+            displayInfo.location.includes("miniboard_")
+          );
+          if (displayInfo.mainType == "tracker" && displayInfo.location.includes("miniboard_")) {
+            const rpDiv = document.createElement("div");
+            rpDiv.classList.add("outer_tracker", "outer_" + displayInfo.typeKey);
+            rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
+            tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
+          }
+        }*/
     };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
-        console.log("placing ", id);
+        var _a;
+        this.darhflog("placing ", id);
         if (id && location && this.custom_placement[id]) {
             location = this.custom_placement[id];
-            console.log("placing id elsewhere: ", id, "at location ", location);
+            this.darhflog("placing id elsewhere: ", id, "at location ", location);
         }
-        return _super.prototype.createDivNode.call(this, id, classes, location);
+        var div = _super.prototype.createDivNode.call(this, id, classes, location);
+        this.darhflog("id ".concat(div.id, " has been created at ").concat((_a = div.parentNode) === null || _a === void 0 ? void 0 : _a.id));
+        return div;
     };
     GameXBody.prototype.updateTokenDisplayInfo = function (tokenDisplayInfo) {
         // override to generate dynamic tooltips and such
@@ -1520,18 +1535,32 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.getPlaceRedirect = function (tokenInfo) {
         var result = _super.prototype.getPlaceRedirect.call(this, tokenInfo);
         if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
-            result.location = this.getDomTokenLocation(tokenInfo.key);
+            result.nop = true; // do not relocate or do anyting
         }
         else if (tokenInfo.key.startsWith("award")) {
-            result.location = 'awardslist';
+            result.location = "awardslist";
         }
         else if (tokenInfo.key.startsWith("milestone")) {
-            result.location = 'milestoneslist';
+            result.location = "milestoneslist";
         }
         else if (this.custom_placement[tokenInfo.key]) {
             result.location = this.custom_placement[tokenInfo.key];
         }
+        if (!result.location) // if failed to find revert to server one
+            result.location = tokenInfo.location;
         return result;
+    };
+    GameXBody.prototype.isLayoutVariant = function (num) {
+        return this.prefs[100].value == num;
+    };
+    GameXBody.prototype.darhflog = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        if (this.isLayoutVariant(1)) {
+            console.log.apply(console, args);
+        }
     };
     GameXBody.prototype.sendActionResolve = function (op, args) {
         if (!args)

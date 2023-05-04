@@ -22,6 +22,9 @@ num|name|t|r|cost|pre|text|php
 #Milestones
 #set id=milestone_{num}
 #set php='vp'=>5
+#set location=milestoneslist
+#set count=1
+#set create=1
 1|Terraformer|7||8|(tr>=35)|Having a terraform rating of at least 35|
 2|Mayor|7||8|(city>=3)|Owning at least 3 city tiles|
 3|Gardener|7||8|(forest>=3)|Owning at least 3 greenery tiles|
@@ -31,6 +34,9 @@ num|name|t|r|cost|pre|text|php
 #Awards
 #set id=award_{num}
 #set php=
+#set location=awardslist
+#set count=1
+#set create=1
 1|Landlord|8||20||Owning the most tiles in play.
 2|Banker|8||20||Having the highest M€ production.
 3|Scientist|8||20||Having the most science tags in play.

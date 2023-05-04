@@ -111,10 +111,7 @@ abstract class PGameTokens extends PGameBasic {
         $res = [];
         $players_basic = $this->loadPlayersBasicInfos();
         foreach ($types as $key => $info) {
-            $type = array_get($info, "type");
-            if ($type != "location") {
-                continue;
-            } // XXX contains
+            if (!$this->isConsideredLocation($key)) continue;
             $scope = array_get($info, "scope");
             $counter = array_get($info, "counter");
             if ($scope && $counter != "hidden") {
@@ -152,6 +149,7 @@ abstract class PGameTokens extends PGameBasic {
         $this->token_types_adjusted = true;
         $players_basic = $this->loadPlayersBasicInfos();
         foreach ($this->token_types as $key => $info) {
+            if (!$this->isConsideredLocation($key)) continue;
             $scope = array_get($info, "scope");
             if ($scope) {
                 if ($scope == "player") {
@@ -204,7 +202,7 @@ abstract class PGameTokens extends PGameBasic {
             $data = array_get($tt, $key, null);
             if ($data) {
                 if ($field === "*") {
-                    $data['_key']=$key;
+                    $data['_key'] = $key;
                     return $data;
                 }
                 return array_get($data, $field, $default);
@@ -272,16 +270,18 @@ abstract class PGameTokens extends PGameBasic {
         }
     }
 
+    protected function isConsideredLocation(string $id) {
+        $type = $this->getRulesFor($id, 'type', '');
+        return ($type == "location"); // XXX contains?
+    }
+
     protected function isContentAllowedForLocation($player_id, $location, $attr = "content") {
         if ($location === "dev_null") {
             return false;
         }
-        $info = $this->getAllRules($location, null);
-        if ($info) {
-            $type = array_get($info, "type");
-            if ($type != "location") {
-                return true;
-            }
+
+        if ($this->isConsideredLocation($location)) {
+            $info = $this->getAllRules($location, null);
             $scope = array_get($info, "scope");
             $content_type = array_get($info, $attr);
 
@@ -299,11 +299,10 @@ abstract class PGameTokens extends PGameBasic {
             } else {
                 return false; // not listed as location
             }
-        } else {
-
-            return true; // not listed allowed
         }
-        return false;
+
+        if ($attr == 'counter') return false; // not listed - do not need counter
+        return true; // otherwise it location ok
     }
 
     protected function isCounterAllowedForLocation($player_id, $location) {
