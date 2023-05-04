@@ -269,7 +269,6 @@
   content: revert;
 }
 
-
 @for $val from -0 through 14{
   .oxygen_scale_item[data-val="#{$val}"] {  left: $val*6.8%; }
   #oxygen_map #tracker_o[data-state="#{$val}"] {  left: $val*6.8%; }

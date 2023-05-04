@@ -77,8 +77,8 @@
 }
 
 .player_tags .tracker {
-  background-image: url("img/resources.png");
-  background-size: 1000% 200%;
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
 }
 
 .player_tags .bagde {
@@ -111,5 +111,8 @@
 .bagde.tracker_tagMicrobe{ background-position-x: -1000%;}
 .bagde.tracker_tagAnimal{ background-position-x: -1100%;}
 
-.tracker.tracker_eru{ background-position-x: -800%;}
-.tracker.tracker_ers{ background-position-x: -700%;}
+.player_tags .tracker.tracker_ers{ background-position: 0 -100%;}
+.player_tags .tracker.tracker_eru{ background-position: -100% -100%}
+
+.player_tags .tracker_forest{ background-position: -600% 0}
+.player_tags .tracker_land{ background-position: -300% -100%}

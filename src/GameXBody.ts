@@ -53,19 +53,42 @@ class GameXBody extends GameTokens {
         if (displayInfo.a) rules += ";a:" + displayInfo.a;
         if (displayInfo.e) rules += ";e:" + displayInfo.e;
 
-        //tags
-        let tagshtm="";
-        if (displayInfo.tags && displayInfo.tags!="") {
-          for (let tag of displayInfo.tags.split(' ')) {
-            tagshtm+='<div class="badge tag_'+tag+'"></div>';
-          }
-        }
+        let tagshtm = "";
+        if (!tokenNode.id.startsWith('card_stanproj')) {
 
+          //tags
+
+          if (displayInfo.tags && displayInfo.tags != "") {
+            for (let tag of displayInfo.tags.split(' ')) {
+              tagshtm += '<div class="badge tag_' + tag + '"></div>';
+            }
+          }
+
+          const decor = this.createDivNode(null, "card_decor", tokenNode.id);
+          const actionhtm= displayInfo.a ? '<div class="card_action">'+displayInfo.a+'</div>' : '';
+          const fxhtm =displayInfo.r ? '<div>'+displayInfo.r+'</div>' :'';
+          const ruleshtm= '<div class="card_effect">'+fxhtm+'<div class="card_tt">'+displayInfo.text+'</div></div>';
+          const prereqhtm= displayInfo.pre ? '<div class="card_prereq">'+displayInfo.pre+'</div>' : '';
+          const vphtm= displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : '';
+          decor.innerHTML = `
+                <div class="card_illustration cardnum_${displayInfo.num}"></div>
+                <div class="card_bg"></div>
+                <div class='card_badges'>${tagshtm}</div>
+                <div class='card_title'>${displayInfo.name}</div>
+                <div class='card_cost'>${displayInfo.cost}</div> 
+                ${actionhtm}
+                ${ruleshtm}
+                ${prereqhtm}
+                ${vphtm}
+
+          `;
+
+       }
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
         div.innerHTML = `
+
         <div class='token_title'>${displayInfo.name}</div>
-        <div class='token_cost'>${displayInfo.cost}</div>
-        <div class='token_badges'>${tagshtm}</div>
+        <div class='token_cost'>${displayInfo.cost}</div> 
         <div class='token_rules'>${rules}</div>
         <div class='token_descr'>${displayInfo.tooltip}</div>
         `;

@@ -11,8 +11,7 @@
   /* border: black solid 1px; */
   border-radius: 5%;
   box-shadow: 2px 2px 3px 1px #00000080;
-  background-image: url("img/cards_bg.jpg");
-  background-size: 300% 100%;
+
 }
 
 .location .card {
@@ -30,16 +29,13 @@
 }
 
 .card[data-card-type="1"] {
-   background-color: lightgreen;
-  background-position-x: 0;
+  background-color: lightgreen;
 }
 .card[data-card-type="2"] {
   background-color: lightblue;
-  background-position-x: -200%;
 }
 .card[data-card-type="3"] {
   background-color: lightyellow;
-  background-position-x: -100%;
 }
 
 
@@ -48,7 +44,7 @@
    filter: grayscale(1);
 }
 
-.token_cost {
+.card_cost {
   font-family: "Prototype";
   position: absolute;
   top: 0%;
@@ -78,7 +74,7 @@
   background-position: -300% 0;
 }
 
-.token_title{
+.card_title{
   font-family: "Prototype";
   position: absolute;
   top: 10.3%;
@@ -98,11 +94,22 @@
   padding: 2%;
   height: 38%;
   background-color: rgba(249, 249, 249, 0.84);
+  display: none;
 }
 
-.token_rules{
+.card_effect{
   position: absolute;
-  top: 30%;
+  top: 70%;
+  font-size: calc(var(--card-width) * 0.07);
+  width: 96%;
+  padding: 2%;
+  height: 24%;
+  background-color: rgba(249, 249, 249, 0.84);
+}
+
+.card_action{
+  position: absolute;
+  top: 18%;
   font-size: calc(var(--card-width) * 0.075);
   width: 100%;
   display: flex;
@@ -111,7 +118,26 @@
   background-color: #80808040;
 }
 
-.token_badges {
+.card_tt {
+  font-size: calc(var(--card-width) * 0.065);
+  font-family: sans-serif;
+  font-style: italic;
+}
+
+.card_vp {
+
+}
+
+.card_prereq{
+  position: absolute;
+  top: 2.7%;
+  left: 21%;
+  font-family: "Prototype";
+  font-size: calc(var(--card-width) * 0.07);
+  background: #f7d543;
+}
+
+.card_badges {
   display: flex;
   position: absolute;
   top:0;
@@ -138,3 +164,43 @@
 .badge.tag_Energy{ background-position-x: -900%;}
 .badge.tag_Microbe{ background-position-x: -1000%;}
 .badge.tag_Animal{ background-position-x: -1100%;}
+
+.card_bg{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("img/cards_bg.png");
+  background-size: 300% 100%;
+  border-radius: 5%;
+}
+
+.card[data-card-type="1"] .card_bg{
+  background-position-x: 0;
+}
+.card[data-card-type="2"] .card_bg{
+  background-position-x: -200%;
+}
+.card[data-card-type="3"] .card_bg{
+  background-position-x: -100%;
+}
+
+.card_illustration{
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background-image: url("img/cards_illustrations.jpg");
+  background-size: 1000% 2100%;
+  top: 16%;
+  border-radius: 5%;
+}
+@for $val from 1 through 250{
+  $col : calc( $val - 1);
+  $row:  floor(( calc( calc($val - 1) / 10)));
+
+  .card_illustration.cardnum_#{$val}{
+    background-position-x: $col % 10 *-100%;
+    background-position-y: calc($row * -100%);
+  }
+
+
+}
