@@ -320,6 +320,7 @@ class GameTokens extends GameBasics {
 
       if (placeInfo.nop) {
         // no placement
+        this.renderSpecificToken(tokenNode);
         return;
       }
 
@@ -349,7 +350,7 @@ class GameTokens extends GameBasics {
           top: placeInfo.y + "px",
         };
       }
- 
+
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
 
       this.renderSpecificToken(tokenNode);

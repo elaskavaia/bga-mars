@@ -54,7 +54,7 @@ tagEvent|Event
 #this is not a real tag but wheatever
 tagFighter|Fighter
 
-#set type=tracker bagde 
+#set type=tracker badge 
 #set create=4
 #set location=tableau_{COLOR}
 

@@ -1102,6 +1102,7 @@ var GameTokens = /** @class */ (function (_super) {
             }
             if (placeInfo.nop) {
                 // no placement
+                this.renderSpecificToken(tokenNode);
                 return;
             }
             if (!$(location_1)) {

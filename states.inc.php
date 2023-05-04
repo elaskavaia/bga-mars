@@ -58,7 +58,7 @@ if (!defined("STATE_END_GAME")) {
     define("STATE_MULTIPLAYER_CHOICE", 6);
     define("STATE_END_GAME", 99);
 
-    define("ABORT_DISPATCH", 98);
+
 }
 
 $machinestates = [

@@ -13,6 +13,7 @@ Random notes on todo items
  * requirement +2/-2 (paramreq)
  * copy_Building
  * effect on next played card
+* Multiplayer research
 * Corporations
 
 ## Client
