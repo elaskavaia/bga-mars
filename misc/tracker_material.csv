@@ -17,7 +17,7 @@ tracker_pe|Energy Production|1|
 tracker_e|Energy|0
 tracker_ph|Heat Production|1|
 tracker_h|Heat|0
-#set location=tableau_{COLOR}
+#set location=player_tags_{COLOR}
 tracker_city|Number of cities on Mars
 tracker_forest|Number of forest on Mars
 tracker_land|Number of owned land
@@ -56,7 +56,7 @@ tagFighter|Fighter
 
 #set type=tracker bagde 
 #set create=4
-#set location=tableau_{COLOR}
+#set location=player_tags_{COLOR}
 
 tracker_tagScience|Count of Science tags
 tracker_tagBuilding|Count of Building tags
