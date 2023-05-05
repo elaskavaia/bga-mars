@@ -41,13 +41,20 @@
       </div>
       <div id="map_middle">
         <div id="map_left">
-          <div id="display_main">
-          </div>
+
           <div id="decks_area">
             <div id="deck_main" class="card carddeck"></div>
             <div id="discard_main" class="card carddeck"></div>
             <div id="oceans_pile" class="tile tile_3"></div>
           </div>
+          <div id="standard_projects_area">
+            <div id="standard_projects_title_zone">
+              <div id="standard_projects_title" class="standard_projects_title">Standard projects</div>
+            </div>
+            <div id="display_main">
+            </div>
+          </div>
+
         </div>
         <div id="map">
           <div class="map_bg"></div>

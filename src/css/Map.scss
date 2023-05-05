@@ -1,6 +1,9 @@
 #ebd-body {
   --map-width: 75vh;
   --map-height: calc(var(--map-width)*0.92);
+
+  --stan-width:14vh; /* 25vh */
+  --stan-height: calc(var(--stan-width)*0.3);
 }
 
 #map_middle{
@@ -273,4 +276,96 @@
   .oxygen_scale_item[data-val="#{$val}"] {  left: $val*6.8%; }
   #oxygen_map #tracker_o[data-state="#{$val}"] {  left: $val*6.8%; }
 
+}
+
+/*standard projects*/
+#standard_projects_area{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: calc(var(--stan-width));
+}
+
+#display_main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
+  border:calc(var(--stan-width) * 0.01) solid #938989;
+  width: fit-content;
+
+}
+
+
+#display_main .card {
+  border-radius:revert;
+  box-shadow: revert;
+  background: revert;
+}
+
+#standard_projects_title_zone {
+  background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
+  width: calc(var(--stan-width) * 0.9);
+  border-radius: 30% 30% 0 0;
+  display: flex;
+  justify-content: center;
+  padding: calc(var(--stan-width) * 0.04);
+}
+
+.standard_projects_title{
+  background: gold;
+  width: fit-content;
+  font-family: "Prototype";
+  font-size: calc(var(--stan-width) * 0.08);
+  border-radius: calc(var(--stan-width) * 0.08);
+  padding: calc(var(--stan-width) * 0.01) calc(var(--stan-width) * 0.03);
+  border: calc(var(--stan-width) * 0.01) solid black;
+}
+
+#counter_display_main {
+  display: none;
+}
+#display_main .card_info_box{
+  display: none;
+}
+
+.stanp_decor {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 130%;
+}
+.stanp_cost{
+  position: relative;
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  width:  calc(var(--stan-width) * 0.2);
+  height: calc(var(--stan-width) * 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: -900% 0;
+  font-family: "Prototype";
+  font-size: calc(var(--stan-width) * 0.1);
+}
+
+.stanp_arrow {
+  position: relative;
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  width:  calc(var(--stan-width) * 0.2);
+  height: calc(var(--stan-width) * 0.2);
+  background-position: -300% 0;
+
+}
+
+.stanp_action{
+  height: calc(var(--stan-width) * 0.2);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: calc(var(--stan-width) * 0.05);
 }

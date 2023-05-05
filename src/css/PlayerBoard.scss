@@ -9,6 +9,7 @@
   border-radius: 1vh;
 }
 
+
 .playerboard {
   position: relative;
   width:100%;
@@ -56,6 +57,10 @@
 .player_area .location {
   width: revert;
 }
+.tableau {
+  display: flex;
+  flex-wrap: wrap;
+}
 
 .player_tags{
   position: relative;
@@ -102,7 +107,7 @@
 .bagde.tracker_tagEvent{ background-position-x: -100%;}
 .bagde.tracker_tagEarth{ background-position-x: -200%;}
 .bagde.tracker_tagEventAggro{ background-position-x: -300%;}
-.bagde.tag_Plant{ background-position-x: -400%;}
+.bagde.tracker_tagPlant{ background-position-x: -400%;}
 .bagde.tracker_tagSpace{ background-position-x: -500%;}
 .bagde.tracker_tagJovian{ background-position-x: -600%;}
 .bagde.tracker_tagScience{ background-position-x: -700%;}

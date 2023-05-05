@@ -82,7 +82,19 @@ class GameXBody extends GameTokens {
 
           `;
 
-       }
+       } else {
+          //standard project formatting:
+          //cost -> action title
+          //except for sell patents
+          const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
+          //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+          decor.innerHTML = `
+             <div class='stanp_cost'>${displayInfo.cost}</div>
+             <div class='stanp_arrow'></div>
+             <div class='stanp_action'>${displayInfo.r}</div>  
+             <div class='standard_projects_title'>${displayInfo.name}</div>  
+          `;
+        }
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
         div.innerHTML = `
 
@@ -157,9 +169,9 @@ class GameXBody extends GameTokens {
     let result = super.getPlaceRedirect(tokenInfo);
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
       result.nop = true; // do not relocate or do anyting
-    } else if (tokenInfo.key.startsWith("award")) {
+    } else if (tokenInfo.key.startsWith("award_")) {
       result.location = "awardslist";
-    } else if (tokenInfo.key.startsWith("milestone")) {
+    } else if (tokenInfo.key.startsWith("milestone_")) {
       result.location = "milestoneslist";
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];

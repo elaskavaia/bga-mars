@@ -33,8 +33,6 @@
 
 
 #ebd-body {
-  --stan-width:12em; /* 25vh */
-  --stan-height: calc(var(--stan-width)*0.3);
 }
 
 
@@ -57,17 +55,7 @@
 
 
 
-.display_main  {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border: 1px solid black;
-  background-color: darkgray;
-  width: fit-content;
-  height: fit-content;
-  padding: calc(var(--stan-width) * 0.07);
 
-}
 #decks_area {
   display: flex;
   flex-direction: column;
