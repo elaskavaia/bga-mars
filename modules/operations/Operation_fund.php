@@ -22,7 +22,7 @@ class Operation_fund extends AbsOperation {
         $map = $this->game->tokens->getTokensOfTypeInLocation("award", null, null);
         $keys = array_keys($map);
         $claimed = $this->game->tokens->countTokensInLocation("award%", null);
-        $costs = [8, 14, 20, 0];
+        $costs = [8, 14, 20, 0, 0, 0];
         $cost = $costs[$claimed];
         $this->argresult['cost'] = $cost;
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {

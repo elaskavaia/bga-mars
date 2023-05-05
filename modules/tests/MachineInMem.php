@@ -6,11 +6,12 @@ declare(strict_types=1);
  * Test class for machine overriding db function to be in memory
  */
 class MachineInMem extends DbMachine {
-    var $xtable;
+    public $xtable;
 
-    function __construct($game = null, $table = "machine", $pool = "main") {
+    function __construct($game = null, $table = "machine", $pool = "main", &$xtable_ref = null) {
         parent::__construct($game, $table, $pool);
         $this->xtable = [];
+        if ($xtable_ref!=null) $this->xtable =& $xtable_ref;
     }
 
     function _($text) {

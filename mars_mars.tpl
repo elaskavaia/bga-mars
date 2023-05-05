@@ -13,7 +13,7 @@
 <div id="thething">
   <div id="hand_area" class="whiteblock">
     <div class="hand" id="hand_{CURRENT_PLAYER_COLOR}"></div>
-    <div class="draw" id="draw_{CURRENT_PLAYER_COLOR}"></div>
+    <div class="hand draw" id="draw_{CURRENT_PLAYER_COLOR}"></div>
   </div>
   <div id="main_area">
     <div id="main_board">

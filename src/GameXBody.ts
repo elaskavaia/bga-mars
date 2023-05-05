@@ -135,9 +135,9 @@ class GameXBody extends GameTokens {
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
       result.nop = true; // do not relocate or do anyting
     } else if (tokenInfo.key.startsWith("award")) {
-      result.location = "awardslist";
+      result.nop = true; 
     } else if (tokenInfo.key.startsWith("milestone")) {
-      result.location = "milestoneslist";
+      result.nop = true; 
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     }
@@ -356,10 +356,15 @@ class GameXBody extends GameTokens {
               }
             );
           });
+
         } else {
           this.addActionButton("button_" + opId, name, () => {
             this.sendActionResolve(opId);
           });
+        }
+    
+        if (opargs.void) {
+          dojo.addClass("button_" + opId,"disabled");
         }
       }
       // add done (skip) when optional
@@ -371,6 +376,11 @@ class GameXBody extends GameTokens {
       }
       i = i + 1;
     }
+  }
+  onUpdateActionButtons_multiplayerChoice(args) {
+      let operations = args.player_operations[this.player_id] ?? undefined;
+      if (!operations) return;
+      this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
   onUpdateActionButtons_after(stateName: string, args: any): void {
@@ -396,6 +406,12 @@ class GameXBody extends GameTokens {
     } else {
       this.showMoveUnauthorized();
     }
+  }
+  onToken_multiplayerChoice(tid: string){
+    this.onToken_playerTurnChoice(tid);
+  }
+  onToken_multiplayerDispatch(tid: string){
+    this.onToken_playerTurnChoice(tid);
   }
 
   // notifications
