@@ -63,8 +63,8 @@ class DbMachine extends APP_GameClass {
         return $this->getSelectQueryLimited('*', $expr);
     }
 
-    function getSelectQueryLimited($field, $expr = '') {
-        $sql = "SELECT $field FROM " . $this->table . " WHERE pool = '" . $this->pool . "' AND $expr";
+    function getSelectQueryLimited($field, $expr = '1') {
+        $sql = "SELECT $field FROM " . $this->table . " WHERE $expr ";
         return $sql;
     }
 
@@ -79,22 +79,22 @@ class DbMachine extends APP_GameClass {
         return "UPDATE $table SET";
     }
 
-    function push($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "") {
-        $op = $this->createOperation($type, 1, $mcount, $count, $owner, $resolve, 0, $data);
+    function push($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "", $pool = null) {
+        $op = $this->createOperation($type, 1, $mcount, $count, $owner, $resolve, 0, $data, $pool);
         $this->interrupt();
         return $this->insertOp(1, $op);
     }
 
-    function queue($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "") {
+    function queue($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "",$pool = null) {
         $rank = $this->getExtremeRank(true);
         $rank++;
-        $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data);
+        $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data, $pool);
         return $this->insertOp($rank, $op);
     }
 
-    function put($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "") {
+    function put($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "", $pool = null) {
         $rank = 1; //$this->getExtremeRank(false);
-        $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data);
+        $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data, $pool);
         return $this->insertOp($rank, $op);
     }
 
@@ -106,9 +106,10 @@ class DbMachine extends APP_GameClass {
         $owner = null,
         $resolve = MACHINE_OP_RESOLVE_DEFAULT,
         $data = "",
-        $parent = 0
+        $parent = 0,
+        $pool = null
     ) {
-        $op = $this->createOperation($type, $rank, $mincount, $count, $owner, $resolve, $parent, $data);
+        $op = $this->createOperation($type, $rank, $mincount, $count, $owner, $resolve, $parent, $data, $pool);
 
         //$this->warn($this->getlistexpr([$op]));
         return $this->insertOp($rank, $op);
@@ -139,8 +140,10 @@ class DbMachine extends APP_GameClass {
         $owner = null,
         $flags = MACHINE_OP_RESOLVE_DEFAULT,
         $parent = 0,
-        $data = ""
+        $data = "",
+        $pool = null
     ) {
+        if (!$pool) $pool = $this->pool;
         if (!$this->pool) throw new feException("no pool");
         $record = [
             "type" => $this->escapeStringForDB($type),
@@ -151,7 +154,7 @@ class DbMachine extends APP_GameClass {
             "flags" => $this->checkInt($flags),
             "parent" => $this->checkInt($parent),
             "data" => $this->escapeStringForDB($data),
-            "pool" => $this->pool,
+            "pool" => $pool,
         ];
         return $record;
     }
@@ -550,6 +553,7 @@ class DbMachine extends APP_GameClass {
     }
 
     public function expandOp($op, $rank = 1) {
+        if (is_numeric($op)) $op = $this->info($op);
         $this->insertRule($op["type"], $rank, $op["mcount"], $op["count"], $op["owner"], $op["flags"], $op["data"], $op["id"], $op["pool"]);
     }
 
@@ -597,7 +601,8 @@ class DbMachine extends APP_GameClass {
         $owner = null,
         $resolve = MACHINE_OP_SEQ,
         $data = "",
-        $parent = 0
+        $parent = 0,
+        $pool = null
     ) {
         if (!$rule) {
             return;
@@ -617,24 +622,24 @@ class DbMachine extends APP_GameClass {
         switch ($op) {
             case "!":
                 $main = $expr->args[0];
-                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent);
+                $this->insertMC(OpExpression::str($main), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
                 break;
             case "+":
             case ",":
             case ":":
                 $this->interrupt($rank);
                 if ($mcount == 0) {
-                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent);
+                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
                 } else {
                     foreach ($expr->args as $subrule) {
-                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag, $data, $parent);
+                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
                     }
                 }
                 break;
             case ";":
                 $this->interrupt($rank, count($expr->args));
                 foreach ($expr->args as $subrule) {
-                    $this->insertRule($subrule, $rank, 1, 1, $owner, $opflag, $data, $parent);
+                    $this->insertRule($subrule, $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
                     $rank += 1;
                 }
                 break;
@@ -642,7 +647,7 @@ class DbMachine extends APP_GameClass {
             case "/":
                 $this->interrupt($rank);
                 foreach ($expr->args as $subrule) {
-                    $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent);
+                    $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent, $pool);
                 }
                 break;
 
@@ -656,7 +661,7 @@ class DbMachine extends APP_GameClass {
         $info = $this->info($op_info);
 
         if ($this->isSharedCounter($info)) {
-            if ($tops == null) $tops = $this->getTopOperations();
+            if ($tops == null) $tops = $this->getTopOperations($info['owner']);
             if ($count === null) $count = 1;
             $this->subtract($tops, $count);
         } else {

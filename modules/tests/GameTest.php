@@ -4,20 +4,32 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertTrue;
+
 require_once "../mars.game.php";
 require_once "TokensInMem.php";
 
+
+class GameStateInMem extends GameState {
+   
+}
+
 class GameUT extends mars {
-
-
+    var $multimachine;
+    var $xtable;
     function __construct() {
         parent::__construct();
         include "../material.inc.php";
         include "../states.inc.php";
-        $this->gamestate = new GameState($machinestates);
+        $this->gamestate = new GameStateInMem($machinestates);
 
         $this->tokens = new TokensInMem();
-        $this->machine = new MachineInMem($this);
+        $this->xtable = [];
+        $this->machine = new MachineInMem($this,'machine','main',$this->xtable);
+        $this->multimachine = new MachineInMem($this,'machine','multi',$this->xtable);
+        $this->curid = 1;
     }
 
     function init() {
@@ -29,8 +41,20 @@ class GameUT extends mars {
     }
 
     function getMultiMachine(){
-        return new MachineInMem($this,'machine','multi');
+        return $this->multimachine;
     }
+
+    public $curid;
+
+    public function getCurrentPlayerId($bReturnNullIfNotLogged = false) {
+        return $this->curid;
+    }
+
+
+    protected function getCurrentPlayerColor() {
+        return $this->getPlayerColorById($this->curid);
+    }
+
     // override/stub methods here that access db and stuff
 }
 
@@ -166,5 +190,38 @@ final class GameTest extends TestCase {
         $m->effect_cardInPlay(PCOLOR,"card_main_173");
         $res = $m->collectListeners(BCOLOR, "defensePlant");
         $this->assertEquals(1, count($res));
+    }
+
+    public function testMultiplayer() {
+        $m = $this->game();
+        $m->machine->push("draw",1,1,PCOLOR,MACHINE_OP_SEQ,'','multi');
+        //$this->assertTrue($m->machine->xtable=== $m->getMultiMachine()->xtable);
+
+        $this-> assertNotNull($m->machine->getTopOperations());
+        $top1=$m->machine->getTopOperations();
+        $this-> assertEquals(1,count($top1));
+        $m->machine->put("draw",1,1,BCOLOR,MACHINE_OP_SEQ,'','multi');
+        $m->machine->queue("m",1,1,PCOLOR,MACHINE_OP_SEQ,'','main');
+        $this-> assertEquals(2,count($m->machine->getTopOperations()));
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $p1= $m->getPlayerIdByColor(PCOLOR);
+        $this->assertEquals("multiplayerDispatch", $m->gamestate->state()['name']);
+        $m->st_gameDispatchMultiplayer();
+        $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getPrivateState($p1));
+        $m->curid = $p1;
+        $op = array_shift($top1);
+        $m->action_resolve(['ops'=>[['op'=>$op['id']]]]);
+        $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
+        $p2= $m->getPlayerIdByColor(BCOLOR);
+        $m->curid = $p2;
+        $res = $m->gamestate->getPrivateState($p2);
+        $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $res);
+
+        $top1=$m->machine->getTopOperations();
+        $this-> assertEquals(1,count($top1));
+        $op = array_shift($top1);
+        $m->action_resolve(['ops'=>[['op'=>$op['id']]]]);
+        $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
     }
 }

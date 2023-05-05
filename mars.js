@@ -1102,6 +1102,7 @@ var GameTokens = /** @class */ (function (_super) {
             }
             if (placeInfo.nop) {
                 // no placement
+                this.renderSpecificToken(tokenNode);
                 return;
             }
             if (!$(location_1)) {
@@ -1538,10 +1539,10 @@ var GameXBody = /** @class */ (function (_super) {
             result.nop = true; // do not relocate or do anyting
         }
         else if (tokenInfo.key.startsWith("award")) {
-            result.location = "awardslist";
+            result.nop = true;
         }
         else if (tokenInfo.key.startsWith("milestone")) {
-            result.location = "milestoneslist";
+            result.nop = true;
         }
         else if (this.custom_placement[tokenInfo.key]) {
             result.location = this.custom_placement[tokenInfo.key];
@@ -1762,6 +1763,9 @@ var GameXBody = /** @class */ (function (_super) {
                         _this.sendActionResolve(opId);
                     });
                 }
+                if (opargs.void) {
+                    dojo.addClass("button_" + opId, "disabled");
+                }
             }
             // add done (skip) when optional
             if (singleOrFirst) {
@@ -1776,6 +1780,13 @@ var GameXBody = /** @class */ (function (_super) {
         for (var opIdS in operations) {
             _loop_1(opIdS);
         }
+    };
+    GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
+        var _a;
+        var operations = (_a = args.player_operations[this.player_id]) !== null && _a !== void 0 ? _a : undefined;
+        if (!operations)
+            return;
+        this.onUpdateActionButtons_playerTurnChoice(operations);
     };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
         var _this = this;
@@ -1805,6 +1816,12 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             this.showMoveUnauthorized();
         }
+    };
+    GameXBody.prototype.onToken_multiplayerChoice = function (tid) {
+        this.onToken_playerTurnChoice(tid);
+    };
+    GameXBody.prototype.onToken_multiplayerDispatch = function (tid) {
+        this.onToken_playerTurnChoice(tid);
     };
     // notifications
     GameXBody.prototype.setupNotifications = function () {

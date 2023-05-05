@@ -13,7 +13,7 @@
 <div id="thething">
   <div id="hand_area" class="whiteblock">
     <div class="hand" id="hand_{CURRENT_PLAYER_COLOR}"></div>
-    <div class="draw" id="draw_{CURRENT_PLAYER_COLOR}"></div>
+    <div class="hand draw" id="draw_{CURRENT_PLAYER_COLOR}"></div>
   </div>
   <div id="main_area">
     <div id="main_board">
@@ -41,20 +41,13 @@
       </div>
       <div id="map_middle">
         <div id="map_left">
-
+          <div id="display_main">
+          </div>
           <div id="decks_area">
             <div id="deck_main" class="card carddeck"></div>
             <div id="discard_main" class="card carddeck"></div>
             <div id="oceans_pile" class="tile tile_3"></div>
           </div>
-          <div id="standard_projects_area">
-            <div id="standard_projects_title_zone">
-              <div id="standard_projects_title" class="standard_projects_title">Standard projects</div>
-            </div>
-            <div id="display_main">
-            </div>
-          </div>
-
         </div>
         <div id="map">
           <div class="map_bg"></div>
@@ -209,11 +202,8 @@
   <div id="players_area">
     <!-- BEGIN player_board -->
     <div id="player_area_{PLAYER_COLOR}" class="player_area" style="--plcolor:#{PLAYER_COLOR};">
-      <div id="player_tags_{PLAYER_COLOR}" class="player_tags">
 
-      </div>
       <div id="tableau_{PLAYER_COLOR}" class="whiteblock"></div>
-
 
     </div>
 	<div id="miniboard_{PLAYER_COLOR}">

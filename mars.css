@@ -137,12 +137,17 @@
   position: relative;
 }
 
-.hand {
+.hand, .draw {
   min-height: var(--card-height);
   display: flex;
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
+  position: relative;
+}
+
+.draw {
+  min-height: unset;
 }
 
 .location > * {
@@ -290,7 +295,7 @@
   flex-direction: row-reverse;
 }
 
-.card .badge {
+.badge {
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);
   background-image: url("img/badges.png");
@@ -1585,104 +1590,47 @@
   width: revert;
 }
 
-.player_tags {
-  position: relative;
-  display: flex;
-  width: 100%;
-  height: fit-content;
-}
-
-.player_tags .bagde, .player_tags .tracker {
-  position: relative;
-  width: calc(var(--pb_cellsize) * 0.5);
-  height: calc(var(--pb_cellsize) * 0.5);
-  display: inline-grid;
-  grid-template-columns: calc(var(--pb_cellsize) * 0.5) calc(var(--pb_cellsize) * 0.3);
-  grid-column-start: 1;
-  margin-right: calc(var(--pb_cellsize) * 0.3);
-}
-
-.player_tags .tracker {
-  background-image: url("img/resources.png");
-  background-size: 1000% 200%;
-}
-
-.player_tags .bagde {
-  background-image: url("img/badges.png");
-  background-size: 1200% 100%;
-}
-
-.player_tags .bagde::after, .player_tags .tracker::after {
-  content: attr(data-state);
-  grid-column-start: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.player_tags .bagde[data-state="0"], .tracker[data-state="0"] {
-  display: none;
-}
-
-.bagde.tracker_tagCity {
-  background-position-x: 0;
-}
-
-.bagde.tracker_tagEvent {
-  background-position-x: -100%;
-}
-
-.bagde.tracker_tagEarth {
-  background-position-x: -200%;
-}
-
-.bagde.tracker_tagEventAggro {
-  background-position-x: -300%;
-}
-
-.bagde.tag_Plant {
-  background-position-x: -400%;
-}
-
-.bagde.tracker_tagSpace {
-  background-position-x: -500%;
-}
-
-.bagde.tracker_tagJovian {
-  background-position-x: -600%;
-}
-
-.bagde.tracker_tagScience {
-  background-position-x: -700%;
-}
-
-.bagde.tracker_tagBuilding {
-  background-position-x: -800%;
-}
-
-.bagde.tracker_tagEnergy {
-  background-position-x: -900%;
-}
-
-.bagde.tracker_tagMicrobe {
-  background-position-x: -1000%;
-}
-
-.bagde.tracker_tagAnimal {
-  background-position-x: -1100%;
-}
-
-.tracker.tracker_eru {
-  background-position-x: -800%;
-}
-
-.tracker.tracker_ers {
-  background-position-x: -700%;
 .mfull .player_area {
   max-width: 1024px;
 }
 .mfull #ebd-body {
   --map-width:40em; /* 75vh */
+}
+.mfull .tracker_tagCity {
+  background-position-x: 0;
+}
+.mfull .tracker_tagEvent {
+  background-position-x: -100%;
+}
+.mfull .tracker_tagEarth {
+  background-position-x: -200%;
+}
+.mfull .tracker_tagEventAggro {
+  background-position-x: -300%;
+}
+.mfull .tracker_tagPlant {
+  background-position-x: -400%;
+}
+.mfull .tracker_tagSpace {
+  background-position-x: -500%;
+}
+.mfull .tracker_tagJovian {
+  background-position-x: -600%;
+}
+.mfull .tracker_tagScience {
+  background-position-x: -700%;
+}
+.mfull .tracker_tagBuilding {
+  background-position-x: -800%;
+}
+.mfull .tracker_tagEnergy {
+  background-position-x: -900%;
+}
+.mfull .tracker_tagMicrobe {
+  background-position-x: -1000%;
+}
+.mfull .tracker_tagAnimal {
+  background-position-x: -1100%;
 }
 
 @font-face {
@@ -1732,6 +1680,17 @@
   height: 40%;
 }
 
+/** hide cards in discard */
+#discard_main > .card {
+  position: absolute;
+  opacity: 0;
+}
+
+/*
+#discard_main > .card ~ .card {
+  opacity: 0;
+}
+*/
 .tracker::after, .param::after {
   content: attr(data-state);
 }
@@ -1846,5 +1805,3 @@
 }
 
 /* */
-
-/*# sourceMappingURL=mars.css.map */

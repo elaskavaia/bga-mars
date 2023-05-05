@@ -16,6 +16,10 @@
 require_once "DbMachine.php";
 require_once "PGameTokens.php";
 
+define("CONTINUE_DISPATCH", null);
+define("ABORT_DISPATCH", 98);
+define("PLAYER_INPUT", 97);
+
 abstract class PGameMachine extends PGameTokens {
     public $machine;
 
@@ -111,7 +115,10 @@ abstract class PGameMachine extends PGameTokens {
      */
     function action_resolve($ac_args) {
         $operations_resolve = $ac_args["ops"];
-        $tops = $this->machine->getTopOperations();
+        $currentPlayer = $this->getCurrentPlayerId();
+        $curowner = $this->getCurrentPlayerColor();
+        $this->systemAssertTrue("Acting user must be a player",$curowner);
+        $tops = $this->machine->getTopOperations($curowner);
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
@@ -121,7 +128,7 @@ abstract class PGameMachine extends PGameTokens {
 
             $color = $info["owner"];
             if ($color === null) {
-                $color = $this->getActivePlayerColor(); // XXX?
+                $color = $curowner;
                 $info["owner"] = $color;
             }
             // now we will call method for specific user action
@@ -135,7 +142,11 @@ abstract class PGameMachine extends PGameTokens {
         }
         $this->machine->normalize();
         $this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
-        $this->gamestate->nextState("next");
+        if ($this->isInMultiplayerMasterState()) {
+            $this->machineMultiplayerDistpatchPrivate($currentPlayer);
+        } else {
+            $this->gamestate->nextState("next");
+        }
     }
 
     function saction_resolve($opinfo, $args): int {
@@ -145,13 +156,7 @@ abstract class PGameMachine extends PGameTokens {
 
 
     function saction_stack(int $count, array $info, array $tops) {
-        $pool = $info['pool'];
-        
-        if ($pool == 'main' || !$pool)
-            $this->machine->resolve($info, $count, $tops);
-        else
-            $this->getMultiMachine()->resolve($info, $count, $tops);
-
+        $this->machine->resolve($info, $count, $tops);
         return;
     }
 
@@ -175,13 +180,24 @@ abstract class PGameMachine extends PGameTokens {
             try {
                 $result["operations"][$id]["typeexpr"] = OpExpression::arr($op["type"]);
             } catch (Throwable $e) {
-                $result["operations"][$id]["typerr"] = $e;
+                $this->error($e);
             }
         }
         return $result;
     }
 
     abstract public function arg_operation($op);
+
+    function arg_multiplayerChoice($player_id) {
+        $res = [];
+        $players = $this->loadPlayersBasicInfos();
+        foreach ($players as $player_id => $player_info) {
+            $color = $player_info['player_color'];
+            $operations = $this->machine->getTopOperations($color);
+            $res['player_operations'][$player_id] = $this->arg_operations($operations);
+        }
+        return $res;
+    }
     //////////////////////////////////////////////////////////////////////////////
     //////////// Game state actions
     ////////////
@@ -192,31 +208,32 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function getTopOperations($owner = null) {
-        if ($this->isInMultiplayerMasterState()) {
-            $operations = $this->getMultiMachine()->getTopOperations($owner);
-        } else {
-            $operations = $this->machine->getTopOperations($owner);
-        }
+        $operations = $this->machine->getTopOperations($owner);
         return $operations;
     }
 
 
-    function hasMultiPlayerOperations() {
-        $operations = $this->getMultiMachine()->getTopOperations();
-        return count($operations) > 0;
+    function hasMultiPlayerOperations($operations) {
+        if (count($operations) > 0) {
+            $op = reset($operations);
+            return $op['pool'] == 'multi';
+        }
+        return false;
     }
 
 
     function machineDistpatch() {
         $n = MA_GAME_DISPATCH_MAX; // <-- this is just a precasious for inf loop, it this goes over user get a prompt after
         for ($i = 0; $i <  $n; $i++) {
-            $isMulti = $this->hasMultiPlayerOperations();
+            $operations = $this->getTopOperations();
+    
+            $isMulti = $this->hasMultiPlayerOperations($operations);
+            $this->debugLog("-DISPATCH $i: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
+
             if ($isMulti) {
                 $this->gamestate->nextState("multiplayer");
                 return;
             }
-            $operations = $this->getTopOperations();
-            $this->trace("$i: machine top: " . $this->machine->getlistexpr($operations));
 
             if (count($operations) == 0) {
                 $nextState = $this->machineExecuteDefault();
@@ -235,7 +252,9 @@ abstract class PGameMachine extends PGameTokens {
 
 
     function machineMultiplayerDistpatch() {
-        $isMulti = $this->hasMultiPlayerOperations();
+        $operations = $this->getTopOperations();
+        $isMulti = $this->hasMultiPlayerOperations($operations);
+        $this->debugLog("-MULTI: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
         if (!$isMulti) {
             $this->gamestate->nextState("next");
             return;
@@ -253,14 +272,14 @@ abstract class PGameMachine extends PGameTokens {
         $n = MA_GAME_DISPATCH_MAX;
         for ($i = 0; $i <  $n; $i++) {
             $operations = $this->getTopOperations($color);
-            $this->trace("$i: machine top for $color: " . $this->machine->getlistexpr($operations));
-            if (count($operations) == 0) {
+            $isMulti = $this->hasMultiPlayerOperations($operations);
+            $this->debugLog("- SINGLE $i: machine top for $color: " . $this->machine->getlistexpr($operations));
+            if (!$isMulti) {
                 $this->gamestate->unsetPrivateState($player_id);
                 $this->gamestate->setPlayerNonMultiactive($player_id, "next");
                 break;
             }
             $this->gamestate->setPlayersMultiactive([$player_id], "next", false);
-            $this->gamestate->initializePrivateState($player_id);
             $nextState = $this->machineExecuteOperations($operations);
 
             if ($nextState === null) continue;
@@ -273,35 +292,36 @@ abstract class PGameMachine extends PGameTokens {
     }
     function machineExecuteOperations($operations) {
         $this->systemAssertTrue("Cannot find operation to execute", count($operations) > 0);
-        if (count($operations) > 1) {
-            $machine = $this->machine;
-            foreach ($operations as $op) {
-                if ($machine->isOrdered($op)) {
-                    return $this->executeOperationSingle($op);
-                }
 
-                if ($this->isVoid($op)) {
-                    $type = $op["type"];
-                    $this->debugLog("-removed $type as void");
-                    $machine->hide($op);
-                    return null;
-                }
+        $machine = $this->machine;
+        $isSingle = count($operations) == 1;
+        foreach ($operations as $op) {
+            if ($machine->isOrdered($op) || $isSingle) {
+                return $this->executeOperationSingle($op);
             }
-            // choice
-            return $this->executeOperationsMultiple($operations);
-        }
 
-        $op = array_shift($operations);
-        return $this->executeOperationSingle($op);
+            if ($machine->isSharedCounter($op) && $this->isVoid($op)) {
+                $type = $op["type"];
+                $this->debugLog("-removed $type as void");
+                $machine->hide($op);
+                return CONTINUE_DISPATCH;
+            }
+        }
+        // choice has to be made
+        return $this->activatePlayerAndSwitchToState($operations);
     }
 
     function executeOperationSingle($op) {
         if ($this->expandOperation($op, null)) {
             $this->machine->hide($op);
-            return null;
+            return CONTINUE_DISPATCH;
         }
-        return $this->executeOperationSingleAtomic($op);
+        if ($this->executeAttemptAutoResolve($op)) {
+            return CONTINUE_DISPATCH;
+        }
+        return $this->activatePlayerAndSwitchToState([$op]);
     }
+
 
     function expandOperation($op, $count) {
         $type = $op["type"];
@@ -330,11 +350,50 @@ abstract class PGameMachine extends PGameTokens {
         return false;
     }
 
-    abstract public function executeOperationsMultiple($operations);
+    function activatePlayerAndSwitchToState($operations) {
+        $this->systemAssertTrue("Missing", count($operations) > 0);
+        $op = reset($operations);
+        $owner = $op["owner"];
+        $this->switchActivePlayerIfNeeded($owner);
+        if ($this->isInMultiplayerMasterState()) {
+            $player_id = $this->getPlayerIdByColor($owner);
+            $this->gamestate->initializePrivateState($player_id);
+            return ABORT_DISPATCH;
+        }
+        $userState = $this->getStateForOperations($operations);
+        if (!$userState)  return CONTINUE_DISPATCH;
+        $this->gamestate->jumpToState($userState);
+        return ABORT_DISPATCH;
+    }
 
-    abstract public function executeOperationSingleAtomic($op);
+    function executeAttemptAutoResolve($op) {
+        return false;
+    }
 
-    abstract public function isVoid($op);
+    function getStateForOperations($operations) {
+        return PLAYER_INPUT;
+    }
+
+    function switchActivePlayerIfNeeded($player_color) {
+        if (!$player_color) return;
+        $player_id = $this->getPlayerIdByColor($player_color);
+        if (!$player_id) return;
+
+        if ($this->isInMultiplayerMasterState()) {
+            if (!$this->gamestate->isPlayerActive($player_id))
+                $this->gamestate->setPlayersMultiactive([$player_id], "notpossible", false);
+            return;
+        }
+
+        if ($this->getActivePlayerId() != $player_id) {
+            $this->setNextActivePlayerCustom($player_id);
+            $this->undoSavepoint();
+        }
+    }
+
+    public function isVoid($op) {
+        return false;
+    }
 
     public function debug_push($type, $count = 1, $owner = null) {
         $this->machine->push($type, $count, $count, $owner);

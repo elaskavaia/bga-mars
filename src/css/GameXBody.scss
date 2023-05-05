@@ -173,6 +173,16 @@
   padding: 1%;
 }
 
+/** hide cards in discard */
+#discard_main > .card {
+  position: absolute;
+  opacity: 0;
+}
+/*
+#discard_main > .card ~ .card {
+  opacity: 0;
+}
+*/
 
 
 /* */

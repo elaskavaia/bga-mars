@@ -18,7 +18,7 @@ function getMachine($input) {
 require_once "tests/GameTest.php";
 
  $x=new GameTest();
- $x->testResolveAcivate();
+ $x->testMultiplayer();
 
 
 //  $res = OpExpression::parseExpression("call(a),m");

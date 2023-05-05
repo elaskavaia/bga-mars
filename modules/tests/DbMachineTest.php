@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 
 use PHPUnit\Framework\TestCase;
@@ -72,8 +74,8 @@ final class DbMachineTest extends TestCase {
         $this->assertRoundtrip("a/b/c");
         $this->assertRoundtrip("a/b/c;d");
         $this->assertRoundtrip("5a");
- 
-       // $this->assertRoundtrip("5a/3b");
+
+        // $this->assertRoundtrip("5a/3b");
 
         $this->assertRoundtrip("3?a");
         $this->assertRoundtrip("?(b/c)");
@@ -89,14 +91,14 @@ final class DbMachineTest extends TestCase {
         return $m->gettablearr();
     }
     private function assertInsert($input, $types, $flags = MACHINE_OP_SEQ, $count = 1, $mincount = null) {
-        if ($mincount===null) $mincount = $count;
+        if ($mincount === null) $mincount = $count;
         $this->assertEqualsArr($this->insertX($types, $flags, $count, $mincount), $this->getInsertTable($input));
     }
 
     public function assertResolve($start, $resolve, $count, $rest, $exp_count) {
         $m = $this->getMachine($start);
         $index = $m->findByType($resolve);
-        $this->assertNotNull($index,"Cound not find $resolve");
+        $this->assertNotNull($index, "Cound not find $resolve");
         $ret = $m->resolve($index, $count);
 
         $m2 = $this->getMachine($rest);
@@ -119,36 +121,44 @@ final class DbMachineTest extends TestCase {
         $this->assertInsert("?a?b", ["?a", "?b"], MACHINE_OP_SEQ, 1);
         $this->assertInsert("a+b+c", ["a", "b", "c"], MACHINE_OP_AND);
         $this->assertInsert("2(a/b/c)", ["a", "b", "c"], MACHINE_OP_OR, 2);
-        $this->assertInsert("?(a/b)", ["a", "b"], MACHINE_OP_OR, 1,0);
-        $this->assertInsert("2?ores(Microbe)", ["ores(Microbe)"], MACHINE_OP_SEQ, 2,0);
-        $this->assertInsert("?2ores(Microbe)", ["ores(Microbe)"], MACHINE_OP_SEQ, 2,0);
+        $this->assertInsert("?(a/b)", ["a", "b"], MACHINE_OP_OR, 1, 0);
+        $this->assertInsert("2?ores(Microbe)", ["ores(Microbe)"], MACHINE_OP_SEQ, 2, 0);
+        $this->assertInsert("?2ores(Microbe)", ["ores(Microbe)"], MACHINE_OP_SEQ, 2, 0);
     }
 
     public function testSimpleAnd() {
         $this->assertResolve("2^(a+b+c)", "a", null, "1^(b+c)", 1);
         $this->assertResolve("1(a+b+c)", "a", null, "b+c", 1);
         $this->assertResolve("a+b+c", "b", null, "a+c", 1);
-       // $this->assertResolve("?(a+b+c)", "a", null, "2?^(b+c)", 1);
+        // $this->assertResolve("?(a+b+c)", "a", null, "2?^(b+c)", 1);
     }
 
     public function testSimpleOr() {
         $this->assertResolve("2(a/b/c)", "a", null, "a/b/c", 1);
         $this->assertResolve("2?(a/b/c)", "a", null, "?(a/b/c)", 1);
-        $this->assertResolve("?(a/b/c)", "a", null, "",1);
-     
+        $this->assertResolve("?(a/b/c)", "a", null, "", 1);
     }
     public function testSimplePay() {
-        $this->assertResolve("d:m", "d", null, "m", 1);    
-        $this->assertResolve("d:m;d:m", "d", null, "m;d:m", 1);   
+        $this->assertResolve("d:m", "d", null, "m", 1);
+        $this->assertResolve("d:m;d:m", "d", null, "m;d:m", 1);
 
         $this->assertEqualsArr(['1|1|d||-1|0|,|'], $this->getInsertTable("[0,]d"));
-        $this->assertResolve("[0,]d", "d", null, "[0,]d", 1); 
-//        $this->assertResolve("[0,](d:m)", "d:m", null, "[0,](d:m)", -1);   
+        $this->assertResolve("[0,]d", "d", null, "[0,]d", 1);
+        //        $this->assertResolve("[0,](d:m)", "d:m", null, "[0,](d:m)", -1);   
     }
 
-    public function testSimpleOrd(){
-        $this->assertResolve("2s,2np_Any,o", "2s", null, "2np_Any,o",1);
+    public function testSimpleOrd() {
+        $this->assertResolve("2s,2np_Any,o", "2s", null, "2np_Any,o", 1);
         $this->assertInsert("2s,2np_Any,o", ["2s", "2np_Any", "o"], MACHINE_OP_SEQ);
-        
+    }
+
+    public function testExpand() {
+        $m = new MachineInMem();
+        $op = $m->insertMC("m,p", 1, 1, 1, PCOLOR, MACHINE_OP_SEQ, "", 0, "multi");
+        $m->expandOp($op);
+        $tops = $m->getTopOperations();
+        $this->assertEquals(2, count($tops));
+        $first = array_shift($tops);
+        $this->assertEquals("multi", $first['pool']);
     }
 }

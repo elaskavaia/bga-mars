@@ -320,6 +320,7 @@ class GameTokens extends GameBasics {
 
       if (placeInfo.nop) {
         // no placement
+        this.renderSpecificToken(tokenNode);
         return;
       }
 
