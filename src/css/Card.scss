@@ -1,7 +1,7 @@
 /*card bg ratio : 1.40658174*/
 
 #ebd-body {
-  --card-width: 10em; /* 18vh */
+  --card-width: 10vw; /* 18vh */
   --card-height: calc(var(--card-width)*1.40658174);
 }
 
@@ -119,7 +119,7 @@
 }
 
 .card_tt {
-  font-size: calc(var(--card-width) * 0.065);
+  font-size: calc(var(--card-width) * 0.055);
   font-family: sans-serif;
   font-style: italic;
 }

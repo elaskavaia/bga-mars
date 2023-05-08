@@ -4,7 +4,10 @@
       }
       #ebd-body {
         --map-width:40em; /* 75vh */
+        --card-width: 10em;
+        --pb_cellsize:4.5em;
       }
+
 
 .tracker_tagCity{ background-position-x: 0;}
 .tracker_tagEvent{ background-position-x: -100%;}

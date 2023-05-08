@@ -17,29 +17,30 @@
   </div>
   <div id="main_area">
     <div id="main_board">
-      <div id="map_top">
-        <div id="oxygen_map">
-          <div class="oxygen_scale">
-            <div class="oxygen_scale_item" data-val="0"></div>
-            <div class="oxygen_scale_item" data-val="1"></div>
-            <div class="oxygen_scale_item" data-val="2"></div>
-            <div class="oxygen_scale_item" data-val="3"></div>
-            <div class="oxygen_scale_item" data-val="4"></div>
-            <div class="oxygen_scale_item" data-val="5"></div>
-            <div class="oxygen_scale_item" data-val="6"></div>
-            <div class="oxygen_scale_item" data-val="7"></div>
-            <div class="oxygen_scale_item" data-val="8"></div>
-            <div class="oxygen_scale_item" data-val="9"></div>
-            <div class="oxygen_scale_item" data-val="10"></div>
-            <div class="oxygen_scale_item" data-val="11"></div>
-            <div class="oxygen_scale_item" data-val="12"></div>
-            <div class="oxygen_scale_item" data-val="13"></div>
-            <div class="oxygen_scale_item" data-val="14"></div>
 
+      <div id="map_middle">
+        <div id="map_top">
+          <div id="oxygen_map">
+            <div class="oxygen_scale">
+              <div class="oxygen_scale_item" data-val="0"></div>
+              <div class="oxygen_scale_item" data-val="1"></div>
+              <div class="oxygen_scale_item" data-val="2"></div>
+              <div class="oxygen_scale_item" data-val="3"></div>
+              <div class="oxygen_scale_item" data-val="4"></div>
+              <div class="oxygen_scale_item" data-val="5"></div>
+              <div class="oxygen_scale_item" data-val="6"></div>
+              <div class="oxygen_scale_item" data-val="7"></div>
+              <div class="oxygen_scale_item" data-val="8"></div>
+              <div class="oxygen_scale_item" data-val="9"></div>
+              <div class="oxygen_scale_item" data-val="10"></div>
+              <div class="oxygen_scale_item" data-val="11"></div>
+              <div class="oxygen_scale_item" data-val="12"></div>
+              <div class="oxygen_scale_item" data-val="13"></div>
+              <div class="oxygen_scale_item" data-val="14"></div>
+
+            </div>
           </div>
         </div>
-      </div>
-      <div id="map_middle">
         <div id="map_left">
 
           <div id="decks_area">
@@ -54,7 +55,9 @@
             <div id="display_main">
             </div>
           </div>
-
+          <div class="hex outer" id="hex_0_1"></div>
+          <div class="hex_phobos"><div class="hex outer" id="hex_0_2"></div></div>
+          <div class="hex_ganymede"><div class="hex outer" id="hex_0_3"></div></div>
         </div>
         <div id="map">
           <div class="map_bg"></div>
@@ -131,9 +134,7 @@
             <div class="hex" id="hex_7_9"></div>
 
 
-            <div class="hex outer" id="hex_0_1"></div>
-            <div class="hex outer" id="hex_0_2"></div>
-            <div class="hex outer" id="hex_0_3"></div>
+
           </div>
         </div>
         <div id="map_right">
@@ -208,7 +209,9 @@
 
   <div id="players_area">
     <!-- BEGIN player_board -->
+
     <div id="player_area_{PLAYER_COLOR}" class="player_area" style="--plcolor:#{PLAYER_COLOR};">
+      <div id="player_area_name_{PLAYER_COLOR}" class="player_area_name">{PLAYER_NAME}</div>
       <div id="player_tags_{PLAYER_COLOR}" class="player_tags">
 
       </div>
