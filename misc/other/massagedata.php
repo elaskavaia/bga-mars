@@ -54,8 +54,8 @@ function tomyformat($fields, $raw_fields) {
 
     $num = $fields['Card #'];
     $deck = $fields['Deck'];
-    if (!is_numeric($num)) return;
-    if ($deck != 'Basic' && $deck != 'Corporate') return;
+    #if (!is_numeric($num)) return;
+    #if ($deck != 'Basic' && $deck != 'Corporate') return;
 
     $t = 0;
     $type = $fields['Card Type'];
@@ -79,7 +79,8 @@ function tomyformat($fields, $raw_fields) {
             break;
     }
 
-    if ($t > 3) return;
+    #if ($t > 3) return;
+    if ($t!=4) return;
 
     $pre = "";
     addpre($pre, $fields['Req: Oxygen'], 'o>=', 0, 14);
