@@ -1,10 +1,4 @@
 num|name|t|r|cost|pre|text|php
-#corp cards
-#
-#set id=card_corp_{num}
-#set location=deck_corp
-#set _tr=text
-1|Begginer Corp|4|42m|10|This is a begginer corp
 #
 #standard projects
 #
