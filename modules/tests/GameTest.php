@@ -217,11 +217,13 @@ final class GameTest extends TestCase {
         $m->curid = $p2;
         $res = $m->gamestate->getPrivateState($p2);
         $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $res);
-
+        
         $top1=$m->machine->getTopOperations();
         $this-> assertEquals(1,count($top1));
         $op = array_shift($top1);
         $m->action_resolve(['ops'=>[['op'=>$op['id']]]]);
         $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
+        $m->st_gameDispatchMultiplayer();
+        $this->assertEquals("gameDispatch", $m->gamestate->state()['name']);
     }
 }

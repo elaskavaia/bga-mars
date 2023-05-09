@@ -452,6 +452,7 @@ class DbTokens extends APP_GameClass {
 
     function getTokenOfTypeInLocation($type, $location = null, $state = null, $order_by = null) {
         $res = $this->getTokensOfTypeInLocation($type, $location, $state, $order_by);
+        if (count($res)==0) return null;
         return reset($res);
     }
 

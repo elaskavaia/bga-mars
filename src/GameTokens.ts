@@ -544,13 +544,18 @@ class GameTokens extends GameBasics {
   /** @Override */
   format_string_recursive(log: string, args: any) {
     try {
-      //console.trace("format_string_recursive(" + log + ")", args);
+
       if (args.log_others !== undefined && this.player_id != args.player_id) {
         log = args.log_others;
       }
 
       if (log && args && !args.processed) {
         args.processed = true;
+
+        // if (!args.name && log.includes("{name}")) {
+        //   debugger;
+        //   console.trace("format_string_recursive(" + log + ")", args);
+        // }
 
         if (args.you) args.you = this.divYou(); // will replace ${you} with colored version
         args.You = this.divYou(); // will replace ${You} with colored version

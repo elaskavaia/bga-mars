@@ -28,6 +28,8 @@ abstract class AbsOperationTile extends AbsOperation {
     protected function getTileId() {
         $type = $this->getTileType();
         $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+        if (!$tile) return null;
+        //throw new BgaSystemException("Cannot find tile of type $type");
         return $tile['key'];
     }
 
@@ -54,11 +56,14 @@ abstract class AbsOperationTile extends AbsOperation {
 
     protected function findReservedAreas($names): array {
         $res = [];
+        if (!$names) return $res;
         $map = $this->getPlanetMap();
         $names_arr = explode(',', $names);
         foreach ($names_arr as $name) {
+            $nname = trim($name);
+            if (!$nname) continue;
             foreach ($map as $hex => $hexinfo) {
-                if ($hexinfo['name'] == trim($name)) {
+                if ($hexinfo['name'] === $nname) {
                     $res[] = $hex;
                     break;
                 }

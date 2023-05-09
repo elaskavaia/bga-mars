@@ -89,7 +89,9 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->push("a",1,$player_id);
         //$this->machine->interrupt();
         //$this->machine->normalize();
-        $this->gamestate->nextState("next");
+        $card = "card_main_123";
+        return $this->debug_oparg($this->getRulesFor($card),$card);
+        //$this->gamestate->nextState("next");
     }
 
     function debug_drawCard($num) {
@@ -565,7 +567,7 @@ abstract class PGameXBody extends PGameMachine {
         $tags = $this->getRulesFor($card_id, "tags", '');
         $discount = $this->collectDiscounts($color, $card_id);
         $costm = max(0, $costm - $discount);
-        if ($costm==0) return "nop";// no-op
+        if ($costm == 0) return "nop"; // no-op
         if (strstr($tags, "Building")) return "${costm}nms";
         if (strstr($tags, "Space")) return "${costm}nmu";
         return "${costm}nm";
@@ -647,8 +649,19 @@ abstract class PGameXBody extends PGameMachine {
             $no,
             clienttranslate('${player_name} places tile ${token_name} into ${place_name}'), // XXX
             [],
-            $this->getPlayerIdByColor($color)
+            $player_id
         );
+        if ($otype != MA_TILE_OCEAN) {
+            $marker  = $this->createPlayerMarker($color);
+            $this->dbSetTokenLocation(
+                $marker,
+                $object,
+                0,
+                '',
+                [],
+                $player_id
+            );
+        }
 
         $this->map = null; // clear map cache since tile came into play ! important
         // hex bonus
@@ -786,19 +799,24 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_draw($color, $deck, $to, $inc) {
-        $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, $inc);
+        $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, 0);
+        $player_id = $this->getPlayerIdByColor($color);
         $this->dbSetTokensLocation(
             $tokens,
             $to,
             null,
-            clienttranslate('${player_name} draws ${token_count} cards'),
+            clienttranslate('private: ${player_name} draws ${token_names}'),
             [
+                "_private" => true,
                 "place_name" => $deck,
-                "token_count" => count($tokens),
-                "player_id" => $this->getPlayerIdByColor($color),
-                "player_name" => $this->getPlayerNameById($this->getPlayerIdByColor($color))
-            ]
+            ],
+            $player_id
         );
+
+        $this->notifyMessage(clienttranslate('${player_name} draws ${token_count} cards'), [
+            "token_count" => count($tokens),
+        ], $player_id);
+        return $tokens;
     }
 
     function effect_production() {
