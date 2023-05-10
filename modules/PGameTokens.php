@@ -244,29 +244,33 @@ abstract class PGameTokens extends PGameBasic {
             return;
         }
 
-        $token_id = $id;
-        if ($create_type === 1 || $create_type === "single") {
+        try {
             $token_id = $id;
-        } elseif ($create_type === 2 || $create_type === "index") {
-            $token_id = "${id}_{INDEX}";
-        } elseif ($create_type === 3 || $create_type === "color_index") {
-            $token_id = "${id}_{COLOR}_{INDEX}";
-        } elseif ($create_type === 4 || $create_type === "color") {
-            $token_id = "${id}_{COLOR}";
-        } elseif ($create_type === 5 || $create_type === "index_color") {
-            $token_id = "${id}_{INDEX}_{COLOR}";
-        }
-        if (strpos($token_id, "{INDEX}") === false) {
-            $count = 1;
-        }
-        $location = array_get($info, "location", "limbo");
-        $state = array_get($info, "state", 0);
-        $token_id = preg_replace("/\{COLOR\}/", "{TYPE}", $token_id);
-        $location = preg_replace("/\{COLOR\}/", "{TYPE}", $location);
-        if (strpos($token_id, "{TYPE}") === false) {
-            $this->tokens->createTokensPack($token_id, $location, $count, 1, null, $state);
-        } else {
-            $this->tokens->createTokensPack($token_id, $location, $count, 1, $this->getPlayerColors(), $state);
+            if ($create_type === 1 || $create_type === "single") {
+                $token_id = $id;
+            } elseif ($create_type === 2 || $create_type === "index") {
+                $token_id = "${id}_{INDEX}";
+            } elseif ($create_type === 3 || $create_type === "color_index") {
+                $token_id = "${id}_{COLOR}_{INDEX}";
+            } elseif ($create_type === 4 || $create_type === "color") {
+                $token_id = "${id}_{COLOR}";
+            } elseif ($create_type === 5 || $create_type === "index_color") {
+                $token_id = "${id}_{INDEX}_{COLOR}";
+            }
+            if (strpos($token_id, "{INDEX}") === false) {
+                $count = 1;
+            }
+            $location = array_get($info, "location", "limbo");
+            $state = array_get($info, "state", 0);
+            $token_id = preg_replace("/\{COLOR\}/", "{TYPE}", $token_id);
+            $location = preg_replace("/\{COLOR\}/", "{TYPE}", $location);
+            if (strpos($token_id, "{TYPE}") === false) {
+                $this->tokens->createTokensPack($token_id, $location, $count, 1, null, $state);
+            } else {
+                $this->tokens->createTokensPack($token_id, $location, $count, 1, $this->getPlayerColors(), $state);
+            }
+        } catch (Exception $e) {
+            $this->error("Failed to create tokens in location $token_id $location x $count ");
         }
     }
 
@@ -375,7 +379,7 @@ abstract class PGameTokens extends PGameBasic {
      * @param string $notif
      * @param array $args
      */
-    function dbSetTokensLocation($token_arr, $place_id, $state = null, $notif = "*", $args = []) {
+    function dbSetTokensLocation($token_arr, $place_id, $state = null, $notif = "*", $args = [], $player_id = 0) {
         $type = $this->tokens->checkListOrTokenArray($token_arr);
         if ($type == 0) {
             return;
@@ -438,10 +442,12 @@ abstract class PGameTokens extends PGameBasic {
         }
         $args = array_merge($notifyArgs, $args);
         //$this->warn("$type $notif ".$args['token_id']." -> ".$args['place_id']."|");
-        if (array_key_exists("player_id", $args)) {
-            $player_id = $args["player_id"];
-        } else {
-            $player_id = $this->getMostlyActivePlayerId();
+        if (!$player_id) {
+            if (array_key_exists("player_id", $args)) {
+                $player_id = $args["player_id"];
+            } else {
+                $player_id = $this->getMostlyActivePlayerId();
+            }
         }
         $this->notifyWithName("tokenMoved", $notif, $args, $player_id);
         // send counter update if required

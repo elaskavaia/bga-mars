@@ -13,7 +13,7 @@
 <div id="thething">
   <div id="hand_area" class="whiteblock">
     <div class="hand" id="hand_{CURRENT_PLAYER_COLOR}"></div>
-    <div class="draw" id="draw_{CURRENT_PLAYER_COLOR}"></div>
+    <div class="draw location" id="draw_{CURRENT_PLAYER_COLOR}"></div>
   </div>
   <div id="main_area">
     <div id="main_board">
@@ -172,7 +172,7 @@
             <div id="milestones_title" class="map_title">Milestones</div>
             <div id="milestones_gains" class="milesawardsgains"></div>
           </div>
-          <div id="milestoneslist" class="map_milesawardscontent">
+          <div id="display_milestones" class="map_milesawardscontent">
             <div id="milestone_1" class="milestone milestone_1"></div>
             <div id="milestone_2" class="milestone milestone_2"></div>
             <div id="milestone_3" class="milestone milestone_3"></div>
@@ -186,7 +186,7 @@
             <div id="awards_title" class="map_title">Awards</div>
             <div id="awards_gains" class="milesawardsgains"></div>
           </div>
-          <div id="awardslist" class="map_milesawardscontent">
+          <div id="display_awards" class="map_milesawardscontent">
             <div id="award_1" class="award award_1"></div>
             <div id="award_2" class="award award_2"></div>
             <div id="award_3" class="award award_3"></div>

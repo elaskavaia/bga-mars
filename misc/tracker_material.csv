@@ -17,7 +17,7 @@ tracker_pe|Energy Production|1|
 tracker_e|Energy|0
 tracker_ph|Heat Production|1|
 tracker_h|Heat|0
-#set location=player_tags_{PLAYER_COLOR}
+#set location=player_tags_{COLOR}
 tracker_city|Number of cities on Mars
 tracker_forest|Number of forest on Mars
 tracker_land|Number of owned land
@@ -51,13 +51,12 @@ tagJovian|Jovian
 tagEnergy|Power
 tagVenus|Venus
 tagEvent|Event
-#this is not a real tag but wheatever
+#this is not a real tag but its used for translation
 tagFighter|Fighter
 
 #set type=tracker badge 
 #set create=4
-#set location=player_tags_{PLAYER_COLOR}
-
+#set location=player_tags_{COLOR}
 tracker_tagScience|Count of Science tags
 tracker_tagBuilding|Count of Building tags
 tracker_tagSpace|Count of Space tags
@@ -68,8 +67,9 @@ tracker_tagCity|Count of City tags
 tracker_tagEarth|Count of Earth tags
 tracker_tagJovian|Count of Jovian tags
 tracker_tagEnergy|Count of Power tags
-tracker_tagVenus|Count of Venus tags
-tracker_tagEvent|Count of Event tags
+tracker_tagEvent|Count of played Events cards
+#tracker_tagVenus|Count of Venus tags
+
 
 #hex tiles
 #set create=2

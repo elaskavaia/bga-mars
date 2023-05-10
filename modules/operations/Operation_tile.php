@@ -17,11 +17,9 @@ class Operation_tile extends AbsOperationTile {
             $reshexes = $this->findReservedAreas($reservename);
             if (count($reshexes) == 0) {
                 if (!$this->checkAdjRulesPasses($ohex, $color, $reservename)) {
-                    return MA_ERR_ALREADYUSED;
+                    return MA_ERR_PLACEMENT;
                 }
-          
-            }
-            if (array_search($ohex, $reshexes) === false) {
+            } else if (array_search($ohex, $reshexes) === false) {
                 return MA_ERR_NOTRESERVED;
             }
         }

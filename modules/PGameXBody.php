@@ -22,7 +22,7 @@ abstract class PGameXBody extends PGameMachine {
             [
                 "gameended" => 11,
                 //      ...
-                //    "my_first_game_variant" => 100,
+                "var_begginers_corp" => 100,
                 //    "my_second_game_variant" => 101,
                 //      ...
             ]
@@ -36,11 +36,19 @@ abstract class PGameXBody extends PGameMachine {
         try {
             $this->createTokens();
             $this->tokens->shuffle("deck_main");
+            $this->tokens->shuffle("deck_corp");
             $players = $this->loadPlayersBasicInfos();
 
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
-                $this->tokens->pickTokensForLocation(4, "deck_main", "hand_${color}");
+                if ($this->getGameStateValue('var_begginers_corp') == 1) {
+                    $this->tokens->pickTokensForLocation(10, "deck_main", "hand_${color}");
+                } else {
+                    $this->tokens->pickTokensForLocation(10, "deck_main", "draw_${color}");
+                    $this->tokens->pickTokensForLocation(2, "deck_corp", "draw_${color}");
+                    $this->multiplayerqueue($color, "keepcorp,10?buycard,prediscard");
+                }
+
                 $this->dbSetScore($player_id, 20, '');
             }
         } catch (Exception $e) {
@@ -89,7 +97,9 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->push("a",1,$player_id);
         //$this->machine->interrupt();
         //$this->machine->normalize();
-        $this->gamestate->nextState("next");
+        $card = "card_main_123";
+        return $this->debug_oparg($this->getRulesFor($card), $card);
+        //$this->gamestate->nextState("next");
     }
 
     function debug_drawCard($num) {
@@ -360,7 +370,8 @@ abstract class PGameXBody extends PGameMachine {
 
             $rules = $this->getOperationRules($type);
             if (!$rules) {
-                throw new BgaSystemException("Operation is not defined for $type");
+                $rules=[];
+                //throw new BgaSystemException("Operation is not defined for $type");
             }
             $classname = array_get($rules, "class", "Operation_$type");
 
@@ -456,6 +467,7 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($cards as $key => $info) {
                 $e = $this->getRulesFor($key, 'e');
                 if (!$e) continue;
+                if ($info['state'] == MA_CARD_STATE_FACEDOWN) continue;
                 $info['e'] = $e;
                 $info['owner'] = substr($info['location'], strlen('tableau_'));
                 $this->eventListners[$key] = $info;
@@ -470,6 +482,15 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($listeners as $lisinfo) {
             $outcome = $lisinfo['outcome'];
             $card = $lisinfo['card'];
+
+            if ($outcome == 'flip') {
+                // special rule - flip does not trigger on itself
+                if ($lisinfo['target'] == $card) continue;
+                // otherwise its immediate resolves
+                $this->executeImmediately($owner, $outcome, 1, $card);
+                continue;
+            }
+
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} triggered effect of ${token_name}'), $card, $owner);
             // these goes in the pull where player can pick the sequence
             $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE,  $lisinfo['target']);
@@ -506,12 +527,12 @@ abstract class PGameXBody extends PGameMachine {
             $card = $info['key'];
             $lisowner = $info['owner'];
             foreach ($events as $event) {
-                $ret = [];
+                $ret = $info;
                 // filter for listener for specific effect
                 if ($this->mtMatchEvent($e, $lisowner, $event, $owner, $ret)) {
+
                     $context = $ret['context'];
                     $ret['card'] = $card;
-                    $ret['owner'] = $lisowner;
                     $ret['event'] = $event;
                     $ret['target'] = $context === 'that' ? $card_context : $card;
                     $res[] = $ret;
@@ -565,7 +586,7 @@ abstract class PGameXBody extends PGameMachine {
         $tags = $this->getRulesFor($card_id, "tags", '');
         $discount = $this->collectDiscounts($color, $card_id);
         $costm = max(0, $costm - $discount);
-        if ($costm==0) return "nop";// no-op
+        if ($costm == 0) return "nop"; // no-op
         if (strstr($tags, "Building")) return "${costm}nms";
         if (strstr($tags, "Space")) return "${costm}nmu";
         return "${costm}nm";
@@ -605,6 +626,10 @@ abstract class PGameXBody extends PGameMachine {
         $state = MA_CARD_STATE_TAGUP;
         if ($ttype == MA_CARD_TYPE_EVENT) {
             $state = MA_CARD_STATE_FACEDOWN;
+            if (isset($rules['e'])) {
+                // single use effect
+                $state = MA_CARD_STATE_ACTION_SINGLEUSE;
+            }
         }
         if (isset($rules['a'])) {
             $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cars
@@ -647,8 +672,19 @@ abstract class PGameXBody extends PGameMachine {
             $no,
             clienttranslate('${player_name} places tile ${token_name} into ${place_name}'), // XXX
             [],
-            $this->getPlayerIdByColor($color)
+            $player_id
         );
+        if ($otype != MA_TILE_OCEAN) {
+            $marker  = $this->createPlayerMarker($color);
+            $this->dbSetTokenLocation(
+                $marker,
+                $object,
+                0,
+                '',
+                [],
+                $player_id
+            );
+        }
 
         $this->map = null; // clear map cache since tile came into play ! important
         // hex bonus
@@ -744,7 +780,7 @@ abstract class PGameXBody extends PGameMachine {
         $current = $this->tokens->getTokenState($token_id);
         if ($current + $inc > $max) {
             $inc = $max - $current;
-            if ($inc == 0) {
+            if ($inc <= 0) {
                 $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max, can no longer increase'), $token_id);
                 return false;
             }
@@ -758,7 +794,7 @@ abstract class PGameXBody extends PGameMachine {
             "token_name" => $token_id,
         ], $this->getPlayerIdByColor($color));
 
-        if ($value == $max) {
+        if ($value >= $max) {
             $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max'), $token_id);
         }
 
@@ -786,19 +822,24 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_draw($color, $deck, $to, $inc) {
-        $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, $inc);
+        $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, 0);
+        $player_id = $this->getPlayerIdByColor($color);
         $this->dbSetTokensLocation(
             $tokens,
             $to,
             null,
-            clienttranslate('${player_name} draws ${token_count} cards'),
+            clienttranslate('private: ${player_name} draws ${token_names}'),
             [
+                "_private" => true,
                 "place_name" => $deck,
-                "token_count" => count($tokens),
-                "player_id" => $this->getPlayerIdByColor($color),
-                "player_name" => $this->getPlayerNameById($this->getPlayerIdByColor($color))
-            ]
+            ],
+            $player_id
         );
+
+        $this->notifyMessage(clienttranslate('${player_name} draws ${token_count} cards'), [
+            "token_count" => count($tokens),
+        ], $player_id);
+        return $tokens;
     }
 
     function effect_production() {
@@ -813,8 +854,9 @@ abstract class PGameXBody extends PGameMachine {
                 if ($p == 'e') {
                     // energy to heat
                     $curr = $this->tokens->getTokenState("tracker_${p}_${color}");
-                    if ($curr) {
+                    if ($curr>0) {
                         $this->effect_incCount($color, 'h', $curr, ['message' => clienttranslate('${player_name} gains ${inc_resource} due to heat transfer')]);
+                        $this->effect_incCount($color, 'e', -$curr);
                     }
                 } elseif ($p == 'm') {
                     $curr = $this->tokens->getTokenState("tracker_tr_${color}");
@@ -1017,9 +1059,9 @@ abstract class PGameXBody extends PGameMachine {
         return $opinst->action_resolve($args);
     }
 
-    function executeImmediately($color, $type, $count) {
+    function executeImmediately($color, $type, $count, $data = '') {
         // this does not go on stack - so no stack clean up
-        $opinst = $this->getOperationInstanceFromType($type, $color, $count);
+        $opinst = $this->getOperationInstanceFromType($type, $color, $count, $data);
         return $opinst->auto($color, $count);
     }
 

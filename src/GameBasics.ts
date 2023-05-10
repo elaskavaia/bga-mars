@@ -827,6 +827,12 @@ class GameBasics extends GameGui {
     this.onNotif(notif);
   }
 
+  ntf_gameStateMultipleActiveUpdate( notif )
+  {
+    this.gamedatas.gamestate.descriptionmyturn = '...';
+    return this.inherited(arguments);
+  }
+
   onNotif(notif: Notif) {
     if (!this.instantaneousMode && notif.log) {
       this.setDescriptionOnMyTurn(notif.log, notif.args);

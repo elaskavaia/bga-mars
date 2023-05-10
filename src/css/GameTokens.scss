@@ -54,3 +54,18 @@
   box-shadow: 0px 0px 4px 2px #800cea !important;
 }
 
+.marker {
+  width: 10px;
+  height: 10px;
+  outline: 1px dashed black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.marker_0000ff {
+  background-color: #0000ff;
+}
+.marker_ff0000 {
+  background-color: #ff0000;
+}

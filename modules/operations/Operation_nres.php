@@ -41,9 +41,13 @@ class Operation_nres extends AbsOperation {
 
         $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
         $num = $inc;
+        $player_id = $this->game->getPlayerIdByColor($owner);
         foreach ($resources as $key => $info) {
             $num--;
-            $this->game->dbSetTokenLocation($key, 'miniboard_' . $owner, 0);
+            $this->game->dbSetTokenLocation($key, "tableau_$owner", 0, clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), [
+                'restype_name' => $this->game->getTokenName("tag$holds"),
+                "card_name" => $this->game->getTokenName($card),
+            ], $player_id);
             if ($num == 0) break;
         }
         if ($num > 0) throw new BgaUserException("Insufficient number of resources");

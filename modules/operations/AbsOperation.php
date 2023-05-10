@@ -123,7 +123,7 @@ abstract class AbsOperation {
         $possible_targets = $this->getStateArg($key);
         if ($args && array_key_exists($key, $args)) {
             $target = $args[$key];
-            $this->game->systemAssertTrue("Unathorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
+            $this->game->systemAssertTrue("Unauthorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
             return $target;
         } else if ($this->isOneChoice()) {
             if (is_array($possible_targets)) return array_shift($possible_targets);

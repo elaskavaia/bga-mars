@@ -88,7 +88,9 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function action_skip($args) {
-        $this->machine->drop($this->machine->getTopOperations());
+        $curowner = $this->getCurrentPlayerColor();
+        $this->systemAssertTrue("Acting user must be a player", $curowner);
+        $this->machine->drop($this->machine->getTopOperations($curowner));
         $this->notifyMessage(clienttranslate('${player_name} skips rest of actions'));
         $this->gamestate->nextState("next");
     }
@@ -117,7 +119,7 @@ abstract class PGameMachine extends PGameTokens {
         $operations_resolve = $ac_args["ops"];
         $currentPlayer = $this->getCurrentPlayerId();
         $curowner = $this->getCurrentPlayerColor();
-        $this->systemAssertTrue("Acting user must be a player",$curowner);
+        $this->systemAssertTrue("Acting user must be a player", $curowner);
         $tops = $this->machine->getTopOperations($curowner);
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
@@ -203,8 +205,7 @@ abstract class PGameMachine extends PGameTokens {
     ////////////
 
     protected function isInMultiplayerMasterState() {
-        $curstate = $this->gamestate->state();
-        return  $this->gamestate->isMutiactiveState() && array_key_exists('initialprivate', $curstate);
+        return $this->gamestate->isMutiactiveState();
     }
 
     function getTopOperations($owner = null) {

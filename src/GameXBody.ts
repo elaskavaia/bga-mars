@@ -48,9 +48,7 @@ class GameXBody extends GameTokens {
 
       // use this to generate some fake parts of card, remove this when use images
       if (displayInfo.mainType == "card") {
-        let rules = displayInfo.r ?? "";
-        if (displayInfo.a) rules += ";a:" + displayInfo.a;
-        if (displayInfo.e) rules += ";e:" + displayInfo.e;
+
 
         let tagshtm = "";
         if (!tokenNode.id.startsWith('card_stanproj')) {
@@ -64,22 +62,17 @@ class GameXBody extends GameTokens {
           }
 
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          const actionhtm= displayInfo.a ? '<div class="card_action">'+displayInfo.a+'</div>' : '';
-          const fxhtm =displayInfo.r ? '<div>'+displayInfo.r+'</div>' :'';
-          const ruleshtm= '<div class="card_effect">'+fxhtm+'<div class="card_tt">'+displayInfo.text+'</div></div>';
-          const prereqhtm= displayInfo.pre ? '<div class="card_prereq">'+displayInfo.pre+'</div>' : '';
-          const vphtm= displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : '';
+
           decor.innerHTML = `
                 <div class="card_illustration cardnum_${displayInfo.num}"></div>
                 <div class="card_bg"></div>
                 <div class='card_badges'>${tagshtm}</div>
                 <div class='card_title'>${displayInfo.name}</div>
                 <div class='card_cost'>${displayInfo.cost}</div> 
-                ${actionhtm}
-                ${ruleshtm}
-                ${prereqhtm}
-                ${vphtm}
-
+                <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
+                <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
+                <div class="card_prereq">${displayInfo.pre??''}</div>
+                <div class="card_vp">${displayInfo.vp??''}</div>
           `;
 
        } else {
@@ -100,8 +93,8 @@ class GameXBody extends GameTokens {
 
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div> 
-        <div class='token_rules'>${rules}</div>
-        <div class='token_descr'>${displayInfo.tooltip}</div>
+        <div class='token_rules'>${displayInfo.r}</div>
+        <div class='token_descr'>${displayInfo.text}</div>
         `;
         tokenNode.appendChild(div);
 
@@ -148,8 +141,12 @@ class GameXBody extends GameTokens {
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
     if (tokenDisplayInfo.mainType == "card") {
+      let rules = tokenDisplayInfo.r ?? "";
+      if (tokenDisplayInfo.a) rules += ";a:" + tokenDisplayInfo.a;
+      if (tokenDisplayInfo.e) rules += ";e:" + tokenDisplayInfo.e;
+
       tokenDisplayInfo.imageTypes += " infonode";
-      tokenDisplayInfo.tooltip =
+      tokenDisplayInfo.tooltip = rules + "<br>"+
         (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
         this.getTr(tokenDisplayInfo.text) +
         "<br>" +

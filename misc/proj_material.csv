@@ -16,7 +16,7 @@ num|name|t|r|cost|pre|text|php
 #Milestones
 #set id=milestone_{num}
 #set php='vp'=>5
-#set location=milestoneslist
+#set location=display_milestones
 #set count=1
 #set create=1
 1|Terraformer|7||8|(tr>=35)|Having a terraform rating of at least 35|
@@ -28,7 +28,7 @@ num|name|t|r|cost|pre|text|php
 #Awards
 #set id=award_{num}
 #set php=
-#set location=awardslist
+#set location=display_awards
 #set count=1
 #set create=1
 1|Landlord|8||20||Owning the most tiles in play.

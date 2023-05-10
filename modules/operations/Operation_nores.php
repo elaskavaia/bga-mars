@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/**
+ * Remove resource from other player
+ */
 class Operation_nores extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
