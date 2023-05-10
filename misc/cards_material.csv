@@ -220,6 +220,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 #set _tr=text|||||||||||
 #set _tr=ac|||||||||||
 #set create=single|||||||||||
+#set type=card corp
 #num|name|t|r|a|e|cost|pre|tags|vp|text|php
 1|Begginer Corp|4|42m|||0|||0|You start with 42 MC. You keep 10 starting cards|
 2|CrediCor|4|57m|||0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
