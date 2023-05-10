@@ -209,6 +209,7 @@
 
 .location .card {
   margin-right: 5px;
+  position: relative;
 }
 
 .card[data-card-type="0"] {
@@ -2286,6 +2287,7 @@
   height: calc(var(--map-width) * 0.08);
   background-image: url("img/milestones_awards.png");
   background-size: 500% 200%;
+  position: relative;
 }
 
 .award_1 {
@@ -3284,20 +3286,6 @@
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5019607843);
   font-size: calc(var(--stan-width) * 0.07);
   margin-bottom: calc(var(--stan-height) * 0.1);
-}
-
-.marker {
-  width: 10px;
-  height: 10px;
-  outline: 1px dashed black;
-}
-
-.marker_0000ff {
-  background-color: #0000ff;
-}
-
-.marker_ff0000 {
-  background-color: #ff0000;
 }
 
 .card .resource {

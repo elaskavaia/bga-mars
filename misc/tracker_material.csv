@@ -51,7 +51,7 @@ tagJovian|Jovian
 tagEnergy|Power
 tagVenus|Venus
 tagEvent|Event
-#this is not a real tag but wheatever
+#this is not a real tag but its used for translation
 tagFighter|Fighter
 
 #set type=tracker badge 
@@ -67,8 +67,9 @@ tracker_tagCity|Count of City tags
 tracker_tagEarth|Count of Earth tags
 tracker_tagJovian|Count of Jovian tags
 tracker_tagEnergy|Count of Power tags
-tracker_tagVenus|Count of Venus tags
-tracker_tagEvent|Count of Event tags
+tracker_tagEvent|Count of played Events cards
+#tracker_tagVenus|Count of Venus tags
+
 
 #hex tiles
 #set create=2

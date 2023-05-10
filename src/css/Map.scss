@@ -179,6 +179,7 @@
   height: calc(var(--map-width) * 0.08);
   background-image: url("img/milestones_awards.png");
   background-size: 500% 200%;
+  position: relative;
 }
 
 .award_1 {background-position:-200% 0; }

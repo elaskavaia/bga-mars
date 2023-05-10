@@ -19,9 +19,9 @@ class Operation_fund extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $map = $this->game->tokens->getTokensOfTypeInLocation("award", null, null);
+        $map = $this->game->tokens->getTokensOfTypeInLocation("award_", null, null);
         $keys = array_keys($map);
-        $claimed = $this->game->tokens->countTokensInLocation("award%", null);
+        $claimed = $this->game->tokens->countTokensInLocation("award_%", null);
         $costs = [8, 14, 20, 0, 0, 0];
         $cost = $costs[$claimed];
         $this->argresult['cost'] = $cost;

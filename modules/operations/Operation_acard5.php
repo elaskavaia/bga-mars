@@ -19,11 +19,11 @@ class Operation_acard5 extends AbsOperation {
         //reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here
         $this->game->dbSetTokenLocation($card_id, "reveal", 0, $notif, [], $player_id);
         $tags = $this->game->getRulesFor($card_id, 'tags', '');
-        if (strstr($tags, 'tagScience')) {
-            $this->game->notifyMessage(clienttranslate('it has science tag'));
+        if (strstr($tags, 'tagMicrobe')) {
+            $this->game->notifyMessage(clienttranslate('it has tag'));
             $this->game->putInEffectPool($color, "res", $this->getContext());
         } else {
-            $this->game->notifyMessage(clienttranslate('it does not have science tag'));
+            $this->game->notifyMessage(clienttranslate('it does not have tag'));
         }
         $this->game->dbSetTokenLocation($card_id, "discard_main", 0, '', [],  $player_id);
         return 1;

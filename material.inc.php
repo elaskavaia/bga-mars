@@ -37,7 +37,7 @@
   define("MA_CARD_TYPE_AWARD", 8);
 
   // error codes
-
+  define("MA_OK", 0);
   define("MA_ERR_COST", 1);
   define("MA_ERR_PREREQ", 2);
   define("MA_ERR_MANDATORYEFFECT", 3);
@@ -64,6 +64,7 @@
   define("MA_CARD_STATE_TAGUP", 1);
   define("MA_CARD_STATE_ACTION_UNUSED", 2);
   define("MA_CARD_STATE_ACTION_USED", 3);
+  define("MA_CARD_STATE_ACTION_SINGLEUSE", 4);
 }
 
 $this->token_types = [
@@ -282,7 +283,7 @@ $this->token_types = [
   'num' => 16,
   'name' => clienttranslate("Domed Crater"),
   't' => 1,
-  'r' => '3pm,1npe,3p',
+  'r' => '3pm,city,1npe,3p',
   'cost' => 24,
   'pre' => 'o<=7',
   'tags' => 'Building City',
@@ -433,7 +434,7 @@ $this->token_types = [
   'num' => 28,
   'name' => clienttranslate("Security Fleet"),
   't' => 2,
-  'a' => 'u:res',
+  'a' => 'nu:res',
   'cost' => 12,
   'tags' => 'Space',
   'vp' => 'resCard',
@@ -823,7 +824,7 @@ $this->token_types = [
   'num' => 59,
   'name' => clienttranslate("Mangrove"),
   't' => 1,
-  'r' => 'o',
+  'r' => 'forest(ocean),o',
   'cost' => 12,
   'pre' => 't>=4',
   'tags' => 'Plant',
@@ -1935,6 +1936,7 @@ $this->token_types = [
   'num' => 149,
   'name' => clienttranslate("CEO's Favourite Project"),
   't' => 3,
+  'r' => 'acard149',
   'cost' => 1,
   'tags' => 'Event',
   'vp' => 0,
@@ -2106,7 +2108,7 @@ $this->token_types = [
   'num' => 163,
   'name' => clienttranslate("Imported Nitrogen"),
   't' => 3,
-  'r' => '4p,tr',
+  'r' => '4p,tr,3ores(Microbe),2ores(Animal)',
   'cost' => 23,
   'tags' => 'Space Earth Event',
   'vp' => 0,
@@ -2291,7 +2293,7 @@ $this->token_types = [
   'num' => 178,
   'name' => clienttranslate("Heat Trappers"),
   't' => 1,
-  'r' => '2nh_Any,pe',
+  'r' => '2nph_Any,pe',
   'cost' => 6,
   'tags' => 'Building Energy',
   'vp' => -1,
@@ -2477,7 +2479,7 @@ $this->token_types = [
   'num' => 193,
   'name' => clienttranslate("Plantation"),
   't' => 1,
-  'r' => 'o',
+  'r' => 'forest,o',
   'cost' => 15,
   'pre' => 'tagScience>=2',
   'tags' => 'Plant',
@@ -2502,6 +2504,7 @@ $this->token_types = [
   'num' => 195,
   'name' => clienttranslate("Indentured Workers"),
   't' => 3,
+  'e' => 'onPay_card:8m;play_card:flip:that',
   'cost' => 0,
   'tags' => 'Event',
   'vp' => -1,
@@ -2635,10 +2638,11 @@ $this->token_types = [
   'num' => 206,
   'name' => clienttranslate("Special Design"),
   't' => 3,
+  'e' => 'play_card:flip:that',
   'cost' => 4,
   'tags' => 'Science Event',
   'vp' => 0,
-  'text' => clienttranslate("The next card you play this generation is +2 or -2 in global requirements, your choice."),
+  'text' => clienttranslate("The next card you play this generation is +2 or -2 in global requirements, your choice TODO."),
 ],
  'card_main_207' => [  //
   'location' => 'deck_main',
@@ -2681,7 +2685,7 @@ $this->token_types = [
   'r' => '42m',
   'cost' => 0,
   'vp' => 0,
-  'text' => clienttranslate("This is a begginer corp"),
+  'text' => clienttranslate("You start with 42 MC. You keep 10 starting cards"),
 ],
  'card_corp_2' => [  //
   'location' => 'deck_corp',
@@ -2772,7 +2776,7 @@ $this->token_types = [
   'num' => 9,
   'name' => clienttranslate("PhoboLog"),
   't' => 4,
-  'r' => '23m,10u',
+  'r' => '23m,10u,eru',
   'cost' => 0,
   'tags' => 'Space',
   'vp' => 0,
@@ -2785,6 +2789,7 @@ $this->token_types = [
   'name' => clienttranslate("Teractor"),
   't' => 4,
   'r' => '60m',
+  'e' => 'onPay_tagEarth:3m',
   'cost' => 0,
   'tags' => 'Earth',
   'vp' => 0,
@@ -2887,7 +2892,7 @@ $this->token_types = [
 ],
 // #Milestones
  'milestone_1' => [  //
-  'location' => 'milestoneslist',
+  'location' => 'display_milestones',
   'count' => 1,
   'create' => 1,
   'vp'=>5,
@@ -2899,7 +2904,7 @@ $this->token_types = [
   'text' => 'Having a terraform rating of at least 35',
 ],
  'milestone_2' => [  //
-  'location' => 'milestoneslist',
+  'location' => 'display_milestones',
   'count' => 1,
   'create' => 1,
   'vp'=>5,
@@ -2911,7 +2916,7 @@ $this->token_types = [
   'text' => 'Owning at least 3 city tiles',
 ],
  'milestone_3' => [  //
-  'location' => 'milestoneslist',
+  'location' => 'display_milestones',
   'count' => 1,
   'create' => 1,
   'vp'=>5,
@@ -2923,7 +2928,7 @@ $this->token_types = [
   'text' => 'Owning at least 3 greenery tiles',
 ],
  'milestone_4' => [  //
-  'location' => 'milestoneslist',
+  'location' => 'display_milestones',
   'count' => 1,
   'create' => 1,
   'vp'=>5,
@@ -2935,7 +2940,7 @@ $this->token_types = [
   'text' => 'Having at least 8 building tags in play',
 ],
  'milestone_5' => [  //
-  'location' => 'milestoneslist',
+  'location' => 'display_milestones',
   'count' => 1,
   'create' => 1,
   'vp'=>5,
@@ -2948,7 +2953,7 @@ $this->token_types = [
 ],
 // #Awards
  'award_1' => [  //
-  'location' => 'awardslist',
+  'location' => 'display_awards',
   'count' => 1,
   'create' => 1,
   'num' => 1,
@@ -2958,7 +2963,7 @@ $this->token_types = [
   'text' => 'Owning the most tiles in play.',
 ],
  'award_2' => [  //
-  'location' => 'awardslist',
+  'location' => 'display_awards',
   'count' => 1,
   'create' => 1,
   'num' => 2,
@@ -2968,7 +2973,7 @@ $this->token_types = [
   'text' => 'Having the highest M€ production.',
 ],
  'award_3' => [  //
-  'location' => 'awardslist',
+  'location' => 'display_awards',
   'count' => 1,
   'create' => 1,
   'num' => 3,
@@ -2978,7 +2983,7 @@ $this->token_types = [
   'text' => 'Having the most science tags in play.',
 ],
  'award_4' => [  //
-  'location' => 'awardslist',
+  'location' => 'display_awards',
   'count' => 1,
   'create' => 1,
   'num' => 4,
@@ -2988,7 +2993,7 @@ $this->token_types = [
   'text' => 'Having the most heat resource cubes.',
 ],
  'award_5' => [  //
-  'location' => 'awardslist',
+  'location' => 'display_awards',
   'count' => 1,
   'create' => 1,
   'num' => 5,
@@ -3171,6 +3176,13 @@ $this->token_types = [
   'type' => 'buycard',
   'name' => clienttranslate("Buy Card"),
 ],
+ 'op_keepcorp' => [  //
+  'undo' => 'true',
+  'prompt' => '${you} must select one corporation card to keep',
+  'params' => 'target',
+  'type' => 'keepcorp',
+  'name' => clienttranslate("Keep Corp"),
+],
  'op_res' => [  //
   'undo' => 'true',
   'prompt' => 'Hmm',
@@ -3219,13 +3231,13 @@ $this->token_types = [
   'type' => 'predraw',
   'name' => clienttranslate("Draw Card"),
 ],
- 'op_np_Any' => [  //
+ 'op_nm_Any' => [  //
   'undo' => 'true',
   'class' => 'AbsOperationIncNegAny',
   'prompt' => '${you} must select a player who will loose the resouces (or none)',
   'params' => 'player',
-  'type' => 'np_Any',
-  'name' => clienttranslate("Remove Plant (Any Player)"),
+  'type' => 'nm_Any',
+  'name' => clienttranslate("Remove MC (Any Player)"),
 ],
  'op_ns_Any' => [  //
   'undo' => 'true',
@@ -3243,13 +3255,29 @@ $this->token_types = [
   'type' => 'nu_Any',
   'name' => clienttranslate("Remove Titanium (Any Player)"),
 ],
- 'op_nm_Any' => [  //
+ 'op_np_Any' => [  //
   'undo' => 'true',
   'class' => 'AbsOperationIncNegAny',
   'prompt' => '${you} must select a player who will loose the resouces (or none)',
   'params' => 'player',
-  'type' => 'nm_Any',
-  'name' => clienttranslate("Remove MC (Any Player)"),
+  'type' => 'np_Any',
+  'name' => clienttranslate("Remove Plant (Any Player)"),
+],
+ 'op_ne_Any' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationIncNegAny',
+  'prompt' => '${you} must select a player who will loose the resouces (or none)',
+  'params' => 'player',
+  'type' => 'ne_Any',
+  'name' => clienttranslate("Remove Energy (Any Player)"),
+],
+ 'op_nh_Any' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationIncNegAny',
+  'prompt' => '${you} must select a player who will loose the resouces (or none)',
+  'params' => 'player',
+  'type' => 'nh_Any',
+  'name' => clienttranslate("Remove Heat (Any Player)"),
 ],
  'op_steal_p' => [  //
   'undo' => 'true',
@@ -3283,6 +3311,22 @@ $this->token_types = [
   'type' => 'npm_Any',
   'name' => clienttranslate("Loose Megacredit Production (Any Player - Mandatory)"),
 ],
+ 'op_nps_Any' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationProdNegAny',
+  'prompt' => '${you} must select a player who will loose the production',
+  'params' => 'player',
+  'type' => 'nps_Any',
+  'name' => clienttranslate("Loose Steel Production (Any Player - Mandatory)"),
+],
+ 'op_npu_Any' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationProdNegAny',
+  'prompt' => '${you} must select a player who will loose the production',
+  'params' => 'player',
+  'type' => 'npu_Any',
+  'name' => clienttranslate("Loose Titanium Production (Any Player - Mandatory)"),
+],
  'op_npp_Any' => [  //
   'undo' => 'true',
   'class' => 'AbsOperationProdNegAny',
@@ -3298,6 +3342,14 @@ $this->token_types = [
   'params' => 'player',
   'type' => 'npe_Any',
   'name' => clienttranslate("Loose Energy Production (Any Player - Mandatory)"),
+],
+ 'op_nph_Any' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationProdNegAny',
+  'prompt' => '${you} must select a player who will loose the production',
+  'params' => 'player',
+  'type' => 'nph_Any',
+  'name' => clienttranslate("Loose Heat Production (Any Player - Mandatory)"),
 ],
  'op_nmu' => [  //
   'undo' => 'true',
@@ -3544,6 +3596,11 @@ $this->token_types = [
   'type' => 'acard5',
   'name' => clienttranslate("Search for Life"),
 ],
+ 'op_flip' => [  //
+  'undo' => 'true',
+  'type' => 'flip',
+  'name' => clienttranslate("Flip"),
+],
 /* --- gen php end op_material --- */
 
 /* --- gen php begin tracker_material --- */
@@ -3785,7 +3842,7 @@ $this->token_types = [
   'location' => 'params',
   'name' => clienttranslate("Event"),
 ],
-// #this is not a real tag but wheatever
+// #this is not a real tag but its used for translation
  'tagFighter' => [  //
   'type' => 'tag',
   'create' => 0,
@@ -3852,18 +3909,13 @@ $this->token_types = [
   'location' => 'player_tags_{COLOR}',
   'name' => clienttranslate("Count of Power tags"),
 ],
- 'tracker_tagVenus' => [  //
-  'type' => 'tracker badge',
-  'create' => 4,
-  'location' => 'player_tags_{COLOR}',
-  'name' => clienttranslate("Count of Venus tags"),
-],
  'tracker_tagEvent' => [  //
   'type' => 'tracker badge',
   'create' => 4,
   'location' => 'player_tags_{COLOR}',
-  'name' => clienttranslate("Count of Event tags"),
+  'name' => clienttranslate("Count of played Events cards"),
 ],
+// #tracker_tagVenus|Count of Venus tags
 // #hex tiles
  'tile_2' => [  //
   'type' => 'tile tile_2',

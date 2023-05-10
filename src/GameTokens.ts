@@ -103,7 +103,9 @@ class GameTokens extends GameBasics {
   setupPlayer(playerInfo: any) {
     console.log("player info " + playerInfo.id, playerInfo);
     const mini = $(`miniboard_${playerInfo.color}`);
-    $(`player_panel_content_${playerInfo.color}`).appendChild(mini);
+    const pp = `player_panel_content_${playerInfo.color}`;
+    document.querySelectorAll(`#${pp}>.miniboard`).forEach(node=>dojo.destroy(node));
+    $(pp).appendChild(mini);
   }
 
   getAllLocations() {

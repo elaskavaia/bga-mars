@@ -25,6 +25,14 @@
  */
 
 $game_options = array(
+    100 => [
+        'name' => totranslate('Begginers Corporations'),   
+        'values' => [
+            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Begginers Corporations')],
+            2 => ['name' => totranslate('No'), 'nobeginner' => true  ],
+        ],
+        'default' => 2
+    ],
 
     /* Example of game variant:
     
@@ -35,7 +43,7 @@ $game_options = array(
                 'values' => array(
 
                             // A simple value for this option:
-                            1 => array( 'name' => totranslate('option 1') )
+                            1 => array( 'name' => totranslate('option 1') ),
 
                             // A simple value for this option.
                             // If this value is chosen, the value of "tmdisplay" is displayed in the game lobby

@@ -907,7 +907,9 @@ var GameTokens = /** @class */ (function (_super) {
     GameTokens.prototype.setupPlayer = function (playerInfo) {
         console.log("player info " + playerInfo.id, playerInfo);
         var mini = $("miniboard_".concat(playerInfo.color));
-        $("player_panel_content_".concat(playerInfo.color)).appendChild(mini);
+        var pp = "player_panel_content_".concat(playerInfo.color);
+        document.querySelectorAll("#".concat(pp, ">.miniboard")).forEach(function (node) { return dojo.destroy(node); });
+        $(pp).appendChild(mini);
     };
     GameTokens.prototype.getAllLocations = function () {
         var res = [];
@@ -1318,10 +1320,10 @@ var GameTokens = /** @class */ (function (_super) {
             }
             if (log && args && !args.processed) {
                 args.processed = true;
-                if (!args.name && log.includes("{name}")) {
-                    debugger;
-                    console.trace("format_string_recursive(" + log + ")", args);
-                }
+                // if (!args.name && log.includes("{name}")) {
+                //   debugger;
+                //   console.trace("format_string_recursive(" + log + ")", args);
+                // }
                 if (args.you)
                     args.you = this.divYou(); // will replace ${you} with colored version
                 args.You = this.divYou(); // will replace ${You} with colored version
