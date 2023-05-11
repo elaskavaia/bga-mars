@@ -1694,15 +1694,19 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "player") {
             paramargs.forEach(function (tid) {
+                var _a;
                 // XXX need to be pretty
                 var playerId = _this.getPlayerIdByColor(tid);
                 // here divId can be like player name on miniboard
                 var divId = "player_name_".concat(playerId);
                 if (single) {
                     var buttonId = "button_" + tid;
-                    _this.addActionButton(buttonId, tid, function () {
+                    var name_2 = (_a = _this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
+                    _this.addActionButton(buttonId, name_2 !== null && name_2 !== void 0 ? name_2 : tid, function () {
                         _this.onSelectTarget(opId, tid);
-                    });
+                    }, undefined, false, 'gray');
+                    if (name_2)
+                        $(buttonId).style.color = "#" + tid;
                 }
                 _this.setReverseIdMap(divId, opId, tid);
             });
@@ -1762,14 +1766,14 @@ var GameXBody = /** @class */ (function (_super) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opargs = opInfo.args;
-            var name_2 = this_1.getButtonNameForOperation(opInfo);
+            var name_3 = this_1.getButtonNameForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
             this_1.activateSlots(opInfo, opId, singleOrFirst);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
-                    this_1.addActionButton("button_" + opId, name_2, function () {
+                    this_1.addActionButton("button_" + opId, name_3, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
@@ -1781,7 +1785,7 @@ var GameXBody = /** @class */ (function (_super) {
                     });
                 }
                 else {
-                    this_1.addActionButton("button_" + opId, name_2, function () {
+                    this_1.addActionButton("button_" + opId, name_3, function () {
                         _this.sendActionResolve(opId);
                     });
                 }

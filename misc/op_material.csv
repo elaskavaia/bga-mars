@@ -62,6 +62,7 @@ nph_Any|Loose Heat Production (Any Player - Mandatory)|${you} must select a play
 #set params=target
 nmu|Pay (possibly with Titanium)|${you} must select a payment choice
 nms|Pay (possibly with Steel)|${you} must select a payment choice
+nmus|Pay (possibly with Steel or Titanium)|${you} must select a payment choice
 
 #auto-resolve actions
 #set prompt=

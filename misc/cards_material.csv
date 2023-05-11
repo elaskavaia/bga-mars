@@ -17,8 +17,8 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 10|Comet|3|3np_Any,t,w|||21||Space Event|0|Raise temperature 1 step and place an ocean tile. Remove up to 3 plants from any player.|
 11|Big Asteroid|3|4u,4np_Any,2t|||27||Space Event|0|Raise temperature 2 steps and gain 4 titanium. Remove up to 4 plants from any player.|
 12|Water Import From Europa|2||12nmu:w||25||Space Jovian|tagJovian|1 VP for each Jovian tag you have.; Action: Pay 12 MC to place an ocean tile. TITANIUM MAY BE USED as if playing a space card.|
-13|Space Elevator|2|pu|s:5m||27||Building Space|2|Increase your titanium production 1 step.; Action: Spend 1 steel to gain 5 MC|
-14|Development Center|2||e:draw||11||Science Building|0|Action: Spend 1 energy to draw a card.|
+13|Space Elevator|2|pu|ns:5m||27||Building Space|2|Increase your titanium production 1 step.; Action: Spend 1 steel to gain 5 MC|
+14|Development Center|2||ne:draw||11||Science Building|0|Action: Spend 1 energy to draw a card.|
 15|Equatorial Magnetizer|2||ne:tr||11||Building|0|Action: Decrease your energy production 1 step to increase your terraforming rating 1 step.|
 16|Domed Crater|1|3pm,city,1npe,3p|||24|o<=7|Building City|1|Oxygen must be 7% or less. Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps.|
 17|Noctis City|1|3pm,1npe,city('Noctis City')|||18||Building City|0|Decrease your energy production 1 step and increase your MC production 3 steps. Place a tile ON THE RESERVED AREA, disregarding normal placement restrictions.|
@@ -30,7 +30,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 23|Arctic Algae|2|p||place_ocean:2p:this:any|12|t<=-12|Plant|0|It must be -12°C or colder to play. Gain 1 plant.; Effect: When anyone places an ocean tile, gain 2 plants.|
 24|Predators|2||nores(Animal):res||14|o>=11|Animal|resCard|Requires 11% oxygen. 1 VP per animal on this card.; Action: Remove 1 animal from any card and add it to this card.|  'holds' => 'Animal'
 25|Space Station|2|||onPay_cardSpace:2m|10||Space|1|Effect: When you play a space card, you pay 2 MC less for it.|
-26|Eos Chasma National Park|1|2pm,3p|||16|t>=-12|Building Plant|1|Requires -128°C  or warmer. Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps.|
+26|Eos Chasma National Park|1|2pm,3p|||16|t>=-12|Building Plant|1|Requires -12°C  or warmer. Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps.|
 27|Interstellar Colony Ship|3||||24|tagScience>=5|Space Earth Event|4|Requires 5 science tags.|
 28|Security Fleet|2||nu:res||12||Space|resCard|1 VP for each fighter resource on this card.; Action: Spend 1 titanium to add 1 fighter resource to this card.|  'holds' => 'Fighter'
 29|Cupola City|1|3pm,1npe,city|||16|o<=9|Building City|0|Oxygen must be 9% or less. Place a city tile. Decrease your energy production 1 step and increase your MC production 3 steps.|
@@ -156,7 +156,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 149|CEO's Favourite Project|3|acard149|||1||Event|0|Add 1 resource to a card with at least 1 resource on it.|
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it.|
 151|Investment Loan|3|1npm,10m|||3||Earth Event|0|Decrease your MC production 1 step. Gain 10 MC.|
-152|Insulation|1|[0,](nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
+152|Insulation|1|counter(ph)?(nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
 153|Adaptation Technology|2||||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case. TODO 2paramreq|
 154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|It must be -14°C or colder. Increase your plant production 2 steps.|
@@ -166,7 +166,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 159|Lichen|1|pp|||7|t>=-24|Plant|0|Requires -24°C or warmer. Increase your plant production 1 step.|
 160|Power Supply Consortium|1|1npe_Any|||5|tagEnergy>=2|Energy|0|Requires 2 power tags. Decrease any energy production 1 step and increase your own 1 step.|
 161|Convoy From Europa|3|w,draw|||15||Space Event|0|Place 1 ocean tile and draw 1 card.|
-162|Imported GHG|3|ph,3h|||7||Space Earth Event|0|Increase your heat production 1 step and gain 3 hear.|
+162|Imported GHG|3|ph,3h|||7||Space Earth Event|0|Increase your heat production 1 step and gain 3 heat.|
 163|Imported Nitrogen|3|4p,tr,3ores(Microbe),2ores(Animal)|||23||Space Earth Event|0|Raise your TR 1 step and gain 4 plants. Add 3 microbes to ANOTHER card and 2 animals to ANOTHER card.|
 164|Micro-Mills|1|ph|||3|||0|Increase your heat production 1 step.|
 165|Magnetic Field Generators|1|2pp,4npe,3tr|||20||Building|0|Decrease your energy production 4 steps and increase your plant production 2 steps. Raise your TR 3 steps.|
@@ -213,22 +213,27 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 206|Special Design|3|||play_card:flip:that|4||Science Event|0|The next card you play this generation is +2 or -2 in global requirements, your choice TODO.|
 207|Medical Lab|1|counter(tagBuilding/2)pm|||13||Science Building|1|Increase your MC production 1 step for every 2 building tags you have, including this.|
 208|AI Central|2|1npe|2draw||21|tagScience>=3|Science Building|1|Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards.|
-|||||||||||
-#corp cards|||||||||||
+
+#corp cards
 #set id=card_corp_{num}|||||||||||
-#set location=deck_corp|||||||||||
 #set _tr=text|||||||||||
 #set _tr=ac|||||||||||
-#set create=single|||||||||||
 #set type=card corp
-#num|name|t|r|a|e|cost|pre|tags|vp|text|php
+
+#set create=2
+#set count=10
+#set location=limbo
 1|Begginer Corp|4|42m|||0|||0|You start with 42 MC. You keep 10 starting cards|
-2|CrediCor|4|57m|||0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
+#set count=10
+#set create=single
+#set location=deck_corp
+#num|name|t|r|a|e|cost|pre|tags|vp|text|php
+2|CrediCor|4|57m||play_card:(counter(cost>=20),4m):that;play_stan:counter(cost>=20)4m:that|0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
 3|Ecoline|4|2pp,36m,3p|||0||Plant|0|You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery.|
 4|Helion|4|3ph,42m|||0||Space|0|You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat.|
 5|Interplanetary Cinematics|4|30m,20s|||0||Building|0|You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC.|
 6|Inventrix|4|45m|||0||Science|0|As your first action in the game, draw 3 cards. Start with 45 MC.; Effect: Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.|
-7|Mining Guild|4|ps,30m,5s|||0||Building|0|The earliest private enterprises on Mars focused on mining and exporting minerals off the surface. As the mega-corporations arrive to terraform, the miners unite in the Guild to defend their interests. With their expertise and knowledg of the planet they will be a worthy contender in the race.; Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.|
+7|Mining Guild|4|30m,5s,ps||place_bonus_u:ps;place_bonus_s:ps|0||Building|0|The earliest private enterprises on Mars focused on mining and exporting minerals off the surface. As the mega-corporations arrive to terraform, the miners unite in the Guild to defend their interests. With their expertise and knowledg of the planet they will be a worthy contender in the race.; Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.|
 8|Saturn Systems|4|pu,42m|||0||Jovian|0|You start with 1 titanium production and 42 MC.; Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step.|
 9|PhoboLog|4|23m,10u,eru|||0||Space|0|You start with 10 titanium and 23 MC; Effect: Your titanium resources are each worth 1 MC extra.|
 10|Teractor|4|60m||onPay_tagEarth:3m|0||Earth|0|You start with 60 MC.; Effect: When playing an Earth card, you pay 3 MC less for it.|

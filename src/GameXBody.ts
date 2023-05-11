@@ -300,9 +300,11 @@ class GameXBody extends GameTokens {
         const divId = `player_name_${playerId}`;
         if (single) {
           const buttonId = "button_" + tid;
-          this.addActionButton(buttonId, tid, () => {
+          const name = this.gamedatas.players[playerId]?.name;
+          this.addActionButton(buttonId, name ?? tid, () => {
             this.onSelectTarget(opId, tid);
-          });
+          },undefined,false,'gray');
+          if (name) $(buttonId).style.color = "#"+tid;
         }
 
         this.setReverseIdMap(divId, opId, tid);

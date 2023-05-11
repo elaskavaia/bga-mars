@@ -12,7 +12,7 @@
 
 <div id="thething">
   <div id="hand_area" class="whiteblock">
-    <div class="hand" id="hand_{CURRENT_PLAYER_COLOR}"></div>
+    <div class="hand location" id="hand_{CURRENT_PLAYER_COLOR}"></div>
     <div class="draw location" id="draw_{CURRENT_PLAYER_COLOR}"></div>
   </div>
   <div id="main_area">

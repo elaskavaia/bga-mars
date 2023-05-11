@@ -8,12 +8,15 @@ class Operation_ores extends  AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
         $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
-        return $this->game->createArgInfo($color, array_keys($tokens), function ($color, $tokenId) {
+        $keys = array_keys($tokens);
+        $keys[] = 'none';
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
+            if ($tokenId == 'none') return MA_OK;
             $par = $this->params ?? '';
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par)  return MA_ERR_NOTAPPLICABLE;
-            return 0;
+            return MA_OK;
         });
     }
 
@@ -27,6 +30,10 @@ class Operation_ores extends  AbsOperation {
         }
 
         return $inc;
+    }
+
+    function isVoid(): bool {
+        return false;
     }
 
     function canResolveAutomatically() {

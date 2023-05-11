@@ -25,7 +25,7 @@ class DelegatedOperation extends AbsOperation {
     function auto(string $owner, int &$count): bool {
         $loccount = $this->delegate->getCount();
         $count =  $this->getCount();
-        return $this->delegate->auto($owner, $loccount);
+        return $this->delegate->auto($owner, $loccount * $count);
     }
 
     function isVoid(): bool {

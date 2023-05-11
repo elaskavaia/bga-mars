@@ -75,10 +75,27 @@ class ComplexOperation extends AbsOperation {
         return  clienttranslate('${you} must confirm ${name}');
     }
 
+    function auto(string $owner, int &$count): bool {
+        $this->user_args = null;
+        if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        if (!$this->isFullyAutomated()) return false;
+        $this->checkVoid();
+
+        foreach ($this->delegates as $i => $sub) {
+            $refcount = $sub->getCount();
+            $subvalue = $sub->auto($owner, $refcount);
+            if ($subvalue == false) {
+                throw new BgaSystemException("Cannot auto-resovle " . $sub->mnemonic);
+            };
+        }
+        return true;
+    }
+
 
     protected function effect(string $owner, int $count): int {
         $userCount = $this->getUserCount();
         if ($this->game->expandOperation($this->op_info, $userCount)) {
+            $this->game->machine->hide($this->op_info);// ??
             return 1;
         }
         $type = $this->op_info['type'];
@@ -86,7 +103,14 @@ class ComplexOperation extends AbsOperation {
     }
 
     function canResolveAutomatically() {
-        return false;
+        if ($this->getMinCount() == 0) return false;
+        if ($this->operation == '/') return false;
+        if ($this->operation == '+') return false;
+        foreach ($this->delegates as $i => $sub) {
+            $subvalue = $sub->canResolveAutomatically();
+            if (!$subvalue) return false;
+        }
+        return $subvalue;
     }
 
     function isFullyAutomated() {
