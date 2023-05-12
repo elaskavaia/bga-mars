@@ -150,6 +150,12 @@
   flex-direction: row-reverse;
 }
 
+.card_vp{
+  position: absolute;
+  bottom: 2%;
+  right: 21%;
+}
+
 .card .badge{
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);

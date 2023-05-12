@@ -6,7 +6,6 @@ declare(strict_types=1);
 // Fund an award
 class Operation_fund extends AbsOperation {
     function effect(string $color, int $inc): int {
-        if (!$this->canResolveAutomatically()) return false;
         $marker = $this->game->createPlayerMarker($color);
         $milestone = $this->getCheckedArg('target');
         $cost = $this->getStateArg('cost');
@@ -31,7 +30,7 @@ class Operation_fund extends AbsOperation {
             if (!$this->game->canAfford($color, $tokenId, $cost)) return MA_ERR_COST;
             $info = $map[$tokenId];
             if ($info['state'] > 0) return MA_ERR_OCCUPIED;
-            return 0;
+            return MA_OK;
         });
     }
 }

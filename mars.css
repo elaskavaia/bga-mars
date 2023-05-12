@@ -338,6 +338,12 @@
   flex-direction: row-reverse;
 }
 
+.card_vp {
+  position: absolute;
+  bottom: 2%;
+  right: 21%;
+}
+
 .card .badge {
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);
@@ -3166,6 +3172,9 @@
   border-radius: unset;
   background: unset;
 }
+.mfull .card_decor {
+  pointer-events: none;
+}
 .mfull .tracker_tagCity {
   background-position-x: 0;
 }
@@ -3292,6 +3301,14 @@
   width: 10px;
   height: 10px;
   outline: 1px dashed black;
+}
+
+.cards_2 > .card {
+  display: inline-block;
+}
+
+.cards_1 > .card, .cards_3 > .card {
+  margin-bottom: calc(var(--card-height) * -1 * 0.9);
 }
 
 #display_main .card .token_descr {

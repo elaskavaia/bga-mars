@@ -58,8 +58,7 @@ class Operation_tile extends AbsOperationTile {
         // DEBUG create tile on the fly
         $this->debugtilecretae();
         $tile = $this->effect_placeTile();
-        $this->game->incTrackerValue($owner, 'land');
-        $this->game->notifyEffect($owner, 'place_tile', $tile);
+
         // special handling for mining tiles
         if ($this->getTileType() == MA_TILE_MINING) {
             $ohex = $this->game->tokens->getTokenLocation($tile);

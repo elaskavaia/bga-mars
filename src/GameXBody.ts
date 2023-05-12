@@ -234,6 +234,9 @@ class GameXBody extends GameTokens {
         result.nop = true;
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
+    } else if (tokenInfo.key.startsWith('card_main') && tokenInfo.location.startsWith('tableau')) {
+      const t = this.getRulesFor(tokenInfo.key,'t');
+      if (t!==undefined) result.location = tokenInfo.location+"_cards_"+t;
     }
     if (!result.location) // if failed to find revert to server one
       result.location = tokenInfo.location;
@@ -302,9 +305,10 @@ class GameXBody extends GameTokens {
     const count = opInfo.count;
 
     if (single) {
+      debugger;
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
       if (paramargs.length == 0) {
-        if (count == from || from == 0) {
+        if (count == from) {
           this.addActionButton("button_" + opId, _("Confirm"), () => {
             this.sendActionResolve(opId);
           });
@@ -359,15 +363,15 @@ class GameXBody extends GameTokens {
         // XXX need to be pretty
 
         const playerId = this.getPlayerIdByColor(tid);
-        let playerName =  this.getPlayerName( playerId);
-        if (playerName=="") playerName=tid;
         // here divId can be like player name on miniboard
         const divId = `player_name_${playerId}`;
         if (single) {
           const buttonId = "button_" + tid;
-          this.addActionButton(buttonId, playerName, () => {
+          const name = this.gamedatas.players[playerId]?.name;
+          this.addActionButton(buttonId, name ?? tid, () => {
             this.onSelectTarget(opId, tid);
-          });
+          },undefined,false,'gray');
+          if (name) $(buttonId).style.color = "#"+tid;
         }
 
         this.setReverseIdMap(divId, opId, tid);
