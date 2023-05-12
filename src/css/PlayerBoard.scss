@@ -72,6 +72,20 @@
 .tableau {
   display: flex;
   flex-wrap: wrap;
+
+  .card[data-card-type="1"] {
+   order:2;
+  }
+  .card[data-card-type="2"] {
+    order:1;
+  }
+  .card[data-card-type="3"] {
+    order:3;
+  }
+  .corp {
+    order: 4;
+  }
+
 }
 
 .tableau>.counter {
@@ -137,13 +151,62 @@
 .badge.tracker_tagMicrobe{ background-position-x: -1000%;}
 .badge.tracker_tagAnimal{ background-position-x: -1100%;}
 
-.player_tags .tracker.tracker_ers{ background-position: 0 -100%; order:-2;}
-.player_tags .tracker.tracker_eru{ background-position: -100% -100%;order:-1;}
 
-.player_tags .tracker_city{ background-position: -700% 0;}
-.player_tags .tracker_forest{ background-position: -600% 0;}
-.player_tags .tracker_land{ background-position: -300% -100%;}
+.tracker.tracker_ers{ background-position: 0 -100%; order:-2;}
+.tracker.tracker_eru{ background-position: -100% -100%;order:-1;}
+
+.tracker.tracker_city{ background-position: -700% 0;}
+.tracker.tracker_forest{ background-position: -600% 0;}
+.tracker.tracker_land{ background-position: -300% -100%;}
 
 .tracker_tagVenus{
   display: none;
+}
+
+.player_controls{
+  position: relative;
+  display: flex;
+  width:100%;
+  justify-content: flex-end;
+}
+
+.filter_button{
+  border: calc(var(--pb_cellsize) * 0.01) solid black;
+  margin-left: 0.5vw;
+  font-size: calc(var(--pb_cellsize) * 0.15);
+  padding: calc(var(--pb_cellsize) * 0.03);
+  border-radius: calc(var(--pb_cellsize) * 0.05);
+  cursor: pointer;
+}
+.filter_button.filter_blue {
+  background-color: #67b1f1;
+}
+.filter_button.filter_green {
+  background-color: #b5ff82;
+}
+.filter_button.filter_red {
+  background-color: #fcb2b2;
+}
+.filter_button[data-enabled="1"]::before {
+  content:'☑' ;
+}
+.filter_button[data-enabled="0"]::before {
+  content:'☐' ;
+}
+
+.tableau[data-visibilityblue="0"] {
+  .card[data-card-type="2"] {
+    display: none;
+  }
+}
+
+.tableau[data-visibilitygreen="0"] {
+  .card[data-card-type="1"] {
+    display: none;
+  }
+}
+.tableau[data-visibilityred="0"] {
+  .card[data-card-type="3"] {
+    display: none;
+  }
 }
