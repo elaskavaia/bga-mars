@@ -240,9 +240,10 @@ class GameXBody extends GameTokens {
     const count = opInfo.count;
 
     if (single) {
+      debugger;
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
       if (paramargs.length == 0) {
-        if (count == from || from == 0) {
+        if (count == from) {
           this.addActionButton("button_" + opId, _("Confirm"), () => {
             this.sendActionResolve(opId);
           });

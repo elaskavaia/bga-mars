@@ -642,7 +642,7 @@ abstract class PGameXBody extends PGameMachine {
         $playeffect = array_get($rules, 'r', '');
         if ($playeffect) {
             $this->debugLog("-come in play effect $playeffect");
-            $this->machine->put($playeffect, 1, 1, $color, MACHINE_FLAG_UNIQUE, $card_id);
+            $this->putInEffectPool($color, $playeffect, $card_id);
         }
         $events = $this->getPlayCardEvents($card_id, 'play_');
         $this->notifyEffect($color, $events, $card_id);
@@ -660,6 +660,8 @@ abstract class PGameXBody extends PGameMachine {
         }
         $rules = $this->getRulesFor($card_id, 'r', '');
         $this->executeImmediately($color, $rules, 1, $card_id);
+        $events = $this->getPlayCardEvents($card_id, 'play_');
+        $this->notifyEffect($color, $events, $card_id);
     }
 
     function effect_placeTile($color, $object, $target) {
@@ -869,17 +871,12 @@ abstract class PGameXBody extends PGameMachine {
     function effect_finalScoring(): int {
         $this->debugConsole("-- final scoring --");
         $players = $this->loadPlayersBasicInfos();
-        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award%");
+        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
         foreach ($markers as $id => $rec) {
-            $loc = $rec['location']; // milestone_x
-            $color = explode('_', $id)[1];
-            $player_id = $this->getPlayerIdByColor($color);
-            // XXX determine the winner
-            $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s for award'), "game_vp_award", [
-                'place' => $loc
-            ]);
+            $loc = $rec['location']; // award_x
+            $this->scoreAward($loc);
         }
-        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone%");
+        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
         foreach ($markers as $id => $rec) {
             $loc = $rec['location']; // milestone_x
             $color = explode('_', $id)[1];
@@ -897,6 +894,50 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->setGameStateValue('gameended', 1);
         return 1;
+    }
+
+    function scoreAward(string $award) {
+        $expr = $this->getRulesFor($award, 'r');
+        $scores = [];
+        $players = $this->loadPlayersBasicInfos();
+        foreach ($players as $player) {
+            $color = $player["player_color"];
+            $res = $this->evaluateExpression($expr, $color);
+            $scores[$color] = $res;
+        }
+        arsort($scores);
+        $place = 1;
+        $lastres = 0;
+        $i = 0;
+        foreach ($scores as $color => $res) {
+            if ($res == 0) break;
+            if ($lastres > 0 && $lastres != $res) {
+                $place += 1;
+                if ($place == 2) {
+                    if ($this->getPlayersNumber() == 2) {
+                        $this->notifyMessage(clienttranslate('second place is not awarded for 2 player game'));
+                        break;
+                    }
+                    if ($i >= 2) {
+                        $this->notifyMessage(clienttranslate('second place is not awarded because 1st place is shared'));
+                        break;
+                    }
+                }
+                if ($place > 2) break;
+            }
+
+            $player_id = $this->getPlayerIdByColor($color);
+            if ($place == 1) $points = 5;
+            else if ($place == 2) $points = 2;
+            else break;
+            $this->dbIncScoreValueAndNotify($player_id, $points, clienttranslate('${player_name} scores ${inc} point/s for award ${award_name} with max value of ${award_counter}'), "game_vp_award", [
+                'place' => $award, // XXX?
+                'award_name' => $this->getTokenName($award),
+                'award_counter' => $res
+            ]);
+            $i++;
+            $lastres = $res;
+        }
     }
 
     function scoreMap(string $owner) {

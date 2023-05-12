@@ -336,6 +336,7 @@ abstract class PGameMachine extends PGameTokens {
 
             $this->machine->interrupt();
             $this->machine->expandOp($op);
+
             //$this->machine->hide($op);
             // sanity to prevent recursion
             $operations = $this->machine->getTopOperations();

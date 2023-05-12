@@ -92,11 +92,9 @@ class ComplexOperation extends AbsOperation {
     }
 
 
-    protected function effect(string $owner, int $count): int {
-        $userCount = $this->getUserCount();
+    protected function effect(string $owner, int $userCount): int {
         if ($this->game->expandOperation($this->op_info, $userCount)) {
-            $this->game->machine->hide($this->op_info);// ??
-            return 1;
+            return $userCount;
         }
         $type = $this->op_info['type'];
         throw new BgaSystemException("Cannot auto-resove $type");

@@ -31,8 +31,8 @@ num|name|t|r|cost|pre|text|php
 #set location=display_awards
 #set count=1
 #set create=1
-1|Landlord|8||20||Owning the most tiles in play.
-2|Banker|8||20||Having the highest M€ production.
-3|Scientist|8||20||Having the most science tags in play.
-4|Thermalist|8||20||Having the most heat resource cubes.
-5|Miner|8||20||Having the most steel and titanium resource cubes.
+1|Landlord|8|land|20||Owning the most tiles in play.
+2|Banker|8|pm|20||Having the highest M€ production.
+3|Scientist|8|tagScience|20||Having the most science tags in play.
+4|Thermalist|8|h|20||Having the most heat resource cubes.
+5|Miner|8|s+u|20||Having the most steel and titanium resource cubes.

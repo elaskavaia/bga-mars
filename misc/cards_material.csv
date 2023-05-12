@@ -120,7 +120,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 113|Solar Power|1|pe|||11||Building Energy|1|Increase your energy production 1 step.|
 114|Breathing Filters|1||||11|o>=7|Science|2|Requires 7% oxygen.|
 115|Artificial Photosynthesis|1|pp/2pe|||12||Science|0|Increase your plant production 1 step or your energy production 2 steps.|
-116|Artificial Lake|1|w|||15|t>=-6|Building|1|Requires -6°C or warmer. Place 1 ocean tile ON AN AREA NOT RESERVED FOR OCEAN.|
+116|Artificial Lake|1|w(notocean)|||15|t>=-6|Building|1|Requires -6°C or warmer. Place 1 ocean tile ON AN AREA NOT RESERVED FOR OCEAN.|
 117|Geothermal Power|1|2pe|||11||Building Energy|0|Increase your energy production 2 steps.|
 118|Farming|1|2pm,2pp,2p|||16|t>=4|Plant|2|Requires +4°C or warmer. Increase your MC production 2 steps and your plant production 2 steps. Gain 2 plants.|
 119|Dust Seals|1||||2|w<=3||1|Requires 3 or less ocean tiles.|
@@ -156,7 +156,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 149|CEO's Favourite Project|3|acard149|||1||Event|0|Add 1 resource to a card with at least 1 resource on it.|
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it.|
 151|Investment Loan|3|1npm,10m|||3||Earth Event|0|Decrease your MC production 1 step. Gain 10 MC.|
-152|Insulation|1|counter(ph)?(nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
+152|Insulation|1|counter(ph,0),(nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
 153|Adaptation Technology|2||||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case. TODO 2paramreq|
 154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|It must be -14°C or colder. Increase your plant production 2 steps.|
@@ -194,7 +194,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 187|Aquifer Pumping|2||8nms:w||18||Building|0|Action: Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card.|
 188|Flooding|3|w|||7||Event|-1|Place an ocean tile. IF THERE ARE TILES ADJACENT TO THIS OCEAN TILE, YOU MAY REMOVE 4 MC FROM THE OWNER OF ONE OF THOSE TILES. TODO|
 189|Energy Saving|1|counter(all_city)pe|||15||Energy|0|Increase your energy production 1 step for each city tile in play.|
-190|Local Heat Trapping|3|5h:(4p/ores(Animal))|||1||Event|0|Spend 5 heat to either gain 4 plants, or to add 2 animals to ANOTHER card.|
+190|Local Heat Trapping|3|5nh:(4p/2ores(Animal))|||1||Event|0|Spend 5 heat to either gain 4 plants, or to add 2 animals to ANOTHER card.|
 191|Permafrost extraction|3||||8|t>=-8|Event|0|Requires -8°C or warmer. Place 1 ocean tile.|
 192|Invention Contest|3|3predraw,keep,prediscard|||2||Science Event|0|Look at the top 3 cards from the deck. Take 1 of them into hand and discard the other 2|
 193|Plantation|1|forest,o|||15|tagScience>=2|Plant|0|Requires 2 science tags. Place a greenery tile and raise oxygen 1 step.|

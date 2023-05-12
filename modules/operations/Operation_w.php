@@ -6,6 +6,11 @@ require_once "AbsOperationTile.php";
 // place ocean
 class Operation_w extends AbsOperationTile {
     function checkPlacement($color, $location, $info, $map) {
+        $reservename = $this->getReservedArea();
+        if ($reservename == 'notocean') {
+            if (isset($info['ocean'])) return MA_ERR_RESERVED;
+            return 0;
+        }
         if (!isset($info['ocean'])) return MA_ERR_NOTRESERVED;
         return 0;
     }

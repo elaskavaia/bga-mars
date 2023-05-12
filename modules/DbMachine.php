@@ -628,11 +628,12 @@ class DbMachine extends APP_GameClass {
             case ",":
             case ":":
                 $this->interrupt($rank);
-                if ($mcount == 0) {
-                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, MACHINE_OP_SEQ, $data, $parent, $pool);
+                if ($mcount != $count) {
+                    $this->insertMC(OpExpression::str($expr->toUnranged()), $rank, $mcount, $count, $owner, $opflag, $data, $parent, $pool);
                 } else {
+                    // XXX this is nto exactly right, it should have been outer loop with $count
                     foreach ($expr->args as $subrule) {
-                        $this->insertMC(OpExpression::str($subrule), $rank, 1, 1, $owner, $opflag, $data, $parent, $pool);
+                        $this->insertMC(OpExpression::str($subrule), $rank, $mcount, $count, $owner, $opflag, $data, $parent, $pool);
                     }
                 }
                 break;
