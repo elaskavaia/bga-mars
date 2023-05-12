@@ -765,10 +765,6 @@ class GameBasics extends GameGui {
   getPlayerColor(playerId: number) {
     return this.gamedatas.players[playerId] ?? "000000";
   }
-  getPlayerName(playerId: string) {
-    if (!this.gamedatas.players[playerId]) return "";
-    return this.gamedatas.players[playerId].name;
-  }
 
   getPlayerIdByColor(color: string) {
     for (var playerId in this.gamedatas.players) {
