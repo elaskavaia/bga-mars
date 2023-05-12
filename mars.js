@@ -1569,6 +1569,11 @@ var GameXBody = /** @class */ (function (_super) {
         else if (this.custom_placement[tokenInfo.key]) {
             result.location = this.custom_placement[tokenInfo.key];
         }
+        else if (tokenInfo.key.startsWith('card_main') && tokenInfo.location.startsWith('tableau')) {
+            var t = this.getRulesFor(tokenInfo.key, 't');
+            if (t !== undefined)
+                result.location = tokenInfo.location + "_cards_" + t;
+        }
         if (!result.location) // if failed to find revert to server one
             result.location = tokenInfo.location;
         return result;

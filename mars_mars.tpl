@@ -215,7 +215,12 @@
       <div id="player_tags_{PLAYER_COLOR}" class="player_tags">
 
       </div>
-      <div id="tableau_{PLAYER_COLOR}" class="whiteblock"></div>
+      <div id="tableau_{PLAYER_COLOR}" class="whiteblock">
+           <div id="tableau_{PLAYER_COLOR}_cards_4" class="cards_4"></div>
+           <div id="tableau_{PLAYER_COLOR}_cards_2" class="cards_2"></div>
+           <div id="tableau_{PLAYER_COLOR}_cards_1" class="cards_1"></div>
+           <div id="tableau_{PLAYER_COLOR}_cards_3" class="cards_3"></div>
+      </div>
 
 
     </div>
