@@ -240,6 +240,38 @@ abstract class PGameXBody extends PGameMachine {
         return $this->notifyMessage($message, $args, $this->getPlayerIdByColor($player_color));
     }
 
+    function adjustedMaterial() {
+        if ($this->token_types_adjusted) {
+            return $this->token_types;
+        }
+        parent::adjustedMaterial();
+
+        $expr_keys = ['r', 'e', 'a'];
+        foreach ($this->token_types as $key => &$info) {
+            if (startsWith($key, "card_")) {
+                $info['expr'] = [];
+                foreach ($expr_keys as $field) {
+                    $r = array_get($info, $field);
+                    try {
+                        if ($r) $info['expr'][$field] = OpExpression::arr($r);
+                    } catch (Exception $e) {
+                        $this->error("error while parsing $field $r");
+                        $this->error($e);
+                    }
+                }
+                $field = 'pre';
+                $r = array_get($info, $field);
+                try {
+                    if ($r) $info['expr'][$field] = MathExpression::arr($r);
+                } catch (Exception $e) {
+                    $this->error("error while parsing $field $r");
+                    $this->error($e);
+                }
+            }
+        }
+        return $this->token_types;
+    }
+
     function canAfford($color, $tokenid, $cost = null) {
         if ($cost !== null) {
             $mc = $this->getTrackerValue($color, 'm');
@@ -271,7 +303,7 @@ abstract class PGameXBody extends PGameMachine {
                         $valid = $this->evaluateExpression($cond, $owner, $tokenid, 'dec');
                     }
                 }
-                return MA_ERR_PREREQ; // fail prereq check
+                if (!$valid) return MA_ERR_PREREQ; // fail prereq check
             }
         }
         // check immediate effect affordability

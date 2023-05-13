@@ -19,7 +19,7 @@ require_once "DbTokens.php";
 abstract class PGameTokens extends PGameBasic {
     public $tokens;
     public $token_types;
-    private $token_types_adjusted;
+    protected $token_types_adjusted;
 
     public function __construct() {
         parent::__construct();

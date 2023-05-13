@@ -10,8 +10,15 @@ require_once "OpExpression.php";
 abstract class MathExpression {
     abstract public function evaluate($mapper);
     abstract public function __toString();
+    abstract public function toArray();
     static function parse($str) {
         return MathExpressionParser::parse($str);
+    }
+
+    public static function arr($str) {
+        $expr = static::parse($str);
+        $res = $expr->toArray();
+        return $res;
     }
 }
 class MathTerminalExpression extends MathExpression {
@@ -39,6 +46,10 @@ class MathTerminalExpression extends MathExpression {
     public function __toString() {
         return $this->left;
     }
+
+    public function toArray(){
+        return $this->left;
+    }
 }
 class MathUnaryExpression extends MathExpression {
     public $op;
@@ -59,6 +70,10 @@ class MathUnaryExpression extends MathExpression {
         $res = eval("return $op($right);");
         return (int)($res);
     }
+
+    public function toArray(){
+        return [$this->op, $this->right->toArray()];
+    }
 }
 class MathBinaryExpression extends MathExpression {
     public $op;
@@ -78,6 +93,10 @@ class MathBinaryExpression extends MathExpression {
         return sprintf("(%s %s %s)", $this->left, $this->op, $this->right);
     }
 
+    public function toArray(){
+        return [$this->op, $this->left->toArray(), $this->right->toArray()];
+    }
+
     public function evaluate($mapper) {
         $left = $this->left->evaluate($mapper);
         $right = $this->right->evaluate($mapper);
@@ -95,7 +114,7 @@ class MathExpressionParser {
         $tokens = $this->lexer->tokenize($str);
         $this->tokens = $tokens;
     }
-    static function parse($str) {
+    static function parse($str): MathExpression {
         $parser = new MathExpressionParser($str);
         return $parser->parseExpression();
     }

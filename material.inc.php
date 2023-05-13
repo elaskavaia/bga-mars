@@ -2695,7 +2695,7 @@ $this->token_types = [
   'name' => clienttranslate("CrediCor"),
   't' => 4,
   'r' => '57m',
-  'e' => 'play_card:(counter(cost>=20),4m):that;play_stan:counter(cost>=20)4m:that',
+  'e' => "play_card:(counter('cost>=20'),4m):that;play_stan:counter('cost>=20')4m:that",
   'cost' => 0,
   'vp' => 0,
   'text' => clienttranslate("You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC."),

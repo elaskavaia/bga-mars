@@ -228,7 +228,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 #set create=single
 #set location=deck_corp
 #num|name|t|r|a|e|cost|pre|tags|vp|text|php
-2|CrediCor|4|57m||play_card:(counter(cost>=20),4m):that;play_stan:counter(cost>=20)4m:that|0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
+2|CrediCor|4|57m||play_card:(counter('cost>=20'),4m):that;play_stan:counter('cost>=20')4m:that|0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
 3|Ecoline|4|2pp,36m,3p|||0||Plant|0|You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery.|
 4|Helion|4|3ph,42m|||0||Space|0|You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat.|
 5|Interplanetary Cinematics|4|30m,20s|||0||Building|0|You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC.|
