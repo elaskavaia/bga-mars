@@ -301,6 +301,10 @@ class GameXBody extends GameTokens {
     return;
   }
 
+  sendActionResolveWithTargetAndPayment(opId: number, target: string, payment: any) {
+    this.sendActionResolve(opId, { target, payment });
+  }
+
   activateSlots(opInfo: any, opId: number, single: boolean) {
     const opargs = opInfo.args;
     const paramargs = opargs.target ?? [];
@@ -402,7 +406,11 @@ class GameXBody extends GameTokens {
             divId,
             tid,
             () => {
-              this.onSelectTarget(opId, tid);
+              if (tid == "payment") {
+                // stub
+                const first = paramargs[0]; // send same data as 1st option as stub
+                this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
+              } else this.onSelectTarget(opId, tid);
             },
             undefined,
             false,
