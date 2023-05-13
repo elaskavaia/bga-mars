@@ -16,12 +16,18 @@ Random notes on todo items
 
 ## Client
 
-* Tags
+* Inline icons in text/cards/stuff/logs/buttons
 * Player picker
-* Hex tiles
 * Payment picker (icons)
 * Stacking played cards
+* Better tooltips
 * Show decoded error on when something cannot be selected/played
+* Tableau filtering
+* Show generations
+* Add options (local storage) for :
+  * hand placement (floating or on top)
+  * size of elements
+  * general layout
 
 ### Client Bonus Features
 
@@ -34,4 +40,4 @@ Random notes on todo items
 
 ## Assets
 
-* Got them?
+* Waiting for official layered board

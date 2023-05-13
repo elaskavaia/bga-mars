@@ -26,6 +26,9 @@ class GameXBody extends GameTokens {
       this.updateTooltip(node.id);
     });
 
+
+    this.connectClass("filter_button", "onclick", "onFilterButton");
+
     console.log("Ending game setup");
   }
 
@@ -60,7 +63,7 @@ class GameXBody extends GameTokens {
               tagshtm += '<div class="badge tag_' + tag + '"></div>';
             }
           }
-
+          const parsedActions=this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? '');
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
 
           decor.innerHTML = `
@@ -74,21 +77,25 @@ class GameXBody extends GameTokens {
                 <div class="card_prereq">${displayInfo.pre??''}</div>
                 <div class="card_vp">${displayInfo.vp??''}</div>
           `;
+          // <div class="card_action">${parsedActions}</div>
+          //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
 
        } else {
           //standard project formatting:
           //cost -> action title
           //except for sell patents
           const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
+          const parsedActions=this.parseActionsToHTML(displayInfo.r);
           //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
           decor.innerHTML = `
              <div class='stanp_cost'>${displayInfo.cost}</div>
              <div class='stanp_arrow'></div>
-             <div class='stanp_action'>${displayInfo.r}</div>  
+             <div class='stanp_action'>${parsedActions}</div>  
              <div class='standard_projects_title'>${displayInfo.name}</div>  
           `;
         }
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
+
         div.innerHTML = `
 
         <div class='token_title'>${displayInfo.name}</div>
@@ -102,6 +109,61 @@ class GameXBody extends GameTokens {
       }
       this.connect(tokenNode, "onclick", "onToken");
     }
+  }
+
+  parseActionsToHTML(actions:string) {
+    let ret=actions;
+
+    const easyParses= {
+      'forest':{classes:'tracker tracker_forest'},
+      'city':{classes:'tracker tracker_city'},
+      'draw':{classes:'token_img draw_icon'},
+      '[1,](sell)':{classes:''},
+      'pe':{classes:'token_img tracker_e',production:true},
+      'pm':{classes:'token_img tracker_m',production:true,content:"1"},
+      'pu':{classes:'token_img tracker_u',production:true},
+      'pp':{classes:'token_img tracker_p',production:true},
+      'ph':{classes:'token_img tracker_h',production:true},
+      'e':{classes:'token_img tracker_e'},
+      'm':{classes:'token_img tracker_m',content:"1"},
+      'u':{classes:'token_img tracker_u'},
+      'p':{classes:'token_img tracker_p'},
+      'h':{classes:'token_img tracker_h'},
+      't':{classes:'token_img temperature_icon'},
+      'w':{classes:'tile tile_3'},
+      ':':{classes:'action_arrow'},
+    };
+
+    let idx=0;
+    let finds=[];
+    for (let key in easyParses) {
+      let item=easyParses[key];
+
+      if (ret.includes(key)) {
+        ret = ret.replace(key,"%"+idx+"%")
+        let content= item.content!=undefined ? item.content : "";
+
+        if (item.production===true) {
+          finds[idx] = '<div class="outer_production"><div class="'+item.classes+'">'+content+'</div></div>';
+        } else {
+          finds[idx] = '<div class="'+item.classes+'"></div>';
+        }
+
+        idx++;
+      }
+
+    }
+
+    //remove ";" between icons
+    ret=ret.replace('%;%','%%');
+
+    //replaces
+    for (let key in finds) {
+      let htm=finds[key];
+      ret = ret.replace('%'+key+'%',htm);
+    }
+
+    return ret;
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {
@@ -299,6 +361,7 @@ class GameXBody extends GameTokens {
     } else if (ttype == "player") {
       paramargs.forEach((tid: string) => {
         // XXX need to be pretty
+
         const playerId = this.getPlayerIdByColor(tid);
         // here divId can be like player name on miniboard
         const divId = `player_name_${playerId}`;
@@ -454,6 +517,21 @@ class GameXBody extends GameTokens {
     this.onToken_playerTurnChoice(tid);
   }
 
+  //custom actions
+  onFilterButton(event: Event) {
+    let id = (event.currentTarget as HTMLElement).id;
+    // Stop this event propagation
+    dojo.stopEvent(event); // XXX
+
+    const plcolor = $(id).dataset.player;
+    const btncolor = $(id).dataset.color;
+    const tblitem='visibility'+btncolor;
+
+    $('tableau_'+plcolor).dataset[tblitem] = $('tableau_'+plcolor).dataset[tblitem]=="1" ? "0" : "1";
+    $(id).dataset.enabled = $(id).dataset.enabled=="1" ? "0" : "1";
+
+    return true;
+  }
 
   // notifications
   setupNotifications(): void {

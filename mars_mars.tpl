@@ -215,7 +215,12 @@
       <div id="player_tags_{PLAYER_COLOR}" class="player_tags">
 
       </div>
-      <div id="tableau_{PLAYER_COLOR}" class="whiteblock">
+      <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
+        <div id="player_filter_blue_{PLAYER_COLOR}" class="filter_button filter_blue"  data-color="blue"  data-enabled="1" data-player="{PLAYER_COLOR}">Actions(Blue)</div>
+        <div id="player_filter_green_{PLAYER_COLOR}" class="filter_button filter_green" data-color="green"  data-enabled="1" data-player="{PLAYER_COLOR}">Automated (Gren)</div>
+        <div id="player_filter_red_{PLAYER_COLOR}" class="filter_button filter_red" data-color="red" data-enabled="1" data-player="{PLAYER_COLOR}">Events(Red)</div>
+      </div>
+      <div id="tableau_{PLAYER_COLOR}" class="whiteblock" data-visibilityblue="1" data-visibilitygreen="1" data-visibilityred="1">
            <div id="tableau_{PLAYER_COLOR}_cards_4" class="cards_4"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2" class="cards_2"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_1" class="cards_1"></div>

@@ -2,7 +2,7 @@
   --map-width: 34vw;
   --map-height: calc(var(--map-width)*0.92);
 
-  --stan-width:6vw; /* 25vh */
+  --stan-width:6.5vw; /* 25vh */
   --stan-height: calc(var(--stan-width)*0.3);
 }
 
@@ -270,16 +270,17 @@
 #temperature_map #tracker_t[data-state="-18"] {  bottom: 35.3%; }
 #temperature_map #tracker_t[data-state="-16"] {  bottom: 39.8%; }
 #temperature_map #tracker_t[data-state="-14"] {  bottom: 44.3%; }
-#temperature_map #tracker_t[data-state="-10"] {  bottom: 48.8%; }
-#temperature_map #tracker_t[data-state="-8"] {  bottom: 53.3%; }
-#temperature_map #tracker_t[data-state="-6"] {  bottom: 57.8%; }
-#temperature_map #tracker_t[data-state="-4"] {  bottom: 62.3%; }
-#temperature_map #tracker_t[data-state="-2"] {  bottom: 66.8%; }
-#temperature_map #tracker_t[data-state="0"] {  bottom: 71.3%; }
-#temperature_map #tracker_t[data-state="2"] {  bottom: 75.8%; }
-#temperature_map #tracker_t[data-state="4"] {  bottom: 80.3%; }
-#temperature_map #tracker_t[data-state="6"] {  bottom: 84.8%; }
-#temperature_map #tracker_t[data-state="8"] {  bottom: 89.3%; }
+#temperature_map #tracker_t[data-state="-12"] {  bottom: 48.8%; }
+#temperature_map #tracker_t[data-state="-10"] {  bottom: 53.3%; }
+#temperature_map #tracker_t[data-state="-8"] {  bottom: 57.8%; }
+#temperature_map #tracker_t[data-state="-6"] {  bottom: 62.3%; }
+#temperature_map #tracker_t[data-state="-4"] {  bottom: 66.8%; }
+#temperature_map #tracker_t[data-state="-2"] {  bottom: 71.3%; }
+#temperature_map #tracker_t[data-state="0"] {  bottom: 75.8%; }
+#temperature_map #tracker_t[data-state="2"] {  bottom: 80.3%; }
+#temperature_map #tracker_t[data-state="4"] {  bottom: 84.8%; }
+#temperature_map #tracker_t[data-state="6"] {  bottom: 89.3%; }
+#temperature_map #tracker_t[data-state="8"] {  bottom: 93.8%; }
 
 
 
@@ -292,7 +293,7 @@
   background: linear-gradient(90deg, rgb(180, 105, 0) 0%, rgb(238, 223, 120) 75%, rgba(0,255,252,1) 100%);*/
   background-image: url("img/oxygen.png");
   background-size: cover;
-  top: -55%;
+  top: -65%;
   pointer-events: none;
   left: 16.5%;
 }
@@ -347,7 +348,7 @@
 .oxygen_scale_item[data-val="13"] {  left: 84%; top:48% }
 .oxygen_scale_item[data-val="14"] {  left: 89.5%; top:63% }
 
-#oxygen_map #tracker_o[data-state="0"] {  display:revert;left: 6%; top: 64%;}
+#oxygen_map #tracker_o[data-state="0"] {  display:revert;opacity: 1;left: 6%; top: 64%;}
 #oxygen_map #tracker_o[data-state="1"] {  left: 10.5%; top:50% }
 #oxygen_map #tracker_o[data-state="2"] {  left: 16.5%; top:36% }
 #oxygen_map #tracker_o[data-state="3"] {  left: 22%; top:25% }
@@ -447,10 +448,41 @@
 }
 
 .stanp_action{
-  height: calc(var(--stan-width) * 0.2);
+  height: calc(var(--stan-width) * 0.25);
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: calc(var(--stan-width) * 0.05);
+  padding: calc(var(--stan-width) * 0.03);
+  width: calc(var(--stan-width) * 0.3);
+}
+
+.stanp_decor .outer_production{
+  width:  calc(var(--stan-width) * 0.25);
+  height: calc(var(--stan-width) * 0.25);
+
+}
+
+.stanp_decor  {
+  --resourcesize: calc(var(--stan-width) * 0.17);
+
+  .token_img {
+    margin-right: revert;
+    font-family: "Prototype";
+    font-size:calc(var(--resourcesize) * 0.6);
+  }
+
+  .tile {
+    width:  calc(var(--stan-width) * 0.25);
+    height: calc(var(--stan-width) * 0.25);
+  }
+
+  .tracker{
+    position: relative;
+    width: calc(var(--stan-width) * 0.25);
+    height: calc(var(--stan-width) * 0.25);
+    flex-shrink: 0;
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+  }
 }

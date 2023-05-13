@@ -158,7 +158,7 @@
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
   background-position: 0 -100%;
- background-color: grey;
+  background-color: grey;
 }
 #discard_main{
   background-color: ghostwhite;
@@ -207,6 +207,11 @@
 
 #players_area {
   margin-top:2vh;
+}
+
+#hand_area {
+  display: flex;
+  flex-direction: column;
 }
 /*
 #discard_main > .card ~ .card {
