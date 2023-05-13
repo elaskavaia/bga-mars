@@ -40,6 +40,24 @@ class AbsOperationPayWithRes extends AbsOperation {
 
         $this->addProposal($info, $type, $mcount, $typecount, $er, $count, 0);
 
+        $info['payment'] = [
+            'q'=>0,
+            'count'=>$count,
+            'original'=>$this->game->getRulesFor($this->getContext(),'cost',0),
+            'resources'=>[],
+            'rate'=>[]
+        ];
+        foreach ($this->getTypes() as $type) {
+            $typecount = $this->game->getTrackerValue($this->color, $type);
+            $er = $this->getExchangeRate($type);
+            $maxres = (int)floor($count / $er);
+            $maxres = min($maxres, $typecount);
+            $info['payment']['resources'][$type]=$maxres;
+            $info['payment']['rate'][$type]=$er;
+        }
+        $info['payment']['resources']['m']= min($count, $mcount);
+        $info['payment']['rate']['m']=1;
+
         return $info;
     }
 
