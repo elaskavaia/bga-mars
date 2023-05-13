@@ -1450,6 +1450,7 @@ var GameXBody = /** @class */ (function (_super) {
         document.querySelectorAll(".hex").forEach(function (node) {
             _this.updateTooltip(node.id);
         });
+        this.connectClass("filter_button", "onclick", "onFilterButton");
         console.log("Ending game setup");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
@@ -1462,7 +1463,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
-        var _b, _c, _d, _e;
+        var _b, _c, _d, _e, _f, _g;
         if (!tokenNode.getAttribute("data-info")) {
             var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
             var classes = displayInfo.imageTypes.split(/  */);
@@ -1474,21 +1475,25 @@ var GameXBody = /** @class */ (function (_super) {
                 if (!tokenNode.id.startsWith('card_stanproj')) {
                     //tags
                     if (displayInfo.tags && displayInfo.tags != "") {
-                        for (var _i = 0, _f = displayInfo.tags.split(' '); _i < _f.length; _i++) {
-                            var tag = _f[_i];
+                        for (var _i = 0, _h = displayInfo.tags.split(' '); _i < _h.length; _i++) {
+                            var tag = _h[_i];
                             tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         }
                     }
+                    var parsedActions = this.parseActionsToHTML((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : '');
                     var decor = this.createDivNode(null, "card_decor", tokenNode.id);
-                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'>").concat(displayInfo.name, "</div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : '', "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_d = displayInfo.pre) !== null && _d !== void 0 ? _d : '', "</div>\n                <div class=\"card_vp\">").concat((_e = displayInfo.vp) !== null && _e !== void 0 ? _e : '', "</div>\n          ");
+                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'>").concat(displayInfo.name, "</div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : '', "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : '', "</div>\n                <div class=\"card_vp\">").concat((_g = displayInfo.vp) !== null && _g !== void 0 ? _g : '', "</div>\n          ");
+                    // <div class="card_action">${parsedActions}</div>
+                    //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
                 }
                 else {
                     //standard project formatting:
                     //cost -> action title
                     //except for sell patents
                     var decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
+                    var parsedActions = this.parseActionsToHTML(displayInfo.r);
                     //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-                    decor.innerHTML = "\n             <div class='stanp_cost'>".concat(displayInfo.cost, "</div>\n             <div class='stanp_arrow'></div>\n             <div class='stanp_action'>").concat(displayInfo.r, "</div>  \n             <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n          ");
+                    decor.innerHTML = "\n             <div class='stanp_cost'>".concat(displayInfo.cost, "</div>\n             <div class='stanp_arrow'></div>\n             <div class='stanp_action'>").concat(parsedActions, "</div>  \n             <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n          ");
                 }
                 var div = this.createDivNode(null, "card_info_box", tokenNode.id);
                 div.innerHTML = "\n\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div> \n        <div class='token_rules'>").concat(displayInfo.r, "</div>\n        <div class='token_descr'>").concat(displayInfo.text, "</div>\n        ");
@@ -1497,6 +1502,52 @@ var GameXBody = /** @class */ (function (_super) {
             }
             this.connect(tokenNode, "onclick", "onToken");
         }
+    };
+    GameXBody.prototype.parseActionsToHTML = function (actions) {
+        var ret = actions;
+        var easyParses = {
+            'forest': { classes: 'tracker tracker_forest' },
+            'city': { classes: 'tracker tracker_city' },
+            'draw': { classes: 'token_img draw_icon' },
+            '[1,](sell)': { classes: '' },
+            'pe': { classes: 'token_img tracker_e', production: true },
+            'pm': { classes: 'token_img tracker_m', production: true, content: "1" },
+            'pu': { classes: 'token_img tracker_u', production: true },
+            'pp': { classes: 'token_img tracker_p', production: true },
+            'ph': { classes: 'token_img tracker_h', production: true },
+            'e': { classes: 'token_img tracker_e' },
+            'm': { classes: 'token_img tracker_m', content: "1" },
+            'u': { classes: 'token_img tracker_u' },
+            'p': { classes: 'token_img tracker_p' },
+            'h': { classes: 'token_img tracker_h' },
+            't': { classes: 'token_img temperature_icon' },
+            'w': { classes: 'tile tile_3' },
+            ':': { classes: 'action_arrow' },
+        };
+        var idx = 0;
+        var finds = [];
+        for (var key in easyParses) {
+            var item = easyParses[key];
+            if (ret.includes(key)) {
+                ret = ret.replace(key, "%" + idx + "%");
+                var content = item.content != undefined ? item.content : "";
+                if (item.production === true) {
+                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + '</div></div>';
+                }
+                else {
+                    finds[idx] = '<div class="' + item.classes + '"></div>';
+                }
+                idx++;
+            }
+        }
+        //remove ";" between icons
+        ret = ret.replace('%;%', '%%');
+        //replaces
+        for (var key in finds) {
+            var htm = finds[key];
+            ret = ret.replace('%' + key + '%', htm);
+        }
+        return ret;
     };
     GameXBody.prototype.renderSpecificToken = function (tokenNode) {
         /* It seems duplicates the other stuff which is already there, disabled for now
@@ -1700,8 +1751,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "player") {
             paramargs.forEach(function (tid) {
-                var _a;
                 // XXX need to be pretty
+                var _a;
                 var playerId = _this.getPlayerIdByColor(tid);
                 // here divId can be like player name on miniboard
                 var divId = "player_name_".concat(playerId);
@@ -1854,6 +1905,18 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onToken_multiplayerDispatch = function (tid) {
         this.onToken_playerTurnChoice(tid);
+    };
+    //custom actions
+    GameXBody.prototype.onFilterButton = function (event) {
+        var id = event.currentTarget.id;
+        // Stop this event propagation
+        dojo.stopEvent(event); // XXX
+        var plcolor = $(id).dataset.player;
+        var btncolor = $(id).dataset.color;
+        var tblitem = 'visibility' + btncolor;
+        $('tableau_' + plcolor).dataset[tblitem] = $('tableau_' + plcolor).dataset[tblitem] == "1" ? "0" : "1";
+        $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
+        return true;
     };
     // notifications
     GameXBody.prototype.setupNotifications = function () {
