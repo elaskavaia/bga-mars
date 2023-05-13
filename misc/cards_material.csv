@@ -164,7 +164,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 157|Nitrite Reducing Bacteria|2|3res|res/(3nres:tr)||11||Microbe|0|Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|  'holds' => 'Microbe'
 158|Industrial Microbes|1|ps,pe|||12||Building Microbe|0|Increase your energy production and your steel production 1 step each.|
 159|Lichen|1|pp|||7|t>=-24|Plant|0|Requires -24°C or warmer. Increase your plant production 1 step.|
-160|Power Supply Consortium|1|1npe_Any|||5|tagEnergy>=2|Energy|0|Requires 2 power tags. Decrease any energy production 1 step and increase your own 1 step.|
+160|Power Supply Consortium|1|npe_Any,pe|||5|tagEnergy>=2|Energy|0|Requires 2 power tags. Decrease any energy production 1 step and increase your own 1 step.|
 161|Convoy From Europa|3|w,draw|||15||Space Event|0|Place 1 ocean tile and draw 1 card.|
 162|Imported GHG|3|ph,3h|||7||Space Earth Event|0|Increase your heat production 1 step and gain 3 heat.|
 163|Imported Nitrogen|3|4p,tr,3ores(Microbe),2ores(Animal)|||23||Space Earth Event|0|Raise your TR 1 step and gain 4 plants. Add 3 microbes to ANOTHER card and 2 animals to ANOTHER card.|
@@ -210,7 +210,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 203|Soletta|1|7ph|||35||Space|0|Increase your heat production 7 steps.|
 204|Technology Demonstration|3|2draw|||5||Science Space Event|0|Draw 2 cards.|
 205|Rad-Chem Factory|1|1npe,2tr|||8||Building|0|Decrease your energy production 1 step. Raise your terraform rating 2 steps.|
-206|Special Design|3|||play_card:flip:that|4||Science Event|0|The next card you play this generation is +2 or -2 in global requirements, your choice TODO.|
+206|Special Design|3|||onPre_delta:2;play_card:flip:that|4||Science Event|0|The next card you play this generation is +2 or -2 in global requirements, your choice TODO.|
 207|Medical Lab|1|counter(tagBuilding/2)pm|||13||Science Building|1|Increase your MC production 1 step for every 2 building tags you have, including this.|
 208|AI Central|2|1npe|2draw||21|tagScience>=3|Science Building|1|Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards.|
 

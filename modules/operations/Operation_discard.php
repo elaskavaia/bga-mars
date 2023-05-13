@@ -14,10 +14,14 @@ class Operation_discard extends AbsOperation {
         return false;
     }
 
-
     function argPrimary() {
         $color = $this->color;
         $keys = array_keys($this->game->tokens->getTokensInLocation("hand_${color}"));
         return $keys;
+    }
+
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['target']) == 0;
     }
 }

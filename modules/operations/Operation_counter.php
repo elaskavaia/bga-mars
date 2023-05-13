@@ -18,7 +18,7 @@ class Operation_counter extends AbsOperation {
         if (!is_numeric($count))  throw new Exception("Did not evaluate to a number $par $count");
         $this->game->debugLog("-evaluted to $count");
         $this->game->machine->hide($this->op_info); // this cannot be part of top
-        $tops = $this->game->machine->getTopOperations();
+        $tops = $this->game->machine->getTopOperations($owner);
         $this->game->machine->setCount($tops, $count, $mincount);
         return 1;
     }

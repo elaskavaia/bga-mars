@@ -18,4 +18,10 @@ class Operation_card extends AbsOperation {
         $keys = array_keys($this->game->tokens->getTokensInLocation("hand_${color}"));
         return $this->game->filterPlayable($color, $keys);
     }
+
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['target']) == 0;
+    }
+
 }

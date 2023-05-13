@@ -1472,17 +1472,17 @@ var GameXBody = /** @class */ (function (_super) {
             // use this to generate some fake parts of card, remove this when use images
             if (displayInfo.mainType == "card") {
                 var tagshtm = "";
-                if (!tokenNode.id.startsWith('card_stanproj')) {
+                if (!tokenNode.id.startsWith("card_stanproj")) {
                     //tags
                     if (displayInfo.tags && displayInfo.tags != "") {
-                        for (var _i = 0, _h = displayInfo.tags.split(' '); _i < _h.length; _i++) {
+                        for (var _i = 0, _h = displayInfo.tags.split(" "); _i < _h.length; _i++) {
                             var tag = _h[_i];
                             tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         }
                     }
-                    var parsedActions = this.parseActionsToHTML((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : '');
+                    var parsedActions = this.parseActionsToHTML((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : "");
                     var decor = this.createDivNode(null, "card_decor", tokenNode.id);
-                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'>").concat(displayInfo.name, "</div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : '', "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : '', "</div>\n                <div class=\"card_vp\">").concat((_g = displayInfo.vp) !== null && _g !== void 0 ? _g : '', "</div>\n          ");
+                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'>").concat(displayInfo.name, "</div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : "", "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : "", "</div>\n                <div class=\"card_vp\">").concat((_g = displayInfo.vp) !== null && _g !== void 0 ? _g : "", "</div>\n          ");
                     // <div class="card_action">${parsedActions}</div>
                     //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
                 }
@@ -1506,23 +1506,23 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.parseActionsToHTML = function (actions) {
         var ret = actions;
         var easyParses = {
-            'forest': { classes: 'tracker tracker_forest' },
-            'city': { classes: 'tracker tracker_city' },
-            'draw': { classes: 'token_img draw_icon' },
-            '[1,](sell)': { classes: '' },
-            'pe': { classes: 'token_img tracker_e', production: true },
-            'pm': { classes: 'token_img tracker_m', production: true, content: "1" },
-            'pu': { classes: 'token_img tracker_u', production: true },
-            'pp': { classes: 'token_img tracker_p', production: true },
-            'ph': { classes: 'token_img tracker_h', production: true },
-            'e': { classes: 'token_img tracker_e' },
-            'm': { classes: 'token_img tracker_m', content: "1" },
-            'u': { classes: 'token_img tracker_u' },
-            'p': { classes: 'token_img tracker_p' },
-            'h': { classes: 'token_img tracker_h' },
-            't': { classes: 'token_img temperature_icon' },
-            'w': { classes: 'tile tile_3' },
-            ':': { classes: 'action_arrow' },
+            forest: { classes: "tracker tracker_forest" },
+            city: { classes: "tracker tracker_city" },
+            draw: { classes: "token_img draw_icon" },
+            "[1,](sell)": { classes: "" },
+            pe: { classes: "token_img tracker_e", production: true },
+            pm: { classes: "token_img tracker_m", production: true, content: "1" },
+            pu: { classes: "token_img tracker_u", production: true },
+            pp: { classes: "token_img tracker_p", production: true },
+            ph: { classes: "token_img tracker_h", production: true },
+            e: { classes: "token_img tracker_e" },
+            m: { classes: "token_img tracker_m", content: "1" },
+            u: { classes: "token_img tracker_u" },
+            p: { classes: "token_img tracker_p" },
+            h: { classes: "token_img tracker_h" },
+            t: { classes: "token_img temperature_icon" },
+            w: { classes: "tile tile_3" },
+            ":": { classes: "action_arrow" },
         };
         var idx = 0;
         var finds = [];
@@ -1532,7 +1532,7 @@ var GameXBody = /** @class */ (function (_super) {
                 ret = ret.replace(key, "%" + idx + "%");
                 var content = item.content != undefined ? item.content : "";
                 if (item.production === true) {
-                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + '</div></div>';
+                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div></div>";
                 }
                 else {
                     finds[idx] = '<div class="' + item.classes + '"></div>';
@@ -1541,11 +1541,11 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         //remove ";" between icons
-        ret = ret.replace('%;%', '%%');
+        ret = ret.replace("%;%", "%%");
         //replaces
         for (var key in finds) {
             var htm = finds[key];
-            ret = ret.replace('%' + key + '%', htm);
+            ret = ret.replace("%" + key + "%", htm);
         }
         return ret;
     };
@@ -1592,12 +1592,14 @@ var GameXBody = /** @class */ (function (_super) {
             if (tokenDisplayInfo.e)
                 rules += ";e:" + tokenDisplayInfo.e;
             tokenDisplayInfo.imageTypes += " infonode";
-            tokenDisplayInfo.tooltip = rules + "<br>" +
-                (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
-                this.getTr(tokenDisplayInfo.text) +
-                "<br>" +
-                _("Number: " + tokenDisplayInfo.num) +
-                (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
+            tokenDisplayInfo.tooltip =
+                rules +
+                    "<br>" +
+                    (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
+                    this.getTr(tokenDisplayInfo.text) +
+                    "<br>" +
+                    _("Number: " + tokenDisplayInfo.num) +
+                    (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
             if (tokenDisplayInfo.vp) {
                 tokenDisplayInfo.tooltip += "<br>VP:" + tokenDisplayInfo.vp;
             }
@@ -1620,12 +1622,13 @@ var GameXBody = /** @class */ (function (_super) {
         else if (this.custom_placement[tokenInfo.key]) {
             result.location = this.custom_placement[tokenInfo.key];
         }
-        else if (tokenInfo.key.startsWith('card_main') && tokenInfo.location.startsWith('tableau')) {
-            var t = this.getRulesFor(tokenInfo.key, 't');
+        else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+            var t = this.getRulesFor(tokenInfo.key, "t");
             if (t !== undefined)
                 result.location = tokenInfo.location + "_cards_" + t;
         }
-        if (!result.location) // if failed to find revert to server one
+        if (!result.location)
+            // if failed to find revert to server one
             result.location = tokenInfo.location;
         return result;
     };
@@ -1716,12 +1719,13 @@ var GameXBody = /** @class */ (function (_super) {
                             });
                         });
                     }
-                    this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
-                        // XXX
-                        _this.sendActionResolve(opId, {
-                            count: count,
+                    if (count >= 1)
+                        this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
+                            // XXX
+                            _this.sendActionResolve(opId, {
+                                count: count,
+                            });
                         });
-                    });
                 }
             }
         }
@@ -1760,7 +1764,7 @@ var GameXBody = /** @class */ (function (_super) {
                     var name_2 = (_a = _this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
                     _this.addActionButton(buttonId, name_2 !== null && name_2 !== void 0 ? name_2 : tid, function () {
                         _this.onSelectTarget(opId, tid);
-                    }, undefined, false, 'gray');
+                    }, undefined, false, "gray");
                     if (name_2)
                         $(buttonId).style.color = "#" + tid;
                 }
@@ -1912,8 +1916,8 @@ var GameXBody = /** @class */ (function (_super) {
         dojo.stopEvent(event); // XXX
         var plcolor = $(id).dataset.player;
         var btncolor = $(id).dataset.color;
-        var tblitem = 'visibility' + btncolor;
-        $('tableau_' + plcolor).dataset[tblitem] = $('tableau_' + plcolor).dataset[tblitem] == "1" ? "0" : "1";
+        var tblitem = "visibility" + btncolor;
+        $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
         $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
         return true;
     };

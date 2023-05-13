@@ -17,6 +17,12 @@ class Operation_keep extends AbsOperation {
     }
 
 
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['target']) == 0;
+    }
+
+
     function canResolveAutomatically() {
         return false;
     }

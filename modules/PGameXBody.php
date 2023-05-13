@@ -94,7 +94,7 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->push("a",1,$player_id);
         //$this->machine->interrupt();
         //$this->machine->normalize();
-        $card = "card_main_163";
+        $card = "card_stanproj_1";
         return $this->debug_oparg($this->getRulesFor($card), $card);
         //$this->gamestate->nextState("next");
     }
@@ -284,6 +284,27 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
+    function evaluatePrecondition($cond, $owner, $tokenid) {
+        if ($cond) {
+            $valid = $this->evaluateExpression($cond, $owner, $tokenid);
+            if (!$valid) {
+                $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
+                // there is one more stupid event card that has temp delta effect
+                $listeners = $this->collectListeners($owner, ['onPre_delta']);
+                foreach ($listeners as $lisinfo) {
+                    $outcome = $lisinfo['outcome'];
+                    $delta += $outcome;
+                }
+                if ($delta) {
+                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, $delta)
+                        || $this->evaluateExpression($cond, $owner, $tokenid, -$delta);
+                }
+                if (!$valid) return false; // fail prereq check
+            }
+        }
+        return true;
+    }
+
     function playability($owner, $tokenid) {
         if (!$owner) {
             $owner == $this->getActivePlayerColor();
@@ -291,21 +312,13 @@ abstract class PGameXBody extends PGameMachine {
         if (!$this->canAfford($owner, $tokenid)) {
             return MA_ERR_COST;
         }
-        // check precond
+        // check precondition
         $cond = $this->getRulesFor($tokenid, "pre");
         if ($cond) {
-            $valid = $this->evaluateExpression($cond, $owner, $tokenid);
-            if (!$valid) {
-                $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
-                if ($delta) {
-                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, 'inc');
-                    if (!$valid) {
-                        $valid = $this->evaluateExpression($cond, $owner, $tokenid, 'dec');
-                    }
-                }
-                if (!$valid) return MA_ERR_PREREQ; // fail prereq check
-            }
+            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid);
+            if (!$valid) return MA_ERR_PREREQ; // fail prereq check
         }
+
         // check immediate effect affordability
         $r = $this->getRulesFor($tokenid, "r");
         if ($r) {
@@ -315,7 +328,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         // special project sell XXX
         if (startsWith($tokenid, "card_stanproj_1")) {
-            if ($this->isVoid(["type" => "sell", "owner" => $owner])) {
+            if ($this->isVoidSingle("sell",$owner)) {
                 return MA_ERR_MANDATORYEFFECT;
             }
         }
@@ -333,13 +346,11 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function evaluateTerm($x, $owner, $context = null, $mods = null) {
-        $type = $this->getRulesFor($x, 'type', '');
+        $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
             $value = $this->tokens->getTokenState("tracker_${x}");
             if (!$mods) return $value;
-            $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
-            if ($mods == 'inc') return $value + $delta;
-            if ($mods == 'dec') return $value - $delta;
+            return $value + $mods;
         }
         if ($x == 'chand') {
             return $this->tokens->countTokensInLocation("hand_$owner");
@@ -627,7 +638,7 @@ abstract class PGameXBody extends PGameMachine {
         $costm = $this->getRulesFor($card_id, "cost", 0);
         $tags = $this->getRulesFor($card_id, "tags", '');
         $discount = 0;
-        if (startsWith($card_id,'card_main'))
+        if (startsWith($card_id, 'card_main'))
             $discount = $this->collectDiscounts($color, $card_id);
         $costm = max(0, $costm - $discount);
         if ($costm == 0)

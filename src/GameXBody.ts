@@ -26,7 +26,6 @@ class GameXBody extends GameTokens {
       this.updateTooltip(node.id);
     });
 
-
     this.connectClass("filter_button", "onclick", "onFilterButton");
 
     console.log("Ending game setup");
@@ -51,19 +50,16 @@ class GameXBody extends GameTokens {
 
       // use this to generate some fake parts of card, remove this when use images
       if (displayInfo.mainType == "card") {
-
-
         let tagshtm = "";
-        if (!tokenNode.id.startsWith('card_stanproj')) {
-
+        if (!tokenNode.id.startsWith("card_stanproj")) {
           //tags
 
           if (displayInfo.tags && displayInfo.tags != "") {
-            for (let tag of displayInfo.tags.split(' ')) {
+            for (let tag of displayInfo.tags.split(" ")) {
               tagshtm += '<div class="badge tag_' + tag + '"></div>';
             }
           }
-          const parsedActions=this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? '');
+          const parsedActions = this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
 
           decor.innerHTML = `
@@ -72,20 +68,19 @@ class GameXBody extends GameTokens {
                 <div class='card_badges'>${tagshtm}</div>
                 <div class='card_title'>${displayInfo.name}</div>
                 <div class='card_cost'>${displayInfo.cost}</div> 
-                <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
+                <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ""}</div>
                 <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
-                <div class="card_prereq">${displayInfo.pre??''}</div>
-                <div class="card_vp">${displayInfo.vp??''}</div>
+                <div class="card_prereq">${displayInfo.pre ?? ""}</div>
+                <div class="card_vp">${displayInfo.vp ?? ""}</div>
           `;
           // <div class="card_action">${parsedActions}</div>
           //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
-
-       } else {
+        } else {
           //standard project formatting:
           //cost -> action title
           //except for sell patents
           const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-          const parsedActions=this.parseActionsToHTML(displayInfo.r);
+          const parsedActions = this.parseActionsToHTML(displayInfo.r);
           //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
           decor.innerHTML = `
              <div class='stanp_cost'>${displayInfo.cost}</div>
@@ -111,56 +106,55 @@ class GameXBody extends GameTokens {
     }
   }
 
-  parseActionsToHTML(actions:string) {
-    let ret=actions;
+  parseActionsToHTML(actions: string) {
+    let ret = actions;
 
-    const easyParses= {
-      'forest':{classes:'tracker tracker_forest'},
-      'city':{classes:'tracker tracker_city'},
-      'draw':{classes:'token_img draw_icon'},
-      '[1,](sell)':{classes:''},
-      'pe':{classes:'token_img tracker_e',production:true},
-      'pm':{classes:'token_img tracker_m',production:true,content:"1"},
-      'pu':{classes:'token_img tracker_u',production:true},
-      'pp':{classes:'token_img tracker_p',production:true},
-      'ph':{classes:'token_img tracker_h',production:true},
-      'e':{classes:'token_img tracker_e'},
-      'm':{classes:'token_img tracker_m',content:"1"},
-      'u':{classes:'token_img tracker_u'},
-      'p':{classes:'token_img tracker_p'},
-      'h':{classes:'token_img tracker_h'},
-      't':{classes:'token_img temperature_icon'},
-      'w':{classes:'tile tile_3'},
-      ':':{classes:'action_arrow'},
+    const easyParses = {
+      forest: { classes: "tracker tracker_forest" },
+      city: { classes: "tracker tracker_city" },
+      draw: { classes: "token_img draw_icon" },
+      "[1,](sell)": { classes: "" },
+      pe: { classes: "token_img tracker_e", production: true },
+      pm: { classes: "token_img tracker_m", production: true, content: "1" },
+      pu: { classes: "token_img tracker_u", production: true },
+      pp: { classes: "token_img tracker_p", production: true },
+      ph: { classes: "token_img tracker_h", production: true },
+      e: { classes: "token_img tracker_e" },
+      m: { classes: "token_img tracker_m", content: "1" },
+      u: { classes: "token_img tracker_u" },
+      p: { classes: "token_img tracker_p" },
+      h: { classes: "token_img tracker_h" },
+      t: { classes: "token_img temperature_icon" },
+      w: { classes: "tile tile_3" },
+      ":": { classes: "action_arrow" },
     };
 
-    let idx=0;
-    let finds=[];
+    let idx = 0;
+    let finds = [];
     for (let key in easyParses) {
-      let item=easyParses[key];
+      let item = easyParses[key];
 
       if (ret.includes(key)) {
-        ret = ret.replace(key,"%"+idx+"%")
-        let content= item.content!=undefined ? item.content : "";
+        ret = ret.replace(key, "%" + idx + "%");
+        let content = item.content != undefined ? item.content : "";
 
-        if (item.production===true) {
-          finds[idx] = '<div class="outer_production"><div class="'+item.classes+'">'+content+'</div></div>';
+        if (item.production === true) {
+          finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div></div>";
         } else {
-          finds[idx] = '<div class="'+item.classes+'"></div>';
+          finds[idx] = '<div class="' + item.classes + '"></div>';
         }
 
         idx++;
       }
-
     }
 
     //remove ";" between icons
-    ret=ret.replace('%;%','%%');
+    ret = ret.replace("%;%", "%%");
 
     //replaces
     for (let key in finds) {
-      let htm=finds[key];
-      ret = ret.replace('%'+key+'%',htm);
+      let htm = finds[key];
+      ret = ret.replace("%" + key + "%", htm);
     }
 
     return ret;
@@ -208,7 +202,9 @@ class GameXBody extends GameTokens {
       if (tokenDisplayInfo.e) rules += ";e:" + tokenDisplayInfo.e;
 
       tokenDisplayInfo.imageTypes += " infonode";
-      tokenDisplayInfo.tooltip = rules + "<br>"+
+      tokenDisplayInfo.tooltip =
+        rules +
+        "<br>" +
         (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
         this.getTr(tokenDisplayInfo.text) +
         "<br>" +
@@ -229,16 +225,17 @@ class GameXBody extends GameTokens {
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
       result.nop = true; // do not relocate or do anyting
     } else if (tokenInfo.key.startsWith("award")) {
-        result.nop = true;
-     } else if (tokenInfo.key.startsWith("milestone")) {
-        result.nop = true;
+      result.nop = true;
+    } else if (tokenInfo.key.startsWith("milestone")) {
+      result.nop = true;
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
-    } else if (tokenInfo.key.startsWith('card_main') && tokenInfo.location.startsWith('tableau')) {
-      const t = this.getRulesFor(tokenInfo.key,'t');
-      if (t!==undefined) result.location = tokenInfo.location+"_cards_"+t;
+    } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+      const t = this.getRulesFor(tokenInfo.key, "t");
+      if (t !== undefined) result.location = tokenInfo.location + "_cards_" + t;
     }
-    if (!result.location) // if failed to find revert to server one
+    if (!result.location)
+      // if failed to find revert to server one
       result.location = tokenInfo.location;
     return result;
   }
@@ -326,12 +323,14 @@ class GameXBody extends GameTokens {
               });
             });
           }
-          this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
-            // XXX
-            this.sendActionResolve(opId, {
-              count: count,
+
+          if (count >= 1)
+            this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
+              // XXX
+              this.sendActionResolve(opId, {
+                count: count,
+              });
             });
-          });
         }
       }
     }
@@ -367,10 +366,17 @@ class GameXBody extends GameTokens {
         if (single) {
           const buttonId = "button_" + tid;
           const name = this.gamedatas.players[playerId]?.name;
-          this.addActionButton(buttonId, name ?? tid, () => {
-            this.onSelectTarget(opId, tid);
-          },undefined,false,'gray');
-          if (name) $(buttonId).style.color = "#"+tid;
+          this.addActionButton(
+            buttonId,
+            name ?? tid,
+            () => {
+              this.onSelectTarget(opId, tid);
+            },
+            undefined,
+            false,
+            "gray"
+          );
+          if (name) $(buttonId).style.color = "#" + tid;
         }
 
         this.setReverseIdMap(divId, opId, tid);
@@ -463,7 +469,7 @@ class GameXBody extends GameTokens {
         }
 
         if (opargs.void) {
-          dojo.addClass("button_" + opId,"disabled");
+          dojo.addClass("button_" + opId, "disabled");
         }
       }
       // add done (skip) when optional
@@ -482,7 +488,6 @@ class GameXBody extends GameTokens {
     if (!operations) return;
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
-
 
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
@@ -509,10 +514,10 @@ class GameXBody extends GameTokens {
     }
   }
 
-  onToken_multiplayerChoice(tid: string){
+  onToken_multiplayerChoice(tid: string) {
     this.onToken_playerTurnChoice(tid);
   }
-  onToken_multiplayerDispatch(tid: string){
+  onToken_multiplayerDispatch(tid: string) {
     this.onToken_playerTurnChoice(tid);
   }
 
@@ -524,10 +529,10 @@ class GameXBody extends GameTokens {
 
     const plcolor = $(id).dataset.player;
     const btncolor = $(id).dataset.color;
-    const tblitem='visibility'+btncolor;
+    const tblitem = "visibility" + btncolor;
 
-    $('tableau_'+plcolor).dataset[tblitem] = $('tableau_'+plcolor).dataset[tblitem]=="1" ? "0" : "1";
-    $(id).dataset.enabled = $(id).dataset.enabled=="1" ? "0" : "1";
+    $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
+    $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
 
     return true;
   }

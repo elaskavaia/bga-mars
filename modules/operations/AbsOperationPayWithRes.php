@@ -59,7 +59,7 @@ class AbsOperationPayWithRes extends AbsOperation {
         $tryc = $mc_try + $type_try * $er;
         $info["$proposal"] = [
             'q' => $q,
-            'count' => $tryc,
+            'count' => min($tryc, $this->getCount()),
             'm' => $mc_try,
             $type => $type_try,
             'sign' => $tryc <=> $this->getCount()
@@ -71,11 +71,11 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info = $this->getStateArg('info');
         $inc = $info[$value]['count'];
         $mc = $info[$value]['m'];
-        $this->game->effect_incCount($owner, 'm', -$mc);
+        if ($mc>0) $this->game->effect_incCount($owner, 'm', -$mc);
         foreach ($this->getTypes() as $type) {
             if (isset($info[$value][$type])) {
                 $tt = $info[$value][$type];
-                if ($tt != 0) $this->game->effect_incCount($owner, $type, -$tt);
+                if ($tt>0) $this->game->effect_incCount($owner, $type, -$tt);
             }
         }
         return $inc;

@@ -107,6 +107,16 @@ final class GameTest extends TestCase {
         $m->tokens->setTokenState('tracker_t_' . PCOLOR, 0);
         $this->assertEquals(0, $m->evaluateExpression("(t>0)*3", PCOLOR));
         $this->assertEquals(9, $m->evaluateExpression("all_u", PCOLOR));
+        $m->tokens->setTokenState('tracker_m_' . PCOLOR, 40);
+        // oxigens
+        $m->tokens->setTokenState('tracker_o', 10);
+        $this->assertEquals(1, $m->evaluateExpression("o>=10", PCOLOR, null));
+        $this->assertEquals(0, $m->evaluateExpression("o<10", PCOLOR, null));
+        $this->assertEquals(1, $m->evaluateExpression("o>0", PCOLOR, null));
+        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR,'card_main_24'));
+        $m->tokens->setTokenState('tracker_pdelta_' . PCOLOR, 2);
+        $this->assertEquals(MA_OK,$m->playability(PCOLOR,'card_main_24'));
+        
     }
 
 
