@@ -52,6 +52,11 @@ class OpExpression {
         $res = $expr->toJson();
         return $res;
     }
+    /**
+     * when dumped to array items will look like
+     * [op min max arg1 arg2 arg3]...
+     * where arg are subexpression of operations
+     */
     public static function arr($str) {
         $expr = static::parseExpression($str);
         $res = $expr->toArray();

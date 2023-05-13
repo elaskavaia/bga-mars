@@ -626,7 +626,9 @@ abstract class PGameXBody extends PGameMachine {
     function getPayment($color, $card_id): string {
         $costm = $this->getRulesFor($card_id, "cost", 0);
         $tags = $this->getRulesFor($card_id, "tags", '');
-        $discount = $this->collectDiscounts($color, $card_id);
+        $discount = 0;
+        if (startsWith($card_id,'card_main'))
+            $discount = $this->collectDiscounts($color, $card_id);
         $costm = max(0, $costm - $discount);
         if ($costm == 0)
             return "nop"; // no-op
