@@ -157,8 +157,8 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it.|
 151|Investment Loan|3|1npm,10m|||3||Earth Event|0|Decrease your MC production 1 step. Gain 10 MC.|
 152|Insulation|1|counter(ph,0),(nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
-153|Adaptation Technology|2||||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case. TODO 2paramreq|
-154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
+153|Adaptation Technology|2||||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case.|
+154|Caretaker Contract|2|2pdelta|8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|It must be -14°C or colder. Increase your plant production 2 steps.|
 156|Standard Technology|2|||play_stan:3m|6||Science|0|Effect: After you pay for a standard project, except selling patents, you gain 3 MC.|
 157|Nitrite Reducing Bacteria|2|3res|res/(3nres:tr)||11||Microbe|0|Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|  'holds' => 'Microbe'

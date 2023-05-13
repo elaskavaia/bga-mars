@@ -4,15 +4,15 @@ Random notes on todo items
 
 * Solo mode difficulies - game option
 * Deck variant - game option
+* Begging corp - done
 
 ## Server
 
-* Awards - scoring
-* Static effects - DONE?
 * Complex cards
  * requirement +2/-2 (paramreq)
  * copy_Building
 * Corporations
+* tracker_tagEvent - calculate on face down also (well only)
 
 ## Client
 

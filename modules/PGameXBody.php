@@ -44,7 +44,7 @@ abstract class PGameXBody extends PGameMachine {
                     $this->tokens->pickTokensForLocation(10, "deck_main", "hand_${color}");
                 } else {
                     $this->tokens->pickTokensForLocation(10, "deck_main", "draw_${color}");
-                    $this->tokens->pickTokensForLocation(2, "deck_corp", "draw_${color}");
+                    $this->tokens->pickTokensForLocation((int)(11 / $this->getPlayersNumber()), "deck_corp", "draw_${color}");
                     $this->multiplayerqueue($color, "keepcorp,10?buycard,prediscard");
                 }
                 $this->dbSetScore($player_id, 20, '');
@@ -264,6 +264,13 @@ abstract class PGameXBody extends PGameMachine {
         if ($cond) {
             $valid = $this->evaluateExpression($cond, $owner, $tokenid);
             if (!$valid) {
+                $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
+                if ($delta) {
+                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, 'inc');
+                    if (!$valid) {
+                        $valid = $this->evaluateExpression($cond, $owner, $tokenid, 'dec');
+                    }
+                }
                 return MA_ERR_PREREQ; // fail prereq check
             }
         }
@@ -283,17 +290,25 @@ abstract class PGameXBody extends PGameMachine {
         return 0;
     }
 
-    function evaluateExpression($cond, $owner = 0, $context = null) {
+    function evaluateExpression($cond, $owner = 0, $context = null, $mods = null) {
         if (!$owner)
             $owner = $this->getActivePlayerColor();
         $expr = MathExpression::parse($cond);
-        $mapper = function ($x) use ($owner, $context) {
-            return $this->evaluateTerm($x, $owner, $context);
+        $mapper = function ($x) use ($owner, $context, $mods) {
+            return $this->evaluateTerm($x, $owner, $context, $mods);
         };
         return $expr->evaluate($mapper);
     }
 
-    function evaluateTerm($x, $owner, $context = null) {
+    function evaluateTerm($x, $owner, $context = null, $mods = null) {
+        $type = $this->getRulesFor($x, 'type', '');
+        if ($type == 'param') {
+            $value = $this->tokens->getTokenState("tracker_${x}");
+            if (!$mods) return $value;
+            $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
+            if ($mods == 'inc') return $value + $delta;
+            if ($mods == 'dec') return $value - $delta;
+        }
         if ($x == 'chand') {
             return $this->tokens->countTokensInLocation("hand_$owner");
         }

@@ -23,6 +23,7 @@ tracker_forest|Number of greenery on Mars
 tracker_land|Number of owned land
 tracker_eru|Titanium Exchange Rate|3
 tracker_ers|Steel Exchange Rate|2
+tracker_pdelta|Global Parameters Delta|0
 
 #terraforming parameters
 #set type=param

@@ -74,6 +74,7 @@ p|Gain Plant
 e|Gain Energy
 h|Gain Heat
 u|Gain Titanium
+pdelta|Increase Global Parameter Requirements Delta
 #set class=AbsOperationIncNeg
 nm|Pay M€
 ns|Pay Steel

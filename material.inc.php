@@ -1987,7 +1987,7 @@ $this->token_types = [
   'cost' => 12,
   'tags' => 'Science',
   'vp' => 1,
-  'text' => clienttranslate("Effect: Your global requirements are +2 or -2 steps, your choice in each case. TODO 2paramreq"),
+  'text' => clienttranslate("Effect: Your global requirements are +2 or -2 steps, your choice in each case."),
 ],
  'card_main_154' => [  //
   'location' => 'deck_main',
@@ -1995,6 +1995,7 @@ $this->token_types = [
   'num' => 154,
   'name' => clienttranslate("Caretaker Contract"),
   't' => 2,
+  'r' => '2pdelta',
   'a' => '8nh:1tr',
   'cost' => 3,
   'pre' => 't>=0',
@@ -3439,6 +3440,12 @@ $this->token_types = [
   'type' => 'u',
   'name' => clienttranslate("Gain Titanium"),
 ],
+ 'op_pdelta' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationInc',
+  'type' => 'pdelta',
+  'name' => clienttranslate("Increase Global Parameter Requirements Delta"),
+],
  'op_nm' => [  //
   'undo' => 'true',
   'class' => 'AbsOperationIncNeg',
@@ -3770,6 +3777,13 @@ $this->token_types = [
   'location' => 'player_tags_{COLOR}',
   'name' => clienttranslate("Steel Exchange Rate"),
   'state' => 2,
+],
+ 'tracker_pdelta' => [  //
+  'type' => 'tracker',
+  'create' => 4,
+  'location' => 'player_tags_{COLOR}',
+  'name' => clienttranslate("Global Parameters Delta"),
+  'state' => 0,
 ],
 // #terraforming parameters
  'tracker_o' => [  //
