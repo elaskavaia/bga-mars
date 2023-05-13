@@ -41,22 +41,22 @@ class AbsOperationPayWithRes extends AbsOperation {
         $this->addProposal($info, $type, $mcount, $typecount, $er, $count, 0);
 
         $info['payment'] = [
-            'q'=>0,
-            'count'=>$count,
-            'original'=>$this->game->getRulesFor($this->getContext(),'cost',0),
-            'resources'=>[],
-            'rate'=>[]
+            'q' => 0,
+            'count' => $count,
+            'original' => $this->game->getRulesFor($this->getContext(), 'cost', 0),
+            'resources' => [],
+            'rate' => []
         ];
         foreach ($this->getTypes() as $type) {
             $typecount = $this->game->getTrackerValue($this->color, $type);
             $er = $this->getExchangeRate($type);
             $maxres = (int)floor($count / $er);
             $maxres = min($maxres, $typecount);
-            $info['payment']['resources'][$type]=$maxres;
-            $info['payment']['rate'][$type]=$er;
+            $info['payment']['resources'][$type] = $maxres;
+            $info['payment']['rate'][$type] = $er;
         }
-        $info['payment']['resources']['m']= min($count, $mcount);
-        $info['payment']['rate']['m']=1;
+        $info['payment']['resources']['m'] = min($count, $mcount);
+        $info['payment']['rate']['m'] = 1;
 
         return $info;
     }
@@ -78,22 +78,43 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info["$proposal"] = [
             'q' => $q,
             'count' => min($tryc, $this->getCount()),
-            'm' => $mc_try,
-            $type => $type_try,
+            'resources' => [
+                'm' => $mc_try,
+                $type => $type_try
+            ],
             'sign' => $tryc <=> $this->getCount()
         ];
     }
 
     function effect(string $owner, int $inc): int {
         $value = $this->getCheckedArg('target');
+
         $info = $this->getStateArg('info');
         $inc = $info[$value]['count'];
-        $mc = $info[$value]['m'];
-        if ($mc>0) $this->game->effect_incCount($owner, 'm', -$mc);
+        if ($value == 'payment') {
+            $uservalue = $this->getUncheckedArg('payment');
+            if (!$uservalue) throw new BgaUserException("Expecting payment parameter");
+            // array of restype=>count
+            $inc = 0;
+            foreach ($uservalue as $type => $ut) {
+                if (isset($info[$value]['resources'][$type])) {
+                    $tt = $info[$value]['resources'][$type];
+                    if ($ut > 0 && $ut <= $tt) $this->game->effect_incCount($owner, $type, -$ut);
+                    else throw new BgaUserException("Invalid payment of $ut? $type"); // FIX XSS
+                    $rate = $info[$value]['rate'][$type];
+                    $inc += $rate * $ut;
+                } else {
+                    throw new BgaUserException("Invalid payment of type $type"); // FIX XSS
+                }
+            }
+            return $inc;
+        }
+        $mc = $info[$value]['resources']['m'];
+        if ($mc > 0) $this->game->effect_incCount($owner, 'm', -$mc);
         foreach ($this->getTypes() as $type) {
-            if (isset($info[$value][$type])) {
-                $tt = $info[$value][$type];
-                if ($tt>0) $this->game->effect_incCount($owner, $type, -$tt);
+            if (isset($info[$value]['resources'][$type])) {
+                $tt = $info[$value]['resources'][$type];
+                if ($tt > 0) $this->game->effect_incCount($owner, $type, -$tt);
             }
         }
         return $inc;

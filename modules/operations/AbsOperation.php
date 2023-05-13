@@ -134,6 +134,10 @@ abstract class AbsOperation {
         }
     
     }
+    protected function getUncheckedArg($key) {
+        $args = $this->user_args;
+        return array_get($args,$key,null);
+    }
 
     protected function getStateArg($key) {
         $actionArgs = $this->getAllStateArgs();
