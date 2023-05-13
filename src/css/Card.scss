@@ -13,6 +13,7 @@
   box-shadow: 2px 2px 3px 1px #00000080;
   position: relative;
   --resourcesize: calc(var(--card-width) * 0.16);
+  user-select: none;
 }
 
 .location .card {
@@ -78,13 +79,20 @@
 .card_title{
   font-family: "Prototype";
   position: absolute;
-  top: 10.3%;
-  left: 0;
-  width: 100%;
+  top: 11%;
+  left: 4%;
+  width: 92%;
   display: flex;
   justify-content: center;
   text-transform: uppercase;
-  font-size: calc(var(--card-width) * 0.070);
+  font-size: calc(var(--card-width) * 0.06);
+  overflow: hidden;
+  height: 6%;
+}
+
+.card_title_inner{
+  width: fit-content;
+  white-space: nowrap;
 }
 
 .token_descr{
@@ -125,10 +133,6 @@
   font-style: italic;
 }
 
-.card_vp {
-
-}
-
 .card_info_box{
   display: none;
 }
@@ -151,9 +155,20 @@
 }
 
 .card_vp{
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -1300% 0;
+  width: calc(var(--card-width) * 0.2);
+  height: calc(var(--card-width) * 0.2);
   position: absolute;
-  bottom: 2%;
-  right: 21%;
+  bottom: 3%;
+  right: 3%;
+  font-family: "Prototype";
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
 }
 
 .card .badge{
@@ -243,8 +258,8 @@
 .card_corp_5 .card_bg{background-position: -400% 0;}
 .card_corp_6 .card_bg{background-position: -500% 0;}
 .card_corp_7 .card_bg{background-position: -600% 0;}
-.card_corp_8 .card_bg{background-position: 0 -100%;}
-.card_corp_9 .card_bg{background-position: -100% -100%;}
+.card_corp_9 .card_bg{background-position: 0 -100%;}
+.card_corp_8 .card_bg{background-position: -100% -100%;}
 .card_corp_10 .card_bg{background-position: -200% -100%;}
 .card_corp_11 .card_bg{background-position: -300% -100%;}
 .card_corp_12 .card_bg{background-position: -400% -100%;}

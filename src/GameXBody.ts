@@ -61,17 +61,24 @@ class GameXBody extends GameTokens {
           }
           const parsedActions = this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
+          let vp="";
+          if (displayInfo.vp) {
+            vp = parseInt(displayInfo.vp) ? '<div class="card_vp">'+displayInfo.vp+'</div>' : '<div class="card_vp">*</div>' ;
+          } else {
+            vp='';
+          }
+          //const vp = displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : "";
 
           decor.innerHTML = `
                 <div class="card_illustration cardnum_${displayInfo.num}"></div>
                 <div class="card_bg"></div>
                 <div class='card_badges'>${tagshtm}</div>
-                <div class='card_title'>${displayInfo.name}</div>
+                <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
                 <div class='card_cost'>${displayInfo.cost}</div> 
                 <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ""}</div>
                 <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
                 <div class="card_prereq">${displayInfo.pre ?? ""}</div>
-                <div class="card_vp">${displayInfo.vp ?? ""}</div>
+                ${vp}
           `;
           // <div class="card_action">${parsedActions}</div>
           //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>

@@ -213,6 +213,10 @@
   display: flex;
   flex-direction: column;
 }
+
+.hand.location:empty {
+  display: none;
+}
 /*
 #discard_main > .card ~ .card {
   opacity: 0;
