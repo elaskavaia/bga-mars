@@ -1688,6 +1688,9 @@ var GameXBody = /** @class */ (function (_super) {
         });
         return;
     };
+    GameXBody.prototype.sendActionResolveWithTargetAndPayment = function (opId, target, payment) {
+        this.sendActionResolve(opId, { target: target, payment: payment });
+    };
     GameXBody.prototype.activateSlots = function (opInfo, opId, single) {
         var _this = this;
         var _a, _b;
@@ -1785,7 +1788,14 @@ var GameXBody = /** @class */ (function (_super) {
                         buttonColor = "red";
                     var divId = "button_" + i;
                     _this.addActionButton(divId, tid, function () {
-                        _this.onSelectTarget(opId, tid);
+                        var _a, _b;
+                        if (tid == "payment") {
+                            // stub
+                            var first = paramargs[0]; // send same data as 1st option as stub
+                            _this.sendActionResolveWithTargetAndPayment(opId, tid, (_b = (_a = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _a === void 0 ? void 0 : _a[first]) === null || _b === void 0 ? void 0 : _b.resources);
+                        }
+                        else
+                            _this.onSelectTarget(opId, tid);
                     }, undefined, false, buttonColor);
                 }
             });

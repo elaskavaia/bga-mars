@@ -94,16 +94,20 @@ class AbsOperationPayWithRes extends AbsOperation {
         if ($value == 'payment') {
             $uservalue = $this->getUncheckedArg('payment');
             if (!$uservalue) throw new BgaUserException("Expecting payment parameter");
+            if (!is_array($uservalue)) throw new BgaUserException("Expecting payment parameter to be array $uservalue");
             // array of restype=>count
             $inc = 0;
             foreach ($uservalue as $type => $ut) {
                 if (isset($info[$value]['resources'][$type])) {
                     $tt = $info[$value]['resources'][$type];
+
                     if ($ut > 0 && $ut <= $tt) $this->game->effect_incCount($owner, $type, -$ut);
                     else throw new BgaUserException("Invalid payment of $ut? $type"); // FIX XSS
                     $rate = $info[$value]['rate'][$type];
                     $inc += $rate * $ut;
+                    //$this->game->warn("User pay $type: $ut of $tt * $rate => $inc");
                 } else {
+
                     throw new BgaUserException("Invalid payment of type $type"); // FIX XSS
                 }
             }
