@@ -17,7 +17,6 @@
   </div>
   <div id="main_area">
     <div id="main_board">
-
       <div id="map_middle">
         <div id="map_top">
           <div id="oxygen_map">

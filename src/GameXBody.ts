@@ -3,6 +3,7 @@
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_placement: any;
+  private custom_pay:any;
 
   constructor() {
     super();
@@ -17,6 +18,7 @@ class GameXBody extends GameTokens {
       tracker_o: "oxygen_map",
       tracker_w: "oceans_pile",
     };
+    this.custom_pay = undefined;
 
     super.setup(gamedatas);
     // hexes are not moved so manually connect
@@ -27,7 +29,7 @@ class GameXBody extends GameTokens {
     });
 
     this.connectClass("filter_button", "onclick", "onFilterButton");
-
+    this.connectClass("hex", "onclick", "onToken");
     console.log("Ending game setup");
   }
 
@@ -39,6 +41,8 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
+
+
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -402,25 +406,157 @@ class GameXBody extends GameTokens {
           if (sign < 0) buttonColor = "gray";
           if (sign > 0) buttonColor = "red";
           const divId = "button_" + i;
-          this.addActionButton(
-            divId,
-            tid,
-            () => {
-              if (tid == "payment") {
-                // stub
-                const first = paramargs[0]; // send same data as 1st option as stub
-                this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
-              } else this.onSelectTarget(opId, tid);
-            },
-            undefined,
-            false,
-            buttonColor
-          );
+          let title='<div class="custom_paiement_inner">'+this.resourcesToHtml(detailsInfo.resources)+'</div>';
+
+          if (tid=="payment") {
+            //show only if options
+            const opts =this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+            this.darhflog('opts',opts.resources,'sum',(Object.entries(opts.resources).reduce((sum: number, [key, val]: [string, unknown]) => sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0), 0)));
+            if (Object.entries(opts.resources).reduce((sum: number, [key, val]: [string, unknown]) => sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0), 0)  > 0) {
+              this.createCustomPayment(opId,opts);
+            }
+          } else {
+            //  title = this.parseActionsToHTML(tid);
+            this.addActionButton(
+              divId,
+              title,
+              () => {
+                if (tid == "payment") {
+                  // stub
+
+                  /*
+                  const first = paramargs[0]; // send same data as 1st option as stub
+                  this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
+
+                   */
+                } else this.onSelectTarget(opId, tid);
+              },
+              undefined,
+              false,
+              buttonColor
+            );
+          }
         }
       });
     }
   }
 
+  //Adds the payment picker according to available alternative payment options
+  createCustomPayment(opId,info) {
+    this.custom_pay  = {
+      needed:info.count,
+      selected:{},
+      available:[],
+      rate:[]
+    }
+
+
+
+    let items_htm='';
+    for (let res in info.resources) {
+      this.custom_pay.selected[res]=0;
+      this.custom_pay.available[res]=info.resources[res];
+      this.custom_pay.rate[res]=info.rate[res];
+
+      //megacredits are spent automatically
+      if (res=='m') {
+        this.custom_pay.selected[res]=this.custom_pay.available[res];
+        continue;
+      }
+
+
+      if ( this.custom_pay.available[res]<=0) continue;
+      //add paiments buttons
+        items_htm+=`
+        <div class="payment_group">
+           <div class="token_img tracker_${res}"></div>
+          <div id="payment_item_minus_${res}" class="btn_payment_item btn_item_minus" data-resource="${res}" data-direction="minus">-</div>
+          <div id="payment_item_${res}" class="payment_item_value item_value_${res}">0</div>
+          <div id="payment_item_plus_${res}" class="btn_payment_item btn_item_plus" data-resource="${res}" data-direction="plus">+</div>                
+        </div>
+      `;
+    }
+    /*
+      <div class="token_img tracker_m payment_item">
+          <div id="custompay_amount_m">${this.custom_pay.needed}</div>
+      </div>
+     */
+
+    //add confirmation button
+    const txt =_("Custom :");
+    const paiement_htm=`
+      <div class="custom_paiement_inner">
+        ${txt}
+        ${items_htm}
+        <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">Pay  <div class="token_img tracker_m payment_item">${this.custom_pay.needed}</div></div>
+      </div>
+    `;
+    const node = this.createDivNode('custom_paiement',"","generalactions");
+    node.innerHTML=paiement_htm;
+
+
+    //adds actions to button payments
+    this.connectClass("btn_payment_item",'onclick',(event)=>{
+      const id = (event.currentTarget as HTMLElement).id;
+      const direction = $(id).dataset.direction;
+      const res = $(id).dataset.resource;
+      dojo.stopEvent(event);
+
+      if (direction=="minus") {
+        if (this.custom_pay.selected[res]>0) {
+          this.custom_pay.selected[res]--;
+        }
+      }
+      if (direction=="plus") {
+        if (this.custom_pay.selected[res]<this.custom_pay.available[res]) {
+          this.custom_pay.selected[res]++;
+        }
+      }
+      $('payment_item_'+res).innerHTML=this.custom_pay.selected[res];
+
+      let total_res = 0;
+     // let values_htm='';
+      for (let res in  this.custom_pay.rate) {
+          if (res!='m') {
+            total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
+          //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
+          }
+      }
+      const mc= this.custom_pay.needed - total_res;
+      this.custom_pay.selected['m']=mc;
+   //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
+     const values_htm=this.resourcesToHtml( this.custom_pay.selected);
+
+
+      $('btn_custompay_send').innerHTML='Pay %s'.replace('%s',values_htm);
+
+    });
+
+    //adds action to final payment button
+    this.connect($('btn_custompay_send'),'onclick', ()=>{
+      let pays={};
+      //backend doesn't accept 0 as paiment
+      for (let res of Object.keys(this.custom_pay.selected) ) {
+        if (this.custom_pay.selected[res]>0) pays[res] = parseInt(this.custom_pay.selected[res]);
+      }
+      this.darhflog('sending',pays,'org',this.custom_pay.selected);
+      this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
+    });
+  }
+
+  resourcesToHtml(resources:any):string {
+    var htm='';
+    const allResources =['m','s','u','h'];
+
+    allResources.forEach((item)=>{
+        if (resources[item] && resources[item]>0) {
+          htm+=`<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
+        }
+    });
+
+
+    return htm;
+  }
   clearReverseIdMap() {
     this.reverseIdLookup = new Map<String, any>();
   }

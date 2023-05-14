@@ -130,12 +130,18 @@
   background-color: rgba(86, 207, 110);
 }
 
+
+
+
 .tile{
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.118);
   background-image: url("img/tiles.png");
   background-size: 1000% 200%;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  left: -4%;
+  top: -1%;
+  position: absolute;
 }
 
 .tile.tile_2 {background-position: 0 0;}
@@ -152,6 +158,14 @@
 .tile.tile_97 {background-position: -100% -100%;}
 .tile.tile_199 {background-position: -200% -100%;}
 
+.tile .marker {
+  outline: 1px dashed black;
+  position: absolute;
+  top: 42%;
+  left: 40%;
+  width: calc(var(--map-width) * 0.025);
+  height: calc(var(--map-width) * 0.025);
+}
 
 #map_bottom{
   display: flex;

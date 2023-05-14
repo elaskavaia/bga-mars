@@ -17,6 +17,7 @@
 @import "Map";
 @import "MiniBoard";
 @import "PlayerBoard";
+@import "CustomPay";
 @import "VLayout";
 
 
@@ -125,7 +126,7 @@
   display: inline-block;
 }
 .cards_1 > .card,.cards_3 > .card {
-  margin-bottom: calc(var(--card-height)*-1*0.9);
+  /*margin-bottom: calc(var(--card-height)*-1*0.9);*/
 }
 
 #display_main .card .token_descr{

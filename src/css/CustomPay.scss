@@ -1,0 +1,72 @@
+#generalactions{
+  --resourcesize: 30px;
+
+  .token_img {
+    font-family: Prototype;
+    margin-left: 5px;
+  }
+
+  .tracker_m{
+    color:black;
+  }
+  .tracker_s{
+    color:white;
+    text-shadow: -1px 1px 0 #000,    1px 1px 0 #000,    1px -1px 0 #000,    -1px -1px 0 #000;
+  }
+  .tracker_u {
+    color:white;
+    text-shadow: -1px 1px 0 #000,    1px 1px 0 #000,    1px -1px 0 #000,    -1px -1px 0 #000;
+  }
+
+  .tracker_h {
+    color:white;
+    text-shadow: -1px 1px 0 #000,    1px 1px 0 #000,    1px -1px 0 #000,    -1px -1px 0 #000;
+  }
+}
+
+#custom_paiement {
+  display: inline-block;
+  margin-left:10px;
+}
+.custom_paiement_inner {
+  display: flex;
+}
+
+.payment_group{
+  display: grid;
+  grid-template-columns: 1fr 0.4fr 1fr 0.4fr;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-left: 4px;
+  height: 30px;
+}
+
+.btn_payment_item{
+  cursor: pointer;
+  border: 1px solid gray;
+  border-radius: 50%;
+  width: 13px;
+  height: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  align-self: center;
+  user-select: none;
+}
+
+.payment_item_value{
+  font-family: Prototype;
+}
+
+#btn_custompay_send {
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  padding: 0 5px 0 5px;
+  display: flex !important;
+  align-items: center;
+
+
+}
