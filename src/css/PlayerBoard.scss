@@ -7,6 +7,7 @@
   position: relative;
   border-radius: 1vh;
   background: linear-gradient(135deg, rgb(51, 51, 51) 0%, rgb(225, 225, 225) 24%, rgb(158, 158, 158) 82%, rgb(225, 225, 225) 100%);
+  --card-count:1;
 }
 .player_area_name {
   background: linear-gradient(135deg, rgb(51, 51, 51) 0%, rgb(225, 225, 225) 24%, rgb(158, 158, 158) 82%, rgb(225, 225, 225) 100%);
@@ -14,7 +15,7 @@
   padding: 0.3vh;
   position: absolute;
   z-index: 1;
-  top: -6%;
+  top: -3vh;
   right: 0;
   border-radius: 1vh;
   color: var(--plcolor);
@@ -177,6 +178,7 @@
   padding: calc(var(--pb_cellsize) * 0.03);
   border-radius: calc(var(--pb_cellsize) * 0.05);
   cursor: pointer;
+  user-select: none;
 }
 .filter_button.filter_blue {
   background-color: #67b1f1;
@@ -208,5 +210,41 @@
 .tableau[data-visibilityred="0"] {
   .card[data-card-type="3"] {
     display: none;
+  }
+}
+.cards_1, .cards_3 {
+  display: flex;
+  flex-direction: column;
+
+  .card:not(:last-child):not(:hover) {
+    height: calc(var(--card-height) * 0.18);
+    overflow: hidden;
+
+    .card_bg{
+      height:calc(var(--card-height));
+    }
+    .card_illustration{
+      display: none;
+    }
+    .card_vp{
+      display: none;
+    }
+    .card_title {
+      height:revert;
+      height: 28%;
+      top:62%;
+    }
+    .card_action{
+      display: none;
+    }
+    .card_effect{
+      display: none;
+    }
+  }
+
+  .card:hover {
+    z_index:10;
+    transform: translateY(-5%);
+    transition: all 100ms;
   }
 }
