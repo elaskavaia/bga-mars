@@ -483,7 +483,8 @@ class GameXBody extends GameTokens {
      */
 
     //add confirmation button
-    const txt =_("Custom :");
+
+    const txt =_("Custom:");
     const paiement_htm=`
       <div class="custom_paiement_inner">
         ${txt}

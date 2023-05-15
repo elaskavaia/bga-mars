@@ -1861,7 +1861,7 @@ var GameXBody = /** @class */ (function (_super) {
           </div>
          */
         //add confirmation button
-        var txt = _("Custom :");
+        var txt = _("Custom:");
         var paiement_htm = "\n      <div class=\"custom_paiement_inner\">\n        ".concat(txt, "\n        ").concat(items_htm, "\n        <div id=\"btn_custompay_send\" class=\"action-button bgabutton bgabutton_blue\">Pay  <div class=\"token_img tracker_m payment_item\">").concat(this.custom_pay.needed, "</div></div>\n      </div>\n    ");
         var node = this.createDivNode('custom_paiement', "", "generalactions");
         node.innerHTML = paiement_htm;
