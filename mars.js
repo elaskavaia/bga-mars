@@ -1444,6 +1444,7 @@ var GameXBody = /** @class */ (function (_super) {
             tracker_o: "oxygen_map",
             tracker_w: "oceans_pile",
         };
+        this.custom_pay = undefined;
         _super.prototype.setup.call(this, gamedatas);
         // hexes are not moved so manually connect
         this.connectClass("hex", "onclick", "onToken");
@@ -1451,6 +1452,7 @@ var GameXBody = /** @class */ (function (_super) {
             _this.updateTooltip(node.id);
         });
         this.connectClass("filter_button", "onclick", "onFilterButton");
+        this.connectClass("hex", "onclick", "onToken");
         console.log("Ending game setup");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
@@ -1463,7 +1465,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
-        var _b, _c, _d, _e, _f, _g;
+        var _b, _c, _d, _e, _f;
         if (!tokenNode.getAttribute("data-info")) {
             var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
             var classes = displayInfo.imageTypes.split(/  */);
@@ -1475,14 +1477,22 @@ var GameXBody = /** @class */ (function (_super) {
                 if (!tokenNode.id.startsWith("card_stanproj")) {
                     //tags
                     if (displayInfo.tags && displayInfo.tags != "") {
-                        for (var _i = 0, _h = displayInfo.tags.split(" "); _i < _h.length; _i++) {
-                            var tag = _h[_i];
+                        for (var _i = 0, _g = displayInfo.tags.split(" "); _i < _g.length; _i++) {
+                            var tag = _g[_i];
                             tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         }
                     }
                     var parsedActions = this.parseActionsToHTML((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : "");
                     var decor = this.createDivNode(null, "card_decor", tokenNode.id);
-                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'>").concat(displayInfo.name, "</div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : "", "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : "", "</div>\n                <div class=\"card_vp\">").concat((_g = displayInfo.vp) !== null && _g !== void 0 ? _g : "", "</div>\n          ");
+                    var vp = "";
+                    if (displayInfo.vp) {
+                        vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + '</div>' : '<div class="card_vp">*</div>';
+                    }
+                    else {
+                        vp = '';
+                    }
+                    //const vp = displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : "";
+                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : "", "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : "", "</div>\n                ").concat(vp, "\n          ");
                     // <div class="card_action">${parsedActions}</div>
                     //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
                 }
@@ -1776,7 +1786,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "enum") {
             paramargs.forEach(function (tid, i) {
-                var _a;
+                var _a, _b;
                 if (single) {
                     var detailsInfo = (_a = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _a === void 0 ? void 0 : _a[tid];
                     var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
@@ -1787,19 +1797,127 @@ var GameXBody = /** @class */ (function (_super) {
                     if (sign > 0)
                         buttonColor = "red";
                     var divId = "button_" + i;
-                    _this.addActionButton(divId, tid, function () {
-                        var _a, _b;
-                        if (tid == "payment") {
-                            // stub
-                            var first = paramargs[0]; // send same data as 1st option as stub
-                            _this.sendActionResolveWithTargetAndPayment(opId, tid, (_b = (_a = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _a === void 0 ? void 0 : _a[first]) === null || _b === void 0 ? void 0 : _b.resources);
+                    var title = '<div class="custom_paiement_inner">' + _this.resourcesToHtml(detailsInfo.resources) + '</div>';
+                    if (tid == "payment") {
+                        //show only if options
+                        var opts = (_b = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _b === void 0 ? void 0 : _b[tid];
+                        _this.darhflog('opts', opts.resources, 'sum', (Object.entries(opts.resources).reduce(function (sum, _a) {
+                            var key = _a[0], val = _a[1];
+                            return sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0);
+                        }, 0)));
+                        if (Object.entries(opts.resources).reduce(function (sum, _a) {
+                            var key = _a[0], val = _a[1];
+                            return sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0);
+                        }, 0) > 0) {
+                            _this.createCustomPayment(opId, opts);
                         }
-                        else
-                            _this.onSelectTarget(opId, tid);
-                    }, undefined, false, buttonColor);
+                    }
+                    else {
+                        //  title = this.parseActionsToHTML(tid);
+                        _this.addActionButton(divId, title, function () {
+                            if (tid == "payment") {
+                                // stub
+                                /*
+                                const first = paramargs[0]; // send same data as 1st option as stub
+                                this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
+              
+                                 */
+                            }
+                            else
+                                _this.onSelectTarget(opId, tid);
+                        }, undefined, false, buttonColor);
+                    }
                 }
             });
         }
+    };
+    //Adds the payment picker according to available alternative payment options
+    GameXBody.prototype.createCustomPayment = function (opId, info) {
+        var _this = this;
+        this.custom_pay = {
+            needed: info.count,
+            selected: {},
+            available: [],
+            rate: []
+        };
+        var items_htm = '';
+        for (var res in info.resources) {
+            this.custom_pay.selected[res] = 0;
+            this.custom_pay.available[res] = info.resources[res];
+            this.custom_pay.rate[res] = info.rate[res];
+            //megacredits are spent automatically
+            if (res == 'm') {
+                this.custom_pay.selected[res] = this.custom_pay.available[res];
+                continue;
+            }
+            if (this.custom_pay.available[res] <= 0)
+                continue;
+            //add paiments buttons
+            items_htm += "\n        <div class=\"payment_group\">\n           <div class=\"token_img tracker_".concat(res, "\"></div>\n          <div id=\"payment_item_minus_").concat(res, "\" class=\"btn_payment_item btn_item_minus\" data-resource=\"").concat(res, "\" data-direction=\"minus\">-</div>\n          <div id=\"payment_item_").concat(res, "\" class=\"payment_item_value item_value_").concat(res, "\">0</div>\n          <div id=\"payment_item_plus_").concat(res, "\" class=\"btn_payment_item btn_item_plus\" data-resource=\"").concat(res, "\" data-direction=\"plus\">+</div>                \n        </div>\n      ");
+        }
+        /*
+          <div class="token_img tracker_m payment_item">
+              <div id="custompay_amount_m">${this.custom_pay.needed}</div>
+          </div>
+         */
+        //add confirmation button
+        var txt = _("Custom :");
+        var paiement_htm = "\n      <div class=\"custom_paiement_inner\">\n        ".concat(txt, "\n        ").concat(items_htm, "\n        <div id=\"btn_custompay_send\" class=\"action-button bgabutton bgabutton_blue\">Pay  <div class=\"token_img tracker_m payment_item\">").concat(this.custom_pay.needed, "</div></div>\n      </div>\n    ");
+        var node = this.createDivNode('custom_paiement', "", "generalactions");
+        node.innerHTML = paiement_htm;
+        //adds actions to button payments
+        this.connectClass("btn_payment_item", 'onclick', function (event) {
+            var id = event.currentTarget.id;
+            var direction = $(id).dataset.direction;
+            var res = $(id).dataset.resource;
+            dojo.stopEvent(event);
+            if (direction == "minus") {
+                if (_this.custom_pay.selected[res] > 0) {
+                    _this.custom_pay.selected[res]--;
+                }
+            }
+            if (direction == "plus") {
+                if (_this.custom_pay.selected[res] < _this.custom_pay.available[res]) {
+                    _this.custom_pay.selected[res]++;
+                }
+            }
+            $('payment_item_' + res).innerHTML = _this.custom_pay.selected[res];
+            var total_res = 0;
+            // let values_htm='';
+            for (var res_1 in _this.custom_pay.rate) {
+                if (res_1 != 'm') {
+                    total_res = total_res + _this.custom_pay.rate[res_1] * _this.custom_pay.selected[res_1];
+                    //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
+                }
+            }
+            var mc = _this.custom_pay.needed - total_res;
+            _this.custom_pay.selected['m'] = mc;
+            //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
+            var values_htm = _this.resourcesToHtml(_this.custom_pay.selected);
+            $('btn_custompay_send').innerHTML = 'Pay %s'.replace('%s', values_htm);
+        });
+        //adds action to final payment button
+        this.connect($('btn_custompay_send'), 'onclick', function () {
+            var pays = {};
+            //backend doesn't accept 0 as paiment
+            for (var _i = 0, _a = Object.keys(_this.custom_pay.selected); _i < _a.length; _i++) {
+                var res = _a[_i];
+                if (_this.custom_pay.selected[res] > 0)
+                    pays[res] = parseInt(_this.custom_pay.selected[res]);
+            }
+            _this.darhflog('sending', pays, 'org', _this.custom_pay.selected);
+            _this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
+        });
+    };
+    GameXBody.prototype.resourcesToHtml = function (resources) {
+        var htm = '';
+        var allResources = ['m', 's', 'u', 'h'];
+        allResources.forEach(function (item) {
+            if (resources[item] && resources[item] > 0) {
+                htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(resources[item], "</div>");
+            }
+        });
+        return htm;
     };
     GameXBody.prototype.clearReverseIdMap = function () {
         this.reverseIdLookup = new Map();

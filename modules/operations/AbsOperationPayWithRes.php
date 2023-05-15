@@ -33,9 +33,9 @@ class AbsOperationPayWithRes extends AbsOperation {
             $maxres = (int)floor($count / $er);
             $maxres = min($maxres, $typecount);
             $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
-            $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
-            $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
-            $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
+            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
+            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
+            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
         }
 
         $this->addProposal($info, $type, $mcount, $typecount, $er, $count, 0);
