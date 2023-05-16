@@ -104,6 +104,7 @@ class GameXBody extends GameTokens {
 
           //const vp = displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : "";
 
+          const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
           decor.innerHTML = `
                 <div class="card_illustration cardnum_${displayInfo.num}"></div>
                 <div class="card_bg"></div>
@@ -113,6 +114,8 @@ class GameXBody extends GameTokens {
                 <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ""}</div>
                 <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
                 <div class="card_prereq">${displayInfo.pre ?? ""}</div>
+                <div class="card_number">${displayInfo.num ?? ""}</div>
+                <div class="card_number_binary">${cn_binary}</div>
                 ${vp}
           `;
           // <div class="card_action">${parsedActions}</div>
@@ -222,23 +225,42 @@ class GameXBody extends GameTokens {
 
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
-    if (tokenDisplayInfo.mainType == "card") {
-      let rules = tokenDisplayInfo.r ?? "";
-      if (tokenDisplayInfo.a) rules += ";a:" + tokenDisplayInfo.a;
-      if (tokenDisplayInfo.e) rules += ";e:" + tokenDisplayInfo.e;
+
+    if  (tokenDisplayInfo.mainType == "card") {
+
+      let cardtype="card";
+      let prefix="card_main_";
+      let rules = tokenDisplayInfo.r ? "<b>"+_("Card Rules:")+"</b>"+tokenDisplayInfo.r : "";
+      if (tokenDisplayInfo.a) rules += "<br><b>"+_("Action:")+"</b>" + tokenDisplayInfo.a;
+      if (tokenDisplayInfo.e) rules += "<br><b>"+_("Effect:")+"</b>" + tokenDisplayInfo.e;
 
       tokenDisplayInfo.imageTypes += " infonode";
-      tokenDisplayInfo.tooltip =
+      let fullText=
         rules +
         "<br>" +
         (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
         this.getTr(tokenDisplayInfo.text) +
         "<br>" +
-        _("Number: " + tokenDisplayInfo.num) +
-        (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
+        "<b>"+_("Number: ")+"</b>" + tokenDisplayInfo.num +
+        (tokenDisplayInfo.tags ? "<br>" + "<b>"+_("Tags: ")+"</b>"  + tokenDisplayInfo.tags : "");
       if (tokenDisplayInfo.vp) {
-        tokenDisplayInfo.tooltip += "<br>VP:" + tokenDisplayInfo.vp;
+        fullText+= "<br><b>"+_("VP:")+"</b>" + tokenDisplayInfo.vp;
       }
+
+      if (tokenDisplayInfo.key.startsWith( "card_corp_")) {
+        prefix="card_corp_";
+        cardtype="corp";
+      }
+
+      if ($(prefix+tokenDisplayInfo.num))  {
+        let card_htm= $(prefix+tokenDisplayInfo.num).outerHTML.replaceAll('id="','id="tt');
+        tokenDisplayInfo.tooltip ='<div class="tt_2cols '+cardtype+'"><div class="tt_card_img">'+card_htm+'</div><div class="tt_card_txt">'+fullText+'</div></div>';
+      } else {
+        tokenDisplayInfo.tooltip =fullText;
+
+      }
+
+
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
