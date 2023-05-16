@@ -7,7 +7,7 @@ class Operation_activate extends AbsOperation {
     function effect(string $color, int $inc): int {
         $tokenId = $this->getCheckedArg('target');
         $r = $this->game->getRulesFor($tokenId, 'a');
-        $this->game->machine->push($r, 1, 1, $color, MACHINE_FLAG_UNIQUE, $tokenId);
+        $this->game->machine->push($r, 1, 1, $color, MACHINE_FLAG_UNIQUE, "$tokenId:a");
         $this->game->dbSetTokenState($tokenId, MA_CARD_STATE_ACTION_USED, clienttranslate('${player_name} activates ${token_name}')); // used
         return 1;
     }

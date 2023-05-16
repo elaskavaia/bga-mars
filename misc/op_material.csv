@@ -60,9 +60,10 @@ nph_Any|Loose Heat Production (Any Player - Mandatory)|${you} must select a play
 
 #set class=AbsOperationPayWithRes
 #set params=target
-nmu|Pay (possibly with Titanium)|${you} must select a payment choice
-nms|Pay (possibly with Steel)|${you} must select a payment choice
-nmus|Pay (possibly with Steel or Titanium)|${you} must select a payment choice
+nmm|Pay|${you} must select a payment choice
+nmu|Pay|${you} must select a payment choice
+nms|Pay|${you} must select a payment choice
+nm|Pay M€|${you} must select a payment choice
 
 #auto-resolve actions
 #set prompt=
@@ -76,7 +77,6 @@ h|Gain Heat
 u|Gain Titanium
 pdelta|Increase Global Parameter Requirements Delta
 #set class=AbsOperationIncNeg
-nm|Pay M€
 ns|Pay Steel
 nu|Pay Titanium
 np|Pay Plant

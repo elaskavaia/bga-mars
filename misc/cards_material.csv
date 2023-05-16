@@ -151,7 +151,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 144|Titanium Mine|1|pu|||7||Building|0|Increase your titanium production 1 step.|
 145|Tectonic Stress Power|1|3pe|||18|tagScience>=2|Building Energy|1|Requires 2 science tags. Increase your energy production 3 steps.|
 146|Nitrophilic Moss|1|2pp,2np|||8|w>=3|Plant|0|Requires 3 ocean tiles and that you lose 2 plants. Increase your plant production 2 steps.|
-147|Herbivores|2|res,np_Any||place_forest:res:this|12|o>=8|Animal|resCard/2|Requires 8% oxygen. Add 1 animal to this card. Decrease any plant production 1 step. 1 VP per 2 animals on this card.; Effect: When you place a greenery tile, add an animal to this card.|  'holds' => 'Animal'
+147|Herbivores|2|res,npp_Any||place_forest:res:this|12|o>=8|Animal|resCard/2|Requires 8% oxygen. Add 1 animal to this card. Decrease any plant production 1 step. 1 VP per 2 animals on this card.; Effect: When you place a greenery tile, add an animal to this card.|  'holds' => 'Animal'
 148|Insects|1|counter(tagPlant),pp|||9|o>=6|Microbe|0|Requires 6% oxygen. Increase your plant production 1 step for each plant tag you have.|
 149|CEO's Favourite Project|3|acard149|||1||Event|0|Add 1 resource to a card with at least 1 resource on it.|
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it.|
@@ -228,7 +228,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 #set create=single
 #set location=deck_corp
 #num|name|t|r|a|e|cost|pre|tags|vp|text|php
-2|CrediCor|4|57m||play_card:(counter('cost>=20'),4m):that;play_stan:counter('cost>=20')4m:that|0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
+2|CrediCor|4|57m||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
 3|Ecoline|4|2pp,36m,3p|||0||Plant|0|You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery.|
 4|Helion|4|3ph,42m|||0||Space|0|You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat.|
 5|Interplanetary Cinematics|4|30m,20s|||0||Building|0|You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC.|
