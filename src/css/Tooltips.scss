@@ -1,0 +1,36 @@
+.card_tooltipcontainer {
+  --card-width: 15vw;
+  --card-height: calc(var(--card-width)*1.40658174);
+
+  .tooltipimage { display: none;}
+  .infobox {display: none;}
+
+
+  .tooltiptext{
+    max-width: none;
+  }
+}
+.midSizeDialog{
+  max-width: none;
+}
+
+.tt_2cols{
+  display: grid;
+  column-gap: 10px;
+  row-gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  height: 100%;
+  width: calc(var(--card-width)*2.1);
+}
+
+.tt_2cols.corp {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  height:revert;
+  width: calc(var(--card-width)*1.5);
+}
+
+.tt_card_text {
+  font-family: sans-serif;
+}

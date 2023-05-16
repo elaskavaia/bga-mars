@@ -127,6 +127,45 @@
   background-color: #80808040;
 }
 
+.card_number{
+  position: absolute;
+  top: 69%;
+  right: 3%;
+  font-size: calc(var(--card-width) * 0.04);
+  font-family: "Prototype";
+  padding: calc(var(--card-width) * 0.005);
+}
+
+.card_number_binary{
+  position: absolute;
+  top: 63.3%;
+  left: 36%;
+  width: 28%;
+  display: flex;
+  font-size: calc(var(--card-width) * 0.05);
+  font-family: "Prototype";
+  opacity: 0.3;
+  justify-content: center;
+}
+
+.card[data-card-type="2"] {
+  .card_number_binary {
+    top: 74.2%;
+  }
+  .card_number {
+    top: 74.2%;
+  }
+}
+
+.card[data-card-type="3"] {
+    .card_number_binary {
+      top: 61.2%;
+    }
+    .card_number {
+      top: 63.5%;
+    }
+}
+
 .card_tt {
   font-size: calc(var(--card-width) * 0.055);
   font-family: sans-serif;
@@ -255,6 +294,10 @@
   }
 
   .card_action{
+    display: none;
+  }
+
+  .card_number{
     display: none;
   }
 
@@ -446,18 +489,18 @@
   }
 }
 
-  .card_corp_11 {
-    .card_effect{
-      top: 48%;
-      width: 45%;
-      height: 24%;
-      left: 49%;
-    }
-    .card_initial {
-      top: 72%;
-      width: 86.5%;
-      left: 6%;
-    }
+.card_corp_11 {
+  .card_effect{
+    top: 48%;
+    width: 45%;
+    height: 24%;
+    left: 49%;
+  }
+  .card_initial {
+    top: 72%;
+    width: 86.5%;
+    left: 6%;
+  }
 }
 .card_corp_12 {
   .card_effect {
