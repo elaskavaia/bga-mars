@@ -253,6 +253,20 @@
   .card_vp {
     display: none;
   }
+
+  .card_action{
+    display: none;
+  }
+
+  .card_initial{
+    position: absolute;
+    font-size: calc(var(--card-width) * 0.035);
+  }
+  .card_effect{
+    background:revert;
+    padding:revert;
+    font-size: calc(var(--card-width) * 0.035);
+  }
 }
 .card_corp_1 .card_bg{background-position: 0 0;}
 .card_corp_2 .card_bg{background-position: -100% 0;}
@@ -277,7 +291,7 @@
 }
 
 .token_img.temperature_icon {
-  background-position: -300% 0;
+  background-position: -200% -100%;
 }
 .token_img.draw_icon {
   background-position: 0 0;
@@ -290,4 +304,172 @@
   width: calc(var(--card-width) * 0.2);
   height: calc(var(--card-width) * 0.2);
   background-position: -300% 0;
+}
+
+/* corp specific */
+.card_corp_1 {
+  .card_title {
+    display: flex;
+  }
+  .card_effect{
+    left: 56%;
+    top: 58%;
+    width: 38%;
+  }
+  .card_initial {
+    left: 6%;
+    top: 66%;
+    width: 47%;
+
+  }
+}
+.card_corp_2 {
+  .card_effect{
+    left: 37%;
+    top: 59%;
+    width: 53%;
+  }
+  .card_initial {
+    left: 6%;
+    top: 66%;
+    width: 29%;
+  }
+}
+.card_corp_3 {
+  .card_effect{
+    left: 56%;
+    top: 58%;
+    width: 38%;
+  }
+  .card_initial {
+    left: 6%;
+    top: 66%;
+    width: 47%;
+
+  }
+}
+.card_corp_4 {
+  .card_effect{
+    left: 51%;
+    top: 58%;
+    width: 39%;
+  }
+  .card_initial {
+    left: 5%;
+    top: 66%;
+    width: 47%;
+
+  }
+}
+
+.card_corp_5 {
+  .card_effect{
+    left: 56%;
+    top: 58%;
+    width: 38%;
+  }
+  .card_initial {
+    left: 6%;
+    top: 66%;
+    width: 47%;
+
+  }
+}
+
+.card_corp_6 {
+  .card_effect{
+    left: 50%;
+    top: 58%;
+    width: 43%;
+  }
+  .card_initial {
+    left: 6%;
+    top: 65%;
+    width: 42%;
+  }
+}
+
+.card_corp_7 {
+  .card_effect{
+    top: 49%;
+    width: 36%;
+    height: 24%;
+    left: 57%;
+  }
+  .card_initial {
+    top: 70%;
+    width: 89.5%;
+    left: 6%;
+  }
+}
+
+
+.card_corp_8 {
+  .card_effect{
+    top: 53%;
+    width: 46%;
+    height: 24%;
+    left: 47%;
+  }
+  .card_initial {
+    top: 58%;
+    width: 38.5%;
+    left: 6%;
+  }
+}
+
+.card_corp_9 {
+  .card_effect{
+    top: 59%;
+    width: 39%;
+    height: 24%;
+    left: 51%;
+  }
+  .card_initial {
+    top: 63%;
+    width: 42.5%;
+    left: 6%;
+  }
+}
+.card_corp_10 {
+  .card_effect {
+    top: 56%;
+    width: 40%;
+    height: 24%;
+    left: 52%;
+  }
+
+  .card_initial {
+    top: 66%;
+    width: 44.5%;
+    left: 6%;
+  }
+}
+
+  .card_corp_11 {
+    .card_effect{
+      top: 48%;
+      width: 45%;
+      height: 24%;
+      left: 49%;
+    }
+    .card_initial {
+      top: 72%;
+      width: 86.5%;
+      left: 6%;
+    }
+}
+.card_corp_12 {
+  .card_effect {
+    top: 56%;
+    width: 40%;
+    height: 24%;
+    left: 52%;
+  }
+
+  .card_initial {
+    top: 70%;
+    width: 44.5%;
+    left: 6%;
+  }
 }

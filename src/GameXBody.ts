@@ -55,7 +55,36 @@ class GameXBody extends GameTokens {
       // use this to generate some fake parts of card, remove this when use images
       if (displayInfo.mainType == "card") {
         let tagshtm = "";
-        if (!tokenNode.id.startsWith("card_stanproj")) {
+        if (tokenNode.id.startsWith("card_corp_")) {
+          //Corp formatting
+          const decor = this.createDivNode(null, "card_decor", tokenNode.id);
+          const texts = displayInfo.text.split(';');
+          let card_initial="";
+          let card_effect="";
+          if (texts.length>0) card_initial = texts[0];
+          if (texts.length>1) card_effect= texts[1];
+          decor.innerHTML = `
+                <div class="card_bg"></div>
+                <div class="card_initial">${card_initial}</div>
+                <div class="card_effect">${card_effect}</div>
+          `;
+
+        } else if (tokenNode.id.startsWith("card_stanproj"))  {
+          //standard project formatting:
+          //cost -> action title
+          //except for sell patents
+          const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
+          const parsedActions = this.parseActionsToHTML(displayInfo.r);
+          //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+          decor.innerHTML = `
+             <div class='stanp_cost'>${displayInfo.cost}</div>
+             <div class='stanp_arrow'></div>
+             <div class='stanp_action'>${parsedActions}</div>  
+             <div class='standard_projects_title'>${displayInfo.name}</div>  
+          `;
+        }
+
+        else {
           //tags
 
           if (displayInfo.tags && displayInfo.tags != "") {
@@ -71,6 +100,8 @@ class GameXBody extends GameTokens {
           } else {
             vp='';
           }
+
+
           //const vp = displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : "";
 
           decor.innerHTML = `
@@ -86,19 +117,6 @@ class GameXBody extends GameTokens {
           `;
           // <div class="card_action">${parsedActions}</div>
           //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
-        } else {
-          //standard project formatting:
-          //cost -> action title
-          //except for sell patents
-          const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-          const parsedActions = this.parseActionsToHTML(displayInfo.r);
-          //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-          decor.innerHTML = `
-             <div class='stanp_cost'>${displayInfo.cost}</div>
-             <div class='stanp_arrow'></div>
-             <div class='stanp_action'>${parsedActions}</div>  
-             <div class='standard_projects_title'>${displayInfo.name}</div>  
-          `;
         }
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
 
@@ -195,13 +213,10 @@ class GameXBody extends GameTokens {
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: string): HTMLDivElement {
-    this.darhflog("placing ", id);
     if (id && location && this.custom_placement[id]) {
       location = this.custom_placement[id];
-      this.darhflog("placing id elsewhere: ", id, "at location ", location);
     }
     const div = super.createDivNode(id, classes, location);
-    this.darhflog(`id ${div.id} has been created at ${(div.parentNode as HTMLElement)?.id}`);
     return div;
   }
 
@@ -411,7 +426,6 @@ class GameXBody extends GameTokens {
           if (tid=="payment") {
             //show only if options
             const opts =this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
-            this.darhflog('opts',opts.resources,'sum',(Object.entries(opts.resources).reduce((sum: number, [key, val]: [string, unknown]) => sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0), 0)));
             if (Object.entries(opts.resources).reduce((sum: number, [key, val]: [string, unknown]) => sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0), 0)  > 0) {
               this.createCustomPayment(opId,opts);
             }
@@ -484,11 +498,14 @@ class GameXBody extends GameTokens {
 
     //add confirmation button
     const txt =_("Custom:");
+    const button_htm=this.resourcesToHtml( this.custom_pay.selected,true);
+
+    const button_whole='Pay %s'.replace('%s',button_htm);
     const paiement_htm=`
       <div class="custom_paiement_inner">
         ${txt}
         ${items_htm}
-        <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">Pay  <div class="token_img tracker_m payment_item">${this.custom_pay.needed}</div></div>
+        <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
       </div>
     `;
     const node = this.createDivNode('custom_paiement',"","generalactions");
@@ -525,8 +542,7 @@ class GameXBody extends GameTokens {
       const mc= this.custom_pay.needed - total_res;
       this.custom_pay.selected['m']=mc;
    //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
-     const values_htm=this.resourcesToHtml( this.custom_pay.selected);
-
+      const values_htm=this.resourcesToHtml( this.custom_pay.selected,true);
 
       $('btn_custompay_send').innerHTML='Pay %s'.replace('%s',values_htm);
 
@@ -544,12 +560,12 @@ class GameXBody extends GameTokens {
     });
   }
 
-  resourcesToHtml(resources:any):string {
+  resourcesToHtml(resources:any,show_zeroes:boolean = false):string {
     var htm='';
     const allResources =['m','s','u','h'];
 
     allResources.forEach((item)=>{
-        if (resources[item] && resources[item]>0) {
+        if (resources[item]!=undefined && (resources[item]>0 || show_zeroes===true)) {
           htm+=`<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
         }
     });
