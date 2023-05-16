@@ -132,11 +132,10 @@ abstract class AbsOperation {
             $this->game->systemAssertTrue("Missing user args for $type");
             return null;
         }
-    
     }
     protected function getUncheckedArg($key) {
         $args = $this->user_args;
-        return array_get($args,$key,null);
+        return array_get($args, $key, null);
     }
 
     protected function getStateArg($key) {
@@ -162,8 +161,11 @@ abstract class AbsOperation {
     }
 
 
-    protected function getContext() {
-        return $this->op_info['data'] ?? ''; // context of effect
+    protected function getContext($index = 0) {
+        $data = $this->op_info['data'] ?? '';
+        if (!$data) return $data;
+        $split = explode(':', $data);
+        return array_get($split,$index,''); // context of effect
     }
 
     protected function getMinCount(): int {

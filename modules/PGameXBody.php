@@ -328,7 +328,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         // special project sell XXX
         if (startsWith($tokenid, "card_stanproj_1")) {
-            if ($this->isVoidSingle("sell",$owner)) {
+            if ($this->isVoidSingle("sell", $owner)) {
                 return MA_ERR_MANDATORYEFFECT;
             }
         }
@@ -544,9 +544,20 @@ abstract class PGameXBody extends PGameMachine {
                 $this->executeImmediately($owner, $outcome, 1, $card);
                 continue;
             }
+            $data = $lisinfo['target'].":e:".$card;
+            if (startsWith($outcome, 'counter')) {
+                // conditional
+                $counterexpt = OpExpression::parseExpression($outcome);
+                $c = OpExpression::str($counterexpt->args[0]);
+                $opinst = $this->getOperationInstanceFromType($c, $owner, 1, $data);
+                if ($opinst instanceof Operation_counter) {
+                    $val = $opinst->evaluate()[0];
+                    if (!$val) continue;
+                }
+            }
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} triggered effect of ${token_name}'), $card, $owner);
             // these goes in the pull where player can pick the sequence
-            $this->machine->put($outcome, 1, 1, $owner, MACHINE_FLAG_UNIQUE, $lisinfo['target']);
+            $this->putInEffectPool($owner, $outcome, $data);
         }
     }
 
@@ -636,20 +647,29 @@ abstract class PGameXBody extends PGameMachine {
 
     function getPayment($color, $card_id): string {
         $costm = $this->getRulesFor($card_id, "cost", 0);
-        $tags = $this->getRulesFor($card_id, "tags", '');
         $discount = 0;
         if (startsWith($card_id, 'card_main'))
             $discount = $this->collectDiscounts($color, $card_id);
         $costm = max(0, $costm - $discount);
         if ($costm == 0)
             return "nop"; // no-op
-        if (strstr($tags, "Building") && strstr($tags, "Space"))
-            return "${costm}nmus";
+
+        return "${costm}nmm";
+    }
+
+    function getPaymentTypes(string $color, string $card_id) {
+        $tags = $this->getRulesFor($card_id, "tags", '');
+        $types = [];
         if (strstr($tags, "Building"))
-            return "${costm}nms";
+            $types[] = 's';
         if (strstr($tags, "Space"))
-            return "${costm}nmu";
-        return "${costm}nm";
+            $types[] = 'u';
+        if ($this->playerHasCard($color, 'card_corp_4')) {
+            // Helion
+            $types[] = 'h';
+        }
+        $types[] = 'm';
+        return $types;
     }
 
     function getCurrentStartingPlayer() {
@@ -668,6 +688,13 @@ abstract class PGameXBody extends PGameMachine {
 
     function isEndOfGameAchived() {
         return $this->getGameProgression() >= 100;
+    }
+
+    function playerHasCard($color, $token_id) {
+        $info = $this->tokens->getTokenInfo($token_id);
+        if (!$info) return false;
+        if ($info['location'] == "tableau_$color") return true;
+        return false;
     }
 
     //////////////////////////////////////////////////////////////////////////////

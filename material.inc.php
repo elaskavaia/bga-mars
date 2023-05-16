@@ -1908,7 +1908,7 @@ $this->token_types = [
   'num' => 147,
   'name' => clienttranslate("Herbivores"),
   't' => 2,
-  'r' => 'res,np_Any',
+  'r' => 'res,npp_Any',
   'e' => 'place_forest:res:this',
   'cost' => 12,
   'pre' => 'o>=8',
@@ -2695,7 +2695,7 @@ $this->token_types = [
   'name' => clienttranslate("CrediCor"),
   't' => 4,
   'r' => '57m',
-  'e' => "play_card:(counter('cost>=20'),4m):that;play_stan:counter('cost>=20')4m:that",
+  'e' => "play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that",
   'cost' => 0,
   'vp' => 0,
   'text' => clienttranslate("You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC."),
@@ -3379,13 +3379,21 @@ $this->token_types = [
   'type' => 'nph_Any',
   'name' => clienttranslate("Loose Heat Production (Any Player - Mandatory)"),
 ],
+ 'op_nmm' => [  //
+  'undo' => 'true',
+  'class' => 'AbsOperationPayWithRes',
+  'prompt' => '${you} must select a payment choice',
+  'params' => 'target',
+  'type' => 'nmm',
+  'name' => clienttranslate("Pay"),
+],
  'op_nmu' => [  //
   'undo' => 'true',
   'class' => 'AbsOperationPayWithRes',
   'prompt' => '${you} must select a payment choice',
   'params' => 'target',
   'type' => 'nmu',
-  'name' => clienttranslate("Pay (possibly with Titanium)"),
+  'name' => clienttranslate("Pay"),
 ],
  'op_nms' => [  //
   'undo' => 'true',
@@ -3393,15 +3401,15 @@ $this->token_types = [
   'prompt' => '${you} must select a payment choice',
   'params' => 'target',
   'type' => 'nms',
-  'name' => clienttranslate("Pay (possibly with Steel)"),
+  'name' => clienttranslate("Pay"),
 ],
- 'op_nmus' => [  //
+ 'op_nm' => [  //
   'undo' => 'true',
   'class' => 'AbsOperationPayWithRes',
   'prompt' => '${you} must select a payment choice',
   'params' => 'target',
-  'type' => 'nmus',
-  'name' => clienttranslate("Pay (possibly with Steel or Titanium)"),
+  'type' => 'nm',
+  'name' => clienttranslate("Pay M€"),
 ],
 // #auto-resolve actions
  'op_m' => [  //
@@ -3445,12 +3453,6 @@ $this->token_types = [
   'class' => 'AbsOperationInc',
   'type' => 'pdelta',
   'name' => clienttranslate("Increase Global Parameter Requirements Delta"),
-],
- 'op_nm' => [  //
-  'undo' => 'true',
-  'class' => 'AbsOperationIncNeg',
-  'type' => 'nm',
-  'name' => clienttranslate("Pay M€"),
 ],
  'op_ns' => [  //
   'undo' => 'true',

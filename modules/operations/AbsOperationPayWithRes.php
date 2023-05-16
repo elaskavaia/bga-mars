@@ -33,17 +33,20 @@ class AbsOperationPayWithRes extends AbsOperation {
             $maxres = (int)floor($count / $er);
             $maxres = min($maxres, $typecount);
             $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
-            $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
-            $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
-            $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
+            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
+            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
+            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
         }
 
         $this->addProposal($info, $type, $mcount, $typecount, $er, $count, 0);
+        $cost = $this->getCost();
+
+
 
         $info['payment'] = [
             'q' => 0,
             'count' => $count,
-            'original' => $this->game->getRulesFor($this->getContext(), 'cost', 0),
+            'original' => $cost,
             'resources' => [],
             'rate' => []
         ];
@@ -51,12 +54,15 @@ class AbsOperationPayWithRes extends AbsOperation {
             $typecount = $this->game->getTrackerValue($this->color, $type);
             $er = $this->getExchangeRate($type);
             $maxres = (int)floor($count / $er);
-            $maxres = min($maxres, $typecount);
-            $info['payment']['resources'][$type] = $maxres;
+            $propres = min($maxres, $typecount);
+            if ($propres < $typecount && $er * $propres < $count) {
+                $propres += 1;
+            }
+            $info['payment']['resources'][$type] = $propres;
             $info['payment']['rate'][$type] = $er;
+            $info['payment']['sign'][$type] =  ($propres * $er) <=> $this->getCount();
         }
-        $info['payment']['resources']['m'] = min($count, $mcount);
-        $info['payment']['rate']['m'] = 1;
+
 
         return $info;
     }
@@ -86,8 +92,19 @@ class AbsOperationPayWithRes extends AbsOperation {
         ];
     }
 
+    function canResolveAutomatically() {
+        $possible = $this->getStateArg('target');
+        if (count($possible) <= 2) return true;
+        return false;
+    }
+
     function effect(string $owner, int $inc): int {
-        $value = $this->getCheckedArg('target');
+        $possible = $this->getStateArg('target');
+        if (count($possible) <= 2) {
+            $value = array_shift($possible);
+        } else {
+            $value = $this->getCheckedArg('target');
+        }
 
         $info = $this->getStateArg('info');
         $inc = $info[$value]['count'];
@@ -113,8 +130,7 @@ class AbsOperationPayWithRes extends AbsOperation {
             }
             return $inc;
         }
-        $mc = $info[$value]['resources']['m'];
-        if ($mc > 0) $this->game->effect_incCount($owner, 'm', -$mc);
+
         foreach ($this->getTypes() as $type) {
             if (isset($info[$value]['resources'][$type])) {
                 $tt = $info[$value]['resources'][$type];
@@ -125,20 +141,41 @@ class AbsOperationPayWithRes extends AbsOperation {
     }
 
     private function getTypes() {
-        $types =  substr($this->mnemonic, 2);
-        return str_split($types);
+        $card_id = $this->getContext();
+        $effect = $this->getContext(1);
+        if ($effect === 'a' || !$card_id) {
+            $types = substr($this->mnemonic, 2);
+            $others = $this->game->getPaymentTypes($this->getOwner(), '');
+            if (!$types) return $others;
+            return array_merge(str_split($types), $others);
+        }
+        return $this->game->getPaymentTypes($this->getOwner(), $card_id);
+    }
+
+    private function getCost() {
+        $card_id = $this->getContext();
+        $effect = $this->getContext(1);
+        if ($effect === 'a' || !$card_id) {
+            $cost = $this->getCount(); // XXX
+        } else {
+            $cost = $this->game->getRulesFor($card_id, 'cost', 0);
+        }
+        return $cost;
     }
 
     private function getExchangeRate($type): int {
         if ($type == 'm') return 1;
-        $er = $this->game->getTrackerValue($this->color, "er$type");
-        return $er;
+        if ($type == 'h') return 1;
+        if ($type == 's' || $type == 'u') {
+            $er = $this->game->getTrackerValue($this->color, "er$type");
+            return $er;
+        }
+        throw new BgaSystemException("Invalid resource type $type");
     }
 
     public function isVoid(): bool {
         $count = $this->getCount();
-        $mcount = $this->game->getTrackerValue($this->color, 'm');
-        $value = $mcount;
+        $value = 0;
         foreach ($this->getTypes() as $type) {
             $typecount = $this->game->getTrackerValue($this->color, $type);
             $er = $this->getExchangeRate($type);
