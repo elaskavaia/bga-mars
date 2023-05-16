@@ -146,6 +146,7 @@ class AbsOperationPayWithRes extends AbsOperation {
         if ($effect === 'a' || !$card_id) {
             $types = substr($this->mnemonic, 2);
             $others = $this->game->getPaymentTypes($this->getOwner(), '');
+            if (!$types) return $others;
             return array_merge(str_split($types), $others);
         }
         return $this->game->getPaymentTypes($this->getOwner(), $card_id);
@@ -165,8 +166,11 @@ class AbsOperationPayWithRes extends AbsOperation {
     private function getExchangeRate($type): int {
         if ($type == 'm') return 1;
         if ($type == 'h') return 1;
-        $er = $this->game->getTrackerValue($this->color, "er$type");
-        return $er;
+        if ($type == 's' || $type == 'u') {
+            $er = $this->game->getTrackerValue($this->color, "er$type");
+            return $er;
+        }
+        throw new BgaSystemException("Invalid resource type $type");
     }
 
     public function isVoid(): bool {
