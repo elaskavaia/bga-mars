@@ -544,7 +544,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->executeImmediately($owner, $outcome, 1, $card);
                 continue;
             }
-            $data = $lisinfo['target'].":e:".$card;
+            $data = $lisinfo['target'] . ":e:" . $card;
             if (startsWith($outcome, 'counter')) {
                 // conditional
                 $counterexpt = OpExpression::parseExpression($outcome);
@@ -564,15 +564,25 @@ abstract class PGameXBody extends PGameMachine {
     function collectDiscounts($owner, $card_id) {
         // event will be onPay_card or similar
         // load all active effect listeners
-        $events = $this->getPlayCardEvents($card_id, 'onPay_');
         $discount = 0;
-        $listeners = $this->collectListeners($owner, $events);
-        foreach ($listeners as $lisinfo) {
-            $outcome = $lisinfo['outcome'];
-            // at this point only discounts are MC
-            $opexpr = OpExpression::parseExpression($outcome);
-            $this->systemAssertTrue("Not expecting other payment options", $opexpr->args[0] == 'm');
-            $discount += $opexpr->to;
+        if ($this->playerHasCard($owner, 'card_corp_12')) {
+            // ThorGate
+            if ($card_id == 'card_stanproj_2' || strstr($this->getRulesFor($card_id, 'tags', ''), 'Energy')) {
+                $discount += 3;
+            }
+        }
+
+        if (startsWith($card_id, 'card_main')) {
+            $events = $this->getPlayCardEvents($card_id, 'onPay_');
+
+            $listeners = $this->collectListeners($owner, $events);
+            foreach ($listeners as $lisinfo) {
+                $outcome = $lisinfo['outcome'];
+                // at this point only discounts are MC
+                $opexpr = OpExpression::parseExpression($outcome);
+                $this->systemAssertTrue("Not expecting other payment options", $opexpr->args[0] == 'm');
+                $discount += $opexpr->to;
+            }
         }
         return $discount;
     }
@@ -628,6 +638,7 @@ abstract class PGameXBody extends PGameMachine {
             $args = [$expr];
         else
             $args = $expr->args;
+        $match = false;
         foreach ($args as $arg) {
             if ($arg->op != ':')
                 throw new BgaSystemException("Cannot parse $trigger_rule missing : " . OpExpression::str($arg));
@@ -636,20 +647,25 @@ abstract class PGameXBody extends PGameMachine {
                 $declareevent = OpExpression::str($arg->args[0]);
                 $regex = MathLexer::toregex($declareevent);
                 if (preg_match($regex, $event) == 1) {
-                    $splits['outcome'] = $arg->args[1]->__toString();
+                    $outcome = $arg->args[1]->__toString();
+                    if (array_get($splits,'outcome')) {
+                        $splits['outcome'] .= ",".$outcome;
+                    } else {
+                        $splits['outcome'] = $outcome;
+                    }
                     $splits['context'] = OpExpression::str(array_get($arg->args, 2, '')); // can be 'that' - meaning context of card that triggered the event vs event handler
-                    return true;
+                   
+                    $match = true;
                 }
             }
         }
-        return false;
+        return $match;
     }
 
     function getPayment($color, $card_id): string {
         $costm = $this->getRulesFor($card_id, "cost", 0);
-        $discount = 0;
-        if (startsWith($card_id, 'card_main'))
-            $discount = $this->collectDiscounts($color, $card_id);
+
+        $discount = $this->collectDiscounts($color, $card_id);
         $costm = max(0, $costm - $discount);
         if ($costm == 0)
             return "nop"; // no-op

@@ -29,7 +29,6 @@ class GameXBody extends GameTokens {
     });
 
     this.connectClass("filter_button", "onclick", "onFilterButton");
-    this.connectClass("hex", "onclick", "onToken");
     console.log("Ending game setup");
   }
 
@@ -622,7 +621,7 @@ class GameXBody extends GameTokens {
 
     const single = Object.keys(operations).length == 1;
     const ordered = xop == "," && !single;
-    if (ordered) this.setDescriptionOnMyTurn("${you} must choose order of operations");
+    if (xop == "+" && !single) this.setDescriptionOnMyTurn("${you} must choose order of operations");
 
     let i = 0;
     for (const opIdS in operations) {

@@ -1452,7 +1452,6 @@ var GameXBody = /** @class */ (function (_super) {
             _this.updateTooltip(node.id);
         });
         this.connectClass("filter_button", "onclick", "onFilterButton");
-        this.connectClass("hex", "onclick", "onToken");
         console.log("Ending game setup");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
@@ -1465,7 +1464,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
-        var _b, _c, _d, _e, _f;
+        var _b, _c, _d, _e, _f, _g;
         if (!tokenNode.getAttribute("data-info")) {
             var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
             var classes = displayInfo.imageTypes.split(/  */);
@@ -1474,11 +1473,32 @@ var GameXBody = /** @class */ (function (_super) {
             // use this to generate some fake parts of card, remove this when use images
             if (displayInfo.mainType == "card") {
                 var tagshtm = "";
-                if (!tokenNode.id.startsWith("card_stanproj")) {
+                if (tokenNode.id.startsWith("card_corp_")) {
+                    //Corp formatting
+                    var decor = this.createDivNode(null, "card_decor", tokenNode.id);
+                    var texts = displayInfo.text.split(';');
+                    var card_initial = "";
+                    var card_effect = "";
+                    if (texts.length > 0)
+                        card_initial = texts[0];
+                    if (texts.length > 1)
+                        card_effect = texts[1];
+                    decor.innerHTML = "\n                <div class=\"card_bg\"></div>\n                <div class=\"card_initial\">".concat(card_initial, "</div>\n                <div class=\"card_effect\">").concat(card_effect, "</div>\n          ");
+                }
+                else if (tokenNode.id.startsWith("card_stanproj")) {
+                    //standard project formatting:
+                    //cost -> action title
+                    //except for sell patents
+                    var decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
+                    var parsedActions = this.parseActionsToHTML(displayInfo.r);
+                    //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+                    decor.innerHTML = "\n             <div class='stanp_cost'>".concat(displayInfo.cost, "</div>\n             <div class='stanp_arrow'></div>\n             <div class='stanp_action'>").concat(parsedActions, "</div>  \n             <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n          ");
+                }
+                else {
                     //tags
                     if (displayInfo.tags && displayInfo.tags != "") {
-                        for (var _i = 0, _g = displayInfo.tags.split(" "); _i < _g.length; _i++) {
-                            var tag = _g[_i];
+                        for (var _i = 0, _h = displayInfo.tags.split(" "); _i < _h.length; _i++) {
+                            var tag = _h[_i];
                             tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         }
                     }
@@ -1492,18 +1512,10 @@ var GameXBody = /** @class */ (function (_super) {
                         vp = '';
                     }
                     //const vp = displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : "";
-                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : "", "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : "", "</div>\n                ").concat(vp, "\n          ");
+                    var cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
+                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : "", "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat((_f = displayInfo.pre) !== null && _f !== void 0 ? _f : "", "</div>\n                <div class=\"card_number\">").concat((_g = displayInfo.num) !== null && _g !== void 0 ? _g : "", "</div>\n                <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                ").concat(vp, "\n          ");
                     // <div class="card_action">${parsedActions}</div>
                     //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
-                }
-                else {
-                    //standard project formatting:
-                    //cost -> action title
-                    //except for sell patents
-                    var decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-                    var parsedActions = this.parseActionsToHTML(displayInfo.r);
-                    //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-                    decor.innerHTML = "\n             <div class='stanp_cost'>".concat(displayInfo.cost, "</div>\n             <div class='stanp_arrow'></div>\n             <div class='stanp_action'>").concat(parsedActions, "</div>  \n             <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n          ");
                 }
                 var div = this.createDivNode(null, "card_info_box", tokenNode.id);
                 div.innerHTML = "\n\n        <div class='token_title'>".concat(displayInfo.name, "</div>\n        <div class='token_cost'>").concat(displayInfo.cost, "</div> \n        <div class='token_rules'>").concat(displayInfo.r, "</div>\n        <div class='token_descr'>").concat(displayInfo.text, "</div>\n        ");
@@ -1582,36 +1594,43 @@ var GameXBody = /** @class */ (function (_super) {
     };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
-        var _a;
-        this.darhflog("placing ", id);
         if (id && location && this.custom_placement[id]) {
             location = this.custom_placement[id];
-            this.darhflog("placing id elsewhere: ", id, "at location ", location);
         }
         var div = _super.prototype.createDivNode.call(this, id, classes, location);
-        this.darhflog("id ".concat(div.id, " has been created at ").concat((_a = div.parentNode) === null || _a === void 0 ? void 0 : _a.id));
         return div;
     };
     GameXBody.prototype.updateTokenDisplayInfo = function (tokenDisplayInfo) {
-        var _a;
         // override to generate dynamic tooltips and such
         if (tokenDisplayInfo.mainType == "card") {
-            var rules = (_a = tokenDisplayInfo.r) !== null && _a !== void 0 ? _a : "";
+            var cardtype = "card";
+            var prefix = "card_main_";
+            var rules = tokenDisplayInfo.r ? "<b>" + _("Card Rules:") + "</b>" + tokenDisplayInfo.r : "";
             if (tokenDisplayInfo.a)
-                rules += ";a:" + tokenDisplayInfo.a;
+                rules += "<br><b>" + _("Action:") + "</b>" + tokenDisplayInfo.a;
             if (tokenDisplayInfo.e)
-                rules += ";e:" + tokenDisplayInfo.e;
+                rules += "<br><b>" + _("Effect:") + "</b>" + tokenDisplayInfo.e;
             tokenDisplayInfo.imageTypes += " infonode";
-            tokenDisplayInfo.tooltip =
-                rules +
-                    "<br>" +
-                    (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
-                    this.getTr(tokenDisplayInfo.text) +
-                    "<br>" +
-                    _("Number: " + tokenDisplayInfo.num) +
-                    (tokenDisplayInfo.tags ? "<br>" + _("Tags: " + tokenDisplayInfo.tags) : "");
+            var fullText = rules +
+                "<br>" +
+                (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
+                this.getTr(tokenDisplayInfo.text) +
+                "<br>" +
+                "<b>" + _("Number: ") + "</b>" + tokenDisplayInfo.num +
+                (tokenDisplayInfo.tags ? "<br>" + "<b>" + _("Tags: ") + "</b>" + tokenDisplayInfo.tags : "");
             if (tokenDisplayInfo.vp) {
-                tokenDisplayInfo.tooltip += "<br>VP:" + tokenDisplayInfo.vp;
+                fullText += "<br><b>" + _("VP:") + "</b>" + tokenDisplayInfo.vp;
+            }
+            if (tokenDisplayInfo.key.startsWith("card_corp_")) {
+                prefix = "card_corp_";
+                cardtype = "corp";
+            }
+            if ($(prefix + tokenDisplayInfo.num)) {
+                var card_htm = $(prefix + tokenDisplayInfo.num).outerHTML.replaceAll('id="', 'id="tt');
+                tokenDisplayInfo.tooltip = '<div class="tt_2cols ' + cardtype + '"><div class="tt_card_img">' + card_htm + '</div><div class="tt_card_txt">' + fullText + '</div></div>';
+            }
+            else {
+                tokenDisplayInfo.tooltip = fullText;
             }
         }
         if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -1801,10 +1820,6 @@ var GameXBody = /** @class */ (function (_super) {
                     if (tid == "payment") {
                         //show only if options
                         var opts = (_b = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _b === void 0 ? void 0 : _b[tid];
-                        _this.darhflog('opts', opts.resources, 'sum', (Object.entries(opts.resources).reduce(function (sum, _a) {
-                            var key = _a[0], val = _a[1];
-                            return sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0);
-                        }, 0)));
                         if (Object.entries(opts.resources).reduce(function (sum, _a) {
                             var key = _a[0], val = _a[1];
                             return sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0);
@@ -1862,7 +1877,9 @@ var GameXBody = /** @class */ (function (_super) {
          */
         //add confirmation button
         var txt = _("Custom:");
-        var paiement_htm = "\n      <div class=\"custom_paiement_inner\">\n        ".concat(txt, "\n        ").concat(items_htm, "\n        <div id=\"btn_custompay_send\" class=\"action-button bgabutton bgabutton_blue\">Pay  <div class=\"token_img tracker_m payment_item\">").concat(this.custom_pay.needed, "</div></div>\n      </div>\n    ");
+        var button_htm = this.resourcesToHtml(this.custom_pay.selected, true);
+        var button_whole = 'Pay %s'.replace('%s', button_htm);
+        var paiement_htm = "\n      <div class=\"custom_paiement_inner\">\n        ".concat(txt, "\n        ").concat(items_htm, "\n        <div id=\"btn_custompay_send\" class=\"action-button bgabutton bgabutton_blue\">").concat(button_whole, "</div>\n      </div>\n    ");
         var node = this.createDivNode('custom_paiement', "", "generalactions");
         node.innerHTML = paiement_htm;
         //adds actions to button payments
@@ -1893,7 +1910,7 @@ var GameXBody = /** @class */ (function (_super) {
             var mc = _this.custom_pay.needed - total_res;
             _this.custom_pay.selected['m'] = mc;
             //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
-            var values_htm = _this.resourcesToHtml(_this.custom_pay.selected);
+            var values_htm = _this.resourcesToHtml(_this.custom_pay.selected, true);
             $('btn_custompay_send').innerHTML = 'Pay %s'.replace('%s', values_htm);
         });
         //adds action to final payment button
@@ -1909,11 +1926,12 @@ var GameXBody = /** @class */ (function (_super) {
             _this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
         });
     };
-    GameXBody.prototype.resourcesToHtml = function (resources) {
+    GameXBody.prototype.resourcesToHtml = function (resources, show_zeroes) {
+        if (show_zeroes === void 0) { show_zeroes = false; }
         var htm = '';
         var allResources = ['m', 's', 'u', 'h'];
         allResources.forEach(function (item) {
-            if (resources[item] && resources[item] > 0) {
+            if (resources[item] != undefined && (resources[item] > 0 || show_zeroes === true)) {
                 htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(resources[item], "</div>");
             }
         });
@@ -1947,7 +1965,7 @@ var GameXBody = /** @class */ (function (_super) {
         var xop = args.op;
         var single = Object.keys(operations).length == 1;
         var ordered = xop == "," && !single;
-        if (ordered)
+        if (xop == "+" && !single)
             this.setDescriptionOnMyTurn("${you} must choose order of operations");
         var i = 0;
         var _loop_1 = function (opIdS) {

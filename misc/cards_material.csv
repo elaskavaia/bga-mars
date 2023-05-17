@@ -157,8 +157,8 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it.|
 151|Investment Loan|3|1npm,10m|||3||Earth Event|0|Decrease your MC production 1 step. Gain 10 MC.|
 152|Insulation|1|counter(ph,0),(nph:pm)|||2|||0|Decrease your heat production any number of steps and increase your MC production the same number of steps.|
-153|Adaptation Technology|2||||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case.|
-154|Caretaker Contract|2|2pdelta|8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
+153|Adaptation Technology|2|2pdelta|||12||Science|1|Effect: Your global requirements are +2 or -2 steps, your choice in each case.|
+154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step.|
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|It must be -14°C or colder. Increase your plant production 2 steps.|
 156|Standard Technology|2|||play_stan:3m|6||Science|0|Effect: After you pay for a standard project, except selling patents, you gain 3 MC.|
 157|Nitrite Reducing Bacteria|2|3res|res/(3nres:tr)||11||Microbe|0|Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|  'holds' => 'Microbe'
@@ -231,13 +231,13 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 2|CrediCor|4|57m||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|0|||0|You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
 3|Ecoline|4|2pp,36m,3p|||0||Plant|0|You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery.|
 4|Helion|4|3ph,42m|||0||Space|0|You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat.|
-5|Interplanetary Cinematics|4|30m,20s|||0||Building|0|You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC.|
-6|Inventrix|4|45m|||0||Science|0|As your first action in the game, draw 3 cards. Start with 45 MC.; Effect: Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.|
+5|Interplanetary Cinematics|4|30m,20s||play_cardEvent:2m|0||Building|0|You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC.|
+6|Inventrix|4|45m,2pdelta|||0||Science|0|As your first action in the game, draw 3 cards. Start with 45 MC.; Effect: Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.|'a1'=>'3draw'
 7|Mining Guild|4|30m,5s,ps||place_bonus_u:ps;place_bonus_s:ps|0||Building|0|The earliest private enterprises on Mars focused on mining and exporting minerals off the surface. As the mega-corporations arrive to terraform, the miners unite in the Guild to defend their interests. With their expertise and knowledg of the planet they will be a worthy contender in the race.; Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.|
-8|Saturn Systems|4|pu,42m|||0||Jovian|0|You start with 1 titanium production and 42 MC.; Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step.|
+8|Saturn Systems|4|pu,42m||play_tagJovian:pm|0||Jovian|0|You start with 1 titanium production and 42 MC.; Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step.|
 9|PhoboLog|4|23m,10u,eru|||0||Space|0|You start with 10 titanium and 23 MC; Effect: Your titanium resources are each worth 1 MC extra.|
 10|Teractor|4|60m||onPay_tagEarth:3m|0||Earth|0|You start with 60 MC.; Effect: When playing an Earth card, you pay 3 MC less for it.|
-11|Tharsis Republic|4|40m|||0||Building|0|You start with 40 MC. As your first action in the game, place a city tile.; Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.|
+11|Tharsis Republic|4|40m||place_city:pm:this:any;place_city:3m|0||Building|0|You start with 40 MC. As your first action in the game, place a city tile.; Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.|'a1'=>'city'
 12|ThorGate|4|pe,48m|||0||Energy|0|You start with 1 energy production and 48 MC.; Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.|
 #|||||||||||
 #13|United Nations Mars Initiative|4|40m|||0||Earth|0|You start with 40 MC.; Action: If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|
