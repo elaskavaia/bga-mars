@@ -111,6 +111,12 @@ $stats_type = array(
             "type" => "int"
         ],
 
+        "game_actions" => array(
+            "id" => 30,
+            "name" => totranslate("Number of actions"),
+            "type" => "int"
+        ),
+
         /*
         Examples:    
         

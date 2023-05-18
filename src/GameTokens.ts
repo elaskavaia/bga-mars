@@ -28,6 +28,7 @@ interface TokenMoveInfo extends Token {
   animtime?: number;
   relation?: string;
   nop?: boolean;
+  from?: string;
 }
 
 class GameTokens extends GameBasics {
@@ -235,7 +236,7 @@ class GameTokens extends GameBasics {
   createToken(placeInfo: TokenMoveInfo) {
     const tokenId = placeInfo.key;
     var info = this.getTokenDisplayInfo(tokenId);
-    var place = placeInfo.location ?? this.getRulesFor(tokenId, "location");
+    var place =  placeInfo.from ?? placeInfo.location ?? this.getRulesFor(tokenId, "location");
     const tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
 
     if (placeInfo.onClick) {
@@ -308,6 +309,7 @@ class GameTokens extends GameBasics {
 
       if (tokenNode == null) {
         //debugger;
+        if (!placeInfo.from && args.place_from) placeInfo.from = args.place_from; 
         tokenNode = this.createToken(placeInfo);
       }
       this.syncTokenDisplayInfo(tokenNode);
@@ -327,7 +329,6 @@ class GameTokens extends GameBasics {
       }
 
       if (!$(location)) {
-        debugger;
         console.error("Unknown place " + location + " for " + tokenInfo.key + " " + token);
         return;
       }

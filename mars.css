@@ -224,6 +224,10 @@
   background-color: #ff0000;
 }
 
+.marker_008000 {
+  background-color: #008000;
+}
+
 /*card bg ratio : 1.40658174*/
 #ebd-body {
   --card-width: 10vw; /* 18vh */

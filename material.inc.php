@@ -824,7 +824,7 @@ $this->token_types = [
   'num' => 59,
   'name' => clienttranslate("Mangrove"),
   't' => 1,
-  'r' => 'forest(ocean),o',
+  'r' => 'forest(ocean)',
   'cost' => 12,
   'pre' => 't>=4',
   'tags' => 'Plant',
@@ -2244,7 +2244,7 @@ $this->token_types = [
   'num' => 174,
   'name' => clienttranslate("Protected Valley"),
   't' => 1,
-  'r' => '2pm,o,forest(ocean)',
+  'r' => '2pm,forest(ocean)',
   'cost' => 23,
   'tags' => 'Building Plant',
   'vp' => 0,
@@ -2480,7 +2480,7 @@ $this->token_types = [
   'num' => 193,
   'name' => clienttranslate("Plantation"),
   't' => 1,
-  'r' => 'forest,o',
+  'r' => 'forest',
   'cost' => 15,
   'pre' => 'tagScience>=2',
   'tags' => 'Plant',
@@ -3169,10 +3169,10 @@ $this->token_types = [
 ],
  'op_sell' => [  //
   'undo' => 'true',
-  'prompt' => '${you} must select a card to discard to gain 1 MC|',
+  'prompt' => '${you} must select a card to discard to gain 1 M€',
   'params' => 'target',
   'type' => 'sell',
-  'name' => clienttranslate("Discard Card from Hand to gain MC"),
+  'name' => clienttranslate("Discard Card from Hand to gain M€"),
 ],
  'op_activate' => [  //
   'undo' => 'true',
@@ -3204,7 +3204,7 @@ $this->token_types = [
 ],
  'op_buycard' => [  //
   'undo' => 'true',
-  'prompt' => '${you} must select a card to buy for 3 MC',
+  'prompt' => '${you} must select a card to buy for 3 M€',
   'params' => 'target',
   'type' => 'buycard',
   'name' => clienttranslate("Buy Card"),
@@ -3270,7 +3270,7 @@ $this->token_types = [
   'prompt' => '${you} must select a player who will loose the resouces (or none)',
   'params' => 'player',
   'type' => 'nm_Any',
-  'name' => clienttranslate("Remove MC (Any Player)"),
+  'name' => clienttranslate("Remove M€ (Any Player)"),
 ],
  'op_ns_Any' => [  //
   'undo' => 'true',
@@ -3334,7 +3334,7 @@ $this->token_types = [
   'prompt' => '${you} must select a player who will loose the resouces',
   'params' => 'player',
   'type' => 'steal_m',
-  'name' => clienttranslate("Steal MC"),
+  'name' => clienttranslate("Steal M€"),
 ],
  'op_npm_Any' => [  //
   'undo' => 'true',
@@ -3383,14 +3383,6 @@ $this->token_types = [
   'params' => 'player',
   'type' => 'nph_Any',
   'name' => clienttranslate("Loose Heat Production (Any Player - Mandatory)"),
-],
- 'op_nmm' => [  //
-  'undo' => 'true',
-  'class' => 'AbsOperationPayWithRes',
-  'prompt' => '${you} must select a payment choice',
-  'params' => 'target',
-  'type' => 'nmm',
-  'name' => clienttranslate("Pay"),
 ],
  'op_nmu' => [  //
   'undo' => 'true',
@@ -3629,12 +3621,6 @@ $this->token_types = [
   'type' => 'lastforest',
   'name' => clienttranslate("Last Forest"),
 ],
- 'op_confirm' => [  //
-  'undo' => 'true',
-  'prompt' => '${you} must confirm or undo',
-  'type' => 'confirm',
-  'name' => clienttranslate("Confirm"),
-],
  'op_cardx' => [  //
   'undo' => 'true',
   'type' => 'cardx',
@@ -3649,6 +3635,20 @@ $this->token_types = [
   'undo' => 'true',
   'type' => 'flip',
   'name' => clienttranslate("Flip"),
+],
+ 'op_confirm' => [  //
+  'undo' => 'true',
+  'class' => 'Operation_confirm',
+  'prompt' => '${you} must confirm or undo',
+  'type' => 'confirm',
+  'name' => clienttranslate("Confirm"),
+],
+ 'op_confturn' => [  //
+  'undo' => 'true',
+  'class' => 'Operation_confirm',
+  'prompt' => '${you} must confirm end of turn or undo (this undoes both actions if able)',
+  'type' => 'confturn',
+  'name' => clienttranslate("Confirm"),
 ],
 /* --- gen php end op_material --- */
 

@@ -99,6 +99,7 @@ class AbsOperationPayWithRes extends AbsOperation {
     }
 
     function effect(string $owner, int $inc): int {
+        if ($inc<=0 || $this->getCost()<=0) return $inc;
         $possible = $this->getStateArg('target');
         if (count($possible) <= 2) {
             $value = array_shift($possible);

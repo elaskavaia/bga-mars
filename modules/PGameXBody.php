@@ -116,6 +116,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_incCount($color, 'm', 40);
     }
 
+    function debug_opcard($card_id) {
+        return $this->debug_oparg($this->getRulesFor($card_id), $card_id);
+    }
+
     function debug_oparg($type, $data = '') {
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
@@ -670,7 +674,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($costm == 0)
             return "nop"; // no-op
 
-        return "${costm}nmm";
+        return "${costm}nm";
     }
 
     function getPaymentTypes(string $color, string $card_id) {

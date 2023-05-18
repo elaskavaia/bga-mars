@@ -63,7 +63,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 56|Mine|1|ps|||4||Building|0|Increase your steel production 1 step.|
 57|Vesta Shipyard|1|pu|||15||Space Jovian|1|Increase your titanium production 1 step.|
 58|Beam From a Thorium Asteroid|1|3pe,3ph|||32||Space Jovian Energy|1|Requires a Jovian tag. Increase your heat production and energy production 3 steps each.|
-59|Mangrove|1|forest(ocean),o|||12|t>=4|Plant|1|Requires +4°C or warmer. Place a Greenery tile ON AN AREA RESERVED FOR OCEAN and raise oxygen 1 step. Disregard normal placement restrictions for this.|
+59|Mangrove|1|forest(ocean)|||12|t>=4|Plant|1|Requires +4°C or warmer. Place a Greenery tile ON AN AREA RESERVED FOR OCEAN and raise oxygen 1 step. Disregard normal placement restrictions for this.|
 60|Trees|1|3pp,p|||13|t>=-4|Plant|1|Requires -4°C or warmer. Increase your plant production 3 steps. Gain 1 plant.|
 61|Great Escarpment Consortium|1|nps_Any:ps|||6|ps>0||0|Requires that you have steel production. Decrease any steel production 1 step and increase your own 1 step|
 62|Mineral Deposit|3|5s|||5||Event|0|Gain 5 steel.|
@@ -178,7 +178,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 171|Magnetic Field Dome|1|pp,2npe,tr|||5||Building|0|Decrease your energy production 2 steps and increase your plant production 1 step. Raise your terraform rating 1 step.|
 172|Pets|2|res||play_city:res:this:any|10||Animal Earth|res/2|Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card.|  'holds' => 'Animal'
 173|Protected Habitats|2|||defensePlant:nop:this:any;defenseAnimal:nop:this:any;defenseMicrobe:nop:this:any|5|||0|Effect: Opponents may not remove your [plants, animals or microbes]|
-174|Protected Valley|1|2pm,o,forest(ocean)|||23||Building Plant|0|Increase your MC production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.|
+174|Protected Valley|1|2pm,forest(ocean)|||23||Building Plant|0|Increase your MC production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.|
 175|Satellites|1|counter(tagSpace)pm|||10||Space|0|Increase your MC production 1 step for each space tag you have, including this one.|
 176|Noctis Farming|1|pm,2p|||10|t>=-20|Building Plant|1|Requires -20°C or warmer. Increase your MC production 1 step and gain 2 plants.|
 177|Water Splitting Plant|2||3ne:o||12|w>=2|Building|0|Requires 2 ocean tiles.; Action: Spend 3 energy to raise oxygen 1 step.|
@@ -197,7 +197,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 190|Local Heat Trapping|3|5nh:(4p/2ores(Animal))|||1||Event|0|Spend 5 heat to either gain 4 plants, or to add 2 animals to ANOTHER card.|
 191|Permafrost extraction|3||||8|t>=-8|Event|0|Requires -8°C or warmer. Place 1 ocean tile.|
 192|Invention Contest|3|3predraw,keep,prediscard|||2||Science Event|0|Look at the top 3 cards from the deck. Take 1 of them into hand and discard the other 2|
-193|Plantation|1|forest,o|||15|tagScience>=2|Plant|0|Requires 2 science tags. Place a greenery tile and raise oxygen 1 step.|
+193|Plantation|1|forest|||15|tagScience>=2|Plant|0|Requires 2 science tags. Place a greenery tile and raise oxygen 1 step.|
 194|Power Infrastructure|2||counter(e,0),(ne:m)||4||Building Energy|0|Action: Spend any amount of energy to gain that amount of MC.|
 195|Indentured Workers|3|||onPay_card:8m;play_card:flip:that|0||Event|-1|The next card you play this generation costs 8MC less.|
 196|Lagrange Observatory|1|draw|||9||Science Space|1|Draw 1 card.|

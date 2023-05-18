@@ -1027,10 +1027,10 @@ var GameTokens = /** @class */ (function (_super) {
         return parseInt($(tokenId).parentNode.getAttribute("data-state") || "0");
     };
     GameTokens.prototype.createToken = function (placeInfo) {
-        var _a;
+        var _a, _b;
         var tokenId = placeInfo.key;
         var info = this.getTokenDisplayInfo(tokenId);
-        var place = (_a = placeInfo.location) !== null && _a !== void 0 ? _a : this.getRulesFor(tokenId, "location");
+        var place = (_b = (_a = placeInfo.from) !== null && _a !== void 0 ? _a : placeInfo.location) !== null && _b !== void 0 ? _b : this.getRulesFor(tokenId, "location");
         var tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
         if (placeInfo.onClick) {
             this.connect(info.key, "onclick", placeInfo.onClick);
@@ -1096,6 +1096,8 @@ var GameTokens = /** @class */ (function (_super) {
             this.saveRestore(token);
             if (tokenNode == null) {
                 //debugger;
+                if (!placeInfo.from && args.place_from)
+                    placeInfo.from = args.place_from;
                 tokenNode = this.createToken(placeInfo);
             }
             this.syncTokenDisplayInfo(tokenNode);
@@ -1112,7 +1114,6 @@ var GameTokens = /** @class */ (function (_super) {
                 return;
             }
             if (!$(location_1)) {
-                debugger;
                 console.error("Unknown place " + location_1 + " for " + tokenInfo.key + " " + token);
                 return;
             }

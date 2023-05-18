@@ -1,4 +1,4 @@
-type|name|prompt
+type|name|prompt|php
 #set id=op_{type}
 #set undo=true
 #set class=
@@ -13,12 +13,12 @@ forest|Place Forest Tile|${you} must select a location to place a Greenery tile,
 city|Place City Tile|${you} must select a location to place a city, cannot place adjecent to other city
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
-sell|Discard Card from Hand to gain MC|${you} must select a card to discard to gain 1 MC|
+sell|Discard Card from Hand to gain M€|${you} must select a card to discard to gain 1 M€|
 activate|Activate Card|${you} must select a card to activate
 ores|Add resource to another card|${you} must select a card to add resource/s to
 nores|Remove resource from another card|${you} must select a card to remove resource/s
 keep|Keep Card|${you} must select a card to add keep
-buycard|Buy Card|${you} must select a card to buy for 3 MC
+buycard|Buy Card|${you} must select a card to buy for 3 M€
 keepcorp|Keep Corp|${you} must select one corporation card to keep
 
 #set params=
@@ -38,7 +38,7 @@ predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 #set undo=true
 #set class=AbsOperationIncNegAny
 #set params=player
-nm_Any|Remove MC (Any Player)|${you} must select a player who will loose the resouces (or none)
+nm_Any|Remove M€ (Any Player)|${you} must select a player who will loose the resouces (or none)
 ns_Any|Remove Steel (Any Player)|${you} must select a player who will loose the resouces (or none)
 nu_Any|Remove Titanium (Any Player)|${you} must select a player who will loose the resouces (or none)
 np_Any|Remove Plant (Any Player)|${you} must select a player who will loose the resouces (or none)
@@ -48,7 +48,7 @@ nh_Any|Remove Heat (Any Player)|${you} must select a player who will loose the r
 #set class=AbsOperationIncSteal
 steal_p|Steal Plant|${you} must select a player who will loose the resouces 
 steal_s|Steal Steel|${you} must select a player who will loose the resouces 
-steal_m|Steal MC|${you} must select a player who will loose the resouces 
+steal_m|Steal M€|${you} must select a player who will loose the resouces 
 
 #set class=AbsOperationProdNegAny
 npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will loose the production
@@ -60,7 +60,6 @@ nph_Any|Loose Heat Production (Any Player - Mandatory)|${you} must select a play
 
 #set class=AbsOperationPayWithRes
 #set params=target
-nmm|Pay|${you} must select a payment choice
 nmu|Pay|${you} must select a payment choice
 nms|Pay|${you} must select a payment choice
 nm|Pay M€|${you} must select a payment choice
@@ -113,9 +112,11 @@ convh|Convert heat into temperature|${you} must confirm spent 8 heat to increase
 convp|Convert plants into greenery
 finalscoring|Final Scoring
 lastforest|Last Forest
-confirm|Confirm|${you} must confirm or undo
 cardx|Play Card
 acard5|Search for Life
 flip|Flip
+#set class=Operation_confirm
+confirm|Confirm|${you} must confirm or undo
+confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
 
 
