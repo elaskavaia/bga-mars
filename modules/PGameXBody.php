@@ -117,14 +117,21 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_opcard($card_id) {
-        return $this->debug_oparg($this->getRulesFor($card_id), $card_id);
+        $color = $this->getCurrentPlayerColor();
+        return [
+            "r"=>$this->debug_oparg($this->getRulesFor($card_id), $card_id),
+            "canAfford"=>$this->canAfford($color,$card_id),
+            "payment"=>$this->getPayment($color,$card_id)
+        ];
     }
 
     function debug_oparg($type, $data = '') {
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
         return [
-            "type" => $type, "args" => $inst->arg(), "can" => $inst->canResolveAutomatically(),
+            "type" => $type, 
+            "args" => $inst->arg(), 
+            "canresolve" => $inst->canResolveAutomatically(),
             "auto" => $inst->isFullyAutomated()
         ];
     }
@@ -228,9 +235,14 @@ abstract class PGameXBody extends PGameMachine {
         $tokens = $this->tokens->getTokensInLocation("hex%");
         foreach ($tokens as $key => $rec) {
             $loc = $rec['location'];
-            $res[$loc]['tile'] = $key;
-            $res[$loc]['owno'] = $rec['state']; // for now XXX
-            $res[$loc]['owner'] = $this->getPlayerColorByNo($res[$loc]['owno']);
+            if (startsWith($key, 'marker')) {
+                // claimed
+                $res[$loc]['claimed'] = getPart($key,1);
+            } else {
+                $res[$loc]['tile'] = $key;
+                $res[$loc]['owno'] = $rec['state']; // for now XXX
+                $res[$loc]['owner'] = $this->getPlayerColorByNo($res[$loc]['owno']);
+            }
         }
         $this->map = $res; // only cache full map
         return $res;
@@ -282,8 +294,7 @@ abstract class PGameXBody extends PGameMachine {
             return $mc >= $cost;
         }
         $payment_op = $this->getPayment($color, $tokenid);
-        $payment_inst = $this->getOperationInstanceFromType($payment_op, $color);
-        if ($payment_inst->isVoid())
+        if ($this->isVoidSingle($payment_op,$color,1,$tokenid))
             return false;
         return true;
     }
@@ -786,7 +797,9 @@ abstract class PGameXBody extends PGameMachine {
             $player_id
         );
         if ($otype != MA_TILE_OCEAN) {
-            $marker = $this->createPlayerMarker($color);
+            $marker_info = $this->tokens->getTokenOnLocation($object);
+            if ($marker_info) $marker = $marker_info['key'];
+            else  $marker = $this->createPlayerMarker($color);
             $this->dbSetTokenLocation($marker, $object, 0, '', [], $player_id);
             $this->incTrackerValue($color, 'land');
         }

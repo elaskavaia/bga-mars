@@ -70,7 +70,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 63|Mining Expedition|3|2s,2np_Any,o|||12||Event|0|Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.|
 64|Mining Area|1|tile(adj_own)|||4||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step.|
 65|Building Industries|1|2ps,1npe|||6||Building|0|Decrease your energy production 1 step and increase your steel production 2 steps.|
-66|Land Claim|3||||1||Event|0|Place your marker on a non-reserved area. Only you may place a tile here TODO|
+66|Land Claim|3|acard66|||1||Event|0|Place your marker on a non-reserved area. Only you may place a tile here|
 67|Mining Rights|1|tile|||9||Building|0|Place [the mining] tile on an area with a steel or titanium placement bonus. Increase that production 1 step.|
 68|Sponsors|1|2pm|||6||Earth|0|Increase your MC production 2  steps.|
 69|Electro Catapult|2|npe|(np:7m)/(ns:7m)||17|o<=8|Building|1|Oxygen must be 8% or less. Decrease your energy production 1 step.; Action: Spend 1 plant or 1 steel to gain 7 MC|
@@ -89,7 +89,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 82|Callisto Penal Mines|1|3pm|||24||Space Jovian|2|Increase your MC production 3 steps.|
 83|Giant Space Mirror|1|3pe|||17||Space Energy|0|Increase your energy production 3 steps.|
 84|Trans-Neptune Probe|1||||6||Science Space|1||
-85|Commercial District|1|4pm,1npe,tile|||16||Building|adj_city|Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile. 1 VP PER ADJACENT CITY TILE.|
+85|Commercial District|1|npe,4pm,tile|||16||Building|adj_city|Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile. 1 VP PER ADJACENT CITY TILE.|
 86|Robotic Workforce|1|copy_Building|||9||Science|0|Duplicate only the production box of one of your building cards.|
 87|Grass|1|pp,3p|||11|t>=-16|Plant|0|Requires -16°C or warmer. Increase your plant production 1 step. Gain 3 plants.|
 88|Heather|1|pp,p|||6|t>=-14|Plant|0|Requires -14°C or warmer. Increase your plant production 1 step. Gain 1 plant.|
@@ -192,7 +192,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|text|php
 185|Olympus Conference|2|||play_tagScience:((nres,draw)/res)|10||Science Building Earth|1|Effect: When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.|  'holds' => 'Science'
 186|Rad-Suits|1|pm|||6|all_city>=2||1|Requires 2 cities in play. Increase your MC production 1 step.|
 187|Aquifer Pumping|2||8nms:w||18||Building|0|Action: Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card.|
-188|Flooding|3|w|||7||Event|-1|Place an ocean tile. IF THERE ARE TILES ADJACENT TO THIS OCEAN TILE, YOU MAY REMOVE 4 MC FROM THE OWNER OF ONE OF THOSE TILES. TODO|
+188|Flooding|3|w|||7||Event|-1|Place an ocean tile. IF THERE ARE TILES ADJACENT TO THIS OCEAN TILE, YOU MAY REMOVE 4 MC FROM THE OWNER OF ONE OF THOSE TILES.|
 189|Energy Saving|1|counter(all_city)pe|||15||Energy|0|Increase your energy production 1 step for each city tile in play.|
 190|Local Heat Trapping|3|5nh:(4p/2ores(Animal))|||1||Event|0|Spend 5 heat to either gain 4 plants, or to add 2 animals to ANOTHER card.|
 191|Permafrost extraction|3||||8|t>=-8|Event|0|Requires -8°C or warmer. Place 1 ocean tile.|
