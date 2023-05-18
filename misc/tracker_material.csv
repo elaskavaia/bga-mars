@@ -4,7 +4,7 @@ id|name|state|php
 #set create=4
 #set location=miniboard_{COLOR}
 tracker_passed|Player Passed|0
-tracker_tr|TR|0
+tracker_tr|TR|20
 tracker_pm|MC Production|0|'min'=>-5
 tracker_m|MC|0
 tracker_ps|Steel Production|0|

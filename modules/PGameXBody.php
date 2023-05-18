@@ -652,13 +652,13 @@ abstract class PGameXBody extends PGameMachine {
                 $regex = MathLexer::toregex($declareevent);
                 if (preg_match($regex, $event) == 1) {
                     $outcome = $arg->args[1]->__toString();
-                    if (array_get($splits,'outcome')) {
-                        $splits['outcome'] .= ",".$outcome;
+                    if (array_get($splits, 'outcome')) {
+                        $splits['outcome'] .= "," . $outcome;
                     } else {
                         $splits['outcome'] = $outcome;
                     }
                     $splits['context'] = OpExpression::str(array_get($arg->args, 2, '')); // can be 'that' - meaning context of card that triggered the event vs event handler
-                   
+
                     $match = true;
                 }
             }
