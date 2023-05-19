@@ -178,11 +178,60 @@
 
 .card_prereq{
   position: absolute;
-  top: 2.7%;
+  top: 3%;
   left: 21%;
   font-family: "Prototype";
-  font-size: calc(var(--card-width) * 0.07);
+  font-size: calc(var(--card-width) * 0.06);
   background: #f7d543;
+  height: 6.2%;
+  --resourcesize: calc(var(--card-width) * 0.08);
+  display: flex;
+  align-items: center;
+  padding-right: calc(var(--card-width) * 0.01);
+
+  .token_img {
+    margin-right:0;
+  }
+  .badge {
+    margin-left: calc(var(--card-width) * 0.01);
+  }
+  .tile{
+    width: calc(var(--card-width) * 0.08);
+    height: calc(var(--card-width) * 0.08);
+    position: relative;
+    left: revert;
+    top: revert;
+    margin-left: calc(var(--card-width) * 0.01);
+  }
+
+  .tracker {
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    width: calc(var(--card-width) * 0.08);
+    height: calc(var(--card-width) * 0.08);
+    position: relative;
+    left: revert;
+    top: revert;
+    margin-left: calc(var(--card-width) * 0.01);
+  }
+
+  .outer_production{
+    width: calc(var(--card-width) * 0.1);
+    height: calc(var(--card-width) * 0.1);
+
+    .token_img {
+      width: calc(var(--card-width) * 0.07);
+      height: calc(var(--card-width) * 0.07);
+    }
+  }
+  .outer_redborder{
+    width: calc(var(--card-width) * 0.09);
+    height: calc(var(--card-width) * 0.095);
+  }
+}
+
+.card_prereq:empty {
+  padding-right: revert;
 }
 
 .card_badges {
@@ -191,6 +240,24 @@
   top:0;
   right: 0;
   flex-direction: row-reverse;
+}
+
+.prereq_content{
+  display: flex;
+  width: fit-content;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: calc(var(--card-width) * 0.01);
+  background: radial-gradient(circle, rgba(255,232,10,1) 0%, rgb(231, 164, 3) 100%);
+
+}
+.prereq_content.mode_max{
+  background:radial-gradient(circle, rgba(255,195,10,1) 0%, rgba(255,89,0,1) 100%);
+}
+
+.card .prereq_content .badge {
+  width: calc(var(--card-width) * 0.09);
+  height: calc(var(--card-width) * 0.09);
 }
 
 .card_vp{
@@ -208,6 +275,7 @@
   justify-content: center;
   align-items: center;
   pointer-events: none;
+  font-size: calc(var(--card-width) * 0.1);
 }
 
 .card .badge{
@@ -333,9 +401,28 @@
   background-size: contain;
 }
 
+.outer_redborder{
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.outer_redborder.redborder_hex {
+  background-position: -1100% 0;
+}
+.outer_redborder.redborder_resource {
+  background-position: -1000% 0;
+}
+
 .token_img.temperature_icon {
   background-position: -200% -100%;
 }
+.token_img.oxygen_icon {
+  background-position: -100% -100%;
+}
+
 .token_img.draw_icon {
   background-position: 0 0;
 }

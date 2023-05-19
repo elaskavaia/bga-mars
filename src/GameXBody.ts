@@ -76,10 +76,15 @@ class GameXBody extends GameTokens {
           const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
           const parsedActions = this.parseActionsToHTML(displayInfo.r);
           //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+          /*
           decor.innerHTML = `
              <div class='stanp_cost'>${displayInfo.cost}</div>
              <div class='stanp_arrow'></div>
              <div class='stanp_action'>${parsedActions}</div>  
+             <div class='standard_projects_title'>${displayInfo.name}</div>  
+          `;*/
+          decor.innerHTML = `
+             <div class='stanp_cost'>${displayInfo.cost!=0 ? displayInfo.cost : "X"}</div>
              <div class='standard_projects_title'>${displayInfo.name}</div>  
           `;
         }
@@ -93,6 +98,18 @@ class GameXBody extends GameTokens {
             }
           }
           const parsedActions = this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
+          let parsedPre = displayInfo.pre ? this.parsePrereqToHTML(displayInfo.expr.pre) :"";
+
+          //specigic card rendering
+          if (displayInfo.num==2) {
+            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('pu')+'</div></div>';
+          }
+          if (displayInfo.num==61) {
+            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('ps')+'</div></div>';
+          }
+          if (displayInfo.num==135) {
+            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('tagPlant tagMicrobe tagAnimal')+'</div></div>';
+          }
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
           let vp="";
           if (displayInfo.vp) {
@@ -113,7 +130,7 @@ class GameXBody extends GameTokens {
                 <div class='card_cost'>${displayInfo.cost}</div> 
                 <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ""}</div>
                 <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
-                <div class="card_prereq">${displayInfo.pre ?? ""}</div>
+                <div class="card_prereq">${parsedPre!=="" ? parsedPre : ""}</div>
                 <div class="card_number">${displayInfo.num ?? ""}</div>
                 <div class="card_number_binary">${cn_binary}</div>
                 ${vp}
@@ -137,27 +154,73 @@ class GameXBody extends GameTokens {
       this.connect(tokenNode, "onclick", "onToken");
     }
   }
+  parsePrereqToHTML(pre: Array<string>) {
+      if (!pre) return "";
+      if (pre.length<3) return "";
 
+      const op = pre[0];
+      const what = pre[1];
+      const qty=pre[2];
+
+      let suffix="";
+      let icon=this.parseActionsToHTML(what);
+      switch (what) {
+        case "o":
+          suffix="%";
+          break;
+        case "t":
+          suffix="°C";
+          break;
+        case "tagScience":
+          break;
+        case "w":
+
+          break;
+      }
+
+      let mode="min";
+      let prefix="";
+
+      if (op=="<=") {
+        mode="max";
+        prefix="max ";
+      }
+
+      let htm='<div class="prereq_content mode_'+mode+'">'+prefix+qty+suffix+icon+'</div></div>';
+
+     return  htm;
+
+  }
   parseActionsToHTML(actions: string) {
     let ret = actions;
 
     const easyParses = {
       forest: { classes: "tracker tracker_forest" },
+      all_city:{classes: "tracker tracker_city", redborder: 'hex'},
       city: { classes: "tracker tracker_city" },
       draw: { classes: "token_img draw_icon" },
+      tagScience:{ classes: "tracker badge tracker_tagScience"},
+      tagEnergy:{ classes: "tracker badge tracker_tagEnergy"},
+      tagMicrobe:{ classes: "tracker badge tracker_tagMicrobe"},
+      tagPlant:{ classes: "tracker badge tracker_tagPlant"},
+      tagAnimal:{ classes: "tracker badge tracker_tagAnimal"},
       "[1,](sell)": { classes: "" },
       pe: { classes: "token_img tracker_e", production: true },
       pm: { classes: "token_img tracker_m", production: true, content: "1" },
       pu: { classes: "token_img tracker_u", production: true },
+      ps: { classes: "token_img tracker_s", production: true },
       pp: { classes: "token_img tracker_p", production: true },
       ph: { classes: "token_img tracker_h", production: true },
       e: { classes: "token_img tracker_e" },
       m: { classes: "token_img tracker_m", content: "1" },
       u: { classes: "token_img tracker_u" },
+      s: { classes: "token_img tracker_s" },
       p: { classes: "token_img tracker_p" },
       h: { classes: "token_img tracker_h" },
       t: { classes: "token_img temperature_icon" },
       w: { classes: "tile tile_3" },
+      o: { classes: "token_img oxygen_icon"},
+
       ":": { classes: "action_arrow" },
     };
 
@@ -172,6 +235,8 @@ class GameXBody extends GameTokens {
 
         if (item.production === true) {
           finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div></div>";
+        } else if (item.redborder) {
+          finds[idx] = '<div class="outer_redborder redborder_'+item.redborder+'"><div class="' + item.classes + '">' + content + "</div></div>";
         } else {
           finds[idx] = '<div class="' + item.classes + '"></div>';
         }
@@ -228,39 +293,37 @@ class GameXBody extends GameTokens {
 
     if  (tokenDisplayInfo.mainType == "card") {
 
-      let cardtype="card";
-      let prefix="card_main_";
-      let rules = tokenDisplayInfo.r ? "<b>"+_("Card Rules:")+"</b>"+tokenDisplayInfo.r : "";
-      if (tokenDisplayInfo.a) rules += "<br><b>"+_("Action:")+"</b>" + tokenDisplayInfo.a;
-      if (tokenDisplayInfo.e) rules += "<br><b>"+_("Effect:")+"</b>" + tokenDisplayInfo.e;
+      let cardtype = "card";
+      let prefix = "card_main_";
+      let rules = tokenDisplayInfo.r ? "<b>" + _("Card Rules:") + "</b>" + tokenDisplayInfo.r : "";
+      if (tokenDisplayInfo.a) rules += "<br><b>" + _("Action:") + "</b>" + tokenDisplayInfo.a;
+      if (tokenDisplayInfo.e) rules += "<br><b>" + _("Effect:") + "</b>" + tokenDisplayInfo.e;
 
       tokenDisplayInfo.imageTypes += " infonode";
-      let fullText=
+      let fullText =
         rules +
         "<br>" +
         (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
         this.getTr(tokenDisplayInfo.text) +
         "<br>" +
-        "<b>"+_("Number: ")+"</b>" + tokenDisplayInfo.num +
-        (tokenDisplayInfo.tags ? "<br>" + "<b>"+_("Tags: ")+"</b>"  + tokenDisplayInfo.tags : "");
+        "<b>" + _("Number: ") + "</b>" + tokenDisplayInfo.num +
+        (tokenDisplayInfo.tags ? "<br>" + "<b>" + _("Tags: ") + "</b>" + tokenDisplayInfo.tags : "");
       if (tokenDisplayInfo.vp) {
-        fullText+= "<br><b>"+_("VP:")+"</b>" + tokenDisplayInfo.vp;
+        fullText += "<br><b>" + _("VP:") + "</b>" + tokenDisplayInfo.vp;
       }
 
-      if (tokenDisplayInfo.key.startsWith( "card_corp_")) {
-        prefix="card_corp_";
-        cardtype="corp";
+      if (tokenDisplayInfo.key.startsWith("card_corp_")) {
+        prefix = "card_corp_";
+        cardtype = "corp";
       }
 
-      if ($(prefix+tokenDisplayInfo.num))  {
-        let card_htm= $(prefix+tokenDisplayInfo.num).outerHTML.replaceAll('id="','id="tt');
-        tokenDisplayInfo.tooltip ='<div class="tt_2cols '+cardtype+'"><div class="tt_card_img">'+card_htm+'</div><div class="tt_card_txt">'+fullText+'</div></div>';
+      if ($(prefix + tokenDisplayInfo.num)) {
+        let card_htm = $(prefix + tokenDisplayInfo.num).outerHTML.replaceAll('id="', 'id="tt');
+        tokenDisplayInfo.tooltip = '<div class="tt_2cols ' + cardtype + '"><div class="tt_card_img">' + card_htm + '</div><div class="tt_card_txt">' + fullText + '</div></div>';
       } else {
-        tokenDisplayInfo.tooltip =fullText;
+        tokenDisplayInfo.tooltip = fullText;
 
       }
-
-
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
