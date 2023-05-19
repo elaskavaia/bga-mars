@@ -162,12 +162,12 @@
 .tile.tile_199 {background-position: -200% -100%;}
 
 .tile .marker {
-  outline: 1px dashed black;
   position: absolute;
   top: 42%;
   left: 40%;
   width: calc(var(--map-width) * 0.025);
   height: calc(var(--map-width) * 0.025);
+  box-shadow: #0b0b0bad 2px 2px 3px 1px;
 }
 
 #map_bottom{

@@ -84,10 +84,10 @@
 .marker {
   width: 10px;
   height: 10px;
-  outline: 1px dashed black;
   position: absolute;
   top: 50%;
   left: 50%;
+  box-shadow: #0b0b0bad 2px 2px 3px 1px;
 }
 
 .marker_0000ff {
@@ -95,4 +95,7 @@
 }
 .marker_ff0000 {
   background-color: #ff0000;
+}
+.marker_008000 {
+  background-color: #008000;
 }

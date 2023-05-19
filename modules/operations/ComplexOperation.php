@@ -130,11 +130,12 @@ class ComplexOperation extends AbsOperation {
                     if ($subvoid == false) return false;
                     break;
                 case ':':
+                    if ($subvoid == true) return true;
+                    break;
                 case ',':
                 case ';':
                 case '+':
-                    if ($subvoid == true) return true;
-                    break;
+                    return $subvoid; // we only can check first operation because the other may depend on it
                 case '!':
                     break;
             }

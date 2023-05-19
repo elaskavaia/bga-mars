@@ -12,6 +12,10 @@ abstract class AbsOperationTile extends AbsOperation {
         return $this->game->createArgInfo($color, $keys, function ($color, $hex) use ($map) {
             $info = $map[$hex];
             if (array_key_exists('tile', $info)) return MA_ERR_OCCUPIED;
+            $claimer = array_get($info,'claimed');
+            if ($claimer && $claimer !== $color) {
+                return MA_ERR_RESERVED;
+            }
             return $this->checkPlacement($color, $hex, $info, $map);
         });
     }

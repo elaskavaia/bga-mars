@@ -19,11 +19,17 @@ class Operation_w extends AbsOperationTile {
         return MA_TILE_OCEAN;
     }
 
-    function effect(string $owner, int $inc): int  {
+    function effect(string $owner, int $inc): int {
         //if ($inc != 1) throw new feException("Cannot use counter $inc for this operation");
         $tile = $this->effect_placeTile();
         $this->game->effect_increaseParam($owner, "w", 1);
-        $this->game->notifyEffect($owner,'place_ocean',$tile);
+        $this->game->notifyEffect($owner, 'place_ocean', $tile);
+
+        //special handling card_main_188
+        if ($this->getContext() == 'card_main_188') {
+            $target = $this->getCheckedArg('target');
+            $this->game->putInEffectPool($owner, 'acard188', $target);
+        }
 
         return 1;
     }

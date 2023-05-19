@@ -29,7 +29,6 @@ class GameXBody extends GameTokens {
     });
 
     this.connectClass("filter_button", "onclick", "onFilterButton");
-    this.connectClass("hex", "onclick", "onToken");
     console.log("Ending game setup");
   }
 
@@ -293,14 +292,14 @@ class GameXBody extends GameTokens {
 
     if  (tokenDisplayInfo.mainType == "card") {
 
-      let cardtype = "card";
-      let prefix = "card_main_";
-      let rules = tokenDisplayInfo.r ? "<b>" + _("Card Rules:") + "</b>" + tokenDisplayInfo.r : "";
-      if (tokenDisplayInfo.a) rules += "<br><b>" + _("Action:") + "</b>" + tokenDisplayInfo.a;
-      if (tokenDisplayInfo.e) rules += "<br><b>" + _("Effect:") + "</b>" + tokenDisplayInfo.e;
+      let cardtype="card";
+      let prefix="card_main_";
+      let rules = tokenDisplayInfo.r ? "<b>"+_("Card Rules:")+"</b>"+tokenDisplayInfo.r : "";
+      if (tokenDisplayInfo.a) rules += "<br><b>"+_("Action:")+"</b>" + tokenDisplayInfo.a;
+      if (tokenDisplayInfo.e) rules += "<br><b>"+_("Effect:")+"</b>" + tokenDisplayInfo.e;
 
       tokenDisplayInfo.imageTypes += " infonode";
-      let fullText =
+      let fullText=
         rules +
         "<br>" +
         (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
@@ -324,6 +323,16 @@ class GameXBody extends GameTokens {
         tokenDisplayInfo.tooltip = fullText;
 
       }
+
+      if ($(prefix+tokenDisplayInfo.num))  {
+        let card_htm= $(prefix+tokenDisplayInfo.num).outerHTML.replaceAll('id="','id="tt');
+        tokenDisplayInfo.tooltip ='<div class="tt_2cols '+cardtype+'"><div class="tt_card_img">'+card_htm+'</div><div class="tt_card_txt">'+fullText+'</div></div>';
+      } else {
+        tokenDisplayInfo.tooltip =fullText;
+
+      }
+
+
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -685,7 +694,7 @@ class GameXBody extends GameTokens {
 
     const single = Object.keys(operations).length == 1;
     const ordered = xop == "," && !single;
-    if (ordered) this.setDescriptionOnMyTurn("${you} must choose order of operations");
+    if (xop == "+" && !single) this.setDescriptionOnMyTurn("${you} must choose order of operations");
 
     let i = 0;
     for (const opIdS in operations) {

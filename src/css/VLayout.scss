@@ -23,6 +23,9 @@
   .card_decor {
     pointer-events: none;
   }
+  .hand.location:empty {
+    display: block;
+  }
   
   /*
       #main_board {

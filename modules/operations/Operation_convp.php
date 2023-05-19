@@ -5,12 +5,19 @@ declare(strict_types=1);
 
 class Operation_convp extends AbsOperation {
     function effect(string $color, int $inc): int {
-        $this->game->push($color, '8np:forest');
+        $cost = $this->getCost();
+        $this->game->push($color, "${cost}np:forest");
         return 1;
+    }
+
+    function getCost() {
+        if ($this->game->playerHasCard($this->color, 'card_corp_3')) return 7;
+        return 8;
     }
 
     function isVoid(): bool {
         $color = $this->color;
-        return $this->game->isVoidSingle("8np", $color) || $this->game->isVoidSingle("forest", $color);
+        $cost = $this->getCost();
+        return $this->game->isVoidSingle("${cost}np", $color) || $this->game->isVoidSingle("forest", $color);
     }
 }
