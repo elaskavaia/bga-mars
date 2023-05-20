@@ -30,6 +30,7 @@
 }
 
 #ebd-body {
+  background-image: url("img/space.jpg");
 }
 
 #thething {
@@ -57,7 +58,7 @@
   height: 5%;
   position: absolute;
   top: 0%;
-  width: 15%;
+  width: 22%;
 }
 
 .tracker::after,
@@ -99,16 +100,8 @@
   margin-right: 20px;
 }
 
-/* standard projects */
-#display_main .card {
-  width: var(--stan-width);
-  height: var(--stan-height);
-  /* border: black solid 1px; */
-  border-radius: 5%;
-  box-shadow: 2px 2px 3px 1px #00000080;
-  font-size: calc(var(--stan-width) * 0.07);
-  margin-bottom: calc(var(--stan-height) * 0.1);
-}
+
+
 
 .card .resource {
   width: 10px;
