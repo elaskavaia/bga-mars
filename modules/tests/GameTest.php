@@ -196,7 +196,7 @@ final class GameTest extends TestCase {
         $dis = $m->collectDiscounts(PCOLOR, "card_main_9");
         $this->assertEquals(4, $dis);
 
-        $m->effect_cardInPlay(PCOLOR, "card_main_173");
+        $m->effect_playCard(PCOLOR, "card_main_173");
         $res = $m->collectListeners(BCOLOR, "defensePlant");
         $this->assertEquals(1, count($res));
     }

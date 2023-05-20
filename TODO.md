@@ -9,8 +9,6 @@ Random notes on todo items
 ## Server
 
 * Complex cards
- * copybu (Robotic Workforce) 
- ** Mining Rights and Mining Area vs Robotic Workforce
 * Corporations
 * tracker_tagEvent - calculate on face down also (well only)
 

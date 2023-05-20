@@ -387,10 +387,6 @@ abstract class PGameXBody extends PGameMachine {
         if ($x == 'cost') {
             return $this->getRulesFor($context, 'cost');
         }
-        if ($x == 'tagEvent') {
-            // tagEvent is not counted as tag since its not face up XXX?
-            return $this->tokens->countTokensInLocation("tableau_$owner", 0);
-        }
         $opp = startsWith($x, 'opp_');
         if (startsWith($x, 'all_') || $opp) {
             $x = substr($x, 4);
@@ -746,7 +742,7 @@ abstract class PGameXBody extends PGameMachine {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Effects
     ////////////
-    function effect_cardInPlay($color, $card_id) {
+    function effect_playCard($color, $card_id) {
         $rules = $this->getRulesFor($card_id, '*');
         $ttype = $rules['t']; // type of card
         $state = MA_CARD_STATE_TAGUP;
@@ -768,6 +764,9 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($tagsarr as $tag) {
                 $this->incTrackerValue($color, "tag$tag");
             }
+        }
+        if ($ttype == MA_CARD_TYPE_EVENT) {
+            $this->incTrackerValue($color, "tagEvent");
         }
         $playeffect = array_get($rules, 'r', '');
         if ($playeffect) {
