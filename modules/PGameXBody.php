@@ -529,8 +529,10 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getActiveEventListeners() {
-        if (!$this->eventListners) {
+        if (!$this->eventListners) 
+        {
             $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_%");
+            //$this->debugConsole("info",["cards"=>$cards]);
             $this->eventListners = [];
             foreach ($cards as $key => $info) {
                 $e = $this->getRulesFor($key, 'e');
@@ -769,6 +771,7 @@ abstract class PGameXBody extends PGameMachine {
     function effect_playCorporation(string $color, string $card_id) {
         $player_id = $this->getPlayerIdByColor($color);
         $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [], $player_id);
+        $this->eventListners = null; // clear cache since corp came into play
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $tagsarr = explode(' ', $tags);
         if ($tags) {
