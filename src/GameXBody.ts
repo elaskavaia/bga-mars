@@ -427,6 +427,12 @@ class GameXBody extends GameTokens {
 
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
+      if (opargs.void) {
+        this.addActionButton("button_u", _("No valid targets, must Undo"), () => {
+          this.ajaxcallwrapper("undo");
+        });
+        return;
+      }
       if (paramargs.length == 0) {
         if (count == from) {
           this.addActionButton("button_" + opId, _("Confirm"), () => {

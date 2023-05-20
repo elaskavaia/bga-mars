@@ -9,8 +9,8 @@ Random notes on todo items
 ## Server
 
 * Complex cards
- * requirement +2/-2 (paramreq)
- * copy_Building
+ * copybu (Robotic Workforce) 
+ ** Mining Rights and Mining Area vs Robotic Workforce
 * Corporations
 * tracker_tagEvent - calculate on face down also (well only)
 

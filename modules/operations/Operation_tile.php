@@ -62,13 +62,9 @@ class Operation_tile extends AbsOperationTile {
         // special handling for mining tiles
         if ($this->getTileType() == MA_TILE_MINING) {
             $ohex = $this->game->tokens->getTokenLocation($tile);
-            $bonus = $this->game->getRulesFor($ohex, 'r', '');
-            if (strpos($bonus, 's') !== false) {
-                $this->game->putInEffectPool($owner, "ps", $tile);
-            }
-            if (strpos($bonus, 'u') !== false) {
-                $this->game->putInEffectPool($owner, "pu", $tile);
-            }
+            $pp = $this->game->getProductionPlacementBonus($ohex);
+            if ($pp) $this->game->putInEffectPool($owner, $pp, $tile);
+            else throw new BgaVisibleSystemException("Location does not have resource bonus");
         }
 
         return 1;

@@ -50,13 +50,7 @@ steal_p|Steal Plant|${you} must select a player who will loose the resouces
 steal_s|Steal Steel|${you} must select a player who will loose the resouces 
 steal_m|Steal M€|${you} must select a player who will loose the resouces 
 
-#set class=AbsOperationProdNegAny
-npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will loose the production
-nps_Any|Loose Steel Production (Any Player - Mandatory)|${you} must select a player who will loose the production
-npu_Any|Loose Titanium Production (Any Player - Mandatory)|${you} must select a player who will loose the production
-npp_Any|Loose Plant Production (Any Player - Mandatory)|${you} must select a player who will loose the production
-npe_Any|Loose Energy Production (Any Player - Mandatory)|${you} must select a player who will loose the production
-nph_Any|Loose Heat Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+
 
 #set class=AbsOperationPayWithRes
 #set params=target
@@ -81,6 +75,8 @@ nu|Pay Titanium
 np|Pay Plant
 ne|Pay Energy
 nh|Pay Heat
+
+#set opp=1
 #set class=AbsOperationProd
 pm|Increase M€ Production
 pu|Increase Titanium Production
@@ -95,6 +91,15 @@ npe|Decrease Energy Production
 nph|Decrease Heat Production
 nps|Decrease Steel Production
 npu|Decrease Titanium Production
+#set class=AbsOperationProdNegAny
+npm_Any|Loose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+nps_Any|Loose Steel Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+npu_Any|Loose Titanium Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+npp_Any|Loose Plant Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+npe_Any|Loose Energy Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+nph_Any|Loose Heat Production (Any Player - Mandatory)|${you} must select a player who will loose the production
+#set opp=
+
 #set class=AbsOperationInc
 eru|Increase Titanium Exchange Rate
 ers|Increase Steel Exchange Rate

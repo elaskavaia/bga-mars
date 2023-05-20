@@ -18,7 +18,7 @@ function getMachine($input) {
 require_once "tests/GameTest.php";
 
  $x=new GameTest();
- $x->testEvalute();
+ $x->testMat();
 
 
 //  $res = OpExpression::parseExpression("call(a),m");

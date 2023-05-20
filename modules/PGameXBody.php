@@ -119,9 +119,9 @@ abstract class PGameXBody extends PGameMachine {
     function debug_opcard($card_id) {
         $color = $this->getCurrentPlayerColor();
         return [
-            "r"=>$this->debug_oparg($this->getRulesFor($card_id), $card_id),
-            "canAfford"=>$this->canAfford($color,$card_id),
-            "payment"=>$this->getPayment($color,$card_id)
+            "r" => $this->debug_oparg($this->getRulesFor($card_id), $card_id),
+            "canAfford" => $this->canAfford($color, $card_id),
+            "payment" => $this->getPayment($color, $card_id)
         ];
     }
 
@@ -129,8 +129,8 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
         return [
-            "type" => $type, 
-            "args" => $inst->arg(), 
+            "type" => $type,
+            "args" => $inst->arg(),
             "canresolve" => $inst->canResolveAutomatically(),
             "auto" => $inst->isFullyAutomated()
         ];
@@ -203,11 +203,22 @@ abstract class PGameXBody extends PGameMachine {
             case 'adj_no':
                 return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
             case 'has_su':
-                $bonus = $this->getRulesFor($ohex, 'r', '');
-                return strpos($bonus, 's') !== false || strpos($bonus, 'u') !== false;
+                $pp = $this->getProductionPlacementBonus($ohex);
+                return !!$pp;
             default:
                 throw new BgaSystemException("Unknown adj rule $rule");
         }
+    }
+
+    function getProductionPlacementBonus($ohex) {
+        $bonus = $this->getRulesFor($ohex, 'r', '');
+        if (strpos($bonus, 's') !== false) {
+            return 'ps';
+        }
+        if (strpos($bonus, 'u') !== false) {
+            return 'pu';
+        }
+        return '';
     }
 
     function createPlayerMarker($color) {
@@ -237,7 +248,7 @@ abstract class PGameXBody extends PGameMachine {
             $loc = $rec['location'];
             if (startsWith($key, 'marker')) {
                 // claimed
-                $res[$loc]['claimed'] = getPart($key,1);
+                $res[$loc]['claimed'] = getPart($key, 1);
             } else {
                 $res[$loc]['tile'] = $key;
                 $res[$loc]['owno'] = $rec['state']; // for now XXX
@@ -294,7 +305,7 @@ abstract class PGameXBody extends PGameMachine {
             return $mc >= $cost;
         }
         $payment_op = $this->getPayment($color, $tokenid);
-        if ($this->isVoidSingle($payment_op,$color,1,$tokenid))
+        if ($this->isVoidSingle($payment_op, $color, 1, $tokenid))
             return false;
         return true;
     }
@@ -529,8 +540,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getActiveEventListeners() {
-        if (!$this->eventListners) 
-        {
+        if (!$this->eventListners) {
             $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_%");
             //$this->debugConsole("info",["cards"=>$cards]);
             $this->eventListners = [];
@@ -1147,8 +1157,11 @@ abstract class PGameXBody extends PGameMachine {
     function createArgInfo(string $color, array $keys, callable $filter) {
         $res = [];
         foreach ($keys as $tokenid) {
-            $rejected = $filter($color, $tokenid);
-            $res[$tokenid] = ["q" => $rejected];
+            $explanation = $filter($color, $tokenid);
+            if (is_numeric($explanation))
+                $res[$tokenid] = ["q" => $explanation];
+            else
+                $res[$tokenid] = $explanation;
         }
         return $res;
     }
@@ -1212,6 +1225,10 @@ abstract class PGameXBody extends PGameMachine {
         $opinst = $this->getOperationInstance($op);
         $count = $op["count"]; // XXX mcount?
         $tops = $this->machine->getTopOperations($owner);
+
+        if ($opinst->isVoid())
+            return false;
+
         if ($opinst->auto($owner, $count)) {
             $this->saction_stack($count, $op, $tops);
             return true;
