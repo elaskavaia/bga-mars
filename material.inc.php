@@ -2894,7 +2894,7 @@ $this->token_types = [
   'vp' => 0,
   'text' => clienttranslate("You start with 42 MC. You keep 10 starting cards"),
 ],
-// #num|name|t|r|a|e|cost|pre|tags|vp||text|php
+// #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
  'card_corp_2' => [  //
   'location' => 'deck_corp',
   'create' => 'single',
@@ -2907,6 +2907,7 @@ $this->token_types = [
   'e' => "play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that",
   'cost' => 0,
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC."),
 ],
  'card_corp_3' => [  //
@@ -2921,6 +2922,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Plant',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery."),
 ],
  'card_corp_4' => [  //
@@ -2935,6 +2937,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Space',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat."),
 ],
  'card_corp_5' => [  //
@@ -2950,6 +2953,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Building',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC."),
 ],
  'card_corp_6' => [  //
@@ -2964,6 +2968,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Science',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("As your first action in the game, draw 3 cards. Start with 45 MC.; Effect: Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case."),
   'a1'=>'3draw',
 ],
@@ -2980,6 +2985,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Building',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("The earliest private enterprises on Mars focused on mining and exporting minerals off the surface. As the mega-corporations arrive to terraform, the miners unite in the Guild to defend their interests. With their expertise and knowledg of the planet they will be a worthy contender in the race.; Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step."),
 ],
  'card_corp_8' => [  //
@@ -2995,6 +3001,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Jovian',
   'vp' => 0,
+  'deck' => 'Corporate',
   'text' => clienttranslate("You start with 1 titanium production and 42 MC.; Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step."),
 ],
  'card_corp_9' => [  //
@@ -3009,6 +3016,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Space',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 10 titanium and 23 MC; Effect: Your titanium resources are each worth 1 MC extra."),
 ],
  'card_corp_10' => [  //
@@ -3024,6 +3032,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Earth',
   'vp' => 0,
+  'deck' => 'Corporate',
   'text' => clienttranslate("You start with 60 MC.; Effect: When playing an Earth card, you pay 3 MC less for it."),
 ],
  'card_corp_11' => [  //
@@ -3039,6 +3048,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Building',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 40 MC. As your first action in the game, place a city tile.; Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC."),
   'a1'=>'city',
 ],
@@ -3054,6 +3064,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Energy',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 1 energy production and 48 MC.; Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it."),
 ],
 /* --- gen php end cards_material --- */
