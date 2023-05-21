@@ -1459,6 +1459,7 @@ var GameXBody = /** @class */ (function (_super) {
             tracker_t: "temperature_map",
             tracker_o: "oxygen_map",
             tracker_w: "oceans_pile",
+            tracker_gen: "map_left",
         };
         this.custom_pay = undefined;
         _super.prototype.setup.call(this, gamedatas);
@@ -1474,9 +1475,9 @@ var GameXBody = /** @class */ (function (_super) {
                 var parentId = div.parentNode.id;
                 var wrapper = this.createDivNode("main_board_wrapper", "", parentId);
                 wrapper.appendChild(div);
-                dojo.place($("main_board_wrapper"), parentId, "first");
             }
         }
+        $('thething').removeAttribute('title');
         console.log("Ending game setup");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {

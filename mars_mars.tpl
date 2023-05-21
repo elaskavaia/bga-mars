@@ -46,8 +46,6 @@
             <div id="deck_main" class="card carddeck"></div>
             <div id="discard_main" class="card carddeck"></div>
             <div id="oceans_pile" class="tile tile_3"></div>
-            <div id="params">
-            </div>
           </div>
           <div id="standard_projects_area">
             <div id="standard_projects_title_zone">
@@ -317,6 +315,7 @@
     <!-- END player_board -->
   </div>
   <div id="limbo"></div>
+  <div id="params"></div>
   <div id="dev_null" class="defhidden"></div>
   <div id="oversurface"></div>
 </div>

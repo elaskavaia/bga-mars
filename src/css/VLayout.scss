@@ -242,6 +242,12 @@
   .map_bg {
     display: none;
   }
+
+  .player_tags .badge::after,
+  .player_tags .tracker::after {
+    color: white;
+  }
+
   .card {
     background-size: 1000% auto;
   }
@@ -259,6 +265,7 @@
       z-index: 10;
       transform: scale(1.5);
       transition: all 500ms;
+      transition-delay: 500ms;
     }
   }
 
@@ -327,5 +334,48 @@
   }
   .tracker_tagAnimal {
     background-position-x: -1100%;
+  }
+
+  #tracker_o,
+  #tracker_gen,
+  #tracker_t {
+    width: 64px;
+    height: 64px;
+    background-image: url(img/resources.png);
+    background-position: 30.5% 62%;
+    background-size: calc(52 * 100%);
+  }
+
+  #oxygen_map #tracker_o {
+    position: absolute;
+    width: 8%;
+    height: 24%;
+    box-shadow: unset;
+    border-radius: unset;
+    padding: 0;
+  }
+
+  #temperature_map #tracker_t {
+    position: absolute;
+    height: 7%;
+    width: 39%;
+    left: 74%;
+    box-shadow: unset;
+    border-radius: unset;
+    padding: 0;
+  }
+
+  #tracker_gen {
+    position: absolute;
+    width: calc(var(--stan-width) * 0.2);
+    height: calc(var(--stan-width) * 0.2);
+  }
+
+  @for $num from 1 through 25 {
+    $row: $num - 1;
+    #tracker_gen[data-state="#{$num}"] {
+      left: -74%;
+      top: calc(100% - $row * (100% / 24));
+    }
   }
 }

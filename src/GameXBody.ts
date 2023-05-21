@@ -17,6 +17,7 @@ class GameXBody extends GameTokens {
       tracker_t: "temperature_map",
       tracker_o: "oxygen_map",
       tracker_w: "oceans_pile",
+      tracker_gen: "map_left",
     };
     this.custom_pay = undefined;
 
@@ -36,9 +37,10 @@ class GameXBody extends GameTokens {
         const parentId = (div.parentNode as any).id;
         const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
         wrapper.appendChild(div);
-        dojo.place($("main_board_wrapper"), parentId, "first");
       }
     }
+
+    $('thething').removeAttribute('title');
 
     console.log("Ending game setup");
   }
@@ -51,8 +53,6 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
-
-
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {

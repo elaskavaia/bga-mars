@@ -3528,6 +3528,10 @@
   --pb_cellsize:4.5vw;
 }
 
+.player-board {
+  background-color: #9E9E9E;
+}
+
 .player_area {
   border: 0.4vh solid var(--plcolor);
   position: relative;
@@ -4147,6 +4151,10 @@
 .mfull .map_bg {
   display: none;
 }
+.mfull .player_tags .badge::after,
+.mfull .player_tags .tracker::after {
+  color: white;
+}
 .mfull .card {
   background-size: 1000% auto;
 }
@@ -4161,6 +4169,7 @@
   z-index: 10;
   transform: scale(1.5);
   transition: all 500ms;
+  transition-delay: 500ms;
 }
 .mfull .card_main_1 {
   background-position: 0% 0%;
@@ -5029,6 +5038,137 @@
 }
 .mfull .tracker_tagAnimal {
   background-position-x: -1100%;
+}
+.mfull #tracker_o,
+.mfull #tracker_gen,
+.mfull #tracker_t {
+  width: 64px;
+  height: 64px;
+  background-image: url(img/resources.png);
+  background-position: 30.5% 62%;
+  background-size: 5200%;
+}
+.mfull #oxygen_map #tracker_o {
+  position: absolute;
+  width: 8%;
+  height: 24%;
+  box-shadow: unset;
+  border-radius: unset;
+  padding: 0;
+}
+.mfull #temperature_map #tracker_t {
+  position: absolute;
+  height: 7%;
+  width: 39%;
+  left: 74%;
+  box-shadow: unset;
+  border-radius: unset;
+  padding: 0;
+}
+.mfull #tracker_gen {
+  position: absolute;
+  width: calc(var(--stan-width) * 0.2);
+  height: calc(var(--stan-width) * 0.2);
+}
+.mfull #tracker_gen[data-state="1"] {
+  left: -74%;
+  top: 100%;
+}
+.mfull #tracker_gen[data-state="2"] {
+  left: -74%;
+  top: 95.8333333333%;
+}
+.mfull #tracker_gen[data-state="3"] {
+  left: -74%;
+  top: 91.6666666667%;
+}
+.mfull #tracker_gen[data-state="4"] {
+  left: -74%;
+  top: 87.5%;
+}
+.mfull #tracker_gen[data-state="5"] {
+  left: -74%;
+  top: 83.3333333333%;
+}
+.mfull #tracker_gen[data-state="6"] {
+  left: -74%;
+  top: 79.1666666667%;
+}
+.mfull #tracker_gen[data-state="7"] {
+  left: -74%;
+  top: 75%;
+}
+.mfull #tracker_gen[data-state="8"] {
+  left: -74%;
+  top: 70.8333333333%;
+}
+.mfull #tracker_gen[data-state="9"] {
+  left: -74%;
+  top: 66.6666666667%;
+}
+.mfull #tracker_gen[data-state="10"] {
+  left: -74%;
+  top: 62.5%;
+}
+.mfull #tracker_gen[data-state="11"] {
+  left: -74%;
+  top: 58.3333333333%;
+}
+.mfull #tracker_gen[data-state="12"] {
+  left: -74%;
+  top: 54.1666666667%;
+}
+.mfull #tracker_gen[data-state="13"] {
+  left: -74%;
+  top: 50%;
+}
+.mfull #tracker_gen[data-state="14"] {
+  left: -74%;
+  top: 45.8333333333%;
+}
+.mfull #tracker_gen[data-state="15"] {
+  left: -74%;
+  top: 41.6666666667%;
+}
+.mfull #tracker_gen[data-state="16"] {
+  left: -74%;
+  top: 37.5%;
+}
+.mfull #tracker_gen[data-state="17"] {
+  left: -74%;
+  top: 33.3333333333%;
+}
+.mfull #tracker_gen[data-state="18"] {
+  left: -74%;
+  top: 29.1666666667%;
+}
+.mfull #tracker_gen[data-state="19"] {
+  left: -74%;
+  top: 25%;
+}
+.mfull #tracker_gen[data-state="20"] {
+  left: -74%;
+  top: 20.8333333333%;
+}
+.mfull #tracker_gen[data-state="21"] {
+  left: -74%;
+  top: 16.6666666667%;
+}
+.mfull #tracker_gen[data-state="22"] {
+  left: -74%;
+  top: 12.5%;
+}
+.mfull #tracker_gen[data-state="23"] {
+  left: -74%;
+  top: 8.3333333333%;
+}
+.mfull #tracker_gen[data-state="24"] {
+  left: -74%;
+  top: 4.1666666667%;
+}
+.mfull #tracker_gen[data-state="25"] {
+  left: -74%;
+  top: 0%;
 }
 
 @font-face {
