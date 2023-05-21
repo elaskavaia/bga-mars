@@ -3840,8 +3840,9 @@ $this->token_types = [
 ],
  'op_convp' => [  //
   'undo' => 'true',
+  'prompt' => '${you} must confirm spent plants to place a Greenery',
   'type' => 'convp',
-  'name' => clienttranslate("Convert plants into greenery"),
+  'name' => clienttranslate("Convert plants into Greenery"),
 ],
  'op_finalscoring' => [  //
   'undo' => 'true',
@@ -4799,10 +4800,11 @@ $this->token_types = [
 ],
  'hex_5_8' => [  //
   'name' => clienttranslate("Hex at (5,8)"),
-  'title' => ' at (5,8) ',
+  'title' => ' at (5,8) draw',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 8,
+  'r' => 'draw',
 ],
  'hex_6_8' => [  //
   'name' => clienttranslate("Hex at (6,8)"),

@@ -4085,6 +4085,9 @@
   top: 43%;
   left: 2%;
 }
+.mfull #display_milestones {
+  left: 13%;
+}
 .mfull #decks_area {
   display: block;
   position: absolute;
@@ -4157,6 +4160,12 @@
 }
 .mfull .card {
   background-size: 1000% auto;
+}
+.mfull .active_slot.card {
+  top: -1em;
+}
+.mfull .cards_2 .card {
+  display: block;
 }
 .mfull .cards_1 .card ~ .card,
 .mfull .cards_3 .card ~ .card,

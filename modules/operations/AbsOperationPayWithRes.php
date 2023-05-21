@@ -27,19 +27,26 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info = [];
         $count = $this->getCount();
         $mcount = $this->game->getTrackerValue($this->color, 'm');
+        $cost = $this->getCost();
         foreach ($this->getTypes() as $type) {
             $typecount = $this->game->getTrackerValue($this->color, $type);
             $er = $this->getExchangeRate($type);
+
             $maxres = (int)floor($count / $er);
-            $maxres = min($maxres, $typecount);
-            $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
+            $propres = min($maxres, $typecount);
+
+
+            $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $propres * $er,  $propres);
+            if ($maxres == 0 && $typecount > 0 && $cost > 0 && $er > 1) {
+                $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1); // overpay
+            }
             // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
             // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
             // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
         }
 
-        $this->addProposal($info, $type, $mcount, $typecount, $er, $count, 0);
-        $cost = $this->getCost();
+
+
 
 
 
@@ -99,7 +106,7 @@ class AbsOperationPayWithRes extends AbsOperation {
     }
 
     function effect(string $owner, int $inc): int {
-        if ($inc<=0 || $this->getCost()<=0) return $inc;
+        if ($inc <= 0 || $this->getCost() <= 0) return $inc;
         $possible = $this->getStateArg('target');
         if (count($possible) <= 2) {
             $value = array_shift($possible);

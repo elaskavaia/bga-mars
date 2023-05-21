@@ -20,6 +20,7 @@ abstract class PGameXBody extends PGameMachine {
         parent::__construct();
         self::initGameStateLabels([
             "gameended" => 11,
+            "lastforest" => 12,
             //      ...
             "var_begginers_corp" => 100,
             //    "my_second_game_variant" => 101,
@@ -47,7 +48,15 @@ abstract class PGameXBody extends PGameMachine {
                     $this->tokens->pickTokensForLocation((int)(11 / $this->getPlayersNumber()), "deck_corp", "draw_${color}");
                     $this->multiplayerqueue($color, "keepcorp,10?buycard,prediscard");
                 }
-                $this->dbSetScore($player_id, 20, '');
+
+                $tr_value = 20;
+                if ($this->isSolo()) {
+                    $tr_value = 14;
+                }
+
+                $tr_traker = $this->getTrackerId($color, 'tr');
+                $this->tokens->setTokenState($tr_traker, $tr_value);
+                $this->dbSetScore($player_id, $tr_value, '');
             }
         } catch (Exception $e) {
             $this->error($e);
@@ -65,6 +74,14 @@ abstract class PGameXBody extends PGameMachine {
      * (see states.inc.php)
      */
     function getGameProgression() {
+        if ($this->isSolo()) {
+            $gen = $this->tokens->getTokenState("tracker_gen");
+            return 100 / 15 * $gen;
+        }
+        return $this->getTerraformingProgression();
+    }
+
+    function getTerraformingProgression() {
         $oxigen = $this->tokens->getTokenState("tracker_o");
         $oceans = $this->tokens->getTokenState("tracker_w");
         $temp = $this->tokens->getTokenState("tracker_t");
@@ -118,10 +135,12 @@ abstract class PGameXBody extends PGameMachine {
 
     function debug_opcard($card_id) {
         $color = $this->getCurrentPlayerColor();
+        $payment = $this->getPayment($color, $card_id);
         return [
             "r" => $this->debug_oparg($this->getRulesFor($card_id), $card_id),
             "canAfford" => $this->canAfford($color, $card_id),
-            "payment" => $this->getPayment($color, $card_id)
+            "payment" => $payment,
+            "paymentop" => $this->debug_oparg($payment, $card_id),
         ];
     }
 
@@ -231,6 +250,10 @@ abstract class PGameXBody extends PGameMachine {
         $token = "resource_${color}";
         $key = $this->tokens->createTokenAutoInc($token, "miniboard_${color}");
         return $key;
+    }
+
+    function isSolo() {
+        return $this->getPlayersNumber() == 1;
     }
 
     function getPlanetMap($load = true) {
@@ -726,7 +749,13 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function isEndOfGameAchived() {
-        return $this->getGameProgression() >= 100;
+        if ($this->isSolo()) {
+            $gen = $this->tokens->getTokenState("tracker_gen");
+            if ($gen == 14) {
+                return true;
+            }
+        }
+        return $this->getTerraformingProgression() >= 100;
     }
 
     function playerHasCard($color, $token_id) {
@@ -891,7 +920,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($inc > 0)
             $message = clienttranslate('${player_name} increases ${token_name} by ${mod}');
         else {
-            $message = clienttranslate('${player_name} decreases ${token_name} by ${mod}');
+            $message = clienttranslate('${player_name} reduces ${token_name} by ${mod}');
             $mod = -$inc;
         }
         $this->notifyCounterDirect($token_id, $value, $message, ["mod" => $mod, "token_name" => $token_id,], $this->getPlayerIdByColor($color));
@@ -988,6 +1017,8 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->effect_production();
         if ($this->isEndOfGameAchived()) {
+            $this->setGameStateValue('lastforest', 1);
+        
             $this->machine->queue("lastforest");
             $this->machine->queue("finalscoring");
             $this->machine->queue("confirm");
@@ -1024,7 +1055,22 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($players as $player) {
             $this->scoreCards($player["player_color"]);
         }
+        foreach ($players as $player) {
+            $score = $this->dbGetScore($player_id);
+            $this->setStat($score, 'game_vp_total', $player_id);
+            $this->notifyMessage(clienttranslate('${player_name} scores ${count} TOTAL VP'), ['count' => $score]);
+        }
+
         $this->setGameStateValue('gameended', 1);
+
+        if ($this->isSolo()) {
+            if ($this->getTerraformingProgression() >= 100) {
+                // yay
+            } else {
+                $this->notifyMessage(clienttranslate('${player_name} lost since they did not achieve the goal by the end of generation 14, score is negated'));
+                $this->dbSetScore($player_id, -1);
+            }
+        }
         return 1;
     }
 
@@ -1167,7 +1213,10 @@ abstract class PGameXBody extends PGameMachine {
 
     function filterPlayable($color, $keys) {
         return $this->createArgInfo($color, $keys, function ($color, $tokenid) {
-            return $this->playability($color, $tokenid);
+            return [
+                'payop'=>$this->getPayment($color, $tokenid),
+                'q'=>$this->playability($color, $tokenid)
+            ];
         });
     }
 

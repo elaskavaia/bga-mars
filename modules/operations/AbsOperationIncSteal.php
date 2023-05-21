@@ -28,7 +28,13 @@ class AbsOperationIncSteal extends AbsOperation {
     }
 
     function canResolveAutomatically() {
+        if ($this->game->isSolo()) return true;
         return false;
+    }
+
+    function isVoid(): bool {
+        if ($this->game->isSolo()) return false;
+        return parent::isVoid();
     }
 
     function getType(): string {
@@ -36,8 +42,14 @@ class AbsOperationIncSteal extends AbsOperation {
     }
 
     function effect(string $owner, int $inc): int {
-        $other = $this->getCheckedArg('target');
         $opres = $this->getType();
+        if ($this->game->isSolo()) {
+            $this->game->notifyMessage(clienttranslate('${player_name} steals from neutral opponent'), [], $this->game->getPlayerIdByColor($owner));
+            $this->game->effect_incCount($owner, $opres, $inc);
+            return $inc;
+        }
+        $other = $this->getCheckedArg('target');
+
         $value = $this->game->getTrackerValue($other, $opres);
         $value = min($inc, $value); // up to
 

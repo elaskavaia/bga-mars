@@ -27,7 +27,7 @@ class Operation_turn extends AbsOperation {
             $this->game->queue($owner, "turn2");
         } else {
             // no need to confirm for 1 player?
-            //$this->game->queue($owner, "confturn");
+            $this->game->queue($owner, "confturn");
         }
         return 1;
     }

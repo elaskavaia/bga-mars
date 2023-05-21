@@ -26,6 +26,9 @@ class AbsOperationIncNegAny extends AbsOperation {
     }
 
     function canResolveAutomatically() {
+        if ($this->game->isSolo()) {
+            return true;
+        }
         return false;
     }
 
@@ -38,9 +41,16 @@ class AbsOperationIncNegAny extends AbsOperation {
     }
 
     function effect(string $owner, int $inc): int {
+        $type = $this->getType();
+        if ($this->game->isSolo()) {
+            $message = clienttranslate('${player_name} removes ${mod} ${token_name} from neutral opponent');
+            $this->game->notifyMessageWithTokenName($message, $this->game->getTrackerId($owner, $type), $owner, ['mod' => $inc]);
+            return $inc;
+        }
+
         $owner = $this->getCheckedArg('target');
         if ($owner == 'none') return $inc; // skipped, this is ok for resources
-        $type = $this->getType();
+
         $this->game->effect_incCount($owner, $type, -$inc, ['ifpossible' => true]);
         return $inc;
     }

@@ -110,6 +110,11 @@ $stats_type = array(
             "name" => totranslate("VP from Awards"),
             "type" => "int"
         ],
+        "game_vp_total" => [
+            "id" => 20,
+            "name" => totranslate("VP total"),
+            "type" => "int"
+        ],
 
         "game_actions" => array(
             "id" => 30,

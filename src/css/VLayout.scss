@@ -167,6 +167,10 @@
     left: 2%;
   }
 
+  #display_milestones {
+    left: 13%;
+  }
+
   #decks_area {
     display: block;
     position: absolute;
@@ -250,6 +254,12 @@
 
   .card {
     background-size: 1000% auto;
+  }
+  .active_slot.card {
+    top: -1em;
+  }
+  .cards_2 .card {
+    display: block;
   }
   .cards_1,
   .cards_3,
