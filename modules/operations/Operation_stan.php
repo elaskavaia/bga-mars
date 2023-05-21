@@ -11,7 +11,7 @@ class Operation_stan extends AbsOperation {
         if ($card_id != 'card_stanproj_1')
             $this->game->notifyEffect($color, "play_stan", $card_id);
         $this->game->push($color, $rules);
-        $this->game->push($color, $this->game->getPayment($color, $card_id), $card_id);
+        $this->game->push($color, $this->game->getPayment($color, $card_id), 1, $card_id);
         return 1;
     }
 

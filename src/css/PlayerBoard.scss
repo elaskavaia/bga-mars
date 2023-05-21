@@ -1,9 +1,6 @@
 #ebd-body {
   --pb_cellsize:4.5vw;
 }
-.player-board {
-  background-color: #9E9E9E;
-}
 
 .player_area {
   border: 0.4vh solid var(--plcolor);
@@ -215,7 +212,6 @@
     display: none;
   }
 }
-.mcompact {
 .cards_1, .cards_3 {
   display: flex;
   flex-direction: column;
@@ -247,9 +243,8 @@
   }
 
   .card:hover {
-    z-index: 10;
+    z_index:10;
     transform: translateY(-5%);
     transition: all 100ms;
   }
-}
 }

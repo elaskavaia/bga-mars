@@ -345,16 +345,13 @@ class GameTokens extends GameBasics {
       if (!tokenNode.parentNode) noAnnimation = true;
       if (noAnnimation) animtime = 0;
 
-      let mobileStyle = {};
+      let mobileStyle = undefined;
       if (placeInfo.x !== undefined || placeInfo.y !== undefined) {
         mobileStyle = {
           position: placeInfo.position || "absolute",
           left: placeInfo.x + "px",
           top: placeInfo.y + "px",
         };
-      }
-      if (placeInfo.relation) {
-        mobileStyle['relation'] = placeInfo.relation;
       }
  
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);

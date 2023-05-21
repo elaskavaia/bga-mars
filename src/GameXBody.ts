@@ -17,7 +17,6 @@ class GameXBody extends GameTokens {
       tracker_t: "temperature_map",
       tracker_o: "oxygen_map",
       tracker_w: "oceans_pile",
-      tracker_gen: "map_left",
     };
     this.custom_pay = undefined;
 
@@ -30,18 +29,6 @@ class GameXBody extends GameTokens {
     });
 
     this.connectClass("filter_button", "onclick", "onFilterButton");
-
-    if (this.isLayoutVariant(2)) {
-      if (!$("main_board_wrapper")) {
-        const div = $("main_board");
-        const parentId = (div.parentNode as any).id;
-        const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
-        wrapper.appendChild(div);
-      }
-    }
-
-    $('thething').removeAttribute('title');
-
     console.log("Ending game setup");
   }
 
@@ -53,6 +40,8 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
+
+
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -230,7 +219,6 @@ class GameXBody extends GameTokens {
       t: { classes: "token_img temperature_icon" },
       w: { classes: "tile tile_3" },
       o: { classes: "token_img oxygen_icon"},
-
       ":": { classes: "action_arrow" },
     };
 
@@ -346,36 +334,30 @@ class GameXBody extends GameTokens {
 
     }
 
-    // if (this.isLocationByType(tokenDisplayInfo.key)) {
-    //   tokenDisplayInfo.imageTypes += " infonode";
-    // }
+    if (this.isLocationByType(tokenDisplayInfo.key)) {
+      tokenDisplayInfo.imageTypes += " infonode";
+    }
   }
 
-
-getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
-  let result = super.getPlaceRedirect(tokenInfo);
-  if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
-    result.nop = true; // do not relocate or do anyting
-  } else if (tokenInfo.key.startsWith("award")) {
-    result.nop = true;
-  } else if (tokenInfo.key.startsWith("milestone")) {
-    result.nop = true;
-  } else if (this.custom_placement[tokenInfo.key]) {
-    result.location = this.custom_placement[tokenInfo.key];
-  } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
-    let t = this.getRulesFor(tokenInfo.key, "t");
-    if (this.getRulesFor(tokenInfo.key, "a")) {
-      result.location = tokenInfo.location + "_cards_2a";
-    } else result.location = tokenInfo.location + "_cards_" + t;
-  } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-    result.location = tokenInfo.location + "_cards_2a";
-    result.relation = "first";
+  getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
+    let result = super.getPlaceRedirect(tokenInfo);
+    if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
+      result.nop = true; // do not relocate or do anyting
+    } else if (tokenInfo.key.startsWith("award")) {
+      result.nop = true;
+    } else if (tokenInfo.key.startsWith("milestone")) {
+      result.nop = true;
+    } else if (this.custom_placement[tokenInfo.key]) {
+      result.location = this.custom_placement[tokenInfo.key];
+    } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+      const t = this.getRulesFor(tokenInfo.key, "t");
+      if (t !== undefined) result.location = tokenInfo.location + "_cards_" + t;
+    }
+    if (!result.location)
+      // if failed to find revert to server one
+      result.location = tokenInfo.location;
+    return result;
   }
-  if (!result.location)
-    // if failed to find revert to server one
-    result.location = tokenInfo.location;
-  return result;
-}
 
   isLayoutVariant(num: number) {
     return this.prefs[100].value == num;
@@ -444,12 +426,6 @@ getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
 
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-      if (opargs.void) {
-        this.addActionButton("button_u", _("No valid targets, must Undo"), () => {
-          this.ajaxcallwrapper("undo");
-        });
-        return;
-      }
       if (paramargs.length == 0) {
         if (count == from) {
           this.addActionButton("button_" + opId, _("Confirm"), () => {

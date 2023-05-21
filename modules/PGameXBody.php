@@ -119,9 +119,9 @@ abstract class PGameXBody extends PGameMachine {
     function debug_opcard($card_id) {
         $color = $this->getCurrentPlayerColor();
         return [
-            "r" => $this->debug_oparg($this->getRulesFor($card_id), $card_id),
-            "canAfford" => $this->canAfford($color, $card_id),
-            "payment" => $this->getPayment($color, $card_id)
+            "r"=>$this->debug_oparg($this->getRulesFor($card_id), $card_id),
+            "canAfford"=>$this->canAfford($color,$card_id),
+            "payment"=>$this->getPayment($color,$card_id)
         ];
     }
 
@@ -129,8 +129,8 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
         return [
-            "type" => $type,
-            "args" => $inst->arg(),
+            "type" => $type, 
+            "args" => $inst->arg(), 
             "canresolve" => $inst->canResolveAutomatically(),
             "auto" => $inst->isFullyAutomated()
         ];
@@ -203,22 +203,11 @@ abstract class PGameXBody extends PGameMachine {
             case 'adj_no':
                 return count($this->getAdjecentHexesOfType($ohex, 0)) == 0;
             case 'has_su':
-                $pp = $this->getProductionPlacementBonus($ohex);
-                return !!$pp;
+                $bonus = $this->getRulesFor($ohex, 'r', '');
+                return strpos($bonus, 's') !== false || strpos($bonus, 'u') !== false;
             default:
                 throw new BgaSystemException("Unknown adj rule $rule");
         }
-    }
-
-    function getProductionPlacementBonus($ohex) {
-        $bonus = $this->getRulesFor($ohex, 'r', '');
-        if (strpos($bonus, 's') !== false) {
-            return 'ps';
-        }
-        if (strpos($bonus, 'u') !== false) {
-            return 'pu';
-        }
-        return '';
     }
 
     function createPlayerMarker($color) {
@@ -248,7 +237,7 @@ abstract class PGameXBody extends PGameMachine {
             $loc = $rec['location'];
             if (startsWith($key, 'marker')) {
                 // claimed
-                $res[$loc]['claimed'] = getPart($key, 1);
+                $res[$loc]['claimed'] = getPart($key,1);
             } else {
                 $res[$loc]['tile'] = $key;
                 $res[$loc]['owno'] = $rec['state']; // for now XXX
@@ -305,7 +294,7 @@ abstract class PGameXBody extends PGameMachine {
             return $mc >= $cost;
         }
         $payment_op = $this->getPayment($color, $tokenid);
-        if ($this->isVoidSingle($payment_op, $color, 1, $tokenid))
+        if ($this->isVoidSingle($payment_op,$color,1,$tokenid))
             return false;
         return true;
     }
@@ -386,6 +375,10 @@ abstract class PGameXBody extends PGameMachine {
         }
         if ($x == 'cost') {
             return $this->getRulesFor($context, 'cost');
+        }
+        if ($x == 'tagEvent') {
+            // tagEvent is not counted as tag since its not face up XXX?
+            return $this->tokens->countTokensInLocation("tableau_$owner", 0);
         }
         $opp = startsWith($x, 'opp_');
         if (startsWith($x, 'all_') || $opp) {
@@ -538,7 +531,6 @@ abstract class PGameXBody extends PGameMachine {
     function getActiveEventListeners() {
         if (!$this->eventListners) {
             $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_%");
-            //$this->debugConsole("info",["cards"=>$cards]);
             $this->eventListners = [];
             foreach ($cards as $key => $info) {
                 $e = $this->getRulesFor($key, 'e');
@@ -742,7 +734,7 @@ abstract class PGameXBody extends PGameMachine {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Effects
     ////////////
-    function effect_playCard($color, $card_id) {
+    function effect_cardInPlay($color, $card_id) {
         $rules = $this->getRulesFor($card_id, '*');
         $ttype = $rules['t']; // type of card
         $state = MA_CARD_STATE_TAGUP;
@@ -765,9 +757,6 @@ abstract class PGameXBody extends PGameMachine {
                 $this->incTrackerValue($color, "tag$tag");
             }
         }
-        if ($ttype == MA_CARD_TYPE_EVENT) {
-            $this->incTrackerValue($color, "tagEvent");
-        }
         $playeffect = array_get($rules, 'r', '');
         if ($playeffect) {
             $this->debugLog("-come in play effect $playeffect");
@@ -780,7 +769,6 @@ abstract class PGameXBody extends PGameMachine {
     function effect_playCorporation(string $color, string $card_id) {
         $player_id = $this->getPlayerIdByColor($color);
         $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [], $player_id);
-        $this->eventListners = null; // clear cache since corp came into play
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $tagsarr = explode(' ', $tags);
         if ($tags) {
@@ -1156,11 +1144,8 @@ abstract class PGameXBody extends PGameMachine {
     function createArgInfo(string $color, array $keys, callable $filter) {
         $res = [];
         foreach ($keys as $tokenid) {
-            $explanation = $filter($color, $tokenid);
-            if (is_numeric($explanation))
-                $res[$tokenid] = ["q" => $explanation];
-            else
-                $res[$tokenid] = $explanation;
+            $rejected = $filter($color, $tokenid);
+            $res[$tokenid] = ["q" => $rejected];
         }
         return $res;
     }
@@ -1224,10 +1209,6 @@ abstract class PGameXBody extends PGameMachine {
         $opinst = $this->getOperationInstance($op);
         $count = $op["count"]; // XXX mcount?
         $tops = $this->machine->getTopOperations($owner);
-
-        if ($opinst->isVoid())
-            return false;
-
         if ($opinst->auto($owner, $count)) {
             $this->saction_stack($count, $op, $tops);
             return true;
