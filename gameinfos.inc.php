@@ -28,13 +28,13 @@ $gameinfos = array(
 'publisher' => 'FryxGames',
 
 // Url of game publisher website
-'publisher_website' => 'http://www.mypublishingcompany.com/',   
+'publisher_website' => 'https://www.fryxgames.se/',   
 
 // Board Game Geek ID of the publisher
 'publisher_bgg_id' => 18575,
 
 // Board game geek ID of the game 167791
-'bgg_id' => 0,
+'bgg_id' => 167791,
 
 // Players configuration that can be played (ex: 2 to 4 players)
 'players' => array(1,2,3,4,5),
@@ -109,6 +109,10 @@ $gameinfos = array(
     'max' => null
 ),
 'db_undo_support' => true,
+
+'presentation' => array(
+    totranslate("In the 2400s, mankind begins to terraform the planet Mars. Giant corporations, sponsored by the World Government on Earth, initiate huge projects to raise the temperature, the oxygen level, and the ocean coverage until the environment is habitable. In Terraforming Mars, you play one of those corporations and work together in the terraforming process, but compete for getting victory points that are awarded not only for your contribution to the terraforming, but also for advancing human infrastructure throughout the solar system, and doing other commendable things."),
+),
 // Games categories
 //  You can attribute a maximum of FIVE "tags" for your game.
 //  Each tag has a specific ID (ex: 22 for the category "Prototype", 101 for the tag "Science-fiction theme game")
@@ -116,7 +120,7 @@ $gameinfos = array(
 //  http://en.doc.boardgamearena.com/Game_meta-information:_gameinfos.inc.php
 //  IMPORTANT: this list should be ORDERED, with the most important tag first.
 //  IMPORTANT: it is mandatory that the FIRST tag is 1, 2, 3 and 4 (= game category)
-'tags' => array( 2 ),
+'tags' => array( 4, 101, 200, 20 ),
 
 
 //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)
