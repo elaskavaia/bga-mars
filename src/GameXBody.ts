@@ -29,6 +29,17 @@ class GameXBody extends GameTokens {
     });
 
     this.connectClass("filter_button", "onclick", "onFilterButton");
+
+    if (this.isLayoutVariant(2)) {
+      if (!$("main_board_wrapper")) {
+        const div = $("main_board");
+        const parentId = (div.parentNode as any).id;
+        const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
+        wrapper.appendChild(div);
+        dojo.place($("main_board_wrapper"), parentId, "first");
+      }
+    }
+
     console.log("Ending game setup");
   }
 
@@ -340,25 +351,31 @@ class GameXBody extends GameTokens {
     }
   }
 
-  getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
-    let result = super.getPlaceRedirect(tokenInfo);
-    if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
-      result.nop = true; // do not relocate or do anyting
-    } else if (tokenInfo.key.startsWith("award")) {
-      result.nop = true;
-    } else if (tokenInfo.key.startsWith("milestone")) {
-      result.nop = true;
-    } else if (this.custom_placement[tokenInfo.key]) {
-      result.location = this.custom_placement[tokenInfo.key];
-    } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
-      const t = this.getRulesFor(tokenInfo.key, "t");
-      if (t !== undefined) result.location = tokenInfo.location + "_cards_" + t;
-    }
-    if (!result.location)
-      // if failed to find revert to server one
-      result.location = tokenInfo.location;
-    return result;
+
+getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
+  let result = super.getPlaceRedirect(tokenInfo);
+  if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
+    result.nop = true; // do not relocate or do anyting
+  } else if (tokenInfo.key.startsWith("award")) {
+    result.nop = true;
+  } else if (tokenInfo.key.startsWith("milestone")) {
+    result.nop = true;
+  } else if (this.custom_placement[tokenInfo.key]) {
+    result.location = this.custom_placement[tokenInfo.key];
+  } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+    let t = this.getRulesFor(tokenInfo.key, "t");
+    if (this.getRulesFor(tokenInfo.key, "a")) {
+      result.location = tokenInfo.location + "_cards_2a";
+    } else result.location = tokenInfo.location + "_cards_" + t;
+  } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+    result.location = tokenInfo.location + "_cards_2a";
+    result.relation = "first";
   }
+  if (!result.location)
+    // if failed to find revert to server one
+    result.location = tokenInfo.location;
+  return result;
+}
 
   isLayoutVariant(num: number) {
     return this.prefs[100].value == num;

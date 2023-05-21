@@ -3781,36 +3781,36 @@
   display: none;
 }
 
-.cards_1, .cards_3 {
+.mcompact .cards_1, .mcompact .cards_3 {
   display: flex;
   flex-direction: column;
 }
-.cards_1 .card:not(:last-child):not(:hover), .cards_3 .card:not(:last-child):not(:hover) {
+.mcompact .cards_1 .card:not(:last-child):not(:hover), .mcompact .cards_3 .card:not(:last-child):not(:hover) {
   height: calc(var(--card-height) * 0.18);
   overflow: hidden;
 }
-.cards_1 .card:not(:last-child):not(:hover) .card_bg, .cards_3 .card:not(:last-child):not(:hover) .card_bg {
+.mcompact .cards_1 .card:not(:last-child):not(:hover) .card_bg, .mcompact .cards_3 .card:not(:last-child):not(:hover) .card_bg {
   height: calc(var(--card-height));
 }
-.cards_1 .card:not(:last-child):not(:hover) .card_illustration, .cards_3 .card:not(:last-child):not(:hover) .card_illustration {
+.mcompact .cards_1 .card:not(:last-child):not(:hover) .card_illustration, .mcompact .cards_3 .card:not(:last-child):not(:hover) .card_illustration {
   display: none;
 }
-.cards_1 .card:not(:last-child):not(:hover) .card_vp, .cards_3 .card:not(:last-child):not(:hover) .card_vp {
+.mcompact .cards_1 .card:not(:last-child):not(:hover) .card_vp, .mcompact .cards_3 .card:not(:last-child):not(:hover) .card_vp {
   display: none;
 }
-.cards_1 .card:not(:last-child):not(:hover) .card_title, .cards_3 .card:not(:last-child):not(:hover) .card_title {
+.mcompact .cards_1 .card:not(:last-child):not(:hover) .card_title, .mcompact .cards_3 .card:not(:last-child):not(:hover) .card_title {
   height: revert;
   height: 28%;
   top: 62%;
 }
-.cards_1 .card:not(:last-child):not(:hover) .card_action, .cards_3 .card:not(:last-child):not(:hover) .card_action {
+.mcompact .cards_1 .card:not(:last-child):not(:hover) .card_action, .mcompact .cards_3 .card:not(:last-child):not(:hover) .card_action {
   display: none;
 }
-.cards_1 .card:not(:last-child):not(:hover) .card_effect, .cards_3 .card:not(:last-child):not(:hover) .card_effect {
+.mcompact .cards_1 .card:not(:last-child):not(:hover) .card_effect, .mcompact .cards_3 .card:not(:last-child):not(:hover) .card_effect {
   display: none;
 }
-.cards_1 .card:hover, .cards_3 .card:hover {
-  z_index: 10;
+.mcompact .cards_1 .card:hover, .mcompact .cards_3 .card:hover {
+  z-index: 10;
   transform: translateY(-5%);
   transition: all 100ms;
 }
@@ -3932,28 +3932,17 @@
   font-family: sans-serif;
 }
 
-.mfull {
-  /*
-        #main_board {
-          position: relative;
-        }
-        #main_board::before {
-          content: "";
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          background-image: url(img/full/TMgameboard.jpg);
-          background-repeat: no-repeat;
-        }
-  */
-}
 .mfull .player_area {
   max-width: 1024px;
 }
 .mfull #ebd-body {
-  --map-width: 40em; /* 75vh */
+  --map-width: 30em; /* 75vh */
+  --map-height: calc(var(--map-width) * 0.92);
   --card-width: 10em;
   --pb_cellsize: 4.5em;
+  --stan-width: calc(var(--map-width) * 0.35);
+  --stan-height: calc(var(--stan-width) * 0.2);
+  --stan-fullheight: calc(var(--stan-width) * 1.604095);
 }
 .mfull .card_effect {
   font-size: calc(var(--card-width) * 0.1);
@@ -3969,9 +3958,1041 @@
 }
 .mfull .card_decor {
   pointer-events: none;
+  display: none;
+}
+.mfull .corp .card_decor {
+  display: block;
 }
 .mfull .hand.location:empty {
   display: block;
+}
+.mfull #main_board {
+  position: relative;
+  width: calc(var(--map-width) * 1.66);
+  height: calc(var(--map-width) * 1.66 * 0.85);
+}
+.mfull #main_area {
+  margin-top: unset;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.mfull #players_area {
+  margin-top: unset;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.mfull #map_middle {
+  position: absolute;
+  padding-top: 0%;
+  padding-left: 0%;
+  width: 100%;
+  height: 90%;
+}
+.mfull #map_top {
+  position: absolute;
+  width: 58%;
+  height: 20%;
+  left: 23%;
+  top: 11%;
+}
+.mfull #map_bottom {
+  width: 100%;
+  position: absolute;
+  bottom: 6%;
+  left: 0%;
+  height: 10%;
+}
+.mfull #map_right {
+  padding: 0%;
+  position: absolute;
+  right: 8%;
+  top: 0%;
+  height: 100%;
+}
+.mfull #map_left {
+  padding: 0%;
+  height: 100%;
+  width: 10%;
+  left: 7%;
+  position: absolute;
+}
+.mfull #map {
+  position: absolute;
+  left: 20%;
+  top: 20%;
+  width: 60%;
+  height: 72%;
+}
+.mfull #oxygen_map {
+  position: absolute;
+  width: calc(var(--map-width) * 0.88);
+  height: calc(var(--map-width) * 0.26);
+  background: none;
+  top: 0px;
+  left: 0px;
+}
+.mfull #temperature_map {
+  position: relative;
+  top: 17%;
+  height: 72%;
+  width: calc(var(--map-width) * 0.157);
+  background: none;
+}
+.mfull #standard_projects_area {
+  display: block;
+  background: unset;
+  top: 59%;
+}
+.mfull #standard_projects_area .display {
+  margin-top: 15%;
+  display: block;
+}
+.mfull .stanp_decor {
+  display: none;
+}
+.mfull #standard_projects_title_zone {
+  display: none;
+}
+.mfull #standard_projects_area .card {
+  top: unset !important;
+  display: block;
+  position: relative;
+  margin-bottom: 0.2em;
+}
+.mfull .milestone,
+.mfull .award {
+  background: none;
+  width: calc(var(--map-width) * 0.14);
+}
+.mfull .map_milesawardsheader {
+  display: none;
+}
+.mfull #main_awards,
+.mfull #main_milestones {
+  padding: 0;
+  border: none;
+  width: 50%;
+  background: none;
+  position: relative;
+}
+.mfull .map_milesawardscontent {
+  position: absolute;
+  top: 43%;
+  left: 2%;
+}
+.mfull #decks_area {
+  display: block;
+  position: absolute;
+  top: 7%;
+  width: var(--stan-width);
+  height: var(--stan-height);
+}
+.mfull .deck > .card,
+.mfull .discard > .card {
+  pointer-events: none;
+}
+.mfull #deck_main {
+  left: 10%;
+  position: absolute;
+}
+.mfull #discard_main {
+  left: 40%;
+  position: absolute;
+}
+.mfull .hex_ganymede {
+  left: 49%;
+  top: 41%;
+  background-image: none;
+}
+.mfull .hex_phobos {
+  left: 58%;
+  top: 13%;
+  background-image: none;
+}
+.mfull #oceans_pile {
+  position: absolute;
+  top: 61%;
+  left: 328%;
+  clip-path: revert;
+}
+.mfull #deck_main,
+.mfull #discard_main {
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+  background-position: 0 -100%;
+  background-color: none;
+}
+.mfull .player_area_name {
+  background: none;
+  padding: 0px;
+  z-index: 1;
+  top: 3em;
+  left: 0px;
+  right: unset;
+  border: none;
+}
+.mfull .tableau.whiteblock {
+  background-image: none;
+}
+.mfull #main_board::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url(img/full/TMgameboard.jpg);
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+}
+.mfull .map_bg {
+  display: none;
+}
+.mfull .card {
+  background-size: 1000% auto;
+}
+.mfull .cards_1 .card ~ .card,
+.mfull .cards_3 .card ~ .card,
+.mfull .cards_2 .card ~ .card {
+  margin-top: calc(var(--card-height) * -1 * 0.8);
+}
+.mfull .tableau .card:hover,
+.mfull .hand .card:hover,
+.mfull .draw .card:hover {
+  z-index: 10;
+  transform: scale(1.5);
+  transition: all 500ms;
+}
+.mfull .card_main_1 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_2 {
+  background-position: 11.1111111111% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_3 {
+  background-position: 22.2222222222% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_4 {
+  background-position: 33.3333333333% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_5 {
+  background-position: 44.4444444444% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_6 {
+  background-position: 55.5555555556% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_7 {
+  background-position: 66.6666666667% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_8 {
+  background-position: 77.7777777778% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_9 {
+  background-position: 88.8888888889% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_10 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_11 {
+  background-position: 0% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_12 {
+  background-position: 11.1111111111% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_13 {
+  background-position: 22.2222222222% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_14 {
+  background-position: 33.3333333333% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_15 {
+  background-position: 44.4444444444% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_16 {
+  background-position: 55.5555555556% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_17 {
+  background-position: 66.6666666667% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_18 {
+  background-position: 77.7777777778% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_19 {
+  background-position: 88.8888888889% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_20 {
+  background-position: 100% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_21 {
+  background-position: 0% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_22 {
+  background-position: 11.1111111111% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_23 {
+  background-position: 22.2222222222% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_24 {
+  background-position: 33.3333333333% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_25 {
+  background-position: 44.4444444444% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_26 {
+  background-position: 55.5555555556% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_27 {
+  background-position: 66.6666666667% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_28 {
+  background-position: 77.7777777778% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_29 {
+  background-position: 88.8888888889% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_30 {
+  background-position: 100% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_31 {
+  background-position: 0% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_32 {
+  background-position: 11.1111111111% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_33 {
+  background-position: 22.2222222222% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_34 {
+  background-position: 33.3333333333% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_35 {
+  background-position: 44.4444444444% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_36 {
+  background-position: 55.5555555556% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_37 {
+  background-position: 66.6666666667% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_38 {
+  background-position: 77.7777777778% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_39 {
+  background-position: 88.8888888889% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_40 {
+  background-position: 100% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_41 {
+  background-position: 0% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_42 {
+  background-position: 11.1111111111% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_43 {
+  background-position: 22.2222222222% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_44 {
+  background-position: 33.3333333333% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_45 {
+  background-position: 44.4444444444% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_46 {
+  background-position: 55.5555555556% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_47 {
+  background-position: 66.6666666667% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_48 {
+  background-position: 77.7777777778% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_49 {
+  background-position: 88.8888888889% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_50 {
+  background-position: 100% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_51 {
+  background-position: 0% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_52 {
+  background-position: 11.1111111111% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_53 {
+  background-position: 22.2222222222% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_54 {
+  background-position: 33.3333333333% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_55 {
+  background-position: 44.4444444444% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_56 {
+  background-position: 55.5555555556% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_57 {
+  background-position: 66.6666666667% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_58 {
+  background-position: 77.7777777778% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_59 {
+  background-position: 88.8888888889% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_60 {
+  background-position: 100% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_61 {
+  background-position: 0% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_62 {
+  background-position: 11.1111111111% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_63 {
+  background-position: 22.2222222222% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_64 {
+  background-position: 33.3333333333% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_65 {
+  background-position: 44.4444444444% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_66 {
+  background-position: 55.5555555556% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_67 {
+  background-position: 66.6666666667% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_68 {
+  background-position: 77.7777777778% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_69 {
+  background-position: 88.8888888889% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_70 {
+  background-position: 100% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_71 {
+  background-position: 0% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_72 {
+  background-position: 11.1111111111% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_73 {
+  background-position: 22.2222222222% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_74 {
+  background-position: 33.3333333333% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_75 {
+  background-position: 44.4444444444% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_76 {
+  background-position: 55.5555555556% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_77 {
+  background-position: 66.6666666667% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_78 {
+  background-position: 77.7777777778% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_79 {
+  background-position: 88.8888888889% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_80 {
+  background-position: 100% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+.mfull .card_main_81 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_82 {
+  background-position: 11.1111111111% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_83 {
+  background-position: 22.2222222222% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_84 {
+  background-position: 33.3333333333% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_85 {
+  background-position: 44.4444444444% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_86 {
+  background-position: 55.5555555556% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_87 {
+  background-position: 66.6666666667% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_88 {
+  background-position: 77.7777777778% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_89 {
+  background-position: 88.8888888889% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_90 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_91 {
+  background-position: 0% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_92 {
+  background-position: 11.1111111111% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_93 {
+  background-position: 22.2222222222% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_94 {
+  background-position: 33.3333333333% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_95 {
+  background-position: 44.4444444444% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_96 {
+  background-position: 55.5555555556% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_97 {
+  background-position: 66.6666666667% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_98 {
+  background-position: 77.7777777778% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_99 {
+  background-position: 88.8888888889% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_100 {
+  background-position: 100% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_101 {
+  background-position: 0% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_102 {
+  background-position: 11.1111111111% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_103 {
+  background-position: 22.2222222222% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_104 {
+  background-position: 33.3333333333% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_105 {
+  background-position: 44.4444444444% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_106 {
+  background-position: 55.5555555556% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_107 {
+  background-position: 66.6666666667% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_108 {
+  background-position: 77.7777777778% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_109 {
+  background-position: 88.8888888889% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_110 {
+  background-position: 100% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_111 {
+  background-position: 0% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_112 {
+  background-position: 11.1111111111% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_113 {
+  background-position: 22.2222222222% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_114 {
+  background-position: 33.3333333333% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_115 {
+  background-position: 44.4444444444% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_116 {
+  background-position: 55.5555555556% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_117 {
+  background-position: 66.6666666667% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_118 {
+  background-position: 77.7777777778% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_119 {
+  background-position: 88.8888888889% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_120 {
+  background-position: 100% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_121 {
+  background-position: 0% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_122 {
+  background-position: 11.1111111111% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_123 {
+  background-position: 22.2222222222% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_124 {
+  background-position: 33.3333333333% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_125 {
+  background-position: 44.4444444444% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_126 {
+  background-position: 55.5555555556% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_127 {
+  background-position: 66.6666666667% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_128 {
+  background-position: 77.7777777778% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_129 {
+  background-position: 88.8888888889% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_130 {
+  background-position: 100% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_131 {
+  background-position: 0% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_132 {
+  background-position: 11.1111111111% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_133 {
+  background-position: 22.2222222222% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_134 {
+  background-position: 33.3333333333% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_135 {
+  background-position: 44.4444444444% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_136 {
+  background-position: 55.5555555556% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_137 {
+  background-position: 66.6666666667% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_138 {
+  background-position: 77.7777777778% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_139 {
+  background-position: 88.8888888889% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_140 {
+  background-position: 100% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_141 {
+  background-position: 0% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_142 {
+  background-position: 11.1111111111% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_143 {
+  background-position: 22.2222222222% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_144 {
+  background-position: 33.3333333333% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_145 {
+  background-position: 44.4444444444% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_146 {
+  background-position: 55.5555555556% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_147 {
+  background-position: 66.6666666667% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_148 {
+  background-position: 77.7777777778% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_149 {
+  background-position: 88.8888888889% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_150 {
+  background-position: 100% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_151 {
+  background-position: 0% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_152 {
+  background-position: 11.1111111111% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_153 {
+  background-position: 22.2222222222% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_154 {
+  background-position: 33.3333333333% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_155 {
+  background-position: 44.4444444444% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_156 {
+  background-position: 55.5555555556% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_157 {
+  background-position: 66.6666666667% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_158 {
+  background-position: 77.7777777778% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_159 {
+  background-position: 88.8888888889% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_160 {
+  background-position: 100% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+.mfull .card_main_161 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_162 {
+  background-position: 11.1111111111% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_163 {
+  background-position: 22.2222222222% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_164 {
+  background-position: 33.3333333333% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_165 {
+  background-position: 44.4444444444% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_166 {
+  background-position: 55.5555555556% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_167 {
+  background-position: 66.6666666667% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_168 {
+  background-position: 77.7777777778% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_169 {
+  background-position: 88.8888888889% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_170 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_171 {
+  background-position: 0% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_172 {
+  background-position: 11.1111111111% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_173 {
+  background-position: 22.2222222222% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_174 {
+  background-position: 33.3333333333% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_175 {
+  background-position: 44.4444444444% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_176 {
+  background-position: 55.5555555556% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_177 {
+  background-position: 66.6666666667% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_178 {
+  background-position: 77.7777777778% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_179 {
+  background-position: 88.8888888889% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_180 {
+  background-position: 100% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_181 {
+  background-position: 0% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_182 {
+  background-position: 11.1111111111% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_183 {
+  background-position: 22.2222222222% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_184 {
+  background-position: 33.3333333333% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_185 {
+  background-position: 44.4444444444% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_186 {
+  background-position: 55.5555555556% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_187 {
+  background-position: 66.6666666667% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_188 {
+  background-position: 77.7777777778% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_189 {
+  background-position: 88.8888888889% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_190 {
+  background-position: 100% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_191 {
+  background-position: 0% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_192 {
+  background-position: 11.1111111111% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_193 {
+  background-position: 22.2222222222% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_194 {
+  background-position: 33.3333333333% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_195 {
+  background-position: 44.4444444444% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_196 {
+  background-position: 55.5555555556% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_197 {
+  background-position: 66.6666666667% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_198 {
+  background-position: 77.7777777778% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_199 {
+  background-position: 88.8888888889% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_200 {
+  background-position: 100% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_201 {
+  background-position: 0% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_202 {
+  background-position: 11.1111111111% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_203 {
+  background-position: 22.2222222222% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_204 {
+  background-position: 33.3333333333% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_205 {
+  background-position: 44.4444444444% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_206 {
+  background-position: 55.5555555556% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_207 {
+  background-position: 66.6666666667% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+.mfull .card_main_208 {
+  background-position: 77.7777777778% 100%;
+  background-image: url(img/full/cards3.jpg);
 }
 .mfull .tracker_tagCity {
   background-position-x: 0;
@@ -4098,7 +5119,7 @@
   margin-top: 3px;
 }
 
-.cards_2 > .card {
+.cards_2 > .card, .cards_2a > .card {
   display: inline-block;
 }
 

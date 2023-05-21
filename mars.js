@@ -299,8 +299,12 @@ var GameBasics = /** @class */ (function (_super) {
         }
     };
     GameBasics.prototype.slideAndPlace = function (token, finalPlace, tlen, mobileStyle, onEnd) {
-        if ($(token).parentNode == $(finalPlace))
+        if ($(token).parentNode == $(finalPlace)) {
+            if (mobileStyle.relation) {
+                dojo.place($(token), $(finalPlace), mobileStyle.relation);
+            }
             return;
+        }
         this.phantomMove(token, finalPlace, tlen, mobileStyle, onEnd);
     };
     GameBasics.prototype.getFulltransformMatrix = function (from, to) {
@@ -367,7 +371,15 @@ var GameBasics = /** @class */ (function (_super) {
         }
         var clone = this.projectOnto(mobileNode, "_temp");
         mobileNode.style.opacity = "0"; // hide original
-        newparent.appendChild(mobileNode); // move original
+        if (mobileStyle.relation) {
+            delete mobileStyle.relation;
+            if (mobileStyle.relation == "first") {
+                newparent.insertBefore(mobileNode, null);
+            }
+        }
+        else {
+            newparent.appendChild(mobileNode); // move original
+        }
         setStyleAttributes(mobileNode, mobileStyle);
         mobileNode.offsetHeight; // recalc
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
@@ -728,7 +740,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.onNotif(notif);
     };
     GameBasics.prototype.ntf_gameStateMultipleActiveUpdate = function (notif) {
-        this.gamedatas.gamestate.descriptionmyturn = '...';
+        this.gamedatas.gamestate.descriptionmyturn = "...";
         return this.inherited(arguments);
     };
     GameBasics.prototype.onNotif = function (notif) {
@@ -1130,13 +1142,16 @@ var GameTokens = /** @class */ (function (_super) {
                 noAnnimation = true;
             if (noAnnimation)
                 animtime = 0;
-            var mobileStyle = undefined;
+            var mobileStyle = {};
             if (placeInfo.x !== undefined || placeInfo.y !== undefined) {
                 mobileStyle = {
                     position: placeInfo.position || "absolute",
                     left: placeInfo.x + "px",
                     top: placeInfo.y + "px",
                 };
+            }
+            if (placeInfo.relation) {
+                mobileStyle['relation'] = placeInfo.relation;
             }
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
             this.renderSpecificToken(tokenNode);
@@ -1453,6 +1468,15 @@ var GameXBody = /** @class */ (function (_super) {
             _this.updateTooltip(node.id);
         });
         this.connectClass("filter_button", "onclick", "onFilterButton");
+        if (this.isLayoutVariant(2)) {
+            if (!$("main_board_wrapper")) {
+                var div = $("main_board");
+                var parentId = div.parentNode.id;
+                var wrapper = this.createDivNode("main_board_wrapper", "", parentId);
+                wrapper.appendChild(div);
+                dojo.place($("main_board_wrapper"), parentId, "first");
+            }
+        }
         console.log("Ending game setup");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
@@ -1722,8 +1746,15 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
             var t = this.getRulesFor(tokenInfo.key, "t");
-            if (t !== undefined)
+            if (this.getRulesFor(tokenInfo.key, "a")) {
+                result.location = tokenInfo.location + "_cards_2a";
+            }
+            else
                 result.location = tokenInfo.location + "_cards_" + t;
+        }
+        else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+            result.location = tokenInfo.location + "_cards_2a";
+            result.relation = "first";
         }
         if (!result.location)
             // if failed to find revert to server one

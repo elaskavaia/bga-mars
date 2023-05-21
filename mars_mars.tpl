@@ -46,6 +46,8 @@
             <div id="deck_main" class="card carddeck"></div>
             <div id="discard_main" class="card carddeck"></div>
             <div id="oceans_pile" class="tile tile_3"></div>
+            <div id="params">
+            </div>
           </div>
           <div id="standard_projects_area">
             <div id="standard_projects_title_zone">
@@ -197,8 +199,7 @@
     </div>
 
 
-    <div id="params">
-    </div>
+
     <div id="thisplayer_zone">
 
     </div>
@@ -220,7 +221,7 @@
         <div id="player_filter_red_{PLAYER_COLOR}" class="filter_button filter_red" data-color="red" data-enabled="1" data-player="{PLAYER_COLOR}">Events(Red)</div>
       </div>
       <div id="tableau_{PLAYER_COLOR}" class="whiteblock" data-visibilityblue="1" data-visibilitygreen="1" data-visibilityred="1">
-           <div id="tableau_{PLAYER_COLOR}_cards_4" class="cards_4"></div>
+           <div id="tableau_{PLAYER_COLOR}_cards_2a" class="cards_2a"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2" class="cards_2"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_1" class="cards_1"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_3" class="cards_3"></div>

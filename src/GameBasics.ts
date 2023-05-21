@@ -358,7 +358,12 @@ class GameBasics extends GameGui {
     mobileStyle?: StringProperties,
     onEnd?: (node?: HTMLElement) => void
   ) {
-    if ($(token).parentNode == $(finalPlace)) return;
+    if ($(token).parentNode == $(finalPlace)) {
+      if (mobileStyle.relation) {
+        dojo.place($(token), $(finalPlace), mobileStyle.relation);
+      }
+      return;
+    }
 
     this.phantomMove(token, finalPlace, tlen, mobileStyle, onEnd);
   }
@@ -440,7 +445,14 @@ class GameBasics extends GameGui {
     }
     var clone = this.projectOnto(mobileNode, "_temp");
     mobileNode.style.opacity = "0"; // hide original
-    newparent.appendChild(mobileNode); // move original
+    if (mobileStyle.relation) {
+      delete mobileStyle.relation;
+      if (mobileStyle.relation == "first") {
+        newparent.insertBefore(mobileNode, null);
+      }
+    } else {
+      newparent.appendChild(mobileNode); // move original
+    }
     setStyleAttributes(mobileNode, mobileStyle);
     mobileNode.offsetHeight; // recalc
 
@@ -827,9 +839,8 @@ class GameBasics extends GameGui {
     this.onNotif(notif);
   }
 
-  ntf_gameStateMultipleActiveUpdate( notif )
-  {
-    this.gamedatas.gamestate.descriptionmyturn = '...';
+  ntf_gameStateMultipleActiveUpdate(notif) {
+    this.gamedatas.gamestate.descriptionmyturn = "...";
     return this.inherited(arguments);
   }
 
@@ -848,7 +859,6 @@ class GameBasics extends GameGui {
 
   notif_counter(notif: Notif) {
     try {
-
       this.onNotif(notif);
       const name = notif.args.counter_name;
       let value: number;
