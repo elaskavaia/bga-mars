@@ -1,10 +1,10 @@
 num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
-#project cards||||||||||||
-#set _tr=ac||||||||||||
-#set _tr=text||||||||||||
-#set id=card_main_{num}||||||||||||
-#set location=deck_main||||||||||||
-#set create=single||||||||||||
+#project cards
+#set _tr=ac
+#set _tr=text
+#set id=card_main_{num}
+#set location=deck_main
+#set create=single
 1|Colonizer Training Camp|1||||8|o<=5|Building Jovian|2|Basic|Oxygen must be 5% or less.|
 2|Asteroid Mining Consortium|1|npu_Any,pu|||13|u >= 1|Jovian|1|Corporate|Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step.|
 3|Deep Well Heating|1|pe,t|||13||Building Energy|0|Basic|Increase your energy production 1 step. Increase temperature 1 step.|
@@ -213,20 +213,20 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 206|Special Design|3|||onPre_delta:2;play_card:flip:that|4||Science Event|0|Basic|The next card you play this generation is +2 or -2 in global requirements, your choice.|
 207|Medical Lab|1|counter(tagBuilding/2)pm|||13||Science Building|1|Corporate|Increase your MC production 1 step for every 2 building tags you have, including this.|
 208|AI Central|2|1npe|2draw||21|tagScience>=3|Science Building|1|Corporate|Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards.|
-||||||||||||
-#corp cards||||||||||||
-#set id=card_corp_{num}||||||||||||
-#set _tr=text||||||||||||
-#set _tr=ac||||||||||||
-#set type=card corp||||||||||||
-||||||||||||
-#set create=2||||||||||||
-#set count=10||||||||||||
-#set location=limbo||||||||||||
+
+#corp cards
+#set id=card_corp_{num}
+#set _tr=text
+#set _tr=ac
+#set type=card corp
+
+#set create=2
+#set count=10
+#set location=limbo
 1|Begginer Corp|4|42m|||0|||0||You start with 42 MC. You keep 10 starting cards|
-#set count=10||||||||||||
-#set create=single||||||||||||
-#set location=deck_corp||||||||||||
+#set count=10
+#set create=single
+#set location=deck_corp
 #num|name|t|r|a|e|cost|pre|tags|vp||text|php
 2|CrediCor|4|57m||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|0|||0||You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.|
 3|Ecoline|4|2pp,36m,3p|||0||Plant|0||You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery.|
@@ -239,7 +239,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 10|Teractor|4|60m||onPay_tagEarth:3m|0||Earth|0||You start with 60 MC.; Effect: When playing an Earth card, you pay 3 MC less for it.|
 11|Tharsis Republic|4|40m||place_city:pm:this:any;place_city:3m|0||Building|0||You start with 40 MC. As your first action in the game, place a city tile.; Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.|'a1'=>'city'
 12|ThorGate|4|pe,48m|||0||Energy|0||You start with 1 energy production and 48 MC.; Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.|
-#||||||||||||
+#
 #13|United Nations Mars Initiative|4|40m|||0||Earth|0||You start with 40 MC.; Action: If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|
 #14|Aphrodite|4|pp,47m|||0||Plant Venus|0||You start with 47 MC and 1 plant production.; Effect: Whenever Venus is terraformed 1 step, you gain 2 MC.|
 #15|Celestic|4|42m|||0||Venus|Ref||You start with 42 MC. As your first action, reveal cards from the deck until you have revealed 2 cards with a floater icon on it. Take those 2 cards into hand, and discard the rest. 1 VP per 3 floaters on this card.; Action: Add a floater to ANY card.|  'holds' => 'Floaters'

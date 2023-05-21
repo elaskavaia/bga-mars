@@ -22,7 +22,7 @@
  *
  */
 
- if (!defined("MA_GAME")) {
+if (!defined("MA_GAME")) {
   // guard since this included multiple times
   define("MA_GAME", 1);
   define("MA_GAME_DISPATCH_MAX", 100);
@@ -69,7 +69,7 @@
 
 $this->token_types = [
   /* this stuff is added manual untl gen php tag */
-#parameters bonuses
+  #parameters bonuses
   'param_o_8' => [
     'r' => 't',
     'param' => 'o',
@@ -90,8 +90,8 @@ $this->token_types = [
     'param' => 't',
     'value' => -20
   ],
-/* --- gen php begin cards_material --- */
-// #project cards||||||||||||
+  /* --- gen php begin cards_material --- */
+// #project cards
  'card_main_1' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -2880,16 +2880,7 @@ $this->token_types = [
   'deck' => 'Corporate',
   'text' => clienttranslate("Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards."),
 ],
- 'card_main_' => [  //
-  'location' => 'deck_main',
-  'create' => 'single',
-],
-// #corp cards||||||||||||
- 'card_corp_' => [  //
-  'location' => 'deck_main',
-  'create' => 'single',
-  'type' => 'card corp',
-],
+// #corp cards
  'card_corp_1' => [  //
   'location' => 'limbo',
   'create' => 2,
@@ -3880,59 +3871,6 @@ $this->token_types = [
   'type' => 'confturn',
   'name' => clienttranslate("Confirm"),
 ],
-// #error code
- 'err_0' => [  //
-  'type' => 0,
-  'name' => clienttranslate("Ok"),
-],
- 'err_1' => [  //
-  'type' => 1,
-  'name' => clienttranslate("Insufficient Funds"),
-],
- 'err_2' => [  //
-  'type' => 2,
-  'name' => clienttranslate("Prerequisites are not fullfilled"),
-],
- 'err_3' => [  //
-  'type' => 3,
-  'name' => clienttranslate("Mandator effect cannot be resolved"),
-],
- 'err_5' => [  //
-  'type' => 5,
-  'name' => clienttranslate("Hex is not reserved"),
-],
- 'err_6' => [  //
-  'type' => 6,
-  'name' => clienttranslate("Hex is reserved"),
-],
- 'err_7' => [  //
-  'type' => 7,
-  'name' => clienttranslate("Hex is occupied"),
-],
- 'err_8' => [  //
-  'type' => 8,
-  'name' => clienttranslate("City placement restrictions"),
-],
- 'err_9' => [  //
-  'type' => 9,
-  'name' => clienttranslate("Greenery placement restrictions"),
-],
- 'err_10' => [  //
-  'type' => 10,
-  'name' => clienttranslate("Max is reached"),
-],
- 'err_11' => [  //
-  'type' => 11,
-  'name' => clienttranslate("Not applicable"),
-],
- 'err_12' => [  //
-  'type' => 12,
-  'name' => clienttranslate("Already used"),
-],
- 'err_13' => [  //
-  'type' => 13,
-  'name' => clienttranslate("Placement restrictions"),
-],
 /* --- gen php end op_material --- */
 
 /* --- gen php begin tracker_material --- */
@@ -4909,7 +4847,62 @@ $this->token_types = [
   'y' => 9,
 ],
 /* --- gen php end map_material --- */
+
+
+        
+  // #error codes - MANUAL ENTRY
+  'err_0' => [  //
+    'code' => MA_OK,
+    'type' => 'err',
+    'name' => clienttranslate("Ok"),
+  ],
+  'err_1' => [  //
+    'code' => MA_ERR_COST,
+    'type' => 'err',
+    'name' => clienttranslate("Insufficient Funds"),
+  ],
+  'err_2' => [  //
+    'code' => MA_ERR_PREREQ, 'type' => 'err',
+    'name' => clienttranslate("Prerequisites are not fullfilled"),
+  ],
+  'err_3' => [  //
+    'code' => MA_ERR_MANDATORYEFFECT, 'type' => 'err',
+    'name' => clienttranslate("Mandator effect cannot be resolved"),
+  ],
+  'err_5' => [  //
+    'code' => 5, 'type' => 'err',
+    'name' => clienttranslate("Hex is not reserved"),
+  ],
+  'err_6' => [  //
+    'code' => 6, 'type' => 'err',
+    'name' => clienttranslate("Hex is reserved"),
+  ],
+  'err_7' => [  //
+    'code' => 7, 'type' => 'err',
+    'name' => clienttranslate("Hex is occupied"),
+  ],
+  'err_8' => [  //
+    'code' => 8, 'type' => 'err',
+    'name' => clienttranslate("City placement restrictions"),
+  ],
+  'err_9' => [  //
+    'code' => 9, 'type' => 'err',
+    'name' => clienttranslate("Greenery placement restrictions"),
+  ],
+  'err_10' => [  //
+    'code' => 10, 'type' => 'err',
+    'name' => clienttranslate("Max is reached"),
+  ],
+  'err_11' => [  //
+    'code' => 11, 'type' => 'err',
+    'name' => clienttranslate("Not applicable"),
+  ],
+  'err_12' => [  //
+    'code' => 12, 'type' => 'err',
+    'name' => clienttranslate("Already used"),
+  ],
+  'err_13' => [  //
+    'code' => 13, 'type' => 'err',
+    'name' => clienttranslate("Placement restrictions"),
+  ],
 ];
-
-
-
