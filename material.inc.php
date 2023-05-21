@@ -3880,6 +3880,59 @@ $this->token_types = [
   'type' => 'confturn',
   'name' => clienttranslate("Confirm"),
 ],
+// #error code
+ 'err_0' => [  //
+  'type' => 0,
+  'name' => clienttranslate("Ok"),
+],
+ 'err_1' => [  //
+  'type' => 1,
+  'name' => clienttranslate("Insufficient Funds"),
+],
+ 'err_2' => [  //
+  'type' => 2,
+  'name' => clienttranslate("Prerequisites are not fullfilled"),
+],
+ 'err_3' => [  //
+  'type' => 3,
+  'name' => clienttranslate("Mandator effect cannot be resolved"),
+],
+ 'err_5' => [  //
+  'type' => 5,
+  'name' => clienttranslate("Hex is not reserved"),
+],
+ 'err_6' => [  //
+  'type' => 6,
+  'name' => clienttranslate("Hex is reserved"),
+],
+ 'err_7' => [  //
+  'type' => 7,
+  'name' => clienttranslate("Hex is occupied"),
+],
+ 'err_8' => [  //
+  'type' => 8,
+  'name' => clienttranslate("City placement restrictions"),
+],
+ 'err_9' => [  //
+  'type' => 9,
+  'name' => clienttranslate("Greenery placement restrictions"),
+],
+ 'err_10' => [  //
+  'type' => 10,
+  'name' => clienttranslate("Max is reached"),
+],
+ 'err_11' => [  //
+  'type' => 11,
+  'name' => clienttranslate("Not applicable"),
+],
+ 'err_12' => [  //
+  'type' => 12,
+  'name' => clienttranslate("Already used"),
+],
+ 'err_13' => [  //
+  'type' => 13,
+  'name' => clienttranslate("Placement restrictions"),
+],
 /* --- gen php end op_material --- */
 
 /* --- gen php begin tracker_material --- */

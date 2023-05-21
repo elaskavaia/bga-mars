@@ -1727,9 +1727,9 @@ var GameXBody = /** @class */ (function (_super) {
                 tokenDisplayInfo.tooltip = fullText;
             }
         }
-        if (this.isLocationByType(tokenDisplayInfo.key)) {
-            tokenDisplayInfo.imageTypes += " infonode";
-        }
+        // if (this.isLocationByType(tokenDisplayInfo.key)) {
+        //   tokenDisplayInfo.imageTypes += " infonode";
+        // }
     };
     GameXBody.prototype.getPlaceRedirect = function (tokenInfo) {
         var result = _super.prototype.getPlaceRedirect.call(this, tokenInfo);

@@ -125,3 +125,24 @@ confirm|Confirm|${you} must confirm or undo
 confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
 
 
+#error code
+#set id=err_{type}
+#set prompt=
+#set class=
+#set undo=
+0|Ok
+1|Insufficient Funds
+2|Prerequisites are not fullfilled
+3|Mandator effect cannot be resolved
+5|Hex is not reserved
+6|Hex is reserved
+7|Hex is occupied
+8|City placement restrictions 
+9|Greenery placement restrictions
+10|Max is reached
+11|Not applicable
+12|Already used
+13|Placement restrictions
+
+
+

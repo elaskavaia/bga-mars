@@ -346,9 +346,9 @@ class GameXBody extends GameTokens {
 
     }
 
-    if (this.isLocationByType(tokenDisplayInfo.key)) {
-      tokenDisplayInfo.imageTypes += " infonode";
-    }
+    // if (this.isLocationByType(tokenDisplayInfo.key)) {
+    //   tokenDisplayInfo.imageTypes += " infonode";
+    // }
   }
 
 
