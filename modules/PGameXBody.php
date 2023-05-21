@@ -49,6 +49,7 @@ abstract class PGameXBody extends PGameMachine {
                     $this->multiplayerqueue($color, "keepcorp,10?buycard,prediscard");
                 }
 
+                // set proper TR and matching score
                 $tr_value = 20;
                 if ($this->isSolo()) {
                     $tr_value = 14;
@@ -959,7 +960,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->putInEffectPool($color, $bonus);
         }
         $this->effect_incTerraformingRank($color, $steps);
-        if ($this->isEndOfGameAchived()) {
+        if ($this->getTerraformingProgression() >= 100) {
             $this->notifyWithName('message_warning', clienttranslate("You have done it!!!"));
         }
         return true;
@@ -1018,7 +1019,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_production();
         if ($this->isEndOfGameAchived()) {
             $this->setGameStateValue('lastforest', 1);
-        
+
             $this->machine->queue("lastforest");
             $this->machine->queue("finalscoring");
             $this->machine->queue("confirm");
@@ -1055,7 +1056,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($players as $player) {
             $this->scoreCards($player["player_color"]);
         }
-        foreach ($players as $player) {
+        foreach ($players as $player_id => $player) {
             $score = $this->dbGetScore($player_id);
             $this->setStat($score, 'game_vp_total', $player_id);
             $this->notifyMessage(clienttranslate('${player_name} scores ${count} TOTAL VP'), ['count' => $score]);
@@ -1214,8 +1215,8 @@ abstract class PGameXBody extends PGameMachine {
     function filterPlayable($color, $keys) {
         return $this->createArgInfo($color, $keys, function ($color, $tokenid) {
             return [
-                'payop'=>$this->getPayment($color, $tokenid),
-                'q'=>$this->playability($color, $tokenid)
+                'payop' => $this->getPayment($color, $tokenid),
+                'q' => $this->playability($color, $tokenid)
             ];
         });
     }

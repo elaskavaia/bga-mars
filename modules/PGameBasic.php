@@ -492,13 +492,11 @@ abstract class PGameBasic extends Table {
     /**
      * Change activate player, also increasing turns_number stats and giving extra time
      */
-    function setNextActivePlayerCustom($next_player_id, $give_time = true) {
-        if ($this->getActivePlayerId() == $next_player_id) {
-            return;
+    function setNextActivePlayerCustom($next_player_id, $give_time = true, $inc_turn = true) {
+        if ($inc_turn) {
+            $this->incStat(1, "turns_number", $next_player_id);
+            $this->incStat(1, "turns_number");
         }
-
-        $this->incStat(1, "turns_number", $next_player_id);
-        $this->incStat(1, "turns_number");
         if ($give_time) {
             $this->giveExtraTime($next_player_id);
         }

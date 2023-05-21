@@ -62,7 +62,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 55|Kelp Farming|1|2pm,3pp,2p|||17|w>=6||1|Basic|Requires 6 ocean tiles. Increase your MC production 2 steps and your plant production 3 steps. Gain 2 plants.|
 56|Mine|1|ps|||4||Building|0|Corporate|Increase your steel production 1 step.|
 57|Vesta Shipyard|1|pu|||15||Space Jovian|1|Corporate|Increase your titanium production 1 step.|
-58|Beam From a Thorium Asteroid|1|3pe,3ph|||32||Space Jovian Energy|1|Basic|Requires a Jovian tag. Increase your heat production and energy production 3 steps each.|
+58|Beam From a Thorium Asteroid|1|3pe,3ph|||32|tagJovian|Space Jovian Energy|1|Basic|Requires a Jovian tag. Increase your heat production and energy production 3 steps each.|
 59|Mangrove|1|forest(ocean)|||12|t>=4|Plant|1|Basic|Requires +4°C or warmer. Place a Greenery tile ON AN AREA RESERVED FOR OCEAN and raise oxygen 1 step. Disregard normal placement restrictions for this.|
 60|Trees|1|3pp,p|||13|t>=-4|Plant|1|Basic|Requires -4°C or warmer. Increase your plant production 3 steps. Gain 1 plant.|
 61|Great Escarpment Consortium|1|nps_Any:ps|||6|ps>0||0|Corporate|Requires that you have steel production. Decrease any steel production 1 step and increase your own 1 step|

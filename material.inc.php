@@ -871,6 +871,7 @@ $this->token_types = [
   't' => 1,
   'r' => '3pe,3ph',
   'cost' => 32,
+  'pre' => 'tagJovian',
   'tags' => 'Space Jovian Energy',
   'vp' => 1,
   'deck' => 'Basic',
@@ -4055,8 +4056,8 @@ $this->token_types = [
   'create' => 1,
   'location' => 'params',
   'name' => clienttranslate("Generations"),
-  'state' => 0,
-  'min'=>0,
+  'state' => 1,
+  'min'=>1,
 ],
 // #tags
  'tagScience' => [  //
