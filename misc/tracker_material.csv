@@ -18,8 +18,8 @@ tracker_e|Energy|0
 tracker_ph|Heat Production|0|
 tracker_h|Heat|0
 #set location=player_tags_{COLOR}
-tracker_city|Number of cities on Mars
-tracker_forest|Number of greenery on Mars
+tracker_city|Number of Cities on Mars
+tracker_forest|Number of Greenery on Mars
 tracker_land|Number of owned land
 tracker_eru|Titanium Exchange Rate|3
 tracker_ers|Steel Exchange Rate|2
@@ -73,7 +73,7 @@ tracker_tagEvent|Count of played Events cards
 #hex tiles
 #set create=2
 #set location=limbo
-#set count=20
+#set count=32
 #set type=tile tile_2
 tile_2|City|0|'tt'=>2
 #set type=tile tile_1

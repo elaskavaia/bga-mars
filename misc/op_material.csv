@@ -9,7 +9,7 @@ stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
 fund|Fund an award|${you} must select an Award to fund
 w|Place Ocean Tile|${you} must select a location to place an ocean tile
-forest|Place Forest Tile|${you} must select a location to place a Greenery tile, adjecent if possible
+forest|Place Greenery Tile|${you} must select a location to place a Greenery tile, adjecent if possible
 city|Place City Tile|${you} must select a location to place a city, cannot place adjecent to other city
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
@@ -116,7 +116,6 @@ counter|Special Counter
 convh|Convert heat into temperature|${you} must confirm spent 8 heat to increase temperature by 1 step
 convp|Convert plants into Greenery|${you} must confirm spent plants to place a Greenery
 finalscoring|Final Scoring
-lastforest|Last Forest
 cardx|Play Card
 acard5|Search for Life
 flip|Flip
