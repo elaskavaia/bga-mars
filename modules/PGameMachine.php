@@ -125,7 +125,7 @@ abstract class PGameMachine extends PGameTokens {
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
             $info = $this->machine->info($operation_id);
-            $this->debugLog("- resolve op " . $info['type'], $args);
+            //$this->debugLog("- resolve op " . $info['type'], $args);
 
 
             $color = $info["owner"];
@@ -143,7 +143,7 @@ abstract class PGameMachine extends PGameTokens {
             // $this->debugConsole("",           $this->machine->gettablearr());
         }
         $this->machine->normalize();
-        $this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
+        //$this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
         if ($this->isInMultiplayerMasterState()) {
             $this->machineMultiplayerDistpatchPrivate($currentPlayer);
         } else {
@@ -229,7 +229,7 @@ abstract class PGameMachine extends PGameTokens {
             $operations = $this->getTopOperations();
     
             $isMulti = $this->hasMultiPlayerOperations($operations);
-            $this->debugLog("-DISPATCH $i: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
+            //$this->debugLog("-DISPATCH $i: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
 
             if ($isMulti) {
                 $this->gamestate->nextState("multiplayer");
@@ -255,7 +255,7 @@ abstract class PGameMachine extends PGameTokens {
     function machineMultiplayerDistpatch() {
         $operations = $this->getTopOperations();
         $isMulti = $this->hasMultiPlayerOperations($operations);
-        $this->debugLog("-MULTI: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
+        //$this->debugLog("-MULTI: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
         if (!$isMulti) {
             $this->gamestate->nextState("next");
             return;
@@ -274,7 +274,7 @@ abstract class PGameMachine extends PGameTokens {
         for ($i = 0; $i <  $n; $i++) {
             $operations = $this->getTopOperations($color);
             $isMulti = $this->hasMultiPlayerOperations($operations);
-            $this->debugLog("- SINGLE $i: machine top for $color: " . $this->machine->getlistexpr($operations));
+            //$this->debugLog("- SINGLE $i: machine top for $color: " . $this->machine->getlistexpr($operations));
             if (!$isMulti) {
                 $this->gamestate->unsetPrivateState($player_id);
                 $this->gamestate->setPlayerNonMultiactive($player_id, "next");

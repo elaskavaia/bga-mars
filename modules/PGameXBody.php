@@ -6,8 +6,9 @@ require_once "operations/ComplexOperation.php";
 require_once "operations/DelegatedOperation.php";
 
 abstract class PGameXBody extends PGameMachine {
-    protected $eventListners; // cache
-    protected $map;
+    protected $eventListners = null; // cache
+    protected $map = null;
+    protected $token_types_adjusted2 = false;
 
     // cache
     function __construct() {
@@ -21,10 +22,10 @@ abstract class PGameXBody extends PGameMachine {
         self::initGameStateLabels([
             "gameended" => 11,
             "lastforest" => 12,
-            //      ...
+            // game variants
             "var_begginers_corp" => 100,
-            //    "my_second_game_variant" => 101,
-            //      ...
+            "var_corporate_era" => 101,
+            "var_solo_flavour" => 102,
         ]);
     }
 
@@ -33,9 +34,11 @@ abstract class PGameXBody extends PGameMachine {
      */
     protected function initTables() {
         try {
+            $this->adjustedMaterial();
             $this->createTokens();
             $this->tokens->shuffle("deck_main");
             $this->tokens->shuffle("deck_corp");
+            $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
             $players = $this->loadPlayersBasicInfos();
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -46,7 +49,13 @@ abstract class PGameXBody extends PGameMachine {
                 } else {
                     $this->tokens->pickTokensForLocation(10, "deck_main", "draw_${color}");
                     $this->tokens->pickTokensForLocation((int)(11 / $this->getPlayersNumber()), "deck_corp", "draw_${color}");
-                    $this->multiplayerqueue($color, "keepcorp,10?buycard,prediscard");
+                    $this->multiplayerqueue($color, "keepcorp,10?buycard");
+                }
+
+                if ($this->getGameStateValue('var_corporate_era') != 1) {
+                    foreach ($production as $prodtype) {
+                        $this->effect_incProduction($color, $prodtype, 1);
+                    }
                 }
 
                 // set proper TR and matching score
@@ -58,6 +67,12 @@ abstract class PGameXBody extends PGameMachine {
                 $tr_traker = $this->getTrackerId($color, 'tr');
                 $this->tokens->setTokenState($tr_traker, $tr_value);
                 $this->dbSetScore($player_id, $tr_value, '');
+            }
+            if ($this->getGameStateValue('var_begginers_corp') != 1) {
+                foreach ($players as $player_id => $player) {
+                    $color = $player["player_color"];
+                    $this->queue($color, "prediscard");
+                }
             }
         } catch (Exception $e) {
             $this->error($e);
@@ -292,14 +307,21 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function adjustedMaterial() {
-        if ($this->token_types_adjusted) {
+        if ($this->token_types_adjusted2) {
             return $this->token_types;
         }
         parent::adjustedMaterial();
 
+        $corp_era = ($this->getGameStateValue('var_corporate_era') == 1);
+
         $expr_keys = ['r', 'e', 'a'];
         foreach ($this->token_types as $key => &$info) {
             if (startsWith($key, "card_")) {
+                $deck = array_get($info, 'deck');
+                if (!$corp_era && $deck == 'Corporate') {
+                    unset($this->token_types[$key]);
+                    continue;
+                }
                 $info['expr'] = [];
                 foreach ($expr_keys as $field) {
                     $r = array_get($info, $field);
@@ -320,6 +342,7 @@ abstract class PGameXBody extends PGameMachine {
                 }
             }
         }
+        $this->token_types_adjusted2 = true;
         return $this->token_types;
     }
 
@@ -583,12 +606,13 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($listeners as $lisinfo) {
             $outcome = $lisinfo['outcome'];
             $card = $lisinfo['card'];
+            $effect_owner = $lisinfo['owner'];
             if ($outcome == 'flip') {
                 // special rule - flip does not trigger on itself
                 if ($lisinfo['target'] == $card)
                     continue;
                 // otherwise its immediate resolves
-                $this->executeImmediately($owner, $outcome, 1, $card);
+                $this->executeImmediately($effect_owner, $outcome, 1, $card);
                 continue;
             }
             $data = $lisinfo['target'] . ":e:" . $card;
@@ -604,7 +628,7 @@ abstract class PGameXBody extends PGameMachine {
             }
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} triggered effect of ${token_name}'), $card, $owner);
             // these goes in the pull where player can pick the sequence
-            $this->putInEffectPool($owner, $outcome, $data);
+            $this->putInEffectPool($effect_owner, $outcome, $data);
         }
     }
 
@@ -800,7 +824,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $playeffect = array_get($rules, 'r', '');
         if ($playeffect) {
-            $this->debugLog("-come in play effect $playeffect");
+            //$this->debugLog("-come in play effect $playeffect");
             $this->putInEffectPool($color, $playeffect, $card_id);
         }
         $events = $this->getPlayCardEvents($card_id, 'play_');
@@ -853,7 +877,7 @@ abstract class PGameXBody extends PGameMachine {
         // hex bonus
         $bonus = $this->getRulesFor($target, 'r');
         if ($bonus) {
-            $this->debugLog("-placement bonus $bonus");
+            //$this->debugLog("-placement bonus $bonus");
             $this->putInEffectPool($color, $bonus, $object);
 
             if (strpos($bonus, 's') !== false) {
@@ -956,7 +980,7 @@ abstract class PGameXBody extends PGameMachine {
         $bounus_name = "param_${type}_${nvalue}";
         $bonus = $this->getRulesFor($bounus_name, 'r');
         if ($bonus) {
-            $this->debugLog("-param bonus $bonus");
+            //$this->debugLog("-param bonus $bonus");
             $this->putInEffectPool($color, $bonus);
         }
         $this->effect_incTerraformingRank($color, $steps);
@@ -1059,7 +1083,10 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($players as $player_id => $player) {
             $score = $this->dbGetScore($player_id);
             $this->setStat($score, 'game_vp_total', $player_id);
+            $mc = $this->getTrackerValue($player["player_color"], 'm');
+            $this->notifyMessage(clienttranslate('${player_name} has ${count} M€ left (for tiebreaker purposes)'), ['count' => $mc]);
             $this->notifyMessage(clienttranslate('${player_name} scores ${count} TOTAL VP'), ['count' => $score]);
+            $this->dbSetAuxScore($player_id, $mc);
         }
 
         $this->setGameStateValue('gameended', 1);
