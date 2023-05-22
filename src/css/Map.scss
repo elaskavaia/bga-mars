@@ -142,8 +142,13 @@
   background-image: url("img/tiles.png");
   background-size: 1000% 200%;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  left: 2%;
+  top: 0%;
+/*
   left: -4%;
   top: -1%;
+
+ */
   position: absolute;
 }
 
@@ -591,4 +596,12 @@
     background-image: url("img/icons.png");
     background-size: 1400% 200%;
   }
+}
+
+#map_hexes {
+  position: absolute;
+  width: 97.5%;
+  height: 97.5%;
+  top: 1.9%;
+  left: 1%;
 }

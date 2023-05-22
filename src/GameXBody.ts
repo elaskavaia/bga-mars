@@ -17,7 +17,6 @@ class GameXBody extends GameTokens {
       tracker_t: "temperature_map",
       tracker_o: "oxygen_map",
       tracker_w: "oceans_pile",
-      tracker_gen: "map_left",
     };
     this.custom_pay = undefined;
 
@@ -58,6 +57,8 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
+
+
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -70,6 +71,12 @@ class GameXBody extends GameTokens {
       // use this to generate some fake parts of card, remove this when use images
       if (displayInfo.mainType == "card") {
         let tagshtm = "";
+        const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+
+        ttdiv.innerHTML = ` 
+            <div class='token_title'>${displayInfo.name}</div>
+        `;
+
         if (tokenNode.id.startsWith("card_corp_")) {
           //Corp formatting
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
@@ -83,6 +90,10 @@ class GameXBody extends GameTokens {
                 <div class="card_initial">${card_initial}</div>
                 <div class="card_effect">${card_effect}</div>
           `;
+          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('INITIAL')+'</div>';
+          ttdiv.innerHTML+=`<div class="card_initial">${card_initial}</div>`;
+          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('EFFECT')+'</div>';
+          ttdiv.innerHTML+=`<div class="card_effect">${card_effect}</div>`;
 
         } else if (tokenNode.id.startsWith("card_stanproj"))  {
           //standard project formatting:
@@ -102,6 +113,7 @@ class GameXBody extends GameTokens {
              <div class='stanp_cost'>${displayInfo.cost!=0 ? displayInfo.cost : "X"}</div>
              <div class='standard_projects_title'>${displayInfo.name}</div>  
           `;
+          ttdiv.innerHTML+=`<div class='card_effect'>${displayInfo.text}</div>`;
         }
 
         else {
@@ -115,7 +127,7 @@ class GameXBody extends GameTokens {
           const parsedActions = this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
           let parsedPre = displayInfo.pre ? this.parsePrereqToHTML(displayInfo.expr.pre) :"";
 
-          //specigic card rendering
+          //specific card rendering
           if (displayInfo.num==2) {
             parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('pu')+'</div></div>';
           }
@@ -132,10 +144,6 @@ class GameXBody extends GameTokens {
           } else {
             vp='';
           }
-
-
-          //const vp = displayInfo.vp ? '<div class="card_vp">'+displayInfo.vp+'</div>' : "";
-
           const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
           decor.innerHTML = `
                 <div class="card_illustration cardnum_${displayInfo.num}"></div>
@@ -150,19 +158,26 @@ class GameXBody extends GameTokens {
                 <div class="card_number_binary">${cn_binary}</div>
                 ${vp}
           `;
+          ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
+          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
+          ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
+                            <div class='card_badges'>${tagshtm}</div></div>`
+          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('EFFECT')+'</div>';
+          ttdiv.innerHTML+=`<div class="card_effect">${displayInfo.text}</div>`;
+
           // <div class="card_action">${parsedActions}</div>
           //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
         }
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
-
         div.innerHTML = `
-
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div> 
         <div class='token_rules'>${displayInfo.r}</div>
         <div class='token_descr'>${displayInfo.text}</div>
         `;
         tokenNode.appendChild(div);
+        //card tooltip
+        tokenNode.appendChild(ttdiv);
 
         tokenNode.setAttribute("data-card-type", displayInfo.t);
       }
@@ -235,7 +250,6 @@ class GameXBody extends GameTokens {
       t: { classes: "token_img temperature_icon" },
       w: { classes: "tile tile_3" },
       o: { classes: "token_img oxygen_icon"},
-
       ":": { classes: "action_arrow" },
     };
 
@@ -271,7 +285,17 @@ class GameXBody extends GameTokens {
 
     return ret;
   }
-
+  setDomTokenState(tokenId: ElementOrId, newState: any) {
+    super.setDomTokenState(tokenId, newState);
+    var node = $(tokenId);
+    if (!node) return;
+    if (!node.id) return;
+    const trackerCopy = "alt_" + node.id;
+    const nodeCopy = $(trackerCopy);
+    if (nodeCopy) {
+      nodeCopy.setAttribute("data-state", newState);
+    }
+  }
   renderSpecificToken(tokenNode: HTMLElement) {
     /* It seems duplicates the other stuff which is already there, disabled for now
     const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
@@ -337,7 +361,6 @@ class GameXBody extends GameTokens {
         tokenDisplayInfo.tooltip = '<div class="tt_2cols ' + cardtype + '"><div class="tt_card_img">' + card_htm + '</div><div class="tt_card_txt">' + fullText + '</div></div>';
       } else {
         tokenDisplayInfo.tooltip = fullText;
-
       }
 
       if ($(prefix+tokenDisplayInfo.num))  {
@@ -345,41 +368,42 @@ class GameXBody extends GameTokens {
         tokenDisplayInfo.tooltip ='<div class="tt_2cols '+cardtype+'"><div class="tt_card_img">'+card_htm+'</div><div class="tt_card_txt">'+fullText+'</div></div>';
       } else {
         tokenDisplayInfo.tooltip =fullText;
-
       }
 
 
     }
 
-    // if (this.isLocationByType(tokenDisplayInfo.key)) {
-    //   tokenDisplayInfo.imageTypes += " infonode";
-    // }
+    if (this.isLocationByType(tokenDisplayInfo.key)) {
+      tokenDisplayInfo.imageTypes += " infonode";
+    }
   }
 
 
-getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
-  let result = super.getPlaceRedirect(tokenInfo);
-  if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
-    result.nop = true; // do not relocate or do anyting
-  } else if (tokenInfo.key.startsWith("award")) {
-    result.nop = true;
-  } else if (tokenInfo.key.startsWith("milestone")) {
-    result.nop = true;
-  } else if (this.custom_placement[tokenInfo.key]) {
-    result.location = this.custom_placement[tokenInfo.key];
-  } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
-    let t = this.getRulesFor(tokenInfo.key, "t");
-    if (this.getRulesFor(tokenInfo.key, "a")) {
-      result.location = tokenInfo.location + "_cards_2a";
-    } else result.location = tokenInfo.location + "_cards_" + t;
-  } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-    result.location = tokenInfo.location + "_cards_4";
+  getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
+    let result = super.getPlaceRedirect(tokenInfo);
+    if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
+      result.nop = true; // do not relocate or do anyting
+    } else if (tokenInfo.key.startsWith("award")) {
+      result.nop = true;
+    } else if (tokenInfo.key.startsWith("milestone")) {
+      result.nop = true;
+    } else if (this.custom_placement[tokenInfo.key]) {
+      result.location = this.custom_placement[tokenInfo.key];
+    } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+      if (this.isLayoutVariant(1)) {
+        result.location = tokenInfo.location+'_corp_effect';
+      }
+      //also set property to corp logo div
+      $(tokenInfo.location+'_corp_logo').dataset.corp=tokenInfo.key;
+    } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+      const t = this.getRulesFor(tokenInfo.key, "t");
+      result.location = tokenInfo.location + "_cards_" + t;
+    }
+    if (!result.location)
+      // if failed to find revert to server one
+      result.location = tokenInfo.location;
+    return result;
   }
-  if (!result.location)
-    // if failed to find revert to server one
-    result.location = tokenInfo.location;
-  return result;
-}
 
   isLayoutVariant(num: number) {
     return this.prefs[100].value == num;
@@ -452,12 +476,6 @@ getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
 
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-      if (opargs.void) {
-        this.addActionButton("button_u", _("No valid targets, must Undo"), () => {
-          this.ajaxcallwrapper("undo");
-        });
-        return;
-      }
       if (paramargs.length == 0) {
         if (count == from) {
           this.addActionButton("button_" + opId, _("Confirm"), () => {

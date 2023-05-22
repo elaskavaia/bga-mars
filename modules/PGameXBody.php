@@ -34,6 +34,7 @@ abstract class PGameXBody extends PGameMachine {
      */
     protected function initTables() {
         try {
+            $this->token_types_adjusted2 = null;// clear cache
             $this->adjustedMaterial();
             $this->createTokens();
             $this->tokens->shuffle("deck_main");
