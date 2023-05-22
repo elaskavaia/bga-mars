@@ -135,7 +135,7 @@
   font-family: "Prototype";
 
 }
-.player_tags .badge[data-state="0"],.tracker[data-state="0"] {
+.player_tags .badge[data-state="0"],.player_tags .tracker[data-state="0"] {
   opacity: 0.2;
 }
 .player_tags .badge[data-state="0"]::after,.player_tags .tracker[data-state="0"]::after {
