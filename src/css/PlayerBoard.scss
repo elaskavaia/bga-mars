@@ -2,6 +2,8 @@
   --pb_cellsize:3vw;
 }
 
+.mcompact {
+
 .player_area {
   border: 0.4vh solid var(--plcolor);
   position: relative;
@@ -55,6 +57,8 @@
   flex-direction: column;
 }
 
+}
+
 .playerboard_own{
   width: var(--pb_cellsize);
   height: calc(var(--pb_cellsize) *0.5);
@@ -77,6 +81,8 @@
   align-items: center;
   color:white;
 }
+
+.mcompact {
 
 .playerboard_header{
   width: 100%;
@@ -102,7 +108,7 @@
   .corp {
     order: 4;
   }
-
+}
 }
 
 .tableau>.counter {
@@ -230,6 +236,8 @@
     display: none;
   }
 }
+
+.mcompact {
 .cards_1, .cards_3 {
   display: flex;
   flex-direction: column;
@@ -261,7 +269,7 @@
   }
 
   .card:hover {
-    z_index:10;
+    z-index:10;
     transform: translateY(-5%);
     transition: all 100ms;
   }
@@ -299,7 +307,7 @@
     pointer-events: none;
   }
 }
-
+}
 .corp_logo  {
   width: calc(var(--card-width) * 1);
   height: calc(var(--card-width) * 0.294);
@@ -321,6 +329,8 @@
 .corp_logo[data-corp="card_corp_12"]{background-position: -400% -100%;}
 .corp_logo[data-corp="card_corp_13"]{background-position: -500% -100%;}
 
+
+.mcompact {
 .playerboard_header {
   --resourcesize:2vw;
 
@@ -388,4 +398,5 @@
     font-size:calc(var(--resourcesize) * 0.3);
     font-weight: normal;
   }
+}
 }
