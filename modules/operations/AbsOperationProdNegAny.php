@@ -27,7 +27,7 @@ class AbsOperationProdNegAny extends AbsOperation {
         if ($this->game->isSolo()) {
             return true;
         }
-        return parent::canResolveAutomatically();
+        return false;
     }
 
     function isVoid(): bool {

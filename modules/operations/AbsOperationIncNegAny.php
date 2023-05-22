@@ -51,7 +51,13 @@ class AbsOperationIncNegAny extends AbsOperation {
         $owner = $this->getCheckedArg('target');
         if ($owner == 'none') return $inc; // skipped, this is ok for resources
 
-        $this->game->effect_incCount($owner, $type, -$inc, ['ifpossible' => true]);
+        $value = $this->game->getTrackerValue($owner, $type);
+        $mod = $inc;
+        if ($inc > $value) {
+            $mod = $value;
+        }
+
+        $this->game->effect_incCount($owner, $type, -$mod);
         return $inc;
     }
 }
