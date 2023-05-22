@@ -264,7 +264,7 @@
     background-size: 1000% auto;
   }
 
-  .cards_2 .card {
+  .cards_2 .card,   .cards_2a .card {
     display: block;
   }
   .cards_1,
@@ -274,6 +274,12 @@
       margin-top: calc(var(--card-height) * -1 * 0.88);
     }
   }
+  .cards_2a {
+    .card:not(.corp) ~ .card {
+      margin-top: calc(var(--card-height) * -1 * 0.7);
+    }
+  }
+
 
   .location .card:hover {
     z-index: 10;

@@ -161,6 +161,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_oparg($type, $data = '') {
+        if (!$type) return [];
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
         return [
@@ -348,10 +349,9 @@ abstract class PGameXBody extends PGameMachine {
 
     function canAfford($color, $tokenid, $cost = null) {
         if ($cost !== null) {
-            $mc = $this->getTrackerValue($color, 'm');
-            return $mc >= $cost;
-        }
-        $payment_op = $this->getPayment($color, $tokenid);
+            $payment_op = "${cost}nm";
+        } else
+            $payment_op = $this->getPayment($color, $tokenid);
         if ($this->isVoidSingle($payment_op, $color, 1, $tokenid))
             return false;
         return true;
@@ -849,11 +849,15 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_placeTile($color, $object, $target) {
+        $this->systemAssertTrue("Invalid tile", $object);
+        $this->systemAssertTrue("Invalid target", $target);
+        $this->systemAssertTrue("Invalid tile, does not exists $object", $this->tokens->getTokenInfo($object));
         $player_id = $this->getPlayerIdByColor($color);
         $otype = $this->getRulesFor($object, 'tt');
         $no = $this->getPlayerNoById($player_id);
         if ($otype == MA_TILE_OCEAN)
             $no = -1;
+        $marker_info = $this->tokens->getTokenOnLocation($target);
         $this->dbSetTokenLocation(
             $object,
             $target,
@@ -862,8 +866,8 @@ abstract class PGameXBody extends PGameMachine {
             [],
             $player_id
         );
+
         if ($otype != MA_TILE_OCEAN) {
-            $marker_info = $this->tokens->getTokenOnLocation($object);
             if ($marker_info) $marker = $marker_info['key'];
             else  $marker = $this->createPlayerMarker($color);
             $this->dbSetTokenLocation($marker, $object, 0, '', [], $player_id);
@@ -896,6 +900,7 @@ abstract class PGameXBody extends PGameMachine {
             //$this->putInEffectPool($color, $bonus, $object);
             $this->executeImmediately($color, $bonus); // not much reason to put in the pool
         }
+
         return $object;
     }
 

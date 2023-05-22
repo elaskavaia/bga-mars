@@ -14,6 +14,7 @@ class Operation_forest extends AbsOperationTile {
             return 0;
         }
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        if (isset($info['reserved'])) return MA_ERR_RESERVED;
         $adj = $this->calculateOwnerAdjMap($map);
         if (count($adj) == 0 || array_key_exists($location, $adj)) {
             // no adjecent places or in the map

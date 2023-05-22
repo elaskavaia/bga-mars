@@ -11,7 +11,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 4|Cloud Seeding|1|npm,nph_Any,2pp|||11|w>=3||0|Basic|Requires 3 ocean tiles. Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps.|
 5|Search For Life|2||nm:acard5||3|o<=6|Science|(resCard>0)*3|Basic|Oxygen must be 6% or less. 3 VPs if you have one or more science resource here.; Action: Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here.|  'holds' => 'Science'
 6|Inventors' Guild|2||predraw,?buycard,prediscard||9||Science|0|Corporate|Action: Look at the top card and either buy it or discard it|
-7|Martian Rails|2||e:counter(all_city),m||13||Building|0|Basic|Action: Spend 1 energy to gain 1 MC for each city tile ON MARS.|
+7|Martian Rails|2||ne:counter(all_city),m||13||Building|0|Basic|Action: Spend 1 energy to gain 1 MC for each city tile ON MARS.|
 8|Capital|1|2npe,5pm,tile|||26|w>=4|Building City|adj_ocean|Basic|Requires 4 ocean tiles. Place [the capital city] tile. Decrease your energy production 2 steps and increase your MC production 5 steps. 1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE.|
 9|Asteroid|3|2u,3np_Any,t|||14||Space Event|0|Basic|Raise temperature 1 step and gain 2 titanium. Remove up to 3 plants from any player.|
 10|Comet|3|3np_Any,t,w|||21||Space Event|0|Basic|Raise temperature 1 step and place an ocean tile. Remove up to 3 plants from any player.|
@@ -19,13 +19,13 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 12|Water Import From Europa|2||12nmu:w||25||Space Jovian|tagJovian|Basic|1 VP for each Jovian tag you have.; Action: Pay 12 MC to place an ocean tile. TITANIUM MAY BE USED as if playing a space card.|
 13|Space Elevator|2|pu|ns:5m||27||Building Space|2|Corporate|Increase your titanium production 1 step.; Action: Spend 1 steel to gain 5 MC|
 14|Development Center|2||ne:draw||11||Science Building|0|Corporate|Action: Spend 1 energy to draw a card.|
-15|Equatorial Magnetizer|2||ne:tr||11||Building|0|Basic|Action: Decrease your energy production 1 step to increase your terraforming rating 1 step.|
+15|Equatorial Magnetizer|2||npe:tr||11||Building|0|Basic|Action: Decrease your energy production 1 step to increase your terraforming rating 1 step.|
 16|Domed Crater|1|npe,3pm,city,3p|||24|o<=7|Building City|1|Basic|Oxygen must be 7% or less. Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps.|
 17|Noctis City|1|npe,3pm,city('Noctis City')|||18||Building City|0|Basic|Decrease your energy production 1 step and increase your MC production 3 steps. Place a tile ON THE RESERVED AREA, disregarding normal placement restrictions.|
 18|Methane From Titan|1|2pp,2ph|||28|o>=2|Space Jovian|2|Basic|Requires 2% oxygen. Increase your heat production 2 steps and your plant production 2 steps.|
 19|Imported Hydrogen|3|3p/3ores(Microbe)/2ores(Animal);w|||16||Space Earth Event|0|Basic|Gain 3 plants, or add 3 microbes or 2 animals to ANOTHER card. Place an ocean tile.|
 20|Research Outpost|2|city(adj_no)||onPay_card:m|18||Science Building City|0|Basic|Place a city tile NEXT TO NO OTHER TILE.; Effect: When you play a card, you pay 1 MC less for it.|
-21|Phobos Space Haven|1|pu|||25||Space City|3|Basic|Increase your titanium production 1 step and place a city tile ON THE RESERVED AREA.|
+21|Phobos Space Haven|1|pu,city('Phobos Space Haven')|||25||Space City|3|Basic|Increase your titanium production 1 step and place a city tile ON THE RESERVED AREA.|
 22|Black Polar Dust|1|2npm,3ph,w|||15|||0|Basic|Place an ocean tile. Decrease your MC production 2 steps and increase your heat production 3 steps.|
 23|Arctic Algae|2|p||place_ocean:2p:this:any|12|t<=-12|Plant|0|Basic|It must be -12°C or colder to play. Gain 1 plant.; Effect: When anyone places an ocean tile, gain 2 plants.|
 24|Predators|2||nores(Animal):res||14|o>=11|Animal|resCard|Basic|Requires 11% oxygen. 1 VP per animal on this card.; Action: Remove 1 animal from any card and add it to this card.|  'holds' => 'Animal'
@@ -48,7 +48,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 41|Food Factory|1|4pm,1npp|||12||Building|1|Basic|Decrease your plant production 1 step and increase your MC production 4 steps.|
 42|Archaebacteria|1|pp|||6|t<=-18|Microbe|0|Basic|It must be -18°C or colder. Increase your plant production 1 step.|
 43|Carbonate Processing|1|1npe,3ph|||6||Building|0|Basic|Decrease your energy production 1 step and increase your heat production 3 steps.|
-44|Natural Preserve|1|pm|||9|o<=4|Science Building|1|Basic|Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. Increase your MC production 1 step.|
+44|Natural Preserve|1|pm,tile(adj_no)|||9|o<=4|Science Building|1|Basic|Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. Increase your MC production 1 step.|
 45|Nuclear Power|1|2npm,3pe|||10||Building Energy|0|Basic|Decrease your MC production 2 steps and increase your energy production 3 steps.|
 46|Lightning Harvest|1|pm,pe|||8|tagScience>=3|Energy|1|Corporate|Requires 3 science tags. Increase your energy production and your MC production 1 step each.|
 47|Algae|1|2pp,p|||10|w>=5|Plant|0|Basic|Requires 5 ocean tiles. Gain 1 plant and increase your plant production 2 steps.|
@@ -195,7 +195,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 188|Flooding|3|w|||7||Event|-1|Basic|Place an ocean tile. IF THERE ARE TILES ADJACENT TO THIS OCEAN TILE, YOU MAY REMOVE 4 MC FROM THE OWNER OF ONE OF THOSE TILES.|
 189|Energy Saving|1|counter(all_city)pe|||15||Energy|0|Basic|Increase your energy production 1 step for each city tile in play.|
 190|Local Heat Trapping|3|5nh:(4p/2ores(Animal))|||1||Event|0|Basic|Spend 5 heat to either gain 4 plants, or to add 2 animals to ANOTHER card.|
-191|Permafrost extraction|3||||8|t>=-8|Event|0|Basic|Requires -8°C or warmer. Place 1 ocean tile.|
+191|Permafrost extraction|3|w|||8|t>=-8|Event|0|Basic|Requires -8°C or warmer. Place 1 ocean tile.|
 192|Invention Contest|3|3predraw,keep,prediscard|||2||Science Event|0|Corporate|Look at the top 3 cards from the deck. Take 1 of them into hand and discard the other 2|
 193|Plantation|1|forest|||15|tagScience>=2|Plant|0|Basic|Requires 2 science tags. Place a greenery tile and raise oxygen 1 step.|
 194|Power Infrastructure|2||counter(e,0),(ne:m)||4||Building Energy|0|Corporate|Action: Spend any amount of energy to gain that amount of MC.|

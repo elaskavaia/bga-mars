@@ -9,6 +9,7 @@ class Operation_w extends AbsOperationTile {
         $reservename = $this->getReservedArea();
         if ($reservename == 'notocean') {
             if (isset($info['ocean'])) return MA_ERR_RESERVED;
+            if (isset($info['reserved'])) return MA_ERR_RESERVED;
             return 0;
         }
         if (!isset($info['ocean'])) return MA_ERR_NOTRESERVED;

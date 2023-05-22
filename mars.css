@@ -4167,13 +4167,16 @@
 .mfull .card {
   background-size: 1000% auto;
 }
-.mfull .cards_2 .card {
+.mfull .cards_2 .card, .mfull .cards_2a .card {
   display: block;
 }
 .mfull .cards_1 .card ~ .card,
 .mfull .cards_3 .card ~ .card,
 .mfull .cards_2 .card ~ .card {
   margin-top: calc(var(--card-height) * -1 * 0.88);
+}
+.mfull .cards_2a .card:not(.corp) ~ .card {
+  margin-top: calc(var(--card-height) * -1 * 0.7);
 }
 .mfull .location .card:hover {
   z-index: 10;

@@ -92,6 +92,7 @@ abstract class AbsOperationTile extends AbsOperation {
     function effect_placeTile() {
         $target = $this->getCheckedArg('target');
         $object = $this->getStateArg('object');
+        $this->game->systemAssertTrue("Invalid target",$target);
         $this->game->effect_placeTile($this->color, $object, $target);
         return $object;
     }

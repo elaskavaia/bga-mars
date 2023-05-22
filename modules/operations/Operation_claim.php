@@ -6,11 +6,10 @@ class Operation_claim extends AbsOperation {
     function effect(string $color, int $inc): int {
         $marker = $this->game->createPlayerMarker($color);
         $milestone = $this->getCheckedArg('target');
-        $cost = $this->game->getRulesFor($milestone, 'cost');
-        $this->game->effect_incCount($color, 'm', - $cost);
         $no = $this->getPlayerNo();
         $this->game->tokens->setTokenState($milestone, $no);
         $this->game->dbSetTokenLocation($marker, $milestone, 1, clienttranslate('${player_name} claims milestone ${place_name}'), [],  $this->game->getPlayerIdByColor($color));
+        $this->game->push($color, $this->game->getPayment($color, $milestone), $milestone);
         return 1;
     }
 
