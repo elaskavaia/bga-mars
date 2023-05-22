@@ -27,21 +27,33 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info = [];
         $count = $this->getCount();
         $mcount = $this->game->getTrackerValue($this->color, 'm');
+        $cost = $this->getCost();
         foreach ($this->getTypes() as $type) {
             $typecount = $this->game->getTrackerValue($this->color, $type);
+
             $er = $this->getExchangeRate($type);
+
             $maxres = (int)floor($count / $er);
-            $maxres = min($maxres, $typecount);
-            $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $maxres * $er,  $maxres);
+            $propres = min($maxres, $typecount);
+            if ($type == 'm') {
+                $this->addProposal($info, $type, $mcount, $typecount, $er, $propres,  0);
+                continue;
+            }
+
+         
+            if ($maxres == 0 && $typecount > 0 && $cost > 0 && $er > 1) {
+                $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1); // overpay
+            } else {
+                $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $propres * $er,  $propres);
+            }
+
+            if ($mcount < $cost && $mcount > 0) {
+                $this->addProposal($info, $type, $mcount, $typecount, $er, $mcount, (int)ceil(($cost - $mcount)/ $er));
+            }
             // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
             // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
             // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
         }
-
-        $this->addProposal($info, $type, $mcount, $typecount, $er, $count, 0);
-        $cost = $this->getCost();
-
-
 
         $info['payment'] = [
             'q' => 0,
@@ -74,6 +86,7 @@ class AbsOperationPayWithRes extends AbsOperation {
         $q = 0;
         if ($mc_try > $mc_count || $type_try > $type_count) {
             $q = MA_ERR_COST;
+            return;
         }
 
         $proposal = '';
@@ -84,22 +97,21 @@ class AbsOperationPayWithRes extends AbsOperation {
         $info["$proposal"] = [
             'q' => $q,
             'count' => min($tryc, $this->getCount()),
-            'resources' => [
-                'm' => $mc_try,
-                $type => $type_try
-            ],
+            'resources' => ['m' => $mc_try ],
             'sign' => $tryc <=> $this->getCount()
         ];
+        if ($type!='m') $info["$proposal"]['resources'][$type]=$type_try;
     }
 
     function canResolveAutomatically() {
         $possible = $this->getStateArg('target');
-        if (count($possible) <= 2) return true;
+        if (count($possible) == 1) return false; // this is only Custom option
+        if (count($possible) == 2) return true;
         return false;
     }
 
     function effect(string $owner, int $inc): int {
-        if ($inc<=0 || $this->getCost()<=0) return $inc;
+        if ($inc <= 0 || $this->getCost() <= 0) return $inc;
         $possible = $this->getStateArg('target');
         if (count($possible) <= 2) {
             $value = array_shift($possible);

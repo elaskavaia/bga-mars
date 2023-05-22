@@ -18,8 +18,8 @@ tracker_e|Energy|0
 tracker_ph|Heat Production|0|
 tracker_h|Heat|0
 #set location=player_tags_{COLOR}
-tracker_city|Number of cities on Mars
-tracker_forest|Number of greenery on Mars
+tracker_city|Number of Cities on Mars
+tracker_forest|Number of Greenery on Mars
 tracker_land|Number of owned land
 tracker_eru|Titanium Exchange Rate|3
 tracker_ers|Steel Exchange Rate|2
@@ -32,9 +32,7 @@ tracker_pdelta|Global Parameters Delta|0
 tracker_o|Oxigen Level|0|'max'=>14
 tracker_t|Temperature|-30|'max'=>8,'min'=>-30
 tracker_w|Oceans|0|'max'=>9
-tracker_gen|Generations|0|'min'=>0
-
-
+tracker_gen|Generations|1|'min'=>1
 
 
 #tags
@@ -75,7 +73,7 @@ tracker_tagEvent|Count of played Events cards
 #hex tiles
 #set create=2
 #set location=limbo
-#set count=20
+#set count=32
 #set type=tile tile_2
 tile_2|City|0|'tt'=>2
 #set type=tile tile_1
@@ -84,12 +82,14 @@ tile_1|Forest|0|'tt'=>1
 #set type=tile tile_3
 tile_3|Ocean|0|'tt'=>3
 #set count=1
+#set create=1
 #set type=tile tile_2
 tile_8|Capital|0|'tt'=>2
 #set type=tile tile_5
 tile_64|Mining|0|'tt'=>5
 tile_67|Mining|0|'tt'=>5
 #set type=tile tile_4
+tile_44|Natural Preserve|0|'tt'=>4
 tile_85|Commercial District|0|'tt'=>4
 tile_97|Nuclear Zone|0|'tt'=>4
 tile_123|Industrial Center|0|'tt'=>4

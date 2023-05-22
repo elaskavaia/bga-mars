@@ -22,7 +22,7 @@
  *
  */
 
- if (!defined("MA_GAME")) {
+if (!defined("MA_GAME")) {
   // guard since this included multiple times
   define("MA_GAME", 1);
   define("MA_GAME_DISPATCH_MAX", 100);
@@ -69,7 +69,7 @@
 
 $this->token_types = [
   /* this stuff is added manual untl gen php tag */
-#parameters bonuses
+  #parameters bonuses
   'param_o_8' => [
     'r' => 't',
     'param' => 'o',
@@ -90,8 +90,8 @@ $this->token_types = [
     'param' => 't',
     'value' => -20
   ],
-/* --- gen php begin cards_material --- */
-// #project cards||||||||||||
+  /* --- gen php begin cards_material --- */
+// #project cards
  'card_main_1' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -179,7 +179,7 @@ $this->token_types = [
   'num' => 7,
   'name' => clienttranslate("Martian Rails"),
   't' => 2,
-  'a' => 'e:counter(all_city),m',
+  'a' => 'ne:counter(all_city),m',
   'cost' => 13,
   'tags' => 'Building',
   'vp' => 0,
@@ -285,7 +285,7 @@ $this->token_types = [
   'num' => 15,
   'name' => clienttranslate("Equatorial Magnetizer"),
   't' => 2,
-  'a' => 'ne:tr',
+  'a' => 'npe:tr',
   'cost' => 11,
   'tags' => 'Building',
   'vp' => 0,
@@ -366,7 +366,7 @@ $this->token_types = [
   'num' => 21,
   'name' => clienttranslate("Phobos Space Haven"),
   't' => 1,
-  'r' => 'pu',
+  'r' => "pu,city('Phobos Space Haven')",
   'cost' => 25,
   'tags' => 'Space City',
   'vp' => 3,
@@ -677,7 +677,7 @@ $this->token_types = [
   'num' => 44,
   'name' => clienttranslate("Natural Preserve"),
   't' => 1,
-  'r' => 'pm',
+  'r' => 'pm,tile(adj_no)',
   'cost' => 9,
   'pre' => 'o<=4',
   'tags' => 'Science Building',
@@ -871,6 +871,7 @@ $this->token_types = [
   't' => 1,
   'r' => '3pe,3ph',
   'cost' => 32,
+  'pre' => 'tagJovian',
   'tags' => 'Space Jovian Energy',
   'vp' => 1,
   'deck' => 'Basic',
@@ -2647,6 +2648,7 @@ $this->token_types = [
   'num' => 191,
   'name' => clienttranslate("Permafrost extraction"),
   't' => 3,
+  'r' => 'w',
   'cost' => 8,
   'pre' => 't>=-8',
   'tags' => 'Event',
@@ -2880,16 +2882,7 @@ $this->token_types = [
   'deck' => 'Corporate',
   'text' => clienttranslate("Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards."),
 ],
- 'card_main_' => [  //
-  'location' => 'deck_main',
-  'create' => 'single',
-],
-// #corp cards||||||||||||
- 'card_corp_' => [  //
-  'location' => 'deck_main',
-  'create' => 'single',
-  'type' => 'card corp',
-],
+// #corp cards
  'card_corp_1' => [  //
   'location' => 'limbo',
   'create' => 2,
@@ -2903,7 +2896,7 @@ $this->token_types = [
   'vp' => 0,
   'text' => clienttranslate("You start with 42 MC. You keep 10 starting cards"),
 ],
-// #num|name|t|r|a|e|cost|pre|tags|vp||text|php
+// #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
  'card_corp_2' => [  //
   'location' => 'deck_corp',
   'create' => 'single',
@@ -2916,6 +2909,7 @@ $this->token_types = [
   'e' => "play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that",
   'cost' => 0,
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC."),
 ],
  'card_corp_3' => [  //
@@ -2930,6 +2924,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Plant',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery."),
 ],
  'card_corp_4' => [  //
@@ -2944,6 +2939,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Space',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat."),
 ],
  'card_corp_5' => [  //
@@ -2959,6 +2955,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Building',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC."),
 ],
  'card_corp_6' => [  //
@@ -2973,6 +2970,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Science',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("As your first action in the game, draw 3 cards. Start with 45 MC.; Effect: Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case."),
   'a1'=>'3draw',
 ],
@@ -2989,6 +2987,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Building',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("The earliest private enterprises on Mars focused on mining and exporting minerals off the surface. As the mega-corporations arrive to terraform, the miners unite in the Guild to defend their interests. With their expertise and knowledg of the planet they will be a worthy contender in the race.; Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step."),
 ],
  'card_corp_8' => [  //
@@ -3004,6 +3003,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Jovian',
   'vp' => 0,
+  'deck' => 'Corporate',
   'text' => clienttranslate("You start with 1 titanium production and 42 MC.; Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step."),
 ],
  'card_corp_9' => [  //
@@ -3018,6 +3018,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Space',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 10 titanium and 23 MC; Effect: Your titanium resources are each worth 1 MC extra."),
 ],
  'card_corp_10' => [  //
@@ -3033,6 +3034,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Earth',
   'vp' => 0,
+  'deck' => 'Corporate',
   'text' => clienttranslate("You start with 60 MC.; Effect: When playing an Earth card, you pay 3 MC less for it."),
 ],
  'card_corp_11' => [  //
@@ -3048,6 +3050,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Building',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 40 MC. As your first action in the game, place a city tile.; Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC."),
   'a1'=>'city',
 ],
@@ -3063,6 +3066,7 @@ $this->token_types = [
   'cost' => 0,
   'tags' => 'Energy',
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 1 energy production and 48 MC.; Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it."),
 ],
 /* --- gen php end cards_material --- */
@@ -3362,7 +3366,7 @@ $this->token_types = [
   'prompt' => '${you} must select a location to place a Greenery tile, adjecent if possible',
   'params' => 'target',
   'type' => 'forest',
-  'name' => clienttranslate("Place Forest Tile"),
+  'name' => clienttranslate("Place Greenery Tile"),
 ],
  'op_city' => [  //
   'undo' => 'true',
@@ -3805,16 +3809,6 @@ $this->token_types = [
   'type' => 't',
   'name' => clienttranslate("Increase Temperature"),
 ],
- 'op_turn' => [  //
-  'undo' => 'true',
-  'type' => 'turn',
-  'name' => clienttranslate("Take a turn"),
-],
- 'op_turn2' => [  //
-  'undo' => 'true',
-  'type' => 'turn2',
-  'name' => clienttranslate("Take a second action"),
-],
  'op_tr' => [  //
   'undo' => 'true',
   'type' => 'tr',
@@ -3838,18 +3832,14 @@ $this->token_types = [
 ],
  'op_convp' => [  //
   'undo' => 'true',
+  'prompt' => '${you} must confirm spent plants to place a Greenery',
   'type' => 'convp',
-  'name' => clienttranslate("Convert plants into greenery"),
+  'name' => clienttranslate("Convert plants into Greenery"),
 ],
  'op_finalscoring' => [  //
   'undo' => 'true',
   'type' => 'finalscoring',
   'name' => clienttranslate("Final Scoring"),
-],
- 'op_lastforest' => [  //
-  'undo' => 'true',
-  'type' => 'lastforest',
-  'name' => clienttranslate("Last Forest"),
 ],
  'op_cardx' => [  //
   'undo' => 'true',
@@ -3866,6 +3856,18 @@ $this->token_types = [
   'type' => 'flip',
   'name' => clienttranslate("Flip"),
 ],
+ 'op_turn' => [  //
+  'undo' => 'true',
+  'class' => 'Operation_turn',
+  'type' => 'turn',
+  'name' => clienttranslate("Take a turn"),
+],
+ 'op_turn2' => [  //
+  'undo' => 'true',
+  'class' => 'Operation_turn',
+  'type' => 'turn2',
+  'name' => clienttranslate("Take a second action"),
+],
  'op_confirm' => [  //
   'undo' => 'true',
   'class' => 'Operation_confirm',
@@ -3879,59 +3881,6 @@ $this->token_types = [
   'prompt' => '${you} must confirm end of turn or undo (this undoes both actions if able)',
   'type' => 'confturn',
   'name' => clienttranslate("Confirm"),
-],
-// #error code
- 'err_0' => [  //
-  'type' => 0,
-  'name' => clienttranslate("Ok"),
-],
- 'err_1' => [  //
-  'type' => 1,
-  'name' => clienttranslate("Insufficient Funds"),
-],
- 'err_2' => [  //
-  'type' => 2,
-  'name' => clienttranslate("Prerequisites are not fullfilled"),
-],
- 'err_3' => [  //
-  'type' => 3,
-  'name' => clienttranslate("Mandator effect cannot be resolved"),
-],
- 'err_5' => [  //
-  'type' => 5,
-  'name' => clienttranslate("Hex is not reserved"),
-],
- 'err_6' => [  //
-  'type' => 6,
-  'name' => clienttranslate("Hex is reserved"),
-],
- 'err_7' => [  //
-  'type' => 7,
-  'name' => clienttranslate("Hex is occupied"),
-],
- 'err_8' => [  //
-  'type' => 8,
-  'name' => clienttranslate("City placement restrictions"),
-],
- 'err_9' => [  //
-  'type' => 9,
-  'name' => clienttranslate("Greenery placement restrictions"),
-],
- 'err_10' => [  //
-  'type' => 10,
-  'name' => clienttranslate("Max is reached"),
-],
- 'err_11' => [  //
-  'type' => 11,
-  'name' => clienttranslate("Not applicable"),
-],
- 'err_12' => [  //
-  'type' => 12,
-  'name' => clienttranslate("Already used"),
-],
- 'err_13' => [  //
-  'type' => 13,
-  'name' => clienttranslate("Placement restrictions"),
 ],
 /* --- gen php end op_material --- */
 
@@ -4040,13 +3989,13 @@ $this->token_types = [
   'type' => 'tracker',
   'create' => 4,
   'location' => 'player_tags_{COLOR}',
-  'name' => clienttranslate("Number of cities on Mars"),
+  'name' => clienttranslate("Number of Cities on Mars"),
 ],
  'tracker_forest' => [  //
   'type' => 'tracker',
   'create' => 4,
   'location' => 'player_tags_{COLOR}',
-  'name' => clienttranslate("Number of greenery on Mars"),
+  'name' => clienttranslate("Number of Greenery on Mars"),
 ],
  'tracker_land' => [  //
   'type' => 'tracker',
@@ -4105,8 +4054,8 @@ $this->token_types = [
   'create' => 1,
   'location' => 'params',
   'name' => clienttranslate("Generations"),
-  'state' => 0,
-  'min'=>0,
+  'state' => 1,
+  'min'=>1,
 ],
 // #tags
  'tagScience' => [  //
@@ -4260,7 +4209,7 @@ $this->token_types = [
   'type' => 'tile tile_2',
   'create' => 2,
   'location' => 'limbo',
-  'count' => 20,
+  'count' => 32,
   'name' => clienttranslate("City"),
   'state' => 0,
   'tt'=>2,
@@ -4269,7 +4218,7 @@ $this->token_types = [
   'type' => 'tile tile_1',
   'create' => 2,
   'location' => 'limbo',
-  'count' => 20,
+  'count' => 32,
   'name' => clienttranslate("Forest"),
   'state' => 0,
   'tt'=>1,
@@ -4285,7 +4234,7 @@ $this->token_types = [
 ],
  'tile_8' => [  //
   'type' => 'tile tile_2',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Capital"),
@@ -4294,7 +4243,7 @@ $this->token_types = [
 ],
  'tile_64' => [  //
   'type' => 'tile tile_5',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Mining"),
@@ -4303,16 +4252,25 @@ $this->token_types = [
 ],
  'tile_67' => [  //
   'type' => 'tile tile_5',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Mining"),
   'state' => 0,
   'tt'=>5,
 ],
+ 'tile_44' => [  //
+  'type' => 'tile tile_4',
+  'create' => 1,
+  'location' => 'limbo',
+  'count' => 1,
+  'name' => clienttranslate("Natural Preserve"),
+  'state' => 0,
+  'tt'=>4,
+],
  'tile_85' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Commercial District"),
@@ -4321,7 +4279,7 @@ $this->token_types = [
 ],
  'tile_97' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Nuclear Zone"),
@@ -4330,7 +4288,7 @@ $this->token_types = [
 ],
  'tile_123' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Industrial Center"),
@@ -4339,7 +4297,7 @@ $this->token_types = [
 ],
  'tile_128' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Ecological Zone"),
@@ -4348,7 +4306,7 @@ $this->token_types = [
 ],
  'tile_140' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Lava Flows"),
@@ -4357,7 +4315,7 @@ $this->token_types = [
 ],
  'tile_142' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Mohole Area"),
@@ -4366,7 +4324,7 @@ $this->token_types = [
 ],
  'tile_199' => [  //
   'type' => 'tile tile_4',
-  'create' => 2,
+  'create' => 1,
   'location' => 'limbo',
   'count' => 1,
   'name' => clienttranslate("Restricted Area"),
@@ -4850,10 +4808,11 @@ $this->token_types = [
 ],
  'hex_5_8' => [  //
   'name' => clienttranslate("Hex at (5,8)"),
-  'title' => ' at (5,8) ',
+  'title' => ' at (5,8) draw',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 8,
+  'r' => 'draw',
 ],
  'hex_6_8' => [  //
   'name' => clienttranslate("Hex at (6,8)"),
@@ -4909,7 +4868,62 @@ $this->token_types = [
   'y' => 9,
 ],
 /* --- gen php end map_material --- */
+
+
+        
+  // #error codes - MANUAL ENTRY
+  'err_0' => [  //
+    'code' => MA_OK,
+    'type' => 'err',
+    'name' => clienttranslate("Ok"),
+  ],
+  'err_1' => [  //
+    'code' => MA_ERR_COST,
+    'type' => 'err',
+    'name' => clienttranslate("Insufficient Funds"),
+  ],
+  'err_2' => [  //
+    'code' => MA_ERR_PREREQ, 'type' => 'err',
+    'name' => clienttranslate("Prerequisites are not fullfilled"),
+  ],
+  'err_3' => [  //
+    'code' => MA_ERR_MANDATORYEFFECT, 'type' => 'err',
+    'name' => clienttranslate("Mandator effect cannot be resolved"),
+  ],
+  'err_5' => [  //
+    'code' => 5, 'type' => 'err',
+    'name' => clienttranslate("Hex is not reserved"),
+  ],
+  'err_6' => [  //
+    'code' => 6, 'type' => 'err',
+    'name' => clienttranslate("Hex is reserved"),
+  ],
+  'err_7' => [  //
+    'code' => 7, 'type' => 'err',
+    'name' => clienttranslate("Hex is occupied"),
+  ],
+  'err_8' => [  //
+    'code' => 8, 'type' => 'err',
+    'name' => clienttranslate("City placement restrictions"),
+  ],
+  'err_9' => [  //
+    'code' => 9, 'type' => 'err',
+    'name' => clienttranslate("Greenery placement restrictions"),
+  ],
+  'err_10' => [  //
+    'code' => 10, 'type' => 'err',
+    'name' => clienttranslate("Max is reached"),
+  ],
+  'err_11' => [  //
+    'code' => 11, 'type' => 'err',
+    'name' => clienttranslate("Not applicable"),
+  ],
+  'err_12' => [  //
+    'code' => 12, 'type' => 'err',
+    'name' => clienttranslate("Already used"),
+  ],
+  'err_13' => [  //
+    'code' => 13, 'type' => 'err',
+    'name' => clienttranslate("Placement restrictions"),
+  ],
 ];
-
-
-

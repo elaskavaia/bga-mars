@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 
 class Operation_lastforest extends AbsOperation {
-    function effect(string $owner, int $inc): int  {
-        // TODO can they decline?
+    function isVoid(): bool {
+        return false;
+    }
+
+    function canResolveAutomatically() {
+        return true;
+    }
+    function effect(string $ignore, int $inc): int {
         $players = $this->game->getPlayersInOrder($this->game->getCurrentStartingPlayer());
-        foreach ($players as $player) {
-            $forestop = $this->game->machine->createOperationSimple('convp', $player['player_color']);
-            if ($this->game->isVoid($forestop)) continue;
-            $this->game->machine->interrupt();
-            $this->game->machine->insertOp(1, $forestop);
-            $this->game->machine->put('lastforest');
+        $this->game->machine->interrupt();
+        foreach ($players as $player_id => $player) {
+            $optype = 'convp';
+            $color = $player['player_color'];
+            $forestop = $this->game->getOperationInstanceFromType($optype, $color);
+            if ($forestop->isVoid()) {
+                continue;
+            }
+            $this->game->machine->put("convp/nolastforest", 1, 1, $color, MACHINE_OP_SEQ);
+            $this->game->machine->put("lastforest", 1, 1, $color, MACHINE_OP_SEQ);
         }
 
         return 1;

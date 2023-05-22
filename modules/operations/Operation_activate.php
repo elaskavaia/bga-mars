@@ -21,7 +21,7 @@ class Operation_activate extends AbsOperation {
             if (!$r) return MA_ERR_NOTAPPLICABLE;
             $info = $map[$tokenId];
             if ($info['state'] == 3) return MA_ERR_ALREADYUSED;
-            if ($this->game->isVoidSingle($r, $color,1,$tokenId)) return MA_ERR_MANDATORYEFFECT;
+            if ($this->game->isVoidSingle($r, $color, 1, "$tokenId:a")) return MA_ERR_MANDATORYEFFECT;
             return 0;
         });
     }

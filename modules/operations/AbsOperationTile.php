@@ -12,7 +12,7 @@ abstract class AbsOperationTile extends AbsOperation {
         return $this->game->createArgInfo($color, $keys, function ($color, $hex) use ($map) {
             $info = $map[$hex];
             if (array_key_exists('tile', $info)) return MA_ERR_OCCUPIED;
-            $claimer = array_get($info,'claimed');
+            $claimer = array_get($info, 'claimed');
             if ($claimer && $claimer !== $color) {
                 return MA_ERR_RESERVED;
             }
@@ -32,8 +32,14 @@ abstract class AbsOperationTile extends AbsOperation {
     protected function getTileId() {
         $type = $this->getTileType();
         $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
-        if (!$tile) return null;
-        //throw new BgaSystemException("Cannot find tile of type $type");
+        if (!$tile) {
+            // XXX can be removed later
+            $count = count($this->game->tokens->getTokensOfTypeInLocation("tile_${type}_"));
+            $count+=1;
+            $this->game->tokens->createToken("tile_${type}_$count");
+            $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+        }
+        if (!$tile) throw new BgaSystemException("Cannot find tile of type $type");
         return $tile['key'];
     }
 
@@ -86,6 +92,7 @@ abstract class AbsOperationTile extends AbsOperation {
     function effect_placeTile() {
         $target = $this->getCheckedArg('target');
         $object = $this->getStateArg('object');
+        $this->game->systemAssertTrue("Invalid target",$target);
         $this->game->effect_placeTile($this->color, $object, $target);
         return $object;
     }

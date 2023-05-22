@@ -440,7 +440,16 @@ class GameBasics extends GameGui {
     }
     var clone = this.projectOnto(mobileNode, "_temp");
     mobileNode.style.opacity = "0"; // hide original
-    newparent.appendChild(mobileNode); // move original
+    const rel = mobileStyle.relation;
+    if (rel) {
+      delete mobileStyle.relation;
+    }
+    if (rel == "first") {
+      newparent.insertBefore(mobileNode, null);
+    } else {
+      newparent.appendChild(mobileNode); // move original
+    }
+
     setStyleAttributes(mobileNode, mobileStyle);
     mobileNode.offsetHeight; // recalc
 

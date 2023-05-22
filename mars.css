@@ -3658,7 +3658,7 @@
   font-family: "Prototype";
 }
 
-.player_tags .badge[data-state="0"], .tracker[data-state="0"] {
+.player_tags .badge[data-state="0"], .player_tags .tracker[data-state="0"] {
   opacity: 0.2;
 }
 
@@ -3939,6 +3939,12 @@
 .mfull .player_area {
   max-width: 1024px;
 }
+.mfull .bgabutton_gray {
+  border: none;
+  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5019607843);
+  color: #060606;
+  text-shadow: none;
+}
 .mfull #ebd-body {
   --map-width: 30em; /* 75vh */
   --map-height: calc(var(--map-width) * 0.92);
@@ -4085,6 +4091,9 @@
   top: 43%;
   left: 2%;
 }
+.mfull #display_milestones {
+  left: 13%;
+}
 .mfull #decks_area {
   display: block;
   position: absolute;
@@ -4158,18 +4167,28 @@
 .mfull .card {
   background-size: 1000% auto;
 }
+.mfull .cards_2 .card, .mfull .cards_2a .card {
+  display: block;
+}
 .mfull .cards_1 .card ~ .card,
 .mfull .cards_3 .card ~ .card,
 .mfull .cards_2 .card ~ .card {
-  margin-top: calc(var(--card-height) * -1 * 0.8);
+  margin-top: calc(var(--card-height) * -1 * 0.88);
 }
-.mfull .tableau .card:hover,
-.mfull .hand .card:hover,
-.mfull .draw .card:hover {
+.mfull .cards_2a .card:not(.corp) ~ .card {
+  margin-top: calc(var(--card-height) * -1 * 0.7);
+}
+.mfull .location .card:hover {
   z-index: 10;
   transform: scale(1.5);
   transition: all 500ms;
   transition-delay: 500ms;
+}
+.mfull .active_slot.card {
+  box-shadow: 2px 2px 3px 3px #000000, 2px -2px 0px 5px #ff9800 !important;
+}
+.mfull .active_slot.card:hover {
+  outline: unset;
 }
 .mfull .card_main_1 {
   background-position: 0% 0%;

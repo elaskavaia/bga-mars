@@ -9,7 +9,7 @@ stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
 fund|Fund an award|${you} must select an Award to fund
 w|Place Ocean Tile|${you} must select a location to place an ocean tile
-forest|Place Forest Tile|${you} must select a location to place a Greenery tile, adjecent if possible
+forest|Place Greenery Tile|${you} must select a location to place a Greenery tile, adjecent if possible
 city|Place City Tile|${you} must select a location to place a city, cannot place adjecent to other city
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
@@ -108,41 +108,20 @@ ers|Increase Steel Exchange Rate
 #set class=
 o|Increase Oxigen Level
 t|Increase Temperature
-turn|Take a turn
-turn2|Take a second action
 tr|Increase TR
 research|Research
 counter|Special Counter
 convh|Convert heat into temperature|${you} must confirm spent 8 heat to increase temperature by 1 step
-convp|Convert plants into greenery
+convp|Convert plants into Greenery|${you} must confirm spent plants to place a Greenery
 finalscoring|Final Scoring
-lastforest|Last Forest
 cardx|Play Card
 acard5|Search for Life
 flip|Flip
+#set class=Operation_turn
+turn|Take a turn
+turn2|Take a second action
 #set class=Operation_confirm
 confirm|Confirm|${you} must confirm or undo
 confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
-
-
-#error code
-#set id=err_{type}
-#set prompt=
-#set class=
-#set undo=
-0|Ok
-1|Insufficient Funds
-2|Prerequisites are not fullfilled
-3|Mandator effect cannot be resolved
-5|Hex is not reserved
-6|Hex is reserved
-7|Hex is occupied
-8|City placement restrictions 
-9|Greenery placement restrictions
-10|Max is reached
-11|Not applicable
-12|Already used
-13|Placement restrictions
-
 
 

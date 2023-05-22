@@ -19,7 +19,7 @@ require_once "DbTokens.php";
 abstract class PGameTokens extends PGameBasic {
     public $tokens;
     public $token_types;
-    protected $token_types_adjusted;
+    private $token_types_adjusted;
 
     public function __construct() {
         parent::__construct();
@@ -492,7 +492,7 @@ abstract class PGameTokens extends PGameBasic {
         $this->tokens->setTokenState($token_id, $value);
 
         if ($message == "*") {
-            if ($num < 0) {
+            if ($num <= 0) {
                 $message = clienttranslate('${player_name} pays ${inc_resource}');
             } else {
                 $message = clienttranslate('${player_name} gains ${inc_resource}');

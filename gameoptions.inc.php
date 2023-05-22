@@ -26,37 +26,55 @@
 
 $game_options = array(
     100 => [
-        'name' => totranslate('Begginers Corporations'),   
+        'name' => totranslate('Begginers Corporations'),
         'values' => [
-            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Begginers Corporations')],
-            2 => ['name' => totranslate('No'), 'nobeginner' => true  ],
+            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Begginers Corporations'), 'firstgameonly' => true],
+            0 => ['name' => totranslate('No'), 'nobeginner' => true],
         ],
-        'default' => 2
+        'default' => 0
     ],
-
-    /* Example of game variant:
-    
-    
-    // note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.
-    100 => array(
-                'name' => totranslate('my game option'),    
-                'values' => array(
-
-                            // A simple value for this option:
-                            1 => array( 'name' => totranslate('option 1') ),
-
-                            // A simple value for this option.
-                            // If this value is chosen, the value of "tmdisplay" is displayed in the game lobby
-                            2 => array( 'name' => totranslate('option 2'), 'tmdisplay' => totranslate('option 2') ),
-
-                            // Another value, with other options:
-                            //  beta=true => this option is in beta version right now.
-                            //  nobeginner=true  =>  this option is not recommended for beginners
-                            3 => array( 'name' => totranslate('option 3'),  'beta' => true, 'nobeginner' => true ),) )
-                        )
+    101 => [
+        'name' => totranslate('Corporate Era'),
+        'values' => [
+            1 => ['name' => totranslate('Yes'), 
+            'description' => totranslate('Corporate Era variant includes Corporate Era deck cards and all productions starts at 0'), 
+            'tmdisplay' => totranslate('Corporate Era'), 'nobeginner' => true],
+            0 => ['name' => totranslate('No'), 
+            'description' => totranslate('Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1'), 
+            'tmdisplay' => totranslate('Standard Game')],
+        ],
+        'displaycondition' => array(
+            // Note: only display for non-solo mode, solo mode is always corporate era
+            array(
+                'type' => 'minplayers',
+                'value' => array (2, 3, 4, 5),
+            ),
+        ),
+        'default' => 1
+    ],
+    102 => array(
+        'name' => totranslate('Solo variant'),
+        'values' => array(
+            0 => array(
+                'name' => totranslate( 'Standard' ),
+                'description' => totranslate( 'All global parameters must be maxed out by the end of generation 14 to win' ),
+            ),
+            1 => array(
+                'name' => totranslate( 'TR63' ),
+                'description' => totranslate( 'You must reach a Terraform Rating of 63 by the end of generation 14 to win' ),
+                'tmdisplay' => totranslate( 'TR63' ),
             )
-
-    */);
+        ),
+        'displaycondition' => array(
+            // Note: only display for solo mode
+            array(
+                'type' => 'maxplayers',
+                'value' => 1
+            ),
+        ),
+        'default' => 0
+    ),
+);
 $game_preferences = [
     100 => [
         'name' => totranslate('Layout and Theme'),

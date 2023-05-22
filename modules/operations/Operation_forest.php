@@ -14,6 +14,7 @@ class Operation_forest extends AbsOperationTile {
             return 0;
         }
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        if (isset($info['reserved'])) return MA_ERR_RESERVED;
         $adj = $this->calculateOwnerAdjMap($map);
         if (count($adj) == 0 || array_key_exists($location, $adj)) {
             // no adjecent places or in the map
@@ -56,7 +57,11 @@ class Operation_forest extends AbsOperationTile {
     function effect(string $owner, int $inc): int {
         $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'forest');
-        $this->game->effect_increaseParam($owner, "o", $inc);
+        
+        if (!$this->game->getGameStateValue('lastforest')) {
+            $this->game->effect_increaseParam($owner, "o", $inc);
+        }
+    
         $this->game->notifyEffect($owner, 'place_forest', $tile);
         return 1;
     }
