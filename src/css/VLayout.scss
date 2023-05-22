@@ -1,8 +1,4 @@
 .mfull {
-  .player_area {
-    max-width: 1024px;
-  }
-
   .bgabutton_gray {
     border: none;
     box-shadow: 2px 2px 3px 1px #00000080;
@@ -24,14 +20,14 @@
   .card_effect {
     font-size: calc(var(--card-width) * 0.1);
   }
-  #thisplayer_zone {
-    width: unset;
-  }
+
+
   .player_area {
     border: unset;
     position: relative;
     border-radius: unset;
     background: unset;
+    outline: 1px dashed green;
   }
   .card_decor {
     pointer-events: none;
@@ -48,24 +44,40 @@
 
   $bigmap: 1.66;
   $ratio: 1.445 / 1.7;
+  $mainh: calc(var(--map-width) * $bigmap * $ratio);
+  $mainw: calc(var(--map-width) * $bigmap);
 
   #main_board {
     position: relative;
-    width: calc(var(--map-width) * $bigmap);
-    height: calc(var(--map-width) * $bigmap * $ratio);
+    width: $mainw;
+    height: $mainh;
   }
 
   #main_area {
     margin-top: unset;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: $mainw auto;
+    grid-template-rows: $mainh auto auto;
+    justify-content: unset;
+  }
+
+  #main_board_wrapper, #main_board {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #thisplayer_zone ~ .player_area {
+    // second player
+    grid-column: 2;
+  }
+
+  #thisplayer_zone {
+    width: 100%;
+    grid-column: 2;
+    grid-row: 1;
   }
 
   #players_area {
-    margin-top: unset;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    display: none;
   }
 
   #map_middle {
@@ -264,20 +276,34 @@
     background-size: 1000% auto;
   }
 
-  .cards_2 .card,   .cards_2a .card {
-    display: block;
+  .tableau {
+    height: calc(var(--card-height) * 2);
+    display: grid;
+    grid-template-columns: var(--card-height) var(--card-width) var(--card-width) var(--card-width) auto;
+    grid-template-rows: var(--card-width) auto;
+    grid-gap: 0.2em;
+    outline: 2px dashed yellow;
   }
-  .cards_1,
-  .cards_3,
-  .cards_2 {
-    .card ~ .card {
-      margin-top: calc(var(--card-height) * -1 * 0.88);
-    }
+
+  .cards_bin {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, var(--card-width));
+    grid-template-rows: repeat(auto-fill, calc(var(--card-height) * 0.12)) [last-row] var(--card-height);
+    grid-row-start: 1;
+    grid-row-end: -1;
   }
-  .cards_2a {
-    .card:not(.corp) ~ .card {
-      margin-top: calc(var(--card-height) * -1 * 0.7);
-    }
+  .cards_1 {
+    grid-column-end: -1;
+    grid-column-start: 4;
+  }
+
+  .cards_4 {
+    grid-column: 1;
+  }
+  .cards_3 {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: right;
   }
 
 

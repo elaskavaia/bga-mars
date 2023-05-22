@@ -33,8 +33,8 @@ class GameBasics extends GameGui {
     console.log("Starting game setup", gamedatas);
     // add reload Css debug button
     var parent = document.querySelector(".debug_section");
-    if (parent) {
-      var butt = dojo.create("a", { class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
+    if (parent && !$('reloadcss')) {
+      var butt = dojo.create("a", { id: 'reloadcss', class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
       dojo.connect(butt, "onclick", () => reloadCss());
     }
     this.setupNotifications();

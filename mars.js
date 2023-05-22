@@ -40,8 +40,8 @@ var GameBasics = /** @class */ (function (_super) {
         console.log("Starting game setup", gamedatas);
         // add reload Css debug button
         var parent = document.querySelector(".debug_section");
-        if (parent) {
-            var butt = dojo.create("a", { class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
+        if (parent && !$('reloadcss')) {
+            var butt = dojo.create("a", { id: 'reloadcss', class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
             dojo.connect(butt, "onclick", function () { return reloadCss(); });
         }
         this.setupNotifications();
@@ -1470,19 +1470,24 @@ var GameXBody = /** @class */ (function (_super) {
             _this.updateTooltip(node.id);
         });
         this.connectClass("filter_button", "onclick", "onFilterButton");
-        if (this.isLayoutVariant(2)) {
-            if (!$("main_board_wrapper")) {
-                var div = $("main_board");
-                var parentId = div.parentNode.id;
-                var wrapper = this.createDivNode("main_board_wrapper", "", parentId);
-                wrapper.appendChild(div);
-            }
-        }
+        // if (this.isLayoutFull()) {
+        //   if (!$("main_board_wrapper")) {
+        //     const div = $("main_board");
+        //     const parentId = (div.parentNode as any).id;
+        //     const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
+        //     wrapper.appendChild(div);
+        //   }
+        // }
         $('thething').removeAttribute('title');
         console.log("Ending game setup");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
         _super.prototype.setupPlayer.call(this, playerInfo);
+        if (this.isLayoutFull()) {
+            var div = $("main_area");
+            var board = $("player_area_".concat(playerInfo.color));
+            div.appendChild(board);
+        }
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {
             var board = $("player_area_".concat(playerInfo.color));
@@ -1755,8 +1760,7 @@ var GameXBody = /** @class */ (function (_super) {
                 result.location = tokenInfo.location + "_cards_" + t;
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-            result.location = tokenInfo.location + "_cards_2a";
-            result.relation = "first";
+            result.location = tokenInfo.location + "_cards_4";
         }
         if (!result.location)
             // if failed to find revert to server one
@@ -1766,12 +1770,15 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.isLayoutVariant = function (num) {
         return this.prefs[100].value == num;
     };
+    GameXBody.prototype.isLayoutFull = function () {
+        return this.isLayoutVariant(2);
+    };
     GameXBody.prototype.darhflog = function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        if (this.isLayoutVariant(1)) {
+        if (!this.isLayoutFull()) {
             console.log.apply(console, args);
         }
     };
@@ -2137,6 +2144,7 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper("undo"); }, undefined, undefined, "red");
         }
+        this.addActionButton('button_rcss', 'Reload CSS', function () { return reloadCss(); });
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt

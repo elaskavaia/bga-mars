@@ -31,14 +31,14 @@ class GameXBody extends GameTokens {
 
     this.connectClass("filter_button", "onclick", "onFilterButton");
 
-    if (this.isLayoutVariant(2)) {
-      if (!$("main_board_wrapper")) {
-        const div = $("main_board");
-        const parentId = (div.parentNode as any).id;
-        const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
-        wrapper.appendChild(div);
-      }
-    }
+    // if (this.isLayoutFull()) {
+    //   if (!$("main_board_wrapper")) {
+    //     const div = $("main_board");
+    //     const parentId = (div.parentNode as any).id;
+    //     const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
+    //     wrapper.appendChild(div);
+    //   }
+    // }
 
     $('thething').removeAttribute('title');
 
@@ -48,6 +48,11 @@ class GameXBody extends GameTokens {
   setupPlayer(playerInfo: any) {
     super.setupPlayer(playerInfo);
 
+    if (this.isLayoutFull()) {
+      const div = $("main_area");
+      const board = $(`player_area_${playerInfo.color}`);
+      div.appendChild(board);
+    } 
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
       const board = $(`player_area_${playerInfo.color}`);
@@ -368,8 +373,7 @@ getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
       result.location = tokenInfo.location + "_cards_2a";
     } else result.location = tokenInfo.location + "_cards_" + t;
   } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-    result.location = tokenInfo.location + "_cards_2a";
-    result.relation = "first";
+    result.location = tokenInfo.location + "_cards_4";
   }
   if (!result.location)
     // if failed to find revert to server one
@@ -381,8 +385,12 @@ getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     return this.prefs[100].value == num;
   }
 
+  isLayoutFull() {
+    return this.isLayoutVariant(2);
+  }
+
   darhflog(...args: any) {
-    if (this.isLayoutVariant(1)) {
+    if (!this.isLayoutFull()) {
       console.log(...args);
     }
   }
@@ -779,6 +787,8 @@ getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
       if (this.on_client_state) this.addCancelButton();
       else this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper("undo"), undefined, undefined, "red");
     }
+
+    this.addActionButton('button_rcss','Reload CSS', () => reloadCss())
   }
 
   onSelectTarget(opId: number, target: string) {

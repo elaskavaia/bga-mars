@@ -119,6 +119,12 @@
   background-image: none;
 }
 
+#button_rcss {
+  float: right;
+  background-color: rgb(255, 0, 251);
+  background-image: none;
+}
+
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -3936,9 +3942,6 @@
   font-family: sans-serif;
 }
 
-.mfull .player_area {
-  max-width: 1024px;
-}
 .mfull .bgabutton_gray {
   border: none;
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5019607843);
@@ -3957,14 +3960,12 @@
 .mfull .card_effect {
   font-size: calc(var(--card-width) * 0.1);
 }
-.mfull #thisplayer_zone {
-  width: unset;
-}
 .mfull .player_area {
   border: unset;
   position: relative;
   border-radius: unset;
   background: unset;
+  outline: 1px dashed green;
 }
 .mfull .card_decor {
   pointer-events: none;
@@ -3983,14 +3984,25 @@
 }
 .mfull #main_area {
   margin-top: unset;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: calc(var(--map-width) * 1.66) auto;
+  grid-template-rows: calc(var(--map-width) * 1.66 * 0.85) auto auto;
+  justify-content: unset;
+}
+.mfull #main_board_wrapper, .mfull #main_board {
+  grid-column: 1;
+  grid-row: 1;
+}
+.mfull #thisplayer_zone ~ .player_area {
+  grid-column: 2;
+}
+.mfull #thisplayer_zone {
+  width: 100%;
+  grid-column: 2;
+  grid-row: 1;
 }
 .mfull #players_area {
-  margin-top: unset;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  display: none;
 }
 .mfull #map_middle {
   position: absolute;
@@ -4167,16 +4179,32 @@
 .mfull .card {
   background-size: 1000% auto;
 }
-.mfull .cards_2 .card, .mfull .cards_2a .card {
-  display: block;
+.mfull .tableau {
+  height: calc(var(--card-height) * 2);
+  display: grid;
+  grid-template-columns: var(--card-height) var(--card-width) var(--card-width) var(--card-width) auto;
+  grid-template-rows: var(--card-width) auto;
+  grid-gap: 0.2em;
+  outline: 2px dashed yellow;
 }
-.mfull .cards_1 .card ~ .card,
-.mfull .cards_3 .card ~ .card,
-.mfull .cards_2 .card ~ .card {
-  margin-top: calc(var(--card-height) * -1 * 0.88);
+.mfull .cards_bin {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--card-width));
+  grid-template-rows: repeat(auto-fill, calc(var(--card-height) * 0.12)) [last-row] var(--card-height);
+  grid-row-start: 1;
+  grid-row-end: -1;
 }
-.mfull .cards_2a .card:not(.corp) ~ .card {
-  margin-top: calc(var(--card-height) * -1 * 0.7);
+.mfull .cards_1 {
+  grid-column-end: -1;
+  grid-column-start: 4;
+}
+.mfull .cards_4 {
+  grid-column: 1;
+}
+.mfull .cards_3 {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: right;
 }
 .mfull .location .card:hover {
   z-index: 10;
