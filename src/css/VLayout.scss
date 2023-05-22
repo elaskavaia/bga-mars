@@ -2,6 +2,14 @@
   .player_area {
     max-width: 1024px;
   }
+
+  .bgabutton_gray {
+    border: none;
+    box-shadow: 2px 2px 3px 1px #00000080;
+    color: #060606;
+    text-shadow: none;
+  }
+
   #ebd-body {
     --map-width: 30em; /* 75vh */
     --map-height: calc(var(--map-width) * 0.92);
@@ -255,9 +263,7 @@
   .card {
     background-size: 1000% auto;
   }
-  .active_slot.card {
-    top: -1em;
-  }
+
   .cards_2 .card {
     display: block;
   }
@@ -265,18 +271,23 @@
   .cards_3,
   .cards_2 {
     .card ~ .card {
-      margin-top: calc(var(--card-height) * -1 * 0.8);
+      margin-top: calc(var(--card-height) * -1 * 0.88);
     }
   }
-  .tableau,
-  .hand,
-  .draw {
-    .card:hover {
-      z-index: 10;
-      transform: scale(1.5);
-      transition: all 500ms;
-      transition-delay: 500ms;
-    }
+
+  .location .card:hover {
+    z-index: 10;
+    transform: scale(1.5);
+    transition: all 500ms;
+    transition-delay: 500ms;
+  }
+
+  .active_slot.card {
+    box-shadow: 2px 2px 3px 3px #000000, 2px -2px 0px 5px #ff9800 !important;
+  }
+
+  .active_slot.card:hover {
+    outline: unset;
   }
 
   @for $num from 1 through 80 {
