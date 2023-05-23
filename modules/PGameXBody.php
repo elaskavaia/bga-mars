@@ -279,8 +279,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function isSolo() {
-        $players = $this->loadPlayersBasicInfos();
-        return count($players) == 1;
+        return $this->getPlayersNumber() == 1;
     }
 
     function getPlanetMap($load = true) {

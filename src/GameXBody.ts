@@ -17,6 +17,7 @@ class GameXBody extends GameTokens {
       tracker_t: "temperature_map",
       tracker_o: "oxygen_map",
       tracker_w: "oceans_pile",
+      tracker_gen: "map_left",
     };
     this.custom_pay = undefined;
 
@@ -57,8 +58,6 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
-
-
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -390,16 +389,22 @@ class GameXBody extends GameTokens {
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-      if (this.isLayoutFull()) {
-        result.location = tokenInfo.location+'_cards_4';
-      } else {
+      if (!this.isLayoutFull()) {
         result.location = tokenInfo.location+'_corp_effect';
+      } else {
+        result.location = tokenInfo.location+'_cards_4'; 
       }
       //also set property to corp logo div
       $(tokenInfo.location+'_corp_logo').dataset.corp=tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
+      if (this.isLayoutFull()) {
+        if (this.getRulesFor(tokenInfo.key, "a")) {
+          result.location = tokenInfo.location + "_cards_2a" ;
+        }
+      }
+   
     }
     if (!result.location)
       // if failed to find revert to server one

@@ -3736,6 +3736,10 @@
   --pb_cellsize:3vw;
 }
 
+.player-board {
+  background-color: #9E9E9E;
+}
+
 .mcompact .player_area {
   border: 0.4vh solid var(--plcolor);
   position: relative;

@@ -1453,6 +1453,7 @@ var GameXBody = /** @class */ (function (_super) {
             tracker_t: "temperature_map",
             tracker_o: "oxygen_map",
             tracker_w: "oceans_pile",
+            tracker_gen: "map_left",
         };
         this.custom_pay = undefined;
         _super.prototype.setup.call(this, gamedatas);
@@ -1770,11 +1771,11 @@ var GameXBody = /** @class */ (function (_super) {
             result.location = this.custom_placement[tokenInfo.key];
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-            if (this.isLayoutFull()) {
-                result.location = tokenInfo.location + '_cards_4';
+            if (!this.isLayoutFull()) {
+                result.location = tokenInfo.location + '_corp_effect';
             }
             else {
-                result.location = tokenInfo.location + '_corp_effect';
+                result.location = tokenInfo.location + '_cards_4';
             }
             //also set property to corp logo div
             $(tokenInfo.location + '_corp_logo').dataset.corp = tokenInfo.key;
@@ -1782,6 +1783,11 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
             var t = this.getRulesFor(tokenInfo.key, "t");
             result.location = tokenInfo.location + "_cards_" + t;
+            if (this.isLayoutFull()) {
+                if (this.getRulesFor(tokenInfo.key, "a")) {
+                    result.location = tokenInfo.location + "_cards_2a";
+                }
+            }
         }
         if (!result.location)
             // if failed to find revert to server one

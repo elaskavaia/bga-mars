@@ -80,8 +80,6 @@ abstract class PGameBasic extends Table {
         }
         self::reloadPlayersBasicInfos();
         $this->activeNextPlayer(); // just in case so its not 0, dev code can change it later
-        $this->players = [];
-        $this->loadPlayersBasicInfos();
     }
 
     public function initStats() {

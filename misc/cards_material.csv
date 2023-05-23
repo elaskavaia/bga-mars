@@ -6,7 +6,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
 #set location=deck_main
 #set create=single
 1|Colonizer Training Camp|1||||8|o<=5|Building Jovian|2|Basic|Oxygen must be 5% or less.|
-2|Asteroid Mining Consortium|1|npu_Any,pu|||13|u >= 1|Jovian|1|Corporate|Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step.|
+2|Asteroid Mining Consortium|1|npu_Any,pu|||13|pu|Jovian|1|Corporate|Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step.|
 3|Deep Well Heating|1|pe,t|||13||Building Energy|0|Basic|Increase your energy production 1 step. Increase temperature 1 step.|
 4|Cloud Seeding|1|npm,nph_Any,2pp|||11|w>=3||0|Basic|Requires 3 ocean tiles. Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps.|
 5|Search For Life|2||nm:acard5||3|o<=6|Science|(resCard>0)*3|Basic|Oxygen must be 6% or less. 3 VPs if you have one or more science resource here.; Action: Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here.|  'holds' => 'Science'

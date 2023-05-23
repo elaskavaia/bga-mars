@@ -113,7 +113,7 @@ $this->token_types = [
   't' => 1,
   'r' => 'npu_Any,pu',
   'cost' => 13,
-  'pre' => 'u >= 1',
+  'pre' => 'pu',
   'tags' => 'Jovian',
   'vp' => 1,
   'deck' => 'Corporate',

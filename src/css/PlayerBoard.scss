@@ -2,6 +2,12 @@
   --pb_cellsize:3vw;
 }
 
+// need to change the background of player area, pink does not work with the theme
+.player-board {
+  background-color: #9E9E9E;
+}
+
+
 .mcompact {
 
 .player_area {
