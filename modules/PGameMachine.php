@@ -35,6 +35,11 @@ abstract class PGameMachine extends PGameTokens {
      * In this space, you can put any utility methods useful for your game logic
      */
 
+    function debug_initTables() {
+        $this->DBQuery("DELETE FROM machine");
+        parent::debug_initTables();
+    }
+
     public function getMultiMachine() {
         return new DbMachine($this, 'machine', 'multi');
     }
@@ -227,7 +232,7 @@ abstract class PGameMachine extends PGameTokens {
         $n = MA_GAME_DISPATCH_MAX; // <-- this is just a precasious for inf loop, it this goes over user get a prompt after
         for ($i = 0; $i <  $n; $i++) {
             $operations = $this->getTopOperations();
-    
+
             $isMulti = $this->hasMultiPlayerOperations($operations);
             //$this->debugLog("-DISPATCH $i: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
 

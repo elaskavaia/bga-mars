@@ -80,6 +80,8 @@ abstract class PGameBasic extends Table {
         }
         self::reloadPlayersBasicInfos();
         $this->activeNextPlayer(); // just in case so its not 0, dev code can change it later
+        $this->players = [];
+        $this->loadPlayersBasicInfos();
     }
 
     public function initStats() {
@@ -681,6 +683,9 @@ if (!function_exists("array_get")) {
         }
         if (is_null($array)) {
             return $default;
+        }
+        if (!is_array($array)) {
+            throw new BgaSystemException("array_get first arg is not array");
         }
         if (array_key_exists($key, $array)) {
             return $array[$key];

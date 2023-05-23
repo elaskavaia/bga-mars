@@ -367,7 +367,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         var clone = this.projectOnto(mobileNode, "_temp");
         mobileNode.style.opacity = "0"; // hide original
-        var rel = mobileStyle.relation;
+        var rel = mobileStyle === null || mobileStyle === void 0 ? void 0 : mobileStyle.relation;
         if (rel) {
             delete mobileStyle.relation;
         }
@@ -1770,7 +1770,10 @@ var GameXBody = /** @class */ (function (_super) {
             result.location = this.custom_placement[tokenInfo.key];
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-            if (this.isLayoutVariant(1)) {
+            if (this.isLayoutFull()) {
+                result.location = tokenInfo.location + '_cards_4';
+            }
+            else {
                 result.location = tokenInfo.location + '_corp_effect';
             }
             //also set property to corp logo div

@@ -1,4 +1,7 @@
 .mfull {
+  .player-board {
+    background-color: #909090;
+  }
   .bgabutton_gray {
     border: none;
     box-shadow: 2px 2px 3px 1px #00000080;
@@ -21,7 +24,6 @@
     font-size: calc(var(--card-width) * 0.1);
   }
 
-
   .player_area {
     border: unset;
     position: relative;
@@ -29,6 +31,11 @@
     background: unset;
     outline: 1px dashed green;
   }
+
+  .player_counters {
+    display: none;
+  }
+
   .card_decor {
     pointer-events: none;
     display: none;
@@ -61,7 +68,8 @@
     justify-content: unset;
   }
 
-  #main_board_wrapper, #main_board {
+  #main_board_wrapper,
+  #main_board {
     grid-column: 1;
     grid-row: 1;
   }
@@ -283,6 +291,7 @@
     grid-template-rows: var(--card-width) auto;
     grid-gap: 0.2em;
     outline: 2px dashed yellow;
+    padding: 0;
   }
 
   .cards_bin {
@@ -305,7 +314,6 @@
     grid-row: 2;
     justify-self: right;
   }
-
 
   .location .card:hover {
     z-index: 10;
@@ -431,7 +439,72 @@
       top: calc(100% - $row * (100% / 24));
     }
   }
+  .miniboard > * {
+    display: inline-block;
+  }
+  .miniboard {
+    .playerboard_header {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
 
+      .playerboard_group {
+        position: relative;
+        width: fit-content;
+        height: fit-content;
+        display: grid;
+        grid-template-columns: 60% 40%;
+        grid-template-rows: repeat(2, 1fr);
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+        width: calc(var(--resourcesize) * 2.2);
+        height: calc(var(--resourcesize) * 1);
+        font-family: "Prototype";
+        font-size: calc(var(--resourcesize) * 0.4);
+        margin: calc(var(--resourcesize) * 0.06);
+
+        .playerboard_group_img {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          grid-area: 1 / 1 / 4 / 2;
+          .token_img {
+            margin-right: 0;
+          }
+        }
+        .playerboard_produce {
+          width: revert;
+          height: revert;
+          grid-area: 2 / 2 / 3 / 3;
+        }
+        .playerboard_own {
+          width: revert;
+          height: revert;
+          background: #ffffff7d;
+          grid-area: 1 / 2 / 2 / 3;
+        }
+
+        .player_tags .badge[data-state="0"],
+        .tracker[data-state="0"] {
+          display: revert;
+        }
+      }
+
+      .playerboard_own {
+        width: var(--pb_cellsize);
+        height: calc(var(--pb_cellsize) * 0.5);
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+    }
+  }
+
+  .player_tags .badge[data-state="0"],
+  .player_tags .tracker[data-state="0"] {
+    opacity: 0.2;
+    display: inline-block;
+  }
   /* Added by darhf, to prevent messing things up too much*/
   #map_hexes {
     position: unset;
@@ -445,6 +518,6 @@
     font-size: calc(var(--card-width) * 0.07);
   }
   .player_area_name {
-    top:0;
+    top: 0;
   }
 }

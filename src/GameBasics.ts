@@ -440,7 +440,7 @@ class GameBasics extends GameGui {
     }
     var clone = this.projectOnto(mobileNode, "_temp");
     mobileNode.style.opacity = "0"; // hide original
-    const rel = mobileStyle.relation;
+    const rel = mobileStyle?.relation;
     if (rel) {
       delete mobileStyle.relation;
     }

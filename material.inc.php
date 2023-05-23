@@ -59,7 +59,7 @@ if (!defined("MA_GAME")) {
   define("MA_TILE_SPECIAL", 4);
   define("MA_TILE_MINING", 5);
 
-  // card states in hand
+  // card states on tableau
   define("MA_CARD_STATE_FACEDOWN", 0);
   define("MA_CARD_STATE_TAGUP", 1);
   define("MA_CARD_STATE_ACTION_UNUSED", 2);

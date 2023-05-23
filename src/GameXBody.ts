@@ -390,7 +390,9 @@ class GameXBody extends GameTokens {
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-      if (this.isLayoutVariant(1)) {
+      if (this.isLayoutFull()) {
+        result.location = tokenInfo.location+'_cards_4';
+      } else {
         result.location = tokenInfo.location+'_corp_effect';
       }
       //also set property to corp logo div

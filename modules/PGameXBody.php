@@ -34,7 +34,11 @@ abstract class PGameXBody extends PGameMachine {
      */
     protected function initTables() {
         try {
-            $this->token_types_adjusted2 = null;// clear cache
+            $this->token_types_adjusted2 = false; // clear cache
+            if ($this->isSolo()) {
+                $this->setGameStateValue("var_corporate_era", 1); // solo can only be corp era
+            }
+
             $this->adjustedMaterial();
             $this->createTokens();
             $this->tokens->shuffle("deck_main");
@@ -53,7 +57,7 @@ abstract class PGameXBody extends PGameMachine {
                     $this->multiplayerqueue($color, "keepcorp,10?buycard");
                 }
 
-                if ($this->getGameStateValue('var_corporate_era') != 1) {
+                if (!$this->isCorporateEraVariant()) {
                     foreach ($production as $prodtype) {
                         $this->effect_incProduction($color, $prodtype, 1);
                     }
@@ -103,6 +107,10 @@ abstract class PGameXBody extends PGameMachine {
         $oceans = $this->tokens->getTokenState("tracker_w");
         $temp = $this->tokens->getTokenState("tracker_t");
         return (100 * ($oxigen / 14 + $oceans / 9 + ($temp + 30) / 38)) / 3;
+    }
+
+    function isCorporateEraVariant() {
+        return $this->getGameStateValue('var_corporate_era') == 1 || $this->isSolo();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -271,7 +279,8 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function isSolo() {
-        return $this->getPlayersNumber() == 1;
+        $players = $this->loadPlayersBasicInfos();
+        return count($players) == 1;
     }
 
     function getPlanetMap($load = true) {
@@ -308,22 +317,30 @@ abstract class PGameXBody extends PGameMachine {
         return $this->notifyMessage($message, $args, $this->getPlayerIdByColor($player_color));
     }
 
+    protected function createTokens() {
+        $corp_era  = $this->isCorporateEraVariant();
+        foreach ($this->token_types as $id => $info) {
+            if (!$corp_era) {
+                if (startsWith($id, "card_")) {
+                    $deck = array_get($info, 'deck');
+                    if ($deck == 'Corporate') {
+                        continue;
+                    }
+                }
+            }
+            $this->createTokenFromInfo($id, $info);
+        }
+    }
+
     function adjustedMaterial() {
         if ($this->token_types_adjusted2) {
             return $this->token_types;
         }
         parent::adjustedMaterial();
 
-        $corp_era = ($this->getGameStateValue('var_corporate_era') == 1);
-
         $expr_keys = ['r', 'e', 'a'];
         foreach ($this->token_types as $key => &$info) {
             if (startsWith($key, "card_")) {
-                $deck = array_get($info, 'deck');
-                if (!$corp_era && $deck == 'Corporate') {
-                    unset($this->token_types[$key]);
-                    continue;
-                }
                 $info['expr'] = [];
                 foreach ($expr_keys as $field) {
                     $r = array_get($info, $field);
@@ -596,6 +613,7 @@ abstract class PGameXBody extends PGameMachine {
                     continue;
                 $info['e'] = $e;
                 $info['owner'] = substr($info['location'], strlen('tableau_'));
+                $info['key'] = $key;
                 $this->eventListners[$key] = $info;
             }
         }

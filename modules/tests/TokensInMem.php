@@ -18,7 +18,7 @@ class TokensInMem extends DbTokens {
     }
     function getTokenInfo($token_key) {
         self::checkKey($token_key);
-        return $this->keyindex[$token_key];
+        return array_get($this->keyindex,$token_key,null);
     }
 
     function DbCreateTokens($values) {
