@@ -305,12 +305,18 @@
 
       <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
         <div id="player_area_name_{PLAYER_COLOR}" class="player_area_name">{PLAYER_NAME}</div>
+
+        <div id="player_viewcards_2_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="2"  data-selected="1" data-player="{PLAYER_COLOR}"><div class="buttoncard"><i class="fa fa-eye" aria-hidden="true"></i></div></div>
+        <div id="player_viewcards_1_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="1"  data-selected="0" data-player="{PLAYER_COLOR}"><div class="buttoncard"><i class="fa fa-eye" aria-hidden="true"></i></div></div>
+        <div id="player_viewcards_3_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="3" data-selected="0" data-player="{PLAYER_COLOR}"><div class="buttoncard"><i class="fa fa-eye" aria-hidden="true"></i></div></div>
+        <!--
         <div id="player_filter_blue_{PLAYER_COLOR}" class="filter_button filter_blue"  data-color="blue"  data-enabled="1" data-player="{PLAYER_COLOR}">Actions(Blue)</div>
-        <div id="player_filter_green_{PLAYER_COLOR}" class="filter_button filter_green" data-color="green"  data-enabled="1" data-player="{PLAYER_COLOR}">Automated (Gren)</div>
+        <div id="player_filter_green_{PLAYER_COLOR}" class="filter_button filter_green" data-color="green"  data-enabled="1" data-player="{PLAYER_COLOR}">Automated (Green)</div>
         <div id="player_filter_red_{PLAYER_COLOR}" class="filter_button filter_red" data-color="red" data-enabled="1" data-player="{PLAYER_COLOR}">Events(Red)</div>
+        -->
       </div>
 
-      <div id="tableau_{PLAYER_COLOR}" class="whiteblock" data-visibilityblue="1" data-visibilitygreen="1" data-visibilityred="1">
+      <div id="tableau_{PLAYER_COLOR}" class="whiteblock" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
            <div id="tableau_{PLAYER_COLOR}_cards_4"  class="cards_4 cards_bin"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2a" class="cards_2a cards_bin"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2"  class="cards_2 cards_bin"></div>
@@ -320,20 +326,23 @@
 
 
     </div>
-    <div id="miniboard_{PLAYER_COLOR}">
-      <div id="counter_hand_{PLAYER_COLOR}"></div>
-      <div id="counter_draw_{PLAYER_COLOR}"></div>
-      <div id="tracker_tr_{PLAYER_COLOR}"></div>
+    <div id="miniboard_{PLAYER_COLOR}" class="style_2">
+      <div class="miniboard_entry">
+        <div class="token_img cardback"></div>
+        <div id="counter_hand_{PLAYER_COLOR}"></div>
+        <div id="counter_draw_{PLAYER_COLOR}"></div>
+      </div>
+
+
       <div id="playerboard_{PLAYER_COLOR}" class="playerboard playerboard_header">
-
-
         <div class="playerboard_group">
           <div class="playerboard_group_img">
             <div class="token_img tracker_m"></div>
+            <div class="playerboard_own">
+              <div id="tracker_m_{PLAYER_COLOR}"></div>
+            </div>
           </div>
-          <div class="playerboard_own">
-            <div id="tracker_m_{PLAYER_COLOR}"></div>
-          </div>
+
           <div class="playerboard_produce">
             <!-- cannot be + here - it can be negative -->
             <div id="tracker_pm_{PLAYER_COLOR}"></div>
@@ -343,9 +352,9 @@
         <div class="playerboard_group">
           <div class="playerboard_group_img">
             <div class="token_img tracker_s"></div>
-          </div>
-          <div class="playerboard_own">
-            <div id="tracker_s_{PLAYER_COLOR}"></div>
+            <div class="playerboard_own">
+              <div id="tracker_s_{PLAYER_COLOR}"></div>
+            </div>
           </div>
           <div class="playerboard_produce">
             +
@@ -356,9 +365,9 @@
         <div class="playerboard_group">
           <div class="playerboard_group_img">
             <div class="token_img tracker_u"></div>
-          </div>
-          <div class="playerboard_own">
-            <div id="tracker_u_{PLAYER_COLOR}"></div>
+            <div class="playerboard_own">
+              <div id="tracker_u_{PLAYER_COLOR}"></div>
+            </div>
           </div>
           <div class="playerboard_produce">
             +
@@ -369,116 +378,43 @@
         <div class="playerboard_group">
           <div class="playerboard_group_img">
             <div class="token_img tracker_p"></div>
+            <div class="playerboard_own">
+              <div id="tracker_p_{PLAYER_COLOR}"></div>
+            </div>
           </div>
           <div class="playerboard_produce">
             +
             <div id="tracker_pp_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_own">
-            <div id="tracker_p_{PLAYER_COLOR}"></div>
           </div>
         </div>
 
         <div class="playerboard_group">
           <div class="playerboard_group_img">
             <div class="token_img tracker_e"></div>
+            <div class="playerboard_own">
+              <div id="tracker_e_{PLAYER_COLOR}"></div>
+            </div>
           </div>
           <div class="playerboard_produce">
             +
             <div id="tracker_pe_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_own">
-            <div id="tracker_e_{PLAYER_COLOR}"></div>
           </div>
         </div>
 
         <div class="playerboard_group">
           <div class="playerboard_group_img">
             <div class="token_img tracker_h"></div>
+            <div class="playerboard_own">
+              <div id="tracker_h_{PLAYER_COLOR}"></div>
+            </div>
           </div>
           <div class="playerboard_produce">
             +
             <div id="tracker_ph_{PLAYER_COLOR}"></div>
           </div>
-          <div class="playerboard_own">
-            <div id="tracker_h_{PLAYER_COLOR}"></div>
-          </div>
-        </div>
-<!--
-        <div class="playerboard_group">
-          <div class="playerboard_own">
-            <div class="token_img tracker_m"></div>
-            <div id="tracker_m_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_produce">
-            <div class="token_img tracker_m"></div>
-            <div id="tracker_pm_{PLAYER_COLOR}"></div>
-          </div>
         </div>
 
-        <div class="playerboard_group">
-          <div class="playerboard_own">
-            <div class="token_img tracker_s"></div>
-            <div id="tracker_s_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_produce">
-            <div class="token_img tracker_s"></div>
-            +
-            <div id="tracker_ps_{PLAYER_COLOR}"></div>
-          </div>
-        </div>
 
-        <div class="playerboard_group">
-          <div class="playerboard_own">
-            <div class="token_img tracker_u"></div>
-            <div id="tracker_u_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_produce">
-            <div class="token_img tracker_u"></div>
-            +
-            <div id="tracker_pu_{PLAYER_COLOR}"></div>
-          </div>
-        </div>
-
-        <div class="playerboard_group">
-
-          <div class="playerboard_produce">
-            <div class="token_img tracker_p"></div>
-            +
-            <div id="tracker_pp_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_own">
-            <div class="token_img tracker_p"></div>
-            <div id="tracker_p_{PLAYER_COLOR}"></div>
-          </div>
-        </div>
-
-        <div class="playerboard_group">
-
-          <div class="playerboard_produce">
-            <div class="token_img tracker_e"></div>
-            +
-            <div id="tracker_pe_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_own">
-            <div class="token_img tracker_e"></div>
-            <div id="tracker_e_{PLAYER_COLOR}"></div>
-          </div>
-        </div>
-
-        <div class="playerboard_group">
-
-          <div class="playerboard_produce">
-            <div class="token_img tracker_h"></div>
-            +
-            <div id="tracker_ph_{PLAYER_COLOR}"></div>
-          </div>
-          <div class="playerboard_own">
-            <div class="token_img tracker_h"></div>
-            <div id="tracker_h_{PLAYER_COLOR}"></div>
-          </div>
-        </div>
--->
       </div>
     </div>
 
@@ -489,6 +425,7 @@
   <div id="params"></div>
   <div id="dev_null" class="defhidden"></div>
   <div id="oversurface"></div>
+
 </div>
 
 {OVERALL_GAME_FOOTER}
