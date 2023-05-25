@@ -79,9 +79,45 @@ abstract class PGameXBody extends PGameMachine {
                     $this->queue($color, "prediscard");
                 }
             }
+            if ($this->isSolo()) {
+                //$this->setupSoloMap();
+            }
         } catch (Exception $e) {
             $this->error($e);
         }
+    }
+
+    function setupSoloMap(){
+                // place 2 random cities with forest
+                $nonreserved = [];
+                foreach ($this->token_types as $key => $info) {
+                    if (startsWith($key, "hex_")) {
+                        if (array_get($info, 'reserved')) continue;
+                        $nonreserved[] = $key;
+                    }
+                }
+                shuffle($nonreserved);
+                $type = MA_TILE_CITY;
+                for ($i = 1; $i <= 2; $i++) {
+                    $hex = array_shift($nonreserved);
+
+                    $tile = $this->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+                    $this->tokens->moveToken($tile, $hex, 0);
+
+                    $adj = $this->getAdjecentHexes($hex);
+                    shuffle($adj);
+
+                    while (true) {
+                        $forhex = array_shift($adj);
+                        if (!$forhex) break;
+                        if ($this->getRulesFor($forhex, 'reserved', 0)) {
+                            continue;
+                        }
+                        $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
+                        $this->tokens->moveToken($tile, $forhex, 0);
+                        break;
+                    }
+                }
     }
 
     /*
