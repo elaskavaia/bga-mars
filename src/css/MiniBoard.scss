@@ -129,25 +129,91 @@
 .token_img.tracker_tr {
   background-position: -900% 0;
 }
-
-
-.token_img.tracker_passed {
-  background-image: revert;
-  background-size: revert;
-  background-origin: revert;
-
-}
-.token_img.tracker_passed::after {
-  content:"[P]";
+.token_img.cardback {
+  background-position: 0 -100%;
 }
 
-.tracker_passed[data-state="0"]::after{
-  content:"☐";
-}
-.tracker_passed[data-state="1"]::after{
-  content:"☑";
+.tracker_passed {
+display: none;
 }
 
+.miniboard.style_2 {
+
+  flex-direction: column;
+
+  .playerboard_header {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    --resourcesize: 35px;
+    margin-top: 5px;
+  }
+
+  .playerboard_group{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    width: calc(var(--resourcesize) * 1);
+    height: calc(var(--resourcesize) * 2);
+    font-family: "Prototype";
+    position: relative;
+    font-size: calc(var(--resourcesize) * 0.55);
+    font-weight: normal;
+  }
+
+  .playerboard_group_img{
+    display: flex;
+    align-items: center;
+    grid-area: 1/1/1/1;
+
+    .token_img{
+      margin-right: 0;
+      opacity: 0.7;
+
+    }
+
+  }
+
+  .playerboard_own {
+    position: absolute;
+    width: 100%;
+    text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
+  }
+
+  .playerboard_produce {
+    grid-area: 2/1/2/1;
+    width: 100%;
+  }
+
+  .tracker_tr {
+    display: none;
+  }
+}
+
+.player_score_value:after {
+  content: "";
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  width: calc(var(--pb_cellsize) * 0.5);
+  height: calc(var(--pb_cellsize) * 0.5);
+  background-position: -1200% 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+.player_score .fa-star {
+  display: none;
+}
+
+.miniboard_entry {
+  display: flex;
+  width: calc(var(--resourcesize) * 2);
+  font-size: calc(var(--resourcesize) * 0.55);
+  font-family: 'Prototype';
+}
 /*
 .tracker_pm::before {
   content: "prod MC ";

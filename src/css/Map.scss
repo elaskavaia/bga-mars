@@ -60,7 +60,7 @@
 
 .hex {
   width: calc(var(--map-width) * 0.109);
-  height: calc(var(--map-width) * 0.118);
+  height: calc(var(--map-width) * 0.122);
   border-radius: 30%;
   outline: 1px solid black;
   position: absolute;
@@ -137,18 +137,11 @@
 
 
 .tile{
-  width: calc(var(--map-width) * 0.109);
-  height: calc(var(--map-width) * 0.118);
+  width: calc(var(--map-width) * 0.1085);
+  height: calc(var(--map-width) * 0.12);
   background-image: url("img/tiles.png");
   background-size: 1000% 200%;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  left: 2%;
-  top: 0%;
-/*
-  left: -4%;
-  top: -1%;
-
- */
   position: absolute;
 }
 
@@ -600,8 +593,8 @@
 
 #map_hexes {
   position: absolute;
-  width: 97.5%;
-  height: 97.5%;
-  top: 1.9%;
-  left: 1%;
+  width: 98.1%;
+  height: 97.8%;
+  top: 1.7%;
+  left: 0.75%;
 }

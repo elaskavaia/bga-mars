@@ -29,7 +29,8 @@ class GameXBody extends GameTokens {
       this.updateTooltip(node.id);
     });
 
-    this.connectClass("filter_button", "onclick", "onFilterButton");
+   // this.connectClass("filter_button", "onclick", "onFilterButton");
+    this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
     // if (this.isLayoutFull()) {
     //   if (!$("main_board_wrapper")) {
@@ -285,15 +286,32 @@ class GameXBody extends GameTokens {
     return ret;
   }
   setDomTokenState(tokenId: ElementOrId, newState: any) {
+
     super.setDomTokenState(tokenId, newState);
     var node = $(tokenId);
     if (!node) return;
     if (!node.id) return;
+
+    //intercept player passed state
+    if (node.id.startsWith('tracker_passed_')) {
+      this.darhflog('passes !',node.id,'newstate is ',newState);
+      const plColor=node.id.replace('tracker_passed_','');
+      const plId = this.getPlayerIdByColor(plColor);
+      if (newState==1) {
+        this.disablePlayerPanel(parseInt(plId));
+      } else {
+        this.enablePlayerPanel(parseInt(plId));
+      }
+    }
+
+    //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
     const nodeCopy = $(trackerCopy);
     if (nodeCopy) {
       nodeCopy.setAttribute("data-state", newState);
     }
+
+
   }
   renderSpecificToken(tokenNode: HTMLElement) {
     /* It seems duplicates the other stuff which is already there, disabled for now
@@ -330,46 +348,7 @@ class GameXBody extends GameTokens {
     // override to generate dynamic tooltips and such
 
     if  (tokenDisplayInfo.mainType == "card") {
-
-      let cardtype="card";
-      let prefix="card_main_";
-      let rules = tokenDisplayInfo.r ? "<b>"+_("Card Rules:")+"</b>"+tokenDisplayInfo.r : "";
-      if (tokenDisplayInfo.a) rules += "<br><b>"+_("Action:")+"</b>" + tokenDisplayInfo.a;
-      if (tokenDisplayInfo.e) rules += "<br><b>"+_("Effect:")+"</b>" + tokenDisplayInfo.e;
-
-      tokenDisplayInfo.imageTypes += " infonode";
-      let fullText=
-        rules +
-        "<br>" +
-        (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
-        this.getTr(tokenDisplayInfo.text) +
-        "<br>" +
-        "<b>" + _("Number: ") + "</b>" + tokenDisplayInfo.num +
-        (tokenDisplayInfo.tags ? "<br>" + "<b>" + _("Tags: ") + "</b>" + tokenDisplayInfo.tags : "");
-      if (tokenDisplayInfo.vp) {
-        fullText += "<br><b>" + _("VP:") + "</b>" + tokenDisplayInfo.vp;
-      }
-
-      if (tokenDisplayInfo.key.startsWith("card_corp_")) {
-        prefix = "card_corp_";
-        cardtype = "corp";
-      }
-
-      if ($(prefix + tokenDisplayInfo.num)) {
-        let card_htm = $(prefix + tokenDisplayInfo.num).outerHTML.replaceAll('id="', 'id="tt');
-        tokenDisplayInfo.tooltip = '<div class="tt_2cols ' + cardtype + '"><div class="tt_card_img">' + card_htm + '</div><div class="tt_card_txt">' + fullText + '</div></div>';
-      } else {
-        tokenDisplayInfo.tooltip = fullText;
-      }
-
-      if ($(prefix+tokenDisplayInfo.num))  {
-        let card_htm= $(prefix+tokenDisplayInfo.num).outerHTML.replaceAll('id="','id="tt');
-        tokenDisplayInfo.tooltip ='<div class="tt_2cols '+cardtype+'"><div class="tt_card_img">'+card_htm+'</div><div class="tt_card_txt">'+fullText+'</div></div>';
-      } else {
-        tokenDisplayInfo.tooltip =fullText;
-      }
-
-
+      //do nothing
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -614,8 +593,6 @@ class GameXBody extends GameTokens {
       rate:[]
     }
 
-
-
     let items_htm='';
     for (let res in info.resources) {
       this.custom_pay.selected[res]=0;
@@ -705,7 +682,6 @@ class GameXBody extends GameTokens {
       for (let res of Object.keys(this.custom_pay.selected) ) {
         if (this.custom_pay.selected[res]>0) pays[res] = parseInt(this.custom_pay.selected[res]);
       }
-      this.darhflog('sending',pays,'org',this.custom_pay.selected);
       this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
     });
   }
@@ -854,6 +830,28 @@ class GameXBody extends GameTokens {
     $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
 
     return true;
+  }
+
+  onShowTableauCardsOfColor(event:Event) {
+    let id = (event.currentTarget as HTMLElement).id;
+    // Stop this event propagation
+    dojo.stopEvent(event); // XXX
+
+    const plcolor = $(id).dataset.player;
+    const btncolor = $(id).dataset.cardtype;
+    const tblitem = "visibility_" + btncolor;
+
+    for (let i=1;i<=3;i++) {
+      $("tableau_" + plcolor).dataset['visibility_'+i] = "0";
+      $('player_viewcards_'+i+'_'+plcolor).dataset.selected ="0";
+    }
+    $("tableau_" + plcolor).dataset[tblitem] = "1";
+    $(id).dataset.selected ="1";
+
+    return true;
+
+
+
   }
 
   // notifications

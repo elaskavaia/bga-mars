@@ -309,12 +309,15 @@
 
 .card[data-card-type="1"] .card_bg{
   background-position-x: 0;
+
 }
 .card[data-card-type="2"] .card_bg{
   background-position-x: -200%;
+
 }
 .card[data-card-type="3"] .card_bg{
   background-position-x: -100%;
+
 }
 
 .card_illustration{
@@ -699,6 +702,15 @@
   }
 }
 
+.corp_effect .card:hover {
+  z-index: 10;
+  transform: scale(3);
+  transform-origin: left;
+  transition: all 500ms;
+  transition-delay: 500ms;
+
+}
+
 //hover tooltip
 .card_hovertt
 {
@@ -731,7 +743,6 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    background: #bdd8f0;
     font-size: calc(var(--card-width) * 0.07);
     font-family: "Prototype";
   }
@@ -781,6 +792,20 @@
   }
 }
 
+.card[data-card-type="1"] .tt_intertitle{
+  background: #d0f0bd;
+}
+.card[data-card-type="2"] .tt_intertitle{
+  background: #bdd8f0;
+}
+.card[data-card-type="3"] .tt_intertitle{
+  background: #f0c3bd;
+}
+.card[data-card-type="4"] .tt_intertitle{
+  background: #e9bdf0;
+}
+
+
 .card:hover .card_hovertt {
   animation: showme 300ms 1500ms ;
   animation-fill-mode: forwards;
@@ -795,6 +820,34 @@
 #display_main .card_hovertt {
   width: fit-content;
   height: fit-content;
+}
+
+.mcompact .corp_effect .card .card_hovertt {
+  .token_title {
+    font-size: calc(var(--card-width) * 0.04);
+  }
+  .tt_intertitle {
+    font-size: calc(var(--card-width) * 0.04);
+  }
+
+  .card_initial {
+    display: flex !important;
+    font-size: calc(var(--card-width) * 0.04) !important;
+  }
+  .card_effect {
+    top: unset;
+    width: unset;
+    height: unset;
+    left: unset;
+    font-size: calc(var(--card-width) * 0.04) !important;
+  }
+}
+
+.corp_effect .card:hover .card_hovertt  {
+  animation: showmeinplace 300ms 1500ms ;
+  animation-fill-mode: forwards;
+  width: 100%;
+  height: 100%;
 }
 
 #display_main .card:hover .card_hovertt {
@@ -816,3 +869,18 @@
     transform: translateX(100%);
   }
 }
+
+@keyframes showmeinplace {
+  0%{
+    visibility: visible;
+    transform: translateY(-100%);
+    opacity: 0;
+
+  }
+  100%{
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+

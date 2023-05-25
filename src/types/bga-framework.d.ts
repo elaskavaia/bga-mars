@@ -136,4 +136,7 @@ declare class GameGui {
 
   confirmationDialog( message:string, yesHandler:(param:any)=>void, noHandler?:(param:any)=>void, param?: any ):void;
   multipleChoiceDialog( message: string, choices: any[], callback: (choice: number)=>void ):void;
+
+  enablePlayerPanel(player_id: number):void;
+  disablePlayerPanel(player_id: number):void;
 }
