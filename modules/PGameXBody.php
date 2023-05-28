@@ -80,44 +80,55 @@ abstract class PGameXBody extends PGameMachine {
                 }
             }
             if ($this->isSolo()) {
-                //$this->setupSoloMap();
+                $this->setupSoloMap();
             }
         } catch (Exception $e) {
             $this->error($e);
         }
     }
 
-    function setupSoloMap(){
-                // place 2 random cities with forest
-                $nonreserved = [];
-                foreach ($this->token_types as $key => $info) {
-                    if (startsWith($key, "hex_")) {
-                        if (array_get($info, 'reserved')) continue;
-                        $nonreserved[] = $key;
-                    }
+    function setupSoloMap() {
+        // place 2 random cities with forest
+        $nonreserved = [];
+        foreach ($this->token_types as $key => $info) {
+            if (startsWith($key, "hex_")) {
+                if (array_get($info, 'reserved')) continue;
+                $nonreserved[] = $key;
+            }
+        }
+        shuffle($nonreserved);
+        $type = MA_TILE_CITY;
+        $num = $this->getPlayersNumber();
+        for ($i = 1; $i <= 2; $i++) {
+            $hex = array_shift($nonreserved);
+
+            $tile = $this->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+            $this->systemAssertTrue("city tile not found", $tile);
+            $this->dbSetTokenLocation($tile['key'], $hex, $num);
+            $marker = $this->createPlayerMarker('ffffff');
+            $this->tokens->moveToken($marker, $tile['key'], 0);
+
+            $adj = $this->getAdjecentHexes($hex);
+            shuffle($adj);
+
+            $forestfound = null;
+            while (true) {
+                $forhex = array_shift($adj);
+                if (!$forhex) break;
+                if (array_search($forhex, $nonreserved) === false) {
+                    continue;
                 }
-                shuffle($nonreserved);
-                $type = MA_TILE_CITY;
-                for ($i = 1; $i <= 2; $i++) {
-                    $hex = array_shift($nonreserved);
+                $forestfound = $forhex;
+                unset($nonreserved[$forhex]); // remove adjecent to city so 2nd city cannot be there
+            }
+            if ($forestfound) {
+                $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
+                $this->dbSetTokenLocation($tile['key'], $forestfound, $num);
+                $marker = $this->createPlayerMarker('ffffff');
+                $this->tokens->moveToken($marker, $tile['key'], 0);
+            }
 
-                    $tile = $this->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
-                    $this->tokens->moveToken($tile, $hex, 0);
-
-                    $adj = $this->getAdjecentHexes($hex);
-                    shuffle($adj);
-
-                    while (true) {
-                        $forhex = array_shift($adj);
-                        if (!$forhex) break;
-                        if ($this->getRulesFor($forhex, 'reserved', 0)) {
-                            continue;
-                        }
-                        $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
-                        $this->tokens->moveToken($tile, $forhex, 0);
-                        break;
-                    }
-                }
+        }
     }
 
     /*

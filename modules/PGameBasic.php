@@ -180,7 +180,13 @@ abstract class PGameBasic extends Table {
      */
     function say($message) {
         $message = trim($message);
-        if ($this->isStudio() && $this->debugChat($message)) {
+        try {
+            if ($this->isStudio() && $this->debugChat($message)) {
+                return parent::say(":" . $message);
+            }
+        } catch (Throwable $e) {
+            $this->error($e);
+            $this->debugConsole("ERROR: exception is thrown for $message",['e'=>$e]);
             return parent::say(":" . $message);
         }
         return parent::say($message);
@@ -359,6 +365,10 @@ abstract class PGameBasic extends Table {
         $players = $this->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player_info) {
             if ($player_info["player_no"] == $no) return $player_info["player_color"];
+        }
+        if ($no==count($players)) {
+            // neutural player for solo game, white
+            return 'ffffff';
         }
         return null;
     }
