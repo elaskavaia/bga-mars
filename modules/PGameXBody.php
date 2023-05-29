@@ -79,8 +79,55 @@ abstract class PGameXBody extends PGameMachine {
                     $this->queue($color, "prediscard");
                 }
             }
+            if ($this->isSolo()) {
+                $this->setupSoloMap();
+            }
         } catch (Exception $e) {
             $this->error($e);
+        }
+    }
+
+    function setupSoloMap() {
+        // place 2 random cities with forest
+        $nonreserved = [];
+        foreach ($this->token_types as $key => $info) {
+            if (startsWith($key, "hex_")) {
+                if (array_get($info, 'reserved')) continue;
+                $nonreserved[] = $key;
+            }
+        }
+        shuffle($nonreserved);
+        $type = MA_TILE_CITY;
+        $num = $this->getPlayersNumber();
+        for ($i = 1; $i <= 2; $i++) {
+            $hex = array_shift($nonreserved);
+
+            $tile = $this->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+            $this->systemAssertTrue("city tile not found", $tile);
+            $this->dbSetTokenLocation($tile['key'], $hex, $num);
+            $marker = $this->createPlayerMarker('ffffff');
+            $this->tokens->moveToken($marker, $tile['key'], 0);
+
+            $adj = $this->getAdjecentHexes($hex);
+            shuffle($adj);
+
+            $forestfound = null;
+            while (true) {
+                $forhex = array_shift($adj);
+                if (!$forhex) break;
+                if (array_search($forhex, $nonreserved) === false) {
+                    continue;
+                }
+                $forestfound = $forhex;
+                unset($nonreserved[$forhex]); // remove adjecent to city so 2nd city cannot be there
+            }
+            if ($forestfound) {
+                $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
+                $this->dbSetTokenLocation($tile['key'], $forestfound, $num);
+                $marker = $this->createPlayerMarker('ffffff');
+                $this->tokens->moveToken($marker, $tile['key'], 0);
+            }
+
         }
     }
 
