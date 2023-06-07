@@ -103,7 +103,6 @@ $this->token_types = [
   'tags' => 'Building Jovian',
   'vp' => 2,
   'deck' => 'Basic',
-  'text' => clienttranslate("Oxygen must be 5% or less."),
 ],
  'card_main_2' => [  //
   'location' => 'deck_main',
@@ -117,7 +116,7 @@ $this->token_types = [
   'tags' => 'Jovian',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires that you have titanium production. Decrease any titanium production 1 step and increase your own 1 step."),
+  'text' => clienttranslate("Decrease any titanium production 1 step and increase your own 1 step."),
 ],
  'card_main_3' => [  //
   'location' => 'deck_main',
@@ -143,7 +142,7 @@ $this->token_types = [
   'pre' => 'w>=3',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 3 ocean tiles. Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps."),
+  'text' => clienttranslate("Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps."),
 ],
  'card_main_5' => [  //
   'location' => 'deck_main',
@@ -157,8 +156,9 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => '(resCard>0)*3',
   'deck' => 'Basic',
-  'text' => clienttranslate("Oxygen must be 6% or less. 3 VPs if you have one or more science resource here.; Action: Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here."),
-    'holds' => 'Science',
+  'text_action' => clienttranslate("Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here"),
+  'text_vp' => clienttranslate("3 VPs if you have one or more science resource here.;"),
+  'holds' => 'Science',
 ],
  'card_main_6' => [  //
   'location' => 'deck_main',
@@ -171,7 +171,7 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Action: Look at the top card and either buy it or discard it"),
+  'text_action' => clienttranslate("Look at the top card and either buy it or discard it"),
 ],
  'card_main_7' => [  //
   'location' => 'deck_main',
@@ -184,7 +184,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 1 energy to gain 1 MC for each city tile ON MARS."),
+  'text_action' => clienttranslate("Spend 1 energy to gain 1 MC for each city tile ON MARS."),
 ],
  'card_main_8' => [  //
   'location' => 'deck_main',
@@ -198,7 +198,8 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 'adj_ocean',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 4 ocean tiles. Place [the capital city] tile. Decrease your energy production 2 steps and increase your MC production 5 steps. 1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE."),
+  'text' => clienttranslate("Place [the capital city] tile. Decrease your energy production 2 steps and increase your MC production 5 steps"),
+  'text_vp' => clienttranslate("1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE."),
 ],
  'card_main_9' => [  //
   'location' => 'deck_main',
@@ -250,7 +251,8 @@ $this->token_types = [
   'tags' => 'Space Jovian',
   'vp' => 'tagJovian',
   'deck' => 'Basic',
-  'text' => clienttranslate("1 VP for each Jovian tag you have.; Action: Pay 12 MC to place an ocean tile. TITANIUM MAY BE USED as if playing a space card."),
+  'text_action' => clienttranslate("Pay 12 MC to place an ocean tile. TITANIUM MAY BE USED as if playing a space card."),
+  'text_vp' => clienttranslate("1 VP for each Jovian tag you have"),
 ],
  'card_main_13' => [  //
   'location' => 'deck_main',
@@ -264,7 +266,8 @@ $this->token_types = [
   'tags' => 'Building Space',
   'vp' => 2,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Increase your titanium production 1 step.; Action: Spend 1 steel to gain 5 MC"),
+  'text' => clienttranslate("Increase your titanium production 1 step."),
+  'text_action' => clienttranslate("Spend 1 steel to gain 5 MC"),
 ],
  'card_main_14' => [  //
   'location' => 'deck_main',
@@ -290,7 +293,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Decrease your energy production 1 step to increase your terraforming rating 1 step."),
+  'text_action' => clienttranslate("Decrease your energy production 1 step to increase your terraforming rating 1 step."),
 ],
  'card_main_16' => [  //
   'location' => 'deck_main',
@@ -304,7 +307,7 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Oxygen must be 7% or less. Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps."),
+  'text' => clienttranslate("Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps."),
 ],
  'card_main_17' => [  //
   'location' => 'deck_main',
@@ -331,7 +334,7 @@ $this->token_types = [
   'tags' => 'Space Jovian',
   'vp' => 2,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 2% oxygen. Increase your heat production 2 steps and your plant production 2 steps."),
+  'text' => clienttranslate("Increase your heat production 2 steps and your plant production 2 steps."),
 ],
  'card_main_19' => [  //
   'location' => 'deck_main',
@@ -358,7 +361,8 @@ $this->token_types = [
   'tags' => 'Science Building City',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Place a city tile NEXT TO NO OTHER TILE.; Effect: When you play a card, you pay 1 MC less for it."),
+  'text' => clienttranslate("Place a city tile NEXT TO NO OTHER TILE."),
+  'text_effect' => clienttranslate("When you play a card, you pay 1 MC less for it."),
 ],
  'card_main_21' => [  //
   'location' => 'deck_main',
@@ -398,7 +402,8 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("It must be -12°C or colder to play. Gain 1 plant.; Effect: When anyone places an ocean tile, gain 2 plants."),
+  'text' => clienttranslate("Gain 1 plant."),
+  'text_effect' => clienttranslate("When anyone places an ocean tile, gain 2 plants."),
 ],
  'card_main_24' => [  //
   'location' => 'deck_main',
@@ -412,8 +417,9 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 11% oxygen. 1 VP per animal on this card.; Action: Remove 1 animal from any card and add it to this card."),
-    'holds' => 'Animal',
+  'text_action' => clienttranslate("Remove 1 animal from any card and add it to this card."),
+  'text_vp' => clienttranslate("1 VP per animal on this card"),
+  'holds' => 'Animal',
 ],
  'card_main_25' => [  //
   'location' => 'deck_main',
@@ -426,7 +432,7 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: When you play a space card, you pay 2 MC less for it."),
+  'text_effect' => clienttranslate("When you play a space card, you pay 2 MC less for it."),
 ],
  'card_main_26' => [  //
   'location' => 'deck_main',
@@ -440,7 +446,7 @@ $this->token_types = [
   'tags' => 'Building Plant',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -12°C  or warmer. Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps."),
+  'text' => clienttranslate("Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps."),
 ],
  'card_main_27' => [  //
   'location' => 'deck_main',
@@ -453,7 +459,6 @@ $this->token_types = [
   'tags' => 'Space Earth Event',
   'vp' => 4,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 5 science tags."),
 ],
  'card_main_28' => [  //
   'location' => 'deck_main',
@@ -466,8 +471,9 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 'resCard',
   'deck' => 'Corporate',
-  'text' => clienttranslate("1 VP for each fighter resource on this card.; Action: Spend 1 titanium to add 1 fighter resource to this card."),
-    'holds' => 'Fighter',
+  'text_action' => clienttranslate("Spend 1 titanium to add 1 fighter resource to this card."),
+  'text_vp' => clienttranslate("1 VP for each fighter resource on this card."),
+  'holds' => 'Fighter',
 ],
  'card_main_29' => [  //
   'location' => 'deck_main',
@@ -481,7 +487,7 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Oxygen must be 9% or less. Place a city tile. Decrease your energy production 1 step and increase your MC production 3 steps."),
+  'text' => clienttranslate("Place a city tile. Decrease your energy production 1 step and increase your MC production 3 steps."),
 ],
  'card_main_30' => [  //
   'location' => 'deck_main',
@@ -507,7 +513,7 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Effect: When you play a space event, you gain 3 MC and 3 heat."),
+  'text_effect' => clienttranslate("When you play a space event, you gain 3 MC and 3 heat."),
 ],
  'card_main_32' => [  //
   'location' => 'deck_main',
@@ -533,8 +539,8 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Add 1 microbe to this card, or remove 2 microbe from this card to raise oxygen level 1 step."),
-    'holds' => 'Microbe',
+  'text_action' => clienttranslate("Add 1 microbe to this card, or remove 2 microbe from this card to raise oxygen level 1 step."),
+  'holds' => 'Microbe',
 ],
  'card_main_34' => [  //
   'location' => 'deck_main',
@@ -548,8 +554,8 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 4% oxygen.; Action: Add 1 microbe to this card, or remove 2 microbes to raise temperature 1 step."),
-    'holds' => 'Microbe',
+  'text_action' => clienttranslate("Add 1 microbe to this card, or remove 2 microbes to raise temperature 1 step."),
+  'holds' => 'Microbe',
 ],
  'card_main_35' => [  //
   'location' => 'deck_main',
@@ -563,8 +569,9 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 'resCard/2',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 4% oxygen. 1 VP per 2 microbes on this card.; Action: Remove 1 microbe from any card to add 1 to this card."),
-    'holds' => 'Microbe',
+  'text_action' => clienttranslate("Remove 1 microbe from any card to add 1 to this card."),
+  'text_vp' => clienttranslate("1 VP per 2 microbes on this card."),
+  'holds' => 'Microbe',
 ],
  'card_main_36' => [  //
   'location' => 'deck_main',
@@ -603,7 +610,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Effect: When any city tile is placed, gain 2 MC"),
+  'text_effect' => clienttranslate("When any city tile is placed, gain 2 MC"),
 ],
  'card_main_39' => [  //
   'location' => 'deck_main',
@@ -656,7 +663,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("It must be -18°C or colder. Increase your plant production 1 step."),
+  'text' => clienttranslate("Increase your plant production 1 step."),
 ],
  'card_main_43' => [  //
   'location' => 'deck_main',
@@ -683,7 +690,7 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. Increase your MC production 1 step."),
+  'text' => clienttranslate("Place this tile NEXT TO NO OTHER TILE. Increase your MC production 1 step."),
 ],
  'card_main_45' => [  //
   'location' => 'deck_main',
@@ -710,7 +717,7 @@ $this->token_types = [
   'tags' => 'Energy',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 3 science tags. Increase your energy production and your MC production 1 step each."),
+  'text' => clienttranslate("Increase your energy production and your MC production 1 step each."),
 ],
  'card_main_47' => [  //
   'location' => 'deck_main',
@@ -724,7 +731,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 5 ocean tiles. Gain 1 plant and increase your plant production 2 steps."),
+  'text' => clienttranslate("Gain 1 plant and increase your plant production 2 steps."),
 ],
  'card_main_48' => [  //
   'location' => 'deck_main',
@@ -750,8 +757,9 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 'resCard/4',
   'deck' => 'Corporate',
-  'text' => clienttranslate("1 VP per 4 microbes on this card.; Action: Add 1 microbe to this card."),
-    'holds' => 'Microbe',
+  'text_action' => clienttranslate("Add 1 microbe to this card."),
+  'text_vp' => clienttranslate("1 VP per 4 microbes on this card.;"),
+  'holds' => 'Microbe',
 ],
  'card_main_50' => [  //
   'location' => 'deck_main',
@@ -792,8 +800,9 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 2°C or warmer. Decrease any plant production 1 step. 1 VP for each animal on this card.; Action: Add 1 animal to this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Decrease any plant production 1 step. 1 VP for each animal on this card."),
+  'text_action' => clienttranslate("Add 1 animal to this card."),
+  'holds' => 'Animal',
 ],
  'card_main_53' => [  //
   'location' => 'deck_main',
@@ -806,7 +815,7 @@ $this->token_types = [
   'pre' => 't>=0',
   'vp' => 2,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 0°C or warmer. Place 2 ocean tiles."),
+  'text' => clienttranslate("Place 2 ocean tiles."),
 ],
  'card_main_54' => [  //
   'location' => 'deck_main',
@@ -821,8 +830,10 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 6% oxygen. Decrease any plant production 1 step. 1 VP per 2 animals on this card.; Action: Add 1 animal to this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Decrease any plant production 1 step."),
+  'text_action' => clienttranslate("Add 1 animal to this card."),
+  'text_vp' => clienttranslate("1 VP per 2 animals on this card."),
+  'holds' => 'Animal',
 ],
  'card_main_55' => [  //
   'location' => 'deck_main',
@@ -835,7 +846,7 @@ $this->token_types = [
   'pre' => 'w>=6',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 6 ocean tiles. Increase your MC production 2 steps and your plant production 3 steps. Gain 2 plants."),
+  'text' => clienttranslate("Increase your MC production 2 steps and your plant production 3 steps. Gain 2 plants."),
 ],
  'card_main_56' => [  //
   'location' => 'deck_main',
@@ -875,7 +886,7 @@ $this->token_types = [
   'tags' => 'Space Jovian Energy',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires a Jovian tag. Increase your heat production and energy production 3 steps each."),
+  'text' => clienttranslate("Increase your heat production and energy production 3 steps each."),
 ],
  'card_main_59' => [  //
   'location' => 'deck_main',
@@ -889,7 +900,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires +4°C or warmer. Place a Greenery tile ON AN AREA RESERVED FOR OCEAN and raise oxygen 1 step. Disregard normal placement restrictions for this."),
+  'text' => clienttranslate("Place a Greenery tile ON AN AREA RESERVED FOR OCEAN and raise oxygen 1 step. Disregard normal placement restrictions for this."),
 ],
  'card_main_60' => [  //
   'location' => 'deck_main',
@@ -903,7 +914,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -4°C or warmer. Increase your plant production 3 steps. Gain 1 plant."),
+  'text' => clienttranslate("Increase your plant production 3 steps. Gain 1 plant."),
 ],
  'card_main_61' => [  //
   'location' => 'deck_main',
@@ -1022,7 +1033,8 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Oxygen must be 8% or less. Decrease your energy production 1 step.; Action: Spend 1 plant or 1 steel to gain 7 MC"),
+  'text' => clienttranslate("Decrease your energy production 1 step."),
+  'text_action' => clienttranslate("Spend 1 plant or 1 steel to gain 7 MC"),
 ],
  'card_main_70' => [  //
   'location' => 'deck_main',
@@ -1035,7 +1047,7 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 2,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: when you play a card, you pay 2 MC less for it."),
+  'text_effect' => clienttranslate("When you play a card, you pay 2 MC less for it."),
 ],
  'card_main_71' => [  //
   'location' => 'deck_main',
@@ -1048,7 +1060,7 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: Each titanium you have is worth 1MC extra. Each steel you have is worth 1 MC extra."),
+  'text_effect' => clienttranslate("Each titanium you have is worth 1MC extra. Each steel you have is worth 1 MC extra."),
 ],
  'card_main_72' => [  //
   'location' => 'deck_main',
@@ -1063,8 +1075,10 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 13% oxygen. Decrease any plant production 2 steps. 1 VP for each animal on this card; Action: Add an animal to this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Decrease any plant production 2 steps."),
+  'text_action' => clienttranslate("Add an animal to this card."),
+  'text_vp' => clienttranslate("1 VP for each animal on this card."),
+  'holds' => 'Animal',
 ],
  'card_main_73' => [  //
   'location' => 'deck_main',
@@ -1077,7 +1091,7 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: When you play a science tag, including this, you may discard a card from hand to draw a card."),
+  'text_vp' => clienttranslate("When you play a science tag, including this, you may discard a card from hand to draw a card."),
 ],
  'card_main_74' => [  //
   'location' => 'deck_main',
@@ -1090,7 +1104,7 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD."),
+  'text_vp' => clienttranslate("When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD."),
 ],
  'card_main_75' => [  //
   'location' => 'deck_main',
@@ -1116,7 +1130,7 @@ $this->token_types = [
   'tags' => 'Space Energy',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 7MC to increase your energy production 1 step."),
+  'text_action' => clienttranslate("Spend 7MC to increase your energy production 1 step."),
 ],
  'card_main_77' => [  //
   'location' => 'deck_main',
@@ -1157,7 +1171,7 @@ $this->token_types = [
   'tags' => 'Science Energy',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: When you play a space card, you pay 2 MC less for it"),
+  'text_effect' => clienttranslate("When you play a space card, you pay 2 MC less for it"),
 ],
  'card_main_80' => [  //
   'location' => 'deck_main',
@@ -1170,7 +1184,7 @@ $this->token_types = [
   'tags' => 'Space Event',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any plyer."),
+  'text' => clienttranslate("Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any player."),
 ],
  'card_main_81' => [  //
   'location' => 'deck_main',
@@ -1183,7 +1197,8 @@ $this->token_types = [
   'tags' => 'Space City Jovian',
   'vp' => 'tagJovian',
   'deck' => 'Basic',
-  'text' => clienttranslate("Place a city tile ON THE RESERVED AREA [for Ganymede Colony]. 1 VP per Jovian tag you have."),
+  'text' => clienttranslate("Place a city tile ON THE RESERVED AREA [for Ganymede Colony]."),
+  'text_vp' => clienttranslate("1 VP per Jovian tag you have."),
 ],
  'card_main_82' => [  //
   'location' => 'deck_main',
@@ -1260,7 +1275,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -16°C or warmer. Increase your plant production 1 step. Gain 3 plants."),
+  'text' => clienttranslate("Increase your plant production 1 step. Gain 3 plants."),
 ],
  'card_main_88' => [  //
   'location' => 'deck_main',
@@ -1274,7 +1289,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -14°C or warmer. Increase your plant production 1 step. Gain 1 plant."),
+  'text' => clienttranslate("Increase your plant production 1 step. Gain 1 plant."),
 ],
  'card_main_89' => [  //
   'location' => 'deck_main',
@@ -1327,7 +1342,8 @@ $this->token_types = [
   'tags' => 'Space Jovian',
   'vp' => 'tagJovian',
   'deck' => 'Corporate',
-  'text' => clienttranslate("Increase your titanium production 2 steps and your MC production 2 steps. 1 VP per Jovian tag you have."),
+  'text' => clienttranslate("Increase your titanium production 2 steps and your MC production 2 steps."),
+  'text_vp' => clienttranslate("1 VP per Jovian tag you have."),
 ],
  'card_main_93' => [  //
   'location' => 'deck_main',
@@ -1341,7 +1357,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -10°C or warmer. Increase your plant production 2 steps. Gain 2 plants."),
+  'text' => clienttranslate("Increase your plant production 2 steps. Gain 2 plants."),
 ],
  'card_main_94' => [  //
   'location' => 'deck_main',
@@ -1356,7 +1372,7 @@ $this->token_types = [
   'tags' => 'Science Energy',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 5 science tags. Increase your energy production 6 steps.; Effect: When you play a space card, you pay 2 MC less for it."),
+  'text' => clienttranslate("Increase your energy production 6 steps.; Effect: When you play a space card, you pay 2 MC less for it."),
 ],
  'card_main_95' => [  //
   'location' => 'deck_main',
@@ -1369,8 +1385,9 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 'resCard*2',
   'deck' => 'Corporate',
-  'text' => clienttranslate("2 VP for each science resource on this card.; Action: Spend 6 energy to add a science resource to this card."),
-    'holds' => 'Science',
+  'text_action' => clienttranslate("Spend 6 energy to add a science resource to this card."),
+  'text_vp' => clienttranslate("2 VP for each science resource on this card."),
+  'holds' => 'Science',
 ],
  'card_main_96' => [  //
   'location' => 'deck_main',
@@ -1448,7 +1465,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 4 energy to gain 1 steel and increase oxygen 1 step."),
+  'text_action' => clienttranslate("Spend 4 energy to gain 1 steel and increase oxygen 1 step."),
 ],
  'card_main_102' => [  //
   'location' => 'deck_main',
@@ -1473,7 +1490,7 @@ $this->token_types = [
   'cost' => 15,
   'tags' => 'Building',
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 4 energy to gain 2 steel and increase oxygen 1 step."),
+  'text_action' => clienttranslate("Spend 4 energy to gain 2 steel and increase oxygen 1 step."),
 ],
  'card_main_104' => [  //
   'location' => 'deck_main',
@@ -1486,7 +1503,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 4 energy to gain 1 titanium and increase oxygen 1 step."),
+  'text_action' => clienttranslate("Spend 4 energy to gain 1 titanium and increase oxygen 1 step."),
 ],
  'card_main_105' => [  //
   'location' => 'deck_main',
@@ -1499,7 +1516,7 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: When you play an Earth tag, you pay 3 MC less for it."),
+  'text_effect' => clienttranslate("When you play an Earth tag, you pay 3 MC less for it."),
 ],
  'card_main_106' => [  //
   'location' => 'deck_main',
@@ -1539,7 +1556,7 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 12% oxygen. Decrease your energy production 1 step and increase your MC production 4 steps. Gain 2 plants and place a city tile."),
+  'text' => clienttranslate("Decrease your energy production 1 step and increase your MC production 4 steps. Gain 2 plants and place a city tile."),
 ],
  'card_main_109' => [  //
   'location' => 'deck_main',
@@ -1552,7 +1569,7 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: After you play an event card, you gain 3MC"),
+  'text_effect' => clienttranslate("After you play an event card, you gain 3MC"),
 ],
  'card_main_110' => [  //
   'location' => 'deck_main',
@@ -1566,7 +1583,8 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Decrease your MC production 1 step.; Action: Look at the top card and either buy it or discard it"),
+  'text' => clienttranslate("Decrease your MC production 1 step."),
+  'text_action' => clienttranslate("Look at the top card and either buy it or discard it"),
 ],
  'card_main_111' => [  //
   'location' => 'deck_main',
@@ -1618,7 +1636,6 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 2,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 7% oxygen."),
 ],
  'card_main_115' => [  //
   'location' => 'deck_main',
@@ -1645,7 +1662,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -6°C or warmer. Place 1 ocean tile ON AN AREA NOT RESERVED FOR OCEAN."),
+  'text' => clienttranslate("Place 1 ocean tile ON AN AREA NOT RESERVED FOR OCEAN."),
 ],
  'card_main_117' => [  //
   'location' => 'deck_main',
@@ -1672,7 +1689,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 2,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires +4°C or warmer. Increase your MC production 2 steps and your plant production 2 steps. Gain 2 plants."),
+  'text' => clienttranslate("Increase your MC production 2 steps and your plant production 2 steps. Gain 2 plants."),
 ],
  'card_main_119' => [  //
   'location' => 'deck_main',
@@ -1684,7 +1701,6 @@ $this->token_types = [
   'pre' => 'w<=3',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 3 or less ocean tiles."),
 ],
  'card_main_120' => [  //
   'location' => 'deck_main',
@@ -1738,7 +1754,8 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Place [the Industrial Center] tile ADJACENT TO A CITY TILE.; Action: Spend 7 MC to increase your steel production 1 step."),
+  'text' => clienttranslate("Place [the Industrial Center] tile ADJACENT TO A CITY TILE"),
+  'text_action' => clienttranslate("Action: Spend 7 MC to increase your steel production 1 step."),
 ],
  'card_main_124' => [  //
   'location' => 'deck_main',
@@ -1803,8 +1820,9 @@ $this->token_types = [
   'tags' => 'Plant Animal',
   'vp' => 'resCard/2',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.; Effect: When you play an animal or a plant tag (including these 2), add an animal to this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card."),
+  'text_effect' => clienttranslate("When you play an animal or a plant tag (including these 2), add an animal to this card."),
+  'holds' => 'Animal',
 ],
  'card_main_129' => [  //
   'location' => 'deck_main',
@@ -1817,7 +1835,7 @@ $this->token_types = [
   'pre' => 'o>=5',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 5% oxygen. Increase your MC production 1 step for each city tile ON MARS."),
+  'text' => clienttranslate("Increase your MC production 1 step for each city tile ON MARS."),
 ],
  'card_main_130' => [  //
   'location' => 'deck_main',
@@ -1831,7 +1849,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 4% oxygen. Increase your plant production 1 step for every 2 microbe tags you have, including this."),
+  'text' => clienttranslate("Increase your plant production 1 step for every 2 microbe tags you have, including this."),
 ],
  'card_main_131' => [  //
   'location' => 'deck_main',
@@ -1845,8 +1863,9 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 'resCard/3',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 3% oxygen. 1 VP per 3 microbes on this card.; Effect: When you play an animal, plant, or microbe tag, including this, add a microbe to this card."),
-    'holds' => 'Microbe',
+  'text_effect' => clienttranslate("When you play an animal, plant, or microbe tag, including this, add a microbe to this card."),
+  'text_vp' => clienttranslate("1 VP per 3 microbes on this card."),
+  'holds' => 'Microbe',
 ],
  'card_main_132' => [  //
   'location' => 'deck_main',
@@ -1860,7 +1879,7 @@ $this->token_types = [
   'tags' => 'Science Building Energy',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 2 power tags. Increase your energy production 3 steps."),
+  'text' => clienttranslate("Increase your energy production 3 steps."),
 ],
  'card_main_133' => [  //
   'location' => 'deck_main',
@@ -1874,7 +1893,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -14°C or warmer.; Action: Add a microbe to ANOTHER card."),
+  'text_action' => clienttranslate("Add a microbe to ANOTHER card."),
 ],
  'card_main_134' => [  //
   'location' => 'deck_main',
@@ -1888,7 +1907,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("It must be -10°C or colder.; Action: Gain 1 plant or add 2 microbes to ANOTHER card."),
+  'text_action' => clienttranslate("Gain 1 plant or add 2 microbes to ANOTHER card."),
 ],
  'card_main_135' => [  //
   'location' => 'deck_main',
@@ -1901,7 +1920,6 @@ $this->token_types = [
   'tags' => 'Microbe Plant Animal',
   'vp' => 3,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires a plant tag, a microbe tag, and an animal tag."),
 ],
  'card_main_136' => [  //
   'location' => 'deck_main',
@@ -1915,7 +1933,7 @@ $this->token_types = [
   'tags' => 'Building Energy',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 4 ocean tiles. Increase your energy production 2 steps."),
+  'text' => clienttranslate("Increase your energy production 2 steps."),
 ],
  'card_main_137' => [  //
   'location' => 'deck_main',
@@ -1955,7 +1973,7 @@ $this->token_types = [
   'tags' => 'Energy',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 3 ocean tiles. Increase your energy production 1 step."),
+  'text' => clienttranslate("Increase your energy production 1 step."),
 ],
  'card_main_140' => [  //
   'location' => 'deck_main',
@@ -2034,7 +2052,7 @@ $this->token_types = [
   'tags' => 'Building Energy',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 2 science tags. Increase your energy production 3 steps."),
+  'text' => clienttranslate("Increase your energy production 3 steps."),
 ],
  'card_main_146' => [  //
   'location' => 'deck_main',
@@ -2048,7 +2066,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 3 ocean tiles and that you lose 2 plants. Increase your plant production 2 steps."),
+  'text' => clienttranslate("Increase your plant production 2 steps."),
 ],
  'card_main_147' => [  //
   'location' => 'deck_main',
@@ -2063,8 +2081,10 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard/2',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 8% oxygen. Add 1 animal to this card. Decrease any plant production 1 step. 1 VP per 2 animals on this card.; Effect: When you place a greenery tile, add an animal to this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Add 1 animal to this card. Decrease any plant production 1 step."),
+  'text_effect' => clienttranslate("When you place a greenery tile, add an animal to this card."),
+  'text_vp' => clienttranslate("1 VP per 2 animals on this card,"),
+  'holds' => 'Animal',
 ],
  'card_main_148' => [  //
   'location' => 'deck_main',
@@ -2078,7 +2098,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 6% oxygen. Increase your plant production 1 step for each plant tag you have."),
+  'text' => clienttranslate("Increase your plant production 1 step for each plant tag you have."),
 ],
  'card_main_149' => [  //
   'location' => 'deck_main',
@@ -2105,7 +2125,7 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 3,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 7 science tags.; Effect: when you play a card, you pay 2 MC less for it."),
+  'text_effect' => clienttranslate("When you play a card, you pay 2 MC less for it."),
 ],
  'card_main_151' => [  //
   'location' => 'deck_main',
@@ -2143,7 +2163,7 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Effect: Your global requirements are +2 or -2 steps, your choice in each case."),
+  'text_effect' => clienttranslate("Your global requirements are +2 or -2 steps, your choice in each case."),
 ],
  'card_main_154' => [  //
   'location' => 'deck_main',
@@ -2156,7 +2176,7 @@ $this->token_types = [
   'pre' => 't>=0',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 0°C or warmer.; Action: Spend 8 heat to increase your terraforming rating 1 step."),
+  'text_action' => clienttranslate("Spend 8 heat to increase your terraforming rating 1 step."),
 ],
  'card_main_155' => [  //
   'location' => 'deck_main',
@@ -2170,7 +2190,7 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("It must be -14°C or colder. Increase your plant production 2 steps."),
+  'text' => clienttranslate("Increase your plant production 2 steps."),
 ],
  'card_main_156' => [  //
   'location' => 'deck_main',
@@ -2183,7 +2203,7 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: After you pay for a standard project, except selling patents, you gain 3 MC."),
+  'text_effect' => clienttranslate("After you pay for a standard project, except selling patents, you gain 3 MC."),
 ],
  'card_main_157' => [  //
   'location' => 'deck_main',
@@ -2197,8 +2217,9 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Add 3 microbes to this card.; Action: Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step."),
-    'holds' => 'Microbe',
+  'text' => clienttranslate("Add 3 microbes to this card,"),
+  'text_action' => clienttranslate("Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step."),
+  'holds' => 'Microbe',
 ],
  'card_main_158' => [  //
   'location' => 'deck_main',
@@ -2225,7 +2246,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -24°C or warmer. Increase your plant production 1 step."),
+  'text' => clienttranslate("Increase your plant production 1 step."),
 ],
  'card_main_160' => [  //
   'location' => 'deck_main',
@@ -2239,7 +2260,7 @@ $this->token_types = [
   'tags' => 'Energy',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 2 power tags. Decrease any energy production 1 step and increase your own 1 step."),
+  'text' => clienttranslate("Decrease any energy production 1 step and increase your own 1 step."),
 ],
  'card_main_161' => [  //
   'location' => 'deck_main',
@@ -2318,7 +2339,8 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 5% oxygen. Decrease your energy production 1 step and increase your MC production 2 steps.; Effect: When you play a space card, you pay 2MC less for it."),
+  'text' => clienttranslate("Decrease your energy production 1 step and increase your MC production 2 steps.;"),
+  'text_effect' => clienttranslate("When you play a space card, you pay 2MC less for it."),
 ],
  'card_main_167' => [  //
   'location' => 'deck_main',
@@ -2344,7 +2366,7 @@ $this->token_types = [
   'tags' => 'Building Energy',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 7% oxygen. Increase your energy production 1 step."),
+  'text' => clienttranslate("Increase your energy production 1 step."),
 ],
  'card_main_169' => [  //
   'location' => 'deck_main',
@@ -2358,7 +2380,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 2,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -6°C or warmer. Increase your plant production 1 step and your MC production 2 steps. Gain 1 plant."),
+  'text' => clienttranslate("Increase your plant production 1 step and your MC production 2 steps. Gain 1 plant."),
 ],
  'card_main_170' => [  //
   'location' => 'deck_main',
@@ -2398,8 +2420,10 @@ $this->token_types = [
   'tags' => 'Animal Earth',
   'vp' => 'res/2',
   'deck' => 'Basic',
-  'text' => clienttranslate("Add 1 animal to this card. 1 VP per 2 animals here.; Effect: When any city tile is placed, add an animal to this card.  Animals may not be removed from this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Add 1 animal to this card."),
+  'text_effect' => clienttranslate("When any city tile is placed, add an animal to this card. Animals may not be removed from this card"),
+  'text_vp' => clienttranslate("1 VP per 2 animals here."),
+  'holds' => 'Animal',
 ],
  'card_main_173' => [  //
   'location' => 'deck_main',
@@ -2411,7 +2435,7 @@ $this->token_types = [
   'cost' => 5,
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: Opponents may not remove your [plants, animals or microbes]"),
+  'text_effect' => clienttranslate("Opponents may not remove your [plants, animals or microbes]"),
 ],
  'card_main_174' => [  //
   'location' => 'deck_main',
@@ -2424,7 +2448,7 @@ $this->token_types = [
   'tags' => 'Building Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Increase your MC production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step."),
+  'text' => clienttranslate("Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step."),
 ],
  'card_main_175' => [  //
   'location' => 'deck_main',
@@ -2451,7 +2475,7 @@ $this->token_types = [
   'tags' => 'Building Plant',
   'vp' => 1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -20°C or warmer. Increase your MC production 1 step and gain 2 plants."),
+  'text' => clienttranslate("Increase your MC production 1 step and gain 2 plants."),
 ],
  'card_main_177' => [  //
   'location' => 'deck_main',
@@ -2465,7 +2489,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 2 ocean tiles.; Action: Spend 3 energy to raise oxygen 1 step."),
+  'text_action' => clienttranslate("Spend 3 energy to raise oxygen 1 step,"),
 ],
  'card_main_178' => [  //
   'location' => 'deck_main',
@@ -2518,7 +2542,7 @@ $this->token_types = [
   'tags' => 'Event',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires +2°C or warmer. Place 1 ocean tile."),
+  'text' => clienttranslate("Place 1 ocean tile."),
 ],
  'card_main_182' => [  //
   'location' => 'deck_main',
@@ -2545,7 +2569,7 @@ $this->token_types = [
   'tags' => 'Building Energy',
   'vp' => -1,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 6% oxygen. Decrease any plant production 1 step and increase your energy production 2 steps."),
+  'text' => clienttranslate("Decrease any plant production 1 step and increase your energy production 2 steps."),
 ],
  'card_main_184' => [  //
   'location' => 'deck_main',
@@ -2560,8 +2584,9 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard',
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 9% oxygen. Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card.; Action: Add 1 animal to this card."),
-    'holds' => 'Animal',
+  'text' => clienttranslate("Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card,"),
+  'text_action' => clienttranslate("Add 1 animal to this card."),
+  'holds' => 'Animal',
 ],
  'card_main_185' => [  //
   'location' => 'deck_main',
@@ -2574,8 +2599,8 @@ $this->token_types = [
   'tags' => 'Science Building Earth',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Effect: When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card."),
-    'holds' => 'Science',
+  'text_effect' => clienttranslate("When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card."),
+  'holds' => 'Science',
 ],
  'card_main_186' => [  //
   'location' => 'deck_main',
@@ -2601,7 +2626,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card."),
+  'text_action' => clienttranslate("Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card."),
 ],
  'card_main_188' => [  //
   'location' => 'deck_main',
@@ -2654,7 +2679,7 @@ $this->token_types = [
   'tags' => 'Event',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires -8°C or warmer. Place 1 ocean tile."),
+  'text' => clienttranslate("Place 1 ocean tile."),
 ],
  'card_main_192' => [  //
   'location' => 'deck_main',
@@ -2681,7 +2706,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Requires 2 science tags. Place a greenery tile and raise oxygen 1 step."),
+  'text' => clienttranslate("Place a greenery tile and raise oxygen 1 step."),
 ],
  'card_main_194' => [  //
   'location' => 'deck_main',
@@ -2694,7 +2719,7 @@ $this->token_types = [
   'tags' => 'Building Energy',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Action: Spend any amount of energy to gain that amount of MC."),
+  'text_action' => clienttranslate("Spend any amount of energy to gain that amount of MC."),
 ],
  'card_main_195' => [  //
   'location' => 'deck_main',
@@ -2746,7 +2771,8 @@ $this->token_types = [
   'tags' => 'Space Earth',
   'vp' => 'all_city/3',
   'deck' => 'Basic',
-  'text' => clienttranslate("Increase your MC production 5 steps. 1 VP for every 3rd city in play."),
+  'text' => clienttranslate("Increase your MC production 5 steps."),
+  'text_vp' => clienttranslate("1 VP for every 3rd city in play."),
 ],
  'card_main_199' => [  //
   'location' => 'deck_main',
@@ -2774,7 +2800,8 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.; Effect: Each time a city tile is placed, including this, increase your MC production 1 step."),
+  'text' => clienttranslate("Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile."),
+  'text_effect' => clienttranslate("Each time a city tile is placed, including this, increase your MC production 1 step."),
 ],
  'card_main_201' => [  //
   'location' => 'deck_main',
@@ -2800,7 +2827,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Action: Spend 10 MC to increase your heat production 2 steps."),
+  'text_action' => clienttranslate("Spend 10 MC to increase your heat production 2 steps."),
 ],
  'card_main_203' => [  //
   'location' => 'deck_main',
@@ -2880,7 +2907,7 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Requires 3 science tags to play. Decrease your energy production 1 step.; Action: Draw 2 cards."),
+  'text' => clienttranslate("Decrease your energy production 1 step.; Action: Draw 2 cards."),
 ],
 // #corp cards
  'card_corp_1' => [  //
@@ -2896,7 +2923,7 @@ $this->token_types = [
   'vp' => 0,
   'text' => clienttranslate("You start with 42 MC. You keep 10 starting cards"),
 ],
-// #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|php
+// #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
  'card_corp_2' => [  //
   'location' => 'deck_corp',
   'create' => 'single',
@@ -2910,7 +2937,8 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 57 MC.; Effect: After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC."),
+  'text' => clienttranslate("You start with 57 MC."),
+  'text_effect' => clienttranslate("After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC."),
 ],
  'card_corp_3' => [  //
   'location' => 'deck_corp',
@@ -2925,7 +2953,8 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 2 plant production, 3 plants, and 36 MC.; Effect: You may always pay 7 plants, instead of 8, to place 1 greenery."),
+  'text' => clienttranslate("You start with 2 plant production, 3 plants, and 36 MC,"),
+  'text_effect' => clienttranslate("You may always pay 7 plants, instead of 8, to place 1 greenery."),
 ],
  'card_corp_4' => [  //
   'location' => 'deck_corp',
@@ -2940,7 +2969,8 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 3 heat production and 42 MC.; Effect: You may use heat as MC. You may not use MC as heat."),
+  'text' => clienttranslate("You start with 3 heat production and 42 MC."),
+  'text_effect' => clienttranslate("You may use heat as MC. You may not use MC as heat."),
 ],
  'card_corp_5' => [  //
   'location' => 'deck_corp',
@@ -2956,7 +2986,8 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 20 steel and 30 MC.; Effect: Each time you play an event, you gain 2 MC."),
+  'text' => clienttranslate("You start with 20 steel and 30 MC."),
+  'text_effect' => clienttranslate("Each time you play an event, you gain 2 MC."),
 ],
  'card_corp_6' => [  //
   'location' => 'deck_corp',
@@ -2971,7 +3002,8 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("As your first action in the game, draw 3 cards. Start with 45 MC.; Effect: Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case."),
+  'text' => clienttranslate("As your first action in the game, draw 3 cards. Start with 45 MC,"),
+  'text_effect' => clienttranslate("Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case."),
   'a1'=>'3draw',
 ],
  'card_corp_7' => [  //
@@ -2988,7 +3020,8 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("The earliest private enterprises on Mars focused on mining and exporting minerals off the surface. As the mega-corporations arrive to terraform, the miners unite in the Guild to defend their interests. With their expertise and knowledg of the planet they will be a worthy contender in the race.; Effect: Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step."),
+  'text' => clienttranslate("You start with 5 steel, 1 steel production and 30 MC,"),
+  'text_effect' => clienttranslate("Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step."),
 ],
  'card_corp_8' => [  //
   'location' => 'deck_corp',
@@ -3004,7 +3037,8 @@ $this->token_types = [
   'tags' => 'Jovian',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("You start with 1 titanium production and 42 MC.; Effect: Each time any Jovian tag is put into play, including this, increase your MC production 1 step."),
+  'text' => clienttranslate("You start with 1 titanium production and 42 MC."),
+  'text_effect' => clienttranslate("Each time any Jovian tag is put into play, including this, increase your MC production 1 step."),
 ],
  'card_corp_9' => [  //
   'location' => 'deck_corp',
@@ -3019,7 +3053,8 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 10 titanium and 23 MC; Effect: Your titanium resources are each worth 1 MC extra."),
+  'text' => clienttranslate("You start with 10 titanium and 23 MC,"),
+  'text_effect' => clienttranslate("Your titanium resources are each worth 1 MC extra."),
 ],
  'card_corp_10' => [  //
   'location' => 'deck_corp',
@@ -3035,7 +3070,8 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("You start with 60 MC.; Effect: When playing an Earth card, you pay 3 MC less for it."),
+  'text' => clienttranslate("You start with 60 MC."),
+  'text_effect' => clienttranslate("When playing an Earth card, you pay 3 MC less for it."),
 ],
  'card_corp_11' => [  //
   'location' => 'deck_corp',
@@ -3051,7 +3087,8 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 40 MC. As your first action in the game, place a city tile.; Effect: When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC."),
+  'text' => clienttranslate("You start with 40 MC. As your first action in the game, place a city tile."),
+  'text_effect' => clienttranslate("When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC."),
   'a1'=>'city',
 ],
  'card_corp_12' => [  //
@@ -3067,7 +3104,8 @@ $this->token_types = [
   'tags' => 'Energy',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 1 energy production and 48 MC.; Effect: When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it."),
+  'text' => clienttranslate("You start with 1 energy production and 48 MC."),
+  'text_effect' => clienttranslate("When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it."),
 ],
 /* --- gen php end cards_material --- */
 /* --- gen php begin proj_material --- */
