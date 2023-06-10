@@ -49,7 +49,7 @@ abstract class PGameXBody extends PGameMachine {
                 $color = $player["player_color"];
                 if ($this->getGameStateValue('var_begginers_corp') == 1) {
                     $corp = $this->tokens->getTokenOfTypeInLocation("card_corp_1_", null, 0);
-                    $this->effect_playCorporation($color, $corp['key']);
+                    $this->effect_playCorporation($color, $corp['key'], false);
                     $this->tokens->pickTokensForLocation(10, "deck_main", "hand_${color}");
                 } else {
                     $this->tokens->pickTokensForLocation(10, "deck_main", "draw_${color}");
@@ -77,7 +77,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->getGameStateValue('var_begginers_corp') != 1) {
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
-                    $this->queue($color, "prediscard");
+                    $this->queue($color, "finsetup");
                 }
             }
             if ($this->isSolo()) {
@@ -921,8 +921,18 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyEffect($color, $events, $card_id);
     }
 
-    function effect_playCorporation(string $color, string $card_id) {
+    function effect_playCorporation(string $color, string $card_id, bool $setup) {
         $player_id = $this->getPlayerIdByColor($color);
+        if ($setup) {
+            $cost = - $this->getRulesFor($card_id,'cost');
+            $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('You picked corporation ${token_name}. The will receive ${cost} ME. The rest of the perks you will receive after setup is finished'), [
+                "_private"=>true,
+                "cost" => $cost
+            ], $player_id);
+
+            $this->effect_incCount($color, 'm', $cost, ['message' => '']);
+            return;
+        }
         $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [], $player_id);
         $this->eventListners = null; // clear cache since corp came into play
         $tags = $this->getRulesFor($card_id, 'tags', '');
@@ -1039,9 +1049,10 @@ abstract class PGameXBody extends PGameMachine {
             // can undo corp selection also
             $corp = $this->tokens->getTokenOfTypeInLocation('card_corp',"tableau_$color");
             if ($corp) {
-                $this->dbSetTokenLocation($corp['key'], "draw_$color", 0, '');
+                $corp_id = $corp['key'];
+                $this->dbSetTokenLocation($corp_id, "draw_$color", 0, '');
                 // undo crop effects
-                //$this->effect_incCount($color, 'm', -1*$this->get, ['message' => '']);
+                $this->effect_incCount($color, 'm', $this->getRulesFor($corp_id,'cost'), ['message' => '']);
                 $this->multiplayerpush($color, 'keepcorp');
             }
         }

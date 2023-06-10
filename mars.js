@@ -2551,7 +2551,7 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0)
-                    this_1.addActionButton("button_skip", _("Skip"), function () {
+                    this_1.addActionButton("button_skip", _("Done"), function () {
                         _this.sendActionSkip();
                     });
             }

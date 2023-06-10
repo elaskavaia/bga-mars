@@ -721,7 +721,7 @@ class GameXBody extends GameTokens {
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0)
-          this.addActionButton("button_skip", _("Skip"), () => {
+          this.addActionButton("button_skip", _("Done"), () => {
             this.sendActionSkip();
           });
       }

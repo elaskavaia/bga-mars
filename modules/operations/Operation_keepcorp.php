@@ -6,7 +6,7 @@ declare(strict_types=1);
 class Operation_keepcorp extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $this->game->effect_playCorporation($color,  $card_id);
+        $this->game->effect_playCorporation($color,  $card_id, true);
         //         $player_id = $this->game->getPlayerIdByColor($color);
         // $rest = $this->argPrimary();
         // foreach ($rest as $card_id2) {
