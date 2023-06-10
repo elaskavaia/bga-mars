@@ -1949,6 +1949,8 @@ var GameXBody = /** @class */ (function (_super) {
             var div = $("main_area");
             var board = $("player_area_".concat(playerInfo.color));
             div.appendChild(board);
+            $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_3', "1");
+            $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_1', "1");
         }
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {

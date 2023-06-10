@@ -45,6 +45,8 @@ class GameXBody extends GameTokens {
       const div = $("main_area");
       const board = $(`player_area_${playerInfo.color}`);
       div.appendChild(board);
+      $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_3',"1");
+      $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_1',"1");
     } 
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {

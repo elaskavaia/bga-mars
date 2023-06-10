@@ -3,14 +3,11 @@ Random notes on todo items
 ## General
 
 * Solo mode difficulies - game option
-* Deck variant - game option
-* Begging corp - done
 
 ## Server
 
-* Complex cards
-* Corporations
-* tracker_tagEvent - calculate on face down also (well only)
+* undo - block on draw
+
 
 ## Client
 

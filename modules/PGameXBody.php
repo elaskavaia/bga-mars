@@ -100,14 +100,17 @@ abstract class PGameXBody extends PGameMachine {
         shuffle($nonreserved);
         $type = MA_TILE_CITY;
         $num = $this->getPlayersNumber();
+        $botcolor = 'ffffff';
         for ($i = 1; $i <= 2; $i++) {
             $hex = array_shift($nonreserved);
 
             $tile = $this->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
             $this->systemAssertTrue("city tile not found", $tile);
             $this->dbSetTokenLocation($tile['key'], $hex, $num);
-            $marker = $this->createPlayerMarker('ffffff');
+            $marker = $this->createPlayerMarker($botcolor);
             $this->tokens->moveToken($marker, $tile['key'], 0);
+            $this->incTrackerValue($botcolor,'city');
+            $this->incTrackerValue($botcolor, 'land');
 
             $adj = $this->getAdjecentHexes($hex);
             shuffle($adj);
@@ -125,8 +128,10 @@ abstract class PGameXBody extends PGameMachine {
             if ($forestfound) {
                 $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
                 $this->dbSetTokenLocation($tile['key'], $forestfound, $num);
-                $marker = $this->createPlayerMarker('ffffff');
+                $marker = $this->createPlayerMarker($botcolor);
                 $this->tokens->moveToken($marker, $tile['key'], 0);
+                $this->incTrackerValue($botcolor,'forest');
+                $this->incTrackerValue($botcolor, 'land');
             }
         }
     }
@@ -184,7 +189,7 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->interrupt();
         //$this->machine->normalize();
         $card = "card_stanproj_1";
-        return $this->debug_oparg($this->getRulesFor($card), $card);
+        return $this->debug_oparg("counter(all_city),m", $card);
         //$this->gamestate->nextState("next");
     }
 
@@ -502,6 +507,7 @@ abstract class PGameXBody extends PGameMachine {
         if (startsWith($x, 'all_') || $opp) {
             $x = substr($x, 4);
             $colors = $this->getPlayerColors();
+            if ($this->isSolo()) $colors[] = 'ffffff';
             $value = 0;
             foreach ($colors as $color) {
                 if ($opp && $color === $owner)
@@ -845,7 +851,8 @@ abstract class PGameXBody extends PGameMachine {
     function isEndOfGameAchived() {
         if ($this->isSolo()) {
             $gen = $this->tokens->getTokenState("tracker_gen");
-            if ($gen == 14) {
+            $maxgen = $this->getRulesFor('solo', 'gen');
+            if ($gen == $maxgen) {
                 return true;
             }
         }
@@ -924,9 +931,9 @@ abstract class PGameXBody extends PGameMachine {
     function effect_playCorporation(string $color, string $card_id, bool $setup) {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
-            $cost = - $this->getRulesFor($card_id,'cost');
+            $cost = -$this->getRulesFor($card_id, 'cost');
             $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('You picked corporation ${token_name}. The will receive ${cost} ME. The rest of the perks you will receive after setup is finished'), [
-                "_private"=>true,
+                "_private" => true,
                 "cost" => $cost
             ], $player_id);
 
@@ -1017,12 +1024,12 @@ abstract class PGameXBody extends PGameMachine {
         $rest = $this->tokens->getTokensInLocation("draw_$color");
         $has_corp = 0;
         foreach ($rest as $card_id => $card) {
-            if (startsWith($card_id,'card_corp')) {
+            if (startsWith($card_id, 'card_corp')) {
                 $has_corp += 1;
             }
         }
 
-        if ($count == 0 && $has_corp==false) throw new BgaUserException(self::_("Nothing to undo"));
+        if ($count == 0 && $has_corp == false) throw new BgaUserException(self::_("Nothing to undo"));
         $ops = $this->getTopOperations($color);
         $this->userAssertTrue("Cannot undo", count($ops) == 1);
         $op = array_shift($ops);
@@ -1047,12 +1054,12 @@ abstract class PGameXBody extends PGameMachine {
 
         if ($has_corp) {
             // can undo corp selection also
-            $corp = $this->tokens->getTokenOfTypeInLocation('card_corp',"tableau_$color");
+            $corp = $this->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
             if ($corp) {
                 $corp_id = $corp['key'];
                 $this->dbSetTokenLocation($corp_id, "draw_$color", 0, '');
                 // undo crop effects
-                $this->effect_incCount($color, 'm', $this->getRulesFor($corp_id,'cost'), ['message' => '']);
+                $this->effect_incCount($color, 'm', $this->getRulesFor($corp_id, 'cost'), ['message' => '']);
                 $this->multiplayerpush($color, 'keepcorp');
             }
         }
@@ -1255,10 +1262,29 @@ abstract class PGameXBody extends PGameMachine {
         $this->setGameStateValue('gameended', 1);
 
         if ($this->isSolo()) {
-            if ($this->getTerraformingProgression() >= 100) {
-                // yay
+            $color = $this->getPlayerColorById($player_id);
+            $win = false;
+            $maxgen = $this->getRulesFor('solo', 'gen');
+            if ($this->getGameStateValue('var_solo_flavour') == 1) {      // TR63
+                $this->notifyMessage(
+                    clienttranslate('The goal was to achieve terraforming rating of 63 or more by the end of generation ${maxgen}'),
+                    ['maxgen' => $maxgen]
+                );
+                $tr = $this->getTrackerValue($color, 'tr');
+                $this->notifyMessage(clienttranslate('${player_name} terraforming rating is ${count}'), ['count' => $tr]);
+                if ($tr >= 63) {
+                    $win = true;
+                }
             } else {
-                $this->notifyMessage(clienttranslate('${player_name} lost since they did not achieve the goal by the end of generation 14, score is negated'));
+                $this->notifyMessage(clienttranslate('The goal was to completing the terraforming by the end of generation ${maxgen}'), ['maxgen' => $maxgen]);
+                if ($this->getTerraformingProgression() >= 100) {
+                    $win = true;
+                }
+            }
+            if ($win) {
+                $this->notifyMessage(clienttranslate('${player_name} wins'));
+            } else {
+                $this->notifyMessage(clienttranslate('${player_name} looses since they did not achieve the goal, score is negated'));
                 $this->dbSetScore($player_id, -1);
             }
         }

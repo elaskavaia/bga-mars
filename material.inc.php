@@ -4060,6 +4060,24 @@ $this->token_types = [
   'name' => clienttranslate("Global Parameters Delta"),
   'state' => 0,
 ],
+ 'tracker_city_ffffff' => [  //
+  'type' => 'tracker',
+  'create' => 1,
+  'location' => 'limbo',
+  'name' => clienttranslate("Number of Cities on Mars"),
+],
+ 'tracker_forest_ffffff' => [  //
+  'type' => 'tracker',
+  'create' => 1,
+  'location' => 'limbo',
+  'name' => clienttranslate("Number of Greenery on Mars"),
+],
+ 'tracker_land_ffffff' => [  //
+  'type' => 'tracker',
+  'create' => 1,
+  'location' => 'limbo',
+  'name' => clienttranslate("Number of owned land"),
+],
 // #terraforming parameters
  'tracker_o' => [  //
   'type' => 'param',
@@ -4905,7 +4923,10 @@ $this->token_types = [
 ],
 /* --- gen php end map_material --- */
 
-
+  // various stuff - MANUAL ENTRY
+  'solo' => [  //
+    'gen' => 14,
+  ],
         
   // #error codes - MANUAL ENTRY
   'err_0' => [  //
