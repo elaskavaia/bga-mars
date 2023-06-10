@@ -11,6 +11,7 @@ class Operation_research extends AbsOperation {
     function effect_research() {
         $this->game->dbResourceInc("tracker_gen", 1, clienttranslate('New generation ${counter_value}'));
         $players = $this->game->loadPlayersBasicInfos();
+
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             // unpass
@@ -24,11 +25,19 @@ class Operation_research extends AbsOperation {
                     $this->game->dbSetTokenState($cardid, $state, '');
                 }
             }
-            // draw
-            //$this->game->queue($color, "4draw(auto)");
-  
-            $this->game->multiplayerqueue($color, "4predraw,4?buycard,prediscard"); 
-            //$this->game->debugLog("-MULTI QUEUE: machine top:" . $this->game->machine->getlistexpr($this->game->machine->getTopOperations($color)));
+            // draw  
+            $this->game->queue($color, "4predraw");
+        }
+
+        // multiplayer buy
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->game->multiplayerqueue($color, "4?buycard");
+        }
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->game->queue($color, "prediscard");
         }
     }
 }

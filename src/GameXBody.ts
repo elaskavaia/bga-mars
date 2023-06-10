@@ -3,7 +3,7 @@
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_placement: any;
-  private custom_pay:any;
+  private custom_pay: any;
 
   constructor() {
     super();
@@ -29,7 +29,7 @@ class GameXBody extends GameTokens {
       this.updateTooltip(node.id);
     });
 
-   // this.connectClass("filter_button", "onclick", "onFilterButton");
+    // this.connectClass("filter_button", "onclick", "onFilterButton");
     this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
     // if (this.isLayoutFull()) {
@@ -41,7 +41,7 @@ class GameXBody extends GameTokens {
     //   }
     // }
 
-    $('thething').removeAttribute('title');
+    $("thething").removeAttribute("title");
 
     console.log("Ending game setup");
   }
@@ -53,7 +53,7 @@ class GameXBody extends GameTokens {
       const div = $("main_area");
       const board = $(`player_area_${playerInfo.color}`);
       div.appendChild(board);
-    } 
+    }
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
       const board = $(`player_area_${playerInfo.color}`);
@@ -80,22 +80,21 @@ class GameXBody extends GameTokens {
         if (tokenNode.id.startsWith("card_corp_")) {
           //Corp formatting
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          const texts = displayInfo.text.split(';');
-          let card_initial="";
-          let card_effect="";
-          if (texts.length>0) card_initial = texts[0];
-          if (texts.length>1) card_effect= texts[1];
+          const texts = displayInfo.text.split(";");
+          let card_initial = "";
+          let card_effect = "";
+          if (texts.length > 0) card_initial = texts[0];
+          if (texts.length > 1) card_effect = texts[1];
           decor.innerHTML = `
                 <div class="card_bg"></div>
                 <div class="card_initial">${card_initial}</div>
                 <div class="card_effect">${card_effect}</div>
           `;
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('INITIAL')+'</div>';
-          ttdiv.innerHTML+=`<div class="card_initial">${card_initial}</div>`;
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('EFFECT')+'</div>';
-          ttdiv.innerHTML+=`<div class="card_effect">${card_effect}</div>`;
-
-        } else if (tokenNode.id.startsWith("card_stanproj"))  {
+          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("INITIAL") + "</div>";
+          ttdiv.innerHTML += `<div class="card_initial">${card_initial}</div>`;
+          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
+          ttdiv.innerHTML += `<div class="card_effect">${card_effect}</div>`;
+        } else if (tokenNode.id.startsWith("card_stanproj")) {
           //standard project formatting:
           //cost -> action title
           //except for sell patents
@@ -110,13 +109,11 @@ class GameXBody extends GameTokens {
              <div class='standard_projects_title'>${displayInfo.name}</div>  
           `;*/
           decor.innerHTML = `
-             <div class='stanp_cost'>${displayInfo.cost!=0 ? displayInfo.cost : "X"}</div>
+             <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
              <div class='standard_projects_title'>${displayInfo.name}</div>  
           `;
-          ttdiv.innerHTML+=`<div class='card_effect'>${displayInfo.text}</div>`;
-        }
-
-        else {
+          ttdiv.innerHTML += `<div class='card_effect'>${displayInfo.text}</div>`;
+        } else {
           //tags
 
           if (displayInfo.tags && displayInfo.tags != "") {
@@ -125,24 +122,24 @@ class GameXBody extends GameTokens {
             }
           }
           const parsedActions = this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
-          let parsedPre = displayInfo.pre ? this.parsePrereqToHTML(displayInfo.expr.pre) :"";
+          let parsedPre = displayInfo.pre ? this.parsePrereqToHTML(displayInfo.expr.pre) : "";
 
           //specific card rendering
-          if (displayInfo.num==2) {
-            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('pu')+'</div></div>';
+          if (displayInfo.num == 2) {
+            parsedPre = '<div class="prereq_content mode_min">' + this.parseActionsToHTML("pu") + "</div></div>";
           }
-          if (displayInfo.num==61) {
-            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('ps')+'</div></div>';
+          if (displayInfo.num == 61) {
+            parsedPre = '<div class="prereq_content mode_min">' + this.parseActionsToHTML("ps") + "</div></div>";
           }
-          if (displayInfo.num==135) {
-            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('tagPlant tagMicrobe tagAnimal')+'</div></div>';
+          if (displayInfo.num == 135) {
+            parsedPre = '<div class="prereq_content mode_min">' + this.parseActionsToHTML("tagPlant tagMicrobe tagAnimal") + "</div></div>";
           }
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          let vp="";
+          let vp = "";
           if (displayInfo.vp) {
-            vp = parseInt(displayInfo.vp) ? '<div class="card_vp">'+displayInfo.vp+'</div>' : '<div class="card_vp">*</div>' ;
+            vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + "</div>" : '<div class="card_vp">*</div>';
           } else {
-            vp='';
+            vp = "";
           }
           const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
           decor.innerHTML = `
@@ -153,17 +150,17 @@ class GameXBody extends GameTokens {
                 <div class='card_cost'>${displayInfo.cost}</div> 
                 <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ""}</div>
                 <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
-                <div class="card_prereq">${parsedPre!=="" ? parsedPre : ""}</div>
+                <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
                 <div class="card_number">${displayInfo.num ?? ""}</div>
                 <div class="card_number_binary">${cn_binary}</div>
                 ${vp}
           `;
-          ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
-          ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
-                            <div class='card_badges'>${tagshtm}</div></div>`
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('EFFECT')+'</div>';
-          ttdiv.innerHTML+=`<div class="card_effect">${displayInfo.text}</div>`;
+          ttdiv.innerHTML += `<div class="card_number">${displayInfo.num ?? ""}</div>`;
+          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("PROPERTIES") + "</div>";
+          ttdiv.innerHTML += `<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
+                            <div class='card_badges'>${tagshtm}</div></div>`;
+          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
+          ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text}</div>`;
 
           // <div class="card_action">${parsedActions}</div>
           //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
@@ -185,55 +182,53 @@ class GameXBody extends GameTokens {
     }
   }
   parsePrereqToHTML(pre: Array<string>) {
-      if (!pre) return "";
-      if (pre.length<3) return "";
+    if (!pre) return "";
+    if (pre.length < 3) return "";
 
-      const op = pre[0];
-      const what = pre[1];
-      const qty=pre[2];
+    const op = pre[0];
+    const what = pre[1];
+    const qty = pre[2];
 
-      let suffix="";
-      let icon=this.parseActionsToHTML(what);
-      switch (what) {
-        case "o":
-          suffix="%";
-          break;
-        case "t":
-          suffix="°C";
-          break;
-        case "tagScience":
-          break;
-        case "w":
+    let suffix = "";
+    let icon = this.parseActionsToHTML(what);
+    switch (what) {
+      case "o":
+        suffix = "%";
+        break;
+      case "t":
+        suffix = "°C";
+        break;
+      case "tagScience":
+        break;
+      case "w":
+        break;
+    }
 
-          break;
-      }
+    let mode = "min";
+    let prefix = "";
 
-      let mode="min";
-      let prefix="";
+    if (op == "<=") {
+      mode = "max";
+      prefix = "max ";
+    }
 
-      if (op=="<=") {
-        mode="max";
-        prefix="max ";
-      }
+    let htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qty + suffix + icon + "</div></div>";
 
-      let htm='<div class="prereq_content mode_'+mode+'">'+prefix+qty+suffix+icon+'</div></div>';
-
-     return  htm;
-
+    return htm;
   }
   parseActionsToHTML(actions: string) {
     let ret = actions;
 
     const easyParses = {
       forest: { classes: "tracker tracker_forest" },
-      all_city:{classes: "tracker tracker_city", redborder: 'hex'},
+      all_city: { classes: "tracker tracker_city", redborder: "hex" },
       city: { classes: "tracker tracker_city" },
       draw: { classes: "token_img draw_icon" },
-      tagScience:{ classes: "tracker badge tracker_tagScience"},
-      tagEnergy:{ classes: "tracker badge tracker_tagEnergy"},
-      tagMicrobe:{ classes: "tracker badge tracker_tagMicrobe"},
-      tagPlant:{ classes: "tracker badge tracker_tagPlant"},
-      tagAnimal:{ classes: "tracker badge tracker_tagAnimal"},
+      tagScience: { classes: "tracker badge tracker_tagScience" },
+      tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
+      tagMicrobe: { classes: "tracker badge tracker_tagMicrobe" },
+      tagPlant: { classes: "tracker badge tracker_tagPlant" },
+      tagAnimal: { classes: "tracker badge tracker_tagAnimal" },
       "[1,](sell)": { classes: "" },
       pe: { classes: "token_img tracker_e", production: true },
       pm: { classes: "token_img tracker_m", production: true, content: "1" },
@@ -249,7 +244,7 @@ class GameXBody extends GameTokens {
       h: { classes: "token_img tracker_h" },
       t: { classes: "token_img temperature_icon" },
       w: { classes: "tile tile_3" },
-      o: { classes: "token_img oxygen_icon"},
+      o: { classes: "token_img oxygen_icon" },
       ":": { classes: "action_arrow" },
     };
 
@@ -265,7 +260,8 @@ class GameXBody extends GameTokens {
         if (item.production === true) {
           finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div></div>";
         } else if (item.redborder) {
-          finds[idx] = '<div class="outer_redborder redborder_'+item.redborder+'"><div class="' + item.classes + '">' + content + "</div></div>";
+          finds[idx] =
+            '<div class="outer_redborder redborder_' + item.redborder + '"><div class="' + item.classes + '">' + content + "</div></div>";
         } else {
           finds[idx] = '<div class="' + item.classes + '"></div>';
         }
@@ -286,18 +282,17 @@ class GameXBody extends GameTokens {
     return ret;
   }
   setDomTokenState(tokenId: ElementOrId, newState: any) {
-
     super.setDomTokenState(tokenId, newState);
     var node = $(tokenId);
     if (!node) return;
     if (!node.id) return;
 
     //intercept player passed state
-    if (node.id.startsWith('tracker_passed_')) {
-      this.darhflog('passes !',node.id,'newstate is ',newState);
-      const plColor=node.id.replace('tracker_passed_','');
+    if (node.id.startsWith("tracker_passed_")) {
+      this.darhflog("passes !", node.id, "newstate is ", newState);
+      const plColor = node.id.replace("tracker_passed_", "");
       const plId = this.getPlayerIdByColor(plColor);
-      if (newState==1) {
+      if (newState == 1) {
         this.disablePlayerPanel(parseInt(plId));
       } else {
         this.enablePlayerPanel(parseInt(plId));
@@ -310,8 +305,6 @@ class GameXBody extends GameTokens {
     if (nodeCopy) {
       nodeCopy.setAttribute("data-state", newState);
     }
-
-
   }
   renderSpecificToken(tokenNode: HTMLElement) {
     /* It seems duplicates the other stuff which is already there, disabled for now
@@ -347,7 +340,7 @@ class GameXBody extends GameTokens {
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
 
-    if  (tokenDisplayInfo.mainType == "card") {
+    if (tokenDisplayInfo.mainType == "card") {
       //do nothing
     }
 
@@ -355,7 +348,6 @@ class GameXBody extends GameTokens {
       tokenDisplayInfo.imageTypes += " infonode";
     }
   }
-
 
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     let result = super.getPlaceRedirect(tokenInfo);
@@ -369,21 +361,20 @@ class GameXBody extends GameTokens {
       result.location = this.custom_placement[tokenInfo.key];
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       if (!this.isLayoutFull()) {
-        result.location = tokenInfo.location+'_corp_effect';
+        result.location = tokenInfo.location + "_corp_effect";
       } else {
-        result.location = tokenInfo.location+'_cards_4'; 
+        result.location = tokenInfo.location + "_cards_4";
       }
       //also set property to corp logo div
-      $(tokenInfo.location+'_corp_logo').dataset.corp=tokenInfo.key;
+      $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
       if (this.isLayoutFull()) {
         if (this.getRulesFor(tokenInfo.key, "a")) {
-          result.location = tokenInfo.location + "_cards_2a" ;
+          result.location = tokenInfo.location + "_cards_2a";
         }
       }
-   
     }
     if (!result.location)
       // if failed to find revert to server one
@@ -550,13 +541,19 @@ class GameXBody extends GameTokens {
           if (sign < 0) buttonColor = "gray";
           if (sign > 0) buttonColor = "red";
           const divId = "button_" + i;
-          let title='<div class="custom_paiement_inner">'+this.resourcesToHtml(detailsInfo.resources)+'</div>';
+          let title = '<div class="custom_paiement_inner">' + this.resourcesToHtml(detailsInfo.resources) + "</div>";
 
-          if (tid=="payment") {
+          if (tid == "payment") {
             //show only if options
-            const opts =this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
-            if (Object.entries(opts.resources).reduce((sum: number, [key, val]: [string, unknown]) => sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0), 0)  > 0) {
-              this.createCustomPayment(opId,opts);
+            const opts = this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+            if (
+              Object.entries(opts.resources).reduce(
+                (sum: number, [key, val]: [string, unknown]) =>
+                  sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0),
+                0
+              ) > 0
+            ) {
+              this.createCustomPayment(opId, opts);
             }
           } else {
             //  title = this.parseActionsToHTML(tid);
@@ -566,7 +563,6 @@ class GameXBody extends GameTokens {
               () => {
                 if (tid == "payment") {
                   // stub
-
                   /*
                   const first = paramargs[0]; // send same data as 1st option as stub
                   this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
@@ -585,30 +581,29 @@ class GameXBody extends GameTokens {
   }
 
   //Adds the payment picker according to available alternative payment options
-  createCustomPayment(opId,info) {
-    this.custom_pay  = {
-      needed:info.count,
-      selected:{},
-      available:[],
-      rate:[]
-    }
+  createCustomPayment(opId, info) {
+    this.custom_pay = {
+      needed: info.count,
+      selected: {},
+      available: [],
+      rate: [],
+    };
 
-    let items_htm='';
+    let items_htm = "";
     for (let res in info.resources) {
-      this.custom_pay.selected[res]=0;
-      this.custom_pay.available[res]=info.resources[res];
-      this.custom_pay.rate[res]=info.rate[res];
+      this.custom_pay.selected[res] = 0;
+      this.custom_pay.available[res] = info.resources[res];
+      this.custom_pay.rate[res] = info.rate[res];
 
       //megacredits are spent automatically
-      if (res=='m') {
-        this.custom_pay.selected[res]=this.custom_pay.available[res];
+      if (res == "m") {
+        this.custom_pay.selected[res] = this.custom_pay.available[res];
         continue;
       }
 
-
-      if ( this.custom_pay.available[res]<=0) continue;
+      if (this.custom_pay.available[res] <= 0) continue;
       //add paiments buttons
-        items_htm+=`
+      items_htm += `
         <div class="payment_group">
            <div class="token_img tracker_${res}"></div>
           <div id="payment_item_minus_${res}" class="btn_payment_item btn_item_minus" data-resource="${res}" data-direction="minus">-</div>
@@ -624,78 +619,75 @@ class GameXBody extends GameTokens {
      */
 
     //add confirmation button
-    const txt =_("Custom:");
-    const button_htm=this.resourcesToHtml( this.custom_pay.selected,true);
+    const txt = _("Custom:");
+    const button_htm = this.resourcesToHtml(this.custom_pay.selected, true);
 
-    const button_whole='Pay %s'.replace('%s',button_htm);
-    const paiement_htm=`
+    const button_whole = "Pay %s".replace("%s", button_htm);
+    const paiement_htm = `
       <div class="custom_paiement_inner">
         ${txt}
         ${items_htm}
         <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
       </div>
     `;
-    const node = this.createDivNode('custom_paiement',"","generalactions");
-    node.innerHTML=paiement_htm;
-
+    const node = this.createDivNode("custom_paiement", "", "generalactions");
+    node.innerHTML = paiement_htm;
 
     //adds actions to button payments
-    this.connectClass("btn_payment_item",'onclick',(event)=>{
+    this.connectClass("btn_payment_item", "onclick", (event) => {
       const id = (event.currentTarget as HTMLElement).id;
       const direction = $(id).dataset.direction;
       const res = $(id).dataset.resource;
       dojo.stopEvent(event);
 
-      if (direction=="minus") {
-        if (this.custom_pay.selected[res]>0) {
+      if (direction == "minus") {
+        if (this.custom_pay.selected[res] > 0) {
           this.custom_pay.selected[res]--;
         }
       }
-      if (direction=="plus") {
-        if (this.custom_pay.selected[res]<this.custom_pay.available[res]) {
+      if (direction == "plus") {
+        if (this.custom_pay.selected[res] < this.custom_pay.available[res]) {
           this.custom_pay.selected[res]++;
         }
       }
-      $('payment_item_'+res).innerHTML=this.custom_pay.selected[res];
+      $("payment_item_" + res).innerHTML = this.custom_pay.selected[res];
 
       let total_res = 0;
-     // let values_htm='';
-      for (let res in  this.custom_pay.rate) {
-          if (res!='m') {
-            total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
+      // let values_htm='';
+      for (let res in this.custom_pay.rate) {
+        if (res != "m") {
+          total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
           //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
-          }
+        }
       }
-      const mc= this.custom_pay.needed - total_res;
-      this.custom_pay.selected['m']=mc;
-   //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
-      const values_htm=this.resourcesToHtml( this.custom_pay.selected,true);
+      const mc = this.custom_pay.needed - total_res;
+      this.custom_pay.selected["m"] = mc;
+      //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
+      const values_htm = this.resourcesToHtml(this.custom_pay.selected, true);
 
-      $('btn_custompay_send').innerHTML='Pay %s'.replace('%s',values_htm);
-
+      $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
     });
 
     //adds action to final payment button
-    this.connect($('btn_custompay_send'),'onclick', ()=>{
-      let pays={};
+    this.connect($("btn_custompay_send"), "onclick", () => {
+      let pays = {};
       //backend doesn't accept 0 as paiment
-      for (let res of Object.keys(this.custom_pay.selected) ) {
-        if (this.custom_pay.selected[res]>0) pays[res] = parseInt(this.custom_pay.selected[res]);
+      for (let res of Object.keys(this.custom_pay.selected)) {
+        if (this.custom_pay.selected[res] > 0) pays[res] = parseInt(this.custom_pay.selected[res]);
       }
-      this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
+      this.sendActionResolveWithTargetAndPayment(opId, "payment", pays);
     });
   }
 
-  resourcesToHtml(resources:any,show_zeroes:boolean = false):string {
-    var htm='';
-    const allResources =['m','s','u','h'];
+  resourcesToHtml(resources: any, show_zeroes: boolean = false): string {
+    var htm = "";
+    const allResources = ["m", "s", "u", "h"];
 
-    allResources.forEach((item)=>{
-        if (resources[item]!=undefined && (resources[item]>0 || show_zeroes===true)) {
-          htm+=`<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
-        }
+    allResources.forEach((item) => {
+      if (resources[item] != undefined && (resources[item] > 0 || show_zeroes === true)) {
+        htm += `<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
+      }
     });
-
 
     return htm;
   }
@@ -776,20 +768,38 @@ class GameXBody extends GameTokens {
     }
   }
 
+  addUndoButton() {
+    if (!$("button_undo")) {
+      this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper_unchecked("undo"), undefined, undefined, "red");
+    }
+  }
+
   onUpdateActionButtons_multiplayerChoice(args) {
     let operations = args.player_operations[this.player_id] ?? undefined;
     if (!operations) return;
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
+  onEnteringState_multiplayerDispatch(args) {
+    if (!this.isCurrentPlayerActive()) {
+      this.addUndoButton();
+    }
+  }
+
+  onUpdateActionButtons_multiplayerDispatch(args) {
+    if (!this.isCurrentPlayerActive()) {
+      this.addUndoButton();
+    }
+  }
+
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
       // add undo on every state
       if (this.on_client_state) this.addCancelButton();
-      else this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper("undo"), undefined, undefined, "red");
+      else this.addUndoButton();
     }
 
-    this.addActionButton('button_rcss','Reload CSS', () => reloadCss())
+    this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
 
   onSelectTarget(opId: number, target: string) {
@@ -832,7 +842,7 @@ class GameXBody extends GameTokens {
     return true;
   }
 
-  onShowTableauCardsOfColor(event:Event) {
+  onShowTableauCardsOfColor(event: Event) {
     let id = (event.currentTarget as HTMLElement).id;
     // Stop this event propagation
     dojo.stopEvent(event); // XXX
@@ -841,17 +851,14 @@ class GameXBody extends GameTokens {
     const btncolor = $(id).dataset.cardtype;
     const tblitem = "visibility_" + btncolor;
 
-    for (let i=1;i<=3;i++) {
-      $("tableau_" + plcolor).dataset['visibility_'+i] = "0";
-      $('player_viewcards_'+i+'_'+plcolor).dataset.selected ="0";
+    for (let i = 1; i <= 3; i++) {
+      $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+      $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
     }
     $("tableau_" + plcolor).dataset[tblitem] = "1";
-    $(id).dataset.selected ="1";
+    $(id).dataset.selected = "1";
 
     return true;
-
-
-
   }
 
   // notifications
