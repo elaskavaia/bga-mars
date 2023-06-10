@@ -9,7 +9,7 @@
       city: { classes: "tracker tracker_city" },
       ocean: { classes: "tile tile_3" },
       draw: { classes: "token_img cardback" },
-      tile: { classes: "tile tile_%card_number%" },
+      tile: { classes: "tracker tile_%card_number%" },
       tagScience: { classes: "tracker badge tracker_tagScience" },
       tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
       tagMicrobe: { classes: "tracker badge tracker_tagMicrobe" },
@@ -23,12 +23,14 @@
       onPay_card: { classes: "empty" },
       twopoints: { classes: "txtcontent", content: ':' },
       star: { classes: "txtcontent", content: '*' },
-      resScience: { classes: "token_img resource_science" },
+
+      res_Science: { classes: "token_img resource_science" },
+      res_Animal: { classes: "token_img tracker_animal" },
+      res_Microbe: { classes: "token_img tracker_microbe" },
 
       nores_Animal: { classes: "token_img tracker_animal", redborder: 'resource', norepeat: true },
       nores_Microbe: { classes: "token_img tracker_microbe", redborder: 'resource', norepeat: true },
 
-      res_Microbe: { classes: "token_img tracker_microbe" },
       ores_Microbe: { classes: "token_img tracker_microbe", after: '*', norepeat: true },
       ores_Animal: { classes: "token_img tracker_animal", after: '*', norepeat: true },
 
@@ -79,9 +81,19 @@
 
       if (!expr || expr.length < 1) return '';
 
-      if (action_mode==true) {
+      if (!action_mode && !effect_mode) {
+        if (card_num && this['customcard_rules_'+card_num]) {
+          return this['customcard_rules_'+card_num]();
+        }
+      }
+      else if (action_mode==true) {
         if (card_num && this['customcard_action_'+card_num]) {
           return this['customcard_action_'+card_num]();
+        }
+      }
+      else if (effect_mode==true) {
+        if (card_num && this['customcard_effect_'+card_num]) {
+          return this['customcard_effect_'+card_num]();
         }
       }
 
@@ -108,6 +120,7 @@
             }
           } else {
             //card patches
+            if (card_num == 19) parse.norepeat=true;
             if (card_num == 152) parse.qty = -99;
 
             if (parse.negative && parse.production) {
@@ -205,7 +218,7 @@
           items.push(this.getParse('tagMicrobe',depth));
           items.push(this.getParse('star',depth));
           items.push(this.getParse('twopoints',depth));
-          items.push(this.getParse('resScience',depth));
+          items.push(this.getParse('res_Science',depth));
 
         } else {
           items.push(this.getParse(op,depth));
@@ -266,7 +279,7 @@
       return items;
     }
 
-    public static getParse(item: string,depth:number): any {
+    public static getParse(item: string,depth:number=0): any {
       let parse = null;
 
       if (item.includes('counter(')) {
@@ -496,9 +509,77 @@
 
    //custom card stuff
    private static customcard_action_33() {
-      return '<div class="groupline">'+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'</div>'
-        +'<div class="groupline">OR '+this.parseSingleItemToHTML(this.getParse('res_Microbe',1),2)+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('o',0),1)+'</div>'
-
+      return '<div class="groupline">'+this.parseSingleItemToHTML(this.getParse(':'),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe'),1)+'</div>'
+        +'<div class="groupline">OR&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe'),2)+this.parseSingleItemToHTML(this.getParse(':'),1)+this.parseSingleItemToHTML(this.getParse('o'),1)+'</div>'
    }
 
+   private static customcard_action_34() {
+     return '<div class="groupline">'+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'</div>'
+       +'<div class="groupline">OR&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',1),2)+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('t',0),1)+'</div>'
+   }
+
+   private static customcard_rules_37() {
+     return '<div class="card_icono icono_prod">' +
+       '<div class="outer_production">'
+       +'<div class="groupline">'
+          +this.parseSingleItemToHTML(this.getParse('pp',),1)+'&nbsp;OR'
+       +'</div>'
+       +'<div class="groupline">'
+        +'3&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagPlant'),1)+':'+this.parseSingleItemToHTML(this.getParse('pp',0),4)
+       +'</div>'
+       +'</div>'
+       +'</div>'
+       +'<div class="card_icono icono_gains cnt_gains">'
+         +'<div class="outer_gains">'+this.parseSingleItemToHTML(this.getParse('tr',0),2)+this.parseSingleItemToHTML(this.getParse('t',0),1)
+        +'</div>'
+       +'</div>'
+   }
+
+   private static customcard_effect_128() {
+     return '<div class="groupline">'
+       +this.parseSingleItemToHTML(this.getParse('tagPlant',0),1) +'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagAnimal',0),1)
+       +'&nbsp;:&nbsp;'
+       +this.parseSingleItemToHTML(this.getParse('res_Animal',0),1)
+       +'</div>'
+   }
+   private static customcard_effect_131() {
+     return '<div class="groupline">'
+       +this.parseSingleItemToHTML(this.getParse('tagPlant',0),1) +'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagAnimal',0),1)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagMicrobe',0),1)
+       +'&nbsp;:&nbsp;'
+       +this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)
+       +'</div>'
+   }
+
+   private static customcard_rules_143() {
+     return '<div class="card_icono icono_gains cnt_gains">'
+       +this.parseSingleItemToHTML(this.getParse('w'),1)
+       +this.parseSingleItemToHTML(this.getParse('draw'),2)
+       +'&nbsp;&nbsp;'
+       +this.parseSingleItemToHTML(this.getParse('p',0),5)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),4)+'*'
+       +'</div>'
+   }
+   private static customcard_rules_153() {
+     return '<div class="groupline">'
+       +'<div class="prereq_content mode_min">'
+       +this.parseSingleItemToHTML(this.getParse('o',0),1) +'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('w',0),1)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('t',0),1)
+       +'</div>'
+       +'&nbsp;:&nbsp;'
+       +'+/-2'
+       +'</div>'
+   }
+
+   private static customcard_action_157() {
+     return '<div class="groupline">'+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'</div>'
+       +'<div class="groupline">OR&nbsp;3&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',1),1)+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('tr',0),1)+'</div>'
+   }
+
+   private static customcard_rules_206() {
+     return '<div class="groupline">'
+       +'<div class="prereq_content mode_min">'
+       +this.parseSingleItemToHTML(this.getParse('o',0),1) +'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('w',0),1)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('t',0),1)
+       +'</div>'
+       +'&nbsp;:&nbsp;'
+       +'+/-2'
+       +'</div>'
+   }
  }

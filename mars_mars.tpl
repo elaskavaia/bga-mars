@@ -39,12 +39,26 @@
 
             </div>
           </div>
+          <div class="outer_generation">
+              <div class="generation_decor">
+                <div id="generation_counter"></div>
+              </div>
+              <div class="generation_bottom">
+                <div id="generation_text">Gen</div>
+              </div>
+            </div>
         </div>
         <div id="map_left">
 
           <div id="decks_area">
-            <div id="deck_main" class="card carddeck"></div>
-            <div id="discard_main" class="card carddeck"></div>
+
+            <div class="deck_line">
+              <div id="deck_main_title" class="deck_line_text">Draw:</div><div id="deck_main" class=""></div>
+            </div>
+            <div id="discard_holder" class="deck_line">
+              <div id="discard_title" class="deck_line_text">Discard:</div><div id="discard_main" class="card carddeck"></div>
+            </div>
+
             <div id="oceans_pile" class="tile tile_3"></div>
           </div>
           <div id="standard_projects_area">
@@ -257,7 +271,7 @@
               </div>
             </div>
 
-            <div class="playerboard_group">
+            <div id="playerboard_group_plants" class="playerboard_group">
               <div class="playerboard_group_img">
                 <div class="token_img tracker_p"></div>
               </div>

@@ -17,7 +17,7 @@ class GameXBody extends GameTokens {
       tracker_t: "temperature_map",
       tracker_o: "oxygen_map",
       tracker_w: "oceans_pile",
-      tracker_gen: "map_left",
+      tracker_gen: "generation_counter",
     };
     this.custom_pay = undefined;
 
@@ -81,11 +81,12 @@ class GameXBody extends GameTokens {
         if (tokenNode.id.startsWith("card_corp_")) {
           //Corp formatting
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          const texts = displayInfo.text.split(';');
-          let card_initial="";
-          let card_effect="";
-          if (texts.length>0) card_initial = texts[0];
-          if (texts.length>1) card_effect= texts[1];
+         // const texts = displayInfo.text.split(';');
+          let card_initial=displayInfo.text || '';
+          let card_effect =displayInfo.text_effect || '';
+
+       //   if (texts.length>0) card_initial = texts[0];
+        //  if (texts.length>1) card_effect= texts[1];
           decor.innerHTML = `
                 <div class="card_bg"></div>
                 <div class="card_initial">${card_initial}</div>
@@ -544,6 +545,16 @@ class GameXBody extends GameTokens {
         }
       });
     }
+    //custom
+    /*
+    if (opInfo.type=="convp") {
+      //convert plants
+      let btnid='playerboard_group_plants';
+      this.connect($(btnid),'onclick',()=>{
+        this.sendActionResolve(opId);
+      })
+
+    }*/
   }
 
   //Adds the payment picker according to available alternative payment options

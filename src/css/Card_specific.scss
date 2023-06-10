@@ -1,8 +1,59 @@
-#card_main_33 {
+#card_main_19 {
+  .card_icono{
+    height:63%;
+
+    .outer_gains {
+      justify-content: center;
+    }
+  }
+}
+
+#card_main_33, #card_main_34, #card_main_157 {
   .card_action_line:first-child {
     flex-direction: column;
   }
   .card_action_text{
     display: none;
+  }
+
+  .groupline{
+    justify-content: flex-end;
+  }
+}
+
+#card_main_37 {
+  .outer_production {
+    padding-left: calc(var(--card-width) * 0.03);
+    padding-right: calc(var(--card-width) * 0.03);
+  }
+}
+
+#card_main_115 {
+  .card_effect  {
+    flex-direction: column;
+  }
+  .card_icono {
+    justify-content: center;
+    height:fit-content;
+  }
+}
+
+#card_main_122 {
+  .card_tt {
+    display: revert;
+  }
+}
+
+#card_main_146 {
+  .card_tt {
+    grid-area:2 / 1 / 3 / 3;
+    display: flex;
+    align-items: center;
+  }
+
+  .card_effect {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr 1fr;
+
   }
 }
