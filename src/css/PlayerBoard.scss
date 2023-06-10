@@ -235,7 +235,8 @@
       height: 1px;
     }
     .card[data-card-type="2"] {
-      display: none;
+      position: absolute;
+      opacity: 0;
     }
   }
   .tableau[data-visibility_1="0"] {
@@ -244,7 +245,8 @@
       height: 1px;
     }
     .card[data-card-type="1"] {
-      display: none;
+      position: absolute;
+      opacity: 0;
     }
   }
   .tableau[data-visibility_3="0"] {
@@ -253,7 +255,8 @@
       height: 1px;
     }
     .card[data-card-type="3"] {
-      display: none;
+      position: absolute;
+      opacity: 0;
     }
   }
 
