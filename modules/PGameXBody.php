@@ -53,7 +53,8 @@ abstract class PGameXBody extends PGameMachine {
                     $this->tokens->pickTokensForLocation(10, "deck_main", "hand_${color}");
                 } else {
                     $this->tokens->pickTokensForLocation(10, "deck_main", "draw_${color}");
-                    $this->tokens->pickTokensForLocation((int)(11 / $this->getPlayersNumber()), "deck_corp", "draw_${color}");
+                    $corps = 2; //(int)(11 / $this->getPlayersNumber())
+                    $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
                     $this->multiplayerqueue($color, "keepcorp,10?buycard");
                 }
 
@@ -127,7 +128,6 @@ abstract class PGameXBody extends PGameMachine {
                 $marker = $this->createPlayerMarker('ffffff');
                 $this->tokens->moveToken($marker, $tile['key'], 0);
             }
-
         }
     }
 
@@ -634,6 +634,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->machine->queue($type, 1, 1, $color, MACHINE_OP_SEQ, $data, 'multi');
     }
 
+    function multiplayerpush($color, $type, $data = '') {
+        $this->machine->push($type, 1, 1, $color, MACHINE_OP_SEQ, $data, 'multi');
+    }
+
     function push($color, $type, $data = '') {
         $this->machine->push($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
@@ -858,9 +862,30 @@ abstract class PGameXBody extends PGameMachine {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Player actions
     ////////////
+
+
+    function action_undo() {
+        // unchecked action
+
+        $state = $this->gamestate->state();
+        if ($state['type'] == 'multipleactiveplayer') {
+            // special undo 
+            $player_id = $this->getCurrentPlayerId();
+            //for now there is only one case so not need to check oprations
+            //$operations = $this->getTopOperations();
+            $color = $this->getPlayerColorById($player_id);
+            if (!$color) return; // not a player
+            $this->effect_undoBuyCards($color);
+            return;
+        }
+        $this->undoRestorePoint();
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Effects
     ////////////
+
+
     function effect_playCard($color, $card_id) {
         $rules = $this->getRulesFor($card_id, '*');
         $ttype = $rules['t']; // type of card
@@ -967,6 +992,63 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         return $object;
+    }
+
+    function effect_undoBuyCards($owner) {
+        $color = $owner;
+        $player_id = $this->getPlayerIdByColor($color);
+        $this->systemAssertTrue("unexpected non multistate", $this->isInMultiplayerMasterState());
+
+        $this->notifyMessage(clienttranslate('${player_name} takes back their move'), [], $player_id);
+
+
+        $selected = $this->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
+        $count = count($selected);
+        $rest = $this->tokens->getTokensInLocation("draw_$color");
+        $has_corp = 0;
+        foreach ($rest as $card_id => $card) {
+            if (startsWith($card_id,'card_corp')) {
+                $has_corp += 1;
+            }
+        }
+
+        if ($count == 0 && $has_corp==false) throw new BgaUserException(self::_("Nothing to undo"));
+        $ops = $this->getTopOperations($color);
+        $this->userAssertTrue("Cannot undo", count($ops) == 1);
+        $op = array_shift($ops);
+
+
+
+        if ($op['type'] == 'prediscard') {
+            // nothing is left
+        } else if ($op['type'] == 'buycard') {
+            // partial undo
+            $this->machine->hide($op);
+        } else {
+            $this->userAssertTrue("Cannot undo");
+        }
+        $total = $count + count($rest) - $has_corp;
+        $this->multiplayerpush($color, $total . '?buycard');
+
+        foreach ($selected as $card_id => $card) {
+            $this->dbSetTokenLocation($card_id, "draw_$color", 0, '');
+            $this->effect_incCount($color, 'm', -3, ['message' => '']);
+        }
+
+        if ($has_corp) {
+            // can undo corp selection also
+            $corp = $this->tokens->getTokenOfTypeInLocation('card_corp',"tableau_$color");
+            if ($corp) {
+                $this->dbSetTokenLocation($corp['key'], "draw_$color", 0, '');
+                // undo crop effects
+                //$this->effect_incCount($color, 'm', -1*$this->get, ['message' => '']);
+                $this->multiplayerpush($color, 'keepcorp');
+            }
+        }
+
+        $this->machine->normalize();
+        //$this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
+        $this->machineMultiplayerDistpatchPrivate($player_id);
     }
 
     function getPlayCardEvents($card_id, $prefix = ''): array {
@@ -1322,6 +1404,8 @@ abstract class PGameXBody extends PGameMachine {
         $opinst = $this->getOperationInstance($op);
         return $opinst->arg();
     }
+
+
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Game state actions

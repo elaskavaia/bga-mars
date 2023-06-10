@@ -40,8 +40,8 @@ var GameBasics = /** @class */ (function (_super) {
         console.log("Starting game setup", gamedatas);
         // add reload Css debug button
         var parent = document.querySelector(".debug_section");
-        if (parent && !$('reloadcss')) {
-            var butt = dojo.create("a", { id: 'reloadcss', class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
+        if (parent && !$("reloadcss")) {
+            var butt = dojo.create("a", { id: "reloadcss", class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
             dojo.connect(butt, "onclick", function () { return reloadCss(); });
         }
         this.setupNotifications();
@@ -103,20 +103,23 @@ var GameBasics = /** @class */ (function (_super) {
         }
         return undefined;
     };
+    GameBasics.prototype.ajaxcallwrapper_unchecked = function (action, args, handler) {
+        if (!args) {
+            args = {};
+        }
+        if (args.lock === false) {
+            delete args.lock;
+        }
+        else {
+            args.lock = true;
+        }
+        var gname = this.game_name;
+        var url = "/".concat(gname, "/").concat(gname, "/").concat(action, ".html");
+        this.ajaxcall(url, args, this, function (result) { }, handler);
+    };
     GameBasics.prototype.ajaxcallwrapper = function (action, args, handler) {
         if (this.checkAction(action)) {
-            if (!args) {
-                args = {};
-            }
-            if (args.lock === false) {
-                delete args.lock;
-            }
-            else {
-                args.lock = true;
-            }
-            var gname = this.game_name;
-            var url = "/".concat(gname, "/").concat(gname, "/").concat(action, ".html");
-            this.ajaxcall(url, args, this, function (result) { }, handler);
+            this.ajaxcallwrapper_unchecked(action, args, handler);
         }
     };
     /**
@@ -737,7 +740,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.onNotif(notif);
     };
     GameBasics.prototype.ntf_gameStateMultipleActiveUpdate = function (notif) {
-        this.gamedatas.gamestate.descriptionmyturn = '...';
+        this.gamedatas.gamestate.descriptionmyturn = "...";
         return this.inherited(arguments);
     };
     GameBasics.prototype.onNotif = function (notif) {
@@ -850,6 +853,479 @@ var Card = /** @class */ (function () {
     return Card;
 }());
 ;
+/* Module for rendering  card effects, powers , etc
+*
+*/
+var CustomRenders = /** @class */ (function () {
+    function CustomRenders() {
+    }
+    CustomRenders.parseExprToHtml = function (expr, card_num, action_mode, effect_mode) {
+        if (action_mode === void 0) { action_mode = false; }
+        if (effect_mode === void 0) { effect_mode = false; }
+        var rethtm = '';
+        if (!expr || expr.length < 1)
+            return '';
+        if (action_mode == true) {
+            if (card_num && this['customcard_action_' + card_num]) {
+                return this['customcard_action_' + card_num]();
+            }
+        }
+        var items = this.parseExprItem(expr, 0);
+        var prodgains = [];
+        var prodlosses = [];
+        var gains = [];
+        var losses = [];
+        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+            var parse = items_1[_i];
+            //group by type
+            if (parse != null) {
+                if (action_mode == true || effect_mode == true) {
+                    //simpler : gains -> losses
+                    if (parse.group == "ACTION_SPEND") {
+                        losses.push({ item: parse, qty: parse.qty });
+                    }
+                    else {
+                        //card patches
+                        if (card_num == 20)
+                            parse.qty = -1;
+                        gains.push({ item: parse, qty: parse.qty });
+                    }
+                }
+                else {
+                    //card patches
+                    if (card_num == 152)
+                        parse.qty = -99;
+                    if (parse.negative && parse.production) {
+                        prodlosses.push({ item: parse, qty: parse.qty });
+                    }
+                    else if (!parse.negative && parse.production) {
+                        prodgains.push({ item: parse, qty: parse.qty });
+                    }
+                    else if (parse.negative && !parse.production) {
+                        losses.push({ item: parse, qty: parse.qty });
+                    }
+                    else if (!parse.negative && !parse.production) {
+                        gains.push({ item: parse, qty: parse.qty });
+                    }
+                }
+            }
+        }
+        if (action_mode == true || effect_mode == true) {
+            rethtm += '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains">';
+            rethtm += this.parseRulesToHtmlBlock(losses);
+            rethtm += '</div></div>';
+            if (action_mode == true)
+                rethtm += '<div class="action_arrow"></div>';
+            else
+                rethtm += '<div class="effect_separator">:</div>';
+            rethtm += '<div class="card_icono icono_gains cnt_gains"><div class="outer_gains">';
+            rethtm += this.parseRulesToHtmlBlock(gains);
+            rethtm += '</div></div>';
+        }
+        else {
+            //rules mode
+            var blocks = 0;
+            //losses first
+            if (losses.length > 0) {
+                rethtm += '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="plusminus">-</div>';
+                rethtm += this.parseRulesToHtmlBlock(losses);
+                rethtm += '</div></div>';
+                blocks++;
+            }
+            if (prodgains.length > 0 || prodlosses.length > 0) {
+                rethtm += '<div class="card_icono icono_prod"><div class="outer_production">';
+                if (prodlosses.length > 0) {
+                    rethtm += '<div class="production_line cnt_losses"><div class="plusminus">-</div>';
+                    rethtm += this.parseRulesToHtmlBlock(prodlosses);
+                    rethtm += '</div>';
+                }
+                if (prodgains.length > 0) {
+                    rethtm += '<div class="production_line cnt_gains">';
+                    if (prodlosses.length > 0 && !action_mode)
+                        rethtm += '<div class="plusminus">+</div>';
+                    rethtm += this.parseRulesToHtmlBlock(prodgains);
+                    rethtm += '</div>';
+                }
+                rethtm += '</div></div>';
+                blocks++;
+            }
+            if (gains.length > 0) {
+                rethtm += '<div class="card_icono icono_gains cnt_gains"><div class="outer_gains">';
+                if (losses.length > 0)
+                    rethtm += '<div class="plusminus">+</div>';
+                rethtm += this.parseRulesToHtmlBlock(gains);
+                rethtm += '</div></div>';
+                blocks++;
+            }
+        }
+        return rethtm;
+    };
+    CustomRenders.parseExprItem = function (expr, depth) {
+        if (!expr)
+            return [];
+        if (!Array.isArray(expr)) {
+            expr = [expr];
+        }
+        var items = [];
+        var op = expr[0];
+        var min = (expr.length > 1) ? expr[1] : "";
+        var max = (expr.length > 2) ? expr[2] : "";
+        var arg1 = (expr.length > 3) ? expr[3] : "";
+        //simple op, one resource gain
+        if (expr.length == 1) {
+            //special patch
+            if (op == "play_cardSpaceEvent") {
+                items.push(this.getParse('tagSpace', depth));
+                items.push(this.getParse('tagEvent', depth));
+            }
+            else if (op == "acard5") {
+                items.push(this.getParse('tagMicrobe', depth));
+                items.push(this.getParse('star', depth));
+                items.push(this.getParse('twopoints', depth));
+                items.push(this.getParse('resScience', depth));
+            }
+            else {
+                items.push(this.getParse(op, depth));
+            }
+        }
+        else if (op == '!') {
+            if (arg1 != "") {
+                var item = this.getParse(arg1, depth);
+                if (item != null) {
+                    item.qty = max;
+                    items.push(item);
+                }
+            }
+        }
+        else if (op == ',' && arg1.includes('counter(')) {
+            var retSrcs = this.parseExprItem(expr[3], depth + 1);
+            var retGains = this.parseExprItem(expr[4], depth + 1);
+            var isProd = false;
+            for (var _i = 0, retGains_1 = retGains; _i < retGains_1.length; _i++) {
+                var retGain = retGains_1[_i];
+                if (retGain.production == true)
+                    isProd = true;
+                items.push(retGain);
+            }
+            for (var _a = 0, retSrcs_1 = retSrcs; _a < retSrcs_1.length; _a++) {
+                var retSrc = retSrcs_1[_a];
+                retSrc.group = "FOREACH";
+                if (isProd)
+                    retSrc.production = true;
+                items.push(retSrc);
+            }
+        }
+        else if (op == "," || op == ";") {
+            for (var i = 3; i < expr.length; i++) {
+                for (var _b = 0, _c = this.parseExprItem(expr[i], depth + 1); _b < _c.length; _b++) {
+                    var ret = _c[_b];
+                    items.push(ret);
+                }
+            }
+        }
+        else if (op == "/") {
+            for (var i = 3; i < expr.length; i++) {
+                //    items.push(this.parseExprItem(expr[i],true));
+                for (var _d = 0, _e = this.parseExprItem(expr[i], depth + 1); _d < _e.length; _d++) {
+                    var ret = _e[_d];
+                    if (ret != null) {
+                        ret.divider = "OR";
+                        items.push(ret);
+                    }
+                }
+            }
+        }
+        else if (op == ":") {
+            var retSrcs = this.parseExprItem(expr[3], depth + 1);
+            var retGains = this.parseExprItem(expr[4], depth + 1);
+            for (var _f = 0, retSrcs_2 = retSrcs; _f < retSrcs_2.length; _f++) {
+                var retSrc = retSrcs_2[_f];
+                retSrc.group = "ACTION_SPEND";
+                items.push(retSrc);
+            }
+            for (var _g = 0, retGains_2 = retGains; _g < retGains_2.length; _g++) {
+                var retGain = retGains_2[_g];
+                retGain.group = "ACTION_GAIN";
+                items.push(retGain);
+            }
+        }
+        return items;
+    };
+    CustomRenders.getParse = function (item, depth) {
+        var parse = null;
+        if (item.includes('counter(')) {
+            item = item.replace('counter(', '').replace(')', '');
+        }
+        item = item.replace('ores(Microbe)', 'ores_Microbe');
+        item = item.replace('ores(Animal)', 'ores_Animal');
+        item = item.replace("counter('(tagPlant>=3)*4')", 'special_tagplant_sup3');
+        item = item.replace("tagMicrobe/2", 'special_tagmicrobe_half');
+        item = item.replace("ph,0", 'ph');
+        item = item.replace(/\([^)]*\)/g, '(*)');
+        if (this.parses[item]) {
+            parse = Object.assign({}, this.parses[item]);
+        }
+        else if (this.parses[item.replace('_Any', '')]) {
+            parse = Object.assign({}, this.parses[item.replace('_Any', '')]);
+            parse.redborder = "resource";
+        }
+        else if (this.parses[item.replace('play_', '')]) {
+            parse = Object.assign({}, this.parses[item.replace('play_', '')]);
+        }
+        else if (this.parses[item.replace('place_', '')]) {
+            parse = Object.assign({}, this.parses[item.replace('place_', '')]);
+            parse.redborder = 'hex';
+        }
+        else if (this.parses[item.replace('(*)', '')]) {
+            parse = Object.assign({}, this.parses[item.replace('(*)', '')]);
+            parse.after = '*';
+        }
+        else {
+            //unknown parse
+            //this.darhflog('UNKNOWN PARSE :',item);
+            parse = { class: 'unknown', content: item };
+        }
+        parse.depth = depth;
+        return parse;
+    };
+    CustomRenders.parseRulesToHtmlBlock = function (items) {
+        var rethtm = '';
+        var foundor = false;
+        for (var _i = 0, items_2 = items; _i < items_2.length; _i++) {
+            var n = items_2[_i];
+            if (n.item.divider && n.item.divider == "OR") {
+                if (!foundor) {
+                    foundor = true;
+                    //  rethtm+='<div class="breaker"></div>';
+                }
+                else {
+                    rethtm += _('OR') + '&nbsp;';
+                }
+            }
+            //if (n.qty>1) rethtm+=n.qty+'&nbsp;';
+            if (n.item.group && n.item.group == "FOREACH" && items[0] != n)
+                rethtm += '&nbsp;/&nbsp;';
+            rethtm += this.parseSingleItemToHTML(n.item, n.qty);
+        }
+        return rethtm;
+    };
+    CustomRenders.parseSingleItemToHTML = function (item, qty) {
+        var ret = "";
+        var content = item.content != undefined ? item.content : "";
+        if (content == "1" && qty != null) {
+            content = qty;
+            if (qty == -99)
+                content = 'X';
+        }
+        else if (qty != null && (qty > 3 || item.norepeat == true)) {
+            ret = qty + '&nbsp;';
+        }
+        else if (qty == -99) {
+            ret = ret + 'X&nbsp;';
+        }
+        var after = item.after != undefined ? item.after : "";
+        //little resource for nmu & nms
+        if (item.exp) {
+            after = '<div class="resource_exponent"><div class="' + item.exp + '"></div></div>';
+        }
+        var resicon = '<div class="cnt_media ' + item.classes + ' depth_' + item.depth + '">' + content + '</div>' + after;
+        if (item.redborder) {
+            var redborderclass = item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') ? 'hex' : 'resource';
+            resicon = '<div class="outer_redborder redborder_' + redborderclass + '">' + resicon + '</div>';
+        }
+        if (item.production === true) {
+            resicon = '<div class="outer_production">' + resicon + '</div>';
+        }
+        ret = ret + resicon;
+        /*
+        if (item.production === true) {
+           ret =ret+ '<div class="outer_production"><div class="cnt_media ' + item.classes + '">' + content + "</div>"+after+"</div>";
+        } else if (item.redborder) {
+          const redborderclass=item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') ? 'hex' : 'resource';
+          ret =ret+  '<div class="outer_redborder redborder_'+redborderclass+'"><div class="cnt_media ' + item.classes + '">' + content + "</div>"+after+"</div>";
+        } else {
+          ret =ret+  '<div class="cnt_media ' + item.classes + '">'+content+'</div>'+after;
+        }
+  
+         */
+        if (qty != null && qty > 1 && qty <= 3 && item.content != "1" && !item.norepeat) {
+            ret = ret.repeat(qty);
+        }
+        return ret;
+    };
+    CustomRenders.parseActionsToHTML = function (actions) {
+        var ret = actions;
+        var idx = 0;
+        var finds = [];
+        for (var key in this.parses) {
+            var item = this.parses[key];
+            if (ret.includes(key)) {
+                ret = ret.replace(key, "%" + idx + "%");
+                var content = item.content != undefined ? item.content : "";
+                var after = item.after != undefined ? item.after : "";
+                if (item.production === true) {
+                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
+                }
+                else if (item.redborder) {
+                    finds[idx] = '<div class="outer_redborder redborder_' + item.redborder + '"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
+                }
+                else {
+                    finds[idx] = '<div class="' + item.classes + '"></div>' + after;
+                }
+                idx++;
+            }
+        }
+        //remove ";" between icons
+        ret = ret.replace("%;%", "%%");
+        //replaces
+        for (var key in finds) {
+            var htm = finds[key];
+            ret = ret.replace("%" + key + "%", htm);
+        }
+        return ret;
+    };
+    CustomRenders.parsePrereqToHTML = function (pre) {
+        if (!pre)
+            return "";
+        if (pre.length < 3)
+            return "";
+        var op = pre[0];
+        var what = pre[1];
+        var qty = pre[2];
+        var suffix = "";
+        var icon = CustomRenders.parseActionsToHTML(what);
+        switch (what) {
+            case "o":
+                suffix = "%";
+                break;
+            case "t":
+                suffix = "°C";
+                break;
+            case "tagScience":
+                break;
+            case "tagEnergy":
+                break;
+            case "forest":
+                break;
+            case "w":
+                break;
+        }
+        var mode = "min";
+        var prefix = "";
+        if (op == "<=") {
+            mode = "max";
+            prefix = "max ";
+        }
+        var htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qty + suffix + icon + '</div></div>';
+        return htm;
+    };
+    CustomRenders.parsePrereqToText = function (pre) {
+        if (!pre)
+            return "";
+        if (pre.length < 3)
+            return "";
+        var op = pre[0];
+        var what = pre[1];
+        var qty = pre[2];
+        var mode = "min";
+        if (op == "<=") {
+            mode = "max";
+        }
+        var ret = '';
+        switch (what) {
+            case "o":
+                ret = mode == 'min' ? _('Requires $v% Oxygen.') : _('Oxygen must be $v% or less.');
+                break;
+            case "t":
+                ret = mode == 'min' ? _('Requires $v°C or warmer.') : _('It must be $v°C or colder.');
+                break;
+            case "tagScience":
+                ret = _('Requires $v Science tags.');
+                break;
+            case "tagEnergy":
+                ret = _('Requires $v Power tags.');
+                break;
+            case "w":
+                ret = mode == 'min' ? ret = _('Requires $v Ocean tiles.') : _('$v Ocean Tiles or less.');
+                break;
+            case 'forest':
+                ret = _('Requires $v Forest tiles.');
+                break;
+            default:
+                ret = 'NOT FOUND :' + what;
+                break;
+        }
+        ret = ret.replace('$v', qty);
+        return ret;
+    };
+    //custom card stuff
+    CustomRenders.customcard_action_33 = function () {
+        return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>'
+            + '<div class="groupline">OR ' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 1), 2) + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('o', 0), 1) + '</div>';
+    };
+    CustomRenders.parses = {
+        forest: { classes: "tracker tracker_forest" },
+        all_city: { classes: "tracker tracker_city", redborder: 'hex' },
+        city: { classes: "tracker tracker_city" },
+        ocean: { classes: "tile tile_3" },
+        draw: { classes: "token_img cardback" },
+        tile: { classes: "tile tile_%card_number%" },
+        tagScience: { classes: "tracker badge tracker_tagScience" },
+        tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
+        tagMicrobe: { classes: "tracker badge tracker_tagMicrobe" },
+        tagPlant: { classes: "tracker badge tracker_tagPlant" },
+        tagAnimal: { classes: "tracker badge tracker_tagAnimal" },
+        tagJovian: { classes: "tracker badge tracker_tagJovian" },
+        tagSpace: { classes: "tracker badge tracker_tagSpace" },
+        tagEvent: { classes: "tracker badge tracker_tagEvent" },
+        "[1,](sell)": { classes: "" },
+        onPay_cardSpace: { classes: "tracker badge tracker_tagSpace" },
+        onPay_card: { classes: "empty" },
+        twopoints: { classes: "txtcontent", content: ':' },
+        star: { classes: "txtcontent", content: '*' },
+        resScience: { classes: "token_img resource_science" },
+        nores_Animal: { classes: "token_img tracker_animal", redborder: 'resource', norepeat: true },
+        nores_Microbe: { classes: "token_img tracker_microbe", redborder: 'resource', norepeat: true },
+        res_Microbe: { classes: "token_img tracker_microbe" },
+        ores_Microbe: { classes: "token_img tracker_microbe", after: '*', norepeat: true },
+        ores_Animal: { classes: "token_img tracker_animal", after: '*', norepeat: true },
+        special_tagmicrobe_half: { classes: "tracker badge tracker_tagMicrobe", content: "2", norepeat: true },
+        res: { classes: "token_img tracker_%badge%", norepeat: true },
+        nres: { classes: "token_img tracker_%badge%", norepeat: true },
+        nmu: { classes: "token_img tracker_m nmu", negative: true, content: "1", exp: "token_img tracker_u" },
+        nms: { classes: "token_img tracker_m nms", negative: true, content: "1", exp: "token_img tracker_s" },
+        npe: { classes: "token_img tracker_e", negative: true, production: true },
+        npm: { classes: "token_img tracker_m", negative: true, production: true, content: "1" },
+        npu: { classes: "token_img tracker_u", negative: true, production: true },
+        nps: { classes: "token_img tracker_s", negative: true, production: true },
+        npp: { classes: "token_img tracker_p", negative: true, production: true },
+        nph: { classes: "token_img tracker_h", negative: true, production: true },
+        ne: { classes: "token_img tracker_e", negative: true },
+        nm: { classes: "token_img tracker_m", negative: true, content: "1" },
+        nu: { classes: "token_img tracker_u", negative: true },
+        ns: { classes: "token_img tracker_s", negative: true },
+        np: { classes: "token_img tracker_p", negative: true },
+        nh: { classes: "token_img tracker_h", negative: true },
+        pe: { classes: "token_img tracker_e", production: true },
+        pm: { classes: "token_img tracker_m", production: true, content: "1" },
+        pu: { classes: "token_img tracker_u", production: true },
+        ps: { classes: "token_img tracker_s", production: true },
+        pp: { classes: "token_img tracker_p", production: true },
+        ph: { classes: "token_img tracker_h", production: true },
+        tr: { classes: "token_img tracker_tr" },
+        e: { classes: "token_img tracker_e" },
+        m: { classes: "token_img tracker_m", content: "1" },
+        u: { classes: "token_img tracker_u" },
+        s: { classes: "token_img tracker_s" },
+        p: { classes: "token_img tracker_p" },
+        h: { classes: "token_img tracker_h" },
+        t: { classes: "token_img temperature_icon" },
+        w: { classes: "tile tile_3" },
+        o: { classes: "token_img oxygen_icon" },
+        ":": { classes: "action_arrow" },
+    };
+    return CustomRenders;
+}());
 var GameTokens = /** @class */ (function (_super) {
     __extends(GameTokens, _super);
     function GameTokens() {
@@ -1428,7 +1904,6 @@ var GameTokens = /** @class */ (function (_super) {
     };
     return GameTokens;
 }(GameBasics));
-/** Game class */
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -1442,6 +1917,7 @@ var __assign = (this && this.__assign) || function () {
 };
 var GameXBody = /** @class */ (function (_super) {
     __extends(GameXBody, _super);
+    // private parses:any;
     function GameXBody() {
         return _super.call(this) || this;
     }
@@ -1464,14 +1940,6 @@ var GameXBody = /** @class */ (function (_super) {
         });
         // this.connectClass("filter_button", "onclick", "onFilterButton");
         this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
-        // if (this.isLayoutFull()) {
-        //   if (!$("main_board_wrapper")) {
-        //     const div = $("main_board");
-        //     const parentId = (div.parentNode as any).id;
-        //     const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
-        //     wrapper.appendChild(div);
-        //   }
-        // }
         $('thething').removeAttribute('title');
         console.log("Ending game setup");
     };
@@ -1490,7 +1958,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
-        var _b, _c, _d, _e, _f, _g;
+        var _b, _c, _d, _e;
         if (!tokenNode.getAttribute("data-info")) {
             var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
             var classes = displayInfo.imageTypes.split(/  */);
@@ -1522,37 +1990,33 @@ var GameXBody = /** @class */ (function (_super) {
                     //cost -> action title
                     //except for sell patents
                     var decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-                    var parsedActions = this.parseActionsToHTML(displayInfo.r);
+                    var parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
                     //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-                    /*
-                    decor.innerHTML = `
-                       <div class='stanp_cost'>${displayInfo.cost}</div>
-                       <div class='stanp_arrow'></div>
-                       <div class='stanp_action'>${parsedActions}</div>
-                       <div class='standard_projects_title'>${displayInfo.name}</div>
-                    `;*/
                     decor.innerHTML = "\n             <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n             <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n          ");
                     ttdiv.innerHTML += "<div class='card_effect'>".concat(displayInfo.text, "</div>");
                 }
                 else {
                     //tags
+                    var firsttag = '';
                     if (displayInfo.tags && displayInfo.tags != "") {
-                        for (var _i = 0, _h = displayInfo.tags.split(" "); _i < _h.length; _i++) {
-                            var tag = _h[_i];
+                        for (var _i = 0, _f = displayInfo.tags.split(" "); _i < _f.length; _i++) {
+                            var tag = _f[_i];
                             tagshtm += '<div class="badge tag_' + tag + '"></div>';
+                            if (firsttag == "")
+                                firsttag = tag;
                         }
                     }
-                    var parsedActions = this.parseActionsToHTML((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : "");
-                    var parsedPre = displayInfo.pre ? this.parsePrereqToHTML(displayInfo.expr.pre) : "";
+                    var parsedActions = CustomRenders.parseActionsToHTML((_c = (_b = displayInfo.a) !== null && _b !== void 0 ? _b : displayInfo.e) !== null && _c !== void 0 ? _c : "");
+                    var parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) : "";
                     //specific card rendering
                     if (displayInfo.num == 2) {
-                        parsedPre = '<div class="prereq_content mode_min">' + this.parseActionsToHTML('pu') + '</div></div>';
+                        parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML('pu') + '</div></div>';
                     }
                     if (displayInfo.num == 61) {
-                        parsedPre = '<div class="prereq_content mode_min">' + this.parseActionsToHTML('ps') + '</div></div>';
+                        parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML('ps') + '</div></div>';
                     }
                     if (displayInfo.num == 135) {
-                        parsedPre = '<div class="prereq_content mode_min">' + this.parseActionsToHTML('tagPlant tagMicrobe tagAnimal') + '</div></div>';
+                        parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML('tagPlant tagMicrobe tagAnimal') + '</div></div>';
                     }
                     var decor = this.createDivNode(null, "card_decor", tokenNode.id);
                     var vp = "";
@@ -1563,12 +2027,72 @@ var GameXBody = /** @class */ (function (_super) {
                         vp = '';
                     }
                     var cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
-                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_action\">").concat((_e = (_d = displayInfo.a) !== null && _d !== void 0 ? _d : displayInfo.e) !== null && _e !== void 0 ? _e : "", "</div>\n                <div class=\"card_effect\"><div class=\"card_tt\">").concat(displayInfo.text, "</div></div>\n                <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                <div class=\"card_number\">").concat((_f = displayInfo.num) !== null && _f !== void 0 ? _f : "", "</div>\n                <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                ").concat(vp, "\n          ");
-                    ttdiv.innerHTML += "<div class=\"card_number\">".concat((_g = displayInfo.num) !== null && _g !== void 0 ? _g : "", "</div>");
-                    ttdiv.innerHTML += '<div class="tt_intertitle">' + _('PROPERTIES') + '</div>';
-                    ttdiv.innerHTML += "<div class=\"tt_linegroup\"><div class='card_cost'>".concat(displayInfo.cost, "</div>\n                            <div class='card_badges'>").concat(tagshtm, "</div></div>");
-                    ttdiv.innerHTML += '<div class="tt_intertitle">' + _('EFFECT') + '</div>';
-                    ttdiv.innerHTML += "<div class=\"card_effect\">".concat(displayInfo.text, "</div>");
+                    //rules+rules styling
+                    //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
+                    var card_r = "";
+                    var addeffclass = "";
+                    if (displayInfo.r) {
+                        card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r, displayInfo.num || null);
+                        addeffclass = card_r.includes('icono_prod') ? 'cols' : 'rows';
+                        var blocks = (card_r.match(/card_icono/g) || []).length;
+                        addeffclass += ' blocks_' + blocks;
+                        var cntLosses = (card_r.match(/cnt_losses/g) || []).length;
+                        var cntGains = (card_r.match(/cnt_gains/g) || []).length;
+                        var cntProds = (card_r.match(/cnt_media/g) || []).length;
+                        if (((cntLosses > 0 && cntGains == 0) || (cntGains > 0 && cntLosses == 0)) && (cntLosses + cntGains > 1 || (cntLosses + cntGains == 1 && cntProds > 3))) {
+                            //exceptions
+                            if (displayInfo.num && displayInfo.num != 19) {
+                                card_r = '<div class="groupline">' + card_r + '</div>';
+                                addeffclass += ' oneline';
+                            }
+                        }
+                        if (vp != '')
+                            addeffclass += ' hasvp';
+                        //replaces some stuff in parsed rules
+                        card_r = card_r.replace('%card_number%', displayInfo.num);
+                        //special for "res"
+                        card_r = card_r.replaceAll('%badge%', firsttag.toLowerCase());
+                    }
+                    //card actions
+                    var card_a = "";
+                    if (displayInfo.a) {
+                        card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
+                    }
+                    else if (displayInfo.e) {
+                        card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
+                    }
+                    //special for "res"
+                    card_a = card_a.replaceAll('%badge%', firsttag.toLowerCase());
+                    var card_action_text = "";
+                    if (displayInfo.text_action || displayInfo.text_effect) {
+                        card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
+                    }
+                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                <div class=\"card_number\">").concat((_d = displayInfo.num) !== null && _d !== void 0 ? _d : "", "</div>\n                <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                ").concat(vp, "\n          ");
+                    var prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
+                    ttdiv.innerHTML += "<div class=\"card_number\">".concat((_e = displayInfo.num) !== null && _e !== void 0 ? _e : "", "</div>");
+                    if (prereqText != "") {
+                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _('PRE-REQUISITES') + '</div>';
+                        ttdiv.innerHTML += "<div class=\"card_effect\">".concat(prereqText, "</div>");
+                    }
+                    /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
+                    ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
+                                      <div class='card_badges'>${tagshtm}</div></div>`*/
+                    if (displayInfo.text_action && displayInfo.text_action != "") {
+                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _('ACTION') + '</div>';
+                        ttdiv.innerHTML += "<div class=\"card_effect\">".concat(displayInfo.text_action, "</div>");
+                    }
+                    if (displayInfo.text_effect && displayInfo.text_effect != "") {
+                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _('EFFECT') + '</div>';
+                        ttdiv.innerHTML += "<div class=\"card_effect\">".concat(displayInfo.text_effect, "</div>");
+                    }
+                    if (displayInfo.text && displayInfo.text != "") {
+                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _('WHEN PLAYED') + '</div>';
+                        ttdiv.innerHTML += "<div class=\"card_effect\">".concat(displayInfo.text, "</div>");
+                    }
+                    if (displayInfo.text_vp && displayInfo.text_vp != "") {
+                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _('VICTORY POINTS') + '</div>';
+                        ttdiv.innerHTML += "<div class=\"card_effect\">".concat(displayInfo.text_vp, "</div>");
+                    }
                     // <div class="card_action">${parsedActions}</div>
                     //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
                 }
@@ -1581,95 +2105,6 @@ var GameXBody = /** @class */ (function (_super) {
             }
             this.connect(tokenNode, "onclick", "onToken");
         }
-    };
-    GameXBody.prototype.parsePrereqToHTML = function (pre) {
-        if (!pre)
-            return "";
-        if (pre.length < 3)
-            return "";
-        var op = pre[0];
-        var what = pre[1];
-        var qty = pre[2];
-        var suffix = "";
-        var icon = this.parseActionsToHTML(what);
-        switch (what) {
-            case "o":
-                suffix = "%";
-                break;
-            case "t":
-                suffix = "°C";
-                break;
-            case "tagScience":
-                break;
-            case "w":
-                break;
-        }
-        var mode = "min";
-        var prefix = "";
-        if (op == "<=") {
-            mode = "max";
-            prefix = "max ";
-        }
-        var htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qty + suffix + icon + '</div></div>';
-        return htm;
-    };
-    GameXBody.prototype.parseActionsToHTML = function (actions) {
-        var ret = actions;
-        var easyParses = {
-            forest: { classes: "tracker tracker_forest" },
-            all_city: { classes: "tracker tracker_city", redborder: 'hex' },
-            city: { classes: "tracker tracker_city" },
-            draw: { classes: "token_img draw_icon" },
-            tagScience: { classes: "tracker badge tracker_tagScience" },
-            tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
-            tagMicrobe: { classes: "tracker badge tracker_tagMicrobe" },
-            tagPlant: { classes: "tracker badge tracker_tagPlant" },
-            tagAnimal: { classes: "tracker badge tracker_tagAnimal" },
-            "[1,](sell)": { classes: "" },
-            pe: { classes: "token_img tracker_e", production: true },
-            pm: { classes: "token_img tracker_m", production: true, content: "1" },
-            pu: { classes: "token_img tracker_u", production: true },
-            ps: { classes: "token_img tracker_s", production: true },
-            pp: { classes: "token_img tracker_p", production: true },
-            ph: { classes: "token_img tracker_h", production: true },
-            e: { classes: "token_img tracker_e" },
-            m: { classes: "token_img tracker_m", content: "1" },
-            u: { classes: "token_img tracker_u" },
-            s: { classes: "token_img tracker_s" },
-            p: { classes: "token_img tracker_p" },
-            h: { classes: "token_img tracker_h" },
-            t: { classes: "token_img temperature_icon" },
-            w: { classes: "tile tile_3" },
-            o: { classes: "token_img oxygen_icon" },
-            ":": { classes: "action_arrow" },
-        };
-        var idx = 0;
-        var finds = [];
-        for (var key in easyParses) {
-            var item = easyParses[key];
-            if (ret.includes(key)) {
-                ret = ret.replace(key, "%" + idx + "%");
-                var content = item.content != undefined ? item.content : "";
-                if (item.production === true) {
-                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div></div>";
-                }
-                else if (item.redborder) {
-                    finds[idx] = '<div class="outer_redborder redborder_' + item.redborder + '"><div class="' + item.classes + '">' + content + "</div></div>";
-                }
-                else {
-                    finds[idx] = '<div class="' + item.classes + '"></div>';
-                }
-                idx++;
-            }
-        }
-        //remove ";" between icons
-        ret = ret.replace("%;%", "%%");
-        //replaces
-        for (var key in finds) {
-            var htm = finds[key];
-            ret = ret.replace("%" + key + "%", htm);
-        }
-        return ret;
     };
     GameXBody.prototype.setDomTokenState = function (tokenId, newState) {
         _super.prototype.setDomTokenState.call(this, tokenId, newState);

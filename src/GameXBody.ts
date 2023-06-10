@@ -33,15 +33,6 @@ class GameXBody extends GameTokens {
    // this.connectClass("filter_button", "onclick", "onFilterButton");
     this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
-    // if (this.isLayoutFull()) {
-    //   if (!$("main_board_wrapper")) {
-    //     const div = $("main_board");
-    //     const parentId = (div.parentNode as any).id;
-    //     const wrapper = this.createDivNode("main_board_wrapper", "", parentId);
-    //     wrapper.appendChild(div);
-    //   }
-    // }
-
     $('thething').removeAttribute('title');
 
     console.log("Ending game setup");

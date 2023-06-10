@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 
 class Operation_convp extends AbsOperation {
+    function argPrimary() {
+        $color = $this->color;
+        $keys = ["tracker_p_$color"];
+        return $keys;
+    }
+
     function effect(string $color, int $inc): int {
         $cost = $this->getCost();
         $this->game->push($color, "${cost}np:forest");

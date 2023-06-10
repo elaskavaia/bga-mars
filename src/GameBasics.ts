@@ -33,8 +33,8 @@ class GameBasics extends GameGui {
     console.log("Starting game setup", gamedatas);
     // add reload Css debug button
     var parent = document.querySelector(".debug_section");
-    if (parent && !$('reloadcss')) {
-      var butt = dojo.create("a", { id: 'reloadcss', class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
+    if (parent && !$("reloadcss")) {
+      var butt = dojo.create("a", { id: "reloadcss", class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
       dojo.connect(butt, "onclick", () => reloadCss());
     }
     this.setupNotifications();
@@ -105,20 +105,24 @@ class GameBasics extends GameGui {
     return undefined;
   }
 
+  ajaxcallwrapper_unchecked(action: string, args?: any, handler?: (err: any) => void) {
+    if (!args) {
+      args = {};
+    }
+    if (args.lock === false) {
+      delete args.lock;
+    } else {
+      args.lock = true;
+    }
+    let gname = this.game_name;
+    let url = `/${gname}/${gname}/${action}.html`;
+
+    this.ajaxcall(url, args, this, (result) => {}, handler);
+  }
+
   ajaxcallwrapper(action: string, args?: any, handler?: (err: any) => void) {
     if (this.checkAction(action)) {
-      if (!args) {
-        args = {};
-      }
-      if (args.lock === false) {
-        delete args.lock;
-      } else {
-        args.lock = true;
-      }
-      let gname = this.game_name;
-      let url = `/${gname}/${gname}/${action}.html`;
-
-      this.ajaxcall(url, args, this, (result) => {}, handler);
+      this.ajaxcallwrapper_unchecked(action, args, handler);
     }
   }
 
@@ -836,9 +840,8 @@ class GameBasics extends GameGui {
     this.onNotif(notif);
   }
 
-  ntf_gameStateMultipleActiveUpdate( notif )
-  {
-    this.gamedatas.gamestate.descriptionmyturn = '...';
+  ntf_gameStateMultipleActiveUpdate(notif) {
+    this.gamedatas.gamestate.descriptionmyturn = "...";
     return this.inherited(arguments);
   }
 
@@ -857,7 +860,6 @@ class GameBasics extends GameGui {
 
   notif_counter(notif: Notif) {
     try {
-
       this.onNotif(notif);
       const name = notif.args.counter_name;
       let value: number;
