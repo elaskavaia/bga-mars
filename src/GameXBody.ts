@@ -1,9 +1,9 @@
-/** Game class */
 
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_placement: any;
   private custom_pay:any;
+ // private parses:any;
 
   constructor() {
     super();
@@ -21,6 +21,7 @@ class GameXBody extends GameTokens {
     };
     this.custom_pay = undefined;
 
+
     super.setup(gamedatas);
     // hexes are not moved so manually connect
     this.connectClass("hex", "onclick", "onToken");
@@ -29,7 +30,9 @@ class GameXBody extends GameTokens {
       this.updateTooltip(node.id);
     });
 
-    this.connectClass("filter_button", "onclick", "onFilterButton");
+   // this.connectClass("filter_button", "onclick", "onFilterButton");
+    this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+
     $('thething').removeAttribute('title');
 
     console.log("Ending game setup");
@@ -89,15 +92,9 @@ class GameXBody extends GameTokens {
           //cost -> action title
           //except for sell patents
           const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-          const parsedActions = this.parseActionsToHTML(displayInfo.r);
+          const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
           //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-          /*
-          decor.innerHTML = `
-             <div class='stanp_cost'>${displayInfo.cost}</div>
-             <div class='stanp_arrow'></div>
-             <div class='stanp_action'>${parsedActions}</div>  
-             <div class='standard_projects_title'>${displayInfo.name}</div>  
-          `;*/
+
           decor.innerHTML = `
              <div class='stanp_cost'>${displayInfo.cost!=0 ? displayInfo.cost : "X"}</div>
              <div class='standard_projects_title'>${displayInfo.name}</div>  
@@ -108,23 +105,25 @@ class GameXBody extends GameTokens {
         else {
           //tags
 
+          let firsttag='';
           if (displayInfo.tags && displayInfo.tags != "") {
             for (let tag of displayInfo.tags.split(" ")) {
               tagshtm += '<div class="badge tag_' + tag + '"></div>';
+              if (firsttag=="") firsttag = tag;
             }
           }
-          const parsedActions = this.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
-          let parsedPre = displayInfo.pre ? this.parsePrereqToHTML(displayInfo.expr.pre) :"";
+          const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
+          let parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) :"";
 
           //specific card rendering
           if (displayInfo.num==2) {
-            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('pu')+'</div></div>';
+            parsedPre='<div class="prereq_content mode_min">'+CustomRenders.parseActionsToHTML('pu')+'</div></div>';
           }
           if (displayInfo.num==61) {
-            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('ps')+'</div></div>';
+            parsedPre='<div class="prereq_content mode_min">'+CustomRenders.parseActionsToHTML('ps')+'</div></div>';
           }
           if (displayInfo.num==135) {
-            parsedPre='<div class="prereq_content mode_min">'+this.parseActionsToHTML('tagPlant tagMicrobe tagAnimal')+'</div></div>';
+            parsedPre='<div class="prereq_content mode_min">'+CustomRenders.parseActionsToHTML('tagPlant tagMicrobe tagAnimal')+'</div></div>';
           }
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
           let vp="";
@@ -134,30 +133,93 @@ class GameXBody extends GameTokens {
             vp='';
           }
           const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
+
+          //rules+rules styling
+          //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
+          let card_r ="";
+          let addeffclass="";
+          if (displayInfo.r) {
+            card_r =CustomRenders.parseExprToHtml(displayInfo.expr.r, displayInfo.num || null );
+            addeffclass = card_r.includes('icono_prod') ? 'cols' : 'rows';
+            const blocks = (card_r.match(/card_icono/g) || []).length;
+            addeffclass+=' blocks_'+blocks;
+            const cntLosses=(card_r.match(/cnt_losses/g) || []).length;
+            const cntGains=(card_r.match(/cnt_gains/g) || []).length;
+            const cntProds=(card_r.match(/cnt_media/g) || []).length;
+            if (((cntLosses>0 && cntGains==0) || (cntGains>0 && cntLosses==0)) && (cntLosses+cntGains>1 || (cntLosses+cntGains==1 && cntProds>3))) {
+              //exceptions
+              if (displayInfo.num && displayInfo.num!=19) {
+                card_r = '<div class="groupline">'+card_r+'</div>';
+                addeffclass+=' oneline';
+              }
+            }
+            if (vp!='') addeffclass+=' hasvp';
+            //replaces some stuff in parsed rules
+            card_r= card_r.replace('%card_number%',displayInfo.num);
+            //special for "res"
+            card_r = card_r.replaceAll('%badge%',firsttag.toLowerCase());
+          }
+
+          //card actions
+          let card_a="";
+          if (displayInfo.a) {
+            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null,true );
+          } else if (displayInfo.e) {
+            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null,false ,true);
+          }
+          //special for "res"
+          card_a = card_a.replaceAll('%badge%',firsttag.toLowerCase());
+          let card_action_text="";
+          if (displayInfo.text_action || displayInfo.text_effect) {
+            card_action_text=`<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
+          }
           decor.innerHTML = `
                 <div class="card_illustration cardnum_${displayInfo.num}"></div>
                 <div class="card_bg"></div>
                 <div class='card_badges'>${tagshtm}</div>
                 <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
                 <div class='card_cost'>${displayInfo.cost}</div> 
-                <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ""}</div>
-                <div class="card_effect"><div class="card_tt">${displayInfo.text}</div></div>
+                <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
+                <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
                 <div class="card_prereq">${parsedPre!=="" ? parsedPre : ""}</div>
                 <div class="card_number">${displayInfo.num ?? ""}</div>
                 <div class="card_number_binary">${cn_binary}</div>
                 ${vp}
           `;
+
+          const prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
+
           ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
+          if (prereqText!="") {
+            ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PRE-REQUISITES')+'</div>';
+            ttdiv.innerHTML+=`<div class="card_effect">${prereqText}</div>`;
+          }
+          /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
           ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
-                            <div class='card_badges'>${tagshtm}</div></div>`
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('EFFECT')+'</div>';
-          ttdiv.innerHTML+=`<div class="card_effect">${displayInfo.text}</div>`;
+                            <div class='card_badges'>${tagshtm}</div></div>`*/
+          if (displayInfo.text_action && displayInfo.text_action!="") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('ACTION') + '</div>';
+            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_action}</div>`;
+          }
+          if (displayInfo.text_effect && displayInfo.text_effect!="") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('EFFECT') + '</div>';
+            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_effect}</div>`;
+          }
+          if (displayInfo.text && displayInfo.text!="") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('WHEN PLAYED') + '</div>';
+            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text}</div>`;
+          }
+
+          if (displayInfo.text_vp && displayInfo.text_vp!="") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('VICTORY POINTS') + '</div>';
+            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_vp}</div>`;
+          }
 
           // <div class="card_action">${parsedActions}</div>
           //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
         }
         const div = this.createDivNode(null, "card_info_box", tokenNode.id);
+
         div.innerHTML = `
         <div class='token_title'>${displayInfo.name}</div>
         <div class='token_cost'>${displayInfo.cost}</div> 
@@ -173,117 +235,36 @@ class GameXBody extends GameTokens {
       this.connect(tokenNode, "onclick", "onToken");
     }
   }
-  parsePrereqToHTML(pre: Array<string>) {
-      if (!pre) return "";
-      if (pre.length<3) return "";
 
-      const op = pre[0];
-      const what = pre[1];
-      const qty=pre[2];
 
-      let suffix="";
-      let icon=this.parseActionsToHTML(what);
-      switch (what) {
-        case "o":
-          suffix="%";
-          break;
-        case "t":
-          suffix="°C";
-          break;
-        case "tagScience":
-          break;
-        case "w":
 
-          break;
-      }
-
-      let mode="min";
-      let prefix="";
-
-      if (op=="<=") {
-        mode="max";
-        prefix="max ";
-      }
-
-      let htm='<div class="prereq_content mode_'+mode+'">'+prefix+qty+suffix+icon+'</div></div>';
-
-     return  htm;
-
-  }
-  parseActionsToHTML(actions: string) {
-    let ret = actions;
-
-    const easyParses = {
-      forest: { classes: "tracker tracker_forest" },
-      all_city:{classes: "tracker tracker_city", redborder: 'hex'},
-      city: { classes: "tracker tracker_city" },
-      draw: { classes: "token_img draw_icon" },
-      tagScience:{ classes: "tracker badge tracker_tagScience"},
-      tagEnergy:{ classes: "tracker badge tracker_tagEnergy"},
-      tagMicrobe:{ classes: "tracker badge tracker_tagMicrobe"},
-      tagPlant:{ classes: "tracker badge tracker_tagPlant"},
-      tagAnimal:{ classes: "tracker badge tracker_tagAnimal"},
-      "[1,](sell)": { classes: "" },
-      pe: { classes: "token_img tracker_e", production: true },
-      pm: { classes: "token_img tracker_m", production: true, content: "1" },
-      pu: { classes: "token_img tracker_u", production: true },
-      ps: { classes: "token_img tracker_s", production: true },
-      pp: { classes: "token_img tracker_p", production: true },
-      ph: { classes: "token_img tracker_h", production: true },
-      e: { classes: "token_img tracker_e" },
-      m: { classes: "token_img tracker_m", content: "1" },
-      u: { classes: "token_img tracker_u" },
-      s: { classes: "token_img tracker_s" },
-      p: { classes: "token_img tracker_p" },
-      h: { classes: "token_img tracker_h" },
-      t: { classes: "token_img temperature_icon" },
-      w: { classes: "tile tile_3" },
-      o: { classes: "token_img oxygen_icon"},
-      ":": { classes: "action_arrow" },
-    };
-
-    let idx = 0;
-    let finds = [];
-    for (let key in easyParses) {
-      let item = easyParses[key];
-
-      if (ret.includes(key)) {
-        ret = ret.replace(key, "%" + idx + "%");
-        let content = item.content != undefined ? item.content : "";
-
-        if (item.production === true) {
-          finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div></div>";
-        } else if (item.redborder) {
-          finds[idx] = '<div class="outer_redborder redborder_'+item.redborder+'"><div class="' + item.classes + '">' + content + "</div></div>";
-        } else {
-          finds[idx] = '<div class="' + item.classes + '"></div>';
-        }
-
-        idx++;
-      }
-    }
-
-    //remove ";" between icons
-    ret = ret.replace("%;%", "%%");
-
-    //replaces
-    for (let key in finds) {
-      let htm = finds[key];
-      ret = ret.replace("%" + key + "%", htm);
-    }
-
-    return ret;
-  }
   setDomTokenState(tokenId: ElementOrId, newState: any) {
+
     super.setDomTokenState(tokenId, newState);
     var node = $(tokenId);
     if (!node) return;
     if (!node.id) return;
+
+    //intercept player passed state
+    if (node.id.startsWith('tracker_passed_')) {
+      this.darhflog('passes !',node.id,'newstate is ',newState);
+      const plColor=node.id.replace('tracker_passed_','');
+      const plId = this.getPlayerIdByColor(plColor);
+      if (newState==1) {
+        this.disablePlayerPanel(parseInt(plId));
+      } else {
+        this.enablePlayerPanel(parseInt(plId));
+      }
+    }
+
+    //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
     const nodeCopy = $(trackerCopy);
     if (nodeCopy) {
       nodeCopy.setAttribute("data-state", newState);
     }
+
+
   }
   renderSpecificToken(tokenNode: HTMLElement) {
     /* It seems duplicates the other stuff which is already there, disabled for now
@@ -320,46 +301,7 @@ class GameXBody extends GameTokens {
     // override to generate dynamic tooltips and such
 
     if  (tokenDisplayInfo.mainType == "card") {
-
-      let cardtype="card";
-      let prefix="card_main_";
-      let rules = tokenDisplayInfo.r ? "<b>"+_("Card Rules:")+"</b>"+tokenDisplayInfo.r : "";
-      if (tokenDisplayInfo.a) rules += "<br><b>"+_("Action:")+"</b>" + tokenDisplayInfo.a;
-      if (tokenDisplayInfo.e) rules += "<br><b>"+_("Effect:")+"</b>" + tokenDisplayInfo.e;
-
-      tokenDisplayInfo.imageTypes += " infonode";
-      let fullText=
-        rules +
-        "<br>" +
-        (tokenDisplayInfo.ac ? "(" + this.getTr(tokenDisplayInfo.ac) + ")<br>" : "") +
-        this.getTr(tokenDisplayInfo.text) +
-        "<br>" +
-        "<b>" + _("Number: ") + "</b>" + tokenDisplayInfo.num +
-        (tokenDisplayInfo.tags ? "<br>" + "<b>" + _("Tags: ") + "</b>" + tokenDisplayInfo.tags : "");
-      if (tokenDisplayInfo.vp) {
-        fullText += "<br><b>" + _("VP:") + "</b>" + tokenDisplayInfo.vp;
-      }
-
-      if (tokenDisplayInfo.key.startsWith("card_corp_")) {
-        prefix = "card_corp_";
-        cardtype = "corp";
-      }
-
-      if ($(prefix + tokenDisplayInfo.num)) {
-        let card_htm = $(prefix + tokenDisplayInfo.num).outerHTML.replaceAll('id="', 'id="tt');
-        tokenDisplayInfo.tooltip = '<div class="tt_2cols ' + cardtype + '"><div class="tt_card_img">' + card_htm + '</div><div class="tt_card_txt">' + fullText + '</div></div>';
-      } else {
-        tokenDisplayInfo.tooltip = fullText;
-      }
-
-      if ($(prefix+tokenDisplayInfo.num))  {
-        let card_htm= $(prefix+tokenDisplayInfo.num).outerHTML.replaceAll('id="','id="tt');
-        tokenDisplayInfo.tooltip ='<div class="tt_2cols '+cardtype+'"><div class="tt_card_img">'+card_htm+'</div><div class="tt_card_txt">'+fullText+'</div></div>';
-      } else {
-        tokenDisplayInfo.tooltip =fullText;
-      }
-
-
+      //do nothing
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -379,14 +321,22 @@ class GameXBody extends GameTokens {
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-      if (this.isLayoutVariant(1)) {
+      if (!this.isLayoutFull()) {
         result.location = tokenInfo.location+'_corp_effect';
+      } else {
+        result.location = tokenInfo.location+'_cards_4'; 
       }
       //also set property to corp logo div
       $(tokenInfo.location+'_corp_logo').dataset.corp=tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
+      if (this.isLayoutFull()) {
+        if (this.getRulesFor(tokenInfo.key, "a")) {
+          result.location = tokenInfo.location + "_cards_2a" ;
+        }
+      }
+   
     }
     if (!result.location)
       // if failed to find revert to server one
@@ -596,8 +546,6 @@ class GameXBody extends GameTokens {
       rate:[]
     }
 
-
-
     let items_htm='';
     for (let res in info.resources) {
       this.custom_pay.selected[res]=0;
@@ -687,7 +635,6 @@ class GameXBody extends GameTokens {
       for (let res of Object.keys(this.custom_pay.selected) ) {
         if (this.custom_pay.selected[res]>0) pays[res] = parseInt(this.custom_pay.selected[res]);
       }
-      this.darhflog('sending',pays,'org',this.custom_pay.selected);
       this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
     });
   }
@@ -836,6 +783,28 @@ class GameXBody extends GameTokens {
     $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
 
     return true;
+  }
+
+  onShowTableauCardsOfColor(event:Event) {
+    let id = (event.currentTarget as HTMLElement).id;
+    // Stop this event propagation
+    dojo.stopEvent(event); // XXX
+
+    const plcolor = $(id).dataset.player;
+    const btncolor = $(id).dataset.cardtype;
+    const tblitem = "visibility_" + btncolor;
+
+    for (let i=1;i<=3;i++) {
+      $("tableau_" + plcolor).dataset['visibility_'+i] = "0";
+      $('player_viewcards_'+i+'_'+plcolor).dataset.selected ="0";
+    }
+    $("tableau_" + plcolor).dataset[tblitem] = "1";
+    $(id).dataset.selected ="1";
+
+    return true;
+
+
+
   }
 
   // notifications
