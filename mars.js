@@ -2246,6 +2246,15 @@ var GameXBody = /** @class */ (function (_super) {
         else
             return this.getButtonNameForOperationExp(op.type);
     };
+    GameXBody.prototype.getTokenPresentaton = function (type, tokenKey) {
+        var icon = '';
+        if (tokenKey.startsWith('tracker')) {
+            var res = getPart(tokenKey, 1);
+            icon = "<div class=\"token_img tracker_".concat(res, "\"></div>");
+            return icon;
+        }
+        return icon + this.getTokenName(tokenKey); // just a name for now
+    };
     GameXBody.prototype.getButtonNameForOperationExp = function (op) {
         var rules = this.getRulesFor("op_" + op, "*");
         if (rules && rules.name)
@@ -2564,6 +2573,12 @@ var GameXBody = /** @class */ (function (_super) {
             _loop_1(opIdS);
         }
     };
+    GameXBody.prototype.addUndoButton = function () {
+        var _this = this;
+        if (!$("button_undo")) {
+            this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper_unchecked("undo"); }, undefined, undefined, "red");
+        }
+    };
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
         var _a;
         var operations = (_a = args.player_operations[this.player_id]) !== null && _a !== void 0 ? _a : undefined;
@@ -2571,16 +2586,25 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         this.onUpdateActionButtons_playerTurnChoice(operations);
     };
+    GameXBody.prototype.onEnteringState_multiplayerDispatch = function (args) {
+        if (!this.isCurrentPlayerActive()) {
+            this.addUndoButton();
+        }
+    };
+    GameXBody.prototype.onUpdateActionButtons_multiplayerDispatch = function (args) {
+        if (!this.isCurrentPlayerActive()) {
+            this.addUndoButton();
+        }
+    };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
-        var _this = this;
         if (this.isCurrentPlayerActive()) {
             // add undo on every state
             if (this.on_client_state)
                 this.addCancelButton();
             else
-                this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper("undo"); }, undefined, undefined, "red");
+                this.addUndoButton();
         }
-        this.addActionButton('button_rcss', 'Reload CSS', function () { return reloadCss(); });
+        this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt

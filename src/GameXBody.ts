@@ -381,6 +381,16 @@ class GameXBody extends GameTokens {
     else return this.getButtonNameForOperationExp(op.type);
   }
 
+  getTokenPresentaton(type: string, tokenKey: string): string {
+    let icon = '';
+    if (tokenKey.startsWith('tracker')) {
+    const res = getPart(tokenKey,1);
+       icon = `<div class="token_img tracker_${res}"></div>`;
+       return  icon; 
+    }
+    return  icon + this.getTokenName(tokenKey); // just a name for now
+  }
+
   getButtonNameForOperationExp(op: string) {
     const rules = this.getRulesFor("op_" + op, "*");
     if (rules && rules.name) return this.getTr(rules.name);
@@ -731,22 +741,39 @@ class GameXBody extends GameTokens {
     }
   }
 
+  addUndoButton() {
+    if (!$("button_undo")) {
+      this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper_unchecked("undo"), undefined, undefined, "red");
+    }
+  }
+
   onUpdateActionButtons_multiplayerChoice(args) {
     let operations = args.player_operations[this.player_id] ?? undefined;
     if (!operations) return;
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
+  onEnteringState_multiplayerDispatch(args) {
+    if (!this.isCurrentPlayerActive()) {
+      this.addUndoButton();
+    }
+  }
+
+  onUpdateActionButtons_multiplayerDispatch(args) {
+    if (!this.isCurrentPlayerActive()) {
+      this.addUndoButton();
+    }
+  }
+
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
       // add undo on every state
       if (this.on_client_state) this.addCancelButton();
-      else this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper("undo"), undefined, undefined, "red");
+      else this.addUndoButton();
     }
 
-    this.addActionButton('button_rcss','Reload CSS', () => reloadCss())
+    this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
-
   onSelectTarget(opId: number, target: string) {
     // can add prompt
     return this.sendActionResolveWithTarget(opId, target);
