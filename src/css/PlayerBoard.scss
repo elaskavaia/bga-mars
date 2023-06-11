@@ -256,6 +256,10 @@
       width :1px;
       height: 1px;
     }
+    .cards_1vp {
+      width :1px;
+      height: 1px;
+    }
     .card[data-card-type="1"] {
       position: absolute;
       opacity: 0;
@@ -263,6 +267,10 @@
   }
   .tableau[data-visibility_3="0"] {
     .cards_3 {
+      width :1px;
+      height: 1px;
+    }
+    .cards_3vp {
       width :1px;
       height: 1px;
     }
@@ -527,5 +535,52 @@
     }
   }
 
+
+  .playerboard_group_underbutton{
+    width: calc(var(--resourcesize) * 1);
+    height: calc(var(--resourcesize) * 1);
+    background: white;
+    position: absolute;
+    top: -50%;
+    border-radius: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: small;
+    .tracker {
+      background-image: url("img/icons.png");
+      background-size: 1400% 200%;
+      width: calc(var(--resourcesize) * 0.6);
+      height: calc(var(--resourcesize) * 0.6);
+    }
+    .token_img  {
+      width: calc(var(--resourcesize) * 0.6);
+      height: calc(var(--resourcesize) * 0.6);
+    }
+  }
+
+   .active_slot .playerboard_group_underbutton {
+     display: flex;
+     animation: nudge 2000ms infinite ease-in-out;
+   }
+
+  #thisplayer_zone .playerboard_group_img .token_img{
+    z-index: 1;
+  }
+
+
+
+
 }
 
+@keyframes nudge {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
