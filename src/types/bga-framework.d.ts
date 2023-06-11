@@ -80,6 +80,8 @@ declare class GameGui {
   tooltips: string[];
   is_client_only: boolean;
   prefs: any[];
+  table_id: number;
+  metasiteurl: string;
 
   isCurrentPlayerActive(): boolean;
   getActivePlayerId(): number;
@@ -105,6 +107,8 @@ declare class GameGui {
   inherited(args: any): any;
   format_string_recursive(log: string, args: any[]): string;
   clienttranslate_string(text:string):string;
+
+  onScreenWidthChange(): void;
 
   slideToObject(mobile_obj: string | Element, target_obj: string | Element, duration?: number, delay?: number): Animation;
   slideToObjectPos(

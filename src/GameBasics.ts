@@ -17,10 +17,11 @@ class GameBasics extends GameGui {
   classActiveSlot: string = "active_slot";
 
   gamedatas_server: any; // copy of server state gamedatas
-  defaultTooltipDelay: number = 400;
+  defaultTooltipDelay: number = 800;
   defaultAnimationDuration: number = 500;
   _helpMode: boolean = false; // help mode where tooltip shown instead of click action
   _displayedTooltip: any = null; // used in help mode
+  zoom: number = 1.0;
 
   constructor() {
     super();
@@ -31,6 +32,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
+    this.setupInfoPanel();
     // add reload Css debug button
     var parent = document.querySelector(".debug_section");
     if (parent && !$("reloadcss")) {
@@ -533,18 +535,6 @@ class GameBasics extends GameGui {
     </div>`;
   }
 
-  showHelp(id: string, force?: boolean) {
-    if (!force) if (!this._helpMode) return false;
-    if (this.tooltips[id]) {
-      dijit.hideTooltip(id);
-      this._displayedTooltip = new ebg.popindialog();
-      this._displayedTooltip.create("current_tooltip");
-      var html = this.tooltips[id].getContent($(id));
-      this._displayedTooltip.setContent(html);
-      this._displayedTooltip.show();
-    }
-    return true;
-  }
 
   getTr(name: any) {
     if (name === undefined) return null;
@@ -791,6 +781,207 @@ class GameBasics extends GameGui {
 
   isReadOnly() {
     return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
+  }
+
+  addCancelButton (name?: string, handler?: any) {
+    if (!name) name = _("Cancel");
+    if (!handler) handler = () => this.cancelLocalStateEffects();
+    if ($("button_cancel")) dojo.destroy("button_cancel");
+    this.addActionButton("button_cancel", name, handler, null, false, "red");
+  }
+
+  /* @Override */
+  updatePlayerOrdering() {
+    this.inherited(arguments);
+    dojo.place("player_board_config", "player_boards", "first");
+  }
+
+  setupSettings() {
+    var panels = document.querySelectorAll("#player_board_config");
+    if (panels.length > 1) {
+      panels[0].parentNode.removeChild(panels[0]);
+    }
+    dojo.place("player_board_config", "player_boards", "first");
+    for (let index = 100; index <= 110; index++) {
+      const element = $("preference_control_" + index);
+      if (element) dojo.place(element.parentNode.parentNode, "settings-controls-container");
+    }
+
+    var bug = $("bug_button");
+    if (!bug) {
+      var url = this.metasiteurl + "/bug?id=0&table=" + this.table_id;
+      bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url });
+    }
+    dojo.place(bug, "settings-controls-container", "last");
+  }
+
+  setupPreference() {
+    // Extract the ID and value from the UI control
+    var _this = this;
+    function onchange(e: any) {
+      var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
+      if (!match) {
+        return;
+      }
+      var prefId = +match[1];
+      var prefValue = +e.target.value;
+      _this.prefs[prefId].value = prefValue;
+      _this.onPreferenceChange(prefId, prefValue);
+    }
+
+    dojo.query(".preference_control").connect("onchange", onchange);
+    // Call onPreferenceChange() now
+    dojo.query("#ingame_menu_content .preference_control").forEach((el) => onchange({ target: el }));
+  }
+
+  onPreferenceChange(prefId, prefValue) {
+    console.log("Preference changed", prefId, prefValue);
+  }
+
+  toggleSettings() {
+    console.log("toggle setting");
+    dojo.toggleClass("settings-controls-container", "settingsControlsHidden");
+
+    this.setupSettings();
+
+    // Hacking BGA framework
+    if (dojo.hasClass("ebd-body", "mobile_version")) {
+      dojo.query(".player-board").forEach((elt) => {
+        if (elt.style.height != "auto") {
+          dojo.style(elt, "min-height", elt.style.height);
+          elt.style.height = "auto";
+        }
+      });
+    }
+  }
+
+  toggleHelpMode(b) {
+    if (b) this.activateHelpMode();
+    else this.deactivateHelpMode();
+  }
+
+  activateHelpMode() {
+    let chk = $("help-mode-switch");
+    dojo.setAttr(chk, "bchecked", true);
+    this._helpMode = true;
+    dojo.addClass("ebd-body", "help-mode");
+    this._displayedTooltip = null;
+    document.body.addEventListener("click", this.closeCurrentTooltip.bind(this));
+    this.setDescriptionOnMyTurn(_("HELP MODE Activated. Click on game elements to get tooltips"));
+    dojo.empty("generalactions");
+    this.addCancelButton(undefined, () => this.deactivateHelpMode());
+
+    let handler = this.onClickForHelp.bind(this);
+    document.querySelectorAll(".withtooltip").forEach((node) => {
+      node.addEventListener("click", handler, false);
+    });
+  }
+
+  deactivateHelpMode() {
+    let chk = $("help-mode-switch");
+    dojo.setAttr(chk, "bchecked", false);
+    this.closeCurrentTooltip();
+    this._helpMode = false;
+    dojo.removeClass("ebd-body", "help-mode");
+    document.body.removeEventListener("click", this.closeCurrentTooltip.bind(this));
+    let handler = this.onClickForHelp.bind(this);
+    document.querySelectorAll(".withtooltip").forEach((node) => {
+      node.removeEventListener("click", handler, false);
+    });
+
+    this.cancelLocalStateEffects();
+  }
+
+  closeCurrentTooltip() {
+    if (!this._helpMode) return;
+
+    if (this._displayedTooltip == null) return;
+
+    this._displayedTooltip.destroy();
+    this._displayedTooltip = null;
+  }
+
+  onClickForHelp(event) {
+    console.trace("onhelp", event);
+    if (!this._helpMode) return false;
+    event.stopPropagation();
+    event.preventDefault();
+    this.showHelp(event.currentTarget.id);
+    return true;
+  }
+
+  showHelp(id: string, force?: boolean) {
+    if (!force) if (!this._helpMode) return false;
+    if (this.tooltips[id]) {
+      dijit.hideTooltip(id);
+      this._displayedTooltip = new ebg.popindialog();
+      this._displayedTooltip.create("current_tooltip");
+      var html = this.tooltips[id].getContent($(id));
+      this._displayedTooltip.setContent(html);
+      this._displayedTooltip.show();
+    }
+    return true;
+  }
+
+
+  setZoom (zoom: number) {
+    if (zoom === 0 || zoom < 0.1 || zoom > 10) {
+      zoom = 1;
+    }
+    this.zoom = zoom;
+
+    //var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
+    //dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
+    //dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+    var inner = document.getElementById("thething");
+    var div = document.getElementById("zoom-wrapper");
+    if (zoom == 1) {
+      inner.style.removeProperty("transform");
+      inner.style.removeProperty("width");
+      div.style.removeProperty("height");
+    } else {
+      inner.style.transform = "scale(" + zoom + ")";
+      inner.style.transformOrigin = "0 0";
+      inner.style.width = 100 / zoom + "%";
+      div.style.height = inner.offsetHeight * zoom + "px";
+    }
+    localStorage.setItem("mars_zoom", "" + this.zoom);
+    this.onScreenWidthChange();
+  }
+
+  setupInfoPanel() {
+    //dojo.place('player_board_config', 'player_boards', 'first');
+    var strzoom = localStorage.getItem("tapestry_zoom");
+    if (!strzoom) strzoom = "1";
+    this.zoom = Number(strzoom);
+    this.setZoom(this.zoom);
+
+    dojo.connect($("show-settings"), "onclick", () => this.toggleSettings());
+    this.addTooltip("show-settings", "", _("Display game preferences"));
+
+    let chk = $("help-mode-switch");
+    dojo.setAttr(chk, "bchecked", false);
+    dojo.connect(chk, "onclick", () => {
+      console.log("on check", chk);
+      const bchecked = ! chk.getAttribute("bchecked");
+      //dojo.setAttr(chk, "bchecked", !chk.bchecked);
+      this.toggleHelpMode(bchecked);
+    });
+    this.addTooltip(chk.id, "", _("Toggle help mode"));
+
+    // ZOOM
+
+    this.connect($("zoom-out"), "onclick", () => this.setZoom(this.zoom - 0.2));
+    this.connect($("zoom-in"), "onclick", () => this.setZoom(this.zoom + 0.2));
+
+    //$('help-mode-switch').style.display='none';
+    this.setupSettings();
+    this.setupPreference();
+    //this.setupHelper();
+    //this.setupTour();
+
+    this.addTooltip("zoom-in", "", _("Zoom in"));
+    this.addTooltip("zoom-out", "", _("Zoom out"));
   }
 
   // NOTIFICATIONS

@@ -237,3 +237,62 @@ display: none;
 .tracker_passed::before {
   content: "Passed ";
 }*/
+
+
+/*
+ * Controls in the top bar
+ */
+
+#player_config {
+	margin: 10px 0px; 
+  #player_config_row {
+    display: flex;
+    justify-content: space-around;
+
+    *:hover {
+      opacity: 1;
+    }
+  }
+  button {
+    background-color: transparent;
+  }
+}
+
+#show-settings:hover {
+  animation: fa-spin 2s linear;
+}
+
+#settings-controls-container {
+  position: relative;
+  text-align: center;
+  border-top: 1px solid gray;
+  margin-top: 10px;
+
+  .row-data {
+    border: none;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid gray;
+  }
+
+  .row-data .row-label {
+    width: 100%;
+    float: none;
+    color: black;
+    padding-bottom: 0px;
+    text-overflow: initial;
+    white-space: normal;
+    padding: 2px 4px 0px;
+  }
+
+  .row-data .row-value {
+    width: 85%;
+    margin: 0;
+  }
+}
+
+#settings-controls-container.settingsControlsHidden {
+  display: none;
+}
