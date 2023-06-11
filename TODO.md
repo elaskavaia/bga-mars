@@ -29,6 +29,7 @@ Random notes on todo items
 * Passing not obvious
 * Titanim exchange rate during payment
 * Reverse ocean counter
+* Cubes on cards
 
 ## Client - Compact layout
 * Show generation count 
