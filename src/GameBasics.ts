@@ -846,9 +846,9 @@ class GameBasics extends GameGui {
   }
 
   onNotif(notif: Notif) {
-    if (!this.instantaneousMode && notif.log) {
-      this.setDescriptionOnMyTurn(notif.log, notif.args);
-    }
+    // if (!this.instantaneousMode && notif.log) {
+    //   this.setDescriptionOnMyTurn(notif.log, notif.args);
+    // }
   }
 
   notif_speechBubble(notif: Notif) {
