@@ -7,7 +7,7 @@ Random notes on todo items
 
 ## Server
 
-* undo - block on draw
+* undo - block on draw card
 * hide setup notif
 * passing heat on 0 place ocean
 * payment with overpay? I have lagrange (196) ,worth 9 MC  with advance alloys and space station
@@ -30,7 +30,7 @@ Random notes on todo items
 * No stacking actions
 * Remove notif from title bar
 * Land tracker icon is missing
-* Missing undo button when inactive omn research
+* Missing undo button when inactive during research
 * Discounts on cards
 * First player marker
 * Passing not obvious

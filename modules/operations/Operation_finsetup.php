@@ -6,6 +6,9 @@ declare(strict_types=1);
 /** Finish game setup */
 class Operation_finsetup extends AbsOperation {
     function effect(string $color, int $inc): int {
+        $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);
+        if ($this->game->getGameStateValue('var_begginers_corp') == 1)  return 1;
+
         $selected = $this->game->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
             $this->game->dbSetTokenLocation($card_id, "hand_$color", 0, '');

@@ -744,9 +744,9 @@ var GameBasics = /** @class */ (function (_super) {
         return this.inherited(arguments);
     };
     GameBasics.prototype.onNotif = function (notif) {
-        if (!this.instantaneousMode && notif.log) {
-            this.setDescriptionOnMyTurn(notif.log, notif.args);
-        }
+        // if (!this.instantaneousMode && notif.log) {
+        //   this.setDescriptionOnMyTurn(notif.log, notif.args);
+        // }
     };
     GameBasics.prototype.notif_speechBubble = function (notif) {
         var html = this.format_string_recursive(notif.args.text, notif.args.args);
@@ -2246,14 +2246,28 @@ var GameXBody = /** @class */ (function (_super) {
         else
             return this.getButtonNameForOperationExp(op.type);
     };
+    GameXBody.prototype.getDivForTracker = function (id, value) {
+        if (value === void 0) { value = ""; }
+        var res = getPart(id, 1);
+        var icon = "<div class=\"token_img tracker_".concat(res, "\">").concat(value, "</div>");
+        return icon;
+    };
     GameXBody.prototype.getTokenPresentaton = function (type, tokenKey) {
-        var icon = '';
-        if (tokenKey.startsWith('tracker')) {
-            var res = getPart(tokenKey, 1);
-            icon = "<div class=\"token_img tracker_".concat(res, "\"></div>");
-            return icon;
+        var isstr = typeof tokenKey == "string";
+        if (isstr && tokenKey.startsWith('tracker'))
+            return this.getDivForTracker(tokenKey);
+        if (type == 'token_div_count' && !isstr) {
+            var id = tokenKey.args['token_name'];
+            var mod = tokenKey.args['mod'];
+            if (id.startsWith('tracker_m_')) { // just m
+                return this.getDivForTracker(id, mod);
+            }
+            return undefined; // process by parent
         }
-        return icon + this.getTokenName(tokenKey); // just a name for now
+        if (isstr) {
+            return this.getTokenName(tokenKey); // just a name for now
+        }
+        return undefined; // process by parent
     };
     GameXBody.prototype.getButtonNameForOperationExp = function (op) {
         var rules = this.getRulesFor("op_" + op, "*");

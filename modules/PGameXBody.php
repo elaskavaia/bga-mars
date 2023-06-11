@@ -5,6 +5,11 @@ require_once "operations/AbsOperation.php";
 require_once "operations/ComplexOperation.php";
 require_once "operations/DelegatedOperation.php";
 
+define("MA_STAGE_SETUP", 1);
+define("MA_STAGE_GAME", 3);
+define("MA_STAGE_LASTFOREST", 5);
+define("MA_STAGE_ENDED", 9);
+
 abstract class PGameXBody extends PGameMachine {
     protected $eventListners = null; // cache
     protected $map = null;
@@ -20,8 +25,7 @@ abstract class PGameXBody extends PGameMachine {
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         self::initGameStateLabels([
-            "gameended" => 11,
-            "lastforest" => 12,
+            "gamestage" => 11,
             // game variants
             "var_begginers_corp" => 100,
             "var_corporate_era" => 101,
@@ -34,6 +38,7 @@ abstract class PGameXBody extends PGameMachine {
      */
     protected function initTables() {
         try {
+            $this->setGameStateValue('gamestage', MA_STAGE_SETUP);
             $this->token_types_adjusted2 = false; // clear cache
             if ($this->isSolo()) {
                 $this->setGameStateValue("var_corporate_era", 1); // solo can only be corp era
@@ -74,12 +79,12 @@ abstract class PGameXBody extends PGameMachine {
                 $this->tokens->setTokenState($tr_traker, $tr_value);
                 $this->dbSetScore($player_id, $tr_value, '');
             }
-            if ($this->getGameStateValue('var_begginers_corp') != 1) {
-                foreach ($players as $player_id => $player) {
-                    $color = $player["player_color"];
-                    $this->queue($color, "finsetup");
-                }
+
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $this->queue($color, "finsetup");
             }
+
             if ($this->isSolo()) {
                 $this->setupSoloMap();
             }
@@ -109,7 +114,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->dbSetTokenLocation($tile['key'], $hex, $num);
             $marker = $this->createPlayerMarker($botcolor);
             $this->tokens->moveToken($marker, $tile['key'], 0);
-            $this->incTrackerValue($botcolor,'city');
+            $this->incTrackerValue($botcolor, 'city');
             $this->incTrackerValue($botcolor, 'land');
 
             $adj = $this->getAdjecentHexes($hex);
@@ -130,7 +135,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->dbSetTokenLocation($tile['key'], $forestfound, $num);
                 $marker = $this->createPlayerMarker($botcolor);
                 $this->tokens->moveToken($marker, $tile['key'], 0);
-                $this->incTrackerValue($botcolor,'forest');
+                $this->incTrackerValue($botcolor, 'forest');
                 $this->incTrackerValue($botcolor, 'land');
             }
         }
@@ -932,7 +937,7 @@ abstract class PGameXBody extends PGameMachine {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
             $cost = -$this->getRulesFor($card_id, 'cost');
-            $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('You picked corporation ${token_name}. The will receive ${cost} ME. The rest of the perks you will receive after setup is finished'), [
+            $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('You picked corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
                 "_private" => true,
                 "cost" => $cost
             ], $player_id);
@@ -1207,12 +1212,12 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_endOfTurn() {
-        if ($this->getGameStateValue('gameended') == 1) {
+        if ($this->getGameStateValue('gamestage') == MA_STAGE_ENDED) {
             return STATE_END_GAME;
         }
         $this->effect_production();
         if ($this->isEndOfGameAchived()) {
-            $this->setGameStateValue('lastforest', 1);
+            $this->setGameStateValue('gamestage', MA_STAGE_LASTFOREST);
 
             $this->machine->queue("lastforest");
             $this->machine->queue("finalscoring");
@@ -1259,7 +1264,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->dbSetAuxScore($player_id, $mc);
         }
 
-        $this->setGameStateValue('gameended', 1);
+        $this->setGameStateValue('gamestage', MA_STAGE_ENDED);
 
         if ($this->isSolo()) {
             $color = $this->getPlayerColorById($player_id);
@@ -1504,7 +1509,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function machineExecuteDefault() {
-        if ($this->getGameStateValue('gameended') == 1) {
+        if ($this->getGameStateValue('gamestage') == MA_STAGE_ENDED) {
             return STATE_END_GAME;
         }
         // check end of game

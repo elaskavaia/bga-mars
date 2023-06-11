@@ -58,7 +58,7 @@ class Operation_forest extends AbsOperationTile {
         $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'forest');
         
-        if (!$this->game->getGameStateValue('lastforest')) {
+        if ($this->game->getGameStateValue('gamestage') < MA_STAGE_LASTFOREST) {
             $this->game->effect_increaseParam($owner, "o", $inc);
         }
     
