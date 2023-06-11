@@ -24,10 +24,13 @@ class Operation_buycard extends AbsOperation {
         $color = $this->color;
         $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main","draw_${color}"));
         $hasmoney = !$this->game->isVoidSingle("3nm", $color);
-
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($hasmoney) {
-            if ($hasmoney) return 0;
-            return MA_ERR_COST;
+        $q = MA_ERR_COST;
+        if ($hasmoney) $q = 0;
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($q) {
+            return [
+                'pre' => $this->game->precondition($color,$tokenId),
+                'q' => $q
+            ];
         });
     }
 

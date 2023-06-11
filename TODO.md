@@ -14,6 +14,8 @@ Random notes on todo items
 * total vp scope same player name
 * Missing undo button when inactive during research
 * Css for info message notif ("We are done")
+* Starting player on startup
+* Send pre-req calculation on draw
 
 ## Client
 
@@ -35,6 +37,8 @@ Random notes on todo items
 * Titanim exchange rate during payment
 * Reverse ocean counter
 * Cubes on cards
+* Tooltips on milestones
+* Layout types based on size
 
 ## Client - Compact layout
 * Add options (local storage) for :

@@ -308,6 +308,11 @@
    */
 }
 
+.card_cost.discounted {
+  color: #bef983;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+}
+
 #display_main .token_cost {
   border-radius: calc(var(--card-width) * 0.08);
   background-image: url("img/resources.png");
@@ -412,6 +417,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
+  font-family: "Prototype";
 }
 
 .card_outer_action {
@@ -682,13 +689,14 @@
   align-items: center;
   padding-right: calc(var(--card-width) * 0.01);
 }
-.card_prereq .token_img {
+
+.prereq_content .token_img {
   margin-right: 0;
 }
-.card_prereq .badge {
+.prereq_content .badge {
   margin-left: calc(var(--card-width) * 0.01);
 }
-.card_prereq .tile {
+.prereq_content .tile {
   width: calc(var(--card-width) * 0.08);
   height: calc(var(--card-width) * 0.08);
   position: relative;
@@ -696,7 +704,7 @@
   top: revert;
   margin-left: calc(var(--card-width) * 0.01);
 }
-.card_prereq .tracker {
+.prereq_content .tracker {
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
   width: calc(var(--card-width) * 0.08);
@@ -706,15 +714,15 @@
   top: revert;
   margin-left: calc(var(--card-width) * 0.01);
 }
-.card_prereq .outer_production {
+.prereq_content .outer_production {
   width: calc(var(--card-width) * 0.1);
   height: calc(var(--card-width) * 0.1);
 }
-.card_prereq .outer_production .token_img {
+.prereq_content .outer_production .token_img {
   width: calc(var(--card-width) * 0.07);
   height: calc(var(--card-width) * 0.07);
 }
-.card_prereq .outer_redborder {
+.prereq_content .outer_redborder {
   width: calc(var(--card-width) * 0.09);
   height: calc(var(--card-width) * 0.095);
 }
@@ -2397,6 +2405,11 @@
   left: 0;
   top: 0;
 }
+.corp_effect .card.corp.card_corp_1 .card_bg {
+  background-position: 5% 34%;
+  width: 260%;
+  height: 260%;
+}
 .corp_effect #card_corp_2 .card_bg {
   background-position: -94% 38%;
   width: 184%;
@@ -2642,11 +2655,48 @@
     transform: translateX(0%);
   }
 }
-#card_main_33 .card_action_line:first-child {
+#card_main_19 .card_icono {
+  height: 63%;
+}
+#card_main_19 .card_icono .outer_gains {
+  justify-content: center;
+}
+
+#card_main_33 .card_action_line:first-child, #card_main_34 .card_action_line:first-child, #card_main_157 .card_action_line:first-child {
   flex-direction: column;
 }
-#card_main_33 .card_action_text {
+#card_main_33 .card_action_text, #card_main_34 .card_action_text, #card_main_157 .card_action_text {
   display: none;
+}
+#card_main_33 .groupline, #card_main_34 .groupline, #card_main_157 .groupline {
+  justify-content: flex-end;
+}
+
+#card_main_37 .outer_production {
+  padding-left: calc(var(--card-width) * 0.03);
+  padding-right: calc(var(--card-width) * 0.03);
+}
+
+#card_main_115 .card_effect {
+  flex-direction: column;
+}
+#card_main_115 .card_icono {
+  justify-content: center;
+  height: fit-content;
+}
+
+#card_main_122 .card_tt {
+  display: revert;
+}
+
+#card_main_146 .card_tt {
+  grid-area: 2/1/3/3;
+  display: flex;
+  align-items: center;
+}
+#card_main_146 .card_effect {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr 1fr;
 }
 
 #ebd-body {
@@ -3887,6 +3937,44 @@
   left: 0.75%;
 }
 
+.outer_generation {
+  top: -55%;
+  right: 8%;
+  position: absolute;
+  width: calc(var(--map-width) * 0.1);
+  height: calc(var(--map-width) * 0.1);
+  font-family: Prototype;
+  color: white;
+}
+.outer_generation #generation_counter {
+  font-size: calc(var(--map-width) * 0.05);
+}
+.outer_generation .generation_decor {
+  position: absolute;
+  top: 0;
+  width: 75%;
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: rgba(255, 228, 196, 0.2392156863);
+  left: 12.5%;
+  box-shadow: 0 0 0 calc(var(--map-width) * 0.006) rgba(255, 0, 0, 0.4392156863);
+}
+.outer_generation .generation_bottom {
+  width: 100%;
+  height: 25%;
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+}
+.outer_generation .generation_bottom #generation_text {
+  font-size: calc(var(--map-width) * 0.03);
+}
+
 .miniboard {
   display: flex;
   justify-content: center;
@@ -4121,6 +4209,16 @@
   width: calc(var(--resourcesize) * 2);
   font-size: calc(var(--resourcesize) * 0.55);
   font-family: "Prototype";
+}
+
+.player_tags.miniboard_tags {
+  --pb_cellsize: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: fit-content;
+  position: relative;
+  margin-top: 20px;
 }
 
 /*
@@ -4415,6 +4513,46 @@
   background-position: -200% -100%;
 }
 
+.tracker.tile_8 {
+  background-position: -400% -100%;
+}
+
+.tracker.tile_64 {
+  background-position: -600% -100%;
+}
+
+.tracker.tile_85 {
+  background-position: -700% -100%;
+}
+
+.tracker.tile_128 {
+  background-position: -900% -100%;
+}
+
+.tracker.tile_123 {
+  background-position: -1300% -100%;
+}
+
+.tracker.tile_140 {
+  background-position: -1000% -100%;
+}
+
+.tracker.tile_142 {
+  background-position: -1100% -100%;
+}
+
+.tracker.tile_natural {
+  background-position: -500% -100%;
+}
+
+.tracker.tile_97 {
+  background-position: -800% -100%;
+}
+
+.tracker.tile_199 {
+  background-position: -1200% -100%;
+}
+
 .tracker_tagVenus {
   display: none;
 }
@@ -4589,11 +4727,11 @@
   background-position: -600% 0;
 }
 
-.corp_logo[data-corp=card_corp_8] {
+.corp_logo[data-corp=card_corp_9] {
   background-position: 0 -100%;
 }
 
-.corp_logo[data-corp=card_corp_9] {
+.corp_logo[data-corp=card_corp_8] {
   background-position: -100% -100%;
 }
 
@@ -4702,13 +4840,54 @@
   background-color: #f64c4c;
 }
 .mcompact .viewcards_button[data-selected="0"] i {
-  visibility: hidden;
+  display: none;
+}
+.mcompact .viewcards_button[data-selected="1"] .viewcardbutton_counter {
+  display: none;
 }
 .mcompact .tableau .card[data-state="0"] {
   filter: unset;
 }
 .mcompact .tableau .card[data-state="3"] {
   filter: grayscale(0.9);
+}
+.mcompact .tableau {
+  display: grid;
+  grid-template-columns: 1fr calc(var(--card-width) * 1.1);
+  grid-template-rows: 1fr 1fr;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+  min-height: calc(var(--card-height) * 2.1);
+}
+.mcompact .cards_2a {
+  grid-area: 1/1/2/3;
+}
+.mcompact .cards_2 {
+  grid-area: 2/1/3/3;
+}
+.mcompact .cards_1vp {
+  grid-area: 1/1/3/2;
+}
+.mcompact .cards_1 {
+  grid-area: 1/2/3/3;
+}
+.mcompact .cards_3vp {
+  grid-area: 1/1/3/2;
+}
+.mcompact .cards_3 {
+  grid-area: 1/2/3/3;
+}
+.mcompact .cards_bin {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.mcompact .cards_bin.stacked {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+.mcompact .cards_bin.stacked .card ~ .card {
+  margin-top: -105%;
 }
 
 #generalactions {
@@ -6229,15 +6408,15 @@
 }
 
 #decks_area > * {
-  display: inline-block;
+  /*  display: inline-block;*/
 }
 
 #decks_area {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 5%;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  height: 10%;
   position: absolute;
   top: 0%;
   width: 22%;
@@ -6249,13 +6428,18 @@
 }
 
 #oceans_pile {
-  position: relative;
+  position: absolute;
   clip-path: revert;
   width: calc(var(--stan-width) * 0.309);
   height: calc(var(--stan-width) * 0.35);
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #oceans_pile #tracker_w {
+  /*
   position: absolute;
   top: -11%;
   left: -30%;
@@ -6269,7 +6453,10 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  padding: 1%;
+  padding: 1%;*/
+  font-size: calc(var(--stan-width) * 0.2);
+  color: gold;
+  font-family: "Prototype";
 }
 
 /** Temp markers */
@@ -6310,13 +6497,13 @@
 
 /* decks */
 #decks_area .card {
+  /*
   width: calc(var(--stan-width) * 0.3);
   height: calc(var(--stan-width) * 0.31);
-  /* border: black solid 1px;
-  border-radius: 5%;
-  box-shadow: 2px 2px 3px 1px #00000080;
-  margin-bottom:calc(var(--stan-height) * 0.1); ;*/
-  font-size: calc(var(--stan-width) * 0.07);
+
+  font-size: calc(var(--stan-width) * 0.07);*/
+  width: 0;
+  height: 0;
 }
 
 #decks_area .milestone,
@@ -6326,10 +6513,30 @@
 }
 
 #deck_main {
+  /*
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
   background-position: 0 -100%;
   background-color: grey;
+
+   */
+}
+
+.deck_line {
+  color: white;
+  font-family: "Prototype";
+  display: flex;
+  width: fit-content;
+}
+.deck_line .deck_line_text {
+  margin-right: 3%;
+}
+.deck_line .counter {
+  position: relative;
+  margin-left: 10px;
+}
+.deck_line .infobox {
+  display: none;
 }
 
 #discard_main {
@@ -6337,6 +6544,7 @@
 }
 
 .carddeck .counter {
+  /*
   position: absolute;
   top: -18%;
   left: -30%;
@@ -6350,6 +6558,9 @@
   align-items: center;
   border-radius: 50%;
   padding: 1%;
+
+   */
+  position: relative;
 }
 
 /** hide cards in discard */
@@ -6421,6 +6632,15 @@
 
 .hand.location:empty {
   display: none;
+}
+
+#starting_player {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+  background-position: -500% -100%;
 }
 
 /* --------------- LOGS -------------------- */

@@ -88,6 +88,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->isSolo()) {
                 $this->setupSoloMap();
             }
+            $this->setCurrentStartingPlayer($this->getFirstPlayer());
         } catch (Exception $e) {
             $this->error($e);
         }
@@ -450,6 +451,16 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         return true;
+    }
+
+    function precondition($owner, $tokenid) {
+        // check precondition
+        $cond = $this->getRulesFor($tokenid, "pre");
+        if ($cond) {
+            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid);
+            if (!$valid) return MA_ERR_PREREQ; // fail prereq check
+        }
+        return MA_OK;
     }
 
     function playability($owner, $tokenid) {
