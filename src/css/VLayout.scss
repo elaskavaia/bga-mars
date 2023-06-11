@@ -2,6 +2,7 @@
   .player-board {
     background-color: #909090;
   }
+
   .bgabutton_gray {
     border: none;
     box-shadow: 2px 2px 3px 1px #00000080;
@@ -10,7 +11,8 @@
   }
 
   #ebd-body {
-    --map-width: 30em; /* 75vh */
+    --map-width: 30em;
+    /* 75vh */
     --map-height: calc(var(--map-width) * 0.92);
     --card-width: 10em;
     --pb_cellsize: 4.5em;
@@ -73,7 +75,8 @@
     grid-column: 1;
     grid-row: 1;
   }
-  #thisplayer_zone ~ .player_area {
+
+  #thisplayer_zone~.player_area {
     // second player
     grid-column: 2;
   }
@@ -127,6 +130,7 @@
     left: 7%;
     position: absolute;
   }
+
   #map {
     position: absolute;
     left: 20%;
@@ -134,6 +138,7 @@
     width: 60%;
     height: 72%;
   }
+
   #oxygen_map {
     position: absolute;
     width: calc(var(--map-width) * 0.88);
@@ -142,6 +147,7 @@
     top: 0px;
     left: 0px;
   }
+
   #temperature_map {
     position: relative;
     top: 17%;
@@ -155,16 +161,20 @@
     background: unset;
     top: 59%;
   }
+
   #standard_projects_area .display {
     margin-top: 15%;
     display: block;
   }
+
   .stanp_decor {
     display: none;
   }
+
   #standard_projects_title_zone {
     display: none;
   }
+
   #standard_projects_area .card {
     top: unset !important;
     display: block;
@@ -177,9 +187,11 @@
     background: none;
     width: calc(var(--map-width) * 0.14);
   }
+
   .map_milesawardsheader {
     display: none;
   }
+
   #main_awards,
   #main_milestones {
     padding: 0;
@@ -206,8 +218,9 @@
     width: var(--stan-width);
     height: var(--stan-height);
   }
-  .deck > .card,
-  .discard > .card {
+
+  .deck>.card,
+  .discard>.card {
     pointer-events: none;
   }
 
@@ -215,6 +228,7 @@
     left: 10%;
     position: absolute;
   }
+
   #discard_main {
     left: 40%;
     position: absolute;
@@ -225,11 +239,13 @@
     top: 41%;
     background-image: none;
   }
+
   .hex_phobos {
     left: 58%;
     top: 13%;
     background-image: none;
   }
+
   #oceans_pile {
     position: absolute;
     top: 61%;
@@ -258,6 +274,7 @@
     right: unset;
     border: none;
   }
+
   .tableau.whiteblock {
     background-image: none;
   }
@@ -271,6 +288,7 @@
     background-repeat: no-repeat;
     background-size: 100% auto;
   }
+
   .map_bg {
     display: none;
   }
@@ -301,6 +319,7 @@
     grid-row-start: 1;
     grid-row-end: -1;
   }
+
   .cards_1 {
     grid-column-end: -1;
     grid-column-start: 4;
@@ -309,11 +328,13 @@
   .cards_4 {
     grid-column: 1;
   }
+
   .cards_3 {
     grid-column: 1;
     grid-row: 2;
     justify-self: right;
   }
+
   .cards_2a {
     grid-template-rows: repeat(auto-fill, calc(var(--card-height) * 0.3)) [last-row] var(--card-height);
   }
@@ -337,6 +358,7 @@
     $i: $num - 1;
     $col: $i % 10;
     $row: ($i - $col) / 10;
+
     .card_main_#{$num} {
       background-position: calc(100% / 9 * $col) calc(100% / 7 * $row);
       background-image: url(img/full/cards1.jpg);
@@ -347,6 +369,7 @@
     $i: $num - 81;
     $col: $i % 10;
     $row: ($i - $col) / 10;
+
     .card_main_#{$num} {
       background-position: calc(100% / 9 * $col) calc(100% / 7 * $row);
       background-image: url(img/full/cards2.jpg);
@@ -356,48 +379,39 @@
   @for $num from 161 through 208 {
     $i: $num - 161;
     $col: $i % 10;
-    $row: ($i - $col) / 10;
+    $row: calc(($i - $col) / 10);
+
     .card_main_#{$num} {
       background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
       background-image: url(img/full/cards3.jpg);
     }
   }
 
-  .tracker_tagCity {
-    background-position-x: 0;
+
+  .player_tags .badge,
+  .player_tags .tracker {
+    position: relative;
+    width: 32px;
+    height: 32px;
+
+    display: inline-block;
+    margin-right: unset;
+    grid-column-start: unset;
   }
-  .tracker_tagEvent {
-    background-position-x: -100%;
+
+  .player_tags.miniboard_tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
-  .tracker_tagEarth {
-    background-position-x: -200%;
-  }
-  .tracker_tagEventAggro {
-    background-position-x: -300%;
-  }
-  .tracker_tagPlant {
-    background-position-x: -400%;
-  }
-  .tracker_tagSpace {
-    background-position-x: -500%;
-  }
-  .tracker_tagJovian {
-    background-position-x: -600%;
-  }
-  .tracker_tagScience {
-    background-position-x: -700%;
-  }
-  .tracker_tagBuilding {
-    background-position-x: -800%;
-  }
-  .tracker_tagEnergy {
-    background-position-x: -900%;
-  }
-  .tracker_tagMicrobe {
-    background-position-x: -1000%;
-  }
-  .tracker_tagAnimal {
-    background-position-x: -1100%;
+
+  .player_tags .tracker::after {
+    content: attr(data-state);
+    font-family: "Prototype";
+    position: absolute;
+    text-shadow: 1px 1px black;
+    bottom: 20%;
+    right: 0%;
   }
 
   #tracker_o,
@@ -437,6 +451,7 @@
 
   @for $num from 1 through 25 {
     $row: $num - 1;
+
     #tracker_gen[data-state="#{$num}"] {
       left: -74%;
       top: calc(100% - $row * (100% / 24));
@@ -517,6 +532,7 @@
     opacity: 0.2;
     display: inline-block;
   }
+
   /* Added by darhf, to prevent messing things up too much*/
   #map_hexes {
     position: unset;
@@ -529,7 +545,16 @@
   .card_hovertt .card_effect {
     font-size: calc(var(--card-width) * 0.07);
   }
+
   .player_area_name {
     top: 0;
   }
+
+  .player_controls {
+    display: none;
+  }
+  .playerboard_header {
+    display: none;
+  }
+
 }

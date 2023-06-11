@@ -318,7 +318,27 @@
             </div>
 
           </div>
-          <div id="player_tags_{PLAYER_COLOR}" class="player_tags"></div>
+          <div id="player_tags_{PLAYER_COLOR}" class="player_tags">
+            <div id="tracker_tagBuilding_{PLAYER_COLOR}" class="tracker badge  tracker_tagBuilding"></div>
+            <div id="tracker_tagSpace_{PLAYER_COLOR}" class="tracker badge  tracker_tagSpace"></div>
+            <div id="tracker_tagScience_{PLAYER_COLOR}" class="tracker badge  tracker_tagScience"></div>
+            <div id="tracker_tagEnergy_{PLAYER_COLOR}" class="tracker badge  tracker_tagEnergy"></div>
+    
+            <div id="tracker_tagEarth_{PLAYER_COLOR}" class="tracker badge  tracker_tagEarth"></div>
+            <div id="tracker_tagJovian_{PLAYER_COLOR}" class="tracker badge tracker_tagJovian"></div>
+            <div id="tracker_tagCity_{PLAYER_COLOR}" class="tracker badge tracker_tagCity"></div>
+     
+            <div id="tracker_tagPlant_{PLAYER_COLOR}" class="tracker badge  tracker_tagPlant" ></div>
+            <div id="tracker_tagMicrobe_{PLAYER_COLOR}" class="tracker badge t tracker_tagMicrobe"></div>
+            <div id="tracker_tagAnimal_{PLAYER_COLOR}" class="tracker badge tracker_tagAnimal"></div>
+    
+
+            
+            <div id="tracker_tagEvent_{PLAYER_COLOR}" class="tracker badge  tracker_tagEvent"></div>
+            <div id="tracker_city_{PLAYER_COLOR}" class="tracker tracker_city"></div>
+            <div id="tracker_forest_{PLAYER_COLOR}" class="tracker tracker_forest"></div>
+            <div id="tracker_land_{PLAYER_COLOR}" class="tracker tracker_land"></div>
+          </div>
         </div>
       </div>
 
@@ -440,20 +460,25 @@
 
       </div>
       <div id="miniboard_tags_{PLAYER_COLOR}" class="player_tags miniboard_tags">
+        <div id="alt_tracker_tagBuilding_{PLAYER_COLOR}" class="tracker badge  tracker_tagBuilding"></div>
+        <div id="alt_tracker_tagSpace_{PLAYER_COLOR}" class="tracker badge  tracker_tagSpace"></div>
+        <div id="alt_tracker_tagScience_{PLAYER_COLOR}" class="tracker badge  tracker_tagScience"></div>
+        <div id="alt_tracker_tagEnergy_{PLAYER_COLOR}" class="tracker badge  tracker_tagEnergy"></div>
+
+        <div id="alt_tracker_tagEarth_{PLAYER_COLOR}" class="tracker badge  tracker_tagEarth"></div>
+        <div id="alt_tracker_tagJovian_{PLAYER_COLOR}" class="tracker badge tracker_tagJovian"></div>
+ 
+        <div id="alt_tracker_tagPlant_{PLAYER_COLOR}" class="tracker badge  tracker_tagPlant" ></div>
+        <div id="alt_tracker_tagMicrobe_{PLAYER_COLOR}" class="tracker badge t tracker_tagMicrobe"></div>
+        <div id="alt_tracker_tagAnimal_{PLAYER_COLOR}" class="tracker badge tracker_tagAnimal"></div>
+
+        <div id="alt_tracker_tagCity_{PLAYER_COLOR}" class="tracker badge tracker_tagCity"></div>
+        
+        <div id="alt_tracker_tagEvent_{PLAYER_COLOR}" class="tracker badge  tracker_tagEvent"></div>
         <div id="alt_tracker_city_{PLAYER_COLOR}" class="tracker tracker_city"></div>
         <div id="alt_tracker_forest_{PLAYER_COLOR}" class="tracker tracker_forest"></div>
         <div id="alt_tracker_land_{PLAYER_COLOR}" class="tracker tracker_land"></div>
-        <div id="alt_tracker_tagAnimal_{PLAYER_COLOR}" class="tracker badge tracker_tagAnimal"></div>
-        <div id="alt_tracker_tagBuilding_{PLAYER_COLOR}" class="tracker badge  tracker_tagBuilding"></div>
-        <div id="alt_tracker_tagCity_{PLAYER_COLOR}" class="tracker badge tracker_tagCity"></div>
-        <div id="alt_tracker_tagEarth_{PLAYER_COLOR}" class="tracker badge  tracker_tagEarth"></div>
-        <div id="alt_tracker_tagEnergy_{PLAYER_COLOR}" class="tracker badge  tracker_tagEnergy"></div>
-        <div id="alt_tracker_tagEvent_{PLAYER_COLOR}" class="tracker badge  tracker_tagEvent"></div>
-        <div id="alt_tracker_tagJovian_{PLAYER_COLOR}" class="tracker badge tracker_tagJovian"></div>
-        <div id="alt_tracker_tagMicrobe_{PLAYER_COLOR}" class="tracker badge t tracker_tagMicrobe"></div>
-        <div id="alt_tracker_tagPlant_{PLAYER_COLOR}" class="tracker badge  tracker_tagPlant" ></div>
-        <div id="alt_tracker_tagScience_{PLAYER_COLOR}" class="tracker badge  tracker_tagScience"></div>
-        <div id="alt_tracker_tagSpace_{PLAYER_COLOR}" class="tracker badge  tracker_tagSpace"></div>
+     
       </div>
     </div>
 

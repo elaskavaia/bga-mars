@@ -155,22 +155,21 @@
     background-size: 1200% 100%;
   }
 
-  .player_tags .badge::after,.player_tags .tracker::after {
-    content: attr(data-state);
-    grid-column-start: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Prototype";
-
-  }
-  .player_tags .badge[data-state="0"],.player_tags .tracker[data-state="0"] {
-    /*opacity: 0.2;*/
-    display: none;
-  }
-  .player_tags .badge[data-state="0"]::after,.player_tags .tracker[data-state="0"]::after {
-
-  }
+    .mcompact {
+      .player_tags .tracker::after {
+        content: attr(data-state);
+        grid-column-start: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Prototype";
+  
+      }
+  
+      .player_tags .tracker[data-state="0"] {
+        display: none;
+      }
+    }
 
   .badge.tracker_tagCity{ background-position-x: 0;}
   .badge.tracker_tagEvent{ background-position-x: -100%;}

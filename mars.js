@@ -1439,6 +1439,9 @@ var CustomRenders = /** @class */ (function () {
             case 'forest':
                 ret = _('Requires $v Forest tiles.');
                 break;
+            case 'all_city':
+                ret = _('Requires $v citie(s) in play.');
+                break;
             default:
                 ret = 'NOT FOUND :' + what;
                 break;
@@ -2213,6 +2216,8 @@ var GameXBody = /** @class */ (function (_super) {
             div.appendChild(board);
             $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_3', "1");
             $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_1', "1");
+            dojo.destroy("tableau_".concat(playerInfo.color, "_cards_3vp"));
+            dojo.destroy("tableau_".concat(playerInfo.color, "_cards_1vp"));
         }
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {
@@ -2478,7 +2483,7 @@ var GameXBody = /** @class */ (function (_super) {
             result.location = this.custom_placement[tokenInfo.key];
         }
         else if (tokenInfo.key == 'starting_player') {
-            this.darhflog('fp!!!');
+            result.location = tokenInfo.location.replace('tableau_', 'fpholder_');
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
             if (!this.isLayoutFull()) {
@@ -2661,6 +2666,9 @@ var GameXBody = /** @class */ (function (_super) {
             paramargs.forEach(function (tid) {
                 if (tid.startsWith('tracker_p_')) {
                     tid = tid.replace('tracker_p_', 'playergroup_plants_');
+                }
+                if (tid.startsWith('tracker_h_')) {
+                    tid = tid.replace('tracker_h_', 'playergroup_heat_');
                 }
                 if (tid == "none") {
                     if (single) {

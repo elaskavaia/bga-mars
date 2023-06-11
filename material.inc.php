@@ -4078,6 +4078,12 @@ $this->token_types = [
   'location' => 'limbo',
   'name' => clienttranslate("Number of owned land"),
 ],
+ 'starting_player' => [  //
+  'type' => 'tracker',
+  'create' => 1,
+  'location' => 'limbo',
+  'name' => clienttranslate("Starting Player Marker"),
+],
 // #terraforming parameters
  'tracker_o' => [  //
   'type' => 'param',

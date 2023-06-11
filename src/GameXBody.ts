@@ -57,6 +57,9 @@ class GameXBody extends GameTokens {
       div.appendChild(board);
       $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_3',"1");
       $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_1',"1");
+
+      dojo.destroy(`tableau_${playerInfo.color}_cards_3vp`);
+      dojo.destroy(`tableau_${playerInfo.color}_cards_1vp`);
     } 
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
