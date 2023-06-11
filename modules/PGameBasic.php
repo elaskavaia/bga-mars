@@ -320,8 +320,12 @@ abstract class PGameBasic extends Table {
         if (count($preserve) > 0) {
             $args["preserve"] = $preserve;
         }
-        if (isset($args["_private"])) {
+        $private = false;
+        if (array_key_exists("_private", $args)) {
+            $private=$args["_private"];
             unset($args["_private"]);
+        }
+        if ($private) {
             $this->notifyPlayer($player_id, $type, $message, $args);
         } else {
             $this->notifyAllPlayers($type, $message, $args);
