@@ -381,14 +381,27 @@ class GameXBody extends GameTokens {
     else return this.getButtonNameForOperationExp(op.type);
   }
 
-  getTokenPresentaton(type: string, tokenKey: string): string {
-    let icon = '';
-    if (tokenKey.startsWith('tracker')) {
-    const res = getPart(tokenKey,1);
-       icon = `<div class="token_img tracker_${res}"></div>`;
-       return  icon; 
+  getDivForTracker(id: string, value: string | number="") {
+    const res = getPart(id,1);
+    const icon = `<div class="token_img tracker_${res}">${value}</div>`;
+    return  icon; 
+  }
+
+  getTokenPresentaton(type: string, tokenKey: string | {log: string, args: any}): string {
+    const isstr = typeof tokenKey == "string" ;
+    if (isstr &&  tokenKey.startsWith('tracker'))  return this.getDivForTracker(tokenKey);
+    if (type=='token_div_count' && !isstr) {
+      const id = tokenKey.args['token_name'];
+      const mod = tokenKey.args['mod'];
+      if (id.startsWith('tracker_m_')) { // just m
+         return this.getDivForTracker(id, mod);
+      }
+      return undefined; // process by parent
     }
-    return  icon + this.getTokenName(tokenKey); // just a name for now
+    if (isstr) {
+      return  this.getTokenName(tokenKey); // just a name for now
+    }
+    return undefined; // process by parent
   }
 
   getButtonNameForOperationExp(op: string) {
