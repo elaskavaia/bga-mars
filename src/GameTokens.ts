@@ -122,7 +122,6 @@ class GameTokens extends GameBasics {
     }
     return res;
   }
-
   isLocationByType(id: string) {
     return this.hasType(id, "location");
   }

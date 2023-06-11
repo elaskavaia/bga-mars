@@ -266,6 +266,15 @@
   display: none;
 }
 
+#starting_player{
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background-image: url('img/resources.png');
+  background-size: 1000% 200%;
+  background-position: -500% -100%;
+}
+
 /* --------------- LOGS -------------------- */
 
 .log .token_img {

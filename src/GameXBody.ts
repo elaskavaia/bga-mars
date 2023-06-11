@@ -3,6 +3,8 @@ class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_placement: any;
   private custom_pay:any;
+  private local_counters:any;
+  private isDoingSetup:boolean;
  // private parses:any;
 
   constructor() {
@@ -11,6 +13,7 @@ class GameXBody extends GameTokens {
 
   setup(gamedatas: any) {
     this.defaultTooltipDelay = 800;
+    this.isDoingSetup=true;
 
     //custom destinations for tokens
     this.custom_placement = {
@@ -20,6 +23,7 @@ class GameXBody extends GameTokens {
       tracker_gen: "generation_counter",
     };
     this.custom_pay = undefined;
+    this.local_counters=[];
 
 
     super.setup(gamedatas);
@@ -36,10 +40,16 @@ class GameXBody extends GameTokens {
     $('thething').removeAttribute('title');
 
     console.log("Ending game setup");
+    this.isDoingSetup=false;
   }
 
   setupPlayer(playerInfo: any) {
     super.setupPlayer(playerInfo);
+    this.local_counters[playerInfo.color] = {
+      cards_1:0,
+      cards_2:0,
+      cards_3:0
+    }
 
     if (this.isLayoutFull()) {
       const div = $("main_area");
@@ -66,6 +76,7 @@ class GameXBody extends GameTokens {
       if (displayInfo.mainType == "card") {
         let tagshtm = "";
         const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+
 
         ttdiv.innerHTML = ` 
             <div class='token_title'>${displayInfo.name}</div>
@@ -181,7 +192,7 @@ class GameXBody extends GameTokens {
                 <div class="card_bg"></div>
                 <div class='card_badges'>${tagshtm}</div>
                 <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
-                <div class='card_cost'>${displayInfo.cost}</div> 
+                <div id='cost_${tokenNode.id}' class='card_cost'>${displayInfo.cost}</div> 
                 <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
                 <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
                 <div class="card_prereq">${parsedPre!=="" ? parsedPre : ""}</div>
@@ -305,14 +316,44 @@ class GameXBody extends GameTokens {
 
     if  (tokenDisplayInfo.mainType == "card") {
       //do nothing
+     // this.darhflog('update card ',tokenDisplayInfo);
     }
 
     if (this.isLocationByType(tokenDisplayInfo.key)) {
       tokenDisplayInfo.imageTypes += " infonode";
     }
   }
+  updateVisualsFromOp(opInfo: any, opId: number) {
+    const opargs = opInfo.args;
+    const paramargs = opargs.target ?? [];
+    const ttype = opargs.ttype ?? "none";
+    const type = opInfo.type ?? "none";
+    const from = opInfo.mcount;
+    const count = opInfo.count;
 
+    if (type=="card") {
+      const card_info = opInfo.args.info;
+      for (let card_id in card_info) {
 
+        //handle card discounts
+         const displayInfo = this.getTokenDisplayInfo(card_id);
+         const original_cost= parseInt(displayInfo.cost);
+         const discount_cost = parseInt(card_info[card_id].payop.replace('nm',''));
+
+         if (discount_cost!=original_cost) {
+           $('cost_'+card_id).innerHTML=discount_cost.toString();
+           $('cost_'+card_id).classList.add('discounted');
+         }
+      }
+    }
+  }
+  updatePlayerLocalCounters(plColor:string):void {
+    this.darhflog('update pl counters',this.local_counters[plColor]);
+      for (let key of Object.keys(this.local_counters[plColor])) {
+        this.darhflog('updating ','local_counter_'+plColor+'_'+key,'to ',this.local_counters[plColor][key]);
+        $('local_counter_'+plColor+'_'+key).innerHTML=this.local_counters[plColor][key];
+      }
+  }
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     let result = super.getPlaceRedirect(tokenInfo);
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
@@ -323,7 +364,10 @@ class GameXBody extends GameTokens {
       result.nop = true;
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
-    } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+    } else if (tokenInfo.key=='starting_player'){
+      this.darhflog('fp!!!');
+    }
+    else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       if (!this.isLayoutFull()) {
         result.location = tokenInfo.location+'_corp_effect';
       } else {
@@ -334,12 +378,41 @@ class GameXBody extends GameTokens {
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
-      if (this.isLayoutFull()) {
+     // if (this.isLayoutFull()) {
         if (this.getRulesFor(tokenInfo.key, "a")) {
           result.location = tokenInfo.location + "_cards_2a" ;
         }
+     // }
+
+      if (!this.isLayoutFull()) {
+        if (t==1 || t==3) {
+          if (this.getRulesFor(tokenInfo.key, "vp",'0')!='0') {
+            result.location = tokenInfo.location + "_cards_"+t+'vp' ;
+          }
+        }
+        const plcolor=tokenInfo.location.replace('tableau_','');
+        this.local_counters[plcolor]['cards_'+t]++;
+        this.updatePlayerLocalCounters(plcolor);
+
+        //auto switch tabs here
+        if (!this.isDoingSetup) {
+          if ($(tokenInfo.location).dataset['visibility_' + t] == '0') {
+            for (let i = 1; i <= 3; i++) {
+              let btn = 'player_viewcards_' + i + '_' + tokenInfo.location.replace('tableau_', '');
+              this.darhflog('btn is ', btn);
+              if (i == t) {
+                $(tokenInfo.location).dataset['visibility_' + i] = '1';
+                $(btn).dataset.selected = '1';
+              } else {
+                $(btn).dataset.selected = '0';
+                $(tokenInfo.location).dataset['visibility_' + i] = '0';
+              }
+            }
+          }
+        }
       }
-   
+
+
     }
     if (!result.location)
       // if failed to find revert to server one
@@ -734,6 +807,7 @@ class GameXBody extends GameTokens {
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
+      this.updateVisualsFromOp(opInfo,opId);
       this.activateSlots(opInfo, opId, singleOrFirst);
       if (!single && !ordered) {
         // xxx add something for remaining ops in ordered case?

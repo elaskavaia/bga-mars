@@ -18,8 +18,13 @@ Random notes on todo items
 ## Client
 
 * Better tooltips
+  * Tooltips on Milestones + costs & explanations
+  * Tooltips on Awards + costs & explanations
+* Finish Awards & tooltips (still waiting official assets)
 * Show decoded error on when something cannot be selected/played
 * Show discounted card cost
+  * Update from args ok - TODO initial
+* Show if prereq are not met
 * Tableau filtering
 * Show terraforming parameters
 * Resources in log - images not all defined
@@ -32,11 +37,13 @@ Random notes on todo items
 * Cubes on cards
 
 ## Client - Compact layout
-* Show generation count 
 * Add options (local storage) for :
   * hand placement (floating or on top)
   * size of elements
   * general layout
+* Better tableau groups 
+  * blue : effects / actions
+  * others : VP / no VP
 
 ## Client - Full layout
 * Move tags on the miniboard
@@ -54,3 +61,4 @@ Random notes on todo items
 ## Assets
 
 * Waiting for official layered board
+* Ocean icon is wrong (not in asmodee bundle)

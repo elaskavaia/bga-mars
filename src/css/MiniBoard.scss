@@ -225,6 +225,16 @@ display: none;
   font-size: calc(var(--resourcesize) * 0.55);
   font-family: 'Prototype';
 }
+
+.player_tags.miniboard_tags{
+  --pb_cellsize: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: fit-content;
+  position: relative;
+  margin-top: 20px;
+}
 /*
 .tracker_pm::before {
   content: "prod MC ";
@@ -296,3 +306,4 @@ display: none;
 #settings-controls-container.settingsControlsHidden {
   display: none;
 }
+

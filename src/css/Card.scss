@@ -68,6 +68,10 @@
    */
 
 }
+.card_cost.discounted{
+  color: #bef983;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+}
 
 #display_main  .token_cost {
   border-radius: calc(var(--card-width) * 0.08);
@@ -910,7 +914,11 @@ display: none;
     left:0;
     top:0;
   }
-
+  .card.corp.card_corp_1 .card_bg {
+    background-position: 5% 34%;
+    width: 260%;
+    height: 260%;
+  }
   #card_corp_2 .card_bg {
     background-position: -94% 38%;
     width: 184%;
@@ -991,7 +999,6 @@ display: none;
     transform: scale(1.5);
     transition: all 500ms;
     transition-delay: 500ms;
-
   }
 }
 

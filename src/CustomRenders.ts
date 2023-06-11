@@ -18,6 +18,7 @@
       tagJovian: { classes: "tracker badge tracker_tagJovian" },
       tagSpace: { classes: "tracker badge tracker_tagSpace" },
       tagEvent: { classes: "tracker badge tracker_tagEvent" },
+      tagEarth: { classes: "tracker badge tracker_tagEarth" },
       "[1,](sell)": { classes: "" },
       onPay_cardSpace: { classes: "tracker badge tracker_tagSpace" },
       onPay_card: { classes: "empty" },
