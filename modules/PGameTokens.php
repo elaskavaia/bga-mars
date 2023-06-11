@@ -493,16 +493,16 @@ abstract class PGameTokens extends PGameBasic {
 
         if ($message == "*") {
             if ($num <= 0) {
-                $message = clienttranslate('${player_name} pays ${inc_resource}');
+                $message = clienttranslate('${player_name} pays ${token_div_count}');
             } else {
-                $message = clienttranslate('${player_name} gains ${inc_resource}');
+                $message = clienttranslate('${player_name} gains ${token_div_count}');
             }
         }
 
         $args = array_merge($args, [
             "mod" => abs($num),
             "inc" => $num,
-            "inc_resource" => [
+            "token_div_count" => [
                 "log" => '${mod} ${token_name}',
                 "args" => [
                     "token_name" => $token_id,
