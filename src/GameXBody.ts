@@ -113,7 +113,7 @@ class GameXBody extends GameTokens {
               if (firsttag=="") firsttag = tag;
             }
           }
-          const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
+         // const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
           let parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) :"";
 
           //specific card rendering
@@ -450,13 +450,21 @@ class GameXBody extends GameTokens {
 
     if (ttype == "token") {
       paramargs.forEach((tid: string) => {
+        if (tid.startsWith('tracker_p_')) {
+          tid= tid.replace('tracker_p_','playergroup_plants_');
+        }
+
         if (tid == "none") {
           if (single) {
             this.addActionButton("button_none", _("None"), () => {
               this.sendActionResolveWithTarget(opId, "none");
             });
           }
-        } else {
+        } else if (tid.startsWith('tracker_p_')) {
+
+
+        }
+        else {
           this.setActiveSlot(tid);
           this.setReverseIdMap(tid, opId, tid);
           if (single) {

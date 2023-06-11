@@ -271,7 +271,7 @@
               </div>
             </div>
 
-            <div id="playerboard_group_plants" class="playerboard_group">
+            <div id="playergroup_plants_{PLAYER_COLOR}" class="playerboard_group">
               <div class="playerboard_group_img">
                 <div class="token_img tracker_p"></div>
               </div>
