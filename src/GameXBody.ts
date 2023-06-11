@@ -827,26 +827,33 @@ class GameXBody extends GameTokens {
     return true;
   }
 
-  onShowTableauCardsOfColor(event:Event) {
+  onShowTableauCardsOfColor(event: Event) {
     let id = (event.currentTarget as HTMLElement).id;
     // Stop this event propagation
     dojo.stopEvent(event); // XXX
 
-    const plcolor = $(id).dataset.player;
-    const btncolor = $(id).dataset.cardtype;
+    const node = $(id);
+    const plcolor = node.dataset.player;
+    const btncolor = node.dataset.cardtype;
     const tblitem = "visibility_" + btncolor;
 
-    for (let i=1;i<=3;i++) {
-      $("tableau_" + plcolor).dataset['visibility_'+i] = "0";
-      $('player_viewcards_'+i+'_'+plcolor).dataset.selected ="0";
+    if (this.isLayoutFull()) {
+      const selected = node.dataset.selected == "1";
+      const value = !selected ? "1" : "0";
+
+      $("tableau_" + plcolor).dataset[tblitem] = value;
+      node.dataset.selected = value;
+    } else {
+      const value = "1";
+
+      for (let i = 1; i <= 3; i++) {
+        $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+        $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
+      }
+      $("tableau_" + plcolor).dataset[tblitem] = value;
+      node.dataset.selected = value;
     }
-    $("tableau_" + plcolor).dataset[tblitem] = "1";
-    $(id).dataset.selected ="1";
-
     return true;
-
-
-
   }
 
   // notifications

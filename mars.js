@@ -1025,9 +1025,33 @@ function setStyleAttributes(element, attrs) {
 var Card = /** @class */ (function () {
     function Card() {
     }
+    Card.prototype.onShowTableauCardsOfColor = function (event) {
+        var id = event.currentTarget.id;
+        // Stop this event propagation
+        dojo.stopEvent(event); // XXX
+        var node = $(id);
+        var plcolor = node.dataset.player;
+        var btncolor = node.dataset.cardtype;
+        var tblitem = "visibility_" + btncolor;
+        if (this.isLayoutFull()) {
+            var selected = node.dataset.selected == "1";
+            var value = !selected ? "1" : "0";
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
+        }
+        else {
+            var value = "1";
+            for (var i = 1; i <= 3; i++) {
+                $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+                $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
+            }
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
+        }
+        return true;
+    };
     return Card;
 }());
-;
 /* Module for rendering  card effects, powers , etc
 *
 */
@@ -2836,15 +2860,25 @@ var GameXBody = /** @class */ (function (_super) {
         var id = event.currentTarget.id;
         // Stop this event propagation
         dojo.stopEvent(event); // XXX
-        var plcolor = $(id).dataset.player;
-        var btncolor = $(id).dataset.cardtype;
+        var node = $(id);
+        var plcolor = node.dataset.player;
+        var btncolor = node.dataset.cardtype;
         var tblitem = "visibility_" + btncolor;
-        for (var i = 1; i <= 3; i++) {
-            $("tableau_" + plcolor).dataset['visibility_' + i] = "0";
-            $('player_viewcards_' + i + '_' + plcolor).dataset.selected = "0";
+        if (this.isLayoutFull()) {
+            var selected = node.dataset.selected == "1";
+            var value = !selected ? "1" : "0";
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
         }
-        $("tableau_" + plcolor).dataset[tblitem] = "1";
-        $(id).dataset.selected = "1";
+        else {
+            var value = "1";
+            for (var i = 1; i <= 3; i++) {
+                $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+                $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
+            }
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
+        }
         return true;
     };
     // notifications
