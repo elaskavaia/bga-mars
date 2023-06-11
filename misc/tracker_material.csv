@@ -30,6 +30,7 @@ tracker_pdelta|Global Parameters Delta|0
 tracker_city_ffffff|Number of Cities on Mars
 tracker_forest_ffffff|Number of Greenery on Mars
 tracker_land_ffffff|Number of owned land
+starting_player|Starting Player Marker
 
 
 #terraforming parameters

@@ -79,18 +79,17 @@ abstract class PGameTokens extends PGameBasic {
             }
             $content = $this->isContentAllowedForLocation($current_player_id, $location);
 
-            if ($content !== false) {
-                if ($content === true) {
-                    $tokens = $this->tokens->getTokensInLocation($location, null, $sort);
-                    $this->fillTokensFromArray($result["tokens"], $tokens);
-                } else {
-                    $num = floor($content);
-                    if ($count < $num) {
-                        $num = $count;
-                    }
-                    $tokens = $this->tokens->getTokensOnTop($num, $location);
-                    $this->fillTokensFromArray($result["tokens"], $tokens);
+            if ($content === false) continue;
+            if ($content === true) {
+                $tokens = $this->tokens->getTokensInLocation($location, null, $sort);
+                $this->fillTokensFromArray($result["tokens"], $tokens);
+            } else {
+                $num = floor($content);
+                if ($count < $num) {
+                    $num = $count;
                 }
+                $tokens = $this->tokens->getTokensOnTop($num, $location);
+                $this->fillTokensFromArray($result["tokens"], $tokens);
             }
         }
         $table_options = $this->getTableOptions();
