@@ -266,10 +266,14 @@
   display: none;
 }
 
-/*
-#discard_main > .card ~ .card {
-  opacity: 0;
-}
-*/
+/* --------------- LOGS -------------------- */
 
-/* */
+.log .token_img {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 24px;
+}
+

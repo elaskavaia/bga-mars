@@ -25,6 +25,13 @@ tracker_eru|Titanium Exchange Rate|3
 tracker_ers|Steel Exchange Rate|2
 tracker_pdelta|Global Parameters Delta|0
 
+#set location=limbo
+#set create=1
+tracker_city_ffffff|Number of Cities on Mars
+tracker_forest_ffffff|Number of Greenery on Mars
+tracker_land_ffffff|Number of owned land
+
+
 #terraforming parameters
 #set type=param
 #set create=1

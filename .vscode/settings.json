@@ -1,5 +1,6 @@
 {
   "emeraldwalk.runonsave": {
+
     "commands": [
       {
         "match": ".*\\.ts$",
@@ -18,5 +19,9 @@
       }
     ]
   },
-  "prettier.printWidth": 140
+  "prettier.printWidth": 140,
+  "editor.formatOnSaveMode": "modificationsIfAvailable",
+  "editor.formatOnSave": false,
+  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.codeActionsOnSave.rules": []
 }

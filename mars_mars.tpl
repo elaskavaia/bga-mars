@@ -9,7 +9,7 @@
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
 -------
 -->
-
+<div id="zoom-wrapper" class="zoom-wrapper">
 <div id="thething">
   <div id="hand_area" class="whiteblock">
     <div class="hand location" id="hand_{CURRENT_PLAYER_COLOR}"></div>
@@ -439,7 +439,23 @@
   <div id="params"></div>
   <div id="dev_null" class="defhidden"></div>
   <div id="oversurface"></div>
+  <div id="player_board_config" class="player-board">
+    <div id="player_config" >
+      <div id="player_config_row">
+        <button id="zoom-out" class=" fa fa-search-minus fa-2x config-control"></button>
+        <button id="zoom-in" class=" fa fa-search-plus fa-2x config-control"></button>
+        
+        <button id="help-mode-switch" class="fa fa-question-circle fa-2x config-control help-mode-switch"></button>
+
+        <button id="show-settings" class="config-control fa fa-cog fa-2x">	</button>
+      </div>
+      <div class='settingsControlsHidden'
+        id="settings-controls-container">
+      </div>
+    </div>
+  </div>
+
 
 </div>
-
+</div>
 {OVERALL_GAME_FOOTER}

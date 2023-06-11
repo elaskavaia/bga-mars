@@ -102,7 +102,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 92|Io Mining Industries|1|2pm,2pu|||41||Space Jovian|tagJovian|Corporate|Increase your titanium production 2 steps and your MC production 2 steps.|||1 VP per Jovian tag you have.|
 93|Bushes|1|2pp,2p|||10|t>=-10|Plant|0|Basic|Increase your plant production 2 steps. Gain 2 plants.||||
 94|Mass Converter|2|6pe||onPay_cardSpace:2m|8|tagScience>=5|Science Energy|0|Corporate|Increase your energy production 6 steps.; Effect: When you play a space card, you pay 2 MC less for it.||||
-95|Physics Complex|2||6e:res||12||Science Building|resCard*2|Corporate||Spend 6 energy to add a science resource to this card.||2 VP for each science resource on this card.|'holds' => 'Science'
+95|Physics Complex|2||6ne:res||12||Science Building|resCard*2|Corporate||Spend 6 energy to add a science resource to this card.||2 VP for each science resource on this card.|'holds' => 'Science'
 96|Greenhouses|1|counter(all_city) p|||6||Building Plant|0|Basic|Gain 1 plant for each city tile in play.||||
 97|Nuclear Zone|1|2t,tile|||10||Earth|-2|Basic|Place [the nuclear zone] tile and raise the temperature 2 steps.||||
 98|Tropical Resort|1|3pm,2nph|||13||Building|2|Corporate|Decrease your heat production 2 steps and increase your MC production 3 steps.||||
@@ -229,22 +229,22 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set create=2
 #set count=10
 #set location=limbo
-1|Begginer Corp|4|42m|||0|||0||You start with 42 MC. You keep 10 starting cards|
+1|Begginer Corp|4|42m|||0|||0||You start with 42 MC. You keep 10 starting cards||||
 #set count=10
 #set create=single
 #set location=deck_corp
 #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
-2|CrediCor|4|57m||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|0|||0|Basic|You start with 57 MC.||After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.||
-3|Ecoline|4|2pp,36m,3p|||0||Plant|0|Basic|You start with 2 plant production, 3 plants, and 36 MC,||You may always pay 7 plants, instead of 8, to place 1 greenery.||
-4|Helion|4|3ph,42m|||0||Space|0|Basic|You start with 3 heat production and 42 MC.||You may use heat as MC. You may not use MC as heat.||
-5|Interplanetary Cinematics|4|30m,20s||play_cardEvent:2m|0||Building|0|Basic|You start with 20 steel and 30 MC.||Each time you play an event, you gain 2 MC.||
-6|Inventrix|4|45m,2pdelta|||0||Science|0|Basic|As your first action in the game, draw 3 cards. Start with 45 MC,||Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.||'a1'=>'3draw'
-7|Mining Guild|4|30m,5s,ps||place_bonus_u:ps;place_bonus_s:ps|0||Building|0|Basic|You start with 5 steel, 1 steel production and 30 MC,||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
-8|Saturn Systems|4|pu,42m||play_tagJovian:pm|0||Jovian|0|Corporate|You start with 1 titanium production and 42 MC.||Each time any Jovian tag is put into play, including this, increase your MC production 1 step.||
-9|PhoboLog|4|23m,10u,eru|||0||Space|0|Basic|You start with 10 titanium and 23 MC,||Your titanium resources are each worth 1 MC extra.||
-10|Teractor|4|60m||onPay_tagEarth:3m|0||Earth|0|Corporate|You start with 60 MC.||When playing an Earth card, you pay 3 MC less for it.||
-11|Tharsis Republic|4|40m||place_city:pm:this:any;place_city:3m|0||Building|0|Basic|You start with 40 MC. As your first action in the game, place a city tile.||When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.||'a1'=>'city'
-12|ThorGate|4|pe,48m|||0||Energy|0|Basic|You start with 1 energy production and 48 MC.||When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.||
+2|CrediCor|4|||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|-57|||0|Basic|You start with 57 MC.||After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.||
+3|Ecoline|4|2pp,3p|||-36||Plant|0|Basic|You start with 2 plant production, 3 plants, and 36 MC,||You may always pay 7 plants, instead of 8, to place 1 greenery.||
+4|Helion|4|3ph|||-42||Space|0|Basic|You start with 3 heat production and 42 MC.||You may use heat as MC. You may not use MC as heat.||
+5|Interplanetary Cinematics|4|20s||play_cardEvent:2m|-30||Building|0|Basic|You start with 20 steel and 30 MC.||Each time you play an event, you gain 2 MC.||
+6|Inventrix|4|2pdelta|||-45||Science|0|Basic|As your first action in the game, draw 3 cards. Start with 45 MC,||Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.||'a1'=>'3draw'
+7|Mining Guild|4|5s,ps||place_bonus_u:ps;place_bonus_s:ps|-30||Building|0|Basic|You start with 5 steel, 1 steel production and 30 MC,||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
+8|Saturn Systems|4|pu||play_tagJovian:pm|-42||Jovian|0|Corporate|You start with 1 titanium production and 42 MC.||Each time any Jovian tag is put into play, including this, increase your MC production 1 step.||
+9|PhoboLog|4|10u,eru|||-23||Space|0|Basic|You start with 10 titanium and 23 MC,||Your titanium resources are each worth 1 MC extra.||
+10|Teractor|4|||onPay_tagEarth:3m|-60||Earth|0|Corporate|You start with 60 MC.||When playing an Earth card, you pay 3 MC less for it.||
+11|Tharsis Republic|4|||place_city:pm:this:any;place_city:3m|-40||Building|0|Basic|You start with 40 MC. As your first action in the game, place a city tile.||When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.||'a1'=>'city'
+12|ThorGate|4|pe|||-48||Energy|0|Basic|You start with 1 energy production and 48 MC.||When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.||
 #13|United Nations Mars Initiative|4|40m|||0||Earth|0|Basic|You start with 40 MC.|If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|||
 #14|Aphrodite|4|pp,47m|||0||Plant Venus|0|Venus|You start with 47 MC and 1 plant production.||Whenever Venus is terraformed 1 step, you gain 2 MC.||
 #15|Celestic|4|42m|||0||Venus|Ref|Venus|You start with 42 MC. As your first action, reveal cards from the deck until you have revealed 2 cards with a floater icon on it. Take those 2 cards into hand, and discard the rest.||Add a floater to ANY card.|1 VP per 3 floaters on this card.|'holds' => 'Floaters'

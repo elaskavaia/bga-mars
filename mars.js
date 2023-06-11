@@ -25,19 +25,21 @@ GameGui = /** @class */ (function () {
 var GameBasics = /** @class */ (function (_super) {
     __extends(GameBasics, _super);
     function GameBasics() {
-        var _this = _super.call(this) || this;
-        _this.classActiveSlot = "active_slot";
-        _this.defaultTooltipDelay = 400;
-        _this.defaultAnimationDuration = 500;
-        _this._helpMode = false; // help mode where tooltip shown instead of click action
-        _this._displayedTooltip = null; // used in help mode
+        var _this_1 = _super.call(this) || this;
+        _this_1.classActiveSlot = "active_slot";
+        _this_1.defaultTooltipDelay = 800;
+        _this_1.defaultAnimationDuration = 500;
+        _this_1._helpMode = false; // help mode where tooltip shown instead of click action
+        _this_1._displayedTooltip = null; // used in help mode
+        _this_1.zoom = 1.0;
         console.log("game constructor");
-        _this.laststate = null;
-        _this.pendingUpdate = false;
-        return _this;
+        _this_1.laststate = null;
+        _this_1.pendingUpdate = false;
+        return _this_1;
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
+        this.setupInfoPanel();
         // add reload Css debug button
         var parent = document.querySelector(".debug_section");
         if (parent && !$("reloadcss")) {
@@ -225,7 +227,7 @@ var GameBasics = /** @class */ (function (_super) {
      * new parent immediately, so parent is correct during animation
      */
     GameBasics.prototype.slideToObjectRelative = function (tokenId, finalPlace, duration, delay, onEnd, relation, mobileStyle) {
-        var _this = this;
+        var _this_1 = this;
         var mobileNode = $(tokenId);
         duration = duration !== null && duration !== void 0 ? duration : this.defaultAnimationDuration;
         this.delayedExec(function () {
@@ -237,13 +239,13 @@ var GameBasics = /** @class */ (function (_super) {
                     left: "0px",
                 };
             }
-            var box = _this.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
+            var box = _this_1.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
             mobileNode.style.transition = "all " + duration + "ms ease-in-out";
             mobileNode.style.left = box.left + "px";
             mobileNode.style.top = box.top + "px";
         }, function () {
             mobileNode.style.removeProperty("transition");
-            _this.stripPosition(mobileNode);
+            _this_1.stripPosition(mobileNode);
             mobileNode.classList.remove("moving_token");
             setStyleAttributes(mobileNode, mobileStyle);
             if (onEnd)
@@ -251,7 +253,7 @@ var GameBasics = /** @class */ (function (_super) {
         }, duration, delay);
     };
     GameBasics.prototype.slideToObjectAbsolute = function (tokenId, finalPlace, x, y, duration, delay, onEnd, relation, mobileStyle) {
-        var _this = this;
+        var _this_1 = this;
         var mobileNode = $(tokenId);
         duration = duration !== null && duration !== void 0 ? duration : this.defaultAnimationDuration;
         this.delayedExec(function () {
@@ -263,7 +265,7 @@ var GameBasics = /** @class */ (function (_super) {
                     top: y + "px",
                 };
             }
-            _this.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
+            _this_1.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
             mobileNode.style.transition = "all " + duration + "ms ease-in-out";
             mobileNode.style.left = x + "px";
             mobileNode.style.top = y + "px";
@@ -452,20 +454,6 @@ var GameBasics = /** @class */ (function (_super) {
         var actionLine = action ? this.getActionLine(action) : "";
         return "<div class='".concat(containerType, "'>\n        <div class='tooltiptitle'>").concat(name_tr, "</div>\n        <div class='tooltip-body-separator'></div>\n        <div class='tooltip-body'>\n           ").concat(divImg, "\n           <div class='tooltipmessage tooltiptext'>").concat(message_tr, "</div>\n        </div>\n        ").concat(actionLine, "\n    </div>");
     };
-    GameBasics.prototype.showHelp = function (id, force) {
-        if (!force)
-            if (!this._helpMode)
-                return false;
-        if (this.tooltips[id]) {
-            dijit.hideTooltip(id);
-            this._displayedTooltip = new ebg.popindialog();
-            this._displayedTooltip.create("current_tooltip");
-            var html = this.tooltips[id].getContent($(id));
-            this._displayedTooltip.setContent(html);
-            this._displayedTooltip.show();
-        }
-        return true;
-    };
     GameBasics.prototype.getTr = function (name) {
         if (name === undefined)
             return null;
@@ -557,9 +545,9 @@ var GameBasics = /** @class */ (function (_super) {
         this.connect(node, "click", handler);
     };
     GameBasics.prototype.connectAllTemp = function (query, handler) {
-        var _this = this;
+        var _this_1 = this;
         document.querySelectorAll(query).forEach(function (node) {
-            _this.connectClickTemp(node, handler);
+            _this_1.connectClickTemp(node, handler);
         });
     };
     GameBasics.prototype.disconnectClickTemp = function (node) {
@@ -567,12 +555,12 @@ var GameBasics = /** @class */ (function (_super) {
         this.disconnect(node, "click");
     };
     GameBasics.prototype.disconnectAllTemp = function (query) {
-        var _this = this;
+        var _this_1 = this;
         if (!query)
             query = ".temp_click_handler";
         document.querySelectorAll(query).forEach(function (node) {
             //console.log("disconnecting => " + node.id);
-            _this.disconnectClickTemp(node);
+            _this_1.disconnectClickTemp(node);
         });
     };
     /**
@@ -597,9 +585,9 @@ var GameBasics = /** @class */ (function (_super) {
      * @param args - args passes to setClientState
      */
     GameBasics.prototype.setClientStateUpd = function (name, onUpdate, args) {
-        var _this = this;
+        var _this_1 = this;
         this["onUpdateActionButtons_".concat(name)] = onUpdate;
-        setTimeout(function () { return _this.setClientState(name, args); }, 1);
+        setTimeout(function () { return _this_1.setClientState(name, args); }, 1);
     };
     // ASSORTED UTILITY
     GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
@@ -695,6 +683,193 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.isReadOnly = function () {
         return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
     };
+    GameBasics.prototype.addCancelButton = function (name, handler) {
+        var _this_1 = this;
+        if (!name)
+            name = _("Cancel");
+        if (!handler)
+            handler = function () { return _this_1.cancelLocalStateEffects(); };
+        if ($("button_cancel"))
+            dojo.destroy("button_cancel");
+        this.addActionButton("button_cancel", name, handler, null, false, "red");
+    };
+    /* @Override */
+    GameBasics.prototype.updatePlayerOrdering = function () {
+        this.inherited(arguments);
+        dojo.place("player_board_config", "player_boards", "first");
+    };
+    GameBasics.prototype.setupSettings = function () {
+        var panels = document.querySelectorAll("#player_board_config");
+        if (panels.length > 1) {
+            panels[0].parentNode.removeChild(panels[0]);
+        }
+        dojo.place("player_board_config", "player_boards", "first");
+        for (var index = 100; index <= 110; index++) {
+            var element = $("preference_control_" + index);
+            if (element)
+                dojo.place(element.parentNode.parentNode, "settings-controls-container");
+        }
+        var bug = $("bug_button");
+        if (!bug) {
+            var url = this.metasiteurl + "/bug?id=0&table=" + this.table_id;
+            bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url });
+        }
+        dojo.place(bug, "settings-controls-container", "last");
+    };
+    GameBasics.prototype.setupPreference = function () {
+        // Extract the ID and value from the UI control
+        var _this = this;
+        function onchange(e) {
+            var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
+            if (!match) {
+                return;
+            }
+            var prefId = +match[1];
+            var prefValue = +e.target.value;
+            _this.prefs[prefId].value = prefValue;
+            _this.onPreferenceChange(prefId, prefValue);
+        }
+        dojo.query(".preference_control").connect("onchange", onchange);
+        // Call onPreferenceChange() now
+        dojo.query("#ingame_menu_content .preference_control").forEach(function (el) { return onchange({ target: el }); });
+    };
+    GameBasics.prototype.onPreferenceChange = function (prefId, prefValue) {
+        console.log("Preference changed", prefId, prefValue);
+    };
+    GameBasics.prototype.toggleSettings = function () {
+        console.log("toggle setting");
+        dojo.toggleClass("settings-controls-container", "settingsControlsHidden");
+        this.setupSettings();
+        // Hacking BGA framework
+        if (dojo.hasClass("ebd-body", "mobile_version")) {
+            dojo.query(".player-board").forEach(function (elt) {
+                if (elt.style.height != "auto") {
+                    dojo.style(elt, "min-height", elt.style.height);
+                    elt.style.height = "auto";
+                }
+            });
+        }
+    };
+    GameBasics.prototype.toggleHelpMode = function (b) {
+        if (b)
+            this.activateHelpMode();
+        else
+            this.deactivateHelpMode();
+    };
+    GameBasics.prototype.activateHelpMode = function () {
+        var _this_1 = this;
+        var chk = $("help-mode-switch");
+        dojo.setAttr(chk, "bchecked", true);
+        this._helpMode = true;
+        dojo.addClass("ebd-body", "help-mode");
+        this._displayedTooltip = null;
+        document.body.addEventListener("click", this.closeCurrentTooltip.bind(this));
+        this.setDescriptionOnMyTurn(_("HELP MODE Activated. Click on game elements to get tooltips"));
+        dojo.empty("generalactions");
+        this.addCancelButton(undefined, function () { return _this_1.deactivateHelpMode(); });
+        var handler = this.onClickForHelp.bind(this);
+        document.querySelectorAll(".withtooltip").forEach(function (node) {
+            node.addEventListener("click", handler, false);
+        });
+    };
+    GameBasics.prototype.deactivateHelpMode = function () {
+        var chk = $("help-mode-switch");
+        dojo.setAttr(chk, "bchecked", false);
+        this.closeCurrentTooltip();
+        this._helpMode = false;
+        dojo.removeClass("ebd-body", "help-mode");
+        document.body.removeEventListener("click", this.closeCurrentTooltip.bind(this));
+        var handler = this.onClickForHelp.bind(this);
+        document.querySelectorAll(".withtooltip").forEach(function (node) {
+            node.removeEventListener("click", handler, false);
+        });
+        this.cancelLocalStateEffects();
+    };
+    GameBasics.prototype.closeCurrentTooltip = function () {
+        if (!this._helpMode)
+            return;
+        if (this._displayedTooltip == null)
+            return;
+        this._displayedTooltip.destroy();
+        this._displayedTooltip = null;
+    };
+    GameBasics.prototype.onClickForHelp = function (event) {
+        console.trace("onhelp", event);
+        if (!this._helpMode)
+            return false;
+        event.stopPropagation();
+        event.preventDefault();
+        this.showHelp(event.currentTarget.id);
+        return true;
+    };
+    GameBasics.prototype.showHelp = function (id, force) {
+        if (!force)
+            if (!this._helpMode)
+                return false;
+        if (this.tooltips[id]) {
+            dijit.hideTooltip(id);
+            this._displayedTooltip = new ebg.popindialog();
+            this._displayedTooltip.create("current_tooltip");
+            var html = this.tooltips[id].getContent($(id));
+            this._displayedTooltip.setContent(html);
+            this._displayedTooltip.show();
+        }
+        return true;
+    };
+    GameBasics.prototype.setZoom = function (zoom) {
+        if (zoom === 0 || zoom < 0.1 || zoom > 10) {
+            zoom = 1;
+        }
+        this.zoom = zoom;
+        //var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
+        //dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
+        //dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+        var inner = document.getElementById("thething");
+        var div = document.getElementById("zoom-wrapper");
+        if (zoom == 1) {
+            inner.style.removeProperty("transform");
+            inner.style.removeProperty("width");
+            div.style.removeProperty("height");
+        }
+        else {
+            inner.style.transform = "scale(" + zoom + ")";
+            inner.style.transformOrigin = "0 0";
+            inner.style.width = 100 / zoom + "%";
+            div.style.height = inner.offsetHeight * zoom + "px";
+        }
+        localStorage.setItem("mars_zoom", "" + this.zoom);
+        this.onScreenWidthChange();
+    };
+    GameBasics.prototype.setupInfoPanel = function () {
+        var _this_1 = this;
+        //dojo.place('player_board_config', 'player_boards', 'first');
+        var strzoom = localStorage.getItem("tapestry_zoom");
+        if (!strzoom)
+            strzoom = "1";
+        this.zoom = Number(strzoom);
+        this.setZoom(this.zoom);
+        dojo.connect($("show-settings"), "onclick", function () { return _this_1.toggleSettings(); });
+        this.addTooltip("show-settings", "", _("Display game preferences"));
+        var chk = $("help-mode-switch");
+        dojo.setAttr(chk, "bchecked", false);
+        dojo.connect(chk, "onclick", function () {
+            console.log("on check", chk);
+            var bchecked = !chk.getAttribute("bchecked");
+            //dojo.setAttr(chk, "bchecked", !chk.bchecked);
+            _this_1.toggleHelpMode(bchecked);
+        });
+        this.addTooltip(chk.id, "", _("Toggle help mode"));
+        // ZOOM
+        this.connect($("zoom-out"), "onclick", function () { return _this_1.setZoom(_this_1.zoom - 0.2); });
+        this.connect($("zoom-in"), "onclick", function () { return _this_1.setZoom(_this_1.zoom + 0.2); });
+        //$('help-mode-switch').style.display='none';
+        this.setupSettings();
+        this.setupPreference();
+        //this.setupHelper();
+        //this.setupTour();
+        this.addTooltip("zoom-in", "", _("Zoom in"));
+        this.addTooltip("zoom-out", "", _("Zoom out"));
+    };
     // NOTIFICATIONS
     GameBasics.prototype.setupNotifications = function () {
         console.log("notifications subscriptions setup");
@@ -744,9 +919,9 @@ var GameBasics = /** @class */ (function (_super) {
         return this.inherited(arguments);
     };
     GameBasics.prototype.onNotif = function (notif) {
-        if (!this.instantaneousMode && notif.log) {
-            this.setDescriptionOnMyTurn(notif.log, notif.args);
-        }
+        // if (!this.instantaneousMode && notif.log) {
+        //   this.setDescriptionOnMyTurn(notif.log, notif.args);
+        // }
     };
     GameBasics.prototype.notif_speechBubble = function (notif) {
         var html = this.format_string_recursive(notif.args.text, notif.args.args);
@@ -850,9 +1025,33 @@ function setStyleAttributes(element, attrs) {
 var Card = /** @class */ (function () {
     function Card() {
     }
+    Card.prototype.onShowTableauCardsOfColor = function (event) {
+        var id = event.currentTarget.id;
+        // Stop this event propagation
+        dojo.stopEvent(event); // XXX
+        var node = $(id);
+        var plcolor = node.dataset.player;
+        var btncolor = node.dataset.cardtype;
+        var tblitem = "visibility_" + btncolor;
+        if (this.isLayoutFull()) {
+            var selected = node.dataset.selected == "1";
+            var value = !selected ? "1" : "0";
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
+        }
+        else {
+            var value = "1";
+            for (var i = 1; i <= 3; i++) {
+                $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+                $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
+            }
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
+        }
+        return true;
+    };
     return Card;
 }());
-;
 /* Module for rendering  card effects, powers , etc
 *
 */
@@ -1949,6 +2148,8 @@ var GameXBody = /** @class */ (function (_super) {
             var div = $("main_area");
             var board = $("player_area_".concat(playerInfo.color));
             div.appendChild(board);
+            $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_3', "1");
+            $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_1', "1");
         }
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {
@@ -2243,6 +2444,29 @@ var GameXBody = /** @class */ (function (_super) {
             return this.format_string_recursive(op.args.button, op.args.args);
         else
             return this.getButtonNameForOperationExp(op.type);
+    };
+    GameXBody.prototype.getDivForTracker = function (id, value) {
+        if (value === void 0) { value = ""; }
+        var res = getPart(id, 1);
+        var icon = "<div class=\"token_img tracker_".concat(res, "\">").concat(value, "</div>");
+        return icon;
+    };
+    GameXBody.prototype.getTokenPresentaton = function (type, tokenKey) {
+        var isstr = typeof tokenKey == "string";
+        if (isstr && tokenKey.startsWith('tracker'))
+            return this.getDivForTracker(tokenKey);
+        if (type == 'token_div_count' && !isstr) {
+            var id = tokenKey.args['token_name'];
+            var mod = tokenKey.args['mod'];
+            if (id.startsWith('tracker_m_')) { // just m
+                return this.getDivForTracker(id, mod);
+            }
+            return undefined; // process by parent
+        }
+        if (isstr) {
+            return this.getTokenName(tokenKey); // just a name for now
+        }
+        return undefined; // process by parent
     };
     GameXBody.prototype.getButtonNameForOperationExp = function (op) {
         var rules = this.getRulesFor("op_" + op, "*");
@@ -2551,7 +2775,7 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0)
-                    this_1.addActionButton("button_skip", _("Skip"), function () {
+                    this_1.addActionButton("button_skip", _("Done"), function () {
                         _this.sendActionSkip();
                     });
             }
@@ -2562,6 +2786,12 @@ var GameXBody = /** @class */ (function (_super) {
             _loop_1(opIdS);
         }
     };
+    GameXBody.prototype.addUndoButton = function () {
+        var _this = this;
+        if (!$("button_undo")) {
+            this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper_unchecked("undo"); }, undefined, undefined, "red");
+        }
+    };
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
         var _a;
         var operations = (_a = args.player_operations[this.player_id]) !== null && _a !== void 0 ? _a : undefined;
@@ -2569,16 +2799,25 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         this.onUpdateActionButtons_playerTurnChoice(operations);
     };
+    GameXBody.prototype.onEnteringState_multiplayerDispatch = function (args) {
+        if (!this.isCurrentPlayerActive()) {
+            this.addUndoButton();
+        }
+    };
+    GameXBody.prototype.onUpdateActionButtons_multiplayerDispatch = function (args) {
+        if (!this.isCurrentPlayerActive()) {
+            this.addUndoButton();
+        }
+    };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
-        var _this = this;
         if (this.isCurrentPlayerActive()) {
             // add undo on every state
             if (this.on_client_state)
                 this.addCancelButton();
             else
-                this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper("undo"); }, undefined, undefined, "red");
+                this.addUndoButton();
         }
-        this.addActionButton('button_rcss', 'Reload CSS', function () { return reloadCss(); });
+        this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt
@@ -2621,15 +2860,25 @@ var GameXBody = /** @class */ (function (_super) {
         var id = event.currentTarget.id;
         // Stop this event propagation
         dojo.stopEvent(event); // XXX
-        var plcolor = $(id).dataset.player;
-        var btncolor = $(id).dataset.cardtype;
+        var node = $(id);
+        var plcolor = node.dataset.player;
+        var btncolor = node.dataset.cardtype;
         var tblitem = "visibility_" + btncolor;
-        for (var i = 1; i <= 3; i++) {
-            $("tableau_" + plcolor).dataset['visibility_' + i] = "0";
-            $('player_viewcards_' + i + '_' + plcolor).dataset.selected = "0";
+        if (this.isLayoutFull()) {
+            var selected = node.dataset.selected == "1";
+            var value = !selected ? "1" : "0";
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
         }
-        $("tableau_" + plcolor).dataset[tblitem] = "1";
-        $(id).dataset.selected = "1";
+        else {
+            var value = "1";
+            for (var i = 1; i <= 3; i++) {
+                $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+                $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
+            }
+            $("tableau_" + plcolor).dataset[tblitem] = value;
+            node.dataset.selected = value;
+        }
         return true;
     };
     // notifications

@@ -45,6 +45,8 @@ class GameXBody extends GameTokens {
       const div = $("main_area");
       const board = $(`player_area_${playerInfo.color}`);
       div.appendChild(board);
+      $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_3',"1");
+      $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_1',"1");
     } 
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
@@ -378,6 +380,29 @@ class GameXBody extends GameTokens {
   getButtonNameForOperation(op: any) {
     if (op.args.button) return this.format_string_recursive(op.args.button, op.args.args);
     else return this.getButtonNameForOperationExp(op.type);
+  }
+
+  getDivForTracker(id: string, value: string | number="") {
+    const res = getPart(id,1);
+    const icon = `<div class="token_img tracker_${res}">${value}</div>`;
+    return  icon; 
+  }
+
+  getTokenPresentaton(type: string, tokenKey: string | {log: string, args: any}): string {
+    const isstr = typeof tokenKey == "string" ;
+    if (isstr &&  tokenKey.startsWith('tracker'))  return this.getDivForTracker(tokenKey);
+    if (type=='token_div_count' && !isstr) {
+      const id = tokenKey.args['token_name'];
+      const mod = tokenKey.args['mod'];
+      if (id.startsWith('tracker_m_')) { // just m
+         return this.getDivForTracker(id, mod);
+      }
+      return undefined; // process by parent
+    }
+    if (isstr) {
+      return  this.getTokenName(tokenKey); // just a name for now
+    }
+    return undefined; // process by parent
   }
 
   getButtonNameForOperationExp(op: string) {
@@ -740,11 +765,17 @@ class GameXBody extends GameTokens {
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0)
-          this.addActionButton("button_skip", _("Skip"), () => {
+          this.addActionButton("button_skip", _("Done"), () => {
             this.sendActionSkip();
           });
       }
       i = i + 1;
+    }
+  }
+
+  addUndoButton() {
+    if (!$("button_undo")) {
+      this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper_unchecked("undo"), undefined, undefined, "red");
     }
   }
 
@@ -754,16 +785,27 @@ class GameXBody extends GameTokens {
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
+  onEnteringState_multiplayerDispatch(args) {
+    if (!this.isCurrentPlayerActive()) {
+      this.addUndoButton();
+    }
+  }
+
+  onUpdateActionButtons_multiplayerDispatch(args) {
+    if (!this.isCurrentPlayerActive()) {
+      this.addUndoButton();
+    }
+  }
+
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
       // add undo on every state
       if (this.on_client_state) this.addCancelButton();
-      else this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper("undo"), undefined, undefined, "red");
+      else this.addUndoButton();
     }
 
-    this.addActionButton('button_rcss','Reload CSS', () => reloadCss())
+    this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
-
   onSelectTarget(opId: number, target: string) {
     // can add prompt
     return this.sendActionResolveWithTarget(opId, target);
@@ -804,26 +846,33 @@ class GameXBody extends GameTokens {
     return true;
   }
 
-  onShowTableauCardsOfColor(event:Event) {
+  onShowTableauCardsOfColor(event: Event) {
     let id = (event.currentTarget as HTMLElement).id;
     // Stop this event propagation
     dojo.stopEvent(event); // XXX
 
-    const plcolor = $(id).dataset.player;
-    const btncolor = $(id).dataset.cardtype;
+    const node = $(id);
+    const plcolor = node.dataset.player;
+    const btncolor = node.dataset.cardtype;
     const tblitem = "visibility_" + btncolor;
 
-    for (let i=1;i<=3;i++) {
-      $("tableau_" + plcolor).dataset['visibility_'+i] = "0";
-      $('player_viewcards_'+i+'_'+plcolor).dataset.selected ="0";
+    if (this.isLayoutFull()) {
+      const selected = node.dataset.selected == "1";
+      const value = !selected ? "1" : "0";
+
+      $("tableau_" + plcolor).dataset[tblitem] = value;
+      node.dataset.selected = value;
+    } else {
+      const value = "1";
+
+      for (let i = 1; i <= 3; i++) {
+        $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
+        $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
+      }
+      $("tableau_" + plcolor).dataset[tblitem] = value;
+      node.dataset.selected = value;
     }
-    $("tableau_" + plcolor).dataset[tblitem] = "1";
-    $(id).dataset.selected ="1";
-
     return true;
-
-
-
   }
 
   // notifications
