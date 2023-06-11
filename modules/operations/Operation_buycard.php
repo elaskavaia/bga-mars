@@ -6,8 +6,11 @@ declare(strict_types=1);
 class Operation_buycard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $this->game->executeImmediately($color, 'nm', 3);
-        $this->game->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys a card'), [],  $this->game->getPlayerIdByColor($color));
+        $this->game->effect_incCount($color, 'm', -3, ['message' => '']);
+        $this->game->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys a card ${token_name}'), [
+            "_private"=>true
+        ],  $this->game->getPlayerIdByColor($color));
+        $this->game->notifyCounterChanged("hand_$color", ["nod" => true]);
         return 1;
     }
 
@@ -19,7 +22,7 @@ class Operation_buycard extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensInLocation("draw_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main","draw_${color}"));
         $hasmoney = !$this->game->isVoidSingle("3nm", $color);
 
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($hasmoney) {
