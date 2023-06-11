@@ -19,6 +19,8 @@ Random notes on todo items
 
 ## Client
 
+* Integrate Spend 8p to get 1 greenery in the player board
+  * Idem for heat
 * Better tooltips
   * Tooltips on Milestones + costs & explanations
   * Tooltips on Awards + costs & explanations
@@ -45,9 +47,7 @@ Random notes on todo items
   * hand placement (floating or on top)
   * size of elements
   * general layout
-* Better tableau groups 
-  * blue : effects / actions
-  * others : VP / no VP
+
 
 ## Client - Full layout
 * Move tags on the miniboard

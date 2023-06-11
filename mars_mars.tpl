@@ -273,6 +273,9 @@
 
             <div id="playergroup_plants_{PLAYER_COLOR}" class="playerboard_group">
               <div class="playerboard_group_img">
+                <div class="playerboard_group_underbutton">
+                  +<div class="tracker_forest tracker"></div>
+                </div>
                 <div class="token_img tracker_p"></div>
               </div>
               <div class="playerboard_produce">
@@ -282,6 +285,7 @@
               <div class="playerboard_own">
                 <div id="alt_tracker_p_{PLAYER_COLOR}" class="tracker"></div>
               </div>
+
             </div>
 
             <div class="playerboard_group">
@@ -297,8 +301,11 @@
               </div>
             </div>
 
-            <div class="playerboard_group">
+            <div id="playergroup_heat_{PLAYER_COLOR}" class="playerboard_group">
               <div class="playerboard_group_img">
+                <div class="playerboard_group_underbutton">
+                  +<div class="token_img temperature_icon"></div>
+                </div>
                 <div class="token_img tracker_h"></div>
               </div>
               <div class="playerboard_produce">
@@ -309,7 +316,6 @@
                 <div id="alt_tracker_h_{PLAYER_COLOR}" class="tracker"></div>
               </div>
             </div>
-
 
           </div>
           <div id="player_tags_{PLAYER_COLOR}" class="player_tags"></div>
@@ -448,9 +454,6 @@
         <div id="alt_tracker_tagPlant_{PLAYER_COLOR}" class="tracker badge  tracker_tagPlant" ></div>
         <div id="alt_tracker_tagScience_{PLAYER_COLOR}" class="tracker badge  tracker_tagScience"></div>
         <div id="alt_tracker_tagSpace_{PLAYER_COLOR}" class="tracker badge  tracker_tagSpace"></div>
-
-
-
       </div>
     </div>
 

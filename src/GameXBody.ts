@@ -365,7 +365,7 @@ class GameXBody extends GameTokens {
     } else if (this.custom_placement[tokenInfo.key]) {
       result.location = this.custom_placement[tokenInfo.key];
     } else if (tokenInfo.key=='starting_player'){
-      this.darhflog('fp!!!');
+      result.location=tokenInfo.location.replace('tableau_','fpholder_');
     }
     else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       if (!this.isLayoutFull()) {
@@ -550,6 +550,9 @@ class GameXBody extends GameTokens {
       paramargs.forEach((tid: string) => {
         if (tid.startsWith('tracker_p_')) {
           tid= tid.replace('tracker_p_','playergroup_plants_');
+        }
+        if (tid.startsWith('tracker_h_')) {
+          tid= tid.replace('tracker_h_','playergroup_heat_');
         }
 
         if (tid == "none") {

@@ -498,6 +498,9 @@
        case 'forest':
          ret =_('Requires $v Forest tiles.');
          break;
+       case 'all_city':
+         ret =_('Requires $v citie(s) in play.');
+         break;
        default:
          ret='NOT FOUND :'+what;
          break;

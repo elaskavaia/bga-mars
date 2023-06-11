@@ -303,6 +303,13 @@ display: none;
   }
 }
 
+.fp_holder{
+  position: absolute;
+  top: -8px;
+  right: -1px;
+  width: fit-content;
+}
+
 #settings-controls-container.settingsControlsHidden {
   display: none;
 }
