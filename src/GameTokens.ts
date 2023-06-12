@@ -95,11 +95,7 @@ class GameTokens extends GameBasics {
     super.cancelLocalStateEffects();
   }
 
-  addCancelButton() {
-    if (!$("button_cancel")) {
-      this.addActionButton("button_cancel", _("Cancel"), () => this.cancelLocalStateEffects(), null, null, "red");
-    }
-  }
+
 
   setupPlayer(playerInfo: any) {
     console.log("player info " + playerInfo.id, playerInfo);
@@ -122,6 +118,7 @@ class GameTokens extends GameBasics {
     }
     return res;
   }
+
   isLocationByType(id: string) {
     return this.hasType(id, "location");
   }
@@ -514,6 +511,7 @@ class GameTokens extends GameBasics {
         key: tokenId,
         _chain: tokenId,
         name: tokenId,
+        showtooltip: false
       };
     } else {
       tokenInfo = dojo.clone(tokenInfo);

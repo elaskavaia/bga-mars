@@ -20,6 +20,7 @@
       <div id="map_middle">
         <div id="map_top">
           <div id="oxygen_map">
+            <div id="tracker_o" class="tracker param"></div>
             <div class="oxygen_scale">
               <div class="oxygen_scale_item" data-val="0"></div>
               <div class="oxygen_scale_item" data-val="1"></div>
@@ -39,27 +40,33 @@
 
             </div>
           </div>
-          <div class="outer_generation">
+          <div class="outer_generation" id="outer_generation">
               <div class="generation_decor">
-                <div id="generation_counter"></div>
+                <div id="generation_counter">
+                  <div id="tracker_gen" class="tracker"></div>
+                </div>
               </div>
               <div class="generation_bottom">
                 <div id="generation_text">Gen</div>
               </div>
-            </div>
+          </div>
         </div>
         <div id="map_left">
 
           <div id="decks_area">
 
-            <div class="deck_line">
-              <div id="deck_main_title" class="deck_line_text">Draw:</div><div id="deck_main" class=""></div>
+            <div id="deck_holder" class="deck_line">
+              <div id="deck_main_title" class="deck_line_text">Draw:</div>
+              <div id="deck_main" class="carddeck"></div>
             </div>
             <div id="discard_holder" class="deck_line">
-              <div id="discard_title" class="deck_line_text">Discard:</div><div id="discard_main" class="card carddeck"></div>
+              <div id="discard_title" class="deck_line_text">Discard:</div>
+              <div id="discard_main" class="carddeck"></div>
             </div>
 
-            <div id="oceans_pile" class="tile tile_3"></div>
+            <div id="oceans_pile" class="tile tile_3">
+              <div id="tracker_w" class="tracker param"></div>
+            </div>
           </div>
           <div id="standard_projects_area">
             <div id="standard_projects_title_zone">
@@ -152,6 +159,7 @@
         </div>
         <div id="map_right">
           <div id="temperature_map">
+            <div id="tracker_t" class="tracker param"></div>
             <div class="temperature_scale">
               <div class="temperature_scale_item" data-val="-30"></div>
               <div class="temperature_scale_item" data-val="-28"></div>

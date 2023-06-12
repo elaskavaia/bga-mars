@@ -1,10 +1,10 @@
 
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
-  private custom_placement: any;
   private custom_pay:any;
   private local_counters:any;
   private isDoingSetup:boolean;
+  private vlayout: VLayout;
  // private parses:any;
 
   constructor() {
@@ -12,35 +12,29 @@ class GameXBody extends GameTokens {
   }
 
   setup(gamedatas: any) {
-    this.defaultTooltipDelay = 800;
-    this.isDoingSetup=true;
+    try {
+      this.isDoingSetup = true;
+      this.defaultTooltipDelay = 800;
+      this.vlayout = new VLayout(this);
+      this.custom_pay = undefined;
+      this.local_counters = [];
 
-    //custom destinations for tokens
-    this.custom_placement = {
-      tracker_t: "temperature_map",
-      tracker_o: "oxygen_map",
-      tracker_w: "oceans_pile",
-      tracker_gen: "generation_counter",
-    };
-    this.custom_pay = undefined;
-    this.local_counters=[];
+      super.setup(gamedatas);
+      // hexes are not moved so manually connect
+      this.connectClass("hex", "onclick", "onToken");
 
+      document.querySelectorAll(".hex").forEach((node) => {
+        this.updateTooltip(node.id);
+      });
 
-    super.setup(gamedatas);
-    // hexes are not moved so manually connect
-    this.connectClass("hex", "onclick", "onToken");
-
-    document.querySelectorAll(".hex").forEach((node) => {
-      this.updateTooltip(node.id);
-    });
-
-   // this.connectClass("filter_button", "onclick", "onFilterButton");
-    this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
-
-    $('thething').removeAttribute('title');
-
-    console.log("Ending game setup");
-    this.isDoingSetup=false;
+      // this.connectClass("filter_button", "onclick", "onFilterButton");
+      this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+    } catch (e) {
+      console.error(e);
+      console.log("Ending game setup");
+      this.isDoingSetup = false;
+      throw e;
+    }
   }
 
   setupPlayer(playerInfo: any) {
@@ -50,22 +44,13 @@ class GameXBody extends GameTokens {
       cards_2:0,
       cards_3:0
     }
-
-    if (this.isLayoutFull()) {
-      const div = $("main_area");
-      const board = $(`player_area_${playerInfo.color}`);
-      div.appendChild(board);
-      $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_3',"1");
-      $(`tableau_${playerInfo.color}`).setAttribute('data-visibility_1',"1");
-
-      dojo.destroy(`tableau_${playerInfo.color}_cards_3vp`);
-      dojo.destroy(`tableau_${playerInfo.color}_cards_1vp`);
-    } 
+    this.vlayout.setupPlayer(playerInfo);
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
+
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -284,32 +269,11 @@ class GameXBody extends GameTokens {
 
   }
   renderSpecificToken(tokenNode: HTMLElement) {
-    /* It seems duplicates the other stuff which is already there, disabled for now
-    const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
-    if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
-      const originalHtml = tokenNode.outerHTML;
-      this.darhflog(
-        "checking",
-        tokenNode.id,
-        "maintype",
-        displayInfo.mainType,
-        "location inc",
-        displayInfo.location.includes("miniboard_")
-      );
-      if (displayInfo.mainType == "tracker" && displayInfo.location.includes("miniboard_")) {
-        const rpDiv = document.createElement("div");
-        rpDiv.classList.add("outer_tracker", "outer_" + displayInfo.typeKey);
-        rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
-        tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
-      }
-    }*/
+
   }
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: string): HTMLDivElement {
-    if (id && location && this.custom_placement[id]) {
-      location = this.custom_placement[id];
-    }
     const div = super.createDivNode(id, classes, location);
     return div;
   }
@@ -322,9 +286,9 @@ class GameXBody extends GameTokens {
      // this.darhflog('update card ',tokenDisplayInfo);
     }
 
-    if (this.isLocationByType(tokenDisplayInfo.key)) {
-      tokenDisplayInfo.imageTypes += " infonode";
-    }
+    // if (this.isLocationByType(tokenDisplayInfo.key)) {
+    //   tokenDisplayInfo.imageTypes += " infonode";
+    // }
   }
   updateVisualsFromOp(opInfo: any, opId: number) {
     const opargs = opInfo.args;
@@ -365,8 +329,6 @@ class GameXBody extends GameTokens {
       result.nop = true;
     } else if (tokenInfo.key.startsWith("milestone")) {
       result.nop = true;
-    } else if (this.custom_placement[tokenInfo.key]) {
-      result.location = this.custom_placement[tokenInfo.key];
     } else if (tokenInfo.key=='starting_player'){
       result.location=tokenInfo.location.replace('tableau_','fpholder_');
     }

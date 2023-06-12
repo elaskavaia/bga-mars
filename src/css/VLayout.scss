@@ -31,7 +31,7 @@
     position: relative;
     border-radius: unset;
     background: unset;
-    outline: 1px dashed green;
+    outline: 1px dashed var(--pcolor);
   }
 
   .player_counters {
@@ -217,13 +217,29 @@
     top: 7%;
     width: var(--stan-width);
     height: var(--stan-height);
+    color: white;
   }
 
-  .deck>.card,
-  .discard>.card {
+  .carddeck, #discard_main, #deck_main {
+    background-image: url("img/resources.png");
+    background-size: 1000% 200%;
+    background-position: 0 -100%;
+    background-color: unset;
+    width: calc(var(--map-width) * 0.05);
+    height: calc(var(--map-width) * 0.07);
+    outline: 1px solid #9E9E9E;
+    border-radius: 20%;
+  }
+
+  .carddeck > .counter {
+    position: absolute;
+    top: 10%;
+  }
+
+  .carddeck > .card {
     pointer-events: none;
   }
-
+  
   #deck_main {
     left: 10%;
     position: absolute;
@@ -253,13 +269,7 @@
     clip-path: revert;
   }
 
-  #deck_main,
-  #discard_main {
-    background-image: url("img/resources.png");
-    background-size: 1000% 200%;
-    background-position: 0 -100%;
-    background-color: none;
-  }
+
 
   // .hex {
   //   background-color: rgba(148, 202, 216, 0.4);
@@ -308,7 +318,7 @@
     grid-template-columns: var(--card-height) calc(var(--card-width)*2) var(--card-width) var(--card-width) auto;
     grid-template-rows: var(--card-width) auto;
     grid-gap: 0.2em;
-    outline: 2px dashed yellow;
+    outline: 2px dashed var(--plcolor);
     padding: 0;
   }
 

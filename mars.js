@@ -1640,12 +1640,6 @@ var GameTokens = /** @class */ (function (_super) {
         }
         _super.prototype.cancelLocalStateEffects.call(this);
     };
-    GameTokens.prototype.addCancelButton = function () {
-        var _this = this;
-        if (!$("button_cancel")) {
-            this.addActionButton("button_cancel", _("Cancel"), function () { return _this.cancelLocalStateEffects(); }, null, null, "red");
-        }
-    };
     GameTokens.prototype.setupPlayer = function (playerInfo) {
         console.log("player info " + playerInfo.id, playerInfo);
         var mini = $("miniboard_".concat(playerInfo.color));
@@ -2033,6 +2027,7 @@ var GameTokens = /** @class */ (function (_super) {
                 key: tokenId,
                 _chain: tokenId,
                 name: tokenId,
+                showtooltip: false
             };
         }
         else {
@@ -2180,28 +2175,27 @@ var GameXBody = /** @class */ (function (_super) {
     }
     GameXBody.prototype.setup = function (gamedatas) {
         var _this = this;
-        this.defaultTooltipDelay = 800;
-        this.isDoingSetup = true;
-        //custom destinations for tokens
-        this.custom_placement = {
-            tracker_t: "temperature_map",
-            tracker_o: "oxygen_map",
-            tracker_w: "oceans_pile",
-            tracker_gen: "generation_counter",
-        };
-        this.custom_pay = undefined;
-        this.local_counters = [];
-        _super.prototype.setup.call(this, gamedatas);
-        // hexes are not moved so manually connect
-        this.connectClass("hex", "onclick", "onToken");
-        document.querySelectorAll(".hex").forEach(function (node) {
-            _this.updateTooltip(node.id);
-        });
-        // this.connectClass("filter_button", "onclick", "onFilterButton");
-        this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
-        $('thething').removeAttribute('title');
-        console.log("Ending game setup");
-        this.isDoingSetup = false;
+        try {
+            this.isDoingSetup = true;
+            this.defaultTooltipDelay = 800;
+            this.vlayout = new VLayout(this);
+            this.custom_pay = undefined;
+            this.local_counters = [];
+            _super.prototype.setup.call(this, gamedatas);
+            // hexes are not moved so manually connect
+            this.connectClass("hex", "onclick", "onToken");
+            document.querySelectorAll(".hex").forEach(function (node) {
+                _this.updateTooltip(node.id);
+            });
+            // this.connectClass("filter_button", "onclick", "onFilterButton");
+            this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+        }
+        catch (e) {
+            console.error(e);
+            console.log("Ending game setup");
+            this.isDoingSetup = false;
+            throw e;
+        }
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
         _super.prototype.setupPlayer.call(this, playerInfo);
@@ -2210,15 +2204,7 @@ var GameXBody = /** @class */ (function (_super) {
             cards_2: 0,
             cards_3: 0
         };
-        if (this.isLayoutFull()) {
-            var div = $("main_area");
-            var board = $("player_area_".concat(playerInfo.color));
-            div.appendChild(board);
-            $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_3', "1");
-            $("tableau_".concat(playerInfo.color)).setAttribute('data-visibility_1', "1");
-            dojo.destroy("tableau_".concat(playerInfo.color, "_cards_3vp"));
-            dojo.destroy("tableau_".concat(playerInfo.color, "_cards_1vp"));
-        }
+        this.vlayout.setupPlayer(playerInfo);
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {
             var board = $("player_area_".concat(playerInfo.color));
@@ -2400,31 +2386,9 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.renderSpecificToken = function (tokenNode) {
-        /* It seems duplicates the other stuff which is already there, disabled for now
-        const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
-        if (tokenNode && displayInfo && tokenNode.parentNode && displayInfo.location) {
-          const originalHtml = tokenNode.outerHTML;
-          this.darhflog(
-            "checking",
-            tokenNode.id,
-            "maintype",
-            displayInfo.mainType,
-            "location inc",
-            displayInfo.location.includes("miniboard_")
-          );
-          if (displayInfo.mainType == "tracker" && displayInfo.location.includes("miniboard_")) {
-            const rpDiv = document.createElement("div");
-            rpDiv.classList.add("outer_tracker", "outer_" + displayInfo.typeKey);
-            rpDiv.innerHTML = '<div class="token_img ' + displayInfo.typeKey + '"></div>' + originalHtml;
-            tokenNode.parentNode.replaceChild(rpDiv, tokenNode);
-          }
-        }*/
     };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
-        if (id && location && this.custom_placement[id]) {
-            location = this.custom_placement[id];
-        }
         var div = _super.prototype.createDivNode.call(this, id, classes, location);
         return div;
     };
@@ -2434,9 +2398,9 @@ var GameXBody = /** @class */ (function (_super) {
             //do nothing
             // this.darhflog('update card ',tokenDisplayInfo);
         }
-        if (this.isLocationByType(tokenDisplayInfo.key)) {
-            tokenDisplayInfo.imageTypes += " infonode";
-        }
+        // if (this.isLocationByType(tokenDisplayInfo.key)) {
+        //   tokenDisplayInfo.imageTypes += " infonode";
+        // }
     };
     GameXBody.prototype.updateVisualsFromOp = function (opInfo, opId) {
         var _a, _b, _c;
@@ -2478,9 +2442,6 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (tokenInfo.key.startsWith("milestone")) {
             result.nop = true;
-        }
-        else if (this.custom_placement[tokenInfo.key]) {
-            result.location = this.custom_placement[tokenInfo.key];
         }
         else if (tokenInfo.key == 'starting_player') {
             result.location = tokenInfo.location.replace('tableau_', 'fpholder_');
@@ -3037,6 +2998,29 @@ var Operation = /** @class */ (function () {
     function Operation() {
     }
     return Operation;
+}());
+var VLayout = /** @class */ (function () {
+    function VLayout(game) {
+        this.game = game;
+    }
+    VLayout.prototype.setupPlayer = function (playerInfo) {
+        if (!this.game.isLayoutFull())
+            return;
+        var div = $("main_area");
+        var board = $("player_area_".concat(playerInfo.color));
+        div.appendChild(board);
+        $("tableau_".concat(playerInfo.color)).setAttribute("data-visibility_3", "1");
+        $("tableau_".concat(playerInfo.color)).setAttribute("data-visibility_1", "1");
+        dojo.destroy("tableau_".concat(playerInfo.color, "_cards_3vp"));
+        dojo.destroy("tableau_".concat(playerInfo.color, "_cards_1vp"));
+        dojo.place('tracker_gen', 'map_left');
+        dojo.destroy('outer_generation');
+        dojo.place('deck_main', 'decks_area');
+        dojo.place('discard_main', 'decks_area');
+        dojo.destroy('deck_holder');
+        dojo.destroy('discard_holder');
+    };
+    return VLayout;
 }());
 define([
     "dojo",
