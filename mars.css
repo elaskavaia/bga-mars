@@ -3986,7 +3986,6 @@
 
 .miniboard > * {
   display: flex;
-  width: 55px;
   justify-content: normal;
   align-items: center;
   font-weight: bold;
@@ -4206,9 +4205,14 @@
 
 .miniboard_entry {
   display: flex;
-  width: calc(var(--resourcesize) * 2);
+  width: 100%;
   font-size: calc(var(--resourcesize) * 0.55);
   font-family: "Prototype";
+}
+
+.cardback.counter {
+  color: white;
+  justify-content: flex-end;
 }
 
 .player_tags.miniboard_tags {
@@ -5062,74 +5066,6 @@
 }
 
 .mfull {
-  /*
-    darhf:temp deactivate
-
-  .miniboard > * {
-   display: inline-block;
-  }
-  .miniboard {
-
-
-   .playerboard_header {
-     width: 100%;
-     display: grid;
-     grid-template-columns: 1fr 1fr 1fr;
-
-     .playerboard_group {
-       position: relative;
-       width: fit-content;
-       height: fit-content;
-       display: grid;
-       grid-template-columns: 60% 40%;
-       grid-template-rows: repeat(2, 1fr);
-       grid-column-gap: 0px;
-       grid-row-gap: 0px;
-       width: calc(var(--resourcesize) * 2.2);
-       height: calc(var(--resourcesize) * 1);
-       font-family: "Prototype";
-       font-size: calc(var(--resourcesize) * 0.4);
-       margin: calc(var(--resourcesize) * 0.06);
-
-       .playerboard_group_img {
-         display: flex;
-         justify-content: flex-end;
-         align-items: center;
-         grid-area: 1 / 1 / 4 / 2;
-         .token_img {
-           margin-right: 0;
-         }
-       }
-       .playerboard_produce {
-         width: revert;
-         height: revert;
-         grid-area: 2 / 2 / 3 / 3;
-       }
-       .playerboard_own {
-         width: revert;
-         height: revert;
-         background: #ffffff7d;
-         grid-area: 1 / 2 / 2 / 3;
-       }
-
-       .player_tags .badge[data-state="0"],
-       .tracker[data-state="0"] {
-         display: revert;
-       }
-     }
-
-     .playerboard_own {
-       width: var(--pb_cellsize);
-       height: calc(var(--pb_cellsize) * 0.5);
-       display: flex;
-       justify-content: space-evenly;
-       align-items: center;
-     }
-   }
-
-
-    }
-    */
   /* Added by darhf, to prevent messing things up too much*/
 }
 .mfull .player-board {
@@ -5312,7 +5248,9 @@
   height: var(--stan-height);
   color: white;
 }
-.mfull .carddeck, .mfull #discard_main, .mfull #deck_main {
+.mfull .carddeck,
+.mfull #discard_main,
+.mfull #deck_main {
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
   background-position: 0 -100%;
@@ -6430,10 +6368,39 @@
 .mfull .player_area_name {
   top: 0;
 }
-.mfull .player_controls {
+.mfull .playerboard_header {
   display: none;
 }
-.mfull .playerboard_header {
+.mfull .playerboard_controls {
+  display: none;
+}
+.mfull .viewcards_button {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 3%;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.mfull .buttoncard {
+  width: 20px;
+  height: 32px;
+  border: 1px solid gray;
+  border-radius: 20%;
+}
+.mfull .viewcards_button[data-cardtype="1"] .buttoncard {
+  background-color: #b5ff82;
+}
+.mfull .viewcards_button[data-cardtype="2"] .buttoncard {
+  background-color: #67b1f1;
+}
+.mfull .viewcards_button[data-cardtype="3"] .buttoncard {
+  background-color: #f64c4c;
+}
+.mfull .viewcards_button[data-selected="0"] i {
+  display: none;
+}
+.mfull .viewcards_button[data-selected="1"] .viewcardbutton_counter {
   display: none;
 }
 
@@ -6695,6 +6662,10 @@
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
   background-position: -500% -100%;
+}
+
+#starting_player::after {
+  content: "";
 }
 
 /* --------------- LOGS -------------------- */

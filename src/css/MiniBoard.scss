@@ -10,7 +10,7 @@
 
 .miniboard > * {
   display: flex;
-  width: 55px;
+  // width: 55px; // huh?
   justify-content: normal;
   align-items: center;
   font-weight: bold;
@@ -221,10 +221,16 @@ display: none;
 
 .miniboard_entry {
   display: flex;
-  width: calc(var(--resourcesize) * 2);
+  width: 100%;
   font-size: calc(var(--resourcesize) * 0.55);
   font-family: 'Prototype';
 }
+
+.cardback.counter {
+  color: white;
+  justify-content: flex-end;
+}
+
 
 .player_tags.miniboard_tags{
   --pb_cellsize: 50px;

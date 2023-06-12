@@ -275,6 +275,10 @@
   background-position: -500% -100%;
 }
 
+#starting_player::after{
+  content: ""; // override tracker value
+}
+
 /* --------------- LOGS -------------------- */
 
 .log .token_img {

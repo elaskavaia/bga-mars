@@ -3006,19 +3006,25 @@ var VLayout = /** @class */ (function () {
     VLayout.prototype.setupPlayer = function (playerInfo) {
         if (!this.game.isLayoutFull())
             return;
+        var color = playerInfo.color;
         var div = $("main_area");
-        var board = $("player_area_".concat(playerInfo.color));
+        var board = $("player_area_".concat(color));
         div.appendChild(board);
-        $("tableau_".concat(playerInfo.color)).setAttribute("data-visibility_3", "1");
-        $("tableau_".concat(playerInfo.color)).setAttribute("data-visibility_1", "1");
-        dojo.destroy("tableau_".concat(playerInfo.color, "_cards_3vp"));
-        dojo.destroy("tableau_".concat(playerInfo.color, "_cards_1vp"));
+        $("tableau_".concat(color)).setAttribute("data-visibility_3", "1");
+        $("tableau_".concat(color)).setAttribute("data-visibility_1", "1");
+        dojo.destroy("tableau_".concat(color, "_cards_3vp"));
+        dojo.destroy("tableau_".concat(color, "_cards_1vp"));
         dojo.place('tracker_gen', 'map_left');
         dojo.destroy('outer_generation');
         dojo.place('deck_main', 'decks_area');
         dojo.place('discard_main', 'decks_area');
         dojo.destroy('deck_holder');
         dojo.destroy('discard_holder');
+        // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
+        dojo.place("player_viewcards_2_".concat(color), "miniboardentry_".concat(color));
+        dojo.place("player_viewcards_1_".concat(color), "miniboardentry_".concat(color));
+        dojo.place("player_viewcards_3_".concat(color), "miniboardentry_".concat(color));
+        dojo.place("player_area_name_".concat(color), "player_area_".concat(color));
     };
     return VLayout;
 }());

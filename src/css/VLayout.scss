@@ -220,7 +220,9 @@
     color: white;
   }
 
-  .carddeck, #discard_main, #deck_main {
+  .carddeck,
+  #discard_main,
+  #deck_main {
     background-image: url("img/resources.png");
     background-size: 1000% 200%;
     background-position: 0 -100%;
@@ -231,15 +233,15 @@
     border-radius: 20%;
   }
 
-  .carddeck > .counter {
+  .carddeck>.counter {
     position: absolute;
     top: 10%;
   }
 
-  .carddeck > .card {
+  .carddeck>.card {
     pointer-events: none;
   }
-  
+
   #deck_main {
     left: 10%;
     position: absolute;
@@ -468,75 +470,6 @@
     }
   }
 
-  /*
-  darhf:temp deactivate
-
-.miniboard > * {
- display: inline-block;
-}
-.miniboard {
-
-
- .playerboard_header {
-   width: 100%;
-   display: grid;
-   grid-template-columns: 1fr 1fr 1fr;
-
-   .playerboard_group {
-     position: relative;
-     width: fit-content;
-     height: fit-content;
-     display: grid;
-     grid-template-columns: 60% 40%;
-     grid-template-rows: repeat(2, 1fr);
-     grid-column-gap: 0px;
-     grid-row-gap: 0px;
-     width: calc(var(--resourcesize) * 2.2);
-     height: calc(var(--resourcesize) * 1);
-     font-family: "Prototype";
-     font-size: calc(var(--resourcesize) * 0.4);
-     margin: calc(var(--resourcesize) * 0.06);
-
-     .playerboard_group_img {
-       display: flex;
-       justify-content: flex-end;
-       align-items: center;
-       grid-area: 1 / 1 / 4 / 2;
-       .token_img {
-         margin-right: 0;
-       }
-     }
-     .playerboard_produce {
-       width: revert;
-       height: revert;
-       grid-area: 2 / 2 / 3 / 3;
-     }
-     .playerboard_own {
-       width: revert;
-       height: revert;
-       background: #ffffff7d;
-       grid-area: 1 / 2 / 2 / 3;
-     }
-
-     .player_tags .badge[data-state="0"],
-     .tracker[data-state="0"] {
-       display: revert;
-     }
-   }
-
-   .playerboard_own {
-     width: var(--pb_cellsize);
-     height: calc(var(--pb_cellsize) * 0.5);
-     display: flex;
-     justify-content: space-evenly;
-     align-items: center;
-   }
- }
-
-
-  }
-  */
-
   .player_tags .badge[data-state="0"],
   .player_tags .tracker[data-state="0"] {
     opacity: 0.2;
@@ -560,11 +493,46 @@
     top: 0;
   }
 
-  .player_controls {
-    display: none;
-  }
   .playerboard_header {
     display: none;
   }
+  .playerboard_controls {
+    display: none;
+  }
 
+  .viewcards_button {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 3%;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+
+  .buttoncard {
+    width: 20px;
+    height: 32px;
+    border: 1px solid gray;
+    border-radius: 20%;    
+  }
+
+  .viewcards_button[data-cardtype="1"] .buttoncard {
+    background-color: #b5ff82;
+  }
+
+  .viewcards_button[data-cardtype="2"] .buttoncard {
+    background-color: #67b1f1;
+  }
+
+  .viewcards_button[data-cardtype="3"] .buttoncard {
+    background-color: #f64c4c;
+  }
+
+  .viewcards_button[data-selected="0"] i {
+    display: none;
+  }
+
+  .viewcards_button[data-selected="1"] .viewcardbutton_counter {
+    display: none;
+  }
 }

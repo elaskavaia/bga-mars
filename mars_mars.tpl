@@ -378,10 +378,10 @@
     </div>
     <div id="miniboard_{PLAYER_COLOR}" class="style_2">
       <div id="fpholder_{PLAYER_COLOR}" class="fp_holder"></div>
-      <div class="miniboard_entry">
-        <div class="token_img cardback"></div>
-        <div id="counter_hand_{PLAYER_COLOR}"></div>
+      <div id="miniboardentry_{PLAYER_COLOR}" class="miniboard_entry">
+        <div id="counter_hand_{PLAYER_COLOR}" class="token_img cardback"></div>
         <div id="counter_draw_{PLAYER_COLOR}"></div>
+        <!-- in full layout the other card counts go there -->
       </div>
 
 
