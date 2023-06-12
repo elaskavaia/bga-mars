@@ -155,7 +155,7 @@
     background-size: 1200% 100%;
   }
 
-    .mcompact {
+    .player_area{
       .player_tags .tracker::after {
         content: attr(data-state);
         grid-column-start: 2;

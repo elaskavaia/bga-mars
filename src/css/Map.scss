@@ -40,7 +40,7 @@
   flex-direction: column;
   justify-content: flex-end;
   height: 96%;
-  width: 7.4vw;
+  width: calc(var(--stan-width)* 0.8);
 }
 
 
