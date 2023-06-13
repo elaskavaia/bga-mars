@@ -233,7 +233,7 @@ display: none;
 
 
 .player_tags.miniboard_tags{
-  --pb_cellsize: 39px;
+  --pb_cellsize: 33px;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -379,3 +379,25 @@ display: none;
   display: none;
 }
 
+#player_board_params {
+  display: flex;
+  --resourcesize: 35px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-right: 1%;
+  padding-left: 1%;
+
+  .params_line{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+    .tile {
+      width: var(--resourcesize);
+      height: var(--resourcesize);
+      position: relative;
+    }
+  }
+}

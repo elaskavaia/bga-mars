@@ -21,6 +21,7 @@ Random notes on todo items
 
 * Integrate Spend 8p to get 1 greenery in the player board
   * Idem for heat
+  * -> OK but no action on button
 * Better tooltips
   * Tooltips on Milestones + costs & explanations
   * Tooltips on Awards + costs & explanations
@@ -31,6 +32,7 @@ Random notes on todo items
 * Show if prereq are not met
 * Tableau filtering
 * Show terraforming parameters
+  * Put them in params bar
 * Resources in log - images not all defined
 * Animation of resources
 * Land tracker icon is missing
@@ -39,7 +41,6 @@ Random notes on todo items
 * Titanim exchange rate during payment
 * Reverse ocean counter
 * Cubes on cards
-* Tooltips on milestones
 * Layout types based on size
 
 ## Client - Compact layout

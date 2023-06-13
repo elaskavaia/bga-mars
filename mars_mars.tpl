@@ -527,7 +527,6 @@
           <div class="tracker   tracker_land"></div>
           <div id="alt_tracker_land_{PLAYER_COLOR}" class="mini_counter" ></div>
         </div>
-
      
       </div>
     </div>
@@ -537,6 +536,17 @@
   </div>
   <div id="limbo">
     <div id="starting_player"></div>
+    <div id="player_board_params">
+      <div class="params_line">
+        <div class="token_img oxygen_icon"></div><div class="groupline"><div id="alt_tracker_o" class="tracker param"></div> / 14%</div>
+      </div>
+      <div class="params_line">
+        <div class="token_img temperature_icon""></div><div class="groupline"><div id="alt_tracker_t" class="tracker param"></div> / +8°C</div>
+      </div>
+      <div class="params_line">
+        <div class="tile tile_3"></div><div class="groupline"><div id="alt_tracker_w" class="tracker param"></div> / 9</div>
+      </div>
+    </div>
   </div>
   <div id="params"></div>
   <div id="dev_null" class="defhidden"></div>

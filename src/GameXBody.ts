@@ -27,8 +27,11 @@ class GameXBody extends GameTokens {
         this.updateTooltip(node.id);
       });
 
-      // this.connectClass("filter_button", "onclick", "onFilterButton");
+
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+      dojo.place("player_board_params", "player_config", "last");
+
+      this.isDoingSetup = false;
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
@@ -360,6 +363,7 @@ class GameXBody extends GameTokens {
         this.updatePlayerLocalCounters(plcolor);
 
         //auto switch tabs here
+        this.darhflog('isdoingseyup',this.isDoingSetup);
         if (!this.isDoingSetup) {
           if ($(tokenInfo.location).dataset['visibility_' + t] == '0') {
             for (let i = 1; i <= 3; i++) {
@@ -649,6 +653,9 @@ class GameXBody extends GameTokens {
         items_htm+=`
         <div class="payment_group">
            <div class="token_img tracker_${res}"></div>
+           <div class="item_worth">
+               <div class="token_img tracker_m payment_item">${this.custom_pay.rate[res]}</div>
+          </div>
           <div id="payment_item_minus_${res}" class="btn_payment_item btn_item_minus" data-resource="${res}" data-direction="minus">-</div>
           <div id="payment_item_${res}" class="payment_item_value item_value_${res}">0</div>
           <div id="payment_item_plus_${res}" class="btn_payment_item btn_item_plus" data-resource="${res}" data-direction="plus">+</div>                
@@ -704,7 +711,13 @@ class GameXBody extends GameTokens {
           //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
           }
       }
-      const mc= this.custom_pay.needed - total_res;
+      let mc= this.custom_pay.needed - total_res;
+      if (mc<0) {
+        mc=0;
+        $('btn_custompay_send').classList.add('overpay');
+      } else {
+        $('btn_custompay_send').classList.remove('overpay');
+      }
       this.custom_pay.selected['m']=mc;
    //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
       const values_htm=this.resourcesToHtml( this.custom_pay.selected,true);

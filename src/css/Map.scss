@@ -171,6 +171,7 @@
 #map_bottom{
   display: flex;
   width:100%;
+  font-size: calc(var(--map-width)*0.02);
 }
 
 

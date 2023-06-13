@@ -168,6 +168,7 @@
   font-family: "Prototype";
   display: flex;
   width: fit-content;
+  font-size: calc(var(--stan-width)*0.12);
 
   .deck_line_text{
     margin-right:3%;
@@ -286,6 +287,14 @@
 #starting_player::after{
   content: ""; // override tracker value
 }
+
+.bgabutton.overpay {
+  background: red;
+}
+.bgabutton.overpay:hover {
+  background: red;
+}
+
 
 /* --------------- LOGS -------------------- */
 
