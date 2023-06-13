@@ -113,3 +113,11 @@
   background-color: rgb(255, 0, 251);
   background-image: none;
 }
+
+/* warning banner for message_warning */
+.head_warning {
+  background-color: #e6c66e;
+}
+.head_warning span {
+  text-shadow: 0px 0px 2px black;
+}

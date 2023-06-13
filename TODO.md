@@ -12,7 +12,6 @@ Random notes on todo items
 * payment with overpay? I have lagrange (196) ,worth 9 MC  with advance alloys and space station
 * lose production does not offer yourself?
 * Missing undo button when inactive during research
-* Css for info message notif ("We are done")
 
 ## Client
 

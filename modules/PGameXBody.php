@@ -1171,7 +1171,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->effect_incTerraformingRank($color, $steps);
         if ($this->getTerraformingProgression() >= 100) {
-            $this->notifyWithName('message_warning', clienttranslate("You have done it!!!"));
+            $this->notifyWithName('message_warning', clienttranslate("The terraforming is complete!!!"));
         }
         return true;
     }
