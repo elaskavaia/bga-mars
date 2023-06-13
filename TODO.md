@@ -11,11 +11,8 @@ Random notes on todo items
 * passing heat on 0 place ocean
 * payment with overpay? I have lagrange (196) ,worth 9 MC  with advance alloys and space station
 * lose production does not offer yourself?
-* total vp scope same player name
 * Missing undo button when inactive during research
 * Css for info message notif ("We are done")
-* Starting player on startup
-* Send pre-req calculation on draw
 
 ## Client
 

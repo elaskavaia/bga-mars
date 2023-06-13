@@ -1270,8 +1270,8 @@ abstract class PGameXBody extends PGameMachine {
             $score = $this->dbGetScore($player_id);
             $this->setStat($score, 'game_vp_total', $player_id);
             $mc = $this->getTrackerValue($player["player_color"], 'm');
-            $this->notifyMessage(clienttranslate('${player_name} has ${count} M€ left (for tiebreaker purposes)'), ['count' => $mc]);
-            $this->notifyMessage(clienttranslate('${player_name} scores ${count} TOTAL VP'), ['count' => $score]);
+            $this->notifyMessage(clienttranslate('${player_name} has ${count} M€ left (for tiebreaker purposes)'), ['count' => $mc], $player_id);
+            $this->notifyMessage(clienttranslate('${player_name} scores ${count} TOTAL VP'), ['count' => $score], $player_id);
             $this->dbSetAuxScore($player_id, $mc);
         }
 
@@ -1377,7 +1377,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->notifyWithName('message', clienttranslate('${player_name} scores ${inc} points for Greenery tiles'), [
             'inc' => $greenery
-        ]);
+        ],  $player_id );
     }
 
     function scoreCards(string $owner) {
@@ -1411,7 +1411,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with implicit points'), [
             'inc' => $vpdirect
-        ]);
+        ], $player_id );
     }
 
     //////////////////////////////////////////////////////////////////////////////
