@@ -399,31 +399,8 @@
     }
   }
 
-
-  .player_tags .badge,
-  .player_tags .tracker {
-    position: relative;
-    width: 32px;
-    height: 32px;
-
-    display: inline-block;
-    margin-right: unset;
-    grid-column-start: unset;
-  }
-
-  .player_tags.miniboard_tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
-  .player_tags .tracker::after {
-    content: attr(data-state);
-    font-family: "Prototype";
-    position: absolute;
-    text-shadow: 1px 1px black;
-    bottom: 20%;
-    right: 0%;
+  .badge ~ .mini_counter[data-state="0"] {
+    opacity: 0.2;
   }
 
   #tracker_o,
