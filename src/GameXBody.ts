@@ -36,7 +36,7 @@ class GameXBody extends GameTokens {
       console.error(e);
       console.log("Ending game setup");
       this.isDoingSetup = false;
-      throw e;
+      this.showError("Error during game setup: "+e);
     }
   }
 

@@ -502,13 +502,18 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function evaluateExpression($cond, $owner = 0, $context = null, $mods = null) {
-        if (!$owner)
-            $owner = $this->getActivePlayerColor();
-        $expr = MathExpression::parse($cond);
-        $mapper = function ($x) use ($owner, $context, $mods) {
-            return $this->evaluateTerm($x, $owner, $context, $mods);
-        };
-        return $expr->evaluate($mapper);
+        try {
+            if (!$owner)
+                $owner = $this->getActivePlayerColor();
+            $expr = MathExpression::parse($cond);
+            $mapper = function ($x) use ($owner, $context, $mods) {
+                return $this->evaluateTerm($x, $owner, $context, $mods);
+            };
+            return $expr->evaluate($mapper);
+        } catch (Exception $e) {
+            $this->error($e);
+            throw new BgaSystemException("Cannot parse math expression '$cond'");
+        }
     }
 
     function evaluateTerm($x, $owner, $context = null, $mods = null) {
@@ -563,7 +568,7 @@ abstract class PGameXBody extends PGameMachine {
         $type = stripslashes($opinfo['type']);
         $classname = 'xxx';
         try {
-            $expr = OpExpression::parseExpression($type);
+            $expr = $this->parseOpExpression($type);
             $issimple = $expr->isSimple();
             if ($issimple && !$expr->isAtomic()) {
                 $classname = "DelegatedOperation";
@@ -717,7 +722,7 @@ abstract class PGameXBody extends PGameMachine {
             $data = $lisinfo['target'] . ":e:" . $card;
             if (startsWith($outcome, 'counter')) {
                 // conditional
-                $counterexpt = OpExpression::parseExpression($outcome);
+                $counterexpt = $this->parseOpExpression($outcome);
                 $c = OpExpression::str($counterexpt->args[0]);
                 $opinst = $this->getOperationInstanceFromType($c, $owner, 1, $data);
                 if ($opinst instanceof Operation_counter) {
@@ -749,7 +754,7 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($listeners as $lisinfo) {
                 $outcome = $lisinfo['outcome'];
                 // at this point only discounts are MC
-                $opexpr = OpExpression::parseExpression($outcome);
+                $opexpr = $this->parseOpExpression($outcome);
                 $this->systemAssertTrue("Not expecting other payment options", $opexpr->args[0] == 'm');
                 $discount += $opexpr->to;
             }
@@ -803,7 +808,7 @@ abstract class PGameXBody extends PGameMachine {
     function mtMatchEvent($trigger_rule, $trigger_owner, $event, $event_owner, &$splits = []) {
         if (!$trigger_rule)
             return false;
-        $expr = OpExpression::parseExpression($trigger_rule);
+        $expr = $this->parseOpExpression($trigger_rule);
         if ($expr->op != ';')
             $args = [$expr];
         else
@@ -850,11 +855,13 @@ abstract class PGameXBody extends PGameMachine {
             $types[] = 's';
         if (strstr($tags, "Space"))
             $types[] = 'u';
+
+        $types[] = 'm';
+        // heat is last choice
         if ($this->playerHasCard($color, 'card_corp_4')) {
             // Helion
             $types[] = 'h';
         }
-        $types[] = 'm';
         return $types;
     }
 

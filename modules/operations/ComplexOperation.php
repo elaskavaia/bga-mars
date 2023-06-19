@@ -9,7 +9,7 @@ class ComplexOperation extends AbsOperation {
     public function __construct(array $opinfo, PGameXBody $game) {
         parent::__construct($opinfo['type'], $opinfo, $game);
         $type = $this->mnemonic;
-        $expr = OpExpression::parseExpression($type);
+        $expr = $this->game->parseOpExpression($type);
         $this->operation = $expr->op;
         $this->delegates = [];
         foreach ($expr->args as $arg) {

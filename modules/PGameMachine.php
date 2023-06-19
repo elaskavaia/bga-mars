@@ -56,12 +56,15 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     public function isAtomicOperation($op) {
-        $expr = OpExpression::parseExpression($op);
+        $expr = $this->parseOpExpression($op);
         return $expr->isAtomic();
     }
     public function isSimpleOperation($op) {
-        $expr = OpExpression::parseExpression($op);
+        $expr = $this->parseOpExpression($op);
         return $expr->op == "!";
+    }
+    public function parseOpExpression($op) {
+        return $this->machine->parseOpExpression($op);
     }
 
     function debug_dumpMachine() {
@@ -330,6 +333,7 @@ abstract class PGameMachine extends PGameTokens {
 
 
     function expandOperation($op, $count) {
+
         $type = $op["type"];
         if ($count !== null) {
             // user resolved the count

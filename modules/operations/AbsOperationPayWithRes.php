@@ -25,99 +25,126 @@ class AbsOperationPayWithRes extends AbsOperation {
     protected function argPrimaryDetails() {
         if ($this->isVoid()) return [];
         $info = [];
-        $count = $this->getCount();
-        $mcount = $this->game->getTrackerValue($this->color, 'm');
-        $cost = $this->getCost();
-        foreach ($this->getTypes() as $type) {
-            $typecount = $this->game->getTrackerValue($this->color, $type);
-
-            $er = $this->getExchangeRate($type);
-
-            $maxres = (int)floor($count / $er);
-            $propres = min($maxres, $typecount);
-            if ($type == 'm') {
-                $this->addProposal($info, $type, $mcount, $typecount, $er, $propres,  0);
-                continue;
-            }
-
-         
-            if ($maxres == 0 && $typecount > 0 && $cost > 0 && $er > 1) {
-                $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1); // overpay
-            } else {
-                $this->addProposal($info, $type, $mcount, $typecount, $er, $count - $propres * $er,  $propres);
-            }
-
-            if ($mcount < $cost && $mcount > 0) {
-                $this->addProposal($info, $type, $mcount, $typecount, $er, $mcount, (int)ceil(($cost - $mcount)/ $er));
-            }
-            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, 1);
-            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, ($maxres - 1));
-            // $this->addProposal($info, $type, $mcount, $typecount, $er, 0, $maxres);
-        }
+        $cost = $this->getCount();
 
         $info['payment'] = [
             'q' => 0,
-            'count' => $count,
-            'original' => $cost,
+            'count' => $cost,
+            'original' =>  $this->getCost(),
             'resources' => [],
-            'rate' => []
+            'rescount' => [],
+            'rate' => [],
+            'sign' => []
         ];
-        foreach ($this->getTypes() as $type) {
+        $alltypes = $this->getTypes();
+        foreach ($alltypes as $type) {
             $typecount = $this->game->getTrackerValue($this->color, $type);
             $er = $this->getExchangeRate($type);
-            $maxres = (int)floor($count / $er);
+            $maxres = (int)floor($cost / $er);
             $propres = min($maxres, $typecount);
-            if ($propres < $typecount && $er * $propres < $count) {
-                $propres += 1;
+            $overres = $propres;
+            if ($propres < $typecount && $er * $propres < $cost) {
+                $overres += 1;
             }
-            $info['payment']['resources'][$type] = $propres;
+            $info['payment']['rescount'][$type] = $typecount;
+            $info['payment']['resources'][$type] = $overres;
+            $info['payment']['resopti'][$type] = $propres;
             $info['payment']['rate'][$type] = $er;
-            $info['payment']['sign'][$type] =  ($propres * $er) <=> $this->getCount();
+            $info['payment']['sign'][$type] =  ($overres * $er) <=> $cost;
+        }
+
+        $rem = $cost;
+        $prop = [];
+        foreach ($alltypes as $type) {
+
+            $er = $info['payment']['rate'][$type];
+
+
+            $propres =    $info['payment']['resopti'][$type]; // optimal res
+            $overres =    $info['payment']['resources'][$type]; // overpay res
+
+            if ($er > 1) {
+                if ($this->addProposal($info,  ['m' => $cost - $propres * $er, $type => $propres])) break;
+                if ($overres > $propres) $this->addProposal($info,  [$type => $overres]);
+            }
+
+            $maxres = (int)floor($rem / $er);
+            $rempropres = min($maxres,  $info['payment']['rescount'][$type]);
+            $rem = $rem - $rempropres * $er;
+            $prop[$type] = $rempropres;
+            if ($rem <= 0) {
+                if ($this->addProposal($info, $prop)) break;
+            }
+        }
+        $this->addProposal($info, $prop);
+
+        //  proposal with minimal resource
+        $mcount = $info['payment']['rescount']['m'];
+        $heatcount = array_get($info['payment']['rescount'], 'h', 0);
+        $mhcount = $mcount + $heatcount;
+        if ($mhcount > 0) {
+            $type = array_shift($alltypes);
+            $er = $info['payment']['rate'][$type];
+            $propres = min((int)ceil(($cost - $mhcount) / $er), $info['payment']['rescount'][$type]);
+            $propm = min($mcount, $cost - $propres * $er);
+            $map = ['m' => $propm, $type => $propres];
+            if ($heatcount>0) {
+                $map['h']=$mhcount - $propm;
+            }
+            if ($this->addProposal($info, $map)) return $info;
         }
 
 
         return $info;
     }
 
-    private function addProposal(array &$info, $type,  int $mc_count, int $type_count, int $er, int $mc_try, int $type_try) {
-        if ($mc_try < 0) return;
-        if ($type_try < 0) return;
-        if ($type_try == 0 && $mc_try == 0) return;
-        $q = 0;
-        if ($mc_try > $mc_count || $type_try > $type_count) {
-            $q = MA_ERR_COST;
-            return;
-        }
-
+    private function addProposal(array &$info, array $map): bool {
+        $total = 0;
         $proposal = '';
-        if ($mc_try) $proposal .= "${mc_try}m";
-        if ($type_try) $proposal .= "${type_try}${type}";
-        if (array_get($info, $proposal)) return;
-        $tryc = $mc_try + $type_try * $er;
+        foreach ($map as $type => $type_try) {
+            if ($type_try < 0) return false;
+            if ($type_try == 0) continue;
+            $type_count = $info['payment']['rescount'][$type];
+            if ($type_try > $type_count) return false;
+            $er = $info['payment']['rate'][$type];
+            $total += $type_try * $er;
+            $proposal .= "${type_try}${type}";
+        }
+        // already there
+        if (array_get($info, $proposal)) return false;
+        if (!$proposal) return false;
+
+        $q = 0;
+        $count =  $this->getCount();
         $info["$proposal"] = [
             'q' => $q,
-            'count' => min($tryc, $this->getCount()),
-            'resources' => ['m' => $mc_try ],
-            'sign' => $tryc <=> $this->getCount()
+            'count' => min($total, $count),
+            'resources' => $map,
+            'sign' => $total <=> $count
         ];
-        if ($type!='m') $info["$proposal"]['resources'][$type]=$type_try;
+        return true;
     }
 
     function canResolveAutomatically() {
         $possible = $this->getStateArg('target');
         if (count($possible) == 1) return false; // this is only Custom option
-        if (count($possible) == 2) return true;
+        if (count($possible) == 2 && count($this->getTypes()) == 1) return true;
         return false;
     }
 
     function effect(string $owner, int $inc): int {
         if ($inc <= 0 || $this->getCost() <= 0) return $inc;
+        $value = $this->getUncheckedArg('target');
         $possible = $this->getStateArg('target');
-        if (count($possible) <= 2) {
+        if (!$value) {
             $value = array_shift($possible);
+            if ($value == 'payment') {
+                $value = array_shift($possible);
+            }
         } else {
             $value = $this->getCheckedArg('target');
         }
+
 
         $info = $this->getStateArg('info');
         $inc = $info[$value]['count'];
@@ -130,10 +157,14 @@ class AbsOperationPayWithRes extends AbsOperation {
             foreach ($uservalue as $type => $ut) {
                 if (isset($info[$value]['resources'][$type])) {
                     $tt = $info[$value]['resources'][$type];
-                    if ($ut<=0) continue;
-                
+                    if ($ut <= 0 || !((int)$ut)) continue;
+
                     if ($ut > 0 && $ut <= $tt) $this->game->effect_incCount($owner, $type, -$ut);
-                    else throw new BgaUserException("Invalid payment of $ut? $type"); // FIX XSS
+
+                    else {
+                        $message = sprintf(self::_("Invalid amount of %s used for payment: %d of %d (max)"), $this->game->getTokenName($type), $ut, $tt);
+                        throw new BgaUserException($message);
+                    }
                     $rate = $info[$value]['rate'][$type];
                     $realinc += $rate * $ut;
                     $this->game->warn("User pay $type: $ut of $tt * $rate => $realinc/$inc");

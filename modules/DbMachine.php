@@ -116,12 +116,14 @@ class DbMachine extends APP_GameClass {
     }
 
     function insertOp($rank, $op) {
+       
+     
         $this->insertList($rank, [$op]);
         return $this->DbGetLastId();
     }
 
     function createOperationSimple(string $type, string $color, string $data = '') {
-        $expr = OpExpression::parseExpression($type);
+        $expr = $this->parseOpExpression($type);
         $from = 1;
         $to = 1;
         if ($expr->op == '!') {
@@ -130,6 +132,15 @@ class DbMachine extends APP_GameClass {
             $type = OpExpression::str($expr->toUnranged());
         }
         return $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_SEQ, 0, $data);
+    }
+
+    public function parseOpExpression($op) {
+        try {
+            return OpExpression::parseExpression($op);
+        } catch (Throwable $e) {
+            $this->error($e);
+            throw new BgaSystemException("Cannot parse op expression '$op'");
+        }
     }
 
     function createOperation(
@@ -145,6 +156,9 @@ class DbMachine extends APP_GameClass {
     ) {
         if (!$pool) $pool = $this->pool;
         if (!$this->pool) throw new feException("no pool");
+        // sanity check
+        $this->parseOpExpression($type);
+   
         $record = [
             "type" => $this->escapeStringForDB($type),
             "rank" => $this->checkInt($rank),
@@ -610,7 +624,7 @@ class DbMachine extends APP_GameClass {
         if ($rule instanceof OpExpression) {
             $expr = $rule;
         } else {
-            $expr = OpExpression::parseExpression($rule);
+            $expr = $this->parseOpExpression($rule);
         }
         $opflag = $this->operandCode($expr->op);
         $op = OpExpression::getop($expr);

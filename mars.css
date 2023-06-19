@@ -125,6 +125,15 @@
   background-image: none;
 }
 
+/* warning banner for message_warning */
+.head_warning {
+  background-color: #e6c66e;
+}
+
+.head_warning span {
+  text-shadow: 0px 0px 2px black;
+}
+
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -2740,7 +2749,7 @@
   flex-direction: column;
   justify-content: flex-end;
   height: 96%;
-  width: 7.4vw;
+  width: calc(var(--stan-width) * 0.8);
 }
 
 #map {
@@ -3301,6 +3310,7 @@
 #map_bottom {
   display: flex;
   width: 100%;
+  font-size: calc(var(--map-width) * 0.02);
 }
 
 #main_awards, #main_milestones {
@@ -4216,7 +4226,7 @@
 }
 
 .player_tags.miniboard_tags {
-  --pb_cellsize: 50px;
+  --pb_cellsize: 33px;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -4294,8 +4304,76 @@
   width: fit-content;
 }
 
+.miniboard_tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: calc(var(--pb_cellsize) * 1);
+  height: calc(var(--pb_cellsize) * 1);
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: calc(var(--pb_cellsize) * 0.4);
+  font-family: "Prototype";
+  /*
+    .mini_counter[data-state="0"]:after {
+      content: '/';
+    }
+  */
+}
+.miniboard_tag .tracker::after, .miniboard_tag .param::after {
+  content: unset;
+}
+.miniboard_tag .mini_counter {
+  z-index: 1;
+}
+.miniboard_tag .mini_counter::after {
+  content: attr(data-state);
+}
+
+.player_tags .miniboard_tag .badge {
+  width: calc(var(--pb_cellsize) * 1);
+  height: calc(var(--pb_cellsize) * 1);
+  display: flex;
+  grid-template-columns: unset;
+  grid-column-start: unset;
+  margin-right: unset;
+  opacity: 0.8;
+  position: absolute;
+}
+.player_tags .miniboard_tag .tracker {
+  width: calc(var(--pb_cellsize) * 1);
+  height: calc(var(--pb_cellsize) * 1);
+  display: flex;
+  grid-template-columns: unset;
+  grid-column-start: unset;
+  margin-right: unset;
+  opacity: 0.8;
+  position: absolute;
+}
+
 #settings-controls-container.settingsControlsHidden {
   display: none;
+}
+
+#player_board_params {
+  display: flex;
+  --resourcesize: 35px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-right: 1%;
+  padding-left: 1%;
+}
+#player_board_params .params_line {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#player_board_params .params_line .tile {
+  width: var(--resourcesize);
+  height: var(--resourcesize);
+  position: relative;
 }
 
 #ebd-body {
@@ -4428,6 +4506,7 @@
   display: inline-grid;
   grid-template-columns: calc(var(--pb_cellsize) * 0.5) calc(var(--pb_cellsize) * 0.3);
   grid-column-start: 1;
+  font-size: calc(var(--pb_cellsize) * 0.3);
   margin-right: calc(var(--pb_cellsize) * 0.3);
 }
 
@@ -4441,7 +4520,7 @@
   background-size: 1200% 100%;
 }
 
-.mcompact .player_tags .tracker::after {
+.player_area .player_tags .tracker::after {
   content: attr(data-state);
   grid-column-start: 2;
   display: flex;
@@ -4449,7 +4528,7 @@
   align-items: center;
   font-family: "Prototype";
 }
-.mcompact .player_tags .tracker[data-state="0"] {
+.player_area .player_tags .tracker[data-state="0"] {
   display: none;
 }
 
@@ -4994,6 +5073,18 @@
   margin-bottom: 2px;
   margin-top: 0;
   background: #e1e1e1;
+  position: relative;
+}
+.payment_group .item_worth {
+  position: absolute;
+  display: flex;
+  --resourcesize: 13px;
+  bottom: 1%;
+  left: 25%;
+}
+.payment_group .item_worth .payment_item {
+  font-size: 10px;
+  font-weight: lighter;
 }
 
 .btn_payment_item {
@@ -6197,27 +6288,8 @@
   background-position: 77.7777777778% 100%;
   background-image: url(img/full/cards3.jpg);
 }
-.mfull .player_tags .badge,
-.mfull .player_tags .tracker {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  display: inline-block;
-  margin-right: unset;
-  grid-column-start: unset;
-}
-.mfull .player_tags.miniboard_tags {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.mfull .player_tags .tracker::after {
-  content: attr(data-state);
-  font-family: "Prototype";
-  position: absolute;
-  text-shadow: 1px 1px black;
-  bottom: 20%;
-  right: 0%;
+.mfull .badge ~ .mini_counter[data-state="0"] {
+  opacity: 0.2;
 }
 .mfull #tracker_o,
 .mfull #tracker_gen,
@@ -6548,16 +6620,22 @@
   font-family: "Prototype";
   display: flex;
   width: fit-content;
+  font-size: calc(var(--stan-width) * 0.12);
 }
 .deck_line .deck_line_text {
   margin-right: 3%;
 }
-.deck_line .counter {
+.deck_line .carddeck > .counter {
+  top: 0;
+  left: 0;
   position: relative;
   margin-left: 10px;
 }
 .deck_line .infobox {
   display: none;
+}
+.deck_line #discard_main {
+  background-color: unset;
 }
 
 #discard_main {
@@ -6639,7 +6717,8 @@
 }
 
 #thisplayer_zone {
-  width: calc(var(--map-width) * 1.3);
+  min-width: calc(var(--map-width) * 1.3);
+  flex-grow: 100;
 }
 
 #players_area {
@@ -6666,6 +6745,14 @@
 
 #starting_player::after {
   content: "";
+}
+
+.bgabutton.overpay {
+  background: red;
+}
+
+.bgabutton.overpay:hover {
+  background: red;
 }
 
 /* --------------- LOGS -------------------- */

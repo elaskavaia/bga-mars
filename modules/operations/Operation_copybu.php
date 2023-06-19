@@ -15,7 +15,10 @@ class Operation_copybu extends AbsOperation {
             $subr = self::getProductionOnlyRules($r, $card_id);
             if (!$subr) return MA_ERR_NOTAPPLICABLE;
             if ($this->game->isVoidSingle($subr, $color, 1, $card_id)) return MA_ERR_MANDATORYEFFECT;
-            return MA_OK;
+            return [
+                'q'=>MA_OK,
+                'r'=>$subr
+            ];
         });
     }
 
@@ -34,7 +37,7 @@ class Operation_copybu extends AbsOperation {
             return $pp;
         }
         if (!$r) return '';
-        $parsed = OpExpression::parseExpression("nop,$r");
+        $parsed = $this->game->parseOpExpression("nop,$r");
         $res = [];
         foreach ($parsed->args as $arg) {
             $subrule = OpExpression::str($arg);
@@ -49,7 +52,7 @@ class Operation_copybu extends AbsOperation {
         $card_id = $this->getCheckedArg('target');
         $r = $this->game->getRulesFor($card_id, 'r');
         $subr = self::getProductionOnlyRules($r, $card_id);
-        $this->game->push($subr, 1, 1, $color, MACHINE_FLAG_ORDERED, "$card_id:r");
+        $this->game->machine->push($subr, 1, 1, $color, MACHINE_FLAG_ORDERED, "$card_id:r");
         $this->game->notifyMessageWithTokenName(clienttranslate('${player_name} copies production box of ${token_name}'), $card_id, $color);
         return 1;
     }

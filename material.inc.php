@@ -4930,6 +4930,24 @@ $this->token_types = [
 /* --- gen php end map_material --- */
 
   // various stuff - MANUAL ENTRY
+  'm' => [
+    'name' => clienttranslate("M€")
+  ],
+  's' => [
+    'name' => clienttranslate("Steel")
+  ],
+  'u' => [
+    'name' => clienttranslate("Titanium")
+  ],
+  'p' => [
+    'name' => clienttranslate("Plant")
+  ],
+  'e' => [
+    'name' => clienttranslate("Energy")
+  ],
+  'h' => [
+    'name' => clienttranslate("Heat")
+  ],
   'solo' => [  //
     'gen' => 14,
   ],

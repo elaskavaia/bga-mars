@@ -2187,14 +2187,15 @@ var GameXBody = /** @class */ (function (_super) {
             document.querySelectorAll(".hex").forEach(function (node) {
                 _this.updateTooltip(node.id);
             });
-            // this.connectClass("filter_button", "onclick", "onFilterButton");
             this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+            dojo.place("player_board_params", "player_config", "last");
+            this.isDoingSetup = false;
         }
         catch (e) {
             console.error(e);
             console.log("Ending game setup");
             this.isDoingSetup = false;
-            throw e;
+            this.showError("Error during game setup: " + e);
         }
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
@@ -2474,6 +2475,7 @@ var GameXBody = /** @class */ (function (_super) {
                 this.local_counters[plcolor]['cards_' + t]++;
                 this.updatePlayerLocalCounters(plcolor);
                 //auto switch tabs here
+                this.darhflog('isdoingseyup', this.isDoingSetup);
                 if (!this.isDoingSetup) {
                     if ($(tokenInfo.location).dataset['visibility_' + t] == '0') {
                         for (var i = 1; i <= 3; i++) {
@@ -2748,7 +2750,7 @@ var GameXBody = /** @class */ (function (_super) {
             if (this.custom_pay.available[res] <= 0)
                 continue;
             //add paiments buttons
-            items_htm += "\n        <div class=\"payment_group\">\n           <div class=\"token_img tracker_".concat(res, "\"></div>\n          <div id=\"payment_item_minus_").concat(res, "\" class=\"btn_payment_item btn_item_minus\" data-resource=\"").concat(res, "\" data-direction=\"minus\">-</div>\n          <div id=\"payment_item_").concat(res, "\" class=\"payment_item_value item_value_").concat(res, "\">0</div>\n          <div id=\"payment_item_plus_").concat(res, "\" class=\"btn_payment_item btn_item_plus\" data-resource=\"").concat(res, "\" data-direction=\"plus\">+</div>                \n        </div>\n      ");
+            items_htm += "\n        <div class=\"payment_group\">\n           <div class=\"token_img tracker_".concat(res, "\"></div>\n           <div class=\"item_worth\">\n               <div class=\"token_img tracker_m payment_item\">").concat(this.custom_pay.rate[res], "</div>\n          </div>\n          <div id=\"payment_item_minus_").concat(res, "\" class=\"btn_payment_item btn_item_minus\" data-resource=\"").concat(res, "\" data-direction=\"minus\">-</div>\n          <div id=\"payment_item_").concat(res, "\" class=\"payment_item_value item_value_").concat(res, "\">0</div>\n          <div id=\"payment_item_plus_").concat(res, "\" class=\"btn_payment_item btn_item_plus\" data-resource=\"").concat(res, "\" data-direction=\"plus\">+</div>                \n        </div>\n      ");
         }
         /*
           <div class="token_img tracker_m payment_item">
@@ -2788,6 +2790,13 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             }
             var mc = _this.custom_pay.needed - total_res;
+            if (mc < 0) {
+                mc = 0;
+                $('btn_custompay_send').classList.add('overpay');
+            }
+            else {
+                $('btn_custompay_send').classList.remove('overpay');
+            }
             _this.custom_pay.selected['m'] = mc;
             //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
             var values_htm = _this.resourcesToHtml(_this.custom_pay.selected, true);

@@ -13,7 +13,7 @@ declare(strict_types=1);
  * ? optional, alias for [0,1]a
  * ! atomic (if needed)
  */
-class OpExpression {
+class OpExpression extends APP_Object {
     public $op;
     public $from = 1;
     public $to = 1;
@@ -132,8 +132,6 @@ class OpExpression {
     function isSimple() {
         return $this->op == "!";
     }
-
-
 }
 
 class OpExpressionTerminal extends OpExpression {
