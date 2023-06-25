@@ -388,6 +388,8 @@ var GameBasics = /** @class */ (function (_super) {
         setStyleAttributes(desti, mobileStyle);
         clone.style.transitionProperty = "all";
         clone.style.transitionDuration = duration + "ms";
+        clone.style.visibility = "visible";
+        clone.style.opacity = "1";
         // that will cause animation
         clone.style.left = desti.style.left;
         clone.style.top = desti.style.top;
@@ -2188,6 +2190,9 @@ var GameXBody = /** @class */ (function (_super) {
                 _this.updateTooltip(node.id);
             });
             this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+            document.querySelectorAll("#player_config > #player_board_params").forEach(function (node) {
+                dojo.destroy(node); // on undo this remains but another one generated
+            });
             dojo.place("player_board_params", "player_config", "last");
             this.isDoingSetup = false;
         }
@@ -2460,20 +2465,18 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
             var t = this.getRulesFor(tokenInfo.key, "t");
             result.location = tokenInfo.location + "_cards_" + t;
-            // if (this.isLayoutFull()) {
             if (this.getRulesFor(tokenInfo.key, "a")) {
                 result.location = tokenInfo.location + "_cards_2a";
             }
-            // }
+            var plcolor = tokenInfo.location.replace("tableau_", "");
+            this.local_counters[plcolor]["cards_" + t]++;
+            this.updatePlayerLocalCounters(plcolor);
             if (!this.isLayoutFull()) {
                 if (t == 1 || t == 3) {
                     if (this.getRulesFor(tokenInfo.key, "vp", '0') != '0') {
                         result.location = tokenInfo.location + "_cards_" + t + 'vp';
                     }
                 }
-                var plcolor = tokenInfo.location.replace('tableau_', '');
-                this.local_counters[plcolor]['cards_' + t]++;
-                this.updatePlayerLocalCounters(plcolor);
                 //auto switch tabs here
                 this.darhflog('isdoingseyup', this.isDoingSetup);
                 if (!this.isDoingSetup) {
@@ -3033,7 +3036,13 @@ var VLayout = /** @class */ (function () {
         dojo.place("player_viewcards_2_".concat(color), "miniboardentry_".concat(color));
         dojo.place("player_viewcards_1_".concat(color), "miniboardentry_".concat(color));
         dojo.place("player_viewcards_3_".concat(color), "miniboardentry_".concat(color));
+        dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("player_area_name_".concat(color), "player_area_".concat(color));
+        dojo.place("counter_draw_".concat(color), "limbo");
+        for (var i = 1; i <= 3; i++) {
+            $("tableau_" + color).dataset["visibility_" + i] = "1";
+            $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
+        }
     };
     return VLayout;
 }());

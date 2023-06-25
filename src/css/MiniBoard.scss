@@ -20,22 +20,21 @@
 .token_img {
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
-  width : var(--resourcesize);
-  height:  var(--resourcesize);
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  width : var(--resourcesize);
+  height:  var(--resourcesize);
+}
+
+.player_boards .token_img {
   margin-right: 4px;
 }
 
 .playerboard_produce .token_img {
   width: var(--producesize);
   height: var(--producesize);
-}
-
-.outer_tracker {
- /* border: 1px solid; */
 }
 
 .outer_tracker_m{
@@ -142,6 +141,7 @@
 }
 .token_img.cardback {
   background-position: 0 -100%;
+  background-color: black;
 }
 
 .tracker_passed {
@@ -224,11 +224,11 @@ display: none;
   width: 100%;
   font-size: calc(var(--resourcesize) * 0.55);
   font-family: 'Prototype';
+  justify-content: space-between;
 }
 
 .cardback.counter {
   color: white;
-  justify-content: flex-end;
 }
 
 
@@ -311,10 +311,7 @@ display: none;
 }
 
 .fp_holder{
-  position: absolute;
-  top: -8px;
-  right: -1px;
-  width: fit-content;
+  width: 36px; // has to be fixed size so layout does not change when 1st player marker dissapears
 }
 
 

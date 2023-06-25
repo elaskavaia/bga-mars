@@ -399,7 +399,7 @@
     }
   }
 
-  .badge ~ .mini_counter[data-state="0"] {
+  .badge~.mini_counter[data-state="0"] {
     opacity: 0.2;
   }
 
@@ -473,6 +473,7 @@
   .playerboard_header {
     display: none;
   }
+
   .playerboard_controls {
     display: none;
   }
@@ -483,14 +484,28 @@
     height: fit-content;
     border-radius: 3%;
     cursor: pointer;
-    margin-right: 5px;
   }
 
   .buttoncard {
-    width: 20px;
+    // center content
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .miniboard .card_icon {
+    // card form factor is 3/4
+    width: 24px;
     height: 32px;
+
+    border: 1px solid black;
+    border-radius: 20%;
     border: 1px solid gray;
-    border-radius: 20%;    
+    border-radius: 20%;
+  }
+
+  .viewcardbutton_counter {
+    height: calc(var(--resourcesize) * 0.55);
   }
 
   .viewcards_button[data-cardtype="1"] .buttoncard {
@@ -502,14 +517,11 @@
   }
 
   .viewcards_button[data-cardtype="3"] .buttoncard {
-    background-color: #f64c4c;
+    background-color: #e1ac18;
   }
 
   .viewcards_button[data-selected="0"] i {
     display: none;
   }
 
-  .viewcards_button[data-selected="1"] .viewcardbutton_counter {
-    display: none;
-  }
 }

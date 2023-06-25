@@ -585,7 +585,7 @@
   flex-wrap: wrap;
   position: relative;
 }
-.card_icono .token_img {
+.card_icono .card .token_img {
   margin-right: calc(var(--card-width) * 0.01);
 }
 .card_icono .outer_redborder {
@@ -4005,22 +4005,21 @@
 .token_img {
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
-  width: var(--resourcesize);
-  height: var(--resourcesize);
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  width: var(--resourcesize);
+  height: var(--resourcesize);
+}
+
+.player_boards .token_img {
   margin-right: 4px;
 }
 
 .playerboard_produce .token_img {
   width: var(--producesize);
   height: var(--producesize);
-}
-
-.outer_tracker {
-  /* border: 1px solid; */
 }
 
 .outer_tracker_m {
@@ -4147,6 +4146,7 @@
 
 .token_img.cardback {
   background-position: 0 -100%;
+  background-color: black;
 }
 
 .tracker_passed {
@@ -4218,11 +4218,11 @@
   width: 100%;
   font-size: calc(var(--resourcesize) * 0.55);
   font-family: "Prototype";
+  justify-content: space-between;
 }
 
 .cardback.counter {
   color: white;
-  justify-content: flex-end;
 }
 
 .player_tags.miniboard_tags {
@@ -4298,10 +4298,7 @@
 }
 
 .fp_holder {
-  position: absolute;
-  top: -8px;
-  right: -1px;
-  width: fit-content;
+  width: 36px;
 }
 
 .miniboard_tag {
@@ -4919,13 +4916,13 @@
 }
 .mcompact .buttoncard {
   width: calc(var(--pb_cellsize) * 0.3);
-  height: calc(var(--pb_cellsize) * 0.5);
-  border: 2px solid black;
+  height: calc(var(--pb_cellsize) * 0.4);
+  font-size: calc(var(--pb_cellsize) * 0.3);
+  border: 1px solid black;
+  border-radius: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 19%;
-  font-size: calc(var(--pb_cellsize) * 0.3);
 }
 .mcompact .viewcards_button[data-cardtype="1"] .buttoncard {
   background-color: #b5ff82;
@@ -6452,13 +6449,22 @@
   height: fit-content;
   border-radius: 3%;
   cursor: pointer;
-  margin-right: 5px;
 }
 .mfull .buttoncard {
-  width: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.mfull .miniboard .card_icon {
+  width: 24px;
   height: 32px;
+  border: 1px solid black;
+  border-radius: 20%;
   border: 1px solid gray;
   border-radius: 20%;
+}
+.mfull .viewcardbutton_counter {
+  height: calc(var(--resourcesize) * 0.55);
 }
 .mfull .viewcards_button[data-cardtype="1"] .buttoncard {
   background-color: #b5ff82;
@@ -6467,12 +6473,9 @@
   background-color: #67b1f1;
 }
 .mfull .viewcards_button[data-cardtype="3"] .buttoncard {
-  background-color: #f64c4c;
+  background-color: #e1ac18;
 }
 .mfull .viewcards_button[data-selected="0"] i {
-  display: none;
-}
-.mfull .viewcards_button[data-selected="1"] .viewcardbutton_counter {
   display: none;
 }
 
@@ -6736,8 +6739,8 @@
 
 #starting_player {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
   background-position: -500% -100%;

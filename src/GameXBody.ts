@@ -29,6 +29,11 @@ class GameXBody extends GameTokens {
 
 
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+      
+      document.querySelectorAll("#player_config > #player_board_params").forEach((node) => {
+         dojo.destroy(node); // on undo this remains but another one generated
+      });
+
       dojo.place("player_board_params", "player_config", "last");
 
       this.isDoingSetup = false;
@@ -346,11 +351,14 @@ class GameXBody extends GameTokens {
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
-     // if (this.isLayoutFull()) {
-        if (this.getRulesFor(tokenInfo.key, "a")) {
-          result.location = tokenInfo.location + "_cards_2a" ;
-        }
-     // }
+
+      if (this.getRulesFor(tokenInfo.key, "a")) {
+        result.location = tokenInfo.location + "_cards_2a";
+      }
+
+      const plcolor = tokenInfo.location.replace("tableau_", "");
+      this.local_counters[plcolor]["cards_" + t]++;
+      this.updatePlayerLocalCounters(plcolor);
 
       if (!this.isLayoutFull()) {
         if (t==1 || t==3) {
@@ -358,9 +366,7 @@ class GameXBody extends GameTokens {
             result.location = tokenInfo.location + "_cards_"+t+'vp' ;
           }
         }
-        const plcolor=tokenInfo.location.replace('tableau_','');
-        this.local_counters[plcolor]['cards_'+t]++;
-        this.updatePlayerLocalCounters(plcolor);
+
 
         //auto switch tabs here
         this.darhflog('isdoingseyup',this.isDoingSetup);

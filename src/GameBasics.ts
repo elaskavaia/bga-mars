@@ -446,6 +446,7 @@ class GameBasics extends GameGui {
     }
     var clone = this.projectOnto(mobileNode, "_temp");
     mobileNode.style.opacity = "0"; // hide original
+
     const rel = mobileStyle?.relation;
     if (rel) {
       delete mobileStyle.relation;
@@ -463,6 +464,8 @@ class GameBasics extends GameGui {
     setStyleAttributes(desti, mobileStyle);
     clone.style.transitionProperty = "all";
     clone.style.transitionDuration = duration + "ms";
+    clone.style.visibility = "visible";
+    clone.style.opacity = "1";
     // that will cause animation
     clone.style.left = desti.style.left;
     clone.style.top = desti.style.top;

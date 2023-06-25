@@ -454,14 +454,16 @@
   }
 
   .buttoncard {
+    // card form factor is 3/4
     width: calc(var(--pb_cellsize) * 0.3);
-    height: calc(var(--pb_cellsize) * 0.5);
-    border: 2px solid black;
+    height: calc(var(--pb_cellsize) * 0.4);
+    font-size: calc(var(--pb_cellsize) * 0.3);
+    border: 1px solid black;
+    border-radius: 20%;
+    // center content
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 19%;
-    font-size: calc(var(--pb_cellsize) * 0.3);;
   }
 
   .viewcards_button[data-cardtype="1"] .buttoncard  {

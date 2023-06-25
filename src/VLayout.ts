@@ -26,7 +26,13 @@ class VLayout {
     dojo.place(`player_viewcards_2_${color}`,`miniboardentry_${color}`);
     dojo.place(`player_viewcards_1_${color}`,`miniboardentry_${color}`);
     dojo.place(`player_viewcards_3_${color}`,`miniboardentry_${color}`);
+    dojo.place(`fpholder_${color}`,`miniboardentry_${color}`);
     dojo.place(`player_area_name_${color}`,`player_area_${color}`);
-    
+    dojo.place(`counter_draw_${color}`,`limbo`);
+
+    for (let i = 1; i <= 3; i++) {
+      $("tableau_" + color).dataset["visibility_" + i] = "1";
+      $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
+    }
   }
 }

@@ -354,9 +354,9 @@
       <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
         <div id="player_area_name_{PLAYER_COLOR}" class="player_area_name">{PLAYER_NAME}</div>
 
-        <div id="player_viewcards_2_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="2"  data-selected="1" data-player="{PLAYER_COLOR}"><div class="buttoncard"><i class="fa fa-eye" aria-hidden="true"></i><div id="local_counter_{PLAYER_COLOR}_cards_2" class="viewcardbutton_counter">0</div></div></div>
-        <div id="player_viewcards_1_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="1"  data-selected="0" data-player="{PLAYER_COLOR}"><div class="buttoncard"><i class="fa fa-eye" aria-hidden="true"></i><div id="local_counter_{PLAYER_COLOR}_cards_1" class="viewcardbutton_counter">0</div></div></div>
-        <div id="player_viewcards_3_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="3" data-selected="0" data-player="{PLAYER_COLOR}"><div class="buttoncard"><i class="fa fa-eye" aria-hidden="true"></i><div id="local_counter_{PLAYER_COLOR}_cards_3" class="viewcardbutton_counter">0</div></div></div>
+        <div id="player_viewcards_2_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="2"  data-selected="1" data-player="{PLAYER_COLOR}"><div class="buttoncard card_icon"><div id="local_counter_{PLAYER_COLOR}_cards_2" class="viewcardbutton_counter">0</div><i class="fa fa-eye" aria-hidden="true"></i></div></div>
+        <div id="player_viewcards_1_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="1"  data-selected="0" data-player="{PLAYER_COLOR}"><div class="buttoncard card_icon"><div id="local_counter_{PLAYER_COLOR}_cards_1" class="viewcardbutton_counter">0</div><i class="fa fa-eye" aria-hidden="true"></i></div></div>
+        <div id="player_viewcards_3_{PLAYER_COLOR}" class="viewcards_button" data-cardtype="3" data-selected="0" data-player="{PLAYER_COLOR}"><div class="buttoncard card_icon"><div id="local_counter_{PLAYER_COLOR}_cards_3" class="viewcardbutton_counter">0</div><i class="fa fa-eye" aria-hidden="true"></i></div></div>
         <!--
         <div id="player_filter_blue_{PLAYER_COLOR}" class="filter_button filter_blue"  data-color="blue"  data-enabled="1" data-player="{PLAYER_COLOR}">Actions(Blue)</div>
         <div id="player_filter_green_{PLAYER_COLOR}" class="filter_button filter_green" data-color="green"  data-enabled="1" data-player="{PLAYER_COLOR}">Automated (Green)</div>
@@ -377,11 +377,12 @@
 
     </div>
     <div id="miniboard_{PLAYER_COLOR}" class="style_2">
-      <div id="fpholder_{PLAYER_COLOR}" class="fp_holder"></div>
+
       <div id="miniboardentry_{PLAYER_COLOR}" class="miniboard_entry">
-        <div id="counter_hand_{PLAYER_COLOR}" class="token_img cardback"></div>
+        <div id="counter_hand_{PLAYER_COLOR}" class="token_img cardback card_icon"></div>
         <div id="counter_draw_{PLAYER_COLOR}"></div>
         <!-- in full layout the other card counts go there -->
+        <div id="fpholder_{PLAYER_COLOR}" class="fp_holder"></div>
       </div>
 
 
@@ -493,7 +494,10 @@
           <div class="tracker badge  tracker_tagJovian"></div>
           <div id="alt_tracker_tagJovian_{PLAYER_COLOR}" class="mini_counter" ></div>
         </div>
-
+        <div class="miniboard_tag">
+          <div class="tracker badge  tracker_tagCity"></div>
+          <div id="alt_tracker_tagCity_{PLAYER_COLOR}" class="mini_counter" ></div>
+        </div>
         <div class="miniboard_tag">
           <div class="tracker badge  tracker_tagPlant"></div>
           <div id="alt_tracker_tagPlant_{PLAYER_COLOR}" class="mini_counter" ></div>
@@ -505,10 +509,6 @@
         <div class="miniboard_tag">
           <div class="tracker badge  tracker_tagAnimal"></div>
           <div id="alt_tracker_tagAnimal_{PLAYER_COLOR}" class="mini_counter" ></div>
-        </div>
-        <div class="miniboard_tag">
-          <div class="tracker badge  tracker_tagCity"></div>
-          <div id="alt_tracker_tagCity_{PLAYER_COLOR}" class="mini_counter" ></div>
         </div>
         <div class="miniboard_tag">
           <div class="tracker badge  tracker_tagEvent"></div>
@@ -541,7 +541,7 @@
         <div class="token_img oxygen_icon"></div><div class="groupline"><div id="alt_tracker_o" class="tracker param"></div> / 14%</div>
       </div>
       <div class="params_line">
-        <div class="token_img temperature_icon""></div><div class="groupline"><div id="alt_tracker_t" class="tracker param"></div> / +8°C</div>
+        <div class="token_img temperature_icon"></div><div class="groupline"><div id="alt_tracker_t" class="tracker param"></div> / +8°C</div>
       </div>
       <div class="params_line">
         <div class="tile tile_3"></div><div class="groupline"><div id="alt_tracker_w" class="tracker param"></div> / 9</div>
