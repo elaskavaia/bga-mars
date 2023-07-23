@@ -6454,6 +6454,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  font-weight: normal;
 }
 .mfull .miniboard .card_icon {
   width: 24px;

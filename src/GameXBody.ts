@@ -523,12 +523,6 @@ class GameXBody extends GameTokens {
 
     if (ttype == "token") {
       paramargs.forEach((tid: string) => {
-        if (tid.startsWith('tracker_p_')) {
-          tid= tid.replace('tracker_p_','playergroup_plants_');
-        }
-        if (tid.startsWith('tracker_h_')) {
-          tid= tid.replace('tracker_h_','playergroup_heat_');
-        }
 
         if (tid == "none") {
           if (single) {
@@ -536,11 +530,7 @@ class GameXBody extends GameTokens {
               this.sendActionResolveWithTarget(opId, "none");
             });
           }
-        } else if (tid.startsWith('tracker_p_')) {
-
-
-        }
-        else {
+        } else {
           this.setActiveSlot(tid);
           this.setReverseIdMap(tid, opId, tid);
           if (single) {
@@ -630,6 +620,28 @@ class GameXBody extends GameTokens {
       })
 
     }*/
+  }
+
+  /** When server wants to activate some element, ui may adjust it */
+  getActiveSlotRedirect(_node: ElementOrId): ElementOrId {
+     const node = $(_node);
+     if (!node) {
+      this.showError("Not found " + _node);
+      return _node;
+    }
+    const id = node.id;
+    if (!id) return _node;
+    if (id.startsWith('tracker_p_')) {
+       return id.replace('tracker_p_','playergroup_plants_');
+    }
+    if (id.startsWith('tracker_h_')) {
+       return id.replace('tracker_h_','playergroup_heat_');
+    }
+    return node;
+  }
+
+  setActiveSlot(node: ElementOrId) {
+    super.setActiveSlot(this.getActiveSlotRedirect(node));
   }
 
   //Adds the payment picker according to available alternative payment options
@@ -853,9 +865,7 @@ class GameXBody extends GameTokens {
   }
 
   onUpdateActionButtons_multiplayerDispatch(args) {
-    if (!this.isCurrentPlayerActive()) {
       this.addUndoButton();
-    }
   }
 
   onUpdateActionButtons_after(stateName: string, args: any): void {

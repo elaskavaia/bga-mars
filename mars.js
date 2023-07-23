@@ -2630,20 +2630,12 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if (ttype == "token") {
             paramargs.forEach(function (tid) {
-                if (tid.startsWith('tracker_p_')) {
-                    tid = tid.replace('tracker_p_', 'playergroup_plants_');
-                }
-                if (tid.startsWith('tracker_h_')) {
-                    tid = tid.replace('tracker_h_', 'playergroup_heat_');
-                }
                 if (tid == "none") {
                     if (single) {
                         _this.addActionButton("button_none", _("None"), function () {
                             _this.sendActionResolveWithTarget(opId, "none");
                         });
                     }
-                }
-                else if (tid.startsWith('tracker_p_')) {
                 }
                 else {
                     _this.setActiveSlot(tid);
@@ -2730,6 +2722,27 @@ var GameXBody = /** @class */ (function (_super) {
           })
     
         }*/
+    };
+    /** When server wants to activate some element, ui may adjust it */
+    GameXBody.prototype.getActiveSlotRedirect = function (_node) {
+        var node = $(_node);
+        if (!node) {
+            this.showError("Not found " + _node);
+            return _node;
+        }
+        var id = node.id;
+        if (!id)
+            return _node;
+        if (id.startsWith('tracker_p_')) {
+            return id.replace('tracker_p_', 'playergroup_plants_');
+        }
+        if (id.startsWith('tracker_h_')) {
+            return id.replace('tracker_h_', 'playergroup_heat_');
+        }
+        return node;
+    };
+    GameXBody.prototype.setActiveSlot = function (node) {
+        _super.prototype.setActiveSlot.call(this, this.getActiveSlotRedirect(node));
     };
     //Adds the payment picker according to available alternative payment options
     GameXBody.prototype.createCustomPayment = function (opId, info) {
@@ -2924,9 +2937,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerDispatch = function (args) {
-        if (!this.isCurrentPlayerActive()) {
-            this.addUndoButton();
-        }
+        this.addUndoButton();
     };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
         if (this.isCurrentPlayerActive()) {
