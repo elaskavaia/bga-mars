@@ -712,14 +712,27 @@ class GameBasics extends GameGui {
     return;
   }
 
+  findActiveParent(element: HTMLElement) {
+    debugger;
+    if (this.isActiveSlot(element)) return element;
+    const parent = element.parentElement;
+    if (!parent || parent.id=='thething' || parent == element) return null;
+    return this.findActiveParent(parent);
+  }
+
   /**
    * This is convenient function to be called when processing click events, it - remembers id of object - stops propagation - logs to
    * console - the if checkActive is set to true check if element has active_slot class
    */
   onClickSanity(event: Event, checkActiveSlot?: boolean, checkActivePlayer?: boolean) {
-    var id = (event.currentTarget as HTMLElement).id;
+    let id = (event.currentTarget as HTMLElement).id;
     // Stop this event propagation
     dojo.stopEvent(event); // XXX
+    if (id == 'thething') { 
+      let node = this.findActiveParent(event.target as HTMLElement);
+      id = node?.id;
+    }
+
     console.log("on slot " + id);
     if (!id) return null;
     if (this.showHelp(id)) return null;

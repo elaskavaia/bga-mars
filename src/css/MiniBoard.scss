@@ -144,6 +144,13 @@
   background-color: black;
 }
 
+.token_img.tracker_t{
+  background-position: -200% -100%;
+}
+.token_img.tracker_o{
+  background-position: -100% -100%;
+}
+
 .tracker_passed {
 display: none;
 }

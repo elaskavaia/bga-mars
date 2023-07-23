@@ -1,11 +1,11 @@
 
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
-  private custom_pay:any;
-  private local_counters:any;
-  private isDoingSetup:boolean;
+  private custom_pay: any;
+  private local_counters: any;
+  private isDoingSetup: boolean;
   private vlayout: VLayout;
- // private parses:any;
+  // private parses:any;
 
   constructor() {
     super();
@@ -27,11 +27,10 @@ class GameXBody extends GameTokens {
         this.updateTooltip(node.id);
       });
 
-
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
-      
+
       document.querySelectorAll("#player_config > #player_board_params").forEach((node) => {
-         dojo.destroy(node); // on undo this remains but another one generated
+        dojo.destroy(node); // on undo this remains but another one generated
       });
 
       dojo.place("player_board_params", "player_config", "last");
@@ -41,24 +40,23 @@ class GameXBody extends GameTokens {
       console.error(e);
       console.log("Ending game setup");
       this.isDoingSetup = false;
-      this.showError("Error during game setup: "+e);
+      this.showError("Error during game setup: " + e);
     }
   }
 
   setupPlayer(playerInfo: any) {
     super.setupPlayer(playerInfo);
     this.local_counters[playerInfo.color] = {
-      cards_1:0,
-      cards_2:0,
-      cards_3:0
-    }
+      cards_1: 0,
+      cards_2: 0,
+      cards_3: 0,
+    };
     this.vlayout.setupPlayer(playerInfo);
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
       const board = $(`player_area_${playerInfo.color}`);
       $("thisplayer_zone").appendChild(board);
     }
-
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -73,7 +71,6 @@ class GameXBody extends GameTokens {
         let tagshtm = "";
         const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
 
-
         ttdiv.innerHTML = ` 
             <div class='token_title'>${displayInfo.name}</div>
         `;
@@ -81,23 +78,22 @@ class GameXBody extends GameTokens {
         if (tokenNode.id.startsWith("card_corp_")) {
           //Corp formatting
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-         // const texts = displayInfo.text.split(';');
-          let card_initial=displayInfo.text || '';
-          let card_effect =displayInfo.text_effect || '';
+          // const texts = displayInfo.text.split(';');
+          let card_initial = displayInfo.text || "";
+          let card_effect = displayInfo.text_effect || "";
 
-       //   if (texts.length>0) card_initial = texts[0];
-        //  if (texts.length>1) card_effect= texts[1];
+          //   if (texts.length>0) card_initial = texts[0];
+          //  if (texts.length>1) card_effect= texts[1];
           decor.innerHTML = `
                 <div class="card_bg"></div>
                 <div class="card_initial">${card_initial}</div>
                 <div class="card_effect">${card_effect}</div>
           `;
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('INITIAL')+'</div>';
-          ttdiv.innerHTML+=`<div class="card_initial">${card_initial}</div>`;
-          ttdiv.innerHTML+='<div class="tt_intertitle">'+_('EFFECT')+'</div>';
-          ttdiv.innerHTML+=`<div class="card_effect">${card_effect}</div>`;
-
-        } else if (tokenNode.id.startsWith("card_stanproj"))  {
+          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("INITIAL") + "</div>";
+          ttdiv.innerHTML += `<div class="card_initial">${card_initial}</div>`;
+          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
+          ttdiv.innerHTML += `<div class="card_effect">${card_effect}</div>`;
+        } else if (tokenNode.id.startsWith("card_stanproj")) {
           //standard project formatting:
           //cost -> action title
           //except for sell patents
@@ -106,82 +102,84 @@ class GameXBody extends GameTokens {
           //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
 
           decor.innerHTML = `
-             <div class='stanp_cost'>${displayInfo.cost!=0 ? displayInfo.cost : "X"}</div>
+             <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
              <div class='standard_projects_title'>${displayInfo.name}</div>  
           `;
-          ttdiv.innerHTML+=`<div class='card_effect'>${displayInfo.text}</div>`;
-        }
-
-        else {
+          ttdiv.innerHTML += `<div class='card_effect'>${displayInfo.text}</div>`;
+        } else {
           //tags
 
-          let firsttag='';
+          let firsttag = "";
           if (displayInfo.tags && displayInfo.tags != "") {
             for (let tag of displayInfo.tags.split(" ")) {
               tagshtm += '<div class="badge tag_' + tag + '"></div>';
-              if (firsttag=="") firsttag = tag;
+              if (firsttag == "") firsttag = tag;
             }
           }
-         // const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
-          let parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) :"";
+          // const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
+          let parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) : "";
 
           //specific card rendering
-          if (displayInfo.num==2) {
-            parsedPre='<div class="prereq_content mode_min">'+CustomRenders.parseActionsToHTML('pu')+'</div></div>';
+          if (displayInfo.num == 2) {
+            parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("pu") + "</div></div>";
           }
-          if (displayInfo.num==61) {
-            parsedPre='<div class="prereq_content mode_min">'+CustomRenders.parseActionsToHTML('ps')+'</div></div>';
+          if (displayInfo.num == 61) {
+            parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("ps") + "</div></div>";
           }
-          if (displayInfo.num==135) {
-            parsedPre='<div class="prereq_content mode_min">'+CustomRenders.parseActionsToHTML('tagPlant tagMicrobe tagAnimal')+'</div></div>';
+          if (displayInfo.num == 135) {
+            parsedPre =
+              '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("tagPlant tagMicrobe tagAnimal") + "</div></div>";
           }
           const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          let vp="";
+          let vp = "";
           if (displayInfo.vp) {
-            vp = parseInt(displayInfo.vp) ? '<div class="card_vp">'+displayInfo.vp+'</div>' : '<div class="card_vp">*</div>' ;
+            vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + "</div>" : '<div class="card_vp">*</div>';
           } else {
-            vp='';
+            vp = "";
           }
           const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
 
           //rules+rules styling
           //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
-          let card_r ="";
-          let addeffclass="";
+          let card_r = "";
+          let addeffclass = "";
           if (displayInfo.r) {
-            card_r =CustomRenders.parseExprToHtml(displayInfo.expr.r, displayInfo.num || null );
-            addeffclass = card_r.includes('icono_prod') ? 'cols' : 'rows';
+            card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r, displayInfo.num || null);
+            addeffclass = card_r.includes("icono_prod") ? "cols" : "rows";
             const blocks = (card_r.match(/card_icono/g) || []).length;
-            addeffclass+=' blocks_'+blocks;
-            const cntLosses=(card_r.match(/cnt_losses/g) || []).length;
-            const cntGains=(card_r.match(/cnt_gains/g) || []).length;
-            const cntProds=(card_r.match(/cnt_media/g) || []).length;
-            if (((cntLosses>0 && cntGains==0) || (cntGains>0 && cntLosses==0)) && (cntLosses+cntGains>1 || (cntLosses+cntGains==1 && cntProds>3))) {
+            addeffclass += " blocks_" + blocks;
+            const cntLosses = (card_r.match(/cnt_losses/g) || []).length;
+            const cntGains = (card_r.match(/cnt_gains/g) || []).length;
+            const cntProds = (card_r.match(/cnt_media/g) || []).length;
+            if (
+              ((cntLosses > 0 && cntGains == 0) || (cntGains > 0 && cntLosses == 0)) &&
+              (cntLosses + cntGains > 1 || (cntLosses + cntGains == 1 && cntProds > 3))
+            ) {
               //exceptions
-              if (displayInfo.num && displayInfo.num!=19) {
-                card_r = '<div class="groupline">'+card_r+'</div>';
-                addeffclass+=' oneline';
+              if (displayInfo.num && displayInfo.num != 19) {
+                card_r = '<div class="groupline">' + card_r + "</div>";
+                addeffclass += " oneline";
               }
             }
-            if (vp!='') addeffclass+=' hasvp';
+            if (vp != "") addeffclass += " hasvp";
             //replaces some stuff in parsed rules
-            card_r= card_r.replace('%card_number%',displayInfo.num);
+            card_r = card_r.replace("%card_number%", displayInfo.num);
             //special for "res"
-            card_r = card_r.replaceAll('%badge%',firsttag.toLowerCase());
+            card_r = card_r.replaceAll("%badge%", firsttag.toLowerCase());
           }
 
           //card actions
-          let card_a="";
+          let card_a = "";
           if (displayInfo.a) {
-            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null,true );
+            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
           } else if (displayInfo.e) {
-            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null,false ,true);
+            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
           }
           //special for "res"
-          card_a = card_a.replaceAll('%badge%',firsttag.toLowerCase());
-          let card_action_text="";
+          card_a = card_a.replaceAll("%badge%", firsttag.toLowerCase());
+          let card_action_text = "";
           if (displayInfo.text_action || displayInfo.text_effect) {
-            card_action_text=`<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
+            card_action_text = `<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
           }
           decor.innerHTML = `
                 <div class="card_illustration cardnum_${displayInfo.num}"></div>
@@ -191,7 +189,7 @@ class GameXBody extends GameTokens {
                 <div id='cost_${tokenNode.id}' class='card_cost'>${displayInfo.cost}</div> 
                 <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
                 <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
-                <div class="card_prereq">${parsedPre!=="" ? parsedPre : ""}</div>
+                <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
                 <div class="card_number">${displayInfo.num ?? ""}</div>
                 <div class="card_number_binary">${cn_binary}</div>
                 ${vp}
@@ -199,29 +197,29 @@ class GameXBody extends GameTokens {
 
           const prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
 
-          ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
-          if (prereqText!="") {
-            ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PRE-REQUISITES')+'</div>';
-            ttdiv.innerHTML+=`<div class="card_effect">${prereqText}</div>`;
+          ttdiv.innerHTML += `<div class="card_number">${displayInfo.num ?? ""}</div>`;
+          if (prereqText != "") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("PRE-REQUISITES") + "</div>";
+            ttdiv.innerHTML += `<div class="card_effect">${prereqText}</div>`;
           }
           /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
           ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
                             <div class='card_badges'>${tagshtm}</div></div>`*/
-          if (displayInfo.text_action && displayInfo.text_action!="") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('ACTION') + '</div>';
+          if (displayInfo.text_action && displayInfo.text_action != "") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("ACTION") + "</div>";
             ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_action}</div>`;
           }
-          if (displayInfo.text_effect && displayInfo.text_effect!="") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('EFFECT') + '</div>';
+          if (displayInfo.text_effect && displayInfo.text_effect != "") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
             ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_effect}</div>`;
           }
-          if (displayInfo.text && displayInfo.text!="") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('WHEN PLAYED') + '</div>';
+          if (displayInfo.text && displayInfo.text != "") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("WHEN PLAYED") + "</div>";
             ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text}</div>`;
           }
 
-          if (displayInfo.text_vp && displayInfo.text_vp!="") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _('VICTORY POINTS') + '</div>';
+          if (displayInfo.text_vp && displayInfo.text_vp != "") {
+            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("VICTORY POINTS") + "</div>";
             ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_vp}</div>`;
           }
 
@@ -246,21 +244,18 @@ class GameXBody extends GameTokens {
     }
   }
 
-
-
   setDomTokenState(tokenId: ElementOrId, newState: any) {
-
     super.setDomTokenState(tokenId, newState);
     var node = $(tokenId);
     if (!node) return;
     if (!node.id) return;
 
     //intercept player passed state
-    if (node.id.startsWith('tracker_passed_')) {
-      this.darhflog('passes !',node.id,'newstate is ',newState);
-      const plColor=node.id.replace('tracker_passed_','');
+    if (node.id.startsWith("tracker_passed_")) {
+      this.darhflog("passes !", node.id, "newstate is ", newState);
+      const plColor = node.id.replace("tracker_passed_", "");
       const plId = this.getPlayerIdByColor(plColor);
-      if (newState==1) {
+      if (newState == 1) {
         this.disablePlayerPanel(parseInt(plId));
       } else {
         this.enablePlayerPanel(parseInt(plId));
@@ -273,12 +268,8 @@ class GameXBody extends GameTokens {
     if (nodeCopy) {
       nodeCopy.setAttribute("data-state", newState);
     }
-
-
   }
-  renderSpecificToken(tokenNode: HTMLElement) {
-
-  }
+  renderSpecificToken(tokenNode: HTMLElement) {}
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: string): HTMLDivElement {
@@ -289,9 +280,9 @@ class GameXBody extends GameTokens {
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
 
-    if  (tokenDisplayInfo.mainType == "card") {
+    if (tokenDisplayInfo.mainType == "card") {
       //do nothing
-     // this.darhflog('update card ',tokenDisplayInfo);
+      // this.darhflog('update card ',tokenDisplayInfo);
     }
 
     // if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -306,28 +297,27 @@ class GameXBody extends GameTokens {
     const from = opInfo.mcount;
     const count = opInfo.count;
 
-    if (type=="card") {
+    if (type == "card") {
       const card_info = opInfo.args.info;
       for (let card_id in card_info) {
-
         //handle card discounts
-         const displayInfo = this.getTokenDisplayInfo(card_id);
-         const original_cost= parseInt(displayInfo.cost);
-         const discount_cost = parseInt(card_info[card_id].payop.replace('nm',''));
+        const displayInfo = this.getTokenDisplayInfo(card_id);
+        const original_cost = parseInt(displayInfo.cost);
+        const discount_cost = parseInt(card_info[card_id].payop.replace("nm", ""));
 
-         if (discount_cost!=original_cost) {
-           $('cost_'+card_id).innerHTML=discount_cost.toString();
-           $('cost_'+card_id).classList.add('discounted');
-         }
+        if (discount_cost != original_cost) {
+          $("cost_" + card_id).innerHTML = discount_cost.toString();
+          $("cost_" + card_id).classList.add("discounted");
+        }
       }
     }
   }
-  updatePlayerLocalCounters(plColor:string):void {
-    this.darhflog('update pl counters',this.local_counters[plColor]);
-      for (let key of Object.keys(this.local_counters[plColor])) {
-        this.darhflog('updating ','local_counter_'+plColor+'_'+key,'to ',this.local_counters[plColor][key]);
-        $('local_counter_'+plColor+'_'+key).innerHTML=this.local_counters[plColor][key];
-      }
+  updatePlayerLocalCounters(plColor: string): void {
+    this.darhflog("update pl counters", this.local_counters[plColor]);
+    for (let key of Object.keys(this.local_counters[plColor])) {
+      this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
+      $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
+    }
   }
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     let result = super.getPlaceRedirect(tokenInfo);
@@ -337,17 +327,16 @@ class GameXBody extends GameTokens {
       result.nop = true;
     } else if (tokenInfo.key.startsWith("milestone")) {
       result.nop = true;
-    } else if (tokenInfo.key=='starting_player'){
-      result.location=tokenInfo.location.replace('tableau_','fpholder_');
-    }
-    else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+    } else if (tokenInfo.key == "starting_player") {
+      result.location = tokenInfo.location.replace("tableau_", "fpholder_");
+    } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       if (!this.isLayoutFull()) {
-        result.location = tokenInfo.location+'_corp_effect';
+        result.location = tokenInfo.location + "_corp_effect";
       } else {
-        result.location = tokenInfo.location+'_cards_4'; 
+        result.location = tokenInfo.location + "_cards_4";
       }
       //also set property to corp logo div
-      $(tokenInfo.location+'_corp_logo').dataset.corp=tokenInfo.key;
+      $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
@@ -361,33 +350,30 @@ class GameXBody extends GameTokens {
       this.updatePlayerLocalCounters(plcolor);
 
       if (!this.isLayoutFull()) {
-        if (t==1 || t==3) {
-          if (this.getRulesFor(tokenInfo.key, "vp",'0')!='0') {
-            result.location = tokenInfo.location + "_cards_"+t+'vp' ;
+        if (t == 1 || t == 3) {
+          if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
+            result.location = tokenInfo.location + "_cards_" + t + "vp";
           }
         }
 
-
         //auto switch tabs here
-        this.darhflog('isdoingseyup',this.isDoingSetup);
+        this.darhflog("isdoingseyup", this.isDoingSetup);
         if (!this.isDoingSetup) {
-          if ($(tokenInfo.location).dataset['visibility_' + t] == '0') {
+          if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
             for (let i = 1; i <= 3; i++) {
-              let btn = 'player_viewcards_' + i + '_' + tokenInfo.location.replace('tableau_', '');
-              this.darhflog('btn is ', btn);
+              let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+              this.darhflog("btn is ", btn);
               if (i == t) {
-                $(tokenInfo.location).dataset['visibility_' + i] = '1';
-                $(btn).dataset.selected = '1';
+                $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                $(btn).dataset.selected = "1";
               } else {
-                $(btn).dataset.selected = '0';
-                $(tokenInfo.location).dataset['visibility_' + i] = '0';
+                $(btn).dataset.selected = "0";
+                $(tokenInfo.location).dataset["visibility_" + i] = "0";
               }
             }
           }
         }
       }
-
-
     }
     if (!result.location)
       // if failed to find revert to server one
@@ -430,25 +416,26 @@ class GameXBody extends GameTokens {
     else return this.getButtonNameForOperationExp(op.type);
   }
 
-  getDivForTracker(id: string, value: string | number="") {
-    const res = getPart(id,1);
+  getDivForTracker(id: string, value: string | number = "") {
+    const res = getPart(id, 1);
     const icon = `<div class="token_img tracker_${res}">${value}</div>`;
-    return  icon; 
+    return icon;
   }
 
-  getTokenPresentaton(type: string, tokenKey: string | {log: string, args: any}): string {
-    const isstr = typeof tokenKey == "string" ;
-    if (isstr &&  tokenKey.startsWith('tracker'))  return this.getDivForTracker(tokenKey);
-    if (type=='token_div_count' && !isstr) {
-      const id = tokenKey.args['token_name'];
-      const mod = tokenKey.args['mod'];
-      if (id.startsWith('tracker_m_')) { // just m
-         return this.getDivForTracker(id, mod);
+  getTokenPresentaton(type: string, tokenKey: string | { log: string; args: any }): string {
+    const isstr = typeof tokenKey == "string";
+    if (isstr && tokenKey.startsWith("tracker")) return this.getDivForTracker(tokenKey);
+    if (type == "token_div_count" && !isstr) {
+      const id = tokenKey.args["token_name"];
+      const mod = tokenKey.args["mod"];
+      if (id.startsWith("tracker_m_")) {
+        // just m
+        return this.getDivForTracker(id, mod);
       }
       return undefined; // process by parent
     }
     if (isstr) {
-      return  this.getTokenName(tokenKey); // just a name for now
+      return this.getTokenName(tokenKey); // just a name for now
     }
     return undefined; // process by parent
   }
@@ -523,7 +510,6 @@ class GameXBody extends GameTokens {
 
     if (ttype == "token") {
       paramargs.forEach((tid: string) => {
-
         if (tid == "none") {
           if (single) {
             this.addActionButton("button_none", _("None"), () => {
@@ -531,8 +517,9 @@ class GameXBody extends GameTokens {
             });
           }
         } else {
-          this.setActiveSlot(tid);
-          this.setReverseIdMap(tid, opId, tid);
+          const divId = this.getActiveSlotRedirect(tid);
+          this.setActiveSlot(divId);
+          this.setReverseIdMap(divId, opId, tid);
           if (single) {
             if (paramargs.length <= 5) {
               // magic number?
@@ -578,13 +565,19 @@ class GameXBody extends GameTokens {
           if (sign < 0) buttonColor = "gray";
           if (sign > 0) buttonColor = "red";
           const divId = "button_" + i;
-          let title='<div class="custom_paiement_inner">'+this.resourcesToHtml(detailsInfo.resources)+'</div>';
+          let title = '<div class="custom_paiement_inner">' + this.resourcesToHtml(detailsInfo.resources) + "</div>";
 
-          if (tid=="payment") {
+          if (tid == "payment") {
             //show only if options
-            const opts =this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
-            if (Object.entries(opts.resources).reduce((sum: number, [key, val]: [string, unknown]) => sum + ((key !== 'm' && typeof val === 'number' && Number.isInteger(val)) ? val : 0), 0)  > 0) {
-              this.createCustomPayment(opId,opts);
+            const opts = this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+            if (
+              Object.entries(opts.resources).reduce(
+                (sum: number, [key, val]: [string, unknown]) =>
+                  sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0),
+                0
+              ) > 0
+            ) {
+              this.createCustomPayment(opId, opts);
             }
           } else {
             //  title = this.parseActionsToHTML(tid);
@@ -594,7 +587,6 @@ class GameXBody extends GameTokens {
               () => {
                 if (tid == "payment") {
                   // stub
-
                   /*
                   const first = paramargs[0]; // send same data as 1st option as stub
                   this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
@@ -623,52 +615,48 @@ class GameXBody extends GameTokens {
   }
 
   /** When server wants to activate some element, ui may adjust it */
-  getActiveSlotRedirect(_node: ElementOrId): ElementOrId {
-     const node = $(_node);
-     if (!node) {
+  getActiveSlotRedirect(_node: string): string {
+    let node = $(_node);
+    if (!node) {
       this.showError("Not found " + _node);
       return _node;
     }
     const id = node.id;
     if (!id) return _node;
-    if (id.startsWith('tracker_p_')) {
-       return id.replace('tracker_p_','playergroup_plants_');
+    let target: ElementOrId = id;
+    if (id.startsWith("tracker_p_")) {
+      target = id.replace("tracker_p_", "playergroup_plants_");
     }
-    if (id.startsWith('tracker_h_')) {
-       return id.replace('tracker_h_','playergroup_heat_');
+    if (id.startsWith("tracker_h_")) {
+      target = id.replace("tracker_h_", "playergroup_heat_");
     }
-    return node;
-  }
-
-  setActiveSlot(node: ElementOrId) {
-    super.setActiveSlot(this.getActiveSlotRedirect(node));
+    return target;
   }
 
   //Adds the payment picker according to available alternative payment options
-  createCustomPayment(opId,info) {
-    this.custom_pay  = {
-      needed:info.count,
-      selected:{},
-      available:[],
-      rate:[]
-    }
+  createCustomPayment(opId, info) {
+    this.custom_pay = {
+      needed: info.count,
+      selected: {},
+      available: [],
+      rate: [],
+    };
 
-    let items_htm='';
+    let items_htm = "";
     for (let res in info.resources) {
-      this.custom_pay.selected[res]=0;
-      this.custom_pay.available[res]=info.resources[res];
-      this.custom_pay.rate[res]=info.rate[res];
+      this.custom_pay.selected[res] = 0;
+      this.custom_pay.available[res] = info.resources[res];
+      this.custom_pay.rate[res] = info.rate[res];
 
       //megacredits are spent automatically
-      if (res=='m') {
-        this.custom_pay.selected[res]=this.custom_pay.available[res];
+      if (res == "m") {
+        this.custom_pay.selected[res] = this.custom_pay.available[res];
         continue;
       }
 
-
-      if ( this.custom_pay.available[res]<=0) continue;
+      if (this.custom_pay.available[res] <= 0) continue;
       //add paiments buttons
-        items_htm+=`
+      items_htm += `
         <div class="payment_group">
            <div class="token_img tracker_${res}"></div>
            <div class="item_worth">
@@ -687,84 +675,81 @@ class GameXBody extends GameTokens {
      */
 
     //add confirmation button
-    const txt =_("Custom:");
-    const button_htm=this.resourcesToHtml( this.custom_pay.selected,true);
+    const txt = _("Custom:");
+    const button_htm = this.resourcesToHtml(this.custom_pay.selected, true);
 
-    const button_whole='Pay %s'.replace('%s',button_htm);
-    const paiement_htm=`
+    const button_whole = "Pay %s".replace("%s", button_htm);
+    const paiement_htm = `
       <div class="custom_paiement_inner">
         ${txt}
         ${items_htm}
         <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
       </div>
     `;
-    const node = this.createDivNode('custom_paiement',"","generalactions");
-    node.innerHTML=paiement_htm;
-
+    const node = this.createDivNode("custom_paiement", "", "generalactions");
+    node.innerHTML = paiement_htm;
 
     //adds actions to button payments
-    this.connectClass("btn_payment_item",'onclick',(event)=>{
+    this.connectClass("btn_payment_item", "onclick", (event) => {
       const id = (event.currentTarget as HTMLElement).id;
       const direction = $(id).dataset.direction;
       const res = $(id).dataset.resource;
       dojo.stopEvent(event);
 
-      if (direction=="minus") {
-        if (this.custom_pay.selected[res]>0) {
+      if (direction == "minus") {
+        if (this.custom_pay.selected[res] > 0) {
           this.custom_pay.selected[res]--;
         }
       }
-      if (direction=="plus") {
-        if (this.custom_pay.selected[res]<this.custom_pay.available[res]) {
+      if (direction == "plus") {
+        if (this.custom_pay.selected[res] < this.custom_pay.available[res]) {
           this.custom_pay.selected[res]++;
         }
       }
-      $('payment_item_'+res).innerHTML=this.custom_pay.selected[res];
+      $("payment_item_" + res).innerHTML = this.custom_pay.selected[res];
 
       let total_res = 0;
-     // let values_htm='';
-      for (let res in  this.custom_pay.rate) {
-          if (res!='m') {
-            total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
+      // let values_htm='';
+      for (let res in this.custom_pay.rate) {
+        if (res != "m") {
+          total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
           //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
-          }
+        }
       }
-      let mc= this.custom_pay.needed - total_res;
-      if (mc<0) {
-        mc=0;
-        $('btn_custompay_send').classList.add('overpay');
+      let mc = this.custom_pay.needed - total_res;
+      if (mc < 0) {
+        mc = 0;
+        $("btn_custompay_send").classList.add("overpay");
       } else {
-        $('btn_custompay_send').classList.remove('overpay');
+        $("btn_custompay_send").classList.remove("overpay");
       }
-      this.custom_pay.selected['m']=mc;
-   //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
-      const values_htm=this.resourcesToHtml( this.custom_pay.selected,true);
+      this.custom_pay.selected["m"] = mc;
+      //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
+      const values_htm = this.resourcesToHtml(this.custom_pay.selected, true);
 
-      $('btn_custompay_send').innerHTML='Pay %s'.replace('%s',values_htm);
-
+      $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
     });
 
     //adds action to final payment button
-    this.connect($('btn_custompay_send'),'onclick', ()=>{
-      let pays={};
+    this.connect($("btn_custompay_send"), "onclick", () => {
+      let pays = {};
       //backend doesn't accept 0 as paiment
-      for (let res of Object.keys(this.custom_pay.selected) ) {
-        if (this.custom_pay.selected[res]>0) pays[res] = parseInt(this.custom_pay.selected[res]);
+      for (let res of Object.keys(this.custom_pay.selected)) {
+        if (this.custom_pay.selected[res] > 0) pays[res] = parseInt(this.custom_pay.selected[res]);
       }
-      this.sendActionResolveWithTargetAndPayment(opId, 'payment', pays);
+      this.sendActionResolveWithTargetAndPayment(opId, "payment", pays);
     });
   }
 
-  resourcesToHtml(resources:any,show_zeroes:boolean = false):string {
-    var htm='';
-    const allResources =['m','s','u','h'];
+  resourcesToHtml(resources: any, show_zeroes: boolean = false): string {
+    var htm = "";
+    const allResources = ["m", "s", "u", "h"];
 
-    allResources.forEach((item)=>{
-        if (resources[item]!=undefined && (resources[item]>0 || show_zeroes===true)) {
-          htm+=`<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
-        }
+    allResources.forEach((item) => {
+      if (resources[item] != undefined && (resources[item] > 0 || show_zeroes === true)) {
+        htm += `<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
+      }
     });
-
 
     return htm;
   }
@@ -806,7 +791,7 @@ class GameXBody extends GameTokens {
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
-      this.updateVisualsFromOp(opInfo,opId);
+      this.updateVisualsFromOp(opInfo, opId);
       this.activateSlots(opInfo, opId, singleOrFirst);
       if (!single && !ordered) {
         // xxx add something for remaining ops in ordered case?
@@ -865,7 +850,7 @@ class GameXBody extends GameTokens {
   }
 
   onUpdateActionButtons_multiplayerDispatch(args) {
-      this.addUndoButton();
+    this.addUndoButton();
   }
 
   onUpdateActionButtons_after(stateName: string, args: any): void {
@@ -884,6 +869,7 @@ class GameXBody extends GameTokens {
 
   // on click hooks
   onToken_playerTurnChoice(tid: string) {
+    debugger;
     const info = this.reverseIdLookup.get(tid);
     if (info && info !== "0") {
       const opId = info.op;
