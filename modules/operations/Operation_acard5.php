@@ -14,10 +14,9 @@ class Operation_acard5 extends AbsOperation {
             return 1;
         }
         $card_id = $card['key'];
-        $player_id = $this->game->getPlayerIdByColor($color);
         $notif = clienttranslate('${player_name} reveals ${token_name}');
         //reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here
-        $this->game->dbSetTokenLocation($card_id, "reveal", 0, $notif, [], $player_id);
+        $this->game->effect_moveCard($color, $card_id, "reveal", 0, $notif);
         $tags = $this->game->getRulesFor($card_id, 'tags', '');
         if (strstr($tags, 'tagMicrobe')) {
             $this->game->notifyMessage(clienttranslate('it has tag'));
@@ -25,7 +24,7 @@ class Operation_acard5 extends AbsOperation {
         } else {
             $this->game->notifyMessage(clienttranslate('it does not have tag'));
         }
-        $this->game->dbSetTokenLocation($card_id, "discard_main", 0, '', [],  $player_id);
+        $this->game->effect_moveCard($color, $card_id, "discard_main", 0);
         return 1;
     }
 }

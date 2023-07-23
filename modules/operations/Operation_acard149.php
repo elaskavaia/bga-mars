@@ -24,7 +24,7 @@ class Operation_acard149 extends  AbsOperation {
  
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
-            $this->game->dbSetTokenLocation($res, $card, 1);
+            $this->game->effect_moveCard($owner, $res, $card, 1);
         }
 
         return $inc;

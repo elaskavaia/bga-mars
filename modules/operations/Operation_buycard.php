@@ -7,9 +7,9 @@ class Operation_buycard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
         $this->game->effect_incCount($color, 'm', -3, ['message' => '']);
-        $this->game->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys a card ${token_name}'), [
+        $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys a card ${token_name}'), [
             "_private"=>true
-        ],  $this->game->getPlayerIdByColor($color));
+        ]);
         $this->game->notifyCounterChanged("hand_$color", ["nod" => true]);
         return 1;
     }

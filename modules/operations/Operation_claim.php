@@ -8,7 +8,7 @@ class Operation_claim extends AbsOperation {
         $milestone = $this->getCheckedArg('target');
         $no = $this->getPlayerNo();
         $this->game->tokens->setTokenState($milestone, $no);
-        $this->game->dbSetTokenLocation($marker, $milestone, 1, clienttranslate('${player_name} claims milestone ${place_name}'), [],  $this->game->getPlayerIdByColor($color));
+        $this->game->effect_moveCard($color, $marker, $milestone, 1, clienttranslate('${player_name} claims milestone ${place_name}'));
         $this->game->push($color, $this->game->getPayment($color, $milestone), $milestone);
         return 1;
     }

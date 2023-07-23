@@ -9,22 +9,23 @@ class Operation_finsetup extends AbsOperation {
         $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);
         if ($this->game->getGameStateValue('var_begginers_corp') == 1)  return 1;
 
+        // pin drawn cards
         $selected = $this->game->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
-            $this->game->dbSetTokenLocation($card_id, "hand_$color", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
         }
 
+        // discard second cord
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_${color}");
         foreach ($rest as $card_id => $card) {
-            $this->game->dbSetTokenLocation($card_id, "limbo", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "limbo", 0);
         }
 
-   
-
+        // discard unbough cards
         $rest = $this->game->tokens->getTokensInLocation("draw_$color");
         foreach ($rest as $card_id => $card) {
             $type = getPart($card_id, 1);
-            $this->game->dbSetTokenLocation($card_id, "discard_$type", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "discard_$type", 0);
         }
 
         // play selected corp properly

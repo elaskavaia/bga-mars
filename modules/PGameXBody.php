@@ -704,6 +704,10 @@ abstract class PGameXBody extends PGameMachine {
         }
         return $this->eventListners;
     }
+    function effect_moveCard($owner, $card_id, $place_id, $state = null, $notif = "", $args = []) {
+        $this->dbSetTokenLocation($card_id,  $place_id, $state, $notif, $args, $this->getPlayerIdByColor($owner));
+    }
+
 
     function notifyEffect($owner, $events, $card_context) {
         $listeners = $this->collectListeners($owner, $events, $card_context);
@@ -1223,7 +1227,7 @@ abstract class PGameXBody extends PGameMachine {
                     $curr = $this->tokens->getTokenState("tracker_${p}_${color}");
                     if ($curr > 0) {
                         $this->effect_incCount($color, 'h', $curr, [
-                            'message' => clienttranslate('${player_name} gains ${inc_resource} due to heat transfer')
+                            'message' => clienttranslate('${player_name} gains ${token_div_count} due to heat transfer')
                         ]);
                         $this->effect_incCount($color, 'e', -$curr);
                     }
