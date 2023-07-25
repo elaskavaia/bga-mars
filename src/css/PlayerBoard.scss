@@ -243,8 +243,7 @@
 
   .tableau[data-visibility_2="0"] {
     .cards_2, .cards_2a {
-      width :1px;
-      height: 1px;
+      visibility: hidden;
     }
     .card[data-card-type="2"] {
       position: absolute;
@@ -252,13 +251,8 @@
     }
   }
   .tableau[data-visibility_1="0"] {
-    .cards_1 {
-      width :1px;
-      height: 1px;
-    }
-    .cards_1vp {
-      width :1px;
-      height: 1px;
+    .cards_1,  .cards_1vp  {
+      visibility: hidden;
     }
     .card[data-card-type="1"] {
       position: absolute;
@@ -266,13 +260,8 @@
     }
   }
   .tableau[data-visibility_3="0"] {
-    .cards_3 {
-      width :1px;
-      height: 1px;
-    }
-    .cards_3vp {
-      width :1px;
-      height: 1px;
+    .cards_3, .cards_3vp {
+      visibility: hidden;
     }
     .card[data-card-type="3"] {
       position: absolute;

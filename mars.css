@@ -4689,34 +4689,23 @@
 }
 
 .tableau[data-visibility_2="0"] .cards_2, .tableau[data-visibility_2="0"] .cards_2a {
-  width: 1px;
-  height: 1px;
+  visibility: hidden;
 }
 .tableau[data-visibility_2="0"] .card[data-card-type="2"] {
   position: absolute;
   opacity: 0;
 }
 
-.tableau[data-visibility_1="0"] .cards_1 {
-  width: 1px;
-  height: 1px;
-}
-.tableau[data-visibility_1="0"] .cards_1vp {
-  width: 1px;
-  height: 1px;
+.tableau[data-visibility_1="0"] .cards_1, .tableau[data-visibility_1="0"] .cards_1vp {
+  visibility: hidden;
 }
 .tableau[data-visibility_1="0"] .card[data-card-type="1"] {
   position: absolute;
   opacity: 0;
 }
 
-.tableau[data-visibility_3="0"] .cards_3 {
-  width: 1px;
-  height: 1px;
-}
-.tableau[data-visibility_3="0"] .cards_3vp {
-  width: 1px;
-  height: 1px;
+.tableau[data-visibility_3="0"] .cards_3, .tableau[data-visibility_3="0"] .cards_3vp {
+  visibility: hidden;
 }
 .tableau[data-visibility_3="0"] .card[data-card-type="3"] {
   position: absolute;
