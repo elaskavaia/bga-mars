@@ -241,6 +241,7 @@
     content:'☐' ;
   }
 
+.mcompact {
   .tableau[data-visibility_2="0"] {
     .cards_2, .cards_2a {
       visibility: hidden;
@@ -268,9 +269,6 @@
       opacity: 0;
     }
   }
-
-  .mcompact {
-
     .cards_1, .cards_3 {
       display: flex;
 
@@ -493,10 +491,10 @@
 
 
   .cards_2a {
-    grid-area: 1 / 1 / 2 / 3;
+    grid-area: 1 / 1 / 3 / 2;
   }
   .cards_2 {
-    grid-area: 2 / 1 / 3 / 3;
+    grid-area: 1 / 2 / 3 / 3;
   }
 
   .cards_1vp {

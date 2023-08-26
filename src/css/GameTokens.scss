@@ -17,7 +17,7 @@
   position: relative;
 }
 
-.hand, .draw {
+.hand, .draw, .draft {
   min-height: var(--card-height);
   display: flex;
   flex-direction: row;
@@ -25,11 +25,11 @@
   flex-wrap: wrap;
   position: relative;
 }
-.draw {
+.draw, .draft  {
   min-height: unset;
 }
 
-.hand:after, .draw:after {
+.hand:after, .draw:after, .draft:after {
   position: absolute;
   top:0;
   Left:0;
@@ -44,11 +44,14 @@
 .draw:after{
   content: 'Draw';
 }
+.draft:after{
+  content: 'Draft';
+}
 
-.draw:empty {
+.draw:empty,.draft:empty {
   display: none;
 }
-.draw:empty:after {
+.draw:empty:after,.draft:empty:after {
   display: none;
 }
 

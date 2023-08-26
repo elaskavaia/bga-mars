@@ -11,7 +11,12 @@ class AbsOperationPayWithRes extends AbsOperation {
         return  clienttranslate('${you} must pay ${count} MC (can use ${res_name}) for ${card_name}');
     }
     protected function getVisargs() {
-        $type = $this->getTypes()[0];
+        $types = $this->getTypes();
+
+        $type = $types[0];
+        if ($type == 'm' && count($types) > 1) {
+            $type = $types[1];
+        }
         $ttoken = $this->game->getTrackerId('', $type);
         return [
             "name" => $this->getOpName(),
@@ -88,8 +93,8 @@ class AbsOperationPayWithRes extends AbsOperation {
             $propres = min((int)ceil(($cost - $mhcount) / $er), $info['payment']['rescount'][$type]);
             $propm = min($mcount, $cost - $propres * $er);
             $map = ['m' => $propm, $type => $propres];
-            if ($heatcount>0) {
-                $map['h']=$mhcount - $propm;
+            if ($heatcount > 0) {
+                $map['h'] = $mhcount - $propm;
             }
             if ($this->addProposal($info, $map)) return $info;
         }

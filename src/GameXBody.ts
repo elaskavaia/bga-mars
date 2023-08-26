@@ -556,9 +556,12 @@ class GameXBody extends GameTokens {
         this.setReverseIdMap(divId, opId, tid);
       });
     } else if (ttype == "enum") {
+      const args = this.gamedatas.gamestate.args ??  this.gamedatas.gamestate.private_state.args;
+      const operations =  args.operations ?? args.player_operations[this.player_id].operations;
+ 
       paramargs.forEach((tid: string, i: number) => {
         if (single) {
-          const detailsInfo = this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+          const detailsInfo = operations[opId].args?.info?.[tid];
           const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
           //console.log("enum details "+tid,detailsInfo);
           let buttonColor = undefined;
@@ -569,7 +572,7 @@ class GameXBody extends GameTokens {
 
           if (tid == "payment") {
             //show only if options
-            const opts = this.gamedatas.gamestate.args.operations[opId].args.info?.[tid];
+            const opts = operations[opId].args.info?.[tid];
             if (
               Object.entries(opts.resources).reduce(
                 (sum: number, [key, val]: [string, unknown]) =>
@@ -589,7 +592,7 @@ class GameXBody extends GameTokens {
                   // stub
                   /*
                   const first = paramargs[0]; // send same data as 1st option as stub
-                  this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
+                  this.sendActionResolveWithTargetAndPayment(opId, tid, operations[opId].args.info?.[first]?.resources);
 
                    */
                 } else this.onSelectTarget(opId, tid);

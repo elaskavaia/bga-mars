@@ -193,11 +193,12 @@ abstract class AbsOperation {
      */
     function action_resolve(array $args): int {
         $this->user_args =  $args;
-
         // the actual acting player
-        $owner =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
-        if ($this->color && $this->color !== $owner) {
-            $this->game->systemAssertTrue("Not autorized for this operation");
+        $actor =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
+        $owner = $this->color;
+        if ($owner != $actor) {
+            if (!$owner)
+                $owner = $actor;
         }
         $this->argresult = null; // XXX not sure
         $this->color =  $owner;

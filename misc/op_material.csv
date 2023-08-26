@@ -20,6 +20,7 @@ nores|Remove resource from another card|${you} must select a card to remove reso
 keep|Keep Card|${you} must select a card to add keep
 buycard|Buy Card|${you} must select a card to buy for 3 M€
 keepcorp|Keep Corp|${you} must select one corporation card to keep
+draft|Draft Card|${you} must select one card to draft (buy or discard later)
 
 #set params=
 res|Add resource to this card

@@ -85,7 +85,7 @@ class DbMachine extends APP_GameClass {
         return $this->insertOp(1, $op);
     }
 
-    function queue($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "",$pool = null) {
+    function queue($type, $mcount = 1, $count = 1, $owner = null, $resolve = MACHINE_OP_RESOLVE_DEFAULT, $data = "", $pool = null) {
         $rank = $this->getExtremeRank(true);
         $rank++;
         $op = $this->createOperation($type, $rank, $mcount, $count, $owner, $resolve, 0, $data, $pool);
@@ -116,8 +116,8 @@ class DbMachine extends APP_GameClass {
     }
 
     function insertOp($rank, $op) {
-       
-     
+
+
         $this->insertList($rank, [$op]);
         return $this->DbGetLastId();
     }
@@ -158,7 +158,7 @@ class DbMachine extends APP_GameClass {
         if (!$this->pool) throw new feException("no pool");
         // sanity check
         $this->parseOpExpression($type);
-   
+
         $record = [
             "type" => $this->escapeStringForDB($type),
             "rank" => $this->checkInt($rank),
@@ -300,15 +300,17 @@ class DbMachine extends APP_GameClass {
     }
 
     // Get max on min state on the specific location
-    function getExtremeRank($getMax, $owner = null) {
+    function getExtremeRank($getMax, $owner = null, $pool = null) {
         if ($getMax) {
             $min = "MAX(`rank`) res ";
         } else {
             $min = "MIN(`rank`) res ";
         }
         $andowner = '';
+        $andpool = '';
         if ($owner) $andowner = " AND owner = '$owner'";
-        $sql = $this->getSelectQueryLimited("$min", "rank > 0 $andowner");
+        if ($pool)  $andpool = " AND pool = '$pool'";
+        $sql = $this->getSelectQueryLimited("$min", "rank > 0 $andowner $andpool");
         $dbres = self::DbQuery($sql);
         $row = mysql_fetch_assoc($dbres);
         if ($row) {
@@ -318,8 +320,8 @@ class DbMachine extends APP_GameClass {
         }
     }
 
-    function getTopRank($owner = null) {
-        return $this->getExtremeRank(false, $owner);
+    function getTopRank($owner = null, $pool = null) {
+        return $this->getExtremeRank(false, $owner, $pool);
     }
 
     public function getFlags($resolve) {
@@ -372,13 +374,18 @@ class DbMachine extends APP_GameClass {
         return $info;
     }
 
-    function getTopOperations($owner = null) {
-        return $this->getOperationsByRank(null, $owner);
+    function getTopOperations($owner = null, $pool = null) {
+        return $this->getOperationsByRank(null, $owner, $pool);
     }
 
-    function getOperationsByRank($rank = null, $owner = null) {
+    function getBarrierRank(){
+        $barrank = $this->getTopRank(null, 'main');
+        return $barrank;
+    }
+
+    function getOperationsByRank($rank = null, $owner = null, $pool = null) {
         if ($rank === null) {
-            $rank = $this->getTopRank($owner);
+            $rank = $this->getTopRank($owner, $pool);
         }
         $this->checkInt($rank);
         $andowner = '';

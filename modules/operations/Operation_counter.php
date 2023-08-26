@@ -23,7 +23,7 @@ class Operation_counter extends AbsOperation {
         // counter function, followed by expression
         // result of experssion is set as counter for top rank operation
         list ($count,$mincount) = $this->evaluate();
-        $this->game->debugLog("-evaluted to $count:$mincount");
+        //$this->game->debugLog("-evaluted to $count:$mincount");
         $this->game->machine->hide($this->op_info); // this cannot be part of top
         $tops = $this->game->machine->getTopOperations($owner);
         $this->game->machine->setCount($tops, $count, $mincount);

@@ -25,19 +25,7 @@ class Operation_research extends AbsOperation {
                     $this->game->dbSetTokenState($cardid, $state, '');
                 }
             }
-            // draw  
-            $this->game->queue($color, "4predraw");
         }
-
-        // multiplayer buy
-        foreach ($players as $player_id => $player) {
-            $color = $player["player_color"];
-            $this->game->multiplayerqueue($color, "4?buycard");
-        }
-
-        foreach ($players as $player_id => $player) {
-            $color = $player["player_color"];
-            $this->game->queue($color, "prediscard");
-        }
+        $this->game->effect_queueMultiDraw(4);
     }
 }

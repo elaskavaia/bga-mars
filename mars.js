@@ -2604,7 +2604,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.activateSlots = function (opInfo, opId, single) {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c, _d;
         var opargs = opInfo.args;
         var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
         var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
@@ -2687,10 +2687,12 @@ var GameXBody = /** @class */ (function (_super) {
             });
         }
         else if (ttype == "enum") {
+            var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
+            var operations_1 = (_d = args.operations) !== null && _d !== void 0 ? _d : args.player_operations[this.player_id].operations;
             paramargs.forEach(function (tid, i) {
-                var _a, _b;
+                var _a, _b, _c;
                 if (single) {
-                    var detailsInfo = (_a = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _a === void 0 ? void 0 : _a[tid];
+                    var detailsInfo = (_b = (_a = operations_1[opId].args) === null || _a === void 0 ? void 0 : _a.info) === null || _b === void 0 ? void 0 : _b[tid];
                     var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
                     //console.log("enum details "+tid,detailsInfo);
                     var buttonColor = undefined;
@@ -2702,7 +2704,7 @@ var GameXBody = /** @class */ (function (_super) {
                     var title = '<div class="custom_paiement_inner">' + _this.resourcesToHtml(detailsInfo.resources) + "</div>";
                     if (tid == "payment") {
                         //show only if options
-                        var opts = (_b = _this.gamedatas.gamestate.args.operations[opId].args.info) === null || _b === void 0 ? void 0 : _b[tid];
+                        var opts = (_c = operations_1[opId].args.info) === null || _c === void 0 ? void 0 : _c[tid];
                         if (Object.entries(opts.resources).reduce(function (sum, _a) {
                             var key = _a[0], val = _a[1];
                             return sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0);
@@ -2717,7 +2719,7 @@ var GameXBody = /** @class */ (function (_super) {
                                 // stub
                                 /*
                                 const first = paramargs[0]; // send same data as 1st option as stub
-                                this.sendActionResolveWithTargetAndPayment(opId, tid, this.gamedatas.gamestate.args.operations[opId].args.info?.[first]?.resources);
+                                this.sendActionResolveWithTargetAndPayment(opId, tid, operations[opId].args.info?.[first]?.resources);
               
                                  */
                             }

@@ -22,11 +22,11 @@ class MachineInMem extends DbMachine {
         return $string;
     }
 
-    function getExtremeRank($getMax, $owner = null) {
+    function getExtremeRank($getMax, $owner = null, $pool = null) {
         $extrime = $getMax ? 0 : PHP_INT_MAX;
         foreach ($this->xtable as $row) {
             $rank = $row["rank"];
-            if (($owner === null || $row["owner"] == $owner)) {
+            if (($owner === null || $row["owner"] === $owner) && ($pool === null ||  $row["pool"] === $pool)) {
                 if ($rank > 0) {
                     if ($getMax) {
                         if ($rank > $extrime) {
@@ -47,15 +47,15 @@ class MachineInMem extends DbMachine {
         return $this->xtable;
     }
 
-    function getOperationsByRank($rank = null, $owner = null) {
+    function getOperationsByRank($rank = null, $owner = null, $pool = null) {
         if ($rank === null) {
-            $rank = $this->getTopRank($owner);
+            $rank = $this->getTopRank($owner, $pool);
         }
         $this->checkInt($rank);
 
         $arr = $this->xtable;
-        return array_filter($arr, function ($elem) use ($rank, $owner) {
-            return $elem["rank"] == $rank && ($owner === null || $elem["owner"] == $owner);
+        return array_filter($arr, function ($elem) use ($rank, $owner, $pool) {
+            return $elem["rank"] == $rank && ($owner === null || $elem["owner"] == $owner) && ($pool === null ||  $elem["pool"] === $pool);
         });
     }
 

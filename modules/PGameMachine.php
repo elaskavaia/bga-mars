@@ -203,7 +203,7 @@ abstract class PGameMachine extends PGameTokens {
         $players = $this->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player_info) {
             $color = $player_info['player_color'];
-            $operations = $this->machine->getTopOperations($color);
+            $operations = $this->getTopOperationsMulti($color);
             $res['player_operations'][$player_id] = $this->arg_operations($operations);
         }
         return $res;
@@ -218,6 +218,18 @@ abstract class PGameMachine extends PGameTokens {
 
     function getTopOperations($owner = null) {
         $operations = $this->machine->getTopOperations($owner);
+        return $operations;
+    }
+
+    function getTopOperationsMulti($owner = null) {
+        $operations = $this->machine->getTopOperations($owner, 'multi');
+        if (count($operations) > 0) {
+            $barrank  = $this->machine->getBarrierRank();
+            if ($barrank > 0) {
+                $op = reset($operations);
+                if ($op['rank'] > $barrank) return [];
+            }
+        }
         return $operations;
     }
 
@@ -261,10 +273,9 @@ abstract class PGameMachine extends PGameTokens {
 
 
     function machineMultiplayerDistpatch() {
-        $operations = $this->getTopOperations();
-        $isMulti = $this->hasMultiPlayerOperations($operations);
+        $operations = $this->getTopOperationsMulti();
         //$this->debugLog("-MULTI: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
-        if (!$isMulti) {
+        if (count($operations)==0) {
             $this->gamestate->nextState("next");
             return;
         }
@@ -280,7 +291,7 @@ abstract class PGameMachine extends PGameTokens {
         $color = $this->getPlayerColorById($player_id);
         $n = MA_GAME_DISPATCH_MAX;
         for ($i = 0; $i <  $n; $i++) {
-            $operations = $this->getTopOperations($color);
+            $operations = $this->getTopOperationsMulti($color);
             $isMulti = $this->hasMultiPlayerOperations($operations);
             //$this->debugLog("- SINGLE $i: machine top for $color: " . $this->machine->getlistexpr($operations));
             if (!$isMulti) {
@@ -311,7 +322,7 @@ abstract class PGameMachine extends PGameTokens {
 
             if ($machine->isSharedCounter($op) && $this->isVoid($op)) {
                 $type = $op["type"];
-                $this->debugLog("-removed $type as void");
+                //$this->debugLog("-removed $type as void");
                 $machine->hide($op);
                 return CONTINUE_DISPATCH;
             }

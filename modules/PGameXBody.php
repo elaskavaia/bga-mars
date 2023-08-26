@@ -30,6 +30,7 @@ abstract class PGameXBody extends PGameMachine {
             "var_begginers_corp" => 100,
             "var_corporate_era" => 101,
             "var_solo_flavour" => 102,
+            "var_draft" => 103,
         ]);
     }
 
@@ -50,17 +51,22 @@ abstract class PGameXBody extends PGameMachine {
             $this->tokens->shuffle("deck_corp");
             $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
             $players = $this->loadPlayersBasicInfos();
+            $initial_draw = 10;
+            $tr_value = 20;
+            if ($this->isSolo()) {
+                $tr_value = 14;
+            }
+            $corps = 2; //(int)(11 / $this->getPlayersNumber())
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 if ($this->getGameStateValue('var_begginers_corp') == 1) {
                     $corp = $this->tokens->getTokenOfTypeInLocation("card_corp_1_", null, 0);
                     $this->effect_playCorporation($color, $corp['key'], false);
-                    $this->tokens->pickTokensForLocation(10, "deck_main", "hand_${color}");
+                    $this->tokens->pickTokensForLocation($initial_draw, "deck_main", "hand_${color}");
                 } else {
-                    $this->tokens->pickTokensForLocation(10, "deck_main", "draw_${color}");
-                    $corps = 2; //(int)(11 / $this->getPlayersNumber())
+
                     $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-                    $this->multiplayerqueue($color, "keepcorp,10?buycard");
+                    $this->multiplayerqueue($color, "keepcorp");
                 }
 
                 if (!$this->isCorporateEraVariant()) {
@@ -70,15 +76,15 @@ abstract class PGameXBody extends PGameMachine {
                 }
 
                 // set proper TR and matching score
-                $tr_value = 20;
-                if ($this->isSolo()) {
-                    $tr_value = 14;
-                }
-
                 $tr_traker = $this->getTrackerId($color, 'tr');
                 $this->tokens->setTokenState($tr_traker, $tr_value);
                 $this->dbSetScore($player_id, $tr_value, '');
             }
+
+            if ($this->getGameStateValue('var_begginers_corp') != 1) {
+                $this->effect_queueMultiDraw($initial_draw);
+            }
+
 
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -171,6 +177,9 @@ abstract class PGameXBody extends PGameMachine {
         return $this->getGameStateValue('var_corporate_era') == 1 || $this->isSolo();
     }
 
+    function isDraftVariant() {
+        return $this->getGameStateValue('var_draft') == 1;
+    }
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
@@ -708,6 +717,12 @@ abstract class PGameXBody extends PGameMachine {
         $this->dbSetTokenLocation($card_id,  $place_id, $state, $notif, $args, $this->getPlayerIdByColor($owner));
     }
 
+    function getNextDraftPlayerColor($color) {
+        $player_id = $this->getPlayerIdByColor($color);
+        $other_id = $this->getPlayerAfter($player_id);
+        return $this->getPlayerColorById($other_id);
+    }
+
 
     function notifyEffect($owner, $events, $card_context) {
         $listeners = $this->collectListeners($owner, $events, $card_context);
@@ -1044,6 +1059,38 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         return $object;
+    }
+
+    function effect_queueMultiDraw($numcards = 4) {
+        $players = $this->loadPlayersBasicInfos();
+        if ($this->isDraftVariant()) {
+            $this->notifyAllPlayers('message', clienttranslate('research draft'), []);
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $this->effect_draw($color, "deck_main", "draft_${color}", $numcards);
+            }
+            for ($i = 0; $i < $numcards; $i++) {
+                foreach ($players as $player_id => $player) {
+                    $color = $player["player_color"];
+                    $this->multiplayerqueue($color, "draft");
+                }
+                $this->queue(0, "passdraft");
+            }
+        } else {
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $this->effect_draw($color, "deck_main", "draw_${color}", $numcards);
+            }
+        }
+        // multiplayer buy
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->multiplayerqueue($color, "${numcards}?buycard");
+        }
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->queue($color, "prediscard");
+        }
     }
 
     function effect_undoBuyCards($owner) {
@@ -1396,7 +1443,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->notifyWithName('message', clienttranslate('${player_name} scores ${inc} points for Greenery tiles'), [
             'inc' => $greenery
-        ],  $player_id );
+        ],  $player_id);
     }
 
     function scoreCards(string $owner) {
@@ -1430,7 +1477,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with implicit points'), [
             'inc' => $vpdirect
-        ], $player_id );
+        ], $player_id);
     }
 
     //////////////////////////////////////////////////////////////////////////////

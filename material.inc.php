@@ -3474,6 +3474,13 @@ $this->token_types = [
   'type' => 'keepcorp',
   'name' => clienttranslate("Keep Corp"),
 ],
+ 'op_draft' => [  //
+  'undo' => 'true',
+  'prompt' => '${you} must select one card to draft (buy or discard later)',
+  'params' => 'target',
+  'type' => 'draft',
+  'name' => clienttranslate("Draft Card"),
+],
  'op_res' => [  //
   'undo' => 'true',
   'prompt' => 'Hmm',

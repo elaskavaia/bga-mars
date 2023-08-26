@@ -74,6 +74,14 @@ $game_options = array(
         ),
         'default' => 0
     ),
+    103 => [
+        'name' => totranslate('Draft'),
+        'values' => [
+            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Draft'), 'nobeginner' => true],
+            0 => ['name' => totranslate('No')],
+        ],
+        'default' => 0
+    ],
 );
 $game_preferences = [
     100 => [
