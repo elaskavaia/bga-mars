@@ -1770,6 +1770,12 @@ var GameTokens = /** @class */ (function (_super) {
             return;
         this.saveRestore(node);
         node.setAttribute("data-state", newState);
+        if (newState > 0) {
+            node.setAttribute("data-sign", "+");
+        }
+        else {
+            node.removeAttribute("data-sign");
+        }
     };
     GameTokens.prototype.getDomTokenLocation = function (tokenId) {
         return $(tokenId).parentNode.id;
@@ -2207,6 +2213,12 @@ var GameXBody = /** @class */ (function (_super) {
                 dojo.destroy(node); // on undo this remains but another one generated
             });
             dojo.place("player_board_params", "player_config", "last");
+            document.querySelectorAll(".mini_counter").forEach(function (node) {
+                var id = node.id;
+                if (id.startsWith('alt_')) {
+                    _this.updateTooltip(id.substring(4), node.parentElement);
+                }
+            });
             this.isDoingSetup = false;
         }
         catch (e) {
@@ -2403,7 +2415,7 @@ var GameXBody = /** @class */ (function (_super) {
         var trackerCopy = "alt_" + node.id;
         var nodeCopy = $(trackerCopy);
         if (nodeCopy) {
-            nodeCopy.setAttribute("data-state", newState);
+            _super.prototype.setDomTokenState.call(this, trackerCopy, newState);
         }
     };
     GameXBody.prototype.renderSpecificToken = function (tokenNode) { };

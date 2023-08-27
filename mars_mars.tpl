@@ -262,7 +262,6 @@
                 <div id="alt_tracker_s_{PLAYER_COLOR}" class="tracker"></div>
               </div>
               <div class="playerboard_produce">
-                +
                 <div id="alt_tracker_ps_{PLAYER_COLOR}" class="tracker"></div>
               </div>
             </div>
@@ -275,7 +274,6 @@
                 <div id="alt_tracker_u_{PLAYER_COLOR}" class="tracker"></div>
               </div>
               <div class="playerboard_produce">
-                +
                 <div id="alt_tracker_pu_{PLAYER_COLOR}" class="tracker"></div>
               </div>
             </div>
@@ -283,12 +281,11 @@
             <div id="playergroup_plants_{PLAYER_COLOR}" class="playerboard_group">
               <div class="playerboard_group_img">
                 <div class="playerboard_group_underbutton">
-                  +<div class="tracker_forest tracker"></div>
+                  <div class="tracker_forest tracker"></div>
                 </div>
                 <div class="token_img tracker_p"></div>
               </div>
               <div class="playerboard_produce">
-                +
                 <div id="alt_tracker_pp_{PLAYER_COLOR}" class="tracker"></div>
               </div>
               <div class="playerboard_own">
@@ -302,7 +299,6 @@
                 <div class="token_img tracker_e"></div>
               </div>
               <div class="playerboard_produce">
-                +
                 <div id="alt_tracker_pe_{PLAYER_COLOR}" class="tracker"></div>
               </div>
               <div class="playerboard_own">
@@ -318,7 +314,6 @@
                 <div class="token_img tracker_h"></div>
               </div>
               <div class="playerboard_produce">
-                +
                 <div id="alt_tracker_ph_{PLAYER_COLOR}" class="tracker"></div>
               </div>
               <div class="playerboard_own">
@@ -410,7 +405,6 @@
             </div>
           </div>
           <div class="playerboard_produce">
-            +
             <div id="tracker_ps_{PLAYER_COLOR}"></div>
           </div>
         </div>
@@ -423,7 +417,6 @@
             </div>
           </div>
           <div class="playerboard_produce">
-            +
             <div id="tracker_pu_{PLAYER_COLOR}"></div>
           </div>
         </div>
@@ -436,7 +429,6 @@
             </div>
           </div>
           <div class="playerboard_produce">
-            +
             <div id="tracker_pp_{PLAYER_COLOR}"></div>
           </div>
         </div>
@@ -449,7 +441,6 @@
             </div>
           </div>
           <div class="playerboard_produce">
-            +
             <div id="tracker_pe_{PLAYER_COLOR}"></div>
           </div>
         </div>
@@ -462,7 +453,6 @@
             </div>
           </div>
           <div class="playerboard_produce">
-            +
             <div id="tracker_ph_{PLAYER_COLOR}"></div>
           </div>
         </div>

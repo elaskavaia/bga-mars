@@ -66,7 +66,7 @@
     margin-top: unset;
     display: grid;
     grid-template-columns: $mainw auto;
-    grid-template-rows: $mainh auto auto;
+    grid-template-rows: auto auto auto auto;
     justify-content: unset;
   }
 
@@ -317,12 +317,11 @@
   .tableau {
     //height: calc(var(--card-height) * 2);
     display: grid;
-    grid-template-columns: var(--card-height) var(--card-width) var(--card-width) var(--card-width) auto;
+    grid-template-columns: auto auto auto auto auto;
     grid-template-rows: var(--card-width) auto;
     grid-gap: 0.5em;
     outline: 2px dashed var(--plcolor);
     padding: 0.5em;
-    overflow-y: hidden;
   }
 
 
@@ -374,17 +373,23 @@
   .tableau[data-visibility_2="0"] {
     .cards_2 {
       visibility: hidden;
+      width: 0px;
+      height: var(--card-height);
     }
   }
   .tableau[data-visibility_1="0"] {
     .cards_1,  .cards_1vp  {
       visibility: hidden;
+      width: 0px;
+      height: var(--card-height);
     }
 
   }
   .tableau[data-visibility_3="0"] {
     .cards_3, .cards_3vp {
       visibility: hidden;
+      width: 0px;
+      height: 20px;
     }
   }
 

@@ -5206,7 +5206,7 @@
   margin-top: unset;
   display: grid;
   grid-template-columns: calc(var(--map-width) * 1.66) auto;
-  grid-template-rows: calc(var(--map-width) * 1.66 * 0.85) auto auto;
+  grid-template-rows: auto auto auto auto;
   justify-content: unset;
 }
 .mfull #main_board_wrapper,
@@ -5411,12 +5411,11 @@
 }
 .mfull .tableau {
   display: grid;
-  grid-template-columns: var(--card-height) var(--card-width) var(--card-width) var(--card-width) auto;
+  grid-template-columns: auto auto auto auto auto;
   grid-template-rows: var(--card-width) auto;
   grid-gap: 0.5em;
   outline: 2px dashed var(--plcolor);
   padding: 0.5em;
-  overflow-y: hidden;
 }
 .mfull .cards_bin {
   /* grid-template-columns: repeat(auto-fill, var(--card-width)); */
@@ -5452,12 +5451,18 @@
 }
 .mfull .tableau[data-visibility_2="0"] .cards_2 {
   visibility: hidden;
+  width: 0px;
+  height: var(--card-height);
 }
 .mfull .tableau[data-visibility_1="0"] .cards_1, .mfull .tableau[data-visibility_1="0"] .cards_1vp {
   visibility: hidden;
+  width: 0px;
+  height: var(--card-height);
 }
 .mfull .tableau[data-visibility_3="0"] .cards_3, .mfull .tableau[data-visibility_3="0"] .cards_3vp {
   visibility: hidden;
+  width: 0px;
+  height: 20px;
 }
 .mfull .location .card:hover {
   z-index: 10;
@@ -6540,6 +6545,10 @@
 .tracker::after,
 .param::after {
   content: attr(data-state);
+}
+
+.playerboard_produce .tracker::after {
+  content: attr(data-sign) attr(data-state);
 }
 
 #oceans_pile {

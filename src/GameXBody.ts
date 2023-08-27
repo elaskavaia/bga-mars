@@ -35,6 +35,14 @@ class GameXBody extends GameTokens {
 
       dojo.place("player_board_params", "player_config", "last");
 
+
+      document.querySelectorAll(".mini_counter").forEach((node) => {
+        const id  = node.id;
+        if (id.startsWith('alt_')) {
+          this.updateTooltip(id.substring(4), node.parentElement);
+        }
+      });
+
       this.isDoingSetup = false;
     } catch (e) {
       console.error(e);
@@ -266,7 +274,7 @@ class GameXBody extends GameTokens {
     const trackerCopy = "alt_" + node.id;
     const nodeCopy = $(trackerCopy);
     if (nodeCopy) {
-      nodeCopy.setAttribute("data-state", newState);
+      super.setDomTokenState(trackerCopy, newState);
     }
   }
   renderSpecificToken(tokenNode: HTMLElement) {}

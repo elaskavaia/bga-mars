@@ -219,6 +219,11 @@ class GameTokens extends GameBasics {
     if (!node) return;
     this.saveRestore(node);
     node.setAttribute("data-state", newState);
+    if (newState>0) {
+      node.setAttribute("data-sign", "+");
+    } else {
+      node.removeAttribute("data-sign");
+    }
   }
 
   getDomTokenLocation(tokenId: ElementOrId) {
@@ -387,7 +392,7 @@ class GameTokens extends GameBasics {
     //this.updateTooltip(node.id, infoid);
   }
 
-  updateTooltip(token: string, attachTo?: string, delay?: number) {
+  updateTooltip(token: string, attachTo?: ElementOrId, delay?: number) {
     if (attachTo === undefined) {
       attachTo = token;
     }

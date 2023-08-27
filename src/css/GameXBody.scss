@@ -67,6 +67,12 @@
   content: attr(data-state);
 }
 
+.playerboard_produce {
+  .tracker::after {
+  content: attr(data-sign)  attr(data-state);
+}
+}
+
 #oceans_pile {
   position: absolute;
   clip-path: revert;

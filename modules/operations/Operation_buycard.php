@@ -6,7 +6,13 @@ declare(strict_types=1);
 class Operation_buycard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $this->game->multiplayerpush($color, "3nm", "$card_id:a");
+        $money = $this->game->getTrackerValue($color,'m');
+        if ($money>=$inc) {
+            // use money if can
+            $this->game->executeImmediately($color,"nm",$inc);
+        } else {
+            $this->game->multiplayerpush($color, "3nm", "$card_id:a");
+        }
         $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys a card ${token_name}'), [
             "_private"=>true
         ]);
