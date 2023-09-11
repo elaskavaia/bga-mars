@@ -1537,7 +1537,7 @@ var CustomRenders = /** @class */ (function () {
         forest: { classes: "tracker tracker_forest" },
         all_city: { classes: "tracker tracker_city", redborder: 'hex' },
         city: { classes: "tracker tracker_city" },
-        ocean: { classes: "tile tile_3" },
+        ocean: { classes: "token_img tracker_w" },
         draw: { classes: "token_img cardback" },
         tile: { classes: "tracker tile_%card_number%" },
         tagScience: { classes: "tracker badge tracker_tagScience" },
@@ -1592,7 +1592,7 @@ var CustomRenders = /** @class */ (function () {
         p: { classes: "token_img tracker_p" },
         h: { classes: "token_img tracker_h" },
         t: { classes: "token_img temperature_icon" },
-        w: { classes: "tile tile_3" },
+        w: { classes: "token_img tracker_w" },
         o: { classes: "token_img oxygen_icon" },
         ":": { classes: "action_arrow" },
     };
