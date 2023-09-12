@@ -274,7 +274,9 @@
 
 #hand_area {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .hand.location:empty {
@@ -311,5 +313,13 @@
   vertical-align: middle;
   text-align: center;
   line-height: 24px;
+
+
 }
+.log  {
+  .tracker_pm, .tracker_ps, .tracker_pu, .tracker_pp, .tracker_pe, .tracker_ph {
+    outline: 4px solid #b7915e;
+  }
+}
+
 
