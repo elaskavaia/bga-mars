@@ -311,7 +311,8 @@ class GameXBody extends GameTokens {
         //handle card discounts
         const displayInfo = this.getTokenDisplayInfo(card_id);
         const original_cost = parseInt(displayInfo.cost);
-        const discount_cost = parseInt(card_info[card_id].payop.replace("nm", ""));
+        const payop = card_info[card_id].payop;
+        const discount_cost = parseInt(payop.replace("nm", "").replace("nop",0)) || 0;
 
         if (discount_cost != original_cost) {
           $("cost_" + card_id).innerHTML = discount_cost.toString();

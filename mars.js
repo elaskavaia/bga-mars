@@ -2448,7 +2448,8 @@ var GameXBody = /** @class */ (function (_super) {
                 //handle card discounts
                 var displayInfo = this.getTokenDisplayInfo(card_id);
                 var original_cost = parseInt(displayInfo.cost);
-                var discount_cost = parseInt(card_info[card_id].payop.replace("nm", ""));
+                var payop = card_info[card_id].payop;
+                var discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
                 if (discount_cost != original_cost) {
                     $("cost_" + card_id).innerHTML = discount_cost.toString();
                     $("cost_" + card_id).classList.add("discounted");
