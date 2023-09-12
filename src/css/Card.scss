@@ -535,17 +535,21 @@ display: none;
 }
 
 .prereq_content{
-  display: flex;
+  display: block;
   width: fit-content;
-  justify-content: flex-start;
-  align-items: center;
+  min-width: calc(var(--card-width) * 0.22);
   padding-left: calc(var(--card-width) * 0.01);
   background: radial-gradient(circle, rgba(255,232,10,1) 0%, rgb(231, 164, 3) 100%);
-
 }
+.card .prereq_content > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .prereq_content.mode_max{
   background:radial-gradient(circle, rgba(255,195,10,1) 0%, rgba(255,89,0,1) 100%);
 }
+
 
 .card .prereq_content .badge {
   width: calc(var(--card-width) * 0.09);
@@ -614,11 +618,12 @@ display: none;
 
 .card_illustration{
   position: absolute;
-  width: 100%;
+  width: 96%;
   height: 50%;
   background-image: url("img/cards_illustrations.jpg");
   background-size: 1000% 2100%;
   top: 16%;
+  left: 2%;
   border-radius: 5%;
 }
 @for $val from 1 through 250{
