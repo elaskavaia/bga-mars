@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once "Operation_res.php";
-
 class Operation_nres extends AbsOperation {
 
     function argPrimaryDetails() {
@@ -44,10 +42,7 @@ class Operation_nres extends AbsOperation {
         $player_id = $this->game->getPlayerIdByColor($owner);
         foreach ($resources as $key => $info) {
             $num--;
-            $this->game->dbSetTokenLocation($key, "tableau_$owner", 0, clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), [
-                'restype_name' => $this->game->getTokenName("tag$holds"),
-                "card_name" => $this->game->getTokenName($card),
-            ], $player_id);
+            $this->game->effect_moveResource($owner, $key, "tableau_$owner", 0, clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), $card);
             if ($num == 0) break;
         }
         if ($num > 0) throw new BgaUserException("Insufficient number of resources");

@@ -9,9 +9,7 @@ class Operation_res extends AbsOperation {
         $par = $this->game->getRulesFor($card, 'holds', '');
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
-            $this->game->dbSetTokenLocation($res, $card, 1, clienttranslate('${player_name} adds ${restype_name} to ${place_name}'), [
-                'restype_name' => $this->game->getTokenName("tag$par"),
-            ]);
+            $this->game->effect_moveResource($owner, $res, $card, 1, clienttranslate('${player_name} adds ${restype_name} to ${card_name}'), $card);
         }
 
         return $inc;

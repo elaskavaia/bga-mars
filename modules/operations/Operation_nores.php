@@ -31,7 +31,7 @@ class Operation_nores extends AbsOperation {
         $num = $inc;
         foreach ($resources as $key => $info) {
             $num--;
-            $this->game->dbSetTokenLocation($key, 'miniboard_' . $owner, 0);
+            $this->game->effect_moveResource($owner, $key, "tableau_$owner", 0, clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), $card);
             if ($num == 0) break;
         }
         if ($num > 0) throw new feException("Insufficient number of resources on $card");

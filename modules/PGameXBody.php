@@ -716,6 +716,14 @@ abstract class PGameXBody extends PGameMachine {
     function effect_moveCard($owner, $card_id, $place_id, $state = null, $notif = "", $args = []) {
         $this->dbSetTokenLocation($card_id,  $place_id, $state, $notif, $args, $this->getPlayerIdByColor($owner));
     }
+    function effect_moveResource($owner, $res_id, $place_id, $state = null, $notif = "", $card_id) {
+        $holds = $this->getRulesFor($card_id, 'holds', '');
+     
+        $this->dbSetTokenLocation($res_id,  $place_id, $state, $notif, [
+            'card_name'=>$this->getTokenName($card_id),
+            'restype_name' => $this->getTokenName("tag$holds")
+        ], $this->getPlayerIdByColor($owner));
+    }
 
     function getNextDraftPlayerColor($color) {
         $player_id = $this->getPlayerIdByColor($color);

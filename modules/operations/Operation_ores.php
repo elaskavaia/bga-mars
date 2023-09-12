@@ -26,7 +26,7 @@ class Operation_ores extends  AbsOperation {
 
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
-            $this->game->dbSetTokenLocation($res, $card, 1);
+            $this->game->effect_moveResource($owner, $res, $card, 1, clienttranslate('${player_name} adds ${restype_name} to ${card_name}'), $card);
         }
 
         return $inc;
