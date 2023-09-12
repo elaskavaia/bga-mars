@@ -19,6 +19,6 @@ class Operation_nolastforest extends AbsOperation {
     }
 
     function getOpName() {
-        return clienttranslate("Reject placeing Greenery");
+        return clienttranslate("Reject placing Greenery");
     }
 }
