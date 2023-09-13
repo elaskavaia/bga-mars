@@ -92,7 +92,7 @@
 .token_img.tracker_p{
   background-position: 0 0;
 }
-.token_img.tracker_animal{
+.token_img.tracker_resAnimal{
   background-position: -100% 0;
 }
 .token_img.tracker_h{
@@ -101,14 +101,17 @@
 .token_img.tracker_m {
   background-position: -300% 0;
 }
-.token_img.tracker_microbe{
+.token_img.tracker_resMicrobe{
   background-position: -400% 0;
+}
+.token_img.tracker_resFighter{
+  background-position: -400% -100%;
 }
 
 .token_img.tracker_e{
   background-position: -500% 0;
 }
-.token_img.resource_science{
+.token_img.tracker_resScience{
   background-position: -600% 0;
 }
 

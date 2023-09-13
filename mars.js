@@ -1554,16 +1554,16 @@ var CustomRenders = /** @class */ (function () {
         onPay_card: { classes: "empty" },
         twopoints: { classes: "txtcontent", content: ':' },
         star: { classes: "txtcontent", content: '*' },
-        res_Science: { classes: "token_img resource_science" },
-        res_Animal: { classes: "token_img tracker_animal" },
-        res_Microbe: { classes: "token_img tracker_microbe" },
-        nores_Animal: { classes: "token_img tracker_animal", redborder: 'resource', norepeat: true },
-        nores_Microbe: { classes: "token_img tracker_microbe", redborder: 'resource', norepeat: true },
-        ores_Microbe: { classes: "token_img tracker_microbe", after: '*', norepeat: true },
-        ores_Animal: { classes: "token_img tracker_animal", after: '*', norepeat: true },
+        res_Science: { classes: "token_img tracker_resScience" },
+        res_Animal: { classes: "token_img tracker_resAnimal" },
+        res_Microbe: { classes: "token_img tracker_resMicrobe" },
+        nores_Animal: { classes: "token_img tracker_resAnimal", redborder: 'resource', norepeat: true },
+        nores_Microbe: { classes: "token_img tracker_resMicrobe", redborder: 'resource', norepeat: true },
+        ores_Microbe: { classes: "token_img tracker_resMicrobe", after: '*', norepeat: true },
+        ores_Animal: { classes: "token_img tracker_resAnimal", after: '*', norepeat: true },
         special_tagmicrobe_half: { classes: "tracker badge tracker_tagMicrobe", content: "2", norepeat: true },
-        res: { classes: "token_img tracker_%badge%", norepeat: true },
-        nres: { classes: "token_img tracker_%badge%", norepeat: true },
+        res: { classes: "token_img tracker_res%res%", norepeat: true },
+        nres: { classes: "token_img tracker_res%res%", norepeat: true },
         nmu: { classes: "token_img tracker_m nmu", negative: true, content: "1", exp: "token_img tracker_u" },
         nms: { classes: "token_img tracker_m nms", negative: true, content: "1", exp: "token_img tracker_s" },
         npe: { classes: "token_img tracker_e", negative: true, production: true },
@@ -2337,7 +2337,7 @@ var GameXBody = /** @class */ (function (_super) {
                         //replaces some stuff in parsed rules
                         card_r = card_r.replace("%card_number%", displayInfo.num);
                         //special for "res"
-                        card_r = card_r.replaceAll("%badge%", firsttag.toLowerCase());
+                        card_r = card_r.replaceAll("%res%", displayInfo.holds);
                     }
                     //card actions
                     var card_a = "";
@@ -2348,7 +2348,7 @@ var GameXBody = /** @class */ (function (_super) {
                         card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
                     }
                     //special for "res"
-                    card_a = card_a.replaceAll("%badge%", firsttag.toLowerCase());
+                    card_a = card_a.replaceAll("%res%", displayInfo.holds);
                     var card_action_text = "";
                     if (displayInfo.text_action || displayInfo.text_effect) {
                         card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
@@ -2461,7 +2461,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.darhflog("update pl counters", this.local_counters[plColor]);
         for (var _i = 0, _a = Object.keys(this.local_counters[plColor]); _i < _a.length; _i++) {
             var key = _a[_i];
-            this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
+            //this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
             $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
         }
     };

@@ -173,7 +173,7 @@ class GameXBody extends GameTokens {
             //replaces some stuff in parsed rules
             card_r = card_r.replace("%card_number%", displayInfo.num);
             //special for "res"
-            card_r = card_r.replaceAll("%badge%", firsttag.toLowerCase());
+             card_r = card_r.replaceAll("%res%",displayInfo.holds);
           }
 
           //card actions
@@ -184,7 +184,7 @@ class GameXBody extends GameTokens {
             card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
           }
           //special for "res"
-          card_a = card_a.replaceAll("%badge%", firsttag.toLowerCase());
+          card_a = card_a.replaceAll("%res%", displayInfo.holds);
           let card_action_text = "";
           if (displayInfo.text_action || displayInfo.text_effect) {
             card_action_text = `<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
@@ -324,7 +324,7 @@ class GameXBody extends GameTokens {
   updatePlayerLocalCounters(plColor: string): void {
     this.darhflog("update pl counters", this.local_counters[plColor]);
     for (let key of Object.keys(this.local_counters[plColor])) {
-      this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
+      //this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
       $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
     }
   }

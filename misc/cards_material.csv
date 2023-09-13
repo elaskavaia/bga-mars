@@ -164,7 +164,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Corporate||Spend 8 heat to increase your terraforming rating 1 step.|||
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|Basic|Increase your plant production 2 steps.||||
 156|Standard Technology|2|||play_stan:3m|6||Science|0|Corporate|||After you pay for a standard project, except selling patents, you gain 3 MC.||
-157|Nitrite Reducing Bacteria|2|3res|res/(3nres:tr)||11||Microbe|0|Basic|Add 3 microbes to this card,|Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|||'holds' => 'Microbe'
+157|Nitrite Reducing Bacteria|2|3res|res/(3nres:tr)||11||Microbe|0|Basic|Add 3 microbes to this card|Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step.|||'holds' => 'Microbe'
 158|Industrial Microbes|1|ps,pe|||12||Building Microbe|0|Basic|Increase your energy production and your steel production 1 step each.||||
 159|Lichen|1|pp|||7|t>=-24|Plant|0|Basic|Increase your plant production 1 step.||||
 160|Power Supply Consortium|1|npe_Any,pe|||5|tagEnergy>=2|Energy|0|Corporate|Decrease any energy production 1 step and increase your own 1 step.||||

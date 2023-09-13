@@ -25,20 +25,20 @@
       twopoints: { classes: "txtcontent", content: ':' },
       star: { classes: "txtcontent", content: '*' },
 
-      res_Science: { classes: "token_img resource_science" },
-      res_Animal: { classes: "token_img tracker_animal" },
-      res_Microbe: { classes: "token_img tracker_microbe" },
+      res_Science: { classes: "token_img tracker_resScience" },
+      res_Animal: { classes: "token_img tracker_resAnimal" },
+      res_Microbe: { classes: "token_img tracker_resMicrobe" },
 
-      nores_Animal: { classes: "token_img tracker_animal", redborder: 'resource', norepeat: true },
-      nores_Microbe: { classes: "token_img tracker_microbe", redborder: 'resource', norepeat: true },
+      nores_Animal: { classes: "token_img tracker_resAnimal", redborder: 'resource', norepeat: true },
+      nores_Microbe: { classes: "token_img tracker_resMicrobe", redborder: 'resource', norepeat: true },
 
-      ores_Microbe: { classes: "token_img tracker_microbe", after: '*', norepeat: true },
-      ores_Animal: { classes: "token_img tracker_animal", after: '*', norepeat: true },
+      ores_Microbe: { classes: "token_img tracker_resMicrobe", after: '*', norepeat: true },
+      ores_Animal: { classes: "token_img tracker_resAnimal", after: '*', norepeat: true },
 
       special_tagmicrobe_half: { classes: "tracker badge tracker_tagMicrobe", content: "2", norepeat: true },
 
-      res: { classes: "token_img tracker_%badge%", norepeat: true },
-      nres: { classes: "token_img tracker_%badge%", norepeat: true },
+      res: { classes: "token_img tracker_res%res%", norepeat: true },
+      nres: { classes: "token_img tracker_res%res%", norepeat: true },
       nmu: { classes: "token_img tracker_m nmu", negative: true, content: "1", exp: "token_img tracker_u" },
       nms: { classes: "token_img tracker_m nms", negative: true, content: "1", exp: "token_img tracker_s" },
 

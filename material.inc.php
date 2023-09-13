@@ -2218,7 +2218,7 @@ $this->token_types = [
   'tags' => 'Microbe',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Add 3 microbes to this card,"),
+  'text' => clienttranslate("Add 3 microbes to this card"),
   'text_action' => clienttranslate("Add 1 microbe to this card, or remove 3 microbes to increase your TR 1 step."),
   'holds' => 'Microbe',
 ],
