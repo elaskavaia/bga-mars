@@ -18,6 +18,7 @@ class GameXBody extends GameTokens {
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
       this.local_counters = [];
+      this.clearReverseIdMap();
 
       super.setup(gamedatas);
       // hexes are not moved so manually connect
@@ -63,7 +64,8 @@ class GameXBody extends GameTokens {
     //move own player board in main zone
     if (playerInfo.id == this.player_id) {
       const board = $(`player_area_${playerInfo.color}`);
-      $("thisplayer_zone").appendChild(board);
+      dojo.place(board,'main_board','after');
+      dojo.addClass(board,'thisplayer_zone');
     }
   }
 

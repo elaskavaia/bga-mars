@@ -218,13 +218,6 @@
         </div>
       </div>
     </div>
-
-
-
-    <div id="thisplayer_zone">
-
-    </div>
-
   </div>
 
 

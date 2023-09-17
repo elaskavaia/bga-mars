@@ -2202,6 +2202,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;
             this.local_counters = [];
+            this.clearReverseIdMap();
             _super.prototype.setup.call(this, gamedatas);
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
@@ -2239,7 +2240,8 @@ var GameXBody = /** @class */ (function (_super) {
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {
             var board = $("player_area_".concat(playerInfo.color));
-            $("thisplayer_zone").appendChild(board);
+            dojo.place(board, 'main_board', 'after');
+            dojo.addClass(board, 'thisplayer_zone');
         }
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {

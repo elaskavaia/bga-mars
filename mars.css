@@ -249,6 +249,14 @@
   background-color: #ffffff;
 }
 
+.marker_ffa500 {
+  background-color: #ffa500;
+}
+
+.marker_773300 {
+  background-color: #773300;
+}
+
 /*card bg ratio : 1.40658174*/
 #ebd-body {
   --card-width: 8vw;
@@ -5019,7 +5027,7 @@
   display: flex;
   animation: nudge 2000ms infinite ease-in-out;
 }
-.mcompact #thisplayer_zone .playerboard_group_img .token_img {
+.mcompact .thisplayer_zone .playerboard_group_img .token_img {
   z-index: 1;
 }
 
@@ -5194,6 +5202,7 @@
   border-radius: unset;
   background: unset;
   outline: 1px dashed var(--pcolor);
+  min-width: calc(var(--map-width) * 1.66);
 }
 .mfull .player_counters {
   display: none;
@@ -5215,23 +5224,24 @@
 }
 .mfull #main_area {
   margin-top: unset;
-  display: grid;
-  grid-template-columns: calc(var(--map-width) * 1.66) auto;
-  grid-template-rows: auto auto auto auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: unset;
 }
-.mfull #main_board_wrapper,
 .mfull #main_board {
-  grid-column: 1;
-  grid-row: 1;
+  order: 2;
 }
-.mfull #thisplayer_zone ~ .player_area {
-  grid-column: 2;
+.mfull .thisplayer_zone {
+  order: 1;
+  flex-grow: unset;
 }
-.mfull #thisplayer_zone {
-  width: 100%;
-  grid-column: 2;
-  grid-row: 1;
+.mfull .thisplayer_zone ~ .player_area {
+  order: 3;
+}
+.mfull .player_area {
+  min-width: calc(var(--map-width) * 1.66);
+  width: calc(var(--map-width) * 1.66);
 }
 .mfull #players_area {
   display: none;
@@ -6758,7 +6768,7 @@
   background-position-x: -1100%;
 }
 
-#thisplayer_zone {
+.thisplayer_zone {
   min-width: calc(var(--map-width) * 1.3);
   flex-grow: 100;
 }
