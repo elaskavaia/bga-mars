@@ -9,7 +9,7 @@ class Operation_buycard extends AbsOperation {
         $money = $this->game->getTrackerValue($color,'m');
         if ($money>=$inc) {
             // use money if can
-            $this->game->executeImmediately($color,"nm",$inc);
+            $this->game->executeImmediately($color,"nm",3);
         } else {
             $this->game->multiplayerpush($color, "3nm", "$card_id:a");
         }
