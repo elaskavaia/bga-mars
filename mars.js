@@ -689,7 +689,7 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.getPlayerIdByColor = function (color) {
         for (var playerId in this.gamedatas.players) {
             var playerInfo = this.gamedatas.players[playerId];
-            if (color === playerInfo.color) {
+            if (color == playerInfo.color) {
                 return playerId;
             }
         }
