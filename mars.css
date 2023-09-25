@@ -150,6 +150,12 @@
   position: relative;
 }
 
+.hand_area .location {
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  border-radius: 1vh;
+}
+
 .hand, .draw, .draft {
   min-height: var(--card-height);
   display: flex;
@@ -5407,9 +5413,6 @@
   left: 0px;
   right: unset;
   border: none;
-}
-.mfull .tableau.whiteblock {
-  background-image: none;
 }
 .mfull #main_board::before {
   content: "";

@@ -11,7 +11,7 @@
 -->
 <div id="zoom-wrapper" class="zoom-wrapper">
 <div id="thething">
-  <div id="hand_area" class="whiteblock">
+  <div id="hand_area" class="hand_area">
     <div class="hand location" id="hand_{CURRENT_PLAYER_COLOR}"></div>
     <div class="draw location" id="draw_{CURRENT_PLAYER_COLOR}"></div>
     <div class="draft location" id="draft_{CURRENT_PLAYER_COLOR}"></div>
@@ -353,7 +353,7 @@
         -->
       </div>
 
-      <div id="tableau_{PLAYER_COLOR}" class="whiteblock" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
+      <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
            <div id="tableau_{PLAYER_COLOR}_cards_4"  class="cards_4 cards_bin"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2a" class="cards_2a cards_bin"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2"  class="cards_2 cards_bin stacked"></div>

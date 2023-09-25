@@ -13,6 +13,12 @@
 
 .location {
   position: relative;
+
+}
+.hand_area .location {
+  background-color:  #ffffff99;
+  padding: 10px;
+  border-radius: 1vh;
 }
 
 .hand, .draw, .draft {

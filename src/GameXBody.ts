@@ -853,7 +853,10 @@ class GameXBody extends GameTokens {
 
   onUpdateActionButtons_multiplayerChoice(args) {
     let operations = args.player_operations[this.player_id] ?? undefined;
-    if (!operations) return;
+    if (!operations) {
+      this.addUndoButton();
+      return;
+    }
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 

@@ -2958,8 +2958,10 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
         var _a;
         var operations = (_a = args.player_operations[this.player_id]) !== null && _a !== void 0 ? _a : undefined;
-        if (!operations)
+        if (!operations) {
+            this.addUndoButton();
             return;
+        }
         this.onUpdateActionButtons_playerTurnChoice(operations);
     };
     GameXBody.prototype.onEnteringState_multiplayerDispatch = function (args) {

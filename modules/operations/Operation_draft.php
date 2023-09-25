@@ -20,6 +20,8 @@ class Operation_draft extends AbsOperation {
     }
 
     function canResolveAutomatically() {
+        $arg = $this->arg();
+        if ( count($arg['target']) == 1) return true;
         return false;
     }
 

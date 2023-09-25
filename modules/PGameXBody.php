@@ -63,10 +63,6 @@ abstract class PGameXBody extends PGameMachine {
                     $corp = $this->tokens->getTokenOfTypeInLocation("card_corp_1_", null, 0);
                     $this->effect_playCorporation($color, $corp['key'], false);
                     $this->tokens->pickTokensForLocation($initial_draw, "deck_main", "hand_${color}");
-                } else {
-
-                    $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-                    $this->multiplayerqueue($color, "keepcorp");
                 }
 
                 if (!$this->isCorporateEraVariant()) {
@@ -82,7 +78,7 @@ abstract class PGameXBody extends PGameMachine {
             }
 
             if ($this->getGameStateValue('var_begginers_corp') != 1) {
-                $this->effect_queueMultiDraw($initial_draw);
+                $this->effect_queueMultiDraw($initial_draw, $corps);
             }
 
 
@@ -1069,13 +1065,14 @@ abstract class PGameXBody extends PGameMachine {
         return $object;
     }
 
-    function effect_queueMultiDraw($numcards = 4) {
+    function effect_queueMultiDraw($numcards = 4, $corps = 0) {
         $players = $this->loadPlayersBasicInfos();
         if ($this->isDraftVariant()) {
             $this->notifyAllPlayers('message', clienttranslate('research draft'), []);
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->effect_draw($color, "deck_main", "draft_${color}", $numcards);
+                $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
             }
             for ($i = 0; $i < $numcards; $i++) {
                 foreach ($players as $player_id => $player) {
@@ -1088,11 +1085,14 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->effect_draw($color, "deck_main", "draw_${color}", $numcards);
+                $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
+
             }
         }
         // multiplayer buy
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
+            $this->multiplayerqueue($color, "keepcorp");
             $this->multiplayerqueue($color, "${numcards}?buycard");
         }
         foreach ($players as $player_id => $player) {
@@ -1109,6 +1109,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyMessage(clienttranslate('${player_name} takes back their move'), [], $player_id);
 
 
+        // TODO incomplete DRAFT
         $selected = $this->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
         $count = count($selected);
         $rest = $this->tokens->getTokensInLocation("draw_$color");
@@ -1139,7 +1140,7 @@ abstract class PGameXBody extends PGameMachine {
 
         foreach ($selected as $card_id => $card) {
             $this->dbSetTokenLocation($card_id, "draw_$color", 0, '');
-            $this->effect_incCount($color, 'm', -3, ['message' => '']);
+            $this->effect_incCount($color, 'm', 3, ['message' => '']);
         }
 
         if ($has_corp) {
