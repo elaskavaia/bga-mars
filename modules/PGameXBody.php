@@ -90,7 +90,10 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->isSolo()) {
                 $this->setupSoloMap();
             }
-            $this->setCurrentStartingPlayer($this->getFirstPlayer());
+
+            $player_id = $this->getFirstPlayer();
+            $this->setCurrentStartingPlayer($player_id);
+            $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
         } catch (Exception $e) {
             $this->error($e);
         }
@@ -195,13 +198,17 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_q() {
-        $player_id = $this->getCurrentPlayerId();
+        //$player_id = $this->getCurrentPlayerId();
         //$this->machine->push("a",1,$player_id);
         //$this->machine->interrupt();
         //$this->machine->normalize();
-        $card = "card_stanproj_1";
-        return $this->debug_oparg("counter(all_city),m", $card);
+        //$card = "card_stanproj_1";
+        //return $this->debug_oparg("counter(all_city),m", $card);
         //$this->gamestate->nextState("next");
+
+        $player_id = $this->getFirstPlayer();
+        $this->setCurrentStartingPlayer($player_id);
+        $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
     }
 
     function debug_drawCard($num) {
@@ -714,9 +721,9 @@ abstract class PGameXBody extends PGameMachine {
     }
     function effect_moveResource($owner, $res_id, $place_id, $state = null, $notif = "", $card_id) {
         $holds = $this->getRulesFor($card_id, 'holds', '');
-     
+
         $this->dbSetTokenLocation($res_id,  $place_id, $state, $notif, [
-            'card_name'=>$this->getTokenName($card_id),
+            'card_name' => $this->getTokenName($card_id),
             'restype_name' => $this->getTokenName("tag$holds")
         ], $this->getPlayerIdByColor($owner));
     }
@@ -1086,18 +1093,19 @@ abstract class PGameXBody extends PGameMachine {
                 $color = $player["player_color"];
                 $this->effect_draw($color, "deck_main", "draw_${color}", $numcards);
                 $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-
             }
         }
         // multiplayer buy
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            $this->multiplayerqueue($color, "keepcorp");
+            if ($corps) $this->multiplayerqueue($color, "keepcorp");
             $this->multiplayerqueue($color, "${numcards}?buycard");
         }
-        foreach ($players as $player_id => $player) {
-            $color = $player["player_color"];
-            $this->queue($color, "prediscard");
+        if ($corps == 0) { // only do this when not setup, setup has special command
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $this->queue($color, "prediscard");
+            }
         }
     }
 
