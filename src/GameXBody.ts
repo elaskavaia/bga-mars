@@ -5,7 +5,9 @@ class GameXBody extends GameTokens {
   private local_counters: any;
   private isDoingSetup: boolean;
   private vlayout: VLayout;
-  // private parses:any;
+  private localSettings:LocalSettings;
+  private customAnimation:CustomAnimation;
+ // private parses:any;
 
   constructor() {
     super();
@@ -19,6 +21,8 @@ class GameXBody extends GameTokens {
       this.custom_pay = undefined;
       this.local_counters = [];
       this.clearReverseIdMap();
+      this.customAnimation = new CustomAnimation(this);
+
 
       super.setup(gamedatas);
       // hexes are not moved so manually connect
@@ -34,7 +38,24 @@ class GameXBody extends GameTokens {
         dojo.destroy(node); // on undo this remains but another one generated
       });
 
-      dojo.place("player_board_params", "player_config", "last");
+      //local settings
+      this.localSettings = new LocalSettings('mars',
+        [{key:'cardsize',label:_('Card size'),range:[15,200,5],default:100},
+          {key:'mapsize',label:_('Map size'),range:[15,200,5],default:100},
+          {key:'handplace',label:_('Hand placement'),choice:{ontop:_('On top'), floating:_('Floating')},default:'ontop'},
+          {key:'playerarea',label:_('Player zone placement'),choice:{before:_('Before Map'), after:_('After Map')},default:'after'}
+        ]);
+      this.localSettings.setup();
+      //this.localSettings.renderButton('player_config_row');
+      this.localSettings.renderContents('settings-controls-container');
+      //floating hand stuff
+      this.connect($('hand_area_button_pop'),'onclick', ()=>{
+        $('hand_area').dataset.open= $('hand_area').dataset.open=="1" ? "0" : "1";
+      });
+
+
+     // dojo.place("player_board_params", "player_config", "last");    
+     if(!$('player_config').innerHTML.includes("player_board_params"))  dojo.place("player_board_params", "player_config", "last");
 
 
       document.querySelectorAll(".mini_counter").forEach((node) => {
@@ -43,6 +64,14 @@ class GameXBody extends GameTokens {
           this.updateTooltip(id.substring(4), node.parentElement);
         }
       });
+
+      //remove remaining "title" attibutes
+      dojo.query('.award').forEach((node)=>{node.removeAttribute("title")});
+      dojo.query('.milestone').forEach((node)=>{node.removeAttribute("title")});
+
+      //update prereq on cards
+      this.updateHandPrereqs();
+
 
       this.isDoingSetup = false;
     } catch (e) {
@@ -66,6 +95,45 @@ class GameXBody extends GameTokens {
       const board = $(`player_area_${playerInfo.color}`);
       dojo.place(board,'main_board','after');
       dojo.addClass(board,'thisplayer_zone');
+    }
+
+  }
+
+  onNotif(notif: Notif) {
+    super.onNotif(notif);
+    this.darhflog('playing notif ' + notif.type + ' with args ', notif.args);
+
+    //Displays message in header while the notif is playing
+    let msg = this.format_string_recursive(notif.log, notif.args);
+    if (msg != '') {
+      $('gameaction_status').innerHTML = msg;
+      $('pagemaintitletext').innerHTML = msg;
+    }
+
+  }
+
+  //make custom animations depending on situation
+  notif_tokenMoved(notif: Notif):void {
+    super.notif_tokenMoved(notif);
+    //pop animation on Tiles
+    if (notif.args.token_id && notif.args.token_id.startsWith('tile_')) {
+        this.customAnimation.animateTilePop(notif.args.token_id);
+    }
+  }
+
+  notif_counter(notif: Notif):void {
+    super.notif_counter(notif);
+    //move animation on main player board counters
+    /*
+    const counter_move=["m","pm","s","ps","u","pu","p","pp","e","pe","h","ph"].map((item)=>{
+      return "tracker_"+item+"_";
+    });*/
+    const counter_move=["m","s","u","p","e","h"].map((item)=>{
+      return "tracker_"+item+"_";
+    });
+
+    if ((notif.args.inc) && counter_move.some(trk => notif.args.counter_name.startsWith(trk))) {
+      this.customAnimation.moveResources(notif.args.counter_name,notif.args.inc);
     }
   }
 
@@ -202,15 +270,16 @@ class GameXBody extends GameTokens {
                 <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
                 <div class="card_number">${displayInfo.num ?? ""}</div>
                 <div class="card_number_binary">${cn_binary}</div>
+                <div id="resource_holder_${tokenNode.id.replace('card_main_','')}" class="card_resource_holder"></div>
                 ${vp}
           `;
 
           const prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
 
-          ttdiv.innerHTML += `<div class="card_number">${displayInfo.num ?? ""}</div>`;
-          if (prereqText != "") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("PRE-REQUISITES") + "</div>";
-            ttdiv.innerHTML += `<div class="card_effect">${prereqText}</div>`;
+          ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
+          if (prereqText!="") {
+            ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PRE-REQUISITES')+'</div>';
+            ttdiv.innerHTML+=`<div class="card_effect card_tt_prereq">${prereqText}</div>`;
           }
           /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
           ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
@@ -250,6 +319,20 @@ class GameXBody extends GameTokens {
 
         tokenNode.setAttribute("data-card-type", displayInfo.t);
       }
+
+      if (displayInfo.mainType=="award" || displayInfo.mainType=="milestone") {
+        //custom tooltip on awards and milestones
+        const dest= tokenNode.id.replace(displayInfo.mainType+'_',displayInfo.mainType+ '_label_');
+        $(dest).innerHTML=_(displayInfo.name);
+        const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+        ttdiv.innerHTML = ` 
+            <div class='token_title'>${displayInfo.name}</div>
+            <div class='card_effect'>${displayInfo.text}</div>
+        `;
+        tokenNode.appendChild(ttdiv);
+      }
+
+
       this.connect(tokenNode, "onclick", "onToken");
     }
   }
@@ -299,6 +382,101 @@ class GameXBody extends GameTokens {
     //   tokenDisplayInfo.imageTypes += " infonode";
     // }
   }
+
+  updateHandPrereqs():void {
+    if (!this.player_id) return;
+    const nodes= dojo.query('#hand_area .card');
+    for (let node of nodes) {
+
+      // const card_id = node.id.replace('card_main_','');
+      const displayInfo = this.getTokenDisplayInfo(node.id);
+      if (!displayInfo) continue;
+      if (!displayInfo.expr.pre) continue;
+
+      let op = "";
+      let what = "";
+      let qty=0;
+
+      if (typeof displayInfo.expr.pre === 'string') {
+        op = ">=";
+        what = displayInfo.expr.pre;
+        qty=1;
+      } else {
+        if (displayInfo.expr.pre.length<3) {
+          continue
+
+        } else {
+          op = displayInfo.expr.pre[0];
+          what = displayInfo.expr.pre[1];
+          qty=displayInfo.expr.pre[2];
+        }
+      }
+
+      let tracker="";
+      switch (what) {
+        case "o":
+          tracker='tracker_o';
+          break;
+        case "t":
+          tracker='tracker_t';
+          break;
+        case "tagScience":
+          tracker='tracker_tagScience_'+this.getPlayerColor(this.player_id);
+          break;
+        case "tagEnergy":
+          tracker='tracker_tagEnergy_'+this.getPlayerColor(this.player_id);
+          break;
+        case "tagJovian":
+          tracker='tracker_tagJovian_'+this.getPlayerColor(this.player_id);
+          break;
+        case "forest":
+          tracker='tracker_tagForest_'+this.getPlayerColor(this.player_id);
+          break;
+        case "w":
+          tracker='tracker_w';
+          break;
+        case "ps":
+          tracker='tracker_ps_'+this.getPlayerColor(this.player_id);
+          break;
+        case "all_city":
+         // global city tracker exists ?
+
+          break;
+      }
+
+      if (tracker=="") continue;
+
+      let valid=false;
+      this.darhflog("getting state for tracker",tracker);
+      //
+      // const actual = this.getTokenInfoState(tracker);
+      if (!$(tracker)) {
+        continue;
+      }
+      if (!$(tracker).dataset.state) {
+        continue;
+      }
+      const actual =parseInt($(tracker).dataset.state);
+      this.darhflog("got value",actual);
+
+      if (op=="<=") {
+        if (actual<=qty) valid= true;
+      } else if (op=="<") {
+        if (actual<qty) valid= true;
+      } else if (op==">") {
+        if (actual>qty) valid= true;
+      } else if (op==">=") {
+        if (actual>=qty) valid= true;
+      }
+
+      if (!valid) {
+        node.dataset.invalid_prereq=1;
+      } else {
+        node.dataset.invalid_prereq=0;
+      }
+    }
+  }
+
   updateVisualsFromOp(opInfo: any, opId: number) {
     const opargs = opInfo.args;
     const paramargs = opargs.target ?? [];
@@ -338,9 +516,14 @@ class GameXBody extends GameTokens {
       result.nop = true;
     } else if (tokenInfo.key.startsWith("milestone")) {
       result.nop = true;
-    } else if (tokenInfo.key == "starting_player") {
-      result.location = tokenInfo.location.replace("tableau_", "fpholder_");
-    } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+    } else if (tokenInfo.key=='starting_player'){
+      result.location=tokenInfo.location.replace('tableau_','fpholder_');
+    } else if (tokenInfo.key.startsWith("resource_")) {
+      if (tokenInfo.location.startsWith('card_main_')) {
+        result.location=tokenInfo.location.replace('card_main_','resource_holder_');
+      }
+    }
+     else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       if (!this.isLayoutFull()) {
         result.location = tokenInfo.location + "_corp_effect";
       } else {
@@ -368,7 +551,7 @@ class GameXBody extends GameTokens {
         }
 
         //auto switch tabs here
-        this.darhflog("isdoingseyup", this.isDoingSetup);
+       // this.darhflog("isdoingsetup", this.isDoingSetup);
         if (!this.isDoingSetup) {
           if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
             for (let i = 1; i <= 3; i++) {
@@ -431,6 +614,12 @@ class GameXBody extends GameTokens {
     const res = getPart(id, 1);
     const icon = `<div class="token_img tracker_${res}">${value}</div>`;
     return icon;
+  }
+  
+    getButtonColorForOperation(op: any) {
+    if (op.type=="pass") return "red";
+    if (op.type=="skipsec") return "orange";
+    return "blue";
   }
 
   getTokenPresentaton(type: string, tokenKey: string | { log: string; args: any }): string {
@@ -801,7 +990,18 @@ class GameXBody extends GameTokens {
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
       const opargs = opInfo.args;
-      const name = this.getButtonNameForOperation(opInfo);
+
+      let name="";
+      let contains_gfx=false;
+      if (opInfo.typeexpr && opInfo.data && opInfo.data!="") {
+         name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
+         contains_gfx=true;
+      } else {
+         name = this.getButtonNameForOperation(opInfo);
+      }
+
+
+      const color = this.getButtonColorForOperation(opInfo);
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
@@ -823,11 +1023,20 @@ class GameXBody extends GameTokens {
                 this.onSelectTarget(opId, id);
               }
             );
-          });
+          },null,null,color);
         } else {
           this.addActionButton("button_" + opId, name, () => {
             this.sendActionResolve(opId);
-          });
+          },null,null,color);
+        }
+
+        if (color!="blue" && color!="red") {
+          $('button_'+opId).classList.remove('bgabutton_blue');
+          $('button_'+opId).classList.add('bgabutton_'+color);
+        }
+        if (contains_gfx) {
+          $('button_'+opId).classList.add('gfx');
+          $('button_'+opId).setAttribute('title', this.getButtonNameForOperation(opInfo));
         }
 
         if (opargs.void) {
@@ -843,6 +1052,10 @@ class GameXBody extends GameTokens {
       }
       i = i + 1;
     }
+
+    //refresh prereqs rendering on hand cards
+    //TODO : check if this place is pertinent
+    this.updateHandPrereqs();
   }
 
   addUndoButton() {
@@ -853,7 +1066,10 @@ class GameXBody extends GameTokens {
 
   onUpdateActionButtons_multiplayerChoice(args) {
     let operations = args.player_operations[this.player_id] ?? undefined;
-    if (!operations) return;
+    if (!operations) {
+      this.addUndoButton();
+      return;
+    }
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
@@ -883,7 +1099,7 @@ class GameXBody extends GameTokens {
 
   // on click hooks
   onToken_playerTurnChoice(tid: string) {
-    debugger;
+    //debugger;
     const info = this.reverseIdLookup.get(tid);
     if (info && info !== "0") {
       const opId = info.op;

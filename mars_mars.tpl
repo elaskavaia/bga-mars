@@ -11,10 +11,15 @@
 -->
 <div id="zoom-wrapper" class="zoom-wrapper">
 <div id="thething">
-  <div id="hand_area" class="whiteblock">
+  <div id="hand_area" data-open="0">
     <div class="hand location" id="hand_{CURRENT_PLAYER_COLOR}"></div>
     <div class="draw location" id="draw_{CURRENT_PLAYER_COLOR}"></div>
-    <div class="draft location" id="draft_{CURRENT_PLAYER_COLOR}"></div>
+    <div id="hand_area_buttons">
+      <div id="hand_area_button_pop">
+        <div class="icon_hand"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div>
+        <div class="icon_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+      </div>
+    </div>
   </div>
   <div id="main_area">
     <div id="main_board">
@@ -190,30 +195,39 @@
       <div id="map_bottom">
         <div id="main_milestones">
           <div class="map_milesawardsheader">
-            <div id="milestones_costs" class="milesawardscosts"></div>
+            <div id="milestones_costs" class="milesawardscosts">
+              <div id="milestone_cost_1" class="token_img tracker_m">8</div>
+              <div id="milestone_cost_2" class="token_img tracker_m">8</div>
+              <div id="milestone_cost_3" class="token_img tracker_m">8</div>
+            </div>
             <div id="milestones_title" class="map_title">Milestones</div>
-            <div id="milestones_gains" class="milesawardsgains"></div>
+            <div id="milestones_gains" class="milesawardsgains"><div id="milestone_vp_gain" class="card_vp">5</div> </div>
           </div>
           <div id="display_milestones" class="map_milesawardscontent">
-            <div id="milestone_1" class="milestone milestone_1"></div>
-            <div id="milestone_2" class="milestone milestone_2"></div>
-            <div id="milestone_3" class="milestone milestone_3"></div>
-            <div id="milestone_4" class="milestone milestone_4"></div>
-            <div id="milestone_5" class="milestone milestone_5"></div>
+            <div id="milestone_1" class="milestone milestone_1"><div id="milestone_label_1"class="milestone_label">NA</div></div>
+            <div id="milestone_2" class="milestone milestone_2"><div id="milestone_label_2"class="milestone_label">NA</div></div>
+            <div id="milestone_3" class="milestone milestone_3"><div id="milestone_label_3"class="milestone_label">NA</div></div>
+            <div id="milestone_4" class="milestone milestone_4"><div id="milestone_label_4"class="milestone_label">NA</div></div>
+            <div id="milestone_5" class="milestone milestone_5"><div id="milestone_label_5"class="milestone_label">NA</div></div>
           </div>
         </div>
         <div id="main_awards">
           <div class="map_milesawardsheader">
-            <div id="awards_costs" class="milesawardscosts"></div>
+            <div id="awards_costs" class="milesawardscosts">
+              <div id="award_cost_1" class="token_img tracker_m">8</div>
+              <div id="award_cost_2" class="token_img tracker_m">14</div>
+              <div id="award_cost_3" class="token_img tracker_m">20</div>
+
+            </div>
             <div id="awards_title" class="map_title">Awards</div>
-            <div id="awards_gains" class="milesawardsgains"></div>
+            <div id="awards_gains" class="milesawardsgains"><div id="milestone_award_gain_1" class="card_vp">5</div><div id="milestone_award_gain_2" class="card_vp">2</div></div>
           </div>
           <div id="display_awards" class="map_milesawardscontent">
-            <div id="award_1" class="award award_1"></div>
-            <div id="award_2" class="award award_2"></div>
-            <div id="award_3" class="award award_3"></div>
-            <div id="award_4" class="award award_4"></div>
-            <div id="award_5" class="award award_5"></div>
+            <div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>
+            <div id="award_2" class="award award_2"><div id="award_label_2" class="award_label">NA</div></div>
+            <div id="award_3" class="award award_3"><div id="award_label_3" class="award_label">NA</div></div>
+            <div id="award_4" class="award award_4"><div id="award_label_4" class="award_label">NA</div></div>
+            <div id="award_5" class="award award_5"><div id="award_label_5" class="award_label">NA</div></div>
           </div>
         </div>
       </div>
@@ -353,7 +367,7 @@
         -->
       </div>
 
-      <div id="tableau_{PLAYER_COLOR}" class="whiteblock" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
+      <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
            <div id="tableau_{PLAYER_COLOR}_cards_4"  class="cards_4 cards_bin"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2a" class="cards_2a cards_bin"></div>
            <div id="tableau_{PLAYER_COLOR}_cards_2"  class="cards_2 cards_bin stacked"></div>

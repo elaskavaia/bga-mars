@@ -20,12 +20,13 @@
 .token_img {
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
+  width : var(--resourcesize);
+  height:  var(--resourcesize);
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  width : var(--resourcesize);
-  height:  var(--resourcesize);
+
 }
 
 .player_boards .token_img {

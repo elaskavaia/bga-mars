@@ -6,6 +6,7 @@
     public static parses = {
       forest: { classes: "tracker tracker_forest" },
       all_city: { classes: "tracker tracker_city", redborder: 'hex' },
+      all_tagEvent: { classes: "tracker badge tracker_tagEvent",after: '*' },
       city: { classes: "tracker tracker_city" },
       ocean: { classes: "token_img tracker_w" },
       draw: { classes: "token_img cardback" },
@@ -388,7 +389,7 @@
       return ret;
     }
 
-    public static  parseActionsToHTML(actions: string) {
+    public static  parseActionsToHTML(actions: string,optional_content?:string) {
       let ret = actions;
       let idx = 0;
       let finds = [];
@@ -398,6 +399,7 @@
         if (ret.includes(key)) {
           ret = ret.replace(key, "%" + idx + "%");
           let content = item.content != undefined ? item.content : "";
+          if (optional_content) content=optional_content;
           let after = item.after!= undefined ? item.after : "";
 
           if (item.production === true) {
@@ -405,7 +407,7 @@
           } else if (item.redborder) {
             finds[idx] = '<div class="outer_redborder redborder_'+item.redborder+'"><div class="' + item.classes + '">' + content + "</div>"+after+"</div>";
           } else {
-            finds[idx] = '<div class="' + item.classes + '"></div>'+after;
+            finds[idx] = '<div class="' + item.classes + '">'+ content +'</div>'+after;
           }
 
           idx++;
@@ -425,13 +427,28 @@
     }
 
 
-   public static parsePrereqToHTML(pre: Array<string>) {
+   public static parsePrereqToHTML(pre: any) {
      if (!pre) return "";
-     if (pre.length<3) return "";
+     let op = "";
+     let what = "";
+     let qty=0;
 
-     const op = pre[0];
-     const what = pre[1];
-     const qty=pre[2];
+     if (typeof pre === 'string') {
+       op = ">=";
+       what = pre;
+       qty=1;
+     } else {
+       if (pre.length<3) {
+        return "";
+
+       } else {
+         op = pre[0];
+         what = pre[1];
+         qty=pre[2];
+       }
+     }
+
+
 
      let suffix="";
      let icon=CustomRenders.parseActionsToHTML(what);
@@ -468,12 +485,27 @@
    }
 
 
-   public static parsePrereqToText(pre: Array<string>) {
+   public static parsePrereqToText(pre: any) {
      if (!pre) return "";
-     if (pre.length<3) return "";
-     const op = pre[0];
-     const what = pre[1];
-     const qty=pre[2];
+     let op = "";
+     let what = "";
+     let qty=0;
+
+     if (typeof pre === 'string') {
+       op = ">=";
+       what = pre;
+       qty=1;
+     } else {
+       if (pre.length<3) {
+         return "";
+
+       } else {
+         op = pre[0];
+         what = pre[1];
+         qty=pre[2];
+       }
+     }
+
      let mode="min";
      if (op=="<=") {
        mode="max";
@@ -501,11 +533,17 @@
        case 'all_city':
          ret =_('Requires $v citie(s) in play.');
          break;
+       case "ps":
+         ret =_('Requires that you have steel production.');
+         break;
+       case "tagJovian":
+         ret =_('Requires a Jovian tag.');
+         break;
        default:
          ret='NOT FOUND :'+what;
          break;
      }
-     ret =ret.replace('$v',qty);
+     ret =ret.replace('$v',String(qty));
      return  ret;
    }
 
