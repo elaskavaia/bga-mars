@@ -2420,7 +2420,9 @@ var GameXBody = /** @class */ (function (_super) {
             _super.prototype.setDomTokenState.call(this, trackerCopy, newState);
         }
     };
-    GameXBody.prototype.renderSpecificToken = function (tokenNode) { };
+    GameXBody.prototype.renderSpecificToken = function (tokenNode) {
+        this.vlayout.renderSpecificToken(tokenNode);
+    };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
         var div = _super.prototype.createDivNode.call(this, id, classes, location);
@@ -3071,12 +3073,12 @@ var VLayout = /** @class */ (function () {
         $("tableau_".concat(color)).setAttribute("data-visibility_1", "1");
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
-        dojo.place('tracker_gen', 'map_left');
-        dojo.destroy('outer_generation');
-        dojo.place('deck_main', 'decks_area');
-        dojo.place('discard_main', 'decks_area');
-        dojo.destroy('deck_holder');
-        dojo.destroy('discard_holder');
+        dojo.place("tracker_gen", "map_left");
+        dojo.destroy("outer_generation");
+        dojo.place("deck_main", "decks_area");
+        dojo.place("discard_main", "decks_area");
+        dojo.destroy("deck_holder");
+        dojo.destroy("discard_holder");
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("player_viewcards_2_".concat(color), "miniboardentry_".concat(color));
         dojo.place("player_viewcards_1_".concat(color), "miniboardentry_".concat(color));
@@ -3087,6 +3089,42 @@ var VLayout = /** @class */ (function () {
         for (var i = 1; i <= 3; i++) {
             $("tableau_" + color).dataset["visibility_" + i] = "1";
             $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
+        }
+    };
+    VLayout.prototype.renderSpecificToken = function (tokenNode) {
+        if (tokenNode.id.startsWith("tracker_tr")) {
+            // debugger;
+            var marker = "marker_" + tokenNode.id;
+            var markerNode = $(marker);
+            if (!markerNode) {
+                var color = getPart(tokenNode.id, 2);
+                markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
+                var state = parseInt(tokenNode.getAttribute("data-state"));
+                //this.game.setDomTokenState(markerNode, state);
+                var bp = 0;
+                var lp = 0;
+                state = state % 100;
+                var off = state % 25;
+                var mul = 100 / 25;
+                if (state <= 25) {
+                    lp = 0;
+                    bp = mul * off;
+                }
+                else if (state < 50) {
+                    lp = mul * off;
+                    bp = 100;
+                }
+                else if (state <= 75) {
+                    lp = 100;
+                    bp = 100 - mul * off;
+                }
+                else if (state < 50) {
+                    lp = 100 - mul * off;
+                    bp = 0;
+                }
+                markerNode.style.left = "calc(10px + ".concat(lp, "% * 0.95)");
+                markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
+            }
         }
     };
     return VLayout;

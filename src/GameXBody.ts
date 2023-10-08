@@ -279,7 +279,9 @@ class GameXBody extends GameTokens {
       super.setDomTokenState(trackerCopy, newState);
     }
   }
-  renderSpecificToken(tokenNode: HTMLElement) {}
+  renderSpecificToken(tokenNode: HTMLElement) {
+    this.vlayout.renderSpecificToken(tokenNode);
+  }
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: string): HTMLDivElement {

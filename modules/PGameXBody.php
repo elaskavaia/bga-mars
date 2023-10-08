@@ -677,6 +677,16 @@ abstract class PGameXBody extends PGameMachine {
         $this->machine->queue($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
 
+    function queueremove($color, $type, $pool = null) {
+        $ops = $this->machine->getOperations($color, $pool);
+        foreach ($ops as $op_key => $op) {
+            if ($op['type'] == $type) {
+                $this->machine->hide($op);
+                break;
+            }
+        }
+    }
+
     function multiplayerqueue($color, $type, $data = '') {
         $this->machine->queue($type, 1, 1, $color, MACHINE_OP_SEQ, $data, 'multi');
     }

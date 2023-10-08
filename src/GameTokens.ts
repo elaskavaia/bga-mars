@@ -319,6 +319,7 @@ class GameTokens extends GameBasics {
       if (tokenInfo) state = tokenInfo.state;
       this.setDomTokenState(tokenNode, state);
 
+
       if (dojo.hasClass(tokenNode, "infonode")) {
         this.placeInfoBox(tokenNode);
       }

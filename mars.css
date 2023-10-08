@@ -5333,7 +5333,7 @@
 .mfull .milestone,
 .mfull .award {
   background: none;
-  width: calc(var(--map-width) * 0.14);
+  width: calc(var(--map-width) * 0.24);
 }
 .mfull .map_milesawardsheader {
   display: none;
@@ -6824,4 +6824,9 @@
 
 .log .tracker_pm, .log .tracker_ps, .log .tracker_pu, .log .tracker_pp, .log .tracker_pe, .log .tracker_ph {
   outline: 4px solid #b7915e;
+}
+
+.marker_tr {
+  position: absolute;
+  top: unset;
 }

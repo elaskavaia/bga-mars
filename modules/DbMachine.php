@@ -393,6 +393,14 @@ class DbMachine extends APP_GameClass {
         return $this->getCollectionFromDB($this->getSelectQuery("rank = $rank $andowner"));
     }
 
+    function getOperations( $owner = null, $pool = null) {
+        $andowner = '';
+        $andpool = '';
+        if ($owner) $andowner = " AND owner = '$owner'";
+        if ($pool)  $andpool = " AND pool = '$pool'";
+        return $this->getCollectionFromDB($this->getSelectQuery("rank >= 0 $andowner $andpool ORDER BY rank ASC"));
+    }
+
     function info($op) {
         if (is_array($op) && array_get($op, 'id') > 0) {
             return $op;

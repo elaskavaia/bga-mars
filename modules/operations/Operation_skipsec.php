@@ -13,6 +13,7 @@ class Operation_skipsec extends AbsOperation {
 
     function effect(string $color, int $inc): int {
         $this->game->notifyMessage(clienttranslate('${player_name} skips second action'));
+        $this->game->queueremove($color,'confturn');
         return 1;
     }
 }
