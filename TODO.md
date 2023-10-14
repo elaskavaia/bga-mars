@@ -29,15 +29,16 @@ Random notes on todo items
 * Tableau filtering
 * Show terraforming parameters
   * Put them in params bar
-* Resources in log - images not all defined
+* Resources in log - images not all defined DONE?
 * Animation of resources
-* Land tracker icon is missing
-* First player marker
+* Land tracker icon is missing - DONE
+* First player marker - DONE
 * Passing not obvious
 * Titanim exchange rate during payment
-* Reverse ocean counter
+* Reverse ocean counter (should show how many tiles left)
 * Cubes on cards
 * Layout types based on size
+* Gewneration counter on player panel (common panel)
 
 ## Client - Compact layout
 * Add options (local storage) for :
@@ -53,7 +54,7 @@ Random notes on todo items
 
 ### Client Bonus Features
 
-* Card reference
+* Card reference with filters
 * Sounds
 * Flip animation
 * Log scratch on undo

@@ -238,7 +238,7 @@
   <div id="players_area">
     <!-- BEGIN player_board -->
 
-    <div id="player_area_{PLAYER_COLOR}" class="player_area" style="--plcolor:#{PLAYER_COLOR};">
+    <div id="player_area_{PLAYER_COLOR}" class="player_area plcolor_{PLAYER_COLOR}">
       <div id="player_board_header_{PLAYER_COLOR}" class="playerboard_header">
         <div id="tableau_{PLAYER_COLOR}_corp" class="corp_holder">
           <div id="tableau_{PLAYER_COLOR}_corp_logo" class="corp_logo">

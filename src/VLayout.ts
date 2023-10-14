@@ -13,6 +13,10 @@ class VLayout {
 
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
+    dojo.place(`tableau_${color}_corp`, `tableau_${color}`,'first');
+
+    
+
     dojo.place("tracker_gen", "map_left");
     dojo.destroy("outer_generation");
 
@@ -36,6 +40,7 @@ class VLayout {
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {
+    if (!this.game.isLayoutFull()) return;
     if (tokenNode.id.startsWith("tracker_tr")) {
       // debugger;
       const marker = "marker_" + tokenNode.id;

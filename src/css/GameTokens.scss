@@ -97,21 +97,23 @@
   box-shadow: #0b0b0bad 2px 2px 3px 1px;
 }
 
-.marker_0000ff {
-  background-color: #0000ff;
-}
-.marker_ff0000 {
-  background-color: #ff0000;
-}
-.marker_008000 {
-  background-color: #008000;
-}
-.marker_ffffff {
-  background-color: #ffffff;
-}
-.marker_ffa500 {
-  background-color: #ffa500 ;
-}
-.marker_773300 {
-  background-color: #773300 ;
+$colors-list:(
+  _0000ff: #0000ff,
+  _ff0000: #ff0000,
+  _008000: #008000,
+  _ffa500: #ffa500,
+  _773300: #773300,
+  _ffffff: #ffffff
+);
+
+@each $key,$val in $colors-list{
+  .marker#{$key} {
+    background-color: #{$val};
+  }
+  .color#{$key} {
+    color: #{$val};
+  }
+  .plcolor#{$key} {
+    --plcolor: #{$val};
+  }
 }

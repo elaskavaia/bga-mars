@@ -618,7 +618,6 @@ var GameBasics = /** @class */ (function (_super) {
         return;
     };
     GameBasics.prototype.findActiveParent = function (element) {
-        debugger;
         if (this.isActiveSlot(element))
             return element;
         var parent = element.parentElement;
@@ -684,7 +683,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.getPlayerColor = function (playerId) {
         var _a;
-        return (_a = this.gamedatas.players[playerId]) !== null && _a !== void 0 ? _a : "000000";
+        return (_a = this.gamedatas.players[playerId].color) !== null && _a !== void 0 ? _a : "000000";
     };
     GameBasics.prototype.getPlayerIdByColor = function (color) {
         for (var playerId in this.gamedatas.players) {
@@ -889,7 +888,7 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.setupNotifications = function () {
         console.log("notifications subscriptions setup");
         dojo.subscribe("counter", this, "notif_counter");
-        this.notifqueue.setSynchronous("counter", 100);
+        this.notifqueue.setSynchronous("counter", 500);
         dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
         dojo.subscribe("score", this, "notif_score");
         this.notifqueue.setSynchronous("score", 50); // XXX
@@ -969,7 +968,7 @@ var GameBasics = /** @class */ (function (_super) {
             else if ($(name_1)) {
                 this.setDomTokenState(name_1, value);
             }
-            //  console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+            console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
         }
         catch (ex) {
             console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
@@ -1043,6 +1042,207 @@ var Card = /** @class */ (function () {
     return Card;
 }());
 ;
+var CustomAnimation = /** @class */ (function () {
+    function CustomAnimation(game) {
+        this.game = game;
+        this.animations = {};
+        this.slide_duration = 800;
+        this.animations['grow_appear'] =
+            {
+                name: 'grow_appear', duration: 500, easing: 'ease-in',
+                keyframes: "   \n                         0% {\n                               transform:scale(0);\n                            }\n                         80% {\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               transform:scale(1);\n\n                            }\n                    "
+            };
+        this.addAnimationsToDocument(this.animations);
+    }
+    CustomAnimation.prototype.animateTilePop = function (token_id) {
+        return this.playCssAnimation(token_id, 'grow_appear', null, null);
+    };
+    CustomAnimation.prototype.moveResources = function (tracker, qty) {
+        var _this = this;
+        if (qty == 0)
+            return;
+        var trk_item = tracker.replace('tracker_', '').split('_')[0];
+        var delay = 0;
+        var mark = "";
+        if (Math.abs(qty) > 10) {
+            mark = String(Math.abs(qty));
+            qty = -1;
+        }
+        var htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
+        debugger;
+        var _loop_1 = function (i) {
+            var tmpid = 'tmp_' + String(Math.random() * 1000000000);
+            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+            var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
+            var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
+            dojo.place(htm.replace('%t', tmpid), origin_1);
+            this_1.wait(delay).then(function () {
+                _this.game.slideAndPlace(tmpid, destination, 500, undefined, function () {
+                    if (dojo.byId(tmpid))
+                        dojo.destroy(tmpid);
+                    if (dojo.byId('move_from_' + tmpid))
+                        dojo.destroy('move_from_' + tmpid);
+                });
+            });
+            /*
+            this.wait(delay).then(()=>{return this.slideToObjectAndAttach(tmpid,destination);}).then(()=>{
+                dojo.destroy(tmpid);
+              }
+            );*/
+            delay += 100;
+        };
+        var this_1 = this;
+        for (var i = 0; i < Math.abs(qty); i++) {
+            _loop_1(i);
+        }
+    };
+    CustomAnimation.prototype.addAnimationsToDocument = function (animations) {
+        var head = document.getElementsByTagName('head')[0];
+        var s = document.createElement('style');
+        s.setAttribute('type', 'text/css');
+        s.setAttribute('id', 'css_animations');
+        var css = "";
+        for (var _i = 0, _a = Object.keys(animations); _i < _a.length; _i++) {
+            var idx = _a[_i];
+            var anim = animations[idx];
+            css = css + '.anim_' + anim.name + ' {\n';
+            css = css + ' animation: key_anim_' + anim.name + ' ' + anim.duration + 'ms ' + anim.easing + ';\n';
+            css = css + '}\n';
+            css = css + '@keyframes key_anim_' + anim.name + ' {\n';
+            css = css + anim.keyframes;
+            css = css + '}\n';
+        }
+        s.innerHTML = css;
+        head.appendChild(s);
+    };
+    CustomAnimation.prototype.areAnimationsPlayed = function () {
+        //if(this.game.animated) return true;
+        if (this.game.instantaneousMode)
+            return false;
+        if (document.hidden || document.visibilityState === 'hidden')
+            return false;
+        return true;
+    };
+    //"fake" promise, made to use as functional empty default
+    CustomAnimation.prototype.getImmediatePromise = function () {
+        return new Promise(function (resolve, reject) {
+            resolve("");
+        });
+    };
+    //return a timed promise
+    CustomAnimation.prototype.wait = function (ms) {
+        return new Promise(function (resolve, reject) {
+            setTimeout(function () { return resolve(""); }, ms);
+        });
+    };
+    //Adds css class on element, plays it, executes onEnd and removes css class
+    //a promise is returned for easy chaining
+    CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd) {
+        var _this = this;
+        var animation = this.animations[animationname];
+        return new Promise(function (resolve, reject) {
+            var cssClass = 'anim_' + animation.name;
+            var timeoutId = null;
+            var resolvedOK = false;
+            var localCssAnimationCallback = function (e) {
+                if (e.animationName != 'key_' + cssClass) {
+                    //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
+                    return;
+                }
+                resolvedOK = true;
+                $(targetId).removeEventListener('animationend', localCssAnimationCallback);
+                $(targetId).classList.remove(cssClass);
+                if (onEnd)
+                    onEnd();
+                //   this.log('+anim',animationname,'resolved with callback');
+                resolve("");
+            };
+            if (onStart)
+                onStart();
+            $(targetId).addEventListener('animationend', localCssAnimationCallback);
+            dojo.addClass(targetId, cssClass);
+            // this.MAIN.log('+anim',animationname,'starting playing');
+            //timeout security
+            timeoutId = setTimeout(function () {
+                if (resolvedOK)
+                    return;
+                if (_this.nodeExists(targetId)) {
+                    $(targetId).removeEventListener('animationend', localCssAnimationCallback);
+                    $(targetId).classList.remove(cssClass);
+                }
+                if (onEnd)
+                    onEnd();
+                //this.MAIN.log('+anim',animationname,'resolved with timeout');
+                resolve("");
+            }, animation.duration * 1.5);
+        });
+    };
+    CustomAnimation.prototype.slideToObjectAndAttach = function (movingId, destinationId, rotation, posX, posY) {
+        var _this = this;
+        if (rotation === void 0) { rotation = 0; }
+        if (posX === void 0) { posX = undefined; }
+        if (posY === void 0) { posY = undefined; }
+        var object = document.getElementById(movingId);
+        var destination = document.getElementById(destinationId);
+        var zoom = 1;
+        if (destination.contains(object)) {
+            return Promise.resolve(true);
+        }
+        return new Promise(function (resolve) {
+            var originalZIndex = Number(object.style.zIndex);
+            object.style.zIndex = '25';
+            var objectCR = object.getBoundingClientRect();
+            var destinationCR = destination.getBoundingClientRect();
+            var deltaX = destinationCR.left - objectCR.left + (posX !== null && posX !== void 0 ? posX : 0) * zoom;
+            var deltaY = destinationCR.top - objectCR.top + (posY !== null && posY !== void 0 ? posY : 0) * zoom;
+            //When move ends
+            var attachToNewParent = function () {
+                object.style.top = posY !== undefined ? "".concat(posY, "px") : null;
+                object.style.left = posX !== undefined ? "".concat(posX, "px") : null;
+                object.style.position = (posX !== undefined || posY !== undefined) ? 'absolute' : null;
+                object.style.zIndex = originalZIndex ? '' + originalZIndex : null;
+                object.style.transform = rotation ? "rotate(".concat(rotation, "deg)") : null;
+                object.style.transition = null;
+                destination.appendChild(object);
+            };
+            object.style.transition = 'transform ' + _this.slide_duration + 'ms ease-in';
+            object.style.transform = "translate(".concat(deltaX / zoom, "px, ").concat(deltaY / zoom, "px) rotate(").concat(rotation, "deg)");
+            if (object.style.position != "absolute")
+                object.style.position = 'relative';
+            var securityTimeoutId = null;
+            var transitionend = function () {
+                attachToNewParent();
+                object.removeEventListener('transitionend', transitionend);
+                object.removeEventListener('transitioncancel', transitionend);
+                resolve(true);
+                if (securityTimeoutId) {
+                    clearTimeout(securityTimeoutId);
+                }
+            };
+            object.addEventListener('transitionend', transitionend);
+            object.addEventListener('transitioncancel', transitionend);
+            // security check : if transition fails, we force tile to destination
+            securityTimeoutId = setTimeout(function () {
+                if (!destination.contains(object)) {
+                    attachToNewParent();
+                    object.removeEventListener('transitionend', transitionend);
+                    object.removeEventListener('transitioncancel', transitionend);
+                    resolve(true);
+                }
+            }, _this.slide_duration * 1.2);
+        });
+    };
+    CustomAnimation.prototype.nodeExists = function (node_id) {
+        var node = dojo.byId(node_id);
+        if (!node) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    return CustomAnimation;
+}());
 /* Module for rendering  card effects, powers , etc
 *
 */
@@ -1356,7 +1556,7 @@ var CustomRenders = /** @class */ (function () {
         }
         return ret;
     };
-    CustomRenders.parseActionsToHTML = function (actions) {
+    CustomRenders.parseActionsToHTML = function (actions, optional_content) {
         var ret = actions;
         var idx = 0;
         var finds = [];
@@ -1365,6 +1565,8 @@ var CustomRenders = /** @class */ (function () {
             if (ret.includes(key)) {
                 ret = ret.replace(key, "%" + idx + "%");
                 var content = item.content != undefined ? item.content : "";
+                if (optional_content)
+                    content = optional_content;
                 var after = item.after != undefined ? item.after : "";
                 if (item.production === true) {
                     finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
@@ -1373,7 +1575,7 @@ var CustomRenders = /** @class */ (function () {
                     finds[idx] = '<div class="outer_redborder redborder_' + item.redborder + '"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
                 }
                 else {
-                    finds[idx] = '<div class="' + item.classes + '"></div>' + after;
+                    finds[idx] = '<div class="' + item.classes + '">' + content + '</div>' + after;
                 }
                 idx++;
             }
@@ -1390,11 +1592,24 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.parsePrereqToHTML = function (pre) {
         if (!pre)
             return "";
-        if (pre.length < 3)
-            return "";
-        var op = pre[0];
-        var what = pre[1];
-        var qty = pre[2];
+        var op = "";
+        var what = "";
+        var qty = 0;
+        if (typeof pre === 'string') {
+            op = ">=";
+            what = pre;
+            qty = 1;
+        }
+        else {
+            if (pre.length < 3) {
+                return "";
+            }
+            else {
+                op = pre[0];
+                what = pre[1];
+                qty = pre[2];
+            }
+        }
         var suffix = "";
         var icon = CustomRenders.parseActionsToHTML(what);
         switch (what) {
@@ -1425,11 +1640,24 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.parsePrereqToText = function (pre) {
         if (!pre)
             return "";
-        if (pre.length < 3)
-            return "";
-        var op = pre[0];
-        var what = pre[1];
-        var qty = pre[2];
+        var op = "";
+        var what = "";
+        var qty = 0;
+        if (typeof pre === 'string') {
+            op = ">=";
+            what = pre;
+            qty = 1;
+        }
+        else {
+            if (pre.length < 3) {
+                return "";
+            }
+            else {
+                op = pre[0];
+                what = pre[1];
+                qty = pre[2];
+            }
+        }
         var mode = "min";
         if (op == "<=") {
             mode = "max";
@@ -1457,11 +1685,17 @@ var CustomRenders = /** @class */ (function () {
             case 'all_city':
                 ret = _('Requires $v citie(s) in play.');
                 break;
+            case "ps":
+                ret = _('Requires that you have steel production.');
+                break;
+            case "tagJovian":
+                ret = _('Requires a Jovian tag.');
+                break;
             default:
                 ret = 'NOT FOUND :' + what;
                 break;
         }
-        ret = ret.replace('$v', qty);
+        ret = ret.replace('$v', String(qty));
         return ret;
     };
     //custom card stuff
@@ -1536,6 +1770,7 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.parses = {
         forest: { classes: "tracker tracker_forest" },
         all_city: { classes: "tracker tracker_city", redborder: 'hex' },
+        all_tagEvent: { classes: "tracker badge tracker_tagEvent", after: '*' },
         city: { classes: "tracker tracker_city" },
         ocean: { classes: "token_img tracker_w" },
         draw: { classes: "token_img cardback" },
@@ -2203,6 +2438,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.custom_pay = undefined;
             this.local_counters = [];
             this.clearReverseIdMap();
+            this.customAnimation = new CustomAnimation(this);
             _super.prototype.setup.call(this, gamedatas);
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
@@ -2213,13 +2449,39 @@ var GameXBody = /** @class */ (function (_super) {
             document.querySelectorAll("#player_config > #player_board_params").forEach(function (node) {
                 dojo.destroy(node); // on undo this remains but another one generated
             });
-            dojo.place("player_board_params", "player_config", "last");
+            //local settings
+            this.localSettings = new LocalSettings("mars", [
+                { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+                { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+                { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+                {
+                    key: "playerarea",
+                    label: _("Player zone placement"),
+                    choice: { before: _("Before Map"), after: _("After Map") },
+                    default: "after",
+                },
+            ]);
+            this.localSettings.setup();
+            //this.localSettings.renderButton('player_config_row');
+            this.localSettings.renderContents('settings-controls-container');
+            //floating hand stuff
+            this.connect($('hand_area_button_pop'), 'onclick', function () {
+                $('hand_area').dataset.open = $('hand_area').dataset.open == "1" ? "0" : "1";
+            });
+            // dojo.place("player_board_params", "player_config", "last");    
+            if (!$('player_config').innerHTML.includes("player_board_params"))
+                dojo.place("player_board_params", "player_config", "last");
             document.querySelectorAll(".mini_counter").forEach(function (node) {
                 var id = node.id;
                 if (id.startsWith('alt_')) {
                     _this.updateTooltip(id.substring(4), node.parentElement);
                 }
             });
+            //remove remaining "title" attibutes
+            dojo.query('.award').forEach(function (node) { node.removeAttribute("title"); });
+            dojo.query('.milestone').forEach(function (node) { node.removeAttribute("title"); });
+            //update prereq on cards
+            this.updateHandPrereqs();
             this.isDoingSetup = false;
         }
         catch (e) {
@@ -2242,6 +2504,38 @@ var GameXBody = /** @class */ (function (_super) {
             var board = $("player_area_".concat(playerInfo.color));
             dojo.place(board, 'main_board', 'after');
             dojo.addClass(board, 'thisplayer_zone');
+        }
+    };
+    GameXBody.prototype.onNotif = function (notif) {
+        _super.prototype.onNotif.call(this, notif);
+        this.darhflog('playing notif ' + notif.type + ' with args ', notif.args);
+        //Displays message in header while the notif is playing
+        var msg = this.format_string_recursive(notif.log, notif.args);
+        if (msg != '') {
+            $('gameaction_status').innerHTML = msg;
+            $('pagemaintitletext').innerHTML = msg;
+        }
+    };
+    //make custom animations depending on situation
+    GameXBody.prototype.notif_tokenMoved = function (notif) {
+        _super.prototype.notif_tokenMoved.call(this, notif);
+        //pop animation on Tiles
+        if (notif.args.token_id && notif.args.token_id.startsWith('tile_')) {
+            this.customAnimation.animateTilePop(notif.args.token_id);
+        }
+    };
+    GameXBody.prototype.notif_counter = function (notif) {
+        _super.prototype.notif_counter.call(this, notif);
+        //move animation on main player board counters
+        /*
+        const counter_move=["m","pm","s","ps","u","pu","p","pp","e","pe","h","ph"].map((item)=>{
+          return "tracker_"+item+"_";
+        });*/
+        var counter_move = ["m", "s", "u", "p", "e", "h"].map(function (item) {
+            return "tracker_" + item + "_";
+        });
+        if ((notif.args.inc) && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
+            this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
         }
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
@@ -2355,12 +2649,12 @@ var GameXBody = /** @class */ (function (_super) {
                     if (displayInfo.text_action || displayInfo.text_effect) {
                         card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
                     }
-                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div id='cost_").concat(tokenNode.id, "' class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                ").concat(vp, "\n          ");
+                    decor.innerHTML = "\n                <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                <div class=\"card_bg\"></div>\n                <div class='card_badges'>").concat(tagshtm, "</div>\n                <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                <div id='cost_").concat(tokenNode.id, "' class='card_cost'>").concat(displayInfo.cost, "</div> \n                <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                <div id=\"resource_holder_").concat(tokenNode.id.replace('card_main_', ''), "\" class=\"card_resource_holder\"></div>\n                ").concat(vp, "\n          ");
                     var prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
                     ttdiv.innerHTML += "<div class=\"card_number\">".concat((_c = displayInfo.num) !== null && _c !== void 0 ? _c : "", "</div>");
                     if (prereqText != "") {
-                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _("PRE-REQUISITES") + "</div>";
-                        ttdiv.innerHTML += "<div class=\"card_effect\">".concat(prereqText, "</div>");
+                        ttdiv.innerHTML += '<div class="tt_intertitle">' + _('PRE-REQUISITES') + '</div>';
+                        ttdiv.innerHTML += "<div class=\"card_effect card_tt_prereq\">".concat(prereqText, "</div>");
                     }
                     /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
                     ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
@@ -2390,6 +2684,14 @@ var GameXBody = /** @class */ (function (_super) {
                 //card tooltip
                 tokenNode.appendChild(ttdiv);
                 tokenNode.setAttribute("data-card-type", displayInfo.t);
+            }
+            if (displayInfo.mainType == "award" || displayInfo.mainType == "milestone") {
+                //custom tooltip on awards and milestones
+                var dest = tokenNode.id.replace(displayInfo.mainType + '_', displayInfo.mainType + '_label_');
+                $(dest).innerHTML = _(displayInfo.name);
+                var ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+                ttdiv.innerHTML = " \n            <div class='token_title'>".concat(displayInfo.name, "</div>\n            <div class='card_effect'>").concat(displayInfo.text, "</div>\n        ");
+                tokenNode.appendChild(ttdiv);
             }
             this.connect(tokenNode, "onclick", "onToken");
         }
@@ -2438,6 +2740,104 @@ var GameXBody = /** @class */ (function (_super) {
         //   tokenDisplayInfo.imageTypes += " infonode";
         // }
     };
+    GameXBody.prototype.updateHandPrereqs = function () {
+        if (!this.player_id)
+            return;
+        var nodes = dojo.query('#hand_area .card');
+        for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
+            var node = nodes_1[_i];
+            // const card_id = node.id.replace('card_main_','');
+            var displayInfo = this.getTokenDisplayInfo(node.id);
+            if (!displayInfo)
+                continue;
+            if (!displayInfo.expr.pre)
+                continue;
+            var op = "";
+            var what = "";
+            var qty = 0;
+            if (typeof displayInfo.expr.pre === 'string') {
+                op = ">=";
+                what = displayInfo.expr.pre;
+                qty = 1;
+            }
+            else {
+                if (displayInfo.expr.pre.length < 3) {
+                    continue;
+                }
+                else {
+                    op = displayInfo.expr.pre[0];
+                    what = displayInfo.expr.pre[1];
+                    qty = displayInfo.expr.pre[2];
+                }
+            }
+            var tracker = "";
+            switch (what) {
+                case "o":
+                    tracker = 'tracker_o';
+                    break;
+                case "t":
+                    tracker = 'tracker_t';
+                    break;
+                case "tagScience":
+                    tracker = 'tracker_tagScience_' + this.getPlayerColor(this.player_id);
+                    break;
+                case "tagEnergy":
+                    tracker = 'tracker_tagEnergy_' + this.getPlayerColor(this.player_id);
+                    break;
+                case "tagJovian":
+                    tracker = 'tracker_tagJovian_' + this.getPlayerColor(this.player_id);
+                    break;
+                case "forest":
+                    tracker = 'tracker_tagForest_' + this.getPlayerColor(this.player_id);
+                    break;
+                case "w":
+                    tracker = 'tracker_w';
+                    break;
+                case "ps":
+                    tracker = 'tracker_ps_' + this.getPlayerColor(this.player_id);
+                    break;
+                case "all_city":
+                    // global city tracker exists ?
+                    break;
+            }
+            if (tracker == "")
+                continue;
+            var valid = false;
+            this.darhflog("getting state for tracker", tracker);
+            //
+            // const actual = this.getTokenInfoState(tracker);
+            if (!$(tracker)) {
+                continue;
+            }
+            if (!$(tracker).dataset.state) {
+                continue;
+            }
+            var actual = parseInt($(tracker).dataset.state);
+            this.darhflog("got value", actual);
+            if (op == "<=") {
+                if (actual <= qty)
+                    valid = true;
+            }
+            else if (op == "<") {
+                if (actual < qty)
+                    valid = true;
+            }
+            else if (op == ">") {
+                if (actual > qty)
+                    valid = true;
+            }
+            else if (op == ">=") {
+                if (actual >= qty)
+                    valid = true;
+            }
+            if (!valid) {
+                node.dataset.invalid_prereq = 1;
+            }
+            else {
+                node.dataset.invalid_prereq = 0;
+            }
+        }
+    };
     GameXBody.prototype.updateVisualsFromOp = function (opInfo, opId) {
         var _a, _b, _c;
         var opargs = opInfo.args;
@@ -2480,16 +2880,16 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tokenInfo.key.startsWith("milestone")) {
             result.nop = true;
         }
-        else if (tokenInfo.key == "starting_player") {
-            result.location = tokenInfo.location.replace("tableau_", "fpholder_");
+        else if (tokenInfo.key == 'starting_player') {
+            result.location = tokenInfo.location.replace('tableau_', 'fpholder_');
+        }
+        else if (tokenInfo.key.startsWith("resource_")) {
+            if (tokenInfo.location.startsWith('card_main_')) {
+                result.location = tokenInfo.location.replace('card_main_', 'resource_holder_');
+            }
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-            if (!this.isLayoutFull()) {
-                result.location = tokenInfo.location + "_corp_effect";
-            }
-            else {
-                result.location = tokenInfo.location + "_cards_4";
-            }
+            result.location = tokenInfo.location + "_corp_effect";
             //also set property to corp logo div
             $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
         }
@@ -2509,7 +2909,7 @@ var GameXBody = /** @class */ (function (_super) {
                     }
                 }
                 //auto switch tabs here
-                this.darhflog("isdoingseyup", this.isDoingSetup);
+                // this.darhflog("isdoingsetup", this.isDoingSetup);
                 if (!this.isDoingSetup) {
                     if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
                         for (var i = 1; i <= 3; i++) {
@@ -2574,6 +2974,13 @@ var GameXBody = /** @class */ (function (_super) {
         var res = getPart(id, 1);
         var icon = "<div class=\"token_img tracker_".concat(res, "\">").concat(value, "</div>");
         return icon;
+    };
+    GameXBody.prototype.getButtonColorForOperation = function (op) {
+        if (op.type == "pass")
+            return "red";
+        if (op.type == "skipsec")
+            return "orange";
+        return "blue";
     };
     GameXBody.prototype.getTokenPresentaton = function (type, tokenKey) {
         var isstr = typeof tokenKey == "string";
@@ -2905,19 +3312,28 @@ var GameXBody = /** @class */ (function (_super) {
         if (xop == "+" && !single)
             this.setDescriptionOnMyTurn("${you} must choose order of operations");
         var i = 0;
-        var _loop_1 = function (opIdS) {
+        var _loop_2 = function (opIdS) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opargs = opInfo.args;
-            var name_3 = this_1.getButtonNameForOperation(opInfo);
+            var name_3 = "";
+            var contains_gfx = false;
+            if (opInfo.typeexpr && opInfo.data && opInfo.data != "") {
+                name_3 = '<div class="innerbutton">' + CustomRenders.parseExprToHtml(opInfo.typeexpr) + '</div>';
+                contains_gfx = true;
+            }
+            else {
+                name_3 = this_2.getButtonNameForOperation(opInfo);
+            }
+            var color = this_2.getButtonColorForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
-            this_1.updateVisualsFromOp(opInfo, opId);
-            this_1.activateSlots(opInfo, opId, singleOrFirst);
+            this_2.updateVisualsFromOp(opInfo, opId);
+            this_2.activateSlots(opInfo, opId, singleOrFirst);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
-                    this_1.addActionButton("button_" + opId, name_3, function () {
+                    this_2.addActionButton("button_" + opId, name_3, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
@@ -2926,12 +3342,20 @@ var GameXBody = /** @class */ (function (_super) {
                             // onToken
                             _this.onSelectTarget(opId, id);
                         });
-                    });
+                    }, null, null, color);
                 }
                 else {
-                    this_1.addActionButton("button_" + opId, name_3, function () {
+                    this_2.addActionButton("button_" + opId, name_3, function () {
                         _this.sendActionResolve(opId);
-                    });
+                    }, null, null, color);
+                }
+                if (color != "blue" && color != "red") {
+                    $('button_' + opId).classList.remove('bgabutton_blue');
+                    $('button_' + opId).classList.add('bgabutton_' + color);
+                }
+                if (contains_gfx) {
+                    $('button_' + opId).classList.add('gfx');
+                    $('button_' + opId).setAttribute('title', this_2.getButtonNameForOperation(opInfo));
                 }
                 if (opargs.void) {
                     dojo.addClass("button_" + opId, "disabled");
@@ -2940,16 +3364,19 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0)
-                    this_1.addActionButton("button_skip", _("Done"), function () {
+                    this_2.addActionButton("button_skip", _("Done"), function () {
                         _this.sendActionSkip();
                     });
             }
             i = i + 1;
         };
-        var this_1 = this;
+        var this_2 = this;
         for (var opIdS in operations) {
-            _loop_1(opIdS);
+            _loop_2(opIdS);
         }
+        //refresh prereqs rendering on hand cards
+        //TODO : check if this place is pertinent
+        this.updateHandPrereqs();
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
@@ -2991,7 +3418,7 @@ var GameXBody = /** @class */ (function (_super) {
     // on click hooks
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
         var _a;
-        debugger;
+        //debugger;
         var info = this.reverseIdLookup.get(tid);
         if (info && info !== "0") {
             var opId = info.op;
@@ -3058,6 +3485,198 @@ var Operation = /** @class */ (function () {
     }
     return Operation;
 }());
+var LocalSettings = /** @class */ (function () {
+    function LocalSettings(gameName, props) {
+        this.gameName = gameName;
+        this.props = props;
+        /*
+        props : array of objects
+                key : internal name and dataset ebd-body and css variable name
+                label : display label
+    
+                -- kind of setting (only one possibility)
+                    range : value can be any integer between values[0] and values[1] (like a slider)
+                    choice : value can be one of values[0..X] (like a dropdown)
+                             it must be an object of {value1:label1,value2:label2,...}
+    
+                default : default value (required)
+    
+                example : [
+            { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+            { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+            { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+            {
+              key: "playerarea",
+              label: _("Player zone placement"),
+              choice: { before: _("Before Map"), after: _("After Map") },
+              default: "after",
+            },
+          ]);
+         */
+    }
+    //loads setttings, apply data values to main body
+    LocalSettings.prototype.setup = function () {
+        //this.load();
+        for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
+            var prop = _a[_i];
+            var stored = this.readProp(prop.key);
+            this.applyChanges(prop, stored, false);
+        }
+    };
+    LocalSettings.prototype.renderButton = function (parentId) {
+        if (!document.getElementById(parentId))
+            return false;
+        if (document.getElementById(this.gameName + "_btn_localsettings"))
+            return false;
+        var htm = '<div id="' + this.gameName + '_btn_localsettings"></div>';
+        document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
+        return true;
+    };
+    LocalSettings.prototype.renderContents = function (parentId) {
+        if (!document.getElementById(parentId))
+            return false;
+        var htm = '<div id="' +
+            this.gameName +
+            '_localsettings_window" class="localsettings_window">' +
+            '<div class="localsettings_header">' +
+            _("Local Settings") +
+            "</div>" +
+            "%contents%" +
+            "</div>";
+        var htmcontents = "";
+        for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
+            var prop = _a[_i];
+            htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
+        }
+        htm = htm.replace("%contents%", htmcontents);
+        document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
+        //add interactivity
+        for (var _b = 0, _c = this.props; _b < _c.length; _b++) {
+            var prop = _c[_b];
+            this.actionProp(prop);
+        }
+    };
+    LocalSettings.prototype.renderProp = function (prop) {
+        if (prop.range)
+            return this.renderPropRange(prop);
+        if (prop.choice)
+            return this.renderPropChoice(prop);
+        return "<div>Error: invalid property type</div>";
+    };
+    LocalSettings.prototype.renderPropRange = function (prop) {
+        var htm = '<div class="localsettings_prop_label prop_range">' + prop.label + "</div>";
+        htm =
+            htm +
+                '<div class="localsettings_prop_range">' +
+                '<div id="localsettings_prop_button_minus_' +
+                prop.key +
+                '" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>' +
+                '<div id="localsettings_prop_rangevalue_' +
+                prop.key +
+                '" class="localsettings_prop_rangevalue">' +
+                prop.value +
+                "</div>" +
+                '<div id="localsettings_prop_button_plus_' +
+                prop.key +
+                '" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>' +
+                "</div>";
+        return htm;
+    };
+    LocalSettings.prototype.renderPropChoice = function (prop) {
+        var htm = '<div class="localsettings_prop_control prop_choice">' + prop.label + "</div>";
+        htm = htm + '<select id="localsettings_prop_' + prop.key + '" class="">';
+        for (var idx in prop.choice) {
+            var selected = idx == prop.value ? 'selected="selected"' : "";
+            htm = htm + '<option value="' + idx + '" ' + selected + ">" + prop.choice[idx] + "</option>";
+        }
+        htm = htm + " </select>";
+        return htm;
+    };
+    LocalSettings.prototype.actionProp = function (prop) {
+        if (prop.range)
+            this.actionPropRange(prop);
+        if (prop.choice)
+            this.actionPropChoice(prop);
+    };
+    LocalSettings.prototype.actionPropRange = function (prop) {
+        var _this = this;
+        $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", function () {
+            _this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
+        });
+        $("localsettings_prop_button_plus_" + prop.key).addEventListener("click", function () {
+            _this.applyChanges(prop, parseFloat(prop.value) + prop.range.inc);
+        });
+    };
+    LocalSettings.prototype.actionPropChoice = function (prop) {
+        var _this = this;
+        $("localsettings_prop_" + prop.key).addEventListener("change", function (event) {
+            // @ts-ignore
+            _this.applyChanges(prop, event.target.value);
+        });
+    };
+    LocalSettings.prototype.setSanitizedValue = function (prop, newvalue) {
+        if (prop.range) {
+            var value = parseFloat(newvalue);
+            if (isNaN(value) || !value)
+                value = prop.default;
+            if (value > prop.range.max)
+                value = prop.range.max;
+            if (value < prop.range.min)
+                value = prop.range.min;
+            prop.value = String(value);
+        }
+        else if (prop.choice) {
+            if (!prop.choice[newvalue]) {
+                prop.value = String(prop.default);
+            }
+            else {
+                prop.value = String(newvalue);
+            }
+        }
+        else {
+            if (!newvalue) {
+                prop.value = String(prop.default);
+            }
+            else {
+                prop.value = String(newvalue);
+            }
+        }
+        return prop.value;
+    };
+    LocalSettings.prototype.applyChanges = function (prop, newvalue, write) {
+        if (write === void 0) { write = true; }
+        // sanitize value so bad value is never stored
+        var value = this.setSanitizedValue(prop, newvalue);
+        if (prop.range) {
+            var lvar = "localsettings_prop_rangevalue_" + prop.key;
+            if ($(lvar))
+                $(lvar).innerHTML = value;
+        }
+        $("ebd-body").dataset["localsetting_" + prop.key] = value;
+        $("ebd-body").style.setProperty("--localsetting_" + prop.key, value);
+        if (write)
+            this.writeProp(prop.key, value);
+    };
+    LocalSettings.prototype.load = function () {
+        if (!this.readProp("init"))
+            return false;
+        return true;
+    };
+    LocalSettings.prototype.readProp = function (key) {
+        return localStorage.getItem(this.gameName + "." + key);
+    };
+    LocalSettings.prototype.writeProp = function (key, val) {
+        try {
+            localStorage.setItem(this.gameName + "." + key, val);
+            return true;
+        }
+        catch (e) {
+            console.error(e);
+            return false;
+        }
+    };
+    return LocalSettings;
+}());
 var VLayout = /** @class */ (function () {
     function VLayout(game) {
         this.game = game;
@@ -3073,6 +3692,7 @@ var VLayout = /** @class */ (function () {
         $("tableau_".concat(color)).setAttribute("data-visibility_1", "1");
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
+        dojo.place("tableau_".concat(color, "_corp"), "tableau_".concat(color), 'first');
         dojo.place("tracker_gen", "map_left");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
@@ -3092,6 +3712,8 @@ var VLayout = /** @class */ (function () {
         }
     };
     VLayout.prototype.renderSpecificToken = function (tokenNode) {
+        if (!this.game.isLayoutFull())
+            return;
         if (tokenNode.id.startsWith("tracker_tr")) {
             // debugger;
             var marker = "marker_" + tokenNode.id;

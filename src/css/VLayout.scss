@@ -11,16 +11,23 @@
   }
 
   #ebd-body {
-    --map-width: 30em;
+    --map-width: calc(var(--localsetting_mapsize) / 100 * 30em);
+    --map-board-with: calc(var(--map-width) * 1.66);
     /* 75vh */
     --map-height: calc(var(--map-width) * 0.92);
-    --card-width: 10em;
     --pb_cellsize: 4.5em;
+
+    --card-width: calc(var(--localsetting_cardsize) / 100 * 10em);
+    --card-height: calc(var(--card-width) * 1.40658174);
 
     --stan-width: calc(var(--map-width) * 0.35);
     --stan-height: calc(var(--stan-width) * 0.2);
     --stan-fullheight: calc(var(--stan-width) * 1.604095);
   }
+
+  $ratio: 1.445 / 1.7;
+  $mainh: calc(var(--map-board-with) * $ratio);
+  $mainw: calc(var(--map-board-with));
 
   .card_effect {
     font-size: calc(var(--card-width) * 0.1);
@@ -32,7 +39,7 @@
     border-radius: unset;
     background: unset;
     outline: 1px dashed var(--pcolor);
-    min-width: calc(var(--map-width) * 1.66);
+    min-width: var(--map-board-with);
   }
 
   .player_counters {
@@ -52,10 +59,8 @@
     display: block;
   }
 
-  $bigmap: 1.66;
-  $ratio: 1.445 / 1.7;
-  $mainh: calc(var(--map-width) * $bigmap * $ratio);
-  $mainw: calc(var(--map-width) * $bigmap);
+  
+
 
   #main_board {
     position: relative;
@@ -68,7 +73,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: unset;
+    justify-content: center;
   }
 
   // mid-map layout
@@ -78,7 +83,7 @@
 
   .thisplayer_zone {
     order: 1;
-    flex-grow: unset;
+    flex-grow: 1;
   }
 
   .thisplayer_zone~.player_area {
@@ -88,7 +93,8 @@
 
   .player_area {
     min-width:  $mainw;
-    width:  $mainw;
+    width:  unset;
+    flex-grow: 1;
   }
 
 
@@ -191,7 +197,7 @@
   .milestone,
   .award {
     background: none;
-    width: calc(var(--map-width) * 0.24);
+    width: calc(var(--map-board-with) * 0.11);
   }
 
   .map_milesawardsheader {
