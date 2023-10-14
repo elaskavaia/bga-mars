@@ -1,7 +1,7 @@
 /*card bg ratio : 1.40658174*/
 
 #ebd-body {
-  --card-width: 8vw;
+  --card-width: calc(var(--localsetting_cardsize)*.15vh);
   --card-height: calc(var(--card-width)*1.40658174);
 }
 
@@ -470,14 +470,26 @@ display: none;
   left: 21%;
   font-family: "Prototype";
   font-size: calc(var(--card-width) * 0.06);
-  background: #f7d543;
+  /*background: #f7d543;*/
   height: 6.2%;
   --resourcesize: calc(var(--card-width) * 0.08);
   display: flex;
   align-items: center;
   padding-right: calc(var(--card-width) * 0.01);
 
+}
 
+.card[data-invalid_prereq="1"] .card_prereq::after {
+  content:"🛇";
+  color:red;
+  font-weight:bold;
+}
+.card[data-invalid_prereq="1"] .card_tt_prereq {
+  color:red;
+}
+.card[data-invalid_prereq="1"] .card_tt_prereq::before {
+  content:"🛇";
+  color:red;
 }
 
 .prereq_content {
@@ -544,6 +556,10 @@ display: none;
 .card .prereq_content > * {
   display: inline-block;
   vertical-align: middle;
+}
+
+.card .prereq_content > .outer_production {
+  display: flex;
 }
 
 .prereq_content.mode_max{
@@ -1122,8 +1138,21 @@ display: none;
   */
 
 }
+.award:hover .card_hovertt {
+  animation: showme 300ms 1500ms ;
+  animation-fill-mode: forwards;
+}
+.milestone:hover .card_hovertt {
+  animation: showme 300ms 1500ms ;
+  animation-fill-mode: forwards;
+}
 
 #display_main .card_hovertt {
+  width: fit-content;
+  height: fit-content;
+}
+
+#map_bottom .card_hovertt {
   width: fit-content;
   height: fit-content;
 }
@@ -1164,6 +1193,25 @@ display: none;
   animation: showme 300ms 1000ms ;
   animation-fill-mode: forwards;
 }
+
+.mcompact {
+  .card .resource{
+    width: calc(var(--card-width) * 0.08);
+    height: calc(var(--card-width) * 0.08);
+    margin-right: 2%;
+  }
+
+  .card_resource_holder{
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    left: 3%;
+    position: absolute;
+    top: 45%;
+    width: 94%;
+  }
+}
+
 
 
 @keyframes showme {

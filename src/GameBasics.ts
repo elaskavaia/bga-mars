@@ -782,7 +782,7 @@ class GameBasics extends GameGui {
   }
 
   getPlayerColor(playerId: number) {
-    return this.gamedatas.players[playerId] ?? "000000";
+    return this.gamedatas.players[playerId].color ?? "000000";
   }
 
   getPlayerIdByColor(color: string) {
@@ -1005,7 +1005,7 @@ class GameBasics extends GameGui {
   setupNotifications(): void {
     console.log("notifications subscriptions setup");
     dojo.subscribe("counter", this, "notif_counter");
-    this.notifqueue.setSynchronous("counter", 100);
+    this.notifqueue.setSynchronous("counter", 500);
     dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
     dojo.subscribe("score", this, "notif_score");
     this.notifqueue.setSynchronous("score", 50); // XXX
@@ -1088,7 +1088,7 @@ class GameBasics extends GameGui {
       } else if ($(name)) {
         this.setDomTokenState(name, value);
       }
-      //  console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+        console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
     } catch (ex) {
       console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
     }

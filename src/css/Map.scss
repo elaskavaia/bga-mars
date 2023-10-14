@@ -1,8 +1,8 @@
 #ebd-body {
-  --map-width: 30vw;
+  --map-width: calc(var(--localsetting_mapsize)*0.6vh);
   --map-height: calc(var(--map-width)*0.92);
 
-  --stan-width:8vw; /* 25vh */
+  --stan-width: calc(var(--localsetting_mapsize)*0.145vh);
   --stan-height: calc(var(--stan-width)*0.2);
   --stan-fullheight: calc(var(--stan-width)*1.604095);
 
@@ -179,15 +179,26 @@
   width: 48%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
+  height: calc(var(--map-height)*0.15);
+  /*background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
+    border: 0.4vh solid #938989;
+      border-radius: 30% 30% 0 0;
+       width: fit-content;
+   */
   padding: 0.3vh;
-  border: 0.4vh solid #938989;
-  width: fit-content;
-  border-radius: 30% 30% 0 0;
+  background-image: url("img/awards_back.png");
+
+  background-size: cover;
+  position: relative;
+
+
 }
 .map_milesawardscontent{
   display: flex;
   flex-wrap: wrap;
+  height: 62%;
+  top: 18%;
+  position: relative;
 }
 
 .milestone, .award  {
@@ -211,17 +222,72 @@
 .milestone_5 {background-position:-400% -100%;}
 
 
+.milestone_label{
+  bottom: 4%;
+  position: absolute;
+  width: 89%;
+  left: 6%;
+  text-align: center;
+}
+
+.award_label{
+  bottom: 1%;
+  position: absolute;
+  width: 89%;
+  left: 6%;
+  text-align: center;
+}
+
+
+
 .map_milesawardsheader{
   display: flex;
   justify-content: space-evenly;
+  position: relative;
+  top:7%;
+
+
+  .milesawardsgains{
+    width: 25%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    .card_vp{
+      position: relative;
+      margin-left: 5%;
+      width: calc(var(--map-width) * 0.04);
+      height: calc(var(--map-width) * 0.04);
+
+    }
+  }
+
+  .milesawardscosts{
+    width: 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .token_img{
+      position: relative;
+      --resourcesize: calc(var(--map-width) * 0.03);
+      margin-right: 5%;
+    }
+  }
 }
+
+
+
 .map_title {
-  background-color: #EE6F10;
-  padding: 0.3vh;
+  /*background-color: #EE6F10;
+
   border: 0.4vh solid #938989;
   width: fit-content;
   border-radius: 30% 30% 0 0;
+   */
+  padding: 0.3vh;
   font-family: "Prototype";
+  text-transform: uppercase;
 }
 
 

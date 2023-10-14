@@ -20,6 +20,7 @@
 @import "PlayerBoard";
 @import "CustomPay";
 @import "Tooltips";
+@import "LocalSettings";
 @import "VLayout";
 
 @font-face {
@@ -42,9 +43,14 @@
 #main_area {
   display: flex;
   position: relative;
-  /*  flex-wrap: wrap;*/
+  flex-wrap: wrap;
   flex-direction: row;
   margin-top: 2vh;
+  justify-content: center;
+}
+
+#ebd-body[data-localsetting_playerarea=before] #main_area {
+  flex-direction: row-reverse;
 }
 
 #decks_area > * {
@@ -69,9 +75,10 @@
 
 .playerboard_produce {
   .tracker::after {
-  content: attr(data-sign)  attr(data-state);
+    content: attr(data-sign) attr(data-state);
+  }
 }
-}
+
 
 #oceans_pile {
   position: absolute;
@@ -264,7 +271,7 @@
 }
 
 .thisplayer_zone {
-  min-width: calc(var(--map-width) * 1.3);
+  min-width: calc(var(--map-width) * 1);
   flex-grow: 100;
 }
 
@@ -303,7 +310,112 @@
   background: red;
 }
 
+/*--------------- Floating hand -------------------- */
+#hand_area_buttons{
+  display: none;
+}
+#ebd-body[data-localsetting_handplace='floating'] {
+  #hand_area {
+    background-color: rgba(40,39,36,.78);
+    border-right: 1px solid rgba(240, 248, 255, 0.39);
+    border-top: 1px solid rgba(240, 248, 255, 0.39);
+    border-top-right-radius: 8px;
+    bottom: 0;
+    box-shadow: 0 0 10px 1px #ff0;
+    left: 0;
+    position: fixed;
+    transform: translateY(80%);
+    transition: transform .8s;
+    z-index: 1000;
+  }
 
+  #hand_area_buttons{
+    display: flex;
+    justify-content: flex-start;
+    left: 0;
+    position: absolute;
+    right: 0;
+    transition: top .8s;
+    z-index: 2;
+    cursor: pointer;
+
+    .icon_close{
+      display: none;
+    }
+    .icon_hand{
+      display: flex;
+    }
+
+    .icon_hand,.icon_close {
+      align-items: center;
+      font-size: 32px;
+      height: 40px;
+      justify-content: center;
+      margin: 4px;
+      width: 40px;
+    }
+
+    #hand_area_button_pop{
+      background-color: gray;
+      border: 1px solid #000;
+      border-radius: 50%;
+      box-shadow: 2px 2px 5px #000;
+      cursor: pointer;
+      margin: -38px 5px 0;
+      transform: translateY(0);
+      transition: transform .4s,margin .4s;
+    }
+
+    #hand_area_button_pop:hover {
+      transform: translateY(-10px);
+    }
+
+  }
+  #hand_area[data-open='1'] {
+
+    transform: translateY(0);
+
+    #hand_area_button_pop{
+
+      .icon_close{
+        display: flex;
+      }
+      .icon_hand {
+        display: none;
+      }
+    }
+  }
+}
+.bgabutton_orange {
+  background-color: #b17300;
+}
+
+.innerbutton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .card_icono {
+    text-shadow: revert;
+  }
+
+  .card_icono .outer_production{
+    padding-bottom: 2px;
+    padding-top: 2px;
+    flex-direction:row;
+  }
+
+}
+
+.bgabutton.gfx {
+  padding:2px;
+}
+
+#page-title .innerbutton .token_img  {
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+}
 /* --------------- LOGS -------------------- */
 
 .log .token_img {
@@ -313,12 +425,51 @@
   vertical-align: middle;
   text-align: center;
   line-height: 24px;
-
-
 }
 .log  {
   .tracker_pm, .tracker_ps, .tracker_pu, .tracker_pp, .tracker_pe, .tracker_ph {
     outline: 4px solid #b7915e;
+    margin-left: 3px;
+    margin-right: 3px;
+  }
+}
+
+#page-title .token_img {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 30px;
+}
+
+#page-title .item_worth .token_img {
+  width: var(--resourcesize);
+  height: var(--resourcesize);
+  display: flex;
+  vertical-align:revert;
+  justify-content: center;
+  line-height: revert;
+}
+
+.topbar_movefrom {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  left: 50%;
+  top:-42px;
+}
+
+.resmover {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+
+  .token_img{
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
   }
 }
 
