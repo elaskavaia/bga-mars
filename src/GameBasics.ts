@@ -713,7 +713,6 @@ class GameBasics extends GameGui {
   }
 
   findActiveParent(element: HTMLElement) {
-    debugger;
     if (this.isActiveSlot(element)) return element;
     const parent = element.parentElement;
     if (!parent || parent.id=='thething' || parent == element) return null;

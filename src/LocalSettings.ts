@@ -1,11 +1,23 @@
+interface LocalProp {
+  key: string;
+  label: string;
+  value?: string;
+  range?: {
+    min: number;
+    max: number;
+    inc: number;
+  };
+  choice?: { [key: string]: string };
+  default: string | number | null;
+}
 
 class LocalSettings {
-   private gameName:string;
-   private props:any[];
+  private gameName: string;
+  private props: LocalProp[];
 
-  constructor(gameName:string,props:any[]) {
-    this.gameName=gameName;
-    this.props=props;
+  constructor(gameName: string, props: LocalProp[]) {
+    this.gameName = gameName;
+    this.props = props;
     /*
     props : array of objects
             key : internal name and dataset ebd-body and css variable name
@@ -18,54 +30,56 @@ class LocalSettings {
 
             default : default value (required)
 
-            example :
-            [{key:'cardsize',label:_('Card size'),range:[0.1,1,0.1],default:100},
-               {key:'mapsize',label:_('Map size'),range:[0.1,2,0.1],default:100},
-               {key:'handtype',label:_('Hand placement'),choice:{ontop:_('On top'), floating:_('Floating')},default:'ontop'}
-            ];
+            example : [
+        { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+        { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+        {
+          key: "playerarea",
+          label: _("Player zone placement"),
+          choice: { before: _("Before Map"), after: _("After Map") },
+          default: "after",
+        },
+      ]);
      */
   }
 
   //loads setttings, apply data values to main body
-  public setup():void {
+  public setup(): void {
     //this.load();
     for (let prop of this.props) {
-      prop['value'] = this.readProp(prop.key) ?? prop.default;
-      console.log('read prop ',prop.key,' value ', prop['value'], 'read',this.readProp(prop.key));
-      $('ebd-body').dataset['localsetting_'+prop.key]= prop.value;
-      $('ebd-body').style.setProperty('--localsetting_'+prop.key, prop.value);
-    }
-
-    for (let prop of this.props) {
-      console.log('confirm', prop['value']);
+      let stored = this.readProp(prop.key);
+      this.applyChanges(prop, stored, false);
     }
   }
 
-  public renderButton(parentId:string):Boolean {
+  public renderButton(parentId: string): Boolean {
     if (!document.getElementById(parentId)) return false;
-    if (document.getElementById(this.gameName+'_btn_localsettings')) return false;
-    let htm='<div id="'+this.gameName+'_btn_localsettings"></div>';
-    document.getElementById(parentId).insertAdjacentHTML("beforeend",htm);
+    if (document.getElementById(this.gameName + "_btn_localsettings")) return false;
+    let htm = '<div id="' + this.gameName + '_btn_localsettings"></div>';
+    document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
     return true;
   }
 
-
-  public renderContents(parentId:string):Boolean {
+  public renderContents(parentId: string): Boolean {
     if (!document.getElementById(parentId)) return false;
-    let htm='<div id="'+this.gameName+'_localsettings_window" class="localsettings_window">' +
-      '<div class="localsettings_header">'+_('Local Settings')+'</div>'+
-      '%contents%' +
-      '</div>';
+    let htm =
+      '<div id="' +
+      this.gameName +
+      '_localsettings_window" class="localsettings_window">' +
+      '<div class="localsettings_header">' +
+      _("Local Settings") +
+      "</div>" +
+      "%contents%" +
+      "</div>";
 
-    let htmcontents='';
+    let htmcontents = "";
     for (let prop of this.props) {
-      htmcontents=htmcontents+'<div class="localsettings_group">'+
-         this.renderProp(prop) +
-        '</div>';
+      htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
     }
 
-    htm = htm.replace('%contents%',htmcontents);
-    document.getElementById(parentId).insertAdjacentHTML("beforeend",htm);
+    htm = htm.replace("%contents%", htmcontents);
+    document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
 
     //add interactivity
     for (let prop of this.props) {
@@ -73,94 +87,119 @@ class LocalSettings {
     }
   }
 
-  public renderProp(prop:any):string {
+  public renderProp(prop: LocalProp): string {
     if (prop.range) return this.renderPropRange(prop);
     if (prop.choice) return this.renderPropChoice(prop);
-    return '<div>Error:invalid property type</div>';
+    return "<div>Error: invalid property type</div>";
   }
 
-  public renderPropRange(prop:any):string {
-      let htm='<div class="localsettings_prop_label prop_range">'+prop.label+'</div>';
-      htm=htm+'<div class="localsettings_prop_range">'
-              +'<div id="localsettings_prop_button_minus_'+prop.key+'" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>'
-                +'<div id="localsettings_prop_rangevalue_'+prop.key+'" class="localsettings_prop_rangevalue">'+prop.value+'</div>'
-              +'<div id="localsettings_prop_button_plus_'+prop.key+'" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>'
-              +'</div>';
-
-      return htm;
-  }
-
-  public renderPropChoice(prop:any):string {
-    let htm='<div class="localsettings_prop_control prop_choice">'+prop.label+'</div>';
-
-    htm=htm+'<select id="localsettings_prop_'+prop.key+'" class="">';
-    for (let idx in prop.choice) {
-      const selected = idx==prop.value ? 'selected="selected"' : '';
-      htm=htm+'<option value="'+idx+'" '+selected+'>'+prop.choice[idx]+'</option>';
-    }
-    htm=htm+' </select>';
+  public renderPropRange(prop: LocalProp): string {
+    let htm = '<div class="localsettings_prop_label prop_range">' + prop.label + "</div>";
+    htm =
+      htm +
+      '<div class="localsettings_prop_range">' +
+      '<div id="localsettings_prop_button_minus_' +
+      prop.key +
+      '" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>' +
+      '<div id="localsettings_prop_rangevalue_' +
+      prop.key +
+      '" class="localsettings_prop_rangevalue">' +
+      prop.value +
+      "</div>" +
+      '<div id="localsettings_prop_button_plus_' +
+      prop.key +
+      '" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>' +
+      "</div>";
 
     return htm;
   }
 
+  public renderPropChoice(prop: LocalProp): string {
+    let htm = '<div class="localsettings_prop_control prop_choice">' + prop.label + "</div>";
 
-  private actionProp(prop: any) {
-    if (prop.range)  this.actionPropRange(prop);
-    if (prop.choice)  this.actionPropChoice(prop);
+    htm = htm + '<select id="localsettings_prop_' + prop.key + '" class="">';
+    for (let idx in prop.choice) {
+      const selected = idx == prop.value ? 'selected="selected"' : "";
+      htm = htm + '<option value="' + idx + '" ' + selected + ">" + prop.choice[idx] + "</option>";
+    }
+    htm = htm + " </select>";
 
-
+    return htm;
   }
 
-  private actionPropRange(prop: any) {
+  private actionProp(prop: LocalProp) {
+    if (prop.range) this.actionPropRange(prop);
+    if (prop.choice) this.actionPropChoice(prop);
+  }
 
-
-    dojo.connect($('localsettings_prop_button_minus_'+prop.key),"onclick",'this', ()=>{
-      prop.value=parseFloat(prop.value)-parseFloat(prop.range[2]);
-      if (prop.value<= prop.range[0]) prop.value=prop.range[0];
-      $('localsettings_prop_rangevalue_'+prop.key).innerHTML=prop.value;
-
-      this.applyChanges(prop);
+  private actionPropRange(prop: LocalProp) {
+    $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", () => {
+      this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
     });
-    dojo.connect($('localsettings_prop_button_plus_'+prop.key),"onclick",'this', ()=>{
-      prop.value=parseFloat(prop.value)+parseFloat(prop.range[2]);
-      if (prop.value>= prop.range[1]) prop.value=prop.range[1];
-      $('localsettings_prop_rangevalue_'+prop.key).innerHTML=prop.value;
 
-      this.applyChanges(prop);
+    $("localsettings_prop_button_plus_" + prop.key).addEventListener("click", () => {
+      this.applyChanges(prop, parseFloat(prop.value) + prop.range.inc);
     });
   }
 
-  private actionPropChoice(prop: any) {
-    dojo.connect($('localsettings_prop_'+prop.key),"onchange",'this', ()=>{
+  private actionPropChoice(prop: LocalProp) {
+    $("localsettings_prop_" + prop.key).addEventListener("change", (event) => {
       // @ts-ignore
-      prop.value=$('localsettings_prop_'+prop.key).value;
-      this.applyChanges(prop);
+      this.applyChanges(prop, event.target.value);
     });
   }
 
-  private applyChanges(prop:any) {
-    $('ebd-body').dataset['localsetting_'+prop.key]= prop.value;
-    $('ebd-body').style.setProperty('--localsetting_'+prop.key, prop.value);
 
-    this.writeProp(prop.key,prop.value);
+  private setSanitizedValue(prop: LocalProp, newvalue: any) {
+    if (prop.range) {
+      let value = parseFloat(newvalue);
+      if (isNaN(value) || !value) value = prop.default as number;
+      if (value > prop.range.max) value = prop.range.max;
+      if (value < prop.range.min) value = prop.range.min;
+      prop.value = String(value);
+    } else if (prop.choice) {
+      if (!prop.choice[newvalue]) {
+        prop.value = String(prop.default);
+      } else {
+        prop.value = String(newvalue);
+      }
+    } else {
+      if (!newvalue) {
+        prop.value = String(prop.default);
+      } else {
+        prop.value = String(newvalue);
+      }
+    }
+    return prop.value;
   }
 
-  public load():Boolean {
-    if (!this.readProp('init')) return false;
+  private applyChanges(prop: LocalProp, newvalue: any, write: boolean = true) {
+    // sanitize value so bad value is never stored
+    let value = this.setSanitizedValue(prop, newvalue);
+
+    if (prop.range) {
+      const lvar = "localsettings_prop_rangevalue_" + prop.key;
+      if ($(lvar)) $(lvar).innerHTML = value;
+    }
+    $("ebd-body").dataset["localsetting_" + prop.key] = value;
+    $("ebd-body").style.setProperty("--localsetting_" + prop.key, value);
+    if (write) this.writeProp(prop.key, value);
+  }
+
+  public load(): Boolean {
+    if (!this.readProp("init")) return false;
     return true;
   }
-  private readProp(key:string):any {
-    return localStorage.getItem(this.gameName+'.'+key);
+  public readProp(key: string): string {
+    return localStorage.getItem(this.gameName + "." + key);
   }
-  private writeProp(key:string,val:any):Boolean {
+  public writeProp(key: string, val: string): Boolean {
     try {
-      localStorage.setItem(this.gameName+'.'+key,val);
-      return  true;
+      localStorage.setItem(this.gameName + "." + key, val);
+      return true;
     } catch (e) {
-      return  false;
+      console.error(e);
+      return false;
     }
   }
-
-
-
 }

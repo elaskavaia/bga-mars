@@ -39,12 +39,17 @@ class GameXBody extends GameTokens {
       });
 
       //local settings
-      this.localSettings = new LocalSettings('mars',
-        [{key:'cardsize',label:_('Card size'),range:[15,200,5],default:100},
-          {key:'mapsize',label:_('Map size'),range:[15,200,5],default:100},
-          {key:'handplace',label:_('Hand placement'),choice:{ontop:_('On top'), floating:_('Floating')},default:'ontop'},
-          {key:'playerarea',label:_('Player zone placement'),choice:{before:_('Before Map'), after:_('After Map')},default:'after'}
-        ]);
+      this.localSettings = new LocalSettings("mars", [
+        { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+        { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+        {
+          key: "playerarea",
+          label: _("Player zone placement"),
+          choice: { before: _("Before Map"), after: _("After Map") },
+          default: "after",
+        },
+      ]);
       this.localSettings.setup();
       //this.localSettings.renderButton('player_config_row');
       this.localSettings.renderContents('settings-controls-container');
@@ -526,11 +531,9 @@ class GameXBody extends GameTokens {
       }
     }
      else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-      if (!this.isLayoutFull()) {
-        result.location = tokenInfo.location + "_corp_effect";
-      } else {
-        result.location = tokenInfo.location + "_cards_4";
-      }
+      
+      result.location = tokenInfo.location + "_corp_effect";
+
       //also set property to corp logo div
       $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
