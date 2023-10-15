@@ -1597,6 +1597,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     public function isVoidSingle(string $type, string $color, ?int $count = 1, string $data = '') {
+        if ($data===null) $data='';
         $opinst = $this->getOperationInstanceFromType($type, $color, $count, $data);
         return $opinst->isVoid();
     }

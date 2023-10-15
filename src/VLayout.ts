@@ -36,6 +36,7 @@ class VLayout {
 
     dojo.place("deck_main", "decks_area");
     dojo.place("discard_main", "decks_area");
+    dojo.place("oceans_pile", "map_middle");
     dojo.destroy("deck_holder");
     dojo.destroy("discard_holder");
 
@@ -57,33 +58,33 @@ class VLayout {
       // debugger;
       const marker = "marker_" + tokenNode.id;
       let markerNode = $(marker);
+      const color = getPart(tokenNode.id, 2);
       if (!markerNode) {
-        const color = getPart(tokenNode.id, 2);
         markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
-
-        let state = parseInt(tokenNode.getAttribute("data-state"));
-        //this.game.setDomTokenState(markerNode, state);
-        let bp = 0;
-        let lp = 0;
-        state = state % 100;
-        let off = state % 25;
-        let mul = 100 / 25;
-        if (state <= 25) {
-          lp = 0;
-          bp =  mul * off;
-        } else if (state < 50) {
-          lp = mul * off;
-          bp = 100;
-        } else if (state <=75) {
-          lp = 100;
-          bp = 100 - mul * off;
-        } else if (state < 50) {
-          lp = 100 - mul * off;
-          bp = 0;
-        }
-        markerNode.style.left = `calc(10px + ${lp}% * 0.95)`;
-        markerNode.style.bottom = `calc(10px + ${bp}% * 0.95)`;
       }
+
+      let state = parseInt(tokenNode.getAttribute("data-state"));
+      //this.game.setDomTokenState(markerNode, state);
+      let bp = 0;
+      let lp = 0;
+      state = state % 100;
+      let off = state % 25;
+      let mul = 100 / 25;
+      if (state <= 25) {
+        lp = 0;
+        bp = mul * off;
+      } else if (state < 50) {
+        lp = mul * off;
+        bp = 100;
+      } else if (state <= 75) {
+        lp = 100;
+        bp = 100 - mul * off;
+      } else if (state < 50) {
+        lp = 100 - mul * off;
+        bp = 0;
+      }
+      markerNode.style.left = `calc(10px + ${lp}% * 0.95)`;
+      markerNode.style.bottom = `calc(10px + ${bp}% * 0.95)`;
     }
   }
 }

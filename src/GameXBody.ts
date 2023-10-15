@@ -1019,7 +1019,7 @@ class GameXBody extends GameTokens {
 
       let name="";
       let contains_gfx=false;
-      if (opInfo.typeexpr && opInfo.data && opInfo.data!="") {
+      if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
          name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
          contains_gfx=true;
       } else {

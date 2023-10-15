@@ -2221,7 +2221,8 @@ var GameTokens = /** @class */ (function (_super) {
                 return;
             }
             if (!$(location_1)) {
-                console.error("Unknown place " + location_1 + " for " + tokenInfo.key + " " + token);
+                if (location_1)
+                    console.error("Unknown place '" + location_1 + "' for '" + tokenInfo.key + "' " + token);
                 return;
             }
             if (location_1 === "dev_null") {
@@ -3453,7 +3454,7 @@ var GameXBody = /** @class */ (function (_super) {
             var opargs = opInfo.args;
             var name_3 = "";
             var contains_gfx = false;
-            if (opInfo.typeexpr && opInfo.data && opInfo.data != "") {
+            if (opInfo.typeexpr && opInfo.data && opInfo.data != "" && !this_3.isLayoutFull()) {
                 name_3 = '<div class="innerbutton">' + CustomRenders.parseExprToHtml(opInfo.typeexpr) + '</div>';
                 contains_gfx = true;
             }
@@ -3873,6 +3874,7 @@ var VLayout = /** @class */ (function () {
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
         dojo.place("discard_main", "decks_area");
+        dojo.place("oceans_pile", "map_middle");
         dojo.destroy("deck_holder");
         dojo.destroy("discard_holder");
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
@@ -3890,35 +3892,35 @@ var VLayout = /** @class */ (function () {
             // debugger;
             var marker = "marker_" + tokenNode.id;
             var markerNode = $(marker);
+            var color = getPart(tokenNode.id, 2);
             if (!markerNode) {
-                var color = getPart(tokenNode.id, 2);
                 markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
-                var state = parseInt(tokenNode.getAttribute("data-state"));
-                //this.game.setDomTokenState(markerNode, state);
-                var bp = 0;
-                var lp = 0;
-                state = state % 100;
-                var off = state % 25;
-                var mul = 100 / 25;
-                if (state <= 25) {
-                    lp = 0;
-                    bp = mul * off;
-                }
-                else if (state < 50) {
-                    lp = mul * off;
-                    bp = 100;
-                }
-                else if (state <= 75) {
-                    lp = 100;
-                    bp = 100 - mul * off;
-                }
-                else if (state < 50) {
-                    lp = 100 - mul * off;
-                    bp = 0;
-                }
-                markerNode.style.left = "calc(10px + ".concat(lp, "% * 0.95)");
-                markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
             }
+            var state = parseInt(tokenNode.getAttribute("data-state"));
+            //this.game.setDomTokenState(markerNode, state);
+            var bp = 0;
+            var lp = 0;
+            state = state % 100;
+            var off = state % 25;
+            var mul = 100 / 25;
+            if (state <= 25) {
+                lp = 0;
+                bp = mul * off;
+            }
+            else if (state < 50) {
+                lp = mul * off;
+                bp = 100;
+            }
+            else if (state <= 75) {
+                lp = 100;
+                bp = 100 - mul * off;
+            }
+            else if (state < 50) {
+                lp = 100 - mul * off;
+                bp = 0;
+            }
+            markerNode.style.left = "calc(10px + ".concat(lp, "% * 0.95)");
+            markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
         }
     };
     return VLayout;

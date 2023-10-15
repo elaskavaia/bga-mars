@@ -11,16 +11,15 @@
   }
 
   #ebd-body {
-    --map-width: calc(var(--localsetting_mapsize) / 100 * 30em);
+    --map-width: calc(var(--localsetting_mapsize) / 100 * 600px);
     --map-board-with: calc(var(--map-width) * 1.66);
-    /* 75vh */
     --map-height: calc(var(--map-width) * 0.92);
     --pb_cellsize: 3.5em;
 
-    --card-width: calc(var(--localsetting_cardsize) / 100 * 10em);
+    --card-width: calc(var(--localsetting_cardsize) / 100 * 160px);
     --card-height: calc(var(--card-width) * 1.40658174);
 
-    --stan-width: calc(var(--map-width) * 0.35);
+    --stan-width: calc(var(--map-board-with) * 0.155);
     --stan-height: calc(var(--stan-width) * 0.2);
     --stan-fullheight: calc(var(--stan-width) * 1.604095);
   }
@@ -59,7 +58,7 @@
     display: block;
   }
 
-  
+
 
 
   #main_board {
@@ -92,8 +91,8 @@
   }
 
   .player_area {
-    min-width:  $mainw;
-    width:  unset;
+    min-width: $mainw;
+    width: unset;
     flex-grow: 1;
   }
 
@@ -175,7 +174,7 @@
   }
 
   #standard_projects_area .display {
-    margin-top: 15%;
+    margin-top: 19%;
     display: block;
   }
 
@@ -202,7 +201,9 @@
     height: 100%;
   }
 
-  .map_milesawardsheader, .award_label, .milestone_label {
+  .map_milesawardsheader,
+  .award_label,
+  .milestone_label {
     display: none;
   }
 
@@ -282,8 +283,8 @@
 
   #oceans_pile {
     position: absolute;
-    top: 61%;
-    left: 328%;
+    top: 10%;
+    left: 76%;
     clip-path: revert;
   }
 
@@ -344,13 +345,13 @@
   }
 
 
- 
+
   .cards_bin {
-   // display: grid;
+    // display: grid;
     /* grid-template-columns: repeat(auto-fill, var(--card-width)); */
     // grid-template-rows: repeat(auto-fill, calc(var(--card-height) * 0.12));
-     grid-row-start: 1;
-     grid-row-end: -1;
+    grid-row-start: 1;
+    grid-row-end: -1;
     // grid-gap: 0.2em;
   }
 
@@ -358,6 +359,7 @@
     .card {
       display: block;
     }
+
     .card~.card {
       margin-top: calc(var(--card-height) * (0.12 - 1));
     }
@@ -366,6 +368,7 @@
   .cards_1 {
     grid-column: 2;
   }
+
   .cards_2 {
     grid-column: 3;
   }
@@ -385,7 +388,7 @@
     grid-column-start: 4;
   }
 
-  .cards_2a > * {
+  .cards_2a>* {
     display: inline-block;
   }
 
@@ -396,16 +399,22 @@
       height: var(--card-height);
     }
   }
+
   .tableau[data-visibility_1="0"] {
-    .cards_1,  .cards_1vp  {
+
+    .cards_1,
+    .cards_1vp {
       visibility: hidden;
       width: 0px;
       height: var(--card-height);
     }
 
   }
+
   .tableau[data-visibility_3="0"] {
-    .cards_3, .cards_3vp {
+
+    .cards_3,
+    .cards_3vp {
       visibility: hidden;
       width: 0px;
       height: 20px;
@@ -430,170 +439,186 @@
   @for $num from 1 through 80 {
     $i: $num - 1;
     $col: $i % 10;
-    $row: ($i - $col) / 10;
+    $row: (
+      $i - $col) / 10;
 
     .card_main_#{$num} {
-      background-position: calc(100% / 9 * $col) calc(100% / 7 * $row);
-      background-image: url(img/full/cards1.jpg);
-    }
+      background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
+      );
+    background-image: url(img/full/cards1.jpg);
   }
+}
 
-  @for $num from 81 through 160 {
-    $i: $num - 81;
-    $col: $i % 10;
-    $row: ($i - $col) / 10;
+@for $num from 81 through 160 {
+  $i: $num - 81;
+  $col: $i % 10;
+  $row: (
+    $i - $col) / 10;
 
-    .card_main_#{$num} {
-      background-position: calc(100% / 9 * $col) calc(100% / 7 * $row);
-      background-image: url(img/full/cards2.jpg);
-    }
+  .card_main_#{$num} {
+    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
+    );
+  background-image: url(img/full/cards2.jpg);
+}
+}
+
+@for $num from 161 through 208 {
+  $i: $num - 161;
+  $col: $i % 10;
+  $row: calc(($i - $col) / 10);
+
+  .card_main_#{$num} {
+    background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
+    background-image: url(img/full/cards3.jpg);
   }
+}
 
-  @for $num from 161 through 208 {
-    $i: $num - 161;
-    $col: $i % 10;
-    $row: calc(($i - $col) / 10);
+.playerboard_header .badge~.mini_counter[data-state="0"] {
+  opacity: 0.2;
+}
 
-    .card_main_#{$num} {
-      background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
-      background-image: url(img/full/cards3.jpg);
-    }
+#tracker_o,
+#tracker_gen,
+#tracker_t {
+  width: 64px;
+  height: 64px;
+  background-image: url(img/resources.png);
+  background-position: 30.5% 62%;
+  background-size: calc(52 * 100%);
+}
+
+#oxygen_map #tracker_o {
+  position: absolute;
+  width: 8%;
+  height: 24%;
+  box-shadow: unset;
+  border-radius: unset;
+  padding: 0;
+}
+
+#temperature_map #tracker_t {
+  position: absolute;
+  height: 7%;
+  width: 39%;
+  left: 74%;
+  box-shadow: unset;
+  border-radius: unset;
+  padding: 0;
+}
+
+#tracker_gen {
+  position: absolute;
+  width: calc(var(--stan-width) * 0.2);
+  height: calc(var(--stan-width) * 0.2);
+}
+
+@for $num from 1 through 25 {
+  $row: $num - 1;
+
+  #tracker_gen[data-state="#{$num}"] {
+    left: -74%;
+    top: calc(100% - $row * (100% / 24));
   }
+}
 
-  .playerboard_header .badge~.mini_counter[data-state="0"] {
-    opacity: 0.2;
-  }
+.player_tags .badge[data-state="0"],
+.player_tags .tracker[data-state="0"] {
+  opacity: 0.2;
+  display: inline-block;
+}
 
-  #tracker_o,
-  #tracker_gen,
-  #tracker_t {
-    width: 64px;
-    height: 64px;
-    background-image: url(img/resources.png);
-    background-position: 30.5% 62%;
-    background-size: calc(52 * 100%);
-  }
+/* Added by darhf, to prevent messing things up too much*/
+#map_hexes {
+  position: unset;
+  width: unset;
+  height: unset;
+  top: unset;
+  left: unset;
+}
 
-  #oxygen_map #tracker_o {
-    position: absolute;
-    width: 8%;
-    height: 24%;
-    box-shadow: unset;
-    border-radius: unset;
-    padding: 0;
-  }
+.card_hovertt .card_effect {
+  font-size: calc(var(--card-width) * 0.07);
+}
 
-  #temperature_map #tracker_t {
-    position: absolute;
-    height: 7%;
-    width: 39%;
-    left: 74%;
-    box-shadow: unset;
-    border-radius: unset;
-    padding: 0;
-  }
+.playerboard_header {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  background-image: linear-gradient(to right, var(--plcolor), transparent);
+}
 
-  #tracker_gen {
-    position: absolute;
-    width: calc(var(--stan-width) * 0.2);
-    height: calc(var(--stan-width) * 0.2);
-  }
+.player_tags {
+  width: unset;
+}
 
-  @for $num from 1 through 25 {
-    $row: $num - 1;
+.playerboard_controls {
+  display: none;
+}
 
-    #tracker_gen[data-state="#{$num}"] {
-      left: -74%;
-      top: calc(100% - $row * (100% / 24));
-    }
-  }
+.player_controls {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  padding: 0.5em;
+}
 
-  .player_tags .badge[data-state="0"],
-  .player_tags .tracker[data-state="0"] {
-    opacity: 0.2;
-    display: inline-block;
-  }
 
-  /* Added by darhf, to prevent messing things up too much*/
-  #map_hexes {
-    position: unset;
-    width: unset;
-    height: unset;
-    top: unset;
-    left: unset;
-  }
 
-  .card_hovertt .card_effect {
-    font-size: calc(var(--card-width) * 0.07);
-  }
+.corp_logo {
+  width: calc(var(--card-width) * 0.5);
+  height: auto;
+}
 
-  .playerboard_header {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    background-image: linear-gradient(to right, var(--plcolor) , transparent);
-  }
-  .player_tags {
-    width: unset;
-  }
+.corp_holder {
+  justify-content: flex-start;
+}
 
-  .playerboard_controls {
-    display: none;
-  }
+.viewcards_button {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 3%;
+  cursor: pointer;
+}
 
-  .corp_logo {
-    width: calc(var(--card-width) * 0.5);
-    height: auto;
-  }
-  .corp_holder {
-    justify-content: flex-start;
-  }
+.buttoncard {
+  // center content
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-weight: normal;
+}
 
-  .viewcards_button {
-    display: flex;
-    width: fit-content;
-    height: fit-content;
-    border-radius: 3%;
-    cursor: pointer;
-  }
+.corp_holder .card_icon {
+  // card form factor is 3/4
+  width: 24px;
+  height: 32px;
 
-  .buttoncard {
-    // center content
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    font-weight: normal;
-  }
+  border: 1px solid black;
+  border-radius: 20%;
+  border: 1px solid gray;
+  border-radius: 20%;
+}
 
-  .corp_holder .card_icon {
-    // card form factor is 3/4
-    width: 24px;
-    height: 32px;
+.viewcardbutton_counter {
+  height: calc(var(--resourcesize) * 0.55);
+}
 
-    border: 1px solid black;
-    border-radius: 20%;
-    border: 1px solid gray;
-    border-radius: 20%;
-  }
+.viewcards_button[data-cardtype="1"] .buttoncard {
+  background-color: #b5ff82;
+}
 
-  .viewcardbutton_counter {
-    height: calc(var(--resourcesize) * 0.55);
-  }
+.viewcards_button[data-cardtype="2"] .buttoncard {
+  background-color: #67b1f1;
+}
 
-  .viewcards_button[data-cardtype="1"] .buttoncard {
-    background-color: #b5ff82;
-  }
+.viewcards_button[data-cardtype="3"] .buttoncard {
+  background-color: #e1ac18;
+}
 
-  .viewcards_button[data-cardtype="2"] .buttoncard {
-    background-color: #67b1f1;
-  }
-
-  .viewcards_button[data-cardtype="3"] .buttoncard {
-    background-color: #e1ac18;
-  }
-
-  .viewcards_button[data-selected="0"] i {
-    display: none;
-  }
+.viewcards_button[data-selected="0"] i {
+  display: none;
+}
 
 }

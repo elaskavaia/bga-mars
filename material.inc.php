@@ -66,6 +66,10 @@ if (!defined("MA_GAME")) {
   define("MA_CARD_STATE_ACTION_UNUSED", 2);
   define("MA_CARD_STATE_ACTION_USED", 3);
   define("MA_CARD_STATE_ACTION_SINGLEUSE", 4);
+
+  // prefs
+  define("MA_PREF_CONFIRM_TURN", 101);
+  
 }
 
 $this->token_types = [

@@ -102,7 +102,7 @@ $game_preferences = [
         ),
         'default' => 1
     ],
-    101 => [
+    101 => [ // MA_PREF_CONFIRM_TURN
         'name' => totranslate('Confirm turn end'),
         'needReload' => false, 
         'values' => array(

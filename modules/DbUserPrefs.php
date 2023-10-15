@@ -71,7 +71,7 @@ class DbUserPrefs extends APP_GameClass {
         $res = $this->getPrefInfo($player_id, $pref_id);
         if ($res == null)
             return null;
-        return $res ['pref_value'];
+        return (int) $res ['pref_value'];
     }
 
     function setPrefValue($player_id, $pref_id, $pref_value) {
