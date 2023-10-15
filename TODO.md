@@ -2,14 +2,12 @@ Random notes on todo items
 
 ## General
 
-* Draft option
 * Pref to not confirm turn
 
 ## Server
 
 * undo - block on draw card
 * passing heat on 0 place ocean
-* payment with overpay? I have lagrange (196) ,worth 9 MC  with advance alloys and space station
 * lose production does not offer yourself?
 * Missing undo button when inactive during research
 
