@@ -47,6 +47,16 @@ class action_mars extends APP_GameAction {
         self::ajaxResponse();
     }
 
+    public function changePreference()
+    {
+        self::setAjaxMode();
+        $pref = self::getArg('pref_id', AT_posint, false);
+        $value = self::getArg('pref_value', AT_int, false);
+        $player_id = self::getArg('player_id', AT_posint, false);
+        $this->game->action_changePreference($player_id, $pref, $value);
+        self::ajaxResponse();
+    }
+
     function invoke($action, $args) {
         $game = $this->game;
         $game->checkAction($action);

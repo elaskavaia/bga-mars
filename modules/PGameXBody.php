@@ -1,6 +1,7 @@
 <?php
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
+require_once "DbUserPrefs.php";
 require_once "operations/AbsOperation.php";
 require_once "operations/ComplexOperation.php";
 require_once "operations/DelegatedOperation.php";
@@ -14,6 +15,8 @@ abstract class PGameXBody extends PGameMachine {
     protected $eventListners = null; // cache
     protected $map = null;
     protected $token_types_adjusted2 = false;
+    public $dbUserPrefs;
+
 
     // cache
     function __construct() {
@@ -32,6 +35,7 @@ abstract class PGameXBody extends PGameMachine {
             "var_solo_flavour" => 102,
             "var_draft" => 103,
         ]);
+        $this->dbUserPrefs = new DbUserPrefs();
     }
 
     /**
@@ -39,6 +43,8 @@ abstract class PGameXBody extends PGameMachine {
      */
     protected function initTables() {
         try {
+            $players = $this->loadPlayersBasicInfos();
+            $this->dbUserPrefs->setup($players,$this->player_preferences);
             $this->setGameStateValue('gamestage', MA_STAGE_SETUP);
             $this->token_types_adjusted2 = false; // clear cache
             if ($this->isSolo()) {
@@ -50,7 +56,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->tokens->shuffle("deck_main");
             $this->tokens->shuffle("deck_corp");
             $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
-            $players = $this->loadPlayersBasicInfos();
+        
             $initial_draw = 10;
             $tr_value = 20;
             if ($this->isSolo()) {
@@ -178,6 +184,14 @@ abstract class PGameXBody extends PGameMachine {
 
     function isDraftVariant() {
         return $this->getGameStateValue('var_draft') == 1;
+    }
+
+    protected function getAllDatas() {
+        $result = parent::getAllDatas();
+        $current = $this->getCurrentPlayerId();
+        if ($this->isRealPlayer($current))
+            $result ['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
+        return $result;
     }
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
@@ -957,6 +971,15 @@ abstract class PGameXBody extends PGameMachine {
             return;
         }
         $this->undoRestorePoint();
+    }
+
+    function action_changePreference($player_id, $pref, $value) {
+        // anytime action, no checks
+        $current_player_id = $this->getCurrentPlayerId();
+        $this->systemAssertTrue("unauthorized action", $current_player_id == $player_id);
+        $this->systemAssertTrue("unauthorized action", $this->isRealPlayer($player_id));
+        $this->dbUserPrefs->setPrefValue($player_id, $pref, $value);
+        $this->notifyWithName('ack','',['pref_id'=>$pref,'pref_value'=>$value]);
     }
 
     //////////////////////////////////////////////////////////////////////////////

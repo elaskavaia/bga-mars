@@ -85,11 +85,20 @@ $game_options = array(
 );
 $game_preferences = [
     100 => [
-        'name' => totranslate('Layout and Theme'),
+        'name' => totranslate('Graphics'),
         'needReload' => true, // after user changes this preference game interface would auto-reload
         'values' => array(
-            1 => ['name' => totranslate('Compact'), 'cssPref' => 'mcompact'],
-            2 => ['name' => totranslate('Full'), 'cssPref' => 'mfull'],
+            1 => ['name' => totranslate('Constructed'), 'cssPref' => 'mcompact'],
+            2 => ['name' => totranslate('Printed (Engish)'), 'cssPref' => 'mfull'],
+        ),
+        'default' => 1
+    ],
+    101 => [
+        'name' => totranslate('Confirm turn end'),
+        'needReload' => false, 
+        'values' => array(
+            1 => ['name' => totranslate('Confirm') ],
+            0 => ['name' => totranslate('No') ],
         ),
         'default' => 1
     ]
