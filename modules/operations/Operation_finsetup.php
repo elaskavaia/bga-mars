@@ -19,7 +19,7 @@ class Operation_finsetup extends AbsOperation {
         // discard second cord
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_${color}");
         foreach ($rest as $card_id => $card) {
-            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '${player_name} discards ${card_name}');
+            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '${player_name} discards ${token_name}');
         }
 
         // discard unbough cards
