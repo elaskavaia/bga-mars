@@ -4427,6 +4427,10 @@
   justify-content: space-between;
 }
 
+#ebd-body[data-localsetting_showbadges=false] .miniboard_tags {
+  display: none;
+}
+
 /*
  * Controls in the top bar
  */

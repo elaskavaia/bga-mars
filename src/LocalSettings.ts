@@ -6,6 +6,7 @@ interface LocalProp {
     min: number;
     max: number;
     inc: number;
+    slider?: boolean;
   };
   choice?: { [key: string]: string };
   default: string | number | null;
@@ -94,6 +95,16 @@ class LocalSettings {
   }
 
   public renderPropRange(prop: LocalProp): string {
+    if (!prop.range) return;
+    const range  = prop.range;
+    if (range.slider) {
+      const inputid = `localsettings_prop_${prop.key}`;
+      return `
+      <label for="${inputid}" class="localsettings_prop_label prop_range">${prop.label}</label>
+      <input type="range" id="${inputid}" name="${inputid}" min="${range.min}" max="${range.max}" step="${range.inc}" value="${prop.value}">
+      `;
+    }
+
     let htm = '<div class="localsettings_prop_label prop_range">' + prop.label + "</div>";
     htm =
       htm +
@@ -115,6 +126,15 @@ class LocalSettings {
   }
 
   public renderPropChoice(prop: LocalProp): string {
+    if (prop.choice.true) {
+      const inputid = `localsettings_prop_${prop.key}`;
+      const checked = (prop.value === 'false' || !prop.value) ? "": "checked";
+      return `
+      <input type="checkbox" id="${inputid}" name="${inputid}" ${checked}>
+      <label for="${inputid}" class="localsettings_prop_label">${prop.label}</label>
+      `;
+    }
+
     let htm = '<div class="localsettings_prop_control prop_choice">' + prop.label + "</div>";
 
     htm = htm + '<select id="localsettings_prop_' + prop.key + '" class="">';
@@ -133,6 +153,15 @@ class LocalSettings {
   }
 
   private actionPropRange(prop: LocalProp) {
+    if (!prop.range) return;
+    const range  = prop.range;
+    if (range.slider) {
+      $("localsettings_prop_" + prop.key).addEventListener("change", (event) => {
+        // @ts-ignore
+        this.applyChanges(prop, event.target.value);
+      });
+      return;
+    }
     $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", () => {
       this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
     });
@@ -143,6 +172,12 @@ class LocalSettings {
   }
 
   private actionPropChoice(prop: LocalProp) {
+    if (prop.choice.true) {
+      $("localsettings_prop_" + prop.key).addEventListener("click", (event) => {
+        this.applyChanges(prop, (event.target as HTMLInputElement).checked?'true':'false');
+      });
+      return;
+    }
     $("localsettings_prop_" + prop.key).addEventListener("change", (event) => {
       // @ts-ignore
       this.applyChanges(prop, event.target.value);

@@ -41,13 +41,19 @@ class GameXBody extends GameTokens {
       //local settings
       this.localSettings = new LocalSettings("mars", [
         { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
-        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
         { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
         {
           key: "playerarea",
           label: _("Player zone placement"),
           choice: { before: _("Before Map"), after: _("After Map") },
           default: "after",
+        },
+        {
+          key: "showbadges",
+          label: _("Show Badges on minipanel"),
+          choice: { "true": "true", "false": "false" },
+          default: "true",
         },
       ]);
       this.localSettings.setup();

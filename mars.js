@@ -2452,13 +2452,19 @@ var GameXBody = /** @class */ (function (_super) {
             //local settings
             this.localSettings = new LocalSettings("mars", [
                 { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
-                { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
+                { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
                 { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
                 {
                     key: "playerarea",
                     label: _("Player zone placement"),
                     choice: { before: _("Before Map"), after: _("After Map") },
                     default: "after",
+                },
+                {
+                    key: "showbadges",
+                    label: _("Show Badges on minipanel"),
+                    choice: { "true": "true", "false": "false" },
+                    default: "true",
                 },
             ]);
             this.localSettings.setup();
@@ -3564,6 +3570,13 @@ var LocalSettings = /** @class */ (function () {
         return "<div>Error: invalid property type</div>";
     };
     LocalSettings.prototype.renderPropRange = function (prop) {
+        if (!prop.range)
+            return;
+        var range = prop.range;
+        if (range.slider) {
+            var inputid = "localsettings_prop_".concat(prop.key);
+            return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <input type=\"range\" id=\"").concat(inputid, "\" name=\"").concat(inputid, "\" min=\"").concat(range.min, "\" max=\"").concat(range.max, "\" step=\"").concat(range.inc, "\" value=\"").concat(prop.value, "\">\n      ");
+        }
         var htm = '<div class="localsettings_prop_label prop_range">' + prop.label + "</div>";
         htm =
             htm +
@@ -3583,6 +3596,11 @@ var LocalSettings = /** @class */ (function () {
         return htm;
     };
     LocalSettings.prototype.renderPropChoice = function (prop) {
+        if (prop.choice.true) {
+            var inputid = "localsettings_prop_".concat(prop.key);
+            var checked = (prop.value === 'false' || !prop.value) ? "" : "checked";
+            return "\n      <input type=\"checkbox\" id=\"".concat(inputid, "\" name=\"").concat(inputid, "\" ").concat(checked, ">\n      <label for=\"").concat(inputid, "\" class=\"localsettings_prop_label\">").concat(prop.label, "</label>\n      ");
+        }
         var htm = '<div class="localsettings_prop_control prop_choice">' + prop.label + "</div>";
         htm = htm + '<select id="localsettings_prop_' + prop.key + '" class="">';
         for (var idx in prop.choice) {
@@ -3600,6 +3618,16 @@ var LocalSettings = /** @class */ (function () {
     };
     LocalSettings.prototype.actionPropRange = function (prop) {
         var _this = this;
+        if (!prop.range)
+            return;
+        var range = prop.range;
+        if (range.slider) {
+            $("localsettings_prop_" + prop.key).addEventListener("change", function (event) {
+                // @ts-ignore
+                _this.applyChanges(prop, event.target.value);
+            });
+            return;
+        }
         $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", function () {
             _this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
         });
@@ -3609,6 +3637,12 @@ var LocalSettings = /** @class */ (function () {
     };
     LocalSettings.prototype.actionPropChoice = function (prop) {
         var _this = this;
+        if (prop.choice.true) {
+            $("localsettings_prop_" + prop.key).addEventListener("click", function (event) {
+                _this.applyChanges(prop, event.target.checked ? 'true' : 'false');
+            });
+            return;
+        }
         $("localsettings_prop_" + prop.key).addEventListener("change", function (event) {
             // @ts-ignore
             _this.applyChanges(prop, event.target.value);
