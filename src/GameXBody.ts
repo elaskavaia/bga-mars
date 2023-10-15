@@ -226,7 +226,7 @@ class GameXBody extends GameTokens {
           } else {
             vp = "";
           }
-          const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2) : "";
+          const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8,'0') : "";
 
           //rules+rules styling
           //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
@@ -262,8 +262,23 @@ class GameXBody extends GameTokens {
           if (displayInfo.a) {
             card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
           } else if (displayInfo.e) {
-            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
+             card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
           }
+          //card 71 has effect in rules
+          if (displayInfo.num == 71) {
+            card_a = CustomRenders.customcard_action_71();
+          }
+          //same for 153
+          if (displayInfo.num==153) {
+            card_a=card_r;
+            card_r="";
+          }
+         //card 206 hads rules in action part
+          if (displayInfo.num==206) {
+            card_r=card_a;
+            card_a='';
+          }
+
           //special for "res"
           card_a = card_a.replaceAll("%res%", displayInfo.holds);
           let card_action_text = "";

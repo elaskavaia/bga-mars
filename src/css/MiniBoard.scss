@@ -146,6 +146,7 @@
 .token_img.cardback {
   background-position: 0 -100%;
   background-color: black;
+  width: calc(var(--resourcesize) * 0.78);
 }
 
 .token_img.tracker_t{
