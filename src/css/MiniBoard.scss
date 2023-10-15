@@ -211,21 +211,23 @@ display: none;
     grid-area: 2/1/2/1;
     width: 100%;
   }
-
-  .tracker_tr {
-    display: none;
-  }
 }
 
-.player_score_value:after {
-  content: "";
+.player_score_value {
+
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
-  width: calc(var(--pb_cellsize) * 0.5);
-  height: calc(var(--pb_cellsize) * 0.5);
-  background-position: -1200% 0;
+  width: 24px;
+  height: 24px;
+  background-position: -1300% 0;
   display: inline-block;
   vertical-align: middle;
+  text-align: center;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: 14px;
+  line-height: 16px;
+  font-family: "Prototype";
 }
 
 
@@ -233,42 +235,32 @@ display: none;
   display: none;
 }
 
-.miniboard_entry {
-  display: flex;
-  width: 100%;
-  font-size: calc(var(--resourcesize) * 0.55);
-  font-family: 'Prototype';
-  justify-content: space-between;
-}
+
 
 .cardback.counter {
   color: white;
 }
 
-
-.player_tags.miniboard_tags{
+.miniboard {
   --pb_cellsize: 33px;
+}
+
+.miniboard_tags, .miniboard_entry{
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   height: fit-content;
   position: relative;
-  margin-top: 20px;
   left: unset;
 }
-/*
-.tracker_pm::before {
-  content: "prod MC ";
+
+.miniboard_tags {
+  margin-top: 20px;
 }
 
-.tracker_m::before {
-  content: "MC ";
+.miniboard_entry {
+  justify-content: space-between;
 }
-
-.tracker_passed::before {
-  content: "Passed ";
-}*/
-
 
 /*
  * Controls in the top bar
@@ -329,39 +321,29 @@ display: none;
 }
 
 
-.miniboard_tag{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.mini_counter{
   position: relative;
   width: calc(var(--pb_cellsize) * 1);
   height: calc(var(--pb_cellsize) * 1);
+}
+
+
+.mini_counter::after {
+  content: attr(data-state);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: var(--pb_cellsize);
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: calc(var(--pb_cellsize) * 0.4);
   font-family: 'Prototype';
-
-  .tracker::after, .param::after{
-    content:unset;
-  }
-  .mini_counter {
-    z-index: 1;
-  }
-  .mini_counter::after {
-    content: attr(data-state);
-  }
-/*
-  .mini_counter[data-state="0"]:after {
-    content: '/';
-  }
-*/
-
 }
 
 
 
-.player_tags {
-  .miniboard_tag {
+.playerboard_header .player_tags {
     .badge {
       width: calc(var(--pb_cellsize) * 1);
       height: calc(var(--pb_cellsize) * 1);
@@ -383,7 +365,6 @@ display: none;
       opacity: 0.8;
       position: absolute;
     }
-  }
 }
 
 #settings-controls-container.settingsControlsHidden {

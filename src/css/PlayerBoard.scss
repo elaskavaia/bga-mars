@@ -82,13 +82,16 @@
 
   .playerboard_produce{
     width: var(--pb_cellsize);
-    height: calc(var(--pb_cellsize) *0.5);
     background-image: url('img/prodtexture.png');
     background-size: 100% 100%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     color:white;
+  }
+
+  .player_area  .playerboard_produce{
+    height: calc(var(--pb_cellsize) *0.5);
   }
 
 .mcompact {
@@ -133,7 +136,8 @@
     left: 3%;
   }
 
-  .player_tags .badge,.player_tags .tracker{
+.playerboard_header {
+  .player_tags .badge, .player_tags .tracker{
     position: relative;
     width: calc(var(--pb_cellsize) * 0.5);
     height: calc(var(--pb_cellsize) * 0.5);
@@ -144,13 +148,14 @@
     font-size: calc(var(--pb_cellsize) * 0.3);
     margin-right: calc(var(--pb_cellsize) * 0.3);
   }
+}
 
-  .player_tags .tracker {
+  .tracker.micon {
     background-image: url("img/icons.png");
     background-size: 1400% 200%;
   }
-
-  .player_tags .tracker.badge {
+  
+  .tracker.badge {
     background-image: url("img/badges.png");
     background-size: 1200% 100%;
   }
@@ -186,12 +191,32 @@
   .badge.tracker_tagAnimal{ background-position-x: -1100%;}
 
 
-  .tracker.tracker_ers{ background-position: 0 -100%; order:-2;}
-  .tracker.tracker_eru{ background-position: -100% -100%;order:-1;}
+  .tracker.tracker_ers{ 
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: 0 -100%; order:-2;
+  }
+  .tracker.tracker_eru{ 
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -100% -100%;order:-1;
+  }
 
-  .tracker.tracker_city{ background-position: -700% 0;}
-  .tracker.tracker_forest{ background-position: -300% -100%;}
-  .tracker.tracker_land{ background-position: -200% -100%;}
+  .tracker.tracker_city{ 
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -700% 0;
+  }
+  .tracker.tracker_forest{ 
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -300% -100%;
+  }
+  .tracker.tracker_land{ 
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -200% -100%;
+  }
 
 .tracker.tile_8 {background-position: -400% -100%;}
 .tracker.tile_64 {background-position: -600% -100%;}

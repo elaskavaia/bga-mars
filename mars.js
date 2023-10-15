@@ -1771,10 +1771,10 @@ var CustomRenders = /** @class */ (function () {
         forest: { classes: "tracker tracker_forest" },
         all_city: { classes: "tracker tracker_city", redborder: 'hex' },
         all_tagEvent: { classes: "tracker badge tracker_tagEvent", after: '*' },
-        city: { classes: "tracker tracker_city" },
+        city: { classes: "tracker micon tracker_city" },
         ocean: { classes: "token_img tracker_w" },
         draw: { classes: "token_img cardback" },
-        tile: { classes: "tracker tile_%card_number%" },
+        tile: { classes: "tracker micon tile_%card_number%" },
         tagScience: { classes: "tracker badge tracker_tagScience" },
         tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
         tagMicrobe: { classes: "tracker badge tracker_tagMicrobe" },
@@ -2474,7 +2474,7 @@ var GameXBody = /** @class */ (function (_super) {
             document.querySelectorAll(".mini_counter").forEach(function (node) {
                 var id = node.id;
                 if (id.startsWith('alt_')) {
-                    _this.updateTooltip(id.substring(4), node.parentElement);
+                    _this.updateTooltip(id.substring(4), node);
                 }
             });
             //remove remaining "title" attibutes
@@ -3693,6 +3693,19 @@ var VLayout = /** @class */ (function () {
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
         dojo.place("tableau_".concat(color, "_corp"), "tableau_".concat(color), 'first');
+        dojo.place("player_controls_".concat(color), "tableau_".concat(color, "_corp"));
+        dojo.removeClass("tableau_".concat(color, "_corp_effect"), 'corp_effect');
+        dojo.place("player_area_name_".concat(color), "tableau_".concat(color, "_corp"), 'first');
+        dojo.place("tableau_".concat(color, "_corp_logo"), "player_board_header_".concat(color), 'first');
+        var places = ['tracker_city', 'tracker_forest', 'tracker_land'];
+        for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
+            var key = places_1[_i];
+            //alt_tracker_city_ff0000
+            dojo.place($("alt_".concat(key, "_").concat(color)), "miniboardentry_".concat(color));
+        }
+        // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
+        // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
+        // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
         dojo.place("tracker_gen", "map_left");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
@@ -3700,11 +3713,7 @@ var VLayout = /** @class */ (function () {
         dojo.destroy("deck_holder");
         dojo.destroy("discard_holder");
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
-        dojo.place("player_viewcards_2_".concat(color), "miniboardentry_".concat(color));
-        dojo.place("player_viewcards_1_".concat(color), "miniboardentry_".concat(color));
-        dojo.place("player_viewcards_3_".concat(color), "miniboardentry_".concat(color));
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
-        dojo.place("player_area_name_".concat(color), "player_area_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
         for (var i = 1; i <= 3; i++) {
             $("tableau_" + color).dataset["visibility_" + i] = "1";

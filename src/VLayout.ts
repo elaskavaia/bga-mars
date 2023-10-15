@@ -14,6 +14,20 @@ class VLayout {
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
     dojo.place(`tableau_${color}_corp`, `tableau_${color}`,'first');
+    dojo.place(`player_controls_${color}`,`tableau_${color}_corp`, );
+    dojo.removeClass(`tableau_${color}_corp_effect`,'corp_effect');
+    dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`,'first');
+    dojo.place(`tableau_${color}_corp_logo`, `player_board_header_${color}`,'first');
+
+    const places = ['tracker_city','tracker_forest','tracker_land'];
+    for (const key of places) {
+      //alt_tracker_city_ff0000
+      dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
+    }
+    // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
+    // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
+    // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
+    
 
     
 
@@ -26,11 +40,9 @@ class VLayout {
     dojo.destroy("discard_holder");
 
     // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
-    dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
-    dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
-    dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
+
     dojo.place(`fpholder_${color}`, `miniboardentry_${color}`);
-    dojo.place(`player_area_name_${color}`, `player_area_${color}`);
+
     dojo.place(`counter_draw_${color}`, `limbo`);
 
     for (let i = 1; i <= 3; i++) {

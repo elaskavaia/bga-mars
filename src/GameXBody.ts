@@ -66,7 +66,7 @@ class GameXBody extends GameTokens {
       document.querySelectorAll(".mini_counter").forEach((node) => {
         const id  = node.id;
         if (id.startsWith('alt_')) {
-          this.updateTooltip(id.substring(4), node.parentElement);
+          this.updateTooltip(id.substring(4), node);
         }
       });
 

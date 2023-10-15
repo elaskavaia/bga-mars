@@ -4381,60 +4381,52 @@
   grid-area: 2/1/2/1;
   width: 100%;
 }
-.miniboard.style_2 .tracker_tr {
-  display: none;
-}
 
-.player_score_value:after {
-  content: "";
+.player_score_value {
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
-  width: calc(var(--pb_cellsize) * 0.5);
-  height: calc(var(--pb_cellsize) * 0.5);
-  background-position: -1200% 0;
+  width: 24px;
+  height: 24px;
+  background-position: -1300% 0;
   display: inline-block;
   vertical-align: middle;
+  text-align: center;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: 14px;
+  line-height: 16px;
+  font-family: "Prototype";
 }
 
 .player_score .fa-star {
   display: none;
 }
 
-.miniboard_entry {
-  display: flex;
-  width: 100%;
-  font-size: calc(var(--resourcesize) * 0.55);
-  font-family: "Prototype";
-  justify-content: space-between;
-}
-
 .cardback.counter {
   color: white;
 }
 
-.player_tags.miniboard_tags {
+.miniboard {
   --pb_cellsize: 33px;
+}
+
+.miniboard_tags, .miniboard_entry {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   height: fit-content;
   position: relative;
-  margin-top: 20px;
   left: unset;
 }
 
-/*
-.tracker_pm::before {
-  content: "prod MC ";
+.miniboard_tags {
+  margin-top: 20px;
 }
 
-.tracker_m::before {
-  content: "MC ";
+.miniboard_entry {
+  justify-content: space-between;
 }
 
-.tracker_passed::before {
-  content: "Passed ";
-}*/
 /*
  * Controls in the top bar
  */
@@ -4488,34 +4480,26 @@
   width: 36px;
 }
 
-.miniboard_tag {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.mini_counter {
   position: relative;
   width: calc(var(--pb_cellsize) * 1);
   height: calc(var(--pb_cellsize) * 1);
+}
+
+.mini_counter::after {
+  content: attr(data-state);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: var(--pb_cellsize);
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: calc(var(--pb_cellsize) * 0.4);
   font-family: "Prototype";
-  /*
-    .mini_counter[data-state="0"]:after {
-      content: '/';
-    }
-  */
-}
-.miniboard_tag .tracker::after, .miniboard_tag .param::after {
-  content: unset;
-}
-.miniboard_tag .mini_counter {
-  z-index: 1;
-}
-.miniboard_tag .mini_counter::after {
-  content: attr(data-state);
 }
 
-.player_tags .miniboard_tag .badge {
+.playerboard_header .player_tags .badge {
   width: calc(var(--pb_cellsize) * 1);
   height: calc(var(--pb_cellsize) * 1);
   display: flex;
@@ -4525,7 +4509,7 @@
   opacity: 0.8;
   position: absolute;
 }
-.player_tags .miniboard_tag .tracker {
+.playerboard_header .player_tags .tracker {
   width: calc(var(--pb_cellsize) * 1);
   height: calc(var(--pb_cellsize) * 1);
   display: flex;
@@ -4637,13 +4621,16 @@
 
 .playerboard_produce {
   width: var(--pb_cellsize);
-  height: calc(var(--pb_cellsize) * 0.5);
   background-image: url("img/prodtexture.png");
   background-size: 100% 100%;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   color: white;
+}
+
+.player_area .playerboard_produce {
+  height: calc(var(--pb_cellsize) * 0.5);
 }
 
 .mcompact .playerboard_header {
@@ -4683,7 +4670,7 @@
   left: 3%;
 }
 
-.player_tags .badge, .player_tags .tracker {
+.playerboard_header .player_tags .badge, .playerboard_header .player_tags .tracker {
   position: relative;
   width: calc(var(--pb_cellsize) * 0.5);
   height: calc(var(--pb_cellsize) * 0.5);
@@ -4694,12 +4681,12 @@
   margin-right: calc(var(--pb_cellsize) * 0.3);
 }
 
-.player_tags .tracker {
+.tracker.micon {
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
 }
 
-.player_tags .tracker.badge {
+.tracker.badge {
   background-image: url("img/badges.png");
   background-size: 1200% 100%;
 }
@@ -4765,24 +4752,34 @@
 }
 
 .tracker.tracker_ers {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
   background-position: 0 -100%;
   order: -2;
 }
 
 .tracker.tracker_eru {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
   background-position: -100% -100%;
   order: -1;
 }
 
 .tracker.tracker_city {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
   background-position: -700% 0;
 }
 
 .tracker.tracker_forest {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
   background-position: -300% -100%;
 }
 
 .tracker.tracker_land {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
   background-position: -200% -100%;
 }
 
@@ -5378,7 +5375,7 @@
   --map-board-with: calc(var(--map-width) * 1.66);
   /* 75vh */
   --map-height: calc(var(--map-width) * 0.92);
-  --pb_cellsize: 4.5em;
+  --pb_cellsize: 3.5em;
   --card-width: calc(var(--localsetting_cardsize) / 100 * 10em);
   --card-height: calc(var(--card-width) * 1.40658174);
   --stan-width: calc(var(--map-width) * 0.35);
@@ -5596,10 +5593,12 @@
   background: none;
   padding: 0px;
   z-index: 1;
-  top: 3em;
-  left: 0px;
+  left: unset;
   right: unset;
   border: none;
+  color: var(--plcolor);
+  top: calc(var(--card-width) * 0.82);
+  position: absolute;
 }
 .mfull #main_board::before {
   content: "";
@@ -5621,11 +5620,9 @@
   background-size: 1000% auto;
 }
 .mfull .tableau {
-  display: grid;
-  grid-template-columns: auto auto auto auto auto;
-  grid-template-rows: var(--card-width) auto;
-  grid-gap: 0.5em;
-  outline: 2px dashed var(--plcolor);
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
   padding: 0.5em;
 }
 .mfull .cards_bin {
@@ -6519,7 +6516,7 @@
   background-position: 77.7777777778% 100%;
   background-image: url(img/full/cards3.jpg);
 }
-.mfull .badge ~ .mini_counter[data-state="0"] {
+.mfull .playerboard_header .badge ~ .mini_counter[data-state="0"] {
   opacity: 0.2;
 }
 .mfull #tracker_o,
@@ -6668,14 +6665,24 @@
 .mfull .card_hovertt .card_effect {
   font-size: calc(var(--card-width) * 0.07);
 }
-.mfull .player_area_name {
-  top: 0;
-}
 .mfull .playerboard_header {
-  display: none;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  background-image: linear-gradient(to right, var(--plcolor), transparent);
+}
+.mfull .player_tags {
+  width: unset;
 }
 .mfull .playerboard_controls {
   display: none;
+}
+.mfull .corp_logo {
+  width: calc(var(--card-width) * 0.5);
+  height: auto;
+}
+.mfull .corp_holder {
+  justify-content: flex-start;
 }
 .mfull .viewcards_button {
   display: flex;
@@ -6690,7 +6697,7 @@
   flex-direction: column;
   font-weight: normal;
 }
-.mfull .miniboard .card_icon {
+.mfull .corp_holder .card_icon {
   width: 24px;
   height: 32px;
   border: 1px solid black;

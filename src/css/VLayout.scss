@@ -15,7 +15,7 @@
     --map-board-with: calc(var(--map-width) * 1.66);
     /* 75vh */
     --map-height: calc(var(--map-width) * 0.92);
-    --pb_cellsize: 4.5em;
+    --pb_cellsize: 3.5em;
 
     --card-width: calc(var(--localsetting_cardsize) / 100 * 10em);
     --card-height: calc(var(--card-width) * 1.40658174);
@@ -293,10 +293,12 @@
     background: none;
     padding: 0px;
     z-index: 1;
-    top: 3em;
-    left: 0px;
+    left: unset;
     right: unset;
     border: none;
+    color: var(--plcolor);
+    top: calc(var(--card-width) * 0.82);
+    position: absolute;
   }
 
 
@@ -325,11 +327,15 @@
 
   .tableau {
     //height: calc(var(--card-height) * 2);
-    display: grid;
-    grid-template-columns: auto auto auto auto auto;
-    grid-template-rows: var(--card-width) auto;
-    grid-gap: 0.5em;
-    outline: 2px dashed var(--plcolor);
+    // display: grid;
+    // grid-template-columns: auto auto auto auto auto;
+    // grid-template-rows: var(--card-width) auto;
+    // grid-gap: 0.5em;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    //outline: 2px dashed var(--plcolor);
     padding: 0.5em;
   }
 
@@ -450,7 +456,7 @@
     }
   }
 
-  .badge~.mini_counter[data-state="0"] {
+  .playerboard_header .badge~.mini_counter[data-state="0"] {
     opacity: 0.2;
   }
 
@@ -517,16 +523,26 @@
     font-size: calc(var(--card-width) * 0.07);
   }
 
-  .player_area_name {
-    top: 0;
-  }
-
   .playerboard_header {
-    display: none;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    background-image: linear-gradient(to right, var(--plcolor) , transparent);
+  }
+  .player_tags {
+    width: unset;
   }
 
   .playerboard_controls {
     display: none;
+  }
+
+  .corp_logo {
+    width: calc(var(--card-width) * 0.5);
+    height: auto;
+  }
+  .corp_holder {
+    justify-content: flex-start;
   }
 
   .viewcards_button {
@@ -545,7 +561,7 @@
     font-weight: normal;
   }
 
-  .miniboard .card_icon {
+  .corp_holder .card_icon {
     // card form factor is 3/4
     width: 24px;
     height: 32px;
