@@ -36,10 +36,10 @@ $game_options = array(
     101 => [
         'name' => totranslate('Corporate Era'),
         'values' => [
-            1 => ['name' => totranslate('Yes'), 
+            1 => ['name' => totranslate('On'), 
             'description' => totranslate('Corporate Era variant includes Corporate Era deck cards and all productions starts at 0'), 
             'tmdisplay' => totranslate('Corporate Era'), 'nobeginner' => true],
-            0 => ['name' => totranslate('No'), 
+            0 => ['name' => totranslate('Off'), 
             'description' => totranslate('Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1'), 
             'tmdisplay' => totranslate('Standard Game')],
         ],
@@ -50,6 +50,7 @@ $game_options = array(
                 'value' => array (2, 3, 4, 5),
             ),
         ),
+        'notdisplayedmessage' => totranslate('Corporate Era is On'),
         'default' => 1
     ],
     102 => array(
@@ -80,6 +81,14 @@ $game_options = array(
             1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Draft'), 'nobeginner' => true],
             0 => ['name' => totranslate('No')],
         ],
+        'displaycondition' => array(
+            // Note: only display for non-solo mode, solo mode cannot have draft
+            array(
+                'type' => 'minplayers',
+                'value' => array (2, 3, 4, 5),
+            ),
+        ),
+        'notdisplayedmessage' => totranslate('Draft is Off'),
         'default' => 0
     ],
 );

@@ -183,7 +183,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function isDraftVariant() {
-        return $this->getGameStateValue('var_draft') == 1;
+        return $this->getGameStateValue('var_draft') == 1 && !$this->isSolo();
     }
 
     protected function getAllDatas() {
