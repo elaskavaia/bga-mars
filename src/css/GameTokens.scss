@@ -17,8 +17,8 @@
 }
 .hand_area .location {
   background-color:  #ffffff99;
-  padding: 10px;
   border-radius: 1vh;
+  padding: 10px 10px 10px 32px;
 }
 
 .hand, .draw, .draft {
@@ -28,6 +28,7 @@
   justify-content: center;
   flex-wrap: wrap;
   position: relative;
+  padding-left: 32px;
 }
 .draw, .draft  {
   min-height: unset;
@@ -35,11 +36,13 @@
 
 .hand:after, .draw:after, .draft:after {
   position: absolute;
-  top:0;
-  Left:0;
-  opacity: 0.2;
-  font-size: xx-large;
+  top: 10px;
+  left: 0;
+  font-size: 30px;
   font-family: "Prototype";
+  color: rgba(0, 0, 0, 0.34);
+  transform: rotate(-90deg);
+  transform-origin: bottom;
 }
 
 .hand:after{

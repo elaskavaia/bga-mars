@@ -16,6 +16,8 @@
   user-select: none;
 }
 
+
+
 .location .card {
   margin-right: 5px;
   position: relative;
@@ -254,11 +256,13 @@ display: none;
 
 .card_number{
   position: absolute;
-  top: 69%;
+  top: 60%;
   right: 3%;
   font-size: calc(var(--card-width) * 0.04);
   font-family: "Prototype";
   padding: calc(var(--card-width) * 0.005);
+  background: #c1c1c1;
+  border: 1px solid black;
 }
 
 .card_number_binary{
@@ -278,7 +282,7 @@ display: none;
     top: 74.2%;
   }
   .card_number {
-    top: 74.2%;
+    top: 65.2%;
   }
 }
 
@@ -287,7 +291,7 @@ display: none;
       top: 61.2%;
     }
     .card_number {
-      top: 63.5%;
+      top: 56.5%;
     }
 }
 
@@ -323,6 +327,10 @@ display: none;
     width: calc(var(--card-width) * 0.06);
     display: flex;
     justify-content: center;
+
+    height: unset;
+    position: unset;
+    top: unset;
   }
 
   .outer_production {
@@ -366,6 +374,7 @@ display: none;
   .outer_redborder.redborder_hex {
     width: calc(var(--card-width) * 0.19);
     height: calc(var(--card-width) * 0.19);
+    --resourcesize: calc(var(--card-width) * 0.16);
     .tile {
       margin-left:0;
     }
@@ -750,13 +759,13 @@ display: none;
   background-position: 0 0;
 }
 .action_arrow {
-
   position: relative;
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
   width: calc(var(--card-width) * 0.18);
   height: calc(var(--card-width) * 0.18);
   background-position: -300% 0;
+  flex-shrink: 0;
 }
 
 /* corp specific */
@@ -1082,6 +1091,8 @@ display: none;
     font-size: calc(var(--card-width) * 0.06);
     display: flex;
     justify-content: flex-end;
+    border: none;
+    background: none;
   }
 
   .card_cost {
