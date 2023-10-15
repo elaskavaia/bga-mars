@@ -208,7 +208,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 198|Immigration Shuttles|1|5pm|||31||Space Earth|all_city/3|Basic|Increase your MC production 5 steps.|||1 VP for every 3rd city in play.|
 199|Restricted Area|2|tile|2nm:draw||11||Science|0|Corporate|Place [the restricted area] tile.; Action: Spend 2MC to draw a card.||||
 200|Immigrant City|2|npe,2npm,city||place_city:pm:this:any|13||Building City|0|Basic|Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.||Each time a city tile is placed, including this, increase your MC production 1 step.||
-201|Energy Tapping|1|1npe_Any|||3||Energy|-1|Corporate|Decrease any energy production 1 step and increase your own 1 step.||||
+201|Energy Tapping|1|1npe_Any,1pe|||3||Energy|-1|Corporate|Decrease any energy production 1 step and increase your own 1 step.||||
 202|Underground Detonations|2||10nm:2ph||6||Building|0|Basic||Spend 10 MC to increase your heat production 2 steps.|||
 203|Soletta|1|7ph|||35||Space|0|Basic|Increase your heat production 7 steps.||||
 204|Technology Demonstration|3|2draw|||5||Science Space Event|0|Corporate|Draw 2 cards.||||

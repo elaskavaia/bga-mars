@@ -196,11 +196,13 @@
 
   .milestone,
   .award {
+    position: relative;
     background: none;
-    width: calc(var(--map-board-with) * 0.11);
+    width: 17%;
+    height: 100%;
   }
 
-  .map_milesawardsheader {
+  .map_milesawardsheader, .award_label, .milestone_label {
     display: none;
   }
 
@@ -215,8 +217,10 @@
 
   .map_milesawardscontent {
     position: absolute;
-    top: 43%;
+    top: 58%;
     left: 2%;
+    width: 100%;
+    height: 100%;
   }
 
   #display_milestones {
