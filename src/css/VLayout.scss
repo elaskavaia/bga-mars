@@ -302,7 +302,7 @@
     right: unset;
     border: none;
     color: var(--plcolor);
-    top: calc(var(--card-width) * 0.82);
+    top: calc(var(--card-width) * 0.9);
     position: absolute;
   }
 
@@ -472,6 +472,28 @@
     background-image: url(img/full/cards3.jpg);
   }
 }
+
+
+.card.corp {
+  background-size: 600% auto;
+}
+
+.card_corp_1 { // begginer
+  background-position: 0 100%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+@for $num from 2 through 12 {
+  $i: $num - 2;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .card_corp_#{$num} {
+    background-position: calc(100% / 5 * $col) calc(100% / 2 * $row);
+    background-image: url(img/full/cardsC.jpg);
+  }
+}
+
 
 .playerboard_header .badge~.mini_counter[data-state="0"] {
   opacity: 0.2;
