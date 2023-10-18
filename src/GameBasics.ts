@@ -107,7 +107,7 @@ class GameBasics extends GameGui {
     return undefined;
   }
 
-  ajaxcallwrapper_unchecked(action: string, args?: any, handler?: (err: any) => void) {
+  ajaxcallwrapper_unchecked(action: string, args?: any, handler?: (err: any, res?: any) => void) {
     if (!args) {
       args = {};
     }
@@ -122,7 +122,7 @@ class GameBasics extends GameGui {
     this.ajaxcall(url, args, this, (result) => {}, handler);
   }
 
-  ajaxcallwrapper(action: string, args?: any, handler?: (err: any) => void) {
+  ajaxcallwrapper(action: string, args?: any, handler?: (err: any, res?: any) => void) {
     if (this.checkAction(action)) {
       this.ajaxcallwrapper_unchecked(action, args, handler);
     }
@@ -831,6 +831,7 @@ class GameBasics extends GameGui {
   }
 
   setupPreference() {
+    this.checkPreferencesConsistency(this.gamedatas.server_prefs);
     // Extract the ID and value from the UI control
     var _this = this;
     function onchange(e: any) {
@@ -849,8 +850,28 @@ class GameBasics extends GameGui {
     dojo.query("#ingame_menu_content .preference_control").forEach((el) => onchange({ target: el }));
   }
 
-  onPreferenceChange(prefId, prefValue) {
+  checkPreferencesConsistency(backPrefs) {
+    //console.log('check pref',backPrefs,this.prefs);
+    if (!backPrefs) return;
+    if (this.isReadOnly()) return;
+    for (var key in backPrefs) {
+      let value = backPrefs[key];
+      let pref = key;
+      let user_value = parseInt(this.prefs[pref].value);
+      if (this.prefs[pref] !== undefined && user_value != value) {
+        var args = { pref_id: pref, pref_value: user_value, player_id: this.player_id, lock: false };
+        backPrefs[key] = user_value;
+        this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
+          if (err) console.error("changePreference callback failed " + res);
+          else console.log("changePreference sent " + pref + "=" + user_value);
+        });
+      }
+    }
+  }
+
+  onPreferenceChange(prefId: number, prefValue: number) {
     console.log("Preference changed", prefId, prefValue);
+    this.checkPreferencesConsistency(this.gamedatas.server_prefs);
   }
 
   toggleSettings() {
@@ -991,6 +1012,9 @@ class GameBasics extends GameGui {
 
     //$('help-mode-switch').style.display='none';
     this.setupSettings();
+
+
+
     this.setupPreference();
     //this.setupHelper();
     //this.setupTour();

@@ -330,7 +330,7 @@ class GameTokens extends GameBasics {
       }
 
       if (!$(location)) {
-        console.error("Unknown place " + location + " for " + tokenInfo.key + " " + token);
+        if (location) console.error("Unknown place '" + location + "' for '" + tokenInfo.key + "' " + token);
         return;
       }
       if (location === "dev_null") {

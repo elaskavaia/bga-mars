@@ -496,62 +496,65 @@
    }
 
 
-   public static parsePrereqToText(pre: any) {
+   public static parsePrereqToText(pre: any, game: GameXBody) {
      if (!pre) return "";
      let op = "";
      let what = "";
      let qty=0;
 
-     if (typeof pre === 'string') {
+     if (typeof pre === "string") {
        op = ">=";
        what = pre;
-       qty=1;
+       qty = 1;
      } else {
-       if (pre.length<3) {
+       if (pre.length < 3) {
          return "";
-
        } else {
          op = pre[0];
          what = pre[1];
-         qty=pre[2];
+         qty = pre[2];
        }
      }
 
-     let mode="min";
-     if (op=="<=") {
-       mode="max";
+     let mode = "min";
+     if (op == "<=") {
+       mode = "max";
      }
      let ret='';
      switch (what) {
        case "o":
-         ret = mode=='min'? _('Requires $v% Oxygen.') : _('Oxygen must be $v% or less.');
+         ret = mode == "min" ? _("Requires $v% Oxygen.") : _("Oxygen must be $v% or less.");
          break;
        case "t":
-         ret = mode=='min'? _('Requires $v°C or warmer.') : _('It must be $v°C or colder.');
-         break;
-       case "tagScience":
-         ret = _('Requires $v Science tags.') ;
-         break;
-       case "tagEnergy":
-         ret =_('Requires $v Power tags.');
+         ret = mode == "min" ? _("Requires $v°C or warmer.") : _("It must be $v°C or colder.");
          break;
        case "w":
-         ret = mode=='min'?  ret =_('Requires $v Ocean tiles.') : _('$v Ocean Tiles or less.');
+         ret = mode == "min" ? (ret = _("Requires $v ocean/s tiles.")) : _("$v ocean/s tiles or less.");
          break;
-       case 'forest':
-         ret =_('Requires $v Forest tiles.');
+       case "forest":
+         ret = _("Requires $v forest/s tiles.");
          break;
-       case 'all_city':
-         ret =_('Requires $v citie(s) in play.');
+       case "all_city":
+         ret = _("Requires $v citie/s in play.");
          break;
        case "ps":
-         ret =_('Requires that you have steel production.');
+         ret = _("Requires that you have steel production.");
          break;
-       case "tagJovian":
-         ret =_('Requires a Jovian tag.');
+       case "pu":
+         ret = _("Requires that you have titanium production.");
          break;
        default:
-         ret='NOT FOUND :'+what;
+         if (what.startsWith("tag")) {
+           if (qty == 1) {
+             ret = _("Requires a $tag tag.");
+           } else {
+             ret = _("Requires $v $tag tags.");
+           }
+
+           ret = ret.replace("$tag", game.getTokenName(what));
+           break;
+         }
+         ret = "NOT FOUND :" + what;
          break;
      }
      ret =ret.replace('$v',String(qty));

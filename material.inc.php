@@ -66,6 +66,10 @@ if (!defined("MA_GAME")) {
   define("MA_CARD_STATE_ACTION_UNUSED", 2);
   define("MA_CARD_STATE_ACTION_USED", 3);
   define("MA_CARD_STATE_ACTION_SINGLEUSE", 4);
+
+  // prefs
+  define("MA_PREF_CONFIRM_TURN", 101);
+  
 }
 
 $this->token_types = [
@@ -158,7 +162,7 @@ $this->token_types = [
   'vp' => '(resCard>0)*3',
   'deck' => 'Basic',
   'text_action' => clienttranslate("Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here"),
-  'text_vp' => clienttranslate("3 VPs if you have one or more science resource here.;"),
+  'text_vp' => clienttranslate("3 VP if you have one or more science resource here."),
   'holds' => 'Science',
 ],
  'card_main_6' => [  //
@@ -2490,7 +2494,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Basic',
-  'text_action' => clienttranslate("Spend 3 energy to raise oxygen 1 step,"),
+  'text_action' => clienttranslate("Spend 3 energy to raise oxygen 1 step."),
 ],
  'card_main_178' => [  //
   'location' => 'deck_main',
@@ -2787,7 +2791,8 @@ $this->token_types = [
   'tags' => 'Science',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Place [the restricted area] tile.; Action: Spend 2MC to draw a card."),
+  'text' => clienttranslate("Place [the restricted area] tile."),
+  'text_action' => clienttranslate("Spend 2MC to draw a card."),
 ],
  'card_main_200' => [  //
   'location' => 'deck_main',
@@ -2908,7 +2913,8 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Decrease your energy production 1 step.; Action: Draw 2 cards."),
+  'text' => clienttranslate("Decrease your energy production 1 step."),
+  'text_action' => clienttranslate("Draw 2 cards."),
 ],
 // #corp cards
  'card_corp_1' => [  //
@@ -3297,6 +3303,7 @@ $this->token_types = [
 /* --- gen php begin loc_material --- */
  'deck_main' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Deck"),
   'location' => 'main_area',
   'scope' => 'global',
@@ -3306,6 +3313,7 @@ $this->token_types = [
 ],
  'deck_corp' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Corporations Deck"),
   'location' => 'limbo',
   'scope' => 'global',
@@ -3314,6 +3322,7 @@ $this->token_types = [
 ],
  'discard_main' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Discard"),
   'location' => 'main_area',
   'scope' => 'global',
@@ -3322,6 +3331,7 @@ $this->token_types = [
 ],
  'hand' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Hand"),
   'location' => 'hand_area',
   'scope' => 'player',
@@ -3330,6 +3340,7 @@ $this->token_types = [
 ],
  'draw' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Look"),
   'location' => 'hand_area',
   'scope' => 'player',
@@ -3338,6 +3349,7 @@ $this->token_types = [
 ],
  'tableau' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Player Area"),
   'location' => 'tableau_area',
   'scope' => 'player',
@@ -3346,6 +3358,7 @@ $this->token_types = [
 ],
  'display_main' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Display"),
   'location' => 'main_area',
   'scope' => 'global',
@@ -3354,6 +3367,7 @@ $this->token_types = [
 ],
  'limbo' => [  //
   'type' => 'location',
+  'showtooltip' => 0,
   'name' => clienttranslate("Limbo"),
   'scope' => 'global',
   'counter' => 'hidden',

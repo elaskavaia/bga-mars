@@ -36,10 +36,10 @@ $game_options = array(
     101 => [
         'name' => totranslate('Corporate Era'),
         'values' => [
-            1 => ['name' => totranslate('Yes'), 
+            1 => ['name' => totranslate('On'), 
             'description' => totranslate('Corporate Era variant includes Corporate Era deck cards and all productions starts at 0'), 
             'tmdisplay' => totranslate('Corporate Era'), 'nobeginner' => true],
-            0 => ['name' => totranslate('No'), 
+            0 => ['name' => totranslate('Off'), 
             'description' => totranslate('Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1'), 
             'tmdisplay' => totranslate('Standard Game')],
         ],
@@ -50,6 +50,7 @@ $game_options = array(
                 'value' => array (2, 3, 4, 5),
             ),
         ),
+        'notdisplayedmessage' => totranslate('Corporate Era is On'),
         'default' => 1
     ],
     102 => array(
@@ -80,16 +81,33 @@ $game_options = array(
             1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Draft'), 'nobeginner' => true],
             0 => ['name' => totranslate('No')],
         ],
+        'displaycondition' => array(
+            // Note: only display for non-solo mode, solo mode cannot have draft
+            array(
+                'type' => 'minplayers',
+                'value' => array (2, 3, 4, 5),
+            ),
+        ),
+        'notdisplayedmessage' => totranslate('Draft is Off'),
         'default' => 0
     ],
 );
 $game_preferences = [
     100 => [
-        'name' => totranslate('Layout and Theme'),
+        'name' => totranslate('Graphics'),
         'needReload' => true, // after user changes this preference game interface would auto-reload
         'values' => array(
-            1 => ['name' => totranslate('Compact'), 'cssPref' => 'mcompact'],
-            2 => ['name' => totranslate('Full'), 'cssPref' => 'mfull'],
+            1 => ['name' => totranslate('Constructed'), 'cssPref' => 'mcompact'],
+            2 => ['name' => totranslate('Printed (Engish)'), 'cssPref' => 'mfull'],
+        ),
+        'default' => 1
+    ],
+    101 => [ // MA_PREF_CONFIRM_TURN
+        'name' => totranslate('Confirm turn end'),
+        'needReload' => false, 
+        'values' => array(
+            1 => ['name' => totranslate('Confirm') ],
+            0 => ['name' => totranslate('No') ],
         ),
         'default' => 1
     ]

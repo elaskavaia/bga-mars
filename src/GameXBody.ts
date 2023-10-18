@@ -75,11 +75,6 @@ class GameXBody extends GameTokens {
           this.updateTooltip(id.substring(4), node);
         }
       });
-
-      //remove remaining "title" attibutes
-      dojo.query('.award').forEach((node)=>{node.removeAttribute("title")});
-      dojo.query('.milestone').forEach((node)=>{node.removeAttribute("title")});
-
       //update prereq on cards
       this.updateHandPrereqs();
 
@@ -146,6 +141,229 @@ class GameXBody extends GameTokens {
     if ((notif.args.inc) && counter_move.some(trk => notif.args.counter_name.startsWith(trk))) {
       this.customAnimation.moveResources(notif.args.counter_name,notif.args.inc);
     }
+  
+  
+  }
+
+
+  getCardTypeById(type: number) {
+    switch (type) {
+        case 0: return _('Standard Project');
+        case 1: return _('Green Card');
+        case 3: return _('Event Card');
+        case 2: return _('Blue Card');
+        case 4: return _('Corporation');
+        case 5: return _('Prelude');
+        case 7: return _('Milestone');
+        case 8: return _('Award');
+        default: return '?';
+    }
+  }
+
+  generateTooltipSection(label: string, body: string, optional: boolean = true) {
+    if (optional && !body) return '';
+    return `<div class="tt_section"><div class="tt_intertitle">${label}</div><div class='card_tt_effect'>${body}</div></div>`;
+  }
+
+  generateCardTooltip(displayInfo: TokenDisplayInfo): string {
+    if (!displayInfo) return "?";
+    const type = displayInfo.t;
+    let type_name = this.getCardTypeById(type);
+    let card_id = '';
+    if (type>0 && type<7) card_id+= " "+ _(displayInfo.deck) + " #" +  displayInfo.num ?? "";
+    let res = '';
+
+    let tags = "";
+    if (displayInfo.tags) {
+      for (let tag of displayInfo.tags.split(" ")) {
+        tags+=_(tag)+" ";
+      }
+    }
+
+    let vp = displayInfo.text_vp;
+    if (!vp) vp = displayInfo.vp;
+
+    res+=this.generateTooltipSection( type_name, card_id);
+    if (type!=4) res+=this.generateTooltipSection( _('Cost'), displayInfo.cost);
+    res+=this.generateTooltipSection( _('Tags'), tags);
+    const prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+    res+=this.generateTooltipSection( _('Pre-Requisites'), prereqText);
+    res+=this.generateTooltipSection( _('When Played'), displayInfo.text);
+    res+=this.generateTooltipSection( _('Effect'), displayInfo.text_effect);
+    res+=this.generateTooltipSection( _('Action'), displayInfo.text_action);
+    res+=this.generateTooltipSection( _('Holds'), _(displayInfo.holds));
+    res+=this.generateTooltipSection( _('Victory Points'), vp);
+    return res;
+  }
+
+  createHtmlForToken(tokenNode: HTMLElement){
+    const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
+        // use this to generate some fake parts of card, remove this when use images
+        if (displayInfo.mainType == "card") {
+          let tagshtm = "";
+          const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+  
+          ttdiv.innerHTML = `<div class='token_title'>${displayInfo.name}</div>`;
+          ttdiv.innerHTML+=this.generateCardTooltip(displayInfo);
+
+          if (tokenNode.id.startsWith("card_corp_")) {
+            //Corp formatting
+            const decor = this.createDivNode(null, "card_decor", tokenNode.id);
+            // const texts = displayInfo.text.split(';');
+            let card_initial = displayInfo.text || "";
+            let card_effect = displayInfo.text_effect || "";
+  
+            //   if (texts.length>0) card_initial = texts[0];
+            //  if (texts.length>1) card_effect= texts[1];
+            decor.innerHTML = `
+                  <div class="card_bg"></div>
+                  <div class="card_initial">${card_initial}</div>
+                  <div class="card_effect">${card_effect}</div>
+            `;
+    
+          } else if (tokenNode.id.startsWith("card_stanproj")) {
+            //standard project formatting:
+            //cost -> action title
+            //except for sell patents
+            const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
+            const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
+            //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+  
+            decor.innerHTML = `
+               <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
+               <div class='standard_projects_title'>${displayInfo.name}</div>  
+            `;
+          } else {
+            //tags
+  
+            let firsttag = "";
+            if (displayInfo.tags && displayInfo.tags != "") {
+              for (let tag of displayInfo.tags.split(" ")) {
+                tagshtm += '<div class="badge tag_' + tag + '"></div>';
+                if (firsttag == "") firsttag = tag;
+              }
+            }
+            // const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
+            let parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) : "";
+  
+            //specific card rendering
+            if (displayInfo.num == 2) {
+              parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("pu") + "</div></div>";
+            }
+            if (displayInfo.num == 61) {
+              parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("ps") + "</div></div>";
+            }
+            if (displayInfo.num == 135) {
+              parsedPre =
+                '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("tagPlant tagMicrobe tagAnimal") + "</div></div>";
+            }
+            const decor = this.createDivNode(null, "card_decor", tokenNode.id);
+            let vp = "";
+            if (displayInfo.vp) {
+              vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + "</div>" : '<div class="card_vp">*</div>';
+            } else {
+              vp = "";
+            }
+            const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8,'0') : "";
+  
+            //rules+rules styling
+            //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
+            let card_r = "";
+            let addeffclass = "";
+            if (displayInfo.r) {
+              card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r, displayInfo.num || null);
+              addeffclass = card_r.includes("icono_prod") ? "cols" : "rows";
+              const blocks = (card_r.match(/card_icono/g) || []).length;
+              addeffclass += " blocks_" + blocks;
+              const cntLosses = (card_r.match(/cnt_losses/g) || []).length;
+              const cntGains = (card_r.match(/cnt_gains/g) || []).length;
+              const cntProds = (card_r.match(/cnt_media/g) || []).length;
+              if (
+                ((cntLosses > 0 && cntGains == 0) || (cntGains > 0 && cntLosses == 0)) &&
+                (cntLosses + cntGains > 1 || (cntLosses + cntGains == 1 && cntProds > 3))
+              ) {
+                //exceptions
+                if (displayInfo.num && displayInfo.num != 19) {
+                  card_r = '<div class="groupline">' + card_r + "</div>";
+                  addeffclass += " oneline";
+                }
+              }
+              if (vp != "") addeffclass += " hasvp";
+              //replaces some stuff in parsed rules
+              card_r = card_r.replace("%card_number%", displayInfo.num);
+              //special for "res"
+               card_r = card_r.replaceAll("%res%",displayInfo.holds);
+            }
+  
+            //card actions
+            let card_a = "";
+            if (displayInfo.a) {
+              card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
+            } else if (displayInfo.e) {
+               card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
+            }
+            //card 71 has effect in rules
+            if (displayInfo.num == 71) {
+              card_a = CustomRenders.customcard_action_71();
+            }
+            //same for 153
+            if (displayInfo.num==153) {
+              card_a=card_r;
+              card_r="";
+            }
+           //card 206 hads rules in action part
+            if (displayInfo.num==206) {
+              card_r=card_a;
+              card_a='';
+            }
+  
+            //special for "res"
+            card_a = card_a.replaceAll("%res%", displayInfo.holds);
+            let card_action_text = "";
+            if (displayInfo.text_action || displayInfo.text_effect) {
+              card_action_text = `<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
+            }
+            decor.innerHTML = `
+                  <div class="card_illustration cardnum_${displayInfo.num}"></div>
+                  <div class="card_bg"></div>
+                  <div class='card_badges'>${tagshtm}</div>
+                  <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
+                  <div id='cost_${tokenNode.id}' class='card_cost'>${displayInfo.cost}</div> 
+                  <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
+                  <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
+                  <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
+                  <div class="card_number">${displayInfo.num ?? ""}</div>
+                  <div class="card_number_binary">${cn_binary}</div>
+                  <div id="resource_holder_${tokenNode.id.replace('card_main_','')}" class="card_resource_holder"></div>
+                  ${vp}
+            `;
+          }
+          const div = this.createDivNode(null, "card_info_box", tokenNode.id);
+  
+          div.innerHTML = `
+          <div class='token_title'>${displayInfo.name}</div>
+          <div class='token_cost'>${displayInfo.cost}</div> 
+          <div class='token_rules'>${displayInfo.r}</div>
+          <div class='token_descr'>${displayInfo.text}</div>
+          `;
+          tokenNode.appendChild(div);
+          //card tooltip
+          tokenNode.appendChild(ttdiv);
+  
+          tokenNode.setAttribute("data-card-type", displayInfo.t);
+        }
+  
+        if (displayInfo.mainType=="award" || displayInfo.mainType=="milestone") {
+          //custom tooltip on awards and milestones
+          const dest= tokenNode.id.replace(displayInfo.mainType+'_',displayInfo.mainType+ '_label_');
+          $(dest).innerHTML=_(displayInfo.name);
+          const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+          ttdiv.innerHTML = ` 
+              <div class='token_title'>${displayInfo.name}</div>
+              <div class='card_effect'>${displayInfo.text}</div>
+          `;
+          tokenNode.appendChild(ttdiv);
+        }
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -154,212 +372,10 @@ class GameXBody extends GameTokens {
       const classes = displayInfo.imageTypes.split(/  */);
       tokenNode.classList.add(...classes);
       tokenNode.setAttribute("data-info", "1");
-
-      // use this to generate some fake parts of card, remove this when use images
-      if (displayInfo.mainType == "card") {
-        let tagshtm = "";
-        const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-
-        ttdiv.innerHTML = ` 
-            <div class='token_title'>${displayInfo.name}</div>
-        `;
-
-        if (tokenNode.id.startsWith("card_corp_")) {
-          //Corp formatting
-          const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          // const texts = displayInfo.text.split(';');
-          let card_initial = displayInfo.text || "";
-          let card_effect = displayInfo.text_effect || "";
-
-          //   if (texts.length>0) card_initial = texts[0];
-          //  if (texts.length>1) card_effect= texts[1];
-          decor.innerHTML = `
-                <div class="card_bg"></div>
-                <div class="card_initial">${card_initial}</div>
-                <div class="card_effect">${card_effect}</div>
-          `;
-          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("INITIAL") + "</div>";
-          ttdiv.innerHTML += `<div class="card_initial">${card_initial}</div>`;
-          ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
-          ttdiv.innerHTML += `<div class="card_effect">${card_effect}</div>`;
-        } else if (tokenNode.id.startsWith("card_stanproj")) {
-          //standard project formatting:
-          //cost -> action title
-          //except for sell patents
-          const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-          const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
-          //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-
-          decor.innerHTML = `
-             <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
-             <div class='standard_projects_title'>${displayInfo.name}</div>  
-          `;
-          ttdiv.innerHTML += `<div class='card_effect'>${displayInfo.text}</div>`;
-        } else {
-          //tags
-
-          let firsttag = "";
-          if (displayInfo.tags && displayInfo.tags != "") {
-            for (let tag of displayInfo.tags.split(" ")) {
-              tagshtm += '<div class="badge tag_' + tag + '"></div>';
-              if (firsttag == "") firsttag = tag;
-            }
-          }
-          // const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.a ?? displayInfo.e ?? "");
-          let parsedPre = displayInfo.pre ? CustomRenders.parsePrereqToHTML(displayInfo.expr.pre) : "";
-
-          //specific card rendering
-          if (displayInfo.num == 2) {
-            parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("pu") + "</div></div>";
-          }
-          if (displayInfo.num == 61) {
-            parsedPre = '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("ps") + "</div></div>";
-          }
-          if (displayInfo.num == 135) {
-            parsedPre =
-              '<div class="prereq_content mode_min">' + CustomRenders.parseActionsToHTML("tagPlant tagMicrobe tagAnimal") + "</div></div>";
-          }
-          const decor = this.createDivNode(null, "card_decor", tokenNode.id);
-          let vp = "";
-          if (displayInfo.vp) {
-            vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + "</div>" : '<div class="card_vp">*</div>';
-          } else {
-            vp = "";
-          }
-          const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8,'0') : "";
-
-          //rules+rules styling
-          //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
-          let card_r = "";
-          let addeffclass = "";
-          if (displayInfo.r) {
-            card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r, displayInfo.num || null);
-            addeffclass = card_r.includes("icono_prod") ? "cols" : "rows";
-            const blocks = (card_r.match(/card_icono/g) || []).length;
-            addeffclass += " blocks_" + blocks;
-            const cntLosses = (card_r.match(/cnt_losses/g) || []).length;
-            const cntGains = (card_r.match(/cnt_gains/g) || []).length;
-            const cntProds = (card_r.match(/cnt_media/g) || []).length;
-            if (
-              ((cntLosses > 0 && cntGains == 0) || (cntGains > 0 && cntLosses == 0)) &&
-              (cntLosses + cntGains > 1 || (cntLosses + cntGains == 1 && cntProds > 3))
-            ) {
-              //exceptions
-              if (displayInfo.num && displayInfo.num != 19) {
-                card_r = '<div class="groupline">' + card_r + "</div>";
-                addeffclass += " oneline";
-              }
-            }
-            if (vp != "") addeffclass += " hasvp";
-            //replaces some stuff in parsed rules
-            card_r = card_r.replace("%card_number%", displayInfo.num);
-            //special for "res"
-             card_r = card_r.replaceAll("%res%",displayInfo.holds);
-          }
-
-          //card actions
-          let card_a = "";
-          if (displayInfo.a) {
-            card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
-          } else if (displayInfo.e) {
-             card_a = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
-          }
-          //card 71 has effect in rules
-          if (displayInfo.num == 71) {
-            card_a = CustomRenders.customcard_action_71();
-          }
-          //same for 153
-          if (displayInfo.num==153) {
-            card_a=card_r;
-            card_r="";
-          }
-         //card 206 hads rules in action part
-          if (displayInfo.num==206) {
-            card_r=card_a;
-            card_a='';
-          }
-
-          //special for "res"
-          card_a = card_a.replaceAll("%res%", displayInfo.holds);
-          let card_action_text = "";
-          if (displayInfo.text_action || displayInfo.text_effect) {
-            card_action_text = `<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
-          }
-          decor.innerHTML = `
-                <div class="card_illustration cardnum_${displayInfo.num}"></div>
-                <div class="card_bg"></div>
-                <div class='card_badges'>${tagshtm}</div>
-                <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
-                <div id='cost_${tokenNode.id}' class='card_cost'>${displayInfo.cost}</div> 
-                <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
-                <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
-                <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
-                <div class="card_number">${displayInfo.num ?? ""}</div>
-                <div class="card_number_binary">${cn_binary}</div>
-                <div id="resource_holder_${tokenNode.id.replace('card_main_','')}" class="card_resource_holder"></div>
-                ${vp}
-          `;
-
-          const prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
-
-          ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
-          if (prereqText!="") {
-            ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PRE-REQUISITES')+'</div>';
-            ttdiv.innerHTML+=`<div class="card_effect card_tt_prereq">${prereqText}</div>`;
-          }
-          /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
-          ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
-                            <div class='card_badges'>${tagshtm}</div></div>`*/
-          if (displayInfo.text_action && displayInfo.text_action != "") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("ACTION") + "</div>";
-            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_action}</div>`;
-          }
-          if (displayInfo.text_effect && displayInfo.text_effect != "") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
-            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_effect}</div>`;
-          }
-          if (displayInfo.text && displayInfo.text != "") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("WHEN PLAYED") + "</div>";
-            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text}</div>`;
-          }
-
-          if (displayInfo.text_vp && displayInfo.text_vp != "") {
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("VICTORY POINTS") + "</div>";
-            ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_vp}</div>`;
-          }
-
-          // <div class="card_action">${parsedActions}</div>
-          //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
-        }
-        const div = this.createDivNode(null, "card_info_box", tokenNode.id);
-
-        div.innerHTML = `
-        <div class='token_title'>${displayInfo.name}</div>
-        <div class='token_cost'>${displayInfo.cost}</div> 
-        <div class='token_rules'>${displayInfo.r}</div>
-        <div class='token_descr'>${displayInfo.text}</div>
-        `;
-        tokenNode.appendChild(div);
-        //card tooltip
-        tokenNode.appendChild(ttdiv);
-
-        tokenNode.setAttribute("data-card-type", displayInfo.t);
-      }
-
-      if (displayInfo.mainType=="award" || displayInfo.mainType=="milestone") {
-        //custom tooltip on awards and milestones
-        const dest= tokenNode.id.replace(displayInfo.mainType+'_',displayInfo.mainType+ '_label_');
-        $(dest).innerHTML=_(displayInfo.name);
-        const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-        ttdiv.innerHTML = ` 
-            <div class='token_title'>${displayInfo.name}</div>
-            <div class='card_effect'>${displayInfo.text}</div>
-        `;
-        tokenNode.appendChild(ttdiv);
-      }
-
-
       this.connect(tokenNode, "onclick", "onToken");
+      if (!this.isLayoutFull()) {
+         this.createHtmlForToken(tokenNode);
+      }
     }
   }
 
@@ -398,12 +414,16 @@ class GameXBody extends GameTokens {
     return div;
   }
 
+
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
 
-    if (tokenDisplayInfo.mainType == "card") {
-      //do nothing
-      // this.darhflog('update card ',tokenDisplayInfo);
+    if (tokenDisplayInfo.mainType == "card" || tokenDisplayInfo.t) {
+      if (this.isLayoutFull()) {
+        tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
+      } else {
+        tokenDisplayInfo.showtooltip = false;
+      }
     }
 
     // if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -546,7 +566,7 @@ class GameXBody extends GameTokens {
       result.nop = true;
     } else if (tokenInfo.key=='starting_player'){
       result.location=tokenInfo.location.replace('tableau_','fpholder_');
-    } else if (tokenInfo.key.startsWith("resource_")) {
+    } else if (tokenInfo.key.startsWith("resource_") && !this.isLayoutFull()) {
       if (tokenInfo.location.startsWith('card_main_')) {
         result.location=tokenInfo.location.replace('card_main_','resource_holder_');
       }
@@ -1019,7 +1039,7 @@ class GameXBody extends GameTokens {
 
       let name="";
       let contains_gfx=false;
-      if (opInfo.typeexpr && opInfo.data && opInfo.data!="") {
+      if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
          name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
          contains_gfx=true;
       } else {
