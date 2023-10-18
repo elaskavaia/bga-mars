@@ -1125,20 +1125,6 @@ display: none;
   }
 }
 
-.card[data-card-type="1"] .tt_intertitle{
-  background: #d0f0bd;
-}
-.card[data-card-type="2"] .tt_intertitle{
-  background: #bdd8f0;
-}
-.card[data-card-type="3"] .tt_intertitle{
-  background: #f0c3bd;
-}
-.card[data-card-type="4"] .tt_intertitle{
-  background: #e9bdf0;
-}
-
-
 .card:hover .card_hovertt {
   animation: showme 300ms 1500ms ;
   animation-fill-mode: forwards;

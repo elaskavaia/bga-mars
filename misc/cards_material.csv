@@ -12,7 +12,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 2|Asteroid Mining Consortium|1|npu_Any:pu|||13|pu|Jovian|1|Corporate|Decrease any titanium production 1 step and increase your own 1 step.||||
 3|Deep Well Heating|1|pe,t|||13||Building Energy|0|Basic|Increase your energy production 1 step. Increase temperature 1 step.||||
 4|Cloud Seeding|1|npm,nph_Any,2pp|||11|w>=3||0|Basic|Decrease your MC production 1 step and any heat production 1 step.  Increase your plant production 2 steps.||||
-5|Search For Life|2||nm:acard5||3|o<=6|Science|(resCard>0)*3|Basic||Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here||3 VPs if you have one or more science resource here.;|'holds' => 'Science'
+5|Search For Life|2||nm:acard5||3|o<=6|Science|(resCard>0)*3|Basic||Spend 1 MC to reveal and discard the top card of the draw deck. If that card has a microbe tag, add a science resource here||3 VP if you have one or more science resource here.|'holds' => 'Science'
 6|Inventors' Guild|2||predraw,?buycard,prediscard||9||Science|0|Corporate||Look at the top card and either buy it or discard it|||
 7|Martian Rails|2||ne:counter(all_city),m||13||Building|0|Basic||Spend 1 energy to gain 1 MC for each city tile ON MARS.|||
 8|Capital|1|2npe,5pm,tile|||26|w>=4|Building City|adj_ocean|Basic|Place [the capital city] tile. Decrease your energy production 2 steps and increase your MC production 5 steps|||1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE.|
@@ -184,7 +184,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 174|Protected Valley|1|2pm,forest(ocean)|||23||Building Plant|0|Basic|Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.||||
 175|Satellites|1|counter(tagSpace)pm|||10||Space|0|Corporate|Increase your MC production 1 step for each space tag you have, including this one.||||
 176|Noctis Farming|1|pm,2p|||10|t>=-20|Building Plant|1|Basic| Increase your MC production 1 step and gain 2 plants.||||
-177|Water Splitting Plant|2||3ne:o||12|w>=2|Building|0|Basic||Spend 3 energy to raise oxygen 1 step,|||
+177|Water Splitting Plant|2||3ne:o||12|w>=2|Building|0|Basic||Spend 3 energy to raise oxygen 1 step.|||
 178|Heat Trappers|1|2nph_Any,pe|||6||Building Energy|-1|Basic|Decrease any heat production 2 steps and increase your energy production 1 step.||||
 179|Soil Factory|1|npe,pp|||9||Building|1|Basic|Decrease your energy production 1 step and increase your plant production 1 step.||||
 180|Fuel Factory|1|npe,pm,pu|||6||Building|0|Corporate|Decreases your energy production 1 step and increase your titanium and your MC production 1 step each.||||
@@ -206,7 +206,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 196|Lagrange Observatory|1|draw|||9||Science Space|1|Corporate|Draw 1 card.||||
 197|Terraforming Ganymede|1|counter(tagJovian)tr|||33||Space Jovian|2|Corporate|Raise your TR 1 step for each Jovian tag you have, including this.||||
 198|Immigration Shuttles|1|5pm|||31||Space Earth|all_city/3|Basic|Increase your MC production 5 steps.|||1 VP for every 3rd city in play.|
-199|Restricted Area|2|tile|2nm:draw||11||Science|0|Corporate|Place [the restricted area] tile.; Action: Spend 2MC to draw a card.||||
+199|Restricted Area|2|tile|2nm:draw||11||Science|0|Corporate|Place [the restricted area] tile.|Spend 2MC to draw a card.|||
 200|Immigrant City|2|npe,2npm,city||place_city:pm:this:any|13||Building City|0|Basic|Decrease your energy production 1 step and decrease your MC production 2 steps. Place a city tile.||Each time a city tile is placed, including this, increase your MC production 1 step.||
 201|Energy Tapping|1|1npe_Any,1pe|||3||Energy|-1|Corporate|Decrease any energy production 1 step and increase your own 1 step.||||
 202|Underground Detonations|2||10nm:2ph||6||Building|0|Basic||Spend 10 MC to increase your heat production 2 steps.|||
@@ -215,7 +215,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 205|Rad-Chem Factory|1|1npe,2tr|||8||Building|0|Basic|Decrease your energy production 1 step. Raise your terraform rating 2 steps.||||
 206|Special Design|3|||onPre_delta:2;play_card:flip:that|4||Science Event|0|Basic|The next card you play this generation is +2 or -2 in global requirements, your choice.||||
 207|Medical Lab|1|counter(tagBuilding/2)pm|||13||Science Building|1|Corporate|Increase your MC production 1 step for every 2 building tags you have, including this.||||
-208|AI Central|2|1npe|2draw||21|tagScience>=3|Science Building|1|Corporate|Decrease your energy production 1 step.; Action: Draw 2 cards.||||
+208|AI Central|2|1npe|2draw||21|tagScience>=3|Science Building|1|Corporate|Decrease your energy production 1 step.|Draw 2 cards.|||
 
 #corp cards
 #set id=card_corp_{num}

@@ -146,6 +146,56 @@ class GameXBody extends GameTokens {
     if ((notif.args.inc) && counter_move.some(trk => notif.args.counter_name.startsWith(trk))) {
       this.customAnimation.moveResources(notif.args.counter_name,notif.args.inc);
     }
+  
+  
+  }
+
+  getCardTypeById(type: number) {
+    switch (type) {
+        case 0: return _('Standard Project');
+        case 1: return _('Green');
+        case 3: return _('Event');
+        case 2: return _('Blue');
+        case 4: return _('Corporation');
+        case 5: return _('Prelude');
+        case 7: return _('Milestone');
+        case 8: return _('Award');
+        default: return '?';
+    }
+  }
+
+  generateTooltipSection(label: string, body: string, optional: boolean = true) {
+    if (optional && !body) return '';
+    return `<div class="tt_section"><div class="tt_intertitle">${label}</div><div class='card_tt_effect'>${body}</div></div>`;
+  }
+
+  generateCardTooltip(displayInfo: TokenDisplayInfo): string {
+    const type = displayInfo.t;
+    let card_id = this.getCardTypeById(type);
+    if (type>0 && type<7) card_id+= " "+ _(displayInfo.deck) + " #" +  displayInfo.num ?? "";
+    let res = '';
+
+    let tags = "";
+    if (displayInfo.tags) {
+      for (let tag of displayInfo.tags.split(" ")) {
+        tags+=_(tag)+" ";
+      }
+    }
+
+    let vp = displayInfo.text_vp;
+    if (!vp) vp = displayInfo.vp;
+
+    res+=this.generateTooltipSection( _('Card Type'), card_id);
+    if (type!=4) res+=this.generateTooltipSection( _('Cost'), displayInfo.cost);
+    res+=this.generateTooltipSection( _('Tags'), tags);
+    const prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+    res+=this.generateTooltipSection( _('Pre-Requisites'), prereqText);
+    res+=this.generateTooltipSection( _('When Played'), displayInfo.text);
+    res+=this.generateTooltipSection( _('Effect'), displayInfo.text_effect);
+    res+=this.generateTooltipSection( _('Action'), displayInfo.text_action);
+    res+=this.generateTooltipSection( _('Holds'), _(displayInfo.holds));
+    res+=this.generateTooltipSection( _('Victory Points'), vp);
+    return res;
   }
 
   createHtmlForToken(tokenNode: HTMLElement){
@@ -155,10 +205,9 @@ class GameXBody extends GameTokens {
           let tagshtm = "";
           const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
   
-          ttdiv.innerHTML = ` 
-              <div class='token_title'>${displayInfo.name}</div>
-          `;
-  
+          ttdiv.innerHTML = `<div class='token_title'>${displayInfo.name}</div>`;
+          ttdiv.innerHTML+=this.generateCardTooltip(displayInfo);
+
           if (tokenNode.id.startsWith("card_corp_")) {
             //Corp formatting
             const decor = this.createDivNode(null, "card_decor", tokenNode.id);
@@ -173,10 +222,7 @@ class GameXBody extends GameTokens {
                   <div class="card_initial">${card_initial}</div>
                   <div class="card_effect">${card_effect}</div>
             `;
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("INITIAL") + "</div>";
-            ttdiv.innerHTML += `<div class="card_initial">${card_initial}</div>`;
-            ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
-            ttdiv.innerHTML += `<div class="card_effect">${card_effect}</div>`;
+    
           } else if (tokenNode.id.startsWith("card_stanproj")) {
             //standard project formatting:
             //cost -> action title
@@ -189,7 +235,6 @@ class GameXBody extends GameTokens {
                <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
                <div class='standard_projects_title'>${displayInfo.name}</div>  
             `;
-            ttdiv.innerHTML += `<div class='card_effect'>${displayInfo.text}</div>`;
           } else {
             //tags
   
@@ -294,37 +339,6 @@ class GameXBody extends GameTokens {
                   <div id="resource_holder_${tokenNode.id.replace('card_main_','')}" class="card_resource_holder"></div>
                   ${vp}
             `;
-  
-            const prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre) : "";
-  
-            ttdiv.innerHTML+=`<div class="card_number">${displayInfo.num ?? ""}</div>`;
-            if (prereqText!="") {
-              ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PRE-REQUISITES')+'</div>';
-              ttdiv.innerHTML+=`<div class="card_effect card_tt_prereq">${prereqText}</div>`;
-            }
-            /*ttdiv.innerHTML+='<div class="tt_intertitle">'+_('PROPERTIES')+'</div>';
-            ttdiv.innerHTML+=`<div class="tt_linegroup"><div class='card_cost'>${displayInfo.cost}</div>
-                              <div class='card_badges'>${tagshtm}</div></div>`*/
-            if (displayInfo.text_action && displayInfo.text_action != "") {
-              ttdiv.innerHTML += '<div class="tt_intertitle">' + _("ACTION") + "</div>";
-              ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_action}</div>`;
-            }
-            if (displayInfo.text_effect && displayInfo.text_effect != "") {
-              ttdiv.innerHTML += '<div class="tt_intertitle">' + _("EFFECT") + "</div>";
-              ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_effect}</div>`;
-            }
-            if (displayInfo.text && displayInfo.text != "") {
-              ttdiv.innerHTML += '<div class="tt_intertitle">' + _("WHEN PLAYED") + "</div>";
-              ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text}</div>`;
-            }
-  
-            if (displayInfo.text_vp && displayInfo.text_vp != "") {
-              ttdiv.innerHTML += '<div class="tt_intertitle">' + _("VICTORY POINTS") + "</div>";
-              ttdiv.innerHTML += `<div class="card_effect">${displayInfo.text_vp}</div>`;
-            }
-  
-            // <div class="card_action">${parsedActions}</div>
-            //  <div class="card_action">${displayInfo.a ?? displayInfo.e ?? ''}</div>
           }
           const div = this.createDivNode(null, "card_info_box", tokenNode.id);
   
@@ -408,6 +422,9 @@ class GameXBody extends GameTokens {
     if (tokenDisplayInfo.mainType == "card") {
       //do nothing
       // this.darhflog('update card ',tokenDisplayInfo);
+      if (this.isLayoutFull()) {
+        tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
+      }
     }
 
     // if (this.isLocationByType(tokenDisplayInfo.key)) {

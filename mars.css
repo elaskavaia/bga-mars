@@ -50,41 +50,6 @@
   animation: pulse 500ms ease-in-out;
 }
 
-/* tooltips */
-.midSizeDialog {
-  max-width: 400px;
-}
-
-.tooltipimage {
-  vertical-align: top;
-  display: inline-block;
-}
-
-.tooltiptext {
-  display: inline-block;
-  vertical-align: top;
-  padding: 10px;
-}
-
-.tooltiptitle {
-  font-weight: bold;
-  font-size: large;
-  text-transform: uppercase;
-  width: 100%;
-  background-color: antiquewhite;
-}
-
-.tundra .dijitTooltipContainer,
-.tooltipcontainer {
-  background: white;
-  color: black;
-}
-
-.tooltip-body {
-  width: 100%;
-  padding: 10px;
-}
-
 @keyframes pulse {
   0% {
     transform: scale(1) !important;
@@ -2675,22 +2640,6 @@
   top: unset;
   left: 0;
   font-size: calc(var(--card-width) * 0.07) !important;
-}
-
-.card[data-card-type="1"] .tt_intertitle {
-  background: #d0f0bd;
-}
-
-.card[data-card-type="2"] .tt_intertitle {
-  background: #bdd8f0;
-}
-
-.card[data-card-type="3"] .tt_intertitle {
-  background: #f0c3bd;
-}
-
-.card[data-card-type="4"] .tt_intertitle {
-  background: #e9bdf0;
 }
 
 .card:hover .card_hovertt {
@@ -5524,22 +5473,112 @@
   align-items: center;
 }
 
-.card_tooltipcontainer {
+/* tooltips */
+.midSizeDialog {
+  max-width: 400px;
+}
+
+.tooltipimage {
+  vertical-align: top;
+  display: inline-block;
+}
+
+.tooltiptext {
+  display: inline-block;
+  vertical-align: top;
+  padding: 10px;
+}
+
+.tooltiptitle {
+  font-weight: bold;
+  font-size: large;
+  text-transform: uppercase;
+  width: 100%;
+  background-color: rgba(250, 235, 215, 0.3215686275);
+}
+
+.tundra .dijitTooltipContainer,
+.tooltipcontainer {
+  background: white;
+  color: black;
+}
+
+.tooltip-body {
+  width: 100%;
+  padding: 10px;
+}
+
+.mcompact .card_tooltipcontainer {
   --card-width: 15vw;
   --card-height: calc(var(--card-width)*1.40658174);
 }
-.card_tooltipcontainer .tooltipimage {
+.mcompact .card_tooltipcontainer .tooltipimage {
   display: none;
 }
-.card_tooltipcontainer .infobox {
+.mcompact .card_tooltipcontainer .infobox {
   display: none;
 }
-.card_tooltipcontainer .tooltiptext {
+.mcompact .card_tooltipcontainer .tooltiptext {
   max-width: none;
+}
+.mcompact .midSizeDialog {
+  max-width: none;
+}
+.mcompact .tt_intertitle {
+  text-transform: uppercase;
+}
+.mcompact .card[data-card-type="1"] .tt_intertitle {
+  background: #d0f0bd;
+}
+.mcompact .card[data-card-type="2"] .tt_intertitle {
+  background: #bdd8f0;
+}
+.mcompact .card[data-card-type="3"] .tt_intertitle {
+  background: #f0c3bd;
+}
+.mcompact .card[data-card-type="4"] .tt_intertitle {
+  background: #e9bdf0;
 }
 
-.midSizeDialog {
-  max-width: none;
+.mfull #ebd-body {
+  --tt-width: calc(var(--localsetting_cardsize) / 100 * 520px);
+  --tt-height: calc(var(--tt-width) * 0.688);
+}
+.mfull #ebd-body .midSizeDialog {
+  max-width: calc(var(--tt-width));
+}
+.mfull #ebd-body .card_tooltipcontainer {
+  --card-width: calc(var(--tt-width) * 0.4);
+  --card-height: calc(var(--card-width)*1.40658174);
+  background-image: url(img/full/tooltipbg.jpg);
+  background-size: auto;
+  min-width: var(--tt-width);
+  min-height: var(--tt-height);
+}
+.mfull .tt_section > * {
+  display: block;
+}
+.mfull .card_tt_effect {
+  margin-left: 10px;
+}
+.mfull .tt_intertitle {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.mfull .tooltiptext {
+  margin-left: 10px;
+}
+.mfull .tooltiptitle {
+  padding: 6px;
+  padding-left: 10px;
+}
+.mfull .tooltipcontainer,
+.mfull .tundra .dijitTooltipContainer {
+  background-color: transparent;
+  border: unset;
+  border-radius: unset;
+  padding: unset;
+  margin: 0;
 }
 
 .tt_2cols {
@@ -5842,7 +5881,7 @@
   right: unset;
   border: none;
   color: var(--plcolor);
-  top: calc(var(--card-width) * 0.82);
+  top: calc(var(--card-width) * 0.9);
   position: absolute;
 }
 .mfull #main_board::before {
@@ -5921,7 +5960,7 @@
 }
 .mfull .location .card:hover {
   z-index: 10;
-  transform: scale(1.5);
+  transform: unset;
   transition: all 500ms;
   transition-delay: 500ms;
 }
@@ -6762,6 +6801,57 @@
 .mfull .card_main_208 {
   background-position: 77.7777777778% 100%;
   background-image: url(img/full/cards3.jpg);
+}
+.mfull .card.corp {
+  background-size: 600% auto;
+}
+.mfull .card_corp_1 {
+  background-position: 0 100%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_2 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_3 {
+  background-position: 20% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_4 {
+  background-position: 40% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_5 {
+  background-position: 60% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_6 {
+  background-position: 80% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_7 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_8 {
+  background-position: 0% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_9 {
+  background-position: 20% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_10 {
+  background-position: 40% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_11 {
+  background-position: 60% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_12 {
+  background-position: 80% 50%;
+  background-image: url(img/full/cardsC.jpg);
 }
 .mfull .playerboard_header .badge ~ .mini_counter[data-state="0"] {
   opacity: 0.2;

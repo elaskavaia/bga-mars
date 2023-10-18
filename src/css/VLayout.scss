@@ -423,7 +423,7 @@
 
   .location .card:hover {
     z-index: 10;
-    transform: scale(1.5);
+    transform: unset;
     transition: all 500ms;
     transition-delay: 500ms;
   }
