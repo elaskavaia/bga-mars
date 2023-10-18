@@ -87,12 +87,14 @@
       max-width: calc(var(--tt-width));
     }
 
+    .tooltipcontainer {
+      background-image: url(img/full/tooltipbg.jpg);
+      background-size: auto;
+    }
+
     .card_tooltipcontainer {
       --card-width: calc(var(--tt-width) * 0.4);
       --card-height: calc(var(--card-width)*1.40658174);
-
-      background-image: url(img/full/tooltipbg.jpg);
-      background-size: auto;
       min-width: var(--tt-width);
       min-height: var(--tt-height);
     }

@@ -2604,7 +2604,9 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             });
             //remove remaining "title" attibutes
-            dojo.query('.award').forEach(function (node) { node.removeAttribute("title"); });
+            dojo.query('.award').forEach(function (node) {
+                _this.updateTooltip(node.id);
+            });
             dojo.query('.milestone').forEach(function (node) { node.removeAttribute("title"); });
             //update prereq on cards
             this.updateHandPrereqs();
@@ -2667,9 +2669,9 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.getCardTypeById = function (type) {
         switch (type) {
             case 0: return _('Standard Project');
-            case 1: return _('Green');
-            case 3: return _('Event');
-            case 2: return _('Blue');
+            case 1: return _('Green Card');
+            case 3: return _('Event Card');
+            case 2: return _('Blue Card');
             case 4: return _('Corporation');
             case 5: return _('Prelude');
             case 7: return _('Milestone');
@@ -2685,8 +2687,11 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.generateCardTooltip = function (displayInfo) {
         var _a;
+        if (!displayInfo)
+            return "?";
         var type = displayInfo.t;
-        var card_id = this.getCardTypeById(type);
+        var type_name = this.getCardTypeById(type);
+        var card_id = '';
         if (type > 0 && type < 7)
             card_id += (_a = " " + _(displayInfo.deck) + " #" + displayInfo.num) !== null && _a !== void 0 ? _a : "";
         var res = '';
@@ -2700,11 +2705,11 @@ var GameXBody = /** @class */ (function (_super) {
         var vp = displayInfo.text_vp;
         if (!vp)
             vp = displayInfo.vp;
-        res += this.generateTooltipSection(_('Card Type'), card_id);
+        res += this.generateTooltipSection(type_name, card_id);
         if (type != 4)
             res += this.generateTooltipSection(_('Cost'), displayInfo.cost);
         res += this.generateTooltipSection(_('Tags'), tags);
-        var prereqText = displayInfo.pre ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+        var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
         res += this.generateTooltipSection(_('Pre-Requisites'), prereqText);
         res += this.generateTooltipSection(_('When Played'), displayInfo.text);
         res += this.generateTooltipSection(_('Effect'), displayInfo.text_effect);
@@ -2896,11 +2901,12 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.updateTokenDisplayInfo = function (tokenDisplayInfo) {
         // override to generate dynamic tooltips and such
-        if (tokenDisplayInfo.mainType == "card") {
-            //do nothing
-            // this.darhflog('update card ',tokenDisplayInfo);
+        if (tokenDisplayInfo.mainType == "card" || tokenDisplayInfo.t) {
             if (this.isLayoutFull()) {
                 tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
+            }
+            else {
+                tokenDisplayInfo.showtooltip = false;
             }
         }
         // if (this.isLocationByType(tokenDisplayInfo.key)) {

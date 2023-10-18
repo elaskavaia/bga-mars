@@ -5547,11 +5547,13 @@
 .mfull #ebd-body .midSizeDialog {
   max-width: calc(var(--tt-width));
 }
+.mfull #ebd-body .tooltipcontainer {
+  background-image: url(img/full/tooltipbg.jpg);
+  background-size: auto;
+}
 .mfull #ebd-body .card_tooltipcontainer {
   --card-width: calc(var(--tt-width) * 0.4);
   --card-height: calc(var(--card-width)*1.40658174);
-  background-image: url(img/full/tooltipbg.jpg);
-  background-size: auto;
   min-width: var(--tt-width);
   min-height: var(--tt-height);
 }
