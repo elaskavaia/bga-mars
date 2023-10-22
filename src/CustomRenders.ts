@@ -106,8 +106,6 @@
       }
 
       //patch
-
-
       let items = this.parseExprItem(expr,0);
       let prodgains = [];
       let prodlosses = [];

@@ -130,7 +130,10 @@ class CustomAnimation {
   animateRemoveResourceFromCard(resource_id:string):Promise<any> {
 
     const animate_token  =  $(resource_id).parentElement.id;
-
+    if (animate_token.includes("tableau")) {
+      //too late, resource is not on card anymore
+      return  this.getImmediatePromise();
+    }
     return this.playCssAnimation(animate_token, 'great_tingle', ()=>{
       dojo.style(animate_token,'z-index','10');
     }, ()=>{

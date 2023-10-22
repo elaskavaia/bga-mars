@@ -120,6 +120,7 @@ class GameXBody extends GameTokens {
 
   //make custom animations depending on situation
   notif_tokenMoved(notif: Notif):any {
+    
     super.notif_tokenMoved(notif);
     //pop animation on Tiles
     if (notif.args.token_id && notif.args.token_id.startsWith('tile_')) {
@@ -645,13 +646,15 @@ class GameXBody extends GameTokens {
       } else if (tokenInfo.location.startsWith('tableau_')) {
         //resource moved from card
         //which card ?
-        const dest_holder = $(tokenInfo.key).parentElement.id;
-        const dest_counter =dest_holder.replace('holder_','holder_counter_');
-
-        if (dojo.byId(dest_holder)){
-          $(dest_holder).dataset.resource_counter=(parseInt($(dest_holder).dataset.resource_counter)-1).toString();
-          $(dest_counter).dataset.resource_counter=(parseInt($(dest_counter).dataset.resource_counter)-1).toString();
+        const dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
+        if (dest_holder.includes("holder_")) {
+          const dest_counter =dest_holder.replace('holder_','holder_counter_');
+          if (dojo.byId(dest_holder)){
+            $(dest_holder).dataset.resource_counter=(parseInt($(dest_holder).dataset.resource_counter)-1).toString();
+            $(dest_counter).dataset.resource_counter=(parseInt($(dest_counter).dataset.resource_counter)-1).toString();
+          }
         }
+
 
       }
     } else if (tokenInfo.key.startsWith("marker_")) {
@@ -1139,12 +1142,12 @@ class GameXBody extends GameTokens {
 
       let name="";
       let contains_gfx=false;
-      if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
-         name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
-         contains_gfx=true;
-      } else {
+      //if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
+       //  name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
+       //  contains_gfx=true;
+     // } else {
          name = this.getButtonNameForOperation(opInfo);
-      }
+    //  }
 
 
       const color = this.getButtonColorForOperation(opInfo);
