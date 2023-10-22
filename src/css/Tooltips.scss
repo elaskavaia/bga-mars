@@ -34,13 +34,58 @@
 }
 
 .mcompact {
-  .card_tooltipcontainer {
-    --card-width: 15vw;
+
+  .compact_card_tt{
+    display: flex;
+    --card-width: 25vh;
     --card-height: calc(var(--card-width)*1.40658174);
+  }
+
+  .compact_card_tt.standard_project {
+      .card_tooltipimagecontainer{
+        display: none;
+      }
+  }
+
+  .tooltiptitle{
+    font-size:initial ;
+  }
+
+  .card_tooltipcontainer,
+  .award_tooltipcontainer,
+  .milestone_tooltipcontainer,
+  .card_stanproj_1_tooltipcontainer,
+  .card_stanproj_2_tooltipcontainer,
+  .card_stanproj_3_tooltipcontainer,
+  .card_stanproj_4_tooltipcontainer,
+  .card_stanproj_5_tooltipcontainer,
+  .card_stanproj_6_tooltipcontainer
+  {
+
+    font-family: Georgia;
+    font-size: 1.6vh;
+    padding-left: 1vh;
+
+    max-width: 60vh;
+    --map-width: 92vh;
+
+    .tooltip-body{
+      padding: 0;
+    }
+
+    .tooltiptitle {
+      display: flex;
+      justify-content: center;
+      font-family: "Prototype";
+      font-size: 2.5vh;
+      background-color: rgba(87, 87, 87, 0.32);
+
+    }
 
     .tooltipimage {
       display: none;
     }
+
 
     .infobox {
       display: none;
@@ -50,6 +95,28 @@
     .tooltiptext {
       max-width: none;
     }
+
+
+  }
+  .award_tooltipcontainer,
+  .milestone_tooltipcontainer,
+  .card_stanproj_1_tooltipcontainer,
+  .card_stanproj_2_tooltipcontainer,
+  .card_stanproj_3_tooltipcontainer,
+  .card_stanproj_4_tooltipcontainer,
+  .card_stanproj_5_tooltipcontainer,
+  .card_stanproj_6_tooltipcontainer
+{
+      max-width: 40vh;
+  }
+
+
+  .compact_card_tt.invalid_prereq {
+    .tt_section.tt_prereq {
+      .card_tt_effect {
+        color: red;
+      }
+    }
   }
 
   .midSizeDialog {
@@ -58,22 +125,30 @@
 
   .tt_intertitle {
     text-transform: uppercase;
+    font-size: 1.7vh;
+    font-family: "Prototype";
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    font-size: calc(var(--card-width) * 0.07);
+    font-family: "Prototype";
+    background: #ffe9a8;
   }
 
 
-  .card[data-card-type="1"] .tt_intertitle {
+  .card_tooltipcontainer[data-card-type="1"] .tt_intertitle {
     background: #d0f0bd;
   }
 
-  .card[data-card-type="2"] .tt_intertitle {
+  .card_tooltipcontainer[data-card-type="2"] .tt_intertitle {
     background: #bdd8f0;
   }
 
-  .card[data-card-type="3"] .tt_intertitle {
+  .card_tooltipcontainer[data-card-type="3"] .tt_intertitle {
     background: #f0c3bd;
   }
 
-  .card[data-card-type="4"] .tt_intertitle {
+  .card_tooltipcontainer[data-card-type="4"] .tt_intertitle {
     background: #e9bdf0;
   }
 }

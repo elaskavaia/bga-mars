@@ -400,6 +400,7 @@ class GameTokens extends GameBasics {
 
     if (!attachNode) return;
 
+
     // console.log("tooltips for "+token);
     if (typeof token != "string") {
       console.error("cannot calc tooltip" + token);
@@ -424,8 +425,10 @@ class GameTokens extends GameBasics {
     }
 
     var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
+
     if (main) {
       attachNode.classList.add("withtooltip");
+
       if (attachNode.classList.contains("infonode")) {
         const box = attachNode.querySelector(".infobox") as HTMLElement;
         if (box) {
@@ -627,9 +630,15 @@ class GameTokens extends GameBasics {
 
   setupNotifications(): void {
     super.setupNotifications();
+
+    this.subscribeNotification("tokenMoved");
+    this.subscribeNotification("tokenMovedAsync",1,"tokenMoved");// same as conter but no delay
+    /*
     dojo.subscribe("tokenMoved", this, "notif_tokenMoved");
     this.notifqueue.setSynchronous("tokenMoved", 500);
     dojo.subscribe("tokenMovedAsync", this, "notif_tokenMoved"); // same as tokenMoved but no delay
+
+     */
   }
 
   notif_tokenMoved(notif: Notif) {

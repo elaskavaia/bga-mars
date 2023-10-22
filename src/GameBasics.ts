@@ -1027,9 +1027,12 @@ class GameBasics extends GameGui {
 
   setupNotifications(): void {
     console.log("notifications subscriptions setup");
-    dojo.subscribe("counter", this, "notif_counter");
-    this.notifqueue.setSynchronous("counter", 500);
-    dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+   //  dojo.subscribe("counter", this, "notif_counter");
+   // this.notifqueue.setSynchronous("counter", 500);
+   // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+    this.subscribeNotification("counter");
+    this.subscribeNotification("counterAsync",1,"counter");// same as conter but no delay
+
     dojo.subscribe("score", this, "notif_score");
     this.notifqueue.setSynchronous("score", 50); // XXX
     dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
@@ -1041,6 +1044,94 @@ class GameBasics extends GameGui {
     dojo.subscribe("log", this, "notif_log");
   }
 
+  subscribeNotification(notifName:string,duration:number=0,funcName:string=""):void{
+
+    if (funcName=="") funcName= notifName;
+    if (!(typeof this['notif_'+funcName] === 'function'))
+    {
+      console.error("Notification notif_"+funcName+" isn't set !");
+    }
+
+    dojo.subscribe(notifName, this, (notif) => this.playnotif(funcName, notif, duration));
+    if (duration==0)  {
+      //variable duration
+      //don't forget to call this.notifqueue.setSynchronousDuration(duration);
+      this.notifqueue.setSynchronous(notifName);
+    }  else if (duration== 1) {
+      //Notif has no animation, thus no delay
+      this.notifqueue.setSynchronous(notifName, duration);
+    } else if (duration== -1) {
+      //Notif has to be ignored for active player
+      //something about this has been updated in the bga framework, don't know if the big delay is still necessary
+      this.notifqueue.setSynchronous(notifName,10000);
+      this.notifqueue.setIgnoreNotificationCheck(notifName, (notif:Notif) => (notif.args.player_id == this.player_id));
+    }  else {
+      //real fixed duration
+      this.notifqueue.setSynchronous(notifName, duration);
+    }
+  }
+
+  playnotif(notifname:string, notif:Notif, setDelay:number):void {
+      console.log('playing notif ' + notifname + ' with args ', notif.args);
+
+    //setSynchronous has to set for non active player in ignored notif
+    if (setDelay==-1) {
+      if (notif.args.player_id == this.player_id) {
+        //     this.notifqueue.setSynchronous(notifname, 1);
+      } else {
+           //   this.notifqueue.setSynchronous(notifname);
+      }
+    }
+
+    /*
+    Client-side duplicat notification check
+    Disabled for now
+    if (this.prev_notif_uid == args.uid) {
+      this.sendAction('ui_warning', { log: "duplicated notification uid received " + args.uid });
+      // return; // FIXME: return only if reported through production log and confirmed as an issue
+    }
+    this.prev_notif_uid = args.uid;
+    */
+
+    let notiffunc = 'notif_' + notifname;
+
+    if (!this[notiffunc]) {
+      this.showMessage("Notif: "+notiffunc+" not implemented yet",'error');
+    } else {
+      const startTime = Date.now()
+    //  this.onNotif(notif);//should be moved here
+      let p= this[notiffunc](notif);
+      if (setDelay==1) {
+        //nothing to do here
+      }
+      else if (p==undefined) {
+        //no promise returned: no animation played
+       // console.log(notifname+' : no return, sync set to 1');
+        this.notifqueue.setSynchronousDuration(1);
+      }  else {
+      //  this.animated=true;
+        p.then(() => {
+         // console.log(notifname+' : waiting 50ms after returns');
+          return this.wait(50);})
+        .then(() => {
+            this.notifqueue.setSynchronousDuration(10);
+            const executionTime = Date.now() - startTime
+          //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
+        //    this.animated=false;
+        });
+
+      }
+    }
+
+ }
+
+
+  //return a timed promise
+  wait(ms:number):Promise<void> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => resolve(), ms);
+    });
+  }
   notif_log(notif: Notif) {
     if (notif.log) {
       console.log(notif.log, notif.args);

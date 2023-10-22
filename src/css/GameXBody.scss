@@ -112,6 +112,10 @@
   font-family: 'Prototype';
 }
 
+#oceans_pile #tracker_w::after {
+  content:attr(data-calc);
+}
+
 /** Temp markers */
 #params {
   width: fit-content;
@@ -456,6 +460,10 @@
   position: absolute;
   width: 1px;
   height: 1px;
+  top: 0%;
+
+}
+#thething .topbar_movefrom{
   left: 50%;
   top:-42px;
 }
