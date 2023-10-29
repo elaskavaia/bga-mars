@@ -89,17 +89,38 @@ class CustomAnimation {
 
   }
 
+  setOriginalFilter(tableau_id:string,original:number,actual:number) {
+    const btn_original ="player_viewcards_" + original + "_" + tableau_id.replace("tableau_", "");
+    const btn_actual ="player_viewcards_" + actual + "_" + tableau_id.replace("tableau_", "");
 
+    const exec = ()=>{
+      $(tableau_id).dataset["visibility_" + original] = "1";
+      $(tableau_id).dataset["visibility_" + actual] = "0";
+      $(btn_original).dataset.selected = "1";
+      $(btn_actual).dataset.selected = "0";
+    };
+
+    if (this.areAnimationsPlayed()) {
+      this.wait(1500).then(()=>{
+        exec();
+      });
+    } else {
+        exec();
+    }
+  }
   animateTilePop(token_id: string) {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     return this.playCssAnimation(token_id, 'grow_appear', null, null);
   }
 
   animatetingle(counter_id:string) {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     if (this.nodeExists('alt_'+counter_id)) this.playCssAnimation('alt_'+counter_id, 'small_tingle', null, null);
     return this.playCssAnimation(counter_id, 'small_tingle', null, null);
   }
 
   animatePlaceResourceOnCard(resource_id:string, place_id:string):Promise<any> {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
 
     let animate_token = resource_id;
     if(!this.game.isLayoutFull()  && place_id.startsWith('card_main_') ) animate_token = place_id.replace('card_main_','resource_holder_');
@@ -128,7 +149,7 @@ class CustomAnimation {
   }
 
   animateRemoveResourceFromCard(resource_id:string):Promise<any> {
-
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     const animate_token  =  $(resource_id).parentElement.id;
     if (animate_token.includes("tableau")) {
       //too late, resource is not on card anymore
@@ -142,13 +163,14 @@ class CustomAnimation {
   }
 
   moveResources(tracker:string,qty:number) {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     if (qty==0) return this.getImmediatePromise();
 
     const trk_item = tracker.replace('tracker_','').split('_')[0];
 
     let delay=0;
     let mark="";
-    if (Math.abs(qty)>5) {
+    if (Math.abs(qty)>3) {
       mark=String(Math.abs(qty));
       qty=-1;
     }

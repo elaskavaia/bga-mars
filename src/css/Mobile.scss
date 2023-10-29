@@ -1,0 +1,65 @@
+.mcompact {
+  #ebd-body.mobile_portrait {
+    --map-width: calc(var(--localsetting_mapsize) * 0.7vw);
+    --stan-width: calc(var(--localsetting_mapsize) * 0.2vw);
+    --card-width: calc(var(--localsetting_cardsize) * .25vw);
+    --pb_cellsize: 10vw;
+
+    .player_counters {
+      --resourcesize: 7.5vw;
+      flex-wrap: wrap;
+    }
+
+
+    .hand, .draw, .draft {
+      padding: 6px 6px 6px  calc(var(--card-width)*0.2);
+    }
+
+    .hand::after, .draw::after, .draft::after {
+      font-size:  calc(var(--card-width)*0.2);
+    }
+
+    #map_bottom {
+      flex-direction: column;
+    }
+
+    #main_awards, #main_milestones {
+      width: 97%;
+      height: calc(var(--map-height) * 0.28);
+      left: 1%;
+
+      .milestone, .award {
+        width: calc(var(--map-width) * 0.260);
+        height: calc(var(--map-width) * 0.15);
+      }
+
+      .map_milesawardsheader {
+        top: 10%;
+
+        .map_title {
+          font-size: calc(var(--map-width) * 0.04);
+        }
+
+        .milesawardscosts {
+          .token_img {
+            --resourcesize: calc(var(--map-width) * 0.06);
+            font-size: calc(var(--map-width) * 0.04);
+          }
+        }
+
+        .milesawardsgains {
+          .card_vp {
+            width: calc(var(--map-width) * 0.06);
+            height: calc(var(--map-width) * 0.06);
+            font-size: calc(var(--map-width) * 0.04);
+          }
+        }
+      }
+
+      .map_milesawardscontent {
+        justify-content: center;
+      }
+    }
+
+  }
+}

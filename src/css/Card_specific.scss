@@ -112,6 +112,12 @@
   }
 }
 
+.card_main_73 {
+  .before{
+    visibility: revert;
+  }
+}
+
 .card_main_74{
   .card_action{
     --resourcesize:calc(var(--card-width) * 0.10);

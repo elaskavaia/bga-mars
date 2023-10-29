@@ -48,7 +48,8 @@
   }
 
   .tooltiptitle{
-    font-size:initial ;
+    /*font-size:initial ;*/
+    font-size: 1.6vh;
   }
 
   .card_tooltipcontainer,
@@ -151,6 +152,15 @@
   .card_tooltipcontainer[data-card-type="4"] .tt_intertitle {
     background: #e9bdf0;
   }
+
+  .tooltipcontainer {
+    .tile {
+      position: relative;
+      width: calc(var(--map-width) * 0.2170);
+      height: calc(var(--map-width) * 0.24);
+    }
+  }
+
 }
 
 .mfull {

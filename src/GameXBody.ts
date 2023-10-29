@@ -7,6 +7,9 @@ class GameXBody extends GameTokens {
   private vlayout: VLayout;
   private localSettings:LocalSettings;
   private customAnimation:CustomAnimation;
+  private zoneWidth:number;
+  private zoneHeight:number;
+  private previousLayout:string;
  // private parses:any;
 
   constructor() {
@@ -23,6 +26,11 @@ class GameXBody extends GameTokens {
       this.clearReverseIdMap();
       this.customAnimation = new CustomAnimation(this);
 
+      //layout
+      this.previousLayout='desktop';
+      this.zoneWidth =0;
+      this.zoneHeight =0;
+
 
       super.setup(gamedatas);
       // hexes are not moved so manually connect
@@ -33,6 +41,9 @@ class GameXBody extends GameTokens {
       });
 
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+
+      //view discard content
+      this.setupDiscard();
 
       document.querySelectorAll("#player_config > #player_board_params").forEach((node) => {
         dojo.destroy(node); // on undo this remains but another one generated
@@ -103,6 +114,40 @@ class GameXBody extends GameTokens {
       dojo.addClass(board,'thisplayer_zone');
     }
 
+  }
+
+  setupDiscard():void {
+    this.connect($('discard_title'),'onclick', ()=>{
+        let dlg = new ebg.popindialog();
+        dlg.create("discard_dlg");
+        dlg.setTitle( _("Discard pile contents") );
+        const cards_htm = $('discard_main').innerHTML.replaceAll('id="','id="discard_');
+        const html = '<div id="discard_dlg_content">'+cards_htm+'</div>';
+        dlg.setContent(html);
+        dlg.show();
+
+    });
+  }
+
+  onScreenWidthChange() {
+  //  super.onScreenWidthChange();
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+    if (this.zoneWidth!=width || this.zoneHeight!=height) {
+   //   console.log("changed res w,h", width, height);
+
+      this.zoneWidth = width;
+      this.zoneHeight = height;
+
+      if (dojo.hasClass('ebd-body','mobile_version') && this.previousLayout=='desktop' && width<height) {
+        this.previousLayout = 'mobile';
+        dojo.addClass('ebd-body', 'mobile_portrait');
+      } else if (!dojo.hasClass('ebd-body','mobile_version') && this.previousLayout=='mobile' && width>height) {
+        this.previousLayout = 'desktop';
+        dojo.removeClass('ebd-body', 'mobile_portrait');
+      }
+    }
   }
 
   onNotif(notif: Notif) {
@@ -694,9 +739,12 @@ class GameXBody extends GameTokens {
        // this.darhflog("isdoingsetup", this.isDoingSetup);
         if (!this.isDoingSetup) {
           if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
+            let original=0;
+            for (let i = 1; i <= 3; i++) {
+              if ($(tokenInfo.location).dataset["visibility_" + i] == "1") original =i;
+            }
             for (let i = 1; i <= 3; i++) {
               let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
-              this.darhflog("btn is ", btn);
               if (i == t) {
                 $(tokenInfo.location).dataset["visibility_" + i] = "1";
                 $(btn).dataset.selected = "1";
@@ -705,6 +753,7 @@ class GameXBody extends GameTokens {
                 $(tokenInfo.location).dataset["visibility_" + i] = "0";
               }
             }
+            this.customAnimation.setOriginalFilter(tokenInfo.location,original,t);
           }
         }
       }
@@ -1177,6 +1226,8 @@ class GameXBody extends GameTokens {
           this.addActionButton("button_" + opId, name, () => {
             this.sendActionResolve(opId);
           },null,null,color);
+
+
         }
 
         if (color!="blue" && color!="red") {
@@ -1194,10 +1245,13 @@ class GameXBody extends GameTokens {
       }
       // add done (skip) when optional
       if (singleOrFirst) {
-        if (opInfo.mcount <= 0)
+        if (opInfo.mcount <= 0) {
           this.addActionButton("button_skip", _("Done"), () => {
             this.sendActionSkip();
           });
+           $('button_skip').classList.remove('bgabutton_blue');
+           $('button_skip').classList.add('bgabutton_orange');
+        }
       }
       i = i + 1;
     }

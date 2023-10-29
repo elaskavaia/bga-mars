@@ -18,7 +18,7 @@
 .hand_area .location {
   background-color:  #ffffff99;
   border-radius: 1vh;
-  padding: 10px 10px 10px 32px;
+  padding: 10px 10px 10px  calc(var(--card-width)*0.2);
 }
 
 .hand, .draw, .draft {
@@ -28,7 +28,6 @@
   justify-content: center;
   flex-wrap: wrap;
   position: relative;
-  padding-left: 32px;
 }
 .draw, .draft  {
   min-height: unset;
@@ -38,11 +37,18 @@
   position: absolute;
   top: 10px;
   left: 0;
-  font-size: 30px;
+  font-size:  calc(var(--card-width)*0.2);
   font-family: "Prototype";
   color: rgba(0, 0, 0, 0.34);
-  transform: rotate(-90deg);
-  transform-origin: bottom;
+/*  transform: rotate(-90deg);
+  transform-origin: bottom;*/
+
+
+  transform: rotate(-90deg) translateX(-30px);
+  transform-origin: .5em center 0;
+  margin-right: -140px;
+  overflow-wrap: break-word;
+  height: calc(var(--card-width) * 0.2);
 }
 
 .hand:after{

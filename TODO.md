@@ -13,37 +13,37 @@ Random notes on todo items
 
 ## Client
 
-* Integrate Spend 8p to get 1 greenery in the player board
-  * Idem for heat
-  * -> OK but no action on button
+* Integrate Spend 8p to get 1 greenery in the player board - DONE
 * Better tooltips
-  * Tooltips on Milestones + costs & explanations
-  * Tooltips on Awards + costs & explanations
-* Finish Awards & tooltips (still waiting official assets)
+  * Tooltips on Milestones + awards costs & explanations DONE
+  * Explanations/help on Tiles
+  * Explanations/help on 
+* Finish Awards (still waiting official assets) - DONE will do like this for now
 * Show decoded error on when something cannot be selected/played
 * Show discounted card cost
   * Update from args ok - TODO initial
-* Show if prereq are not met
-* Tableau filtering
-* Show terraforming parameters
-  * Put them in params bar
+* Show if prereq are not met - DONE
+* Tableau filtering - DONE
+* Show terraforming parameters - DONE
 * Resources in log - images not all defined DONE?
-* Animation of resources
+* Animation of resources - DONE
 * Land tracker icon is missing - DONE
 * First player marker - DONE
-* Passing not obvious
+* Passing not obvious 
 * Titanim exchange rate during payment
-* Reverse ocean counter (should show how many tiles left)
+* Reverse ocean counter (should show how many tiles left) - DONE
 * Cubes on cards
 * Layout types based on size
 * Gewneration counter on player panel (common panel)
+* Mobile portrait layout
 
 ## Client - Compact layout
 * Add options (local storage) for :
-  * hand placement (floating or on top)
-  * size of elements
-  * general layout
-
+  * hand placement (floating or on top) - DONE
+  * size of elements - DONE
+  * general layout - DONE
+* Fix some remaining cards rendering
+* Show VP worth on cards
 
 ## Client - Full layout
 * Move tags on the miniboard

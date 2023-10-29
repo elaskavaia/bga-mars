@@ -22,7 +22,10 @@
 #main_board {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1.3vh;
+  order: 1;
 }
+
 
 #map_top{
   position: absolute;
@@ -718,4 +721,32 @@
     }
   }
 
+}
+
+#discard_title{
+  cursor: pointer;
+}
+
+#discard_dlg_content {
+  position: relative;
+  justify-content: space-around;
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 33px;
+
+  .counter_discard_main{
+    position: absolute;
+    display: none;
+  }
+
+  .card {
+    opacity: 1;
+    width: var(--card-width);
+    height: var(--card-height);
+    position: relative;
+    color: black;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
 }
