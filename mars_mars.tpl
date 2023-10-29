@@ -240,6 +240,13 @@
           </div>
           <div class="counters_holder">
             <div id="player_counters_{PLAYER_COLOR}" class="player_counters">
+              <div class="tr_playerboard">
+                <div class="playerboard_group_img">
+                  <div class="token_img tracker_tr">
+                    <div id="alt_tracker_tr_{PLAYER_COLOR}" class="tracker"></div>
+                  </div>
+                </div>
+              </div>
               <div class="playerboard_group">
                 <div class="playerboard_group_img">
                   <div class="token_img tracker_m"></div>

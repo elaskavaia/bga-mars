@@ -22,7 +22,10 @@
 #main_board {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1.3vh;
+  order: 1;
 }
+
 
 #map_top{
   position: absolute;
@@ -157,6 +160,7 @@
 .tile.tile_140 {background-position: -700% 0;}
 .tile.tile_5 {background-position: -800% 0;}
 .tile.tile_142 {background-position: -900% 0;}
+.tile.tile_44 {background-position: 0 -100%;}
 .tile.tile_natural {background-position: 0 -100%;}
 .tile.tile_97 {background-position: -100% -100%;}
 .tile.tile_199 {background-position: -200% -100%;}
@@ -227,7 +231,7 @@
 
 
 .milestone_label{
-  bottom: 4%;
+  bottom: 10%;
   position: absolute;
   width: 89%;
   left: 6%;
@@ -235,7 +239,7 @@
 }
 
 .award_label{
-  bottom: 1%;
+  bottom: 5%;
   position: absolute;
   width: 89%;
   left: 6%;
@@ -277,7 +281,12 @@
       --resourcesize: calc(var(--map-width) * 0.03);
       margin-right: 5%;
     }
+
+    .token_img[data-striked="1"] {
+      filter: grayscale(1) opacity(0.7);
+    }
   }
+
 }
 
 
@@ -712,4 +721,32 @@
     }
   }
 
+}
+
+#discard_title{
+  cursor: pointer;
+}
+
+#discard_dlg_content {
+  position: relative;
+  justify-content: space-around;
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 33px;
+
+  .counter_discard_main{
+    position: absolute;
+    display: none;
+  }
+
+  .card {
+    opacity: 1;
+    width: var(--card-width);
+    height: var(--card-height);
+    position: relative;
+    color: black;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
 }

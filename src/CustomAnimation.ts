@@ -21,41 +21,189 @@ class CustomAnimation {
                             }
                     `
       };
+    this.animations['small_tingle'] =
+      {
+        name: 'small_tingle', duration: 500, easing: 'ease-in',
+        keyframes: `   
+                         0% {
+                               color:white;            
+                               transform:scale(1);
+                            }
+                         80% {
+                               color:red;
+                               transform:scale(1.1);
+                            }
+                         100% {
+                               color:white;
+                               transform:scale(1);
 
+                            }
+                    `
+      };
+    this.animations['great_tingle'] =
+      {
+        name: 'great_tingle', duration: 500, easing: 'ease-in',
+        keyframes: `   
+                         0% {
+                               transform:scale(1);
+                               color:white;
+                            }
+                         80% {
+                               color:red;
+                               transform:scale(2);
+                            }
+                         100% {
+                              color:white;
+                               transform:scale(1);
+
+                            }
+                    `
+      };
+    this.animations['pop_and_tilt'] =
+      {
+        name: 'pop_and_tilt', duration: 300, easing: 'ease-in',
+        keyframes: `   
+                         0% {
+                               transform:scale(1);
+                            }
+                         100% {
+                               transform:scale(1.2);
+                               
+                            }
+                    `
+      };
+    this.animations['depop_and_tilt'] =
+      {
+        name: 'depop_and_tilt', duration: 300, easing: 'ease-in',
+        keyframes: `   
+                         0% {
+                               transform:scale(1.2);
+                            }
+                         100% {
+                               transform:scale(1);
+                               
+                            }
+                    `
+      };
     this.addAnimationsToDocument(this.animations);
 
   }
 
+  setOriginalFilter(tableau_id:string,original:number,actual:number) {
+    const btn_original ="player_viewcards_" + original + "_" + tableau_id.replace("tableau_", "");
+    const btn_actual ="player_viewcards_" + actual + "_" + tableau_id.replace("tableau_", "");
 
+    const exec = ()=>{
+      $(tableau_id).dataset["visibility_" + original] = "1";
+      $(tableau_id).dataset["visibility_" + actual] = "0";
+      $(btn_original).dataset.selected = "1";
+      $(btn_actual).dataset.selected = "0";
+    };
+
+    if (this.areAnimationsPlayed()) {
+      this.wait(1500).then(()=>{
+        exec();
+      });
+    } else {
+        exec();
+    }
+  }
   animateTilePop(token_id: string) {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     return this.playCssAnimation(token_id, 'grow_appear', null, null);
   }
 
+  animatetingle(counter_id:string) {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+    if (this.nodeExists('alt_'+counter_id)) this.playCssAnimation('alt_'+counter_id, 'small_tingle', null, null);
+    return this.playCssAnimation(counter_id, 'small_tingle', null, null);
+  }
+
+  animatePlaceResourceOnCard(resource_id:string, place_id:string):Promise<any> {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+
+    let animate_token = resource_id;
+    if(!this.game.isLayoutFull()  && place_id.startsWith('card_main_') ) animate_token = place_id.replace('card_main_','resource_holder_');
+
+    const anim_1:Promise<any> =   this.playCssAnimation(place_id, 'pop_and_tilt', ()=>{
+      dojo.style(place_id,'filter','grayscale(0)');
+      }, ()=>{
+        dojo.style(place_id,'transform','scale(1.2)');
+      });
+
+      const anim_2:Promise<any>= anim_1.then(()=>{
+        return this.playCssAnimation(animate_token, 'great_tingle', ()=>{
+          dojo.style(animate_token,'z-index','10');
+        }, ()=>{
+          dojo.style(animate_token,'z-index','');
+        });
+      });
+
+     return anim_2.then(()=>{
+       return this.playCssAnimation(place_id, 'depop_and_tilt', ()=>{
+         dojo.style(place_id,'transform','');
+       }, ()=>{
+         dojo.style(place_id,'filter','');
+       });
+     });
+  }
+
+  animateRemoveResourceFromCard(resource_id:string):Promise<any> {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+    const animate_token  =  $(resource_id).parentElement.id;
+    if (animate_token.includes("tableau")) {
+      //too late, resource is not on card anymore
+      return  this.getImmediatePromise();
+    }
+    return this.playCssAnimation(animate_token, 'great_tingle', ()=>{
+      dojo.style(animate_token,'z-index','10');
+    }, ()=>{
+      dojo.style(animate_token,'z-index','');
+    });
+  }
 
   moveResources(tracker:string,qty:number) {
-    if (qty==0) return;
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+    if (qty==0) return this.getImmediatePromise();
 
     const trk_item = tracker.replace('tracker_','').split('_')[0];
 
     let delay=0;
     let mark="";
-    if (Math.abs(qty)>10) {
+    if (Math.abs(qty)>3) {
       mark=String(Math.abs(qty));
       qty=-1;
     }
     const htm = '<div id="%t" class="resmover">'+CustomRenders.parseActionsToHTML(trk_item,mark)+'</div>';
 
-    debugger;
     for (let i=0; i<Math.abs(qty);i++) {
       let tmpid='tmp_'+String(Math.random()*1000000000);
-      dojo.place('<div id="move_from_'+tmpid+'" class="topbar_movefrom"></div>','thething');
+
+      let visiblenode="";
+      if (dojo.style('gameaction_status_wrap',"display")!="none") {visiblenode='gameaction_status';}
+      else if (dojo.style('pagemaintitle_wrap',"display")!="none") {visiblenode='pagemaintitletext';}
+
+      let fnode=visiblenode!="" ? $(visiblenode).querySelector('.token_img.tracker_'+trk_item) : null;
+      if (fnode) {
+        dojo.place('<div id="move_from_'+tmpid+'" class="topbar_movefrom"></div>',fnode);
+      } else {
+        dojo.place('<div id="move_from_'+tmpid+'" class="topbar_movefrom"></div>','thething');
+      }
 
       let origin= qty>0 ? 'move_from_'+tmpid : tracker.replace('tracker_','alt_tracker_');
       let destination = qty>0 ? tracker.replace('tracker_','alt_tracker_') : 'move_from_'+tmpid;
 
+      if (!this.nodeExists(origin) && origin.startsWith('alt_')) origin=tracker;
+      if (!this.nodeExists(destination) && destination.startsWith('alt_')) destination=tracker;
+
+
       dojo.place(htm.replace('%t',tmpid),origin);
 
       this.wait(delay).then(()=>{
+
+        if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
+          dojo.place('<div id="move_from_'+tmpid+'" class="topbar_movefrom"></div>','thething');
+        }
         this.game.slideAndPlace(tmpid,destination,500,undefined,()=>{
         if (dojo.byId(tmpid)) dojo.destroy(tmpid);
         if (dojo.byId('move_from_'+tmpid)) dojo.destroy('move_from_'+tmpid);
@@ -67,7 +215,9 @@ class CustomAnimation {
         }
       );*/
       delay+=100;
+
     }
+    return this.wait(delay+500);
   }
 
   addAnimationsToDocument(animations: any): void {

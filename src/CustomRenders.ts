@@ -106,8 +106,6 @@
       }
 
       //patch
-
-
       let items = this.parseExprItem(expr,0);
       let prodgains = [];
       let prodlosses = [];
@@ -365,7 +363,7 @@
       }
 
 
-      let before = item.before!= undefined ? item.before+'&nbsp;' : "";
+      let before = item.before!= undefined ? '<div class="before">'+item.before+'</div>&nbsp;' : "";
       let after = item.after!= undefined ? item.after : "";
       //little resource for nmu & nms
       if (item.exp) {
@@ -489,7 +487,11 @@
        prefix="max ";
      }
 
-     let htm='<div class="prereq_content mode_'+mode+'">'+prefix+qty+suffix+icon+'</div></div>';
+
+     let qtys:string;
+     qtys=qty.toString();
+     if (qty==0 && what!="o" && what!="t") qtys="";
+     let htm='<div class="prereq_content mode_'+mode+'">'+prefix+qtys+suffix+icon+'</div></div>';
 
      return  htm;
 

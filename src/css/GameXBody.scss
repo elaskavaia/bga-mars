@@ -22,6 +22,7 @@
 @import "Tooltips";
 @import "LocalSettings";
 @import "VLayout";
+@import "Mobile";
 
 @font-face {
   font-family: "Prototype";
@@ -49,8 +50,13 @@
   justify-content: center;
 }
 
-#ebd-body[data-localsetting_playerarea=before] #main_area {
-  flex-direction: row-reverse;
+#ebd-body[data-localsetting_playerarea="before"] #main_board {
+  //flex-direction: row-reverse;//
+  order:3;
+}
+#ebd-body[data-localsetting_playerarea="before"] .thisplayer_zone {
+  //flex-direction: row-reverse;//
+  order:1;
 }
 
 #decks_area > * {
@@ -110,6 +116,10 @@
   font-size: calc(var(--stan-width) * 0.2);
   color: gold;
   font-family: 'Prototype';
+}
+
+#oceans_pile #tracker_w::after {
+  content:attr(data-calc);
 }
 
 /** Temp markers */
@@ -231,6 +241,7 @@
 #discard_main > .card {
   position: absolute;
   opacity: 0;
+  pointer-events: none;
 }
 
 .tracker_tagCity {
@@ -273,6 +284,7 @@
 .thisplayer_zone {
   min-width: calc(var(--map-width) * 1);
   flex-grow: 100;
+  order: 2;
 }
 
 #players_area {
@@ -456,6 +468,10 @@
   position: absolute;
   width: 1px;
   height: 1px;
+  top: 0%;
+
+}
+#thething .topbar_movefrom{
   left: 50%;
   top:-42px;
 }

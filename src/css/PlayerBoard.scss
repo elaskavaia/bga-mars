@@ -1,5 +1,5 @@
 #ebd-body {
-  --pb_cellsize:5vh;
+  --pb_cellsize:6vh;
 }
 
 // need to change the background of player area, pink does not work with the theme
@@ -19,22 +19,10 @@
     border-radius: 1vh;
     background: linear-gradient(-35deg, rgba(51, 51, 51, 0.7) 0%, rgba(225, 225, 225, 0.5) 24%, rgba(158, 158, 158, 0.5) 82%, rgba(225, 225, 225, 0.9) 100%);
     --card-count:1;
+    margin-bottom: 3vh;
   }
   .player_area_name {
-    /*
-    background: linear-gradient(135deg, rgb(51, 51, 51) 0%, rgb(225, 225, 225) 24%, rgb(158, 158, 158) 82%, rgb(225, 225, 225) 100%);
-    width: fit-content;
-    padding: 0.3vh;
-    position: absolute;
-    z-index: 1;
-    top: -3vh;
-    right: 0;
-    border-radius: 1vh;
-    color: var(--plcolor);
-    font-family: "Prototype";
-    border: 0.4vh solid var(--plcolor);
-     */
-    padding: 0.3vh;
+/*    padding: 0.3vh;
     position: absolute;
     z-index: 1;
     color: var(--plcolor);
@@ -44,7 +32,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 25%;
+    top: 25%;*/
+    position: absolute;
+    z-index: 1;
+    color: var(--plcolor);
+    font-family: "Prototype";
+    left: 0;
+    min-width: calc(var(--card-width) * 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 12%;
+    border: 0.3vh solid gray;
+    border-radius: 13px;
+    background: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%);
+    box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5);
   }
 
   .playerboard {
@@ -107,6 +109,7 @@
   .tableau {
     display: flex;
     flex-wrap: wrap;
+    padding: 0.5vh;
 
     .card[data-card-type="1"] {
      order:2;
@@ -133,7 +136,7 @@
     width: 100%;
     height:fit-content;
     flex-wrap: wrap;
-    left: 3%;
+  /*  left: 3%;*/
   }
 
 .playerboard_header {
@@ -226,6 +229,7 @@
 .tracker.tile_123 {background-position: -1300% -100%;}
 .tracker.tile_140 {background-position: -1000% -100%;}
 .tracker.tile_142 {background-position: -1100% -100%;}
+.tracker.tile_44 {background-position: -500%  -100%;}
 .tracker.tile_natural {background-position: -500% -100%;}
 .tracker.tile_97 {background-position: -800% -100%;}
 .tracker.tile_199 {background-position: -1200% -100%;}
@@ -273,7 +277,7 @@
       visibility: hidden;
     }
     .card[data-card-type="2"] {
-      position: absolute;
+      /*position: absolute;*/
       opacity: 0;
     }
   }
@@ -282,7 +286,7 @@
       visibility: hidden;
     }
     .card[data-card-type="1"] {
-      position: absolute;
+      /*position: absolute;*/
       opacity: 0;
     }
   }
@@ -291,7 +295,7 @@
       visibility: hidden;
     }
     .card[data-card-type="3"] {
-      position: absolute;
+      /*position: absolute;*/
       opacity: 0;
     }
   }
@@ -346,7 +350,9 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
+    width: calc(var(--resourcesize) * 15.5);
+    --resourcesize:4vh;
   }
 
   .corp_effect .card {
@@ -392,7 +398,25 @@
 
 .mcompact {
   .player_counters {
-    --resourcesize:4vh;
+
+    .tr_playerboard{
+      width: calc(var(--resourcesize) * 1.3);
+      height: calc(var(--resourcesize) * 1);
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .tracker_tr{
+        width: calc(var(--resourcesize)*1.3);
+        height: calc(var(--resourcesize)*1.3);
+        .tracker:after {
+          line-height: var(--pb_cellsize);
+          text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+          color: white;
+          font-size: calc(var(--pb_cellsize) * 0.4);
+          font-family: "Prototype";
+        }
+      }
+    }
 
     .playerboard_group {
       position: relative;
