@@ -10,6 +10,14 @@ Random notes on todo items
 * passing heat on 0 place ocean
 * lose production does not offer yourself?
 * Missing undo button when inactive during research
+* Rules
+* 26: No mention of the “Add animal to another card” effect ? - DONE
+* 51: 'r' => 'counter(tagEarth),m', Shouldn’t it be pm ? -DONE
+* 64: 'r' => 'tile(adj_own)', No mention of the production increase, normal ? SPECIAL
+* 67: Same as 64 SPECIAL
+* 73, 74: text in VP part, not in effect part ? >   'e' => 'play_tagScience:?(discard:draw)',
+* 108: Missing city gain in rules ? DONE
+* 188: Missing -4mc in rules ? SPECIAL
 
 ## Client
 
@@ -46,8 +54,7 @@ Random notes on todo items
 * Show VP worth on cards
 
 ## Client - Full layout
-* Move tags on the miniboard
-* Add card counts to miniboard
+* 
 
 
 ### Client Bonus Features
