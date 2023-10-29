@@ -17,7 +17,7 @@
   "license": "EPL2.0",
   "devDependencies": {
     "@prettier/plugin-php": "^0.19.1",
-    "prettier": "^2.7.1",
+    "prettier": "^3.0.3",
     "sass": "^1.32.6",
     "typescript": "^4.1.3"
   },
