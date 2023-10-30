@@ -33,7 +33,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 23|Arctic Algae|2|p||place_ocean:2p:this:any|12|t<=-12|Plant|0|Basic|Gain 1 plant.||When anyone places an ocean tile, gain 2 plants.||
 24|Predators|2||nores(Animal):res||14|o>=11|Animal|resCard|Basic||Remove 1 animal from any card and add it to this card.||1 VP per animal on this card|'holds' => 'Animal'
 25|Space Station|2|||onPay_cardSpace:2m|10||Space|1|Corporate|||When you play a space card, you pay 2 MC less for it.||
-26|Eos Chasma National Park|1|2pm,3p|||16|t>=-12|Building Plant|1|Basic|Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps.||||
+26|Eos Chasma National Park|1|ores(Animal),2pm,3p|||16|t>=-12|Building Plant|1|Basic|Add 1 animal TO ANY ANIMAL CARD. Gain 3 plants. Increase your MC production 2 steps.||||
 27|Interstellar Colony Ship|3||||24|tagScience>=5|Space Earth Event|4|Corporate|||||
 28|Security Fleet|2||nu:res||12||Space|resCard|Corporate||Spend 1 titanium to add 1 fighter resource to this card.||1 VP for each fighter resource on this card.|'holds' => 'Fighter'
 29|Cupola City|1|npe,3pm,city|||16|o<=9|Building City|0|Basic|Place a city tile. Decrease your energy production 1 step and increase your MC production 3 steps.||||
@@ -58,7 +58,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 48|Adapted Lichen|1|pp|||9||Plant|0|Basic|Increase your plant production 1 step.||||
 49|Tardigrades|2||res||4||Microbe|resCard/4|Corporate||Add 1 microbe to this card.||1 VP per 4 microbes on this card.;|'holds' => 'Microbe'
 50|Virus|3|2nores(Animal)/5np_Any/nop|||1||Microbe Event|0|Corporate|Remove up to 2 animals or 5 plants from any player.||||
-51|Miranda Resort|1|counter(tagEarth),m|||12||Space Jovian|1|Corporate|Increase your MC production 1 step for each Earth tag you have.||||
+51|Miranda Resort|1|counter(tagEarth),pm|||12||Space Jovian|1|Corporate|Increase your MC production 1 step for each Earth tag you have.||||
 52|Fish|2|npp_Any|res||9|t>=2|Animal|resCard|Basic|Decrease any plant production 1 step. 1 VP for each animal on this card.|Add 1 animal to this card.|||'holds' => 'Animal'
 53|Lake Marineris|1|2w|||18|t>=0||2|Basic|Place 2 ocean tiles.||||
 54|Small Animals|2|npp_Any|res||6|o>=6|Animal|resCard|Basic|Decrease any plant production 1 step.|Add 1 animal to this card.||1 VP per 2 animals on this card.|'holds' => 'Animal'
@@ -115,7 +115,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 105|Earth Office|2|||onPay_tagEarth:3m|1||Earth|0|Corporate|||When you play an Earth tag, you pay 3 MC less for it.||
 106|Acquired Company|1|3pm|||10||Earth|0|Corporate|Increase your MC production 3 steps.||||
 107|Media Archives|1|counter(all_tagEvent)m|||8||Earth|0|Corporate|Gain 1 MC for each event EVER PLAYED by all players||||
-108|Open City|1|npe,4pm,2p|||23|o>=12|Building City|1|Basic|Decrease your energy production 1 step and increase your MC production 4 steps. Gain 2 plants and place a city tile.||||
+108|Open City|1|npe,4pm,2p,city|||23|o>=12|Building City|1|Basic|Decrease your energy production 1 step and increase your MC production 4 steps. Gain 2 plants and place a city tile.||||
 109|Media Group|2|||play_cardEvent:3m|6||Earth|0|Corporate|||After you play an event card, you gain 3MC||
 110|Business Network|2|1npm|predraw,?buycard,prediscard||4||Earth|0|Corporate|Decrease your MC production 1 step.|Look at the top card and either buy it or discard it|||
 111|Business Contacts|3|4predraw,2keep,prediscard|||7||Earth Event|0|Corporate|Look at the top 4 cards from the deck. Take 2 of them into hand and discard the other 2||||
@@ -229,11 +229,12 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set create=2
 #set count=10
 #set location=limbo
-1|Begginer Corp|4|42m|||0|||0||You start with 42 MC. You keep 10 starting cards||||
+#num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
+1|Begginer Corp|4|42m|||0|||0|Basic|You start with 42 MC. You keep 10 starting cards||||
 #set count=10
 #set create=single
 #set location=deck_corp
-#num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
+
 2|CrediCor|4|||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|-57|||0|Basic|You start with 57 MC.||After you pay for a card or standard project with a basic cost of 20 MC or more, you gain 4 MC.||
 3|Ecoline|4|2pp,3p|||-36||Plant|0|Basic|You start with 2 plant production, 3 plants, and 36 MC,||You may always pay 7 plants, instead of 8, to place 1 greenery.||
 4|Helion|4|3ph|||-42||Space|0|Basic|You start with 3 heat production and 42 MC.||You may use heat as MC. You may not use MC as heat.||
