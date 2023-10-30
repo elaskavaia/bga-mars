@@ -915,9 +915,11 @@ var GameBasics = /** @class */ (function (_super) {
     // NOTIFICATIONS
     GameBasics.prototype.setupNotifications = function () {
         console.log("notifications subscriptions setup");
-        dojo.subscribe("counter", this, "notif_counter");
-        this.notifqueue.setSynchronous("counter", 500);
-        dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+        //  dojo.subscribe("counter", this, "notif_counter");
+        // this.notifqueue.setSynchronous("counter", 500);
+        // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+        this.subscribeNotification("counter");
+        this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
         dojo.subscribe("score", this, "notif_score");
         this.notifqueue.setSynchronous("score", 50); // XXX
         dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
@@ -927,6 +929,94 @@ var GameBasics = /** @class */ (function (_super) {
         dojo.subscribe("speechBubble", this, "notif_speechBubble");
         this.notifqueue.setSynchronous("speechBubble", 5000);
         dojo.subscribe("log", this, "notif_log");
+    };
+    GameBasics.prototype.subscribeNotification = function (notifName, duration, funcName) {
+        var _this_1 = this;
+        if (duration === void 0) { duration = 0; }
+        if (funcName === void 0) { funcName = ""; }
+        if (funcName == "")
+            funcName = notifName;
+        if (!(typeof this['notif_' + funcName] === 'function')) {
+            console.error("Notification notif_" + funcName + " isn't set !");
+        }
+        dojo.subscribe(notifName, this, function (notif) { return _this_1.playnotif(funcName, notif, duration); });
+        if (duration == 0) {
+            //variable duration
+            //don't forget to call this.notifqueue.setSynchronousDuration(duration);
+            this.notifqueue.setSynchronous(notifName);
+        }
+        else if (duration == 1) {
+            //Notif has no animation, thus no delay
+            this.notifqueue.setSynchronous(notifName, duration);
+        }
+        else if (duration == -1) {
+            //Notif has to be ignored for active player
+            //something about this has been updated in the bga framework, don't know if the big delay is still necessary
+            this.notifqueue.setSynchronous(notifName, 10000);
+            this.notifqueue.setIgnoreNotificationCheck(notifName, function (notif) { return (notif.args.player_id == _this_1.player_id); });
+        }
+        else {
+            //real fixed duration
+            this.notifqueue.setSynchronous(notifName, duration);
+        }
+    };
+    GameBasics.prototype.playnotif = function (notifname, notif, setDelay) {
+        var _this_1 = this;
+        console.log('playing notif ' + notifname + ' with args ', notif.args);
+        //setSynchronous has to set for non active player in ignored notif
+        if (setDelay == -1) {
+            if (notif.args.player_id == this.player_id) {
+                //     this.notifqueue.setSynchronous(notifname, 1);
+            }
+            else {
+                //   this.notifqueue.setSynchronous(notifname);
+            }
+        }
+        /*
+        Client-side duplicat notification check
+        Disabled for now
+        if (this.prev_notif_uid == args.uid) {
+          this.sendAction('ui_warning', { log: "duplicated notification uid received " + args.uid });
+          // return; // FIXME: return only if reported through production log and confirmed as an issue
+        }
+        this.prev_notif_uid = args.uid;
+        */
+        var notiffunc = 'notif_' + notifname;
+        if (!this[notiffunc]) {
+            this.showMessage("Notif: " + notiffunc + " not implemented yet", 'error');
+        }
+        else {
+            var startTime_1 = Date.now();
+            //  this.onNotif(notif);//should be moved here
+            var p = this[notiffunc](notif);
+            if (setDelay == 1) {
+                //nothing to do here
+            }
+            else if (p == undefined) {
+                //no promise returned: no animation played
+                // console.log(notifname+' : no return, sync set to 1');
+                this.notifqueue.setSynchronousDuration(1);
+            }
+            else {
+                //  this.animated=true;
+                p.then(function () {
+                    // console.log(notifname+' : waiting 50ms after returns');
+                    return _this_1.wait(50);
+                })
+                    .then(function () {
+                    _this_1.notifqueue.setSynchronousDuration(10);
+                    var executionTime = Date.now() - startTime_1;
+                    //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
+                    //    this.animated=false;
+                });
+            }
+        }
+    };
+    //return a timed promise
+    GameBasics.prototype.wait = function (ms) {
+        return new Promise(function (resolve, reject) {
+            setTimeout(function () { return resolve(); }, ms);
+        });
     };
     GameBasics.prototype.notif_log = function (notif) {
         if (notif.log) {
@@ -1080,31 +1170,140 @@ var CustomAnimation = /** @class */ (function () {
                 name: 'grow_appear', duration: 500, easing: 'ease-in',
                 keyframes: "   \n                         0% {\n                               transform:scale(0);\n                            }\n                         80% {\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               transform:scale(1);\n\n                            }\n                    "
             };
+        this.animations['small_tingle'] =
+            {
+                name: 'small_tingle', duration: 500, easing: 'ease-in',
+                keyframes: "   \n                         0% {\n                               color:white;            \n                               transform:scale(1);\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               color:white;\n                               transform:scale(1);\n\n                            }\n                    "
+            };
+        this.animations['great_tingle'] =
+            {
+                name: 'great_tingle', duration: 500, easing: 'ease-in',
+                keyframes: "   \n                         0% {\n                               transform:scale(1);\n                               color:white;\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(2);\n                            }\n                         100% {\n                              color:white;\n                               transform:scale(1);\n\n                            }\n                    "
+            };
+        this.animations['pop_and_tilt'] =
+            {
+                name: 'pop_and_tilt', duration: 300, easing: 'ease-in',
+                keyframes: "   \n                         0% {\n                               transform:scale(1);\n                            }\n                         100% {\n                               transform:scale(1.2);\n                               \n                            }\n                    "
+            };
+        this.animations['depop_and_tilt'] =
+            {
+                name: 'depop_and_tilt', duration: 300, easing: 'ease-in',
+                keyframes: "   \n                         0% {\n                               transform:scale(1.2);\n                            }\n                         100% {\n                               transform:scale(1);\n                               \n                            }\n                    "
+            };
         this.addAnimationsToDocument(this.animations);
     }
+    CustomAnimation.prototype.setOriginalFilter = function (tableau_id, original, actual) {
+        var btn_original = "player_viewcards_" + original + "_" + tableau_id.replace("tableau_", "");
+        var btn_actual = "player_viewcards_" + actual + "_" + tableau_id.replace("tableau_", "");
+        var exec = function () {
+            $(tableau_id).dataset["visibility_" + original] = "1";
+            $(tableau_id).dataset["visibility_" + actual] = "0";
+            $(btn_original).dataset.selected = "1";
+            $(btn_actual).dataset.selected = "0";
+        };
+        if (this.areAnimationsPlayed()) {
+            this.wait(1500).then(function () {
+                exec();
+            });
+        }
+        else {
+            exec();
+        }
+    };
     CustomAnimation.prototype.animateTilePop = function (token_id) {
+        if (!this.areAnimationsPlayed())
+            return this.getImmediatePromise();
         return this.playCssAnimation(token_id, 'grow_appear', null, null);
+    };
+    CustomAnimation.prototype.animatetingle = function (counter_id) {
+        if (!this.areAnimationsPlayed())
+            return this.getImmediatePromise();
+        if (this.nodeExists('alt_' + counter_id))
+            this.playCssAnimation('alt_' + counter_id, 'small_tingle', null, null);
+        return this.playCssAnimation(counter_id, 'small_tingle', null, null);
+    };
+    CustomAnimation.prototype.animatePlaceResourceOnCard = function (resource_id, place_id) {
+        var _this = this;
+        if (!this.areAnimationsPlayed())
+            return this.getImmediatePromise();
+        var animate_token = resource_id;
+        if (!this.game.isLayoutFull() && place_id.startsWith('card_main_'))
+            animate_token = place_id.replace('card_main_', 'resource_holder_');
+        var anim_1 = this.playCssAnimation(place_id, 'pop_and_tilt', function () {
+            dojo.style(place_id, 'filter', 'grayscale(0)');
+        }, function () {
+            dojo.style(place_id, 'transform', 'scale(1.2)');
+        });
+        var anim_2 = anim_1.then(function () {
+            return _this.playCssAnimation(animate_token, 'great_tingle', function () {
+                dojo.style(animate_token, 'z-index', '10');
+            }, function () {
+                dojo.style(animate_token, 'z-index', '');
+            });
+        });
+        return anim_2.then(function () {
+            return _this.playCssAnimation(place_id, 'depop_and_tilt', function () {
+                dojo.style(place_id, 'transform', '');
+            }, function () {
+                dojo.style(place_id, 'filter', '');
+            });
+        });
+    };
+    CustomAnimation.prototype.animateRemoveResourceFromCard = function (resource_id) {
+        if (!this.areAnimationsPlayed())
+            return this.getImmediatePromise();
+        var animate_token = $(resource_id).parentElement.id;
+        if (animate_token.includes("tableau")) {
+            //too late, resource is not on card anymore
+            return this.getImmediatePromise();
+        }
+        return this.playCssAnimation(animate_token, 'great_tingle', function () {
+            dojo.style(animate_token, 'z-index', '10');
+        }, function () {
+            dojo.style(animate_token, 'z-index', '');
+        });
     };
     CustomAnimation.prototype.moveResources = function (tracker, qty) {
         var _this = this;
+        if (!this.areAnimationsPlayed())
+            return this.getImmediatePromise();
         if (qty == 0)
-            return;
+            return this.getImmediatePromise();
         var trk_item = tracker.replace('tracker_', '').split('_')[0];
         var delay = 0;
         var mark = "";
-        if (Math.abs(qty) > 10) {
+        if (Math.abs(qty) > 3) {
             mark = String(Math.abs(qty));
             qty = -1;
         }
         var htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
-        debugger;
         var _loop_2 = function (i) {
             var tmpid = 'tmp_' + String(Math.random() * 1000000000);
-            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+            var visiblenode = "";
+            if (dojo.style('gameaction_status_wrap', "display") != "none") {
+                visiblenode = 'gameaction_status';
+            }
+            else if (dojo.style('pagemaintitle_wrap', "display") != "none") {
+                visiblenode = 'pagemaintitletext';
+            }
+            var fnode = visiblenode != "" ? $(visiblenode).querySelector('.token_img.tracker_' + trk_item) : null;
+            if (fnode) {
+                dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', fnode);
+            }
+            else {
+                dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+            }
             var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
             var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
+            if (!this_2.nodeExists(origin_1) && origin_1.startsWith('alt_'))
+                origin_1 = tracker;
+            if (!this_2.nodeExists(destination) && destination.startsWith('alt_'))
+                destination = tracker;
             dojo.place(htm.replace('%t', tmpid), origin_1);
             this_2.wait(delay).then(function () {
+                if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
+                    dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+                }
                 _this.game.slideAndPlace(tmpid, destination, 500, undefined, function () {
                     if (dojo.byId(tmpid))
                         dojo.destroy(tmpid);
@@ -1123,6 +1322,7 @@ var CustomAnimation = /** @class */ (function () {
         for (var i = 0; i < Math.abs(qty); i++) {
             _loop_2(i);
         }
+        return this.wait(delay + 500);
     };
     CustomAnimation.prototype.addAnimationsToDocument = function (animations) {
         var head = document.getElementsByTagName('head')[0];
@@ -1559,7 +1759,7 @@ var CustomRenders = /** @class */ (function () {
         else if (qty == -99) {
             ret = ret + 'X&nbsp;';
         }
-        var before = item.before != undefined ? item.before + '&nbsp;' : "";
+        var before = item.before != undefined ? '<div class="before">' + item.before + '</div>&nbsp;' : "";
         var after = item.after != undefined ? item.after : "";
         //little resource for nmu & nms
         if (item.exp) {
@@ -1668,7 +1868,11 @@ var CustomRenders = /** @class */ (function () {
             mode = "max";
             prefix = "max ";
         }
-        var htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qty + suffix + icon + '</div></div>';
+        var qtys;
+        qtys = qty.toString();
+        if (qty == 0 && what != "o" && what != "t")
+            qtys = "";
+        var htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qtys + suffix + icon + '</div></div>';
         return htm;
     };
     CustomRenders.parsePrereqToText = function (pre, game) {
@@ -2506,9 +2710,14 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
+        this.subscribeNotification("tokenMoved");
+        this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
+        /*
         dojo.subscribe("tokenMoved", this, "notif_tokenMoved");
         this.notifqueue.setSynchronous("tokenMoved", 500);
         dojo.subscribe("tokenMovedAsync", this, "notif_tokenMoved"); // same as tokenMoved but no delay
+    
+         */
     };
     GameTokens.prototype.notif_tokenMoved = function (notif) {
         this.onNotif(notif);
@@ -2559,6 +2768,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.local_counters = [];
             this.clearReverseIdMap();
             this.customAnimation = new CustomAnimation(this);
+            //layout
+            this.previousLayout = 'desktop';
+            this.zoneWidth = 0;
+            this.zoneHeight = 0;
             _super.prototype.setup.call(this, gamedatas);
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
@@ -2566,6 +2779,8 @@ var GameXBody = /** @class */ (function (_super) {
                 _this.updateTooltip(node.id);
             });
             this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+            //view discard content
+            this.setupDiscard();
             document.querySelectorAll("#player_config > #player_board_params").forEach(function (node) {
                 dojo.destroy(node); // on undo this remains but another one generated
             });
@@ -2603,13 +2818,10 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.updateTooltip(id.substring(4), node);
                 }
             });
-            //remove remaining "title" attibutes
-            dojo.query('.award').forEach(function (node) {
-                _this.updateTooltip(node.id);
-            });
-            dojo.query('.milestone').forEach(function (node) { node.removeAttribute("title"); });
             //update prereq on cards
             this.updateHandPrereqs();
+            // card reference
+            this.setupHelpSheets();
             this.isDoingSetup = false;
         }
         catch (e) {
@@ -2634,6 +2846,89 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.addClass(board, 'thisplayer_zone');
         }
     };
+    GameXBody.prototype.setupHelpSheets = function () {
+        var _this = this;
+        var cc = { main: 0, corp: 0 };
+        for (var key in this.gamedatas.token_types) {
+            var info = this.gamedatas.token_types[key];
+            if (key.startsWith('card')) {
+                var num = getPart(key, 2);
+                var type = getPart(key, 1);
+                var helpnode = document.querySelector("#allcards_".concat(type, " .expandablecontent"));
+                if (!helpnode)
+                    continue;
+                // XXX hook proper rendering
+                //const div = dojo.place(`<div id='card_${type}_${num}_help' class='card token card_${type} card_${type}_${num}'></div>`, helpnode);
+                var token = {
+                    key: "card_".concat(type, "_").concat(num, "_help"),
+                    location: helpnode.id,
+                    state: 0
+                };
+                var tokenNode = this.createToken(token);
+                this.syncTokenDisplayInfo(tokenNode);
+                this.renderSpecificToken(tokenNode);
+                this.updateTooltip("card_".concat(type, "_").concat(num), tokenNode);
+                cc[type]++;
+            }
+        }
+        var ccmain = cc['main'];
+        var cccorp = cc['corp'];
+        $("allcards_main_title").innerHTML = _("All Project Cards (".concat(ccmain, ")"));
+        $("allcards_corp_title").innerHTML = _("All Corporate Cards (".concat(cccorp, ")"));
+        // clicks
+        dojo.query(".expandablecontent > *").connect("onclick", this, function (event) {
+            var id = event.currentTarget.id;
+            _this.showHelp(id, true);
+        });
+        dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
+    };
+    GameXBody.prototype.setupDiscard = function () {
+        this.connect($('discard_title'), 'onclick', function () {
+            var dlg = new ebg.popindialog();
+            dlg.create("discard_dlg");
+            dlg.setTitle(_("Discard pile contents"));
+            var cards_htm = $('discard_main').innerHTML.replaceAll('id="', 'id="discard_');
+            var html = '<div id="discard_dlg_content">' + cards_htm + '</div>';
+            dlg.setContent(html);
+            dlg.show();
+        });
+    };
+    GameXBody.prototype.onScreenWidthChange = function () {
+        //  super.onScreenWidthChange();
+        var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        if (this.zoneWidth != width || this.zoneHeight != height) {
+            //   console.log("changed res w,h", width, height);
+            this.zoneWidth = width;
+            this.zoneHeight = height;
+            if (dojo.hasClass('ebd-body', 'mobile_version') && this.previousLayout == 'desktop' && width < height) {
+                this.previousLayout = 'mobile';
+                dojo.addClass('ebd-body', 'mobile_portrait');
+            }
+            else if (!dojo.hasClass('ebd-body', 'mobile_version') && this.previousLayout == 'mobile' && width > height) {
+                this.previousLayout = 'desktop';
+                dojo.removeClass('ebd-body', 'mobile_portrait');
+            }
+        }
+    };
+    GameXBody.prototype.onToggleAllCards = function (event) {
+        dojo.stopEvent(event);
+        var node = event.currentTarget;
+        var parent = node.parentNode.parentNode;
+        var content = parent.querySelector(".expandablecontent");
+        var toExpand = dojo.style(content, "display") == "none";
+        var arrow = parent.querySelector(".expandablearrow " + "div");
+        if (toExpand) {
+            dojo.style(content, "display", "block");
+            dojo.removeClass(arrow, "icon20_expand");
+            dojo.addClass(arrow, "icon20_collapse");
+        }
+        else {
+            dojo.style(content, "display", "none");
+            dojo.removeClass(arrow, "icon20_collapse");
+            dojo.addClass(arrow, "icon20_expand");
+        }
+    };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);
         this.darhflog('playing notif ' + notif.type + ' with args ', notif.args);
@@ -2649,7 +2944,13 @@ var GameXBody = /** @class */ (function (_super) {
         _super.prototype.notif_tokenMoved.call(this, notif);
         //pop animation on Tiles
         if (notif.args.token_id && notif.args.token_id.startsWith('tile_')) {
-            this.customAnimation.animateTilePop(notif.args.token_id);
+            return this.customAnimation.animateTilePop(notif.args.token_id);
+        }
+        else if (notif.args.token_id && notif.args.token_id.startsWith('resource_') && notif.args.place_id.startsWith('card_main_')) {
+            return this.customAnimation.animatePlaceResourceOnCard(notif.args.token_id, notif.args.place_id);
+        }
+        else if (notif.args.token_id && notif.args.token_id.startsWith('resource_') && notif.args.place_id.startsWith('tableau_')) {
+            return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
         }
     };
     GameXBody.prototype.notif_counter = function (notif) {
@@ -2659,11 +2960,20 @@ var GameXBody = /** @class */ (function (_super) {
         const counter_move=["m","pm","s","ps","u","pu","p","pp","e","pe","h","ph"].map((item)=>{
           return "tracker_"+item+"_";
         });*/
-        var counter_move = ["m", "s", "u", "p", "e", "h"].map(function (item) {
+        var counter_move = ["m", "s", "u", "p", "e", "h", "tr"].map(function (item) {
             return "tracker_" + item + "_";
         });
         if ((notif.args.inc) && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
-            this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
+            this.customAnimation.animatetingle(notif.args.counter_name);
+            return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
+        }
+        else {
+            if ($(notif.args.counter_name)) {
+                return this.customAnimation.animatetingle(notif.args.counter_name);
+            }
+            else {
+                return this.customAnimation.wait(200);
+            }
         }
     };
     GameXBody.prototype.getCardTypeById = function (type) {
@@ -2679,11 +2989,43 @@ var GameXBody = /** @class */ (function (_super) {
             default: return '?';
         }
     };
-    GameXBody.prototype.generateTooltipSection = function (label, body, optional) {
+    GameXBody.prototype.generateTooltipSection = function (label, body, optional, additional_class) {
         if (optional === void 0) { optional = true; }
+        if (additional_class === void 0) { additional_class = ""; }
         if (optional && !body)
             return '';
-        return "<div class=\"tt_section\"><div class=\"tt_intertitle\">".concat(label, "</div><div class='card_tt_effect'>").concat(body, "</div></div>");
+        return "<div class=\"tt_section ".concat(additional_class, "\"><div class=\"tt_intertitle\">").concat(label, "</div><div class='card_tt_effect'>").concat(body, "</div></div>");
+    };
+    GameXBody.prototype.generateCardTooltip_Compact = function (displayInfo) {
+        var type = displayInfo.t;
+        var htm = '<div class="compact_card_tt %adcl"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' + type + '">' + this.generateCardTooltip(displayInfo) + '</div></div>';
+        var fullcardhtm = "";
+        var adClass = "";
+        if (type >= 1 && type <= 3) { //main cards
+            if (displayInfo.num && $('card_main_' + displayInfo.num)) {
+                fullcardhtm = $('card_main_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;', '');
+                if (fullcardhtm.includes('data-invalid_prereq="1"')) {
+                    adClass += 'invalid_prereq';
+                }
+            }
+            else {
+                fullcardhtm = '<div>NOTFOUND</div>';
+            }
+        }
+        else if (type == 4) { //corp
+            if (displayInfo.num && $('card_corp_' + displayInfo.num)) {
+                fullcardhtm = $('card_corp_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;', '');
+            }
+        }
+        else if (type == 7 || type == 8) { //milestones / awards
+            var elem = type == 7 ? 'milestone_' + displayInfo.num : 'award_' + displayInfo.num;
+            adClass += 'award_milestone';
+            fullcardhtm = $(elem).outerHTML.replaceAll('id="', 'id="tt_');
+        }
+        else if (type == 0) { //standard project
+            adClass += 'standard_project';
+        }
+        return htm.replace('%adcl', adClass).replace('%c', fullcardhtm);
     };
     GameXBody.prototype.generateCardTooltip = function (displayInfo) {
         var _a;
@@ -2710,7 +3052,7 @@ var GameXBody = /** @class */ (function (_super) {
             res += this.generateTooltipSection(_('Cost'), displayInfo.cost);
         res += this.generateTooltipSection(_('Tags'), tags);
         var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
-        res += this.generateTooltipSection(_('Pre-Requisites'), prereqText);
+        res += this.generateTooltipSection(_('Pre-Requisites'), prereqText, true, 'tt_prereq');
         res += this.generateTooltipSection(_('When Played'), displayInfo.text);
         res += this.generateTooltipSection(_('Effect'), displayInfo.text_effect);
         res += this.generateTooltipSection(_('Action'), displayInfo.text_action);
@@ -2719,14 +3061,17 @@ var GameXBody = /** @class */ (function (_super) {
         return res;
     };
     GameXBody.prototype.createHtmlForToken = function (tokenNode) {
-        var _a;
+        var _a, _b, _c;
         var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
         // use this to generate some fake parts of card, remove this when use images
         if (displayInfo.mainType == "card") {
             var tagshtm = "";
-            var ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-            ttdiv.innerHTML = "<div class='token_title'>".concat(displayInfo.name, "</div>");
-            ttdiv.innerHTML += this.generateCardTooltip(displayInfo);
+            //removed custom tt
+            /*    const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+        
+                ttdiv.innerHTML = `<div class='token_title'>${displayInfo.name}</div>`;
+                ttdiv.innerHTML+=this.generateCardTooltip(displayInfo);
+                */
             if (tokenNode.id.startsWith("card_corp_")) {
                 //Corp formatting
                 var decor = this.createDivNode(null, "card_decor", tokenNode.id);
@@ -2750,8 +3095,8 @@ var GameXBody = /** @class */ (function (_super) {
                 //tags
                 var firsttag = "";
                 if (displayInfo.tags && displayInfo.tags != "") {
-                    for (var _i = 0, _b = displayInfo.tags.split(" "); _i < _b.length; _i++) {
-                        var tag = _b[_i];
+                    for (var _i = 0, _d = displayInfo.tags.split(" "); _i < _d.length; _i++) {
+                        var tag = _d[_i];
                         tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         if (firsttag == "")
                             firsttag = tag;
@@ -2834,22 +3179,29 @@ var GameXBody = /** @class */ (function (_super) {
                 if (displayInfo.text_action || displayInfo.text_effect) {
                     card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
                 }
-                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'>").concat(displayInfo.cost, "</div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_a = displayInfo.num) !== null && _a !== void 0 ? _a : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace('card_main_', ''), "\" class=\"card_resource_holder\"></div>\n                  ").concat(vp, "\n            ");
+                var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
+                var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' + holds + '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' + tokenNode.id.replace('card_main_', '') + '" class="resource_counter"  data-resource_counter="0"></div></div>';
+                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'>").concat(displayInfo.cost, "</div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace('card_main_', ''), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
             }
             var div = this.createDivNode(null, "card_info_box", tokenNode.id);
             div.innerHTML = "\n          <div class='token_title'>".concat(displayInfo.name, "</div>\n          <div class='token_cost'>").concat(displayInfo.cost, "</div> \n          <div class='token_rules'>").concat(displayInfo.r, "</div>\n          <div class='token_descr'>").concat(displayInfo.text, "</div>\n          ");
             tokenNode.appendChild(div);
             //card tooltip
-            tokenNode.appendChild(ttdiv);
+            //tokenNode.appendChild(ttdiv);
             tokenNode.setAttribute("data-card-type", displayInfo.t);
         }
         if (displayInfo.mainType == "award" || displayInfo.mainType == "milestone") {
             //custom tooltip on awards and milestones
             var dest = tokenNode.id.replace(displayInfo.mainType + '_', displayInfo.mainType + '_label_');
             $(dest).innerHTML = _(displayInfo.name);
-            var ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-            ttdiv.innerHTML = " \n              <div class='token_title'>".concat(displayInfo.name, "</div>\n              <div class='card_effect'>").concat(displayInfo.text, "</div>\n          ");
+            /* Disabled custom tt
+            const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+            ttdiv.innerHTML = `
+                <div class='token_title'>${displayInfo.name}</div>
+                <div class='card_effect'>${displayInfo.text}</div>
+            `;
             tokenNode.appendChild(ttdiv);
+            */
         }
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
@@ -2874,7 +3226,6 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         //intercept player passed state
         if (node.id.startsWith("tracker_passed_")) {
-            this.darhflog("passes !", node.id, "newstate is ", newState);
             var plColor = node.id.replace("tracker_passed_", "");
             var plId = this.getPlayerIdByColor(plColor);
             if (newState == 1) {
@@ -2883,6 +3234,10 @@ var GameXBody = /** @class */ (function (_super) {
             else {
                 this.enablePlayerPanel(parseInt(plId));
             }
+        }
+        //tracker w
+        if (node.id.startsWith("tracker_w")) {
+            $(node.id).dataset.calc = (9 - parseInt(newState)).toString();
         }
         //handle copies of trackers
         var trackerCopy = "alt_" + node.id;
@@ -2901,13 +3256,11 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.updateTokenDisplayInfo = function (tokenDisplayInfo) {
         // override to generate dynamic tooltips and such
-        if (tokenDisplayInfo.mainType == "card" || tokenDisplayInfo.t) {
-            if (this.isLayoutFull()) {
-                tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
-            }
-            else {
-                tokenDisplayInfo.showtooltip = false;
-            }
+        if (this.isLayoutFull()) {
+            tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
+        }
+        else {
+            tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
         }
         // if (this.isLocationByType(tokenDisplayInfo.key)) {
         //   tokenDisplayInfo.imageTypes += " infonode";
@@ -2973,11 +3326,10 @@ var GameXBody = /** @class */ (function (_super) {
                     // global city tracker exists ?
                     break;
             }
-            if (tracker == "")
+            if (tracker == "") {
                 continue;
+            }
             var valid = false;
-            this.darhflog("getting state for tracker", tracker);
-            //
             // const actual = this.getTokenInfoState(tracker);
             if (!$(tracker)) {
                 continue;
@@ -2986,7 +3338,6 @@ var GameXBody = /** @class */ (function (_super) {
                 continue;
             }
             var actual = parseInt($(tracker).dataset.state);
-            this.darhflog("got value", actual);
             if (op == "<=") {
                 if (actual <= qty)
                     valid = true;
@@ -3009,6 +3360,8 @@ var GameXBody = /** @class */ (function (_super) {
             else {
                 node.dataset.invalid_prereq = 0;
             }
+            //update TT too
+            this.updateTooltip(node.id);
         }
     };
     GameXBody.prototype.updateVisualsFromOp = function (opInfo, opId) {
@@ -3058,7 +3411,32 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (tokenInfo.key.startsWith("resource_") && !this.isLayoutFull()) {
             if (tokenInfo.location.startsWith('card_main_')) {
+                //resource added to card
                 result.location = tokenInfo.location.replace('card_main_', 'resource_holder_');
+                var dest_holder = tokenInfo.location.replace('card_main_', 'resource_holder_');
+                var dest_counter = tokenInfo.location.replace('card_main_', 'resource_holder_counter_');
+                $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
+                $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
+            }
+            else if (tokenInfo.location.startsWith('tableau_')) {
+                //resource moved from card
+                //which card ?
+                var dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
+                if (dest_holder.includes("holder_")) {
+                    var dest_counter = dest_holder.replace('holder_', 'holder_counter_');
+                    if (dojo.byId(dest_holder)) {
+                        $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
+                        $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
+                    }
+                }
+            }
+        }
+        else if (tokenInfo.key.startsWith("marker_")) {
+            if (tokenInfo.location.startsWith('award')) {
+                this.strikeNextAwardMilestoneCost('award');
+            }
+            else if (tokenInfo.location.startsWith('milestone')) {
+                this.strikeNextAwardMilestoneCost('milestone');
             }
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
@@ -3085,9 +3463,13 @@ var GameXBody = /** @class */ (function (_super) {
                 // this.darhflog("isdoingsetup", this.isDoingSetup);
                 if (!this.isDoingSetup) {
                     if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
+                        var original = 0;
+                        for (var i = 1; i <= 3; i++) {
+                            if ($(tokenInfo.location).dataset["visibility_" + i] == "1")
+                                original = i;
+                        }
                         for (var i = 1; i <= 3; i++) {
                             var btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
-                            this.darhflog("btn is ", btn);
                             if (i == t) {
                                 $(tokenInfo.location).dataset["visibility_" + i] = "1";
                                 $(btn).dataset.selected = "1";
@@ -3097,6 +3479,7 @@ var GameXBody = /** @class */ (function (_super) {
                                 $(tokenInfo.location).dataset["visibility_" + i] = "0";
                             }
                         }
+                        this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
                     }
                 }
             }
@@ -3105,6 +3488,14 @@ var GameXBody = /** @class */ (function (_super) {
             // if failed to find revert to server one
             result.location = tokenInfo.location;
         return result;
+    };
+    GameXBody.prototype.strikeNextAwardMilestoneCost = function (kind) {
+        for (var idx = 1; idx <= 3; idx++) {
+            if ($(kind + '_cost_' + idx).dataset.striked != "1") {
+                $(kind + '_cost_' + idx).dataset.striked = "1";
+                break;
+            }
+        }
     };
     GameXBody.prototype.isLayoutVariant = function (num) {
         return this.prefs[100].value == num;
@@ -3491,13 +3882,12 @@ var GameXBody = /** @class */ (function (_super) {
             var opargs = opInfo.args;
             var name_3 = "";
             var contains_gfx = false;
-            if (opInfo.typeexpr && opInfo.data && opInfo.data != "" && !this_3.isLayoutFull()) {
-                name_3 = '<div class="innerbutton">' + CustomRenders.parseExprToHtml(opInfo.typeexpr) + '</div>';
-                contains_gfx = true;
-            }
-            else {
-                name_3 = this_3.getButtonNameForOperation(opInfo);
-            }
+            //if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
+            //  name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
+            //  contains_gfx=true;
+            // } else {
+            name_3 = this_3.getButtonNameForOperation(opInfo);
+            //  }
             var color = this_3.getButtonColorForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
@@ -3536,10 +3926,13 @@ var GameXBody = /** @class */ (function (_super) {
             }
             // add done (skip) when optional
             if (singleOrFirst) {
-                if (opInfo.mcount <= 0)
+                if (opInfo.mcount <= 0) {
                     this_3.addActionButton("button_skip", _("Done"), function () {
                         _this.sendActionSkip();
                     });
+                    $('button_skip').classList.remove('bgabutton_blue');
+                    $('button_skip').classList.add('bgabutton_orange');
+                }
             }
             i = i + 1;
         };

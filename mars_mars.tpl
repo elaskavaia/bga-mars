@@ -508,6 +508,27 @@
 
       <!-- END player_board -->
     </div>
+
+    <div id="allcards" class="allcards">
+      <div id="allcards_main" class="allcards_main expandable">
+        <div class="expandabletitle">	
+          <a href="#" id="allcards_main_toggle" class="expandabletoggle expandablearrow">
+            <div class="icon20 icon20_expand"></div>
+            <span id="allcards_main_title"></span>
+          </a>
+        </div>
+        <div class="expandablecontent"  id="allcards_main_content"></div>
+      </div>
+      <div id="allcards_corp" class="allcards_corp expandable">
+        <div class="expandabletitle">	
+          <a href="#" id="allcards_corp_toggle" class="expandabletoggle expandablearrow">
+            <div class="icon20 icon20_expand"></div>
+            <span id="allcards_corp_title"></span>
+          </a>
+        </div>
+        <div class="expandablecontent"  id="allcards_corp_content"></div>
+      </div>
+    </div>
     <div id="limbo">
       <div id="starting_player"></div>
       <div id="player_board_params">

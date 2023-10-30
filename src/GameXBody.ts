@@ -89,6 +89,8 @@ class GameXBody extends GameTokens {
       //update prereq on cards
       this.updateHandPrereqs();
 
+      // card reference
+      this.setupHelpSheets();
 
       this.isDoingSetup = false;
     } catch (e) {
@@ -114,6 +116,45 @@ class GameXBody extends GameTokens {
       dojo.addClass(board,'thisplayer_zone');
     }
 
+  }
+
+  setupHelpSheets() {
+
+
+    const cc = {main: 0, corp: 0};
+    for (const key in this.gamedatas.token_types) {
+      const info = this.gamedatas.token_types[key];
+      if (key.startsWith('card')) {
+        const num = getPart(key,2);
+        const type = getPart(key,1);
+        var helpnode = document.querySelector(`#allcards_${type} .expandablecontent`);
+        if (!helpnode) continue;
+        // XXX hook proper rendering
+        //const div = dojo.place(`<div id='card_${type}_${num}_help' class='card token card_${type} card_${type}_${num}'></div>`, helpnode);
+
+        const token = {
+          key: `card_${type}_${num}_help`,
+          location: helpnode.id,
+          state: 0
+        };
+        const tokenNode = this.createToken(token);
+        this.syncTokenDisplayInfo(tokenNode);
+        this.renderSpecificToken(tokenNode);
+        this.updateTooltip(`card_${type}_${num}`, tokenNode);
+        cc[type]++;
+      }
+    }
+    const ccmain = cc['main'];
+    const cccorp = cc['corp'];
+    $(`allcards_main_title`).innerHTML = _(`All Project Cards (${ccmain})`);
+    $(`allcards_corp_title`).innerHTML = _(`All Corporate Cards (${cccorp})`);
+
+    // clicks
+    dojo.query(".expandablecontent > *").connect("onclick", this, (event) => {
+      var id = event.currentTarget.id;
+      this.showHelp(id, true);
+    });
+    dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
   }
 
   setupDiscard():void {
@@ -147,6 +188,28 @@ class GameXBody extends GameTokens {
         this.previousLayout = 'desktop';
         dojo.removeClass('ebd-body', 'mobile_portrait');
       }
+    }
+  }
+
+  onToggleAllCards (event: any) {
+    dojo.stopEvent(event);
+    var node = event.currentTarget;
+    var parent = node.parentNode.parentNode;
+
+    var content = parent.querySelector(".expandablecontent");
+
+    var toExpand = dojo.style(content, "display") == "none";
+
+    var arrow = parent.querySelector(".expandablearrow " + "div");
+
+    if (toExpand) {
+      dojo.style(content, "display", "block");
+      dojo.removeClass(arrow, "icon20_expand");
+      dojo.addClass(arrow, "icon20_collapse");
+    } else {
+      dojo.style(content, "display", "none");
+      dojo.removeClass(arrow, "icon20_collapse");
+      dojo.addClass(arrow, "icon20_expand");
     }
   }
 
