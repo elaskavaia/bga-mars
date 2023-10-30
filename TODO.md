@@ -7,17 +7,9 @@ Random notes on todo items
 ## Server
 
 * undo - block on draw card
-* passing heat on 0 place ocean
 * lose production does not offer yourself?
 * Missing undo button when inactive during research
-* Rules
-* 26: No mention of the “Add animal to another card” effect ? - DONE
-* 51: 'r' => 'counter(tagEarth),m', Shouldn’t it be pm ? -DONE
-* 64: 'r' => 'tile(adj_own)', No mention of the production increase, normal ? SPECIAL
-* 67: Same as 64 SPECIAL
-* 73, 74: text in VP part, not in effect part ? >   'e' => 'play_tagScience:?(discard:draw)',
-* 108: Missing city gain in rules ? DONE
-* 188: Missing -4mc in rules ? SPECIAL
+
 
 ## Client
 
@@ -59,7 +51,8 @@ Random notes on todo items
 
 ### Client Bonus Features
 
-* Card reference with filters
+* Card reference - done
+  * with filters
 * Sounds
 * Flip animation
 * Log scratch on undo
@@ -68,4 +61,3 @@ Random notes on todo items
 ## Assets
 
 * Waiting for official layered board
-* Ocean icon is wrong (not in asmodee bundle)
