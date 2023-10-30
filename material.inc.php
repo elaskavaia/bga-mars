@@ -2917,6 +2917,7 @@ $this->token_types = [
   'text_action' => clienttranslate("Draw 2 cards."),
 ],
 // #corp cards
+// #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
  'card_corp_1' => [  //
   'location' => 'limbo',
   'create' => 2,
@@ -2928,9 +2929,9 @@ $this->token_types = [
   'r' => '42m',
   'cost' => 0,
   'vp' => 0,
+  'deck' => 'Basic',
   'text' => clienttranslate("You start with 42 MC. You keep 10 starting cards"),
 ],
-// #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
  'card_corp_2' => [  //
   'location' => 'deck_corp',
   'create' => 'single',
