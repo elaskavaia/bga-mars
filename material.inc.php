@@ -1096,7 +1096,7 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 1,
   'deck' => 'Corporate',
-  'text_vp' => clienttranslate("When you play a science tag, including this, you may discard a card from hand to draw a card."),
+  'text_effect' => clienttranslate("When you play a science tag, including this, you may discard a card from hand to draw a card."),
 ],
  'card_main_74' => [  //
   'location' => 'deck_main',
@@ -1109,7 +1109,7 @@ $this->token_types = [
   'tags' => 'Science Microbe',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text_vp' => clienttranslate("When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD."),
+  'text_effect' => clienttranslate("When you play a plant, microbe, or an animal tag, including this, gain 1 plant or add 1 resource TO THAT CARD."),
 ],
  'card_main_75' => [  //
   'location' => 'deck_main',
