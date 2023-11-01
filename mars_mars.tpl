@@ -352,6 +352,7 @@
         <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
           <div id="player_area_name_{PLAYER_COLOR}" class="player_area_name">{PLAYER_NAME}</div>
 
+
           <div
             id="player_viewcards_2_{PLAYER_COLOR}"
             class="viewcards_button"
@@ -388,11 +389,19 @@
               <i class="fa fa-eye" aria-hidden="true"></i>
             </div>
           </div>
-          <!--
-        <div id="player_filter_blue_{PLAYER_COLOR}" class="filter_button filter_blue"  data-color="blue"  data-enabled="1" data-player="{PLAYER_COLOR}">Actions(Blue)</div>
-        <div id="player_filter_green_{PLAYER_COLOR}" class="filter_button filter_green" data-color="green"  data-enabled="1" data-player="{PLAYER_COLOR}">Automated (Green)</div>
-        <div id="player_filter_red_{PLAYER_COLOR}" class="filter_button filter_red" data-color="red" data-enabled="1" data-player="{PLAYER_COLOR}">Events(Red)</div>
-        --></div>
+          <div
+                  id="player_viewcards_0_{PLAYER_COLOR}"
+                  class="viewcards_button"
+                  data-cardtype="0"
+                  data-selected="0"
+                  data-player="{PLAYER_COLOR}"
+          >
+            <div class="buttoncard card_icon">
+              <div id="local_counter_{PLAYER_COLOR}_cards_0" class="viewcardbutton_counter">*</div>
+              <i class="fa fa-eye" aria-hidden="true"></i>
+            </div>
+          </div>
+      </div>
 
         <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
           <div id="tableau_{PLAYER_COLOR}_cards_4" class="cards_4 cards_bin"></div>

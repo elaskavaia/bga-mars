@@ -38,13 +38,13 @@
   top: 0.5em;
   left: 0;
   font-size:  calc(var(--card-width)*0.2);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   color: rgba(0, 0, 0, 0.34);
 /*  transform: rotate(-90deg);
   transform-origin: bottom;*/
 
 
-  transform: rotate(-90deg) translateX(-30px);
+  transform: rotate(-90deg) translateX(-30px) translateY(-8px);
   transform-origin: .5em center 0;
   margin-right: -140px;
   overflow-wrap: break-word;

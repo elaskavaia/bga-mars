@@ -17,7 +17,7 @@ Random notes on todo items
 * Better tooltips
   * Tooltips on Milestones + awards costs & explanations DONE
   * Explanations/help on Tiles
-  * Explanations/help on 
+  * Explanations/help on other elements
 * Finish Awards (still waiting official assets) - DONE will do like this for now
 * Show decoded error on when something cannot be selected/played
 * Show discounted card cost

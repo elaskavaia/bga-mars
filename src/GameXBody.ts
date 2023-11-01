@@ -32,6 +32,8 @@ class GameXBody extends GameTokens {
       this.zoneHeight =0;
 
 
+      this.local_counters['game']={cities:0};
+
       super.setup(gamedatas);
       // hexes are not moved so manually connect
       this.connectClass("hex", "onclick", "onToken");
@@ -421,7 +423,7 @@ class GameXBody extends GameTokens {
             const decor = this.createDivNode(null, "card_decor", tokenNode.id);
             let vp = "";
             if (displayInfo.vp) {
-              vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + "</div>" : '<div class="card_vp">*</div>';
+              vp = parseInt(displayInfo.vp) ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>" : '<div class="card_vp"><div class="number_inside">*</div></div>';
             } else {
               vp = "";
             }
@@ -494,7 +496,7 @@ class GameXBody extends GameTokens {
                   <div class="card_bg"></div>
                   <div class='card_badges'>${tagshtm}</div>
                   <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
-                  <div id='cost_${tokenNode.id}' class='card_cost'>${displayInfo.cost}</div> 
+                  <div id='cost_${tokenNode.id}' class='card_cost'><div class="number_inside">${displayInfo.cost}</div></div> 
                   <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
                   <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
                   <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
@@ -518,8 +520,8 @@ class GameXBody extends GameTokens {
           //card tooltip
           //tokenNode.appendChild(ttdiv);
 
-  
           tokenNode.setAttribute("data-card-type", displayInfo.t);
+
         }
   
         if (displayInfo.mainType=="award" || displayInfo.mainType=="milestone") {
@@ -573,6 +575,13 @@ class GameXBody extends GameTokens {
       $(node.id).dataset.calc = (9-parseInt(newState)).toString();
     }
 
+    //local : number of cities on mars
+    if (node.id.startsWith("tracker_city_")) {
+      this.local_counters['game'].cities=0;
+      for (let plid in this.gamedatas.players) {
+        this.local_counters['game'].cities=this.local_counters['game'].cities+parseInt($("tracker_city_"+this.gamedatas.players[plid].color).dataset.state);
+      }
+    }
 
     //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
@@ -616,6 +625,7 @@ class GameXBody extends GameTokens {
       if (!displayInfo) continue;
       if (!displayInfo.expr.pre) continue;
 
+
       let op = "";
       let what = "";
       let qty=0;
@@ -634,7 +644,6 @@ class GameXBody extends GameTokens {
           qty=displayInfo.expr.pre[2];
         }
       }
-
       let tracker="";
       switch (what) {
         case "o":
@@ -662,9 +671,9 @@ class GameXBody extends GameTokens {
           tracker='tracker_ps_'+this.getPlayerColor(this.player_id);
           break;
         case "all_city":
-         // global city tracker exists ?
-
+          tracker='cities';
           break;
+
       }
 
       if (tracker=="") {
@@ -672,15 +681,20 @@ class GameXBody extends GameTokens {
       }
 
       let valid=false;
-
+      let actual =0;
       // const actual = this.getTokenInfoState(tracker);
-      if (!$(tracker)) {
-        continue;
+      if (this.local_counters['game'][tracker]!=undefined) {
+
+        actual =this.local_counters['game'][tracker];
+      } else {
+        if (!$(tracker)) {
+          continue;
+        }
+        if (!$(tracker).dataset.state) {
+          continue;
+        }
+        actual =parseInt($(tracker).dataset.state);
       }
-      if (!$(tracker).dataset.state) {
-        continue;
-      }
-      const actual =parseInt($(tracker).dataset.state);
 
       if (op=="<=") {
         if (actual<=qty) valid= true;
@@ -803,20 +817,22 @@ class GameXBody extends GameTokens {
         if (!this.isDoingSetup) {
           if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
             let original=0;
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 0; i <= 3; i++) {
               if ($(tokenInfo.location).dataset["visibility_" + i] == "1") original =i;
             }
-            for (let i = 1; i <= 3; i++) {
-              let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
-              if (i == t) {
-                $(tokenInfo.location).dataset["visibility_" + i] = "1";
-                $(btn).dataset.selected = "1";
-              } else {
-                $(btn).dataset.selected = "0";
-                $(tokenInfo.location).dataset["visibility_" + i] = "0";
+            if (original!=0) {
+              for (let i = 1; i <= 3; i++) {
+                let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+                if (i == t) {
+                  $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                  $(btn).dataset.selected = "1";
+                } else {
+                  $(btn).dataset.selected = "0";
+                  $(tokenInfo.location).dataset["visibility_" + i] = "0";
+                }
               }
+              this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
             }
-            this.customAnimation.setOriginalFilter(tokenInfo.location,original,t);
           }
         }
       }
@@ -1418,7 +1434,7 @@ class GameXBody extends GameTokens {
     } else {
       const value = "1";
 
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 0; i <= 3; i++) {
         $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
         $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
       }

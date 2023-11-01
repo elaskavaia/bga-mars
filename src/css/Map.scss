@@ -299,7 +299,7 @@
   border-radius: 30% 30% 0 0;
    */
   padding: 0.3vh;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   text-transform: uppercase;
 }
 
@@ -481,7 +481,7 @@
   height: var(--stan-fullheight);
 }
 .standard_projects_title {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--stan-width) * 0.06);
 }
 
@@ -520,7 +520,7 @@
   */
 
   position: absolute;
-  top: 27%;
+  top: 22%;
   right: 1%;
   width: 44%;
   display: flex;
@@ -580,7 +580,7 @@
   .standard_projects_title{width: 39%; }
 }
 #card_stanproj_6 {
-  top:84%;
+  top: 83.5%;
   .standard_projects_title{width: 29%; }
 }
 
@@ -616,7 +616,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--stan-width) * 0.1);
   left:2%
 }
@@ -652,7 +652,7 @@
 
   .token_img {
     margin-right: revert;
-    font-family: "Prototype";
+    font-family: "SpaceFont";
     font-size:calc(var(--resourcesize) * 0.6);
   }
 
@@ -685,7 +685,7 @@
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
-  font-family: Prototype;
+  font-family: SpaceFont;
   color: white;
 
   #generation_counter{
