@@ -475,7 +475,6 @@
        case "forest":
          break;
        case "w":
-
          break;
      }
 
