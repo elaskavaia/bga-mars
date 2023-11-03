@@ -340,7 +340,7 @@
   display: none;
 }
 
-#starting_player{
+.starting_player{
   position: relative;
   width: 36px;
   height: 36px;
@@ -349,7 +349,7 @@
   background-position: -500% -100%;
 }
 
-#starting_player::after{
+.starting_player::after{
   content: ""; // override tracker value
 }
 

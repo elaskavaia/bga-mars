@@ -221,6 +221,17 @@
   align-items: center;
   overflow-wrap: anywhere;
   height: fit-content;
+  --resourcesize: calc(var(--card-width) * 0.12);
+
+}
+
+.card {
+  .card_action_line {
+    .badge {
+      width: calc(var(--card-width) * 0.12);
+      height: calc(var(--card-width) * 0.12);
+    }
+  }
 }
 
 .card_action_text {
@@ -320,7 +331,11 @@ display: none;
     background-image: url("img/icons.png");
     background-size: 1400% 200%;
     width: calc(var(--card-width) * 0.15);
-    height: calc(var(--card-width) * 0.16);
+    height: calc(var(--card-width) * 0.15);
+  }
+  .token_img.tracker_w {
+    width: calc(var(--card-width) * 0.15);
+    height: calc(var(--card-width) * 0.15);
   }
 
   .plusminus{
@@ -377,11 +392,16 @@ display: none;
 
   }
   .outer_redborder.redborder_hex {
-    width: calc(var(--card-width) * 0.19);
-    height: calc(var(--card-width) * 0.19);
+    width: calc(var(--card-width) * 0.18);
+    height: calc(var(--card-width) * 0.18);
     --resourcesize: calc(var(--card-width) * 0.16);
     .tile {
       margin-left:0;
+    }
+    .token_img {
+      margin-right: 0;
+      width: calc(var(--card-width) * 0.15);
+      height: calc(var(--card-width) * 0.15);
     }
   }
 

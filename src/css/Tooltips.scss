@@ -33,8 +33,96 @@
   padding: 10px;
 }
 
-.mcompact {
+.prereq_notmet{
+  display: none;
+  font-style: italic;
+}
 
+.invalid_prereq {
+  .prereq_notmet{
+    display: block;
+  }
+}
+
+.mcompact {
+  --resourcesize:6vh;
+
+
+
+  .tooltipimage.tracker{
+    width: var(--resourcesize);
+    height: var(--resourcesize);
+    background-image: url("img/resources.png");
+    background-size: 1000% 200%;
+  }
+  .tooltipimage.tracker.tracker_tr{
+    display: none;
+  }
+  .tooltipimage.tracker.tracker_gen{
+    display: none;
+  }
+  .tooltipimage.tracker.tracker_w{
+       display: none;
+  }
+  .tooltipimage.tracker.tracker_p{
+    background-position: 0 0;
+  }
+  .tooltipimage.tracker.tracker_h{
+    background-position: -200% 0;
+  }
+  .tooltipimage.tracker.tracker_m {
+    background-position: -300% 0;
+  }
+  .tooltipimage.tracker.tracker_e{
+    background-position: -500% 0;
+  }
+  .tooltipimage.tracker.tracker_s{
+    background-position: -700% 0;
+  }
+  .tooltipimage.tracker.tracker_u {
+    background-position: -800% 0;
+  }
+  .tooltipimage.tracker.tracker_pp{
+    background-position: 0 0;
+  }
+  .tooltipimage.tracker.tracker_ph{
+    background-position: -200% 0;
+  }
+  .tooltipimage.tracker.tracker_pm {
+    background-position: -300% 0;
+  }
+  .tooltipimage.tracker.tracker_pe{
+    background-position: -500% 0;
+  }
+  .tooltipimage.tracker.tracker_ps{
+    background-position: -700% 0;
+  }
+  .tooltipimage.tracker.tracker_pu {
+    background-position: -800% 0;
+  }
+  .tooltipimage.tracker.tracker_tr {
+    background-position: -900% 0;
+  }
+  .tooltipimage.tracker.badge {
+    background-image: url("img/badges.png");
+    background-size: 1200% 100%;
+  }
+
+  .tooltipimage.tracker.tracker_city {
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -700% 0;
+  }
+  .tooltipimage.tracker.tracker_forest {
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -300% -100%;
+  }
+  .tooltipimage.tracker.tracker_land {
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -200% -100%;
+  }
   .compact_card_tt{
     display: flex;
     --card-width: 25vh;
@@ -78,7 +166,7 @@
       display: flex;
       justify-content: center;
       font-family: "SpaceFont";
-      font-size: 2.5vh;
+      font-size: 2vh;
       background-color: rgba(87, 87, 87, 0.32);
 
     }
@@ -161,6 +249,24 @@
     }
   }
 
+  .card_tooltipimagecontainer{
+    .tracker.badge{
+      position: relative;
+      width: 7vh;
+      height: 7vh;
+    }
+    .tracker.badge::after{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      line-height:  7vh;
+      text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+      color: white;
+      font-size: 3.5vh;
+      font-family: "SpaceFont";
+    }
+  }
 }
 
 .mfull {

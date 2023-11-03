@@ -14,10 +14,10 @@ Random notes on todo items
 ## Client
 
 * Integrate Spend 8p to get 1 greenery in the player board - DONE
-* Better tooltips
+* Better tooltips DONE
   * Tooltips on Milestones + awards costs & explanations DONE
-  * Explanations/help on Tiles
-  * Explanations/help on other elements
+  * Explanations/help on Tiles DONE
+  * Explanations/help on other elements DONE
 * Finish Awards (still waiting official assets) - DONE will do like this for now
 * Show decoded error on when something cannot be selected/played
 * Show discounted card cost

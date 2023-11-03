@@ -291,37 +291,108 @@ class GameXBody extends GameTokens {
   generateCardTooltip_Compact(displayInfo: TokenDisplayInfo): string {
      const type = displayInfo.t;
 
-      let htm= '<div class="compact_card_tt %adcl"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="'+type+'">'+ this.generateCardTooltip(displayInfo)+'</div></div>';
+      let htm= '<div class="compact_card_tt %adcl"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="'+type+'">%t</div></div>';
 
-      let fullcardhtm="";
+      let fullitemhtm="";
+      let fulltxt="";
       let adClass="";
 
-      if (type>=1 && type<=3) { //main cards
-        if (displayInfo.num  &&  $('card_main_' + displayInfo.num)) {
-          fullcardhtm = $('card_main_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;','');
-          if (fullcardhtm.includes('data-invalid_prereq="1"')) {
-            adClass += 'invalid_prereq';
+      if (displayInfo.key.startsWith('card_main') || displayInfo.key.startsWith('card_corp_')
+        || displayInfo.key.startsWith('card_stanproj') || displayInfo.key.startsWith('milestone_')
+        || displayInfo.key.startsWith('award_')) {
+
+        fulltxt=this.generateCardTooltip(displayInfo);
+
+        if (type>=1 && type<=3) { //main cards
+          if (displayInfo.num  &&  $('card_main_' + displayInfo.num)) {
+            fullitemhtm = $('card_main_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;','');
+            if (fullitemhtm.includes('data-invalid_prereq="1"')) {
+              adClass += 'invalid_prereq';
+            }
+          } else {
+            fullitemhtm='<div>NOTFOUND</div>';
           }
-        } else {
-          fullcardhtm='<div>NOTFOUND</div>';
-        }
 
-      } else if (type==4) { //corp
-        if (displayInfo.num && $('card_corp_' + displayInfo.num)) {
-          fullcardhtm = $('card_corp_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;','');
-        }
-      } else if (type==7 || type==8) { //milestones / awards
-        const elem = type==7 ? 'milestone_'+displayInfo.num : 'award_'+displayInfo.num;
-        adClass+='award_milestone';
-        fullcardhtm = $(elem).outerHTML.replaceAll('id="','id="tt_');
+        } else if (type==4) { //corp
+          if (displayInfo.num && $('card_corp_' + displayInfo.num)) {
+            fullitemhtm = $('card_corp_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;','');
+          }
+        } else if (type==7 || type==8) { //milestones / awards
+          const elem = type==7 ? 'milestone_'+displayInfo.num : 'award_'+displayInfo.num;
+          adClass+='award_milestone';
+          fullitemhtm = $(elem).outerHTML.replaceAll('id="','id="tt_');
 
-      } else if (type==0) { //standard project
-        adClass+='standard_project';
+        } else if (type==0) { //standard project
+          adClass+='standard_project';
+        }
+      } else {
+        if ($(displayInfo.key)) {
+          if (displayInfo.key.startsWith('tracker_tr_')
+          ) {
+            fullitemhtm = $(displayInfo.key).outerHTML.replaceAll('id="','id="tt_');
+          }
+
+          /*
+          if (displayInfo.key.startsWith('tracker_m_') ||displayInfo.key.startsWith('tracker_s_') ||displayInfo.key.startsWith('tracker_u_')
+            ||displayInfo.key.startsWith('tracker_p_') ||displayInfo.key.startsWith('tracker_e_')||displayInfo.key.startsWith('tracker_h')) {
+                fullitemhtm="";
+          }*/
+        }
+        fulltxt=this.generateItemTooltip(displayInfo);
       }
 
+      return htm.replace('%adcl',adClass).replace('%c',fullitemhtm).replace('%t',fulltxt);
+  }
 
+  generateItemTooltip(displayInfo: TokenDisplayInfo): string {
+    if (!displayInfo) return "?";
+    let txt="";
+    const key= displayInfo.key.replace('alt_','');
 
-      return htm.replace('%adcl',adClass).replace('%c',fullcardhtm);
+    if (key.startsWith("tracker_tr_")) {
+      txt+=this.generateTooltipSection( _('Terraforming Rating'), _('Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20.'));
+    } else if (key.startsWith("tracker_tag")) {
+      txt+=this.generateTooltipSection( _('Tags'), _('Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag).'));
+    } else if (key.startsWith("tracker_city_")
+           || key.startsWith("tracker_forest_")
+           || key.startsWith("tracker_land_")) {
+      txt+=this.generateTooltipSection( _('Tiles on Mars'), _('Number of corresponding tiles played on Mars.'));
+    } else if (key.startsWith("tracker_m_")) {
+      txt+=this.generateTooltipSection( _('MegaCredits'), _('The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards.'));
+    } else if (key.startsWith("tracker_s_")) {
+      txt+=this.generateTooltipSection( _('Steel'), _('Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel.'));
+    } else if (key.startsWith("tracker_u_")) {
+      txt+=this.generateTooltipSection( _('Titanium'), _('Titanium represents resources in space or for the space industry. Titanium is used to pay for space cards, being worth 3 M€ per titanium.'));
+    } else if (key.startsWith("tracker_p_")) {
+      txt+=this.generateTooltipSection( _('Plants'), _('Plants use photosynthesis. As an action, 8 plant resources can be converted into a greenery tile that you place on the board. This increases the oxygen level (and your TR) 1 step. Each greenery is worth 1 VP and generates 1 VP to each adjacent city tile.'));
+    } else if (key.startsWith("tracker_e_")) {
+      txt+=this.generateTooltipSection( _('Energy'), _('Energy is used by many cities and industries. This usage may either be via an action on a blue card, or via a decrease in energy production. Leftover energy is converted into heat'));
+    } else if (key.startsWith("tracker_h_")) {
+      txt+=this.generateTooltipSection( _('Heat'), _('Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step.'));
+    } else if (key.startsWith("tracker_p")) {
+      txt+=this.generateTooltipSection( _('Resource Production'), _('Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production.'));
+    } else if (key=="tracker_gen") {
+      txt+=this.generateTooltipSection( _('Generations'), _('Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round.'));
+    } else if (key=="tracker_w") {
+      txt+=this.generateTooltipSection( _('Oceans pile'), _('This global parameter starts with 9 tiles in a stack here, to be placed on the board during the game.'));
+    } else if (key=="starting_player") {
+      txt+=this.generateTooltipSection( _('First player marker'), _('Shifts clockwise each generation.'));
+    } else if (key.startsWith("counter_hand_")) {
+      txt+=this.generateTooltipSection( _('Hand count'), _('Amount of cards in player\'s hand.'));
+    } else if (key.startsWith("tile_")) {
+      if (displayInfo.tt==3) {
+        txt += this.generateTooltipSection(_('Ocean'), _('Ocean tiles may only be placed on areas reserved for ocean (see map). Placing an ocean tile increases your TR 1 step. Ocean tiles are not owned by any player. Each ocean tile on the board provides a 2 M€ placement bonus for any player later placing a tile, even another ocean, next to it.'));
+      } else if (displayInfo.tt==2) {
+        txt+=this.generateTooltipSection( _('City'), _('May not be placed next to another city. Each city tile is worth 1 VP for each adjacent greenery tile (regardless of owner) at the end of the game.'));
+      } else if (displayInfo.tt==1) {
+        txt+=this.generateTooltipSection( _('Greenery'), _('If possible, greenery tiles must be placed next to another tile that you own. If you have no available area next to your tiles, or if you have no tile at all, you may place the greenery tile on any available area. When placing a greenery tile, you increase the oxygen level, if possible, and also your TR. If you can’t raise the oxygen level you don’t get the increase in TR either. Greenery tiles are worth 1 VP at the end of the game, and also provide 1 VP to any adjacent city.'));
+      }
+      else {
+        txt+=this.generateTooltipSection( _('Special Tile'), _('Some cards allow you to place special tiles. Any function or placement restriction is described on the card. Place the tile, and place a player marker on it.'));
+      }
+
+    }
+    return txt;
   }
 
   generateCardTooltip(displayInfo: TokenDisplayInfo): string {
@@ -345,7 +416,8 @@ class GameXBody extends GameTokens {
     res+=this.generateTooltipSection( type_name, card_id);
     if (type!=4) res+=this.generateTooltipSection( _('Cost'), displayInfo.cost);
     res+=this.generateTooltipSection( _('Tags'), tags);
-    const prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+    let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+    if (prereqText!="") prereqText+='<div class="prereq_notmet">'+_('(You cannot play this card because pre-requisites are not met.)')+'</div>';
     res+=this.generateTooltipSection( _('Pre-Requisites'), prereqText, true,'tt_prereq');
     res+=this.generateTooltipSection( _('When Played'), displayInfo.text);
     res+=this.generateTooltipSection( _('Effect'), displayInfo.text_effect);
