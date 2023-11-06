@@ -191,7 +191,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 181|Ice cap Melting|3|w|||5|t>=2|Event|0|Basic|Place 1 ocean tile.||||
 182|Corporate Stronghold|1|npe,3pm,city|||11||Building City|-2|Corporate|Decrease your energy production 1 step and increase your MC production 3 steps. Place a city tile.||||
 183|Biomass Combustors|1|1npp_Any,2pe|||4|o>=6|Building Energy|-1|Basic|Decrease any plant production 1 step and increase your energy production 2 steps.||||
-184|Livestock|2|2pm,1npp|res||13|o>=9|Animal|resCard|Basic|Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card,|Add 1 animal to this card.|||'holds' => 'Animal'
+184|Livestock|2|npp,2pm|res||13|o>=9|Animal|resCard|Basic|Decrease your plant production 1 step and increase your MC production 2 steps. 1 VP for each animal on this card,|Add 1 animal to this card.|||'holds' => 'Animal'
 185|Olympus Conference|2|||play_tagScience:((nres,draw)/res)|10||Science Building Earth|1|Corporate|||When you play a science tag, including this, either add a science resource to this card, or remove a science resource from this card to draw a card.||'holds' => 'Science'
 186|Rad-Suits|1|pm|||6|all_city>=2||1|Corporate|Requires 2 cities in play. Increase your MC production 1 step.||||
 187|Aquifer Pumping|2||8nms:w||18||Building|0|Basic||Spend 8 MC to place 1 ocean tile. STEEL MAY BE USED as if you were playing a building card.|||

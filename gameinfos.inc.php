@@ -70,7 +70,7 @@ $gameinfos = array(
 // Game is "beta". A game MUST set is_beta=1 when published on BGA for the first time, and must remains like this until all bugs are fixed.
 'is_beta' => 1,                     
 
-// Is this game cooperative (all players wins together or loose together)
+// Is this game cooperative (all players wins together or lose together)
 'is_coop' => 0, 
 
 

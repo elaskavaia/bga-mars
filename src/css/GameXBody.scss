@@ -115,6 +115,7 @@
 .tracker::after,
 .param::after {
   content: attr(data-state);
+  pointer-events: none;
 }
 
 .playerboard_produce {

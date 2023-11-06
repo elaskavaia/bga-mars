@@ -136,14 +136,14 @@
 
 .hand:after, .draw:after, .draft:after {
   position: absolute;
-  top: 0.5em;
+  top: 0.7em;
   left: 0;
   font-size: calc(var(--card-width) * 0.2);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   color: rgba(0, 0, 0, 0.34);
   /*  transform: rotate(-90deg);
     transform-origin: bottom;*/
-  transform: rotate(-90deg) translateX(-30px);
+  transform: rotate(-90deg) translateX(-30px) translateY(-8px);
   transform-origin: 0.5em center 0;
   margin-right: -140px;
   overflow-wrap: break-word;
@@ -332,7 +332,7 @@
 }
 
 .card_cost {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   position: absolute;
   top: 0%;
   width: calc(var(--card-width) * 0.16);
@@ -366,15 +366,15 @@
 }
 
 .card_title {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   position: absolute;
-  top: 11%;
+  top: 9.7%;
   left: 4%;
   width: 92%;
   display: flex;
   justify-content: center;
   text-transform: uppercase;
-  font-size: calc(var(--card-width) * 0.06);
+  font-size: calc(var(--card-width) * 0.067);
   overflow: hidden;
   height: 6%;
 }
@@ -463,7 +463,7 @@
   align-items: center;
   justify-content: center;
   text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 
 .card_outer_action {
@@ -502,6 +502,12 @@
   align-items: center;
   overflow-wrap: anywhere;
   height: fit-content;
+  --resourcesize: calc(var(--card-width) * 0.12);
+}
+
+.card .card_action_line .badge {
+  width: calc(var(--card-width) * 0.12);
+  height: calc(var(--card-width) * 0.12);
 }
 
 .card_action_text {
@@ -538,7 +544,7 @@
   top: 60%;
   right: 3%;
   font-size: calc(var(--card-width) * 0.04);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   padding: calc(var(--card-width) * 0.005);
   background: #c1c1c1;
   border: 1px solid black;
@@ -546,25 +552,25 @@
 
 .card_number_binary {
   position: absolute;
-  top: 63.3%;
+  top: 62.3%;
   left: 36%;
   width: 28%;
   display: flex;
   font-size: calc(var(--card-width) * 0.05);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   opacity: 0.3;
   justify-content: center;
 }
 
 .card[data-card-type="2"] .card_number_binary {
-  top: 74.2%;
+  top: 73.8%;
 }
 .card[data-card-type="2"] .card_number {
   top: 65.2%;
 }
 
 .card[data-card-type="3"] .card_number_binary {
-  top: 61.2%;
+  top: 60.5%;
 }
 .card[data-card-type="3"] .card_number {
   top: 56.5%;
@@ -578,7 +584,7 @@
   height: 96%;
   flex-shrink: 0;
   text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 .card_icono .tile {
   width: calc(var(--card-width) * 0.15);
@@ -592,7 +598,11 @@
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
   width: calc(var(--card-width) * 0.15);
-  height: calc(var(--card-width) * 0.16);
+  height: calc(var(--card-width) * 0.15);
+}
+.card_icono .token_img.tracker_w {
+  width: calc(var(--card-width) * 0.15);
+  height: calc(var(--card-width) * 0.15);
 }
 .card_icono .plusminus {
   width: calc(var(--card-width) * 0.06);
@@ -630,19 +640,29 @@
   margin-right: calc(var(--card-width) * 0.01);
 }
 .card_icono .outer_redborder {
+  /*
   width: calc(var(--card-width) * 0.15);
-  height: calc(var(--card-width) * 0.15);
+  height: calc(var(--card-width) * 0.15);*/
+  width: var(--resourcesize);
+  height: var(--resourcesize);
 }
 .card_icono .outer_redborder .token_img {
   margin-right: 0;
+  width: calc(var(--resourcesize) * 0.85);
+  height: calc(var(--resourcesize) * 0.85);
 }
 .card_icono .outer_redborder.redborder_hex {
-  width: calc(var(--card-width) * 0.19);
-  height: calc(var(--card-width) * 0.19);
+  width: calc(var(--card-width) * 0.18);
+  height: calc(var(--card-width) * 0.18);
   --resourcesize: calc(var(--card-width) * 0.16);
 }
 .card_icono .outer_redborder.redborder_hex .tile {
   margin-left: 0;
+}
+.card_icono .outer_redborder.redborder_hex .token_img {
+  margin-right: 0;
+  width: calc(var(--card-width) * 0.15);
+  height: calc(var(--card-width) * 0.15);
 }
 .card_icono .breaker {
   flex-basis: 100%;
@@ -729,10 +749,10 @@
 
 .card_prereq {
   position: absolute;
-  top: 3%;
+  top: 2.8%;
   left: 21%;
-  font-family: "Prototype";
-  font-size: calc(var(--card-width) * 0.06);
+  font-family: "SpaceFont";
+  font-size: calc(var(--card-width) * 0.065);
   /*background: #f7d543;*/
   height: 6.2%;
   --resourcesize: calc(var(--card-width) * 0.08);
@@ -756,6 +776,15 @@
   color: red;
 }
 
+.prereq_content {
+  display: flex;
+  width: fit-content;
+  min-width: calc(var(--card-width) * 0.22);
+  padding-left: calc(var(--card-width) * 0.01);
+  background: radial-gradient(circle, rgb(255, 232, 10) 0%, rgb(231, 164, 3) 100%);
+  align-items: center;
+  height: calc(var(--card-width) * 0.09);
+}
 .prereq_content .token_img {
   margin-right: 0;
 }
@@ -805,17 +834,9 @@
   flex-direction: row-reverse;
 }
 
-.prereq_content {
-  display: block;
-  width: fit-content;
-  min-width: calc(var(--card-width) * 0.22);
-  padding-left: calc(var(--card-width) * 0.01);
-  background: radial-gradient(circle, rgb(255, 232, 10) 0%, rgb(231, 164, 3) 100%);
-}
-
 .card .prereq_content > * {
-  display: inline-block;
-  vertical-align: middle;
+  /*display: inline-block;
+  vertical-align: middle;*/
 }
 
 .card .prereq_content > .outer_production {
@@ -840,13 +861,17 @@
   position: absolute;
   bottom: 1%;
   right: 1%;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  font-size: calc(var(--card-width) * 0.1);
+  font-size: calc(var(--card-width) * 0.12);
+}
+.card_vp .number_inside {
+  top: -5%;
+  position: relative;
 }
 
 .card .badge {
@@ -2596,14 +2621,14 @@
   background: rgba(208, 198, 183, 0.6509803922);
   font-weight: lighter;
   font-size: calc(var(--card-width) * 0.08);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 .card_hovertt .tt_intertitle {
   width: 100%;
   display: flex;
   justify-content: center;
   font-size: calc(var(--card-width) * 0.07);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 .card_hovertt .tt_linegroup {
   width: 100%;
@@ -2724,7 +2749,7 @@
   color: black;
   font-size: calc(var(--resourcesize) * 0.8);
   text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 .mcompact .card_resource_holder .card_line_holder {
   width: 100%;
@@ -2840,7 +2865,7 @@
   display: none;
 }
 .card_main_66 .card_tt {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-style: normal;
   font-size: calc(var(--card-width) * 0.06);
   text-align: center;
@@ -2898,7 +2923,7 @@
 }
 
 .card_main_110 .card_action .outer_gains {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--card-width) * 0.05);
 }
 .card_main_110 .card_action .card_action_text {
@@ -2909,7 +2934,7 @@
   display: none;
 }
 .card_main_111 .card_effect .card_tt {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -2983,7 +3008,7 @@
   display: none;
 }
 .card_main_149 .card_effect .card_tt {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3002,7 +3027,7 @@
   flex-direction: column;
 }
 .card_main_173 .card_action_line.card_action_icono .groupline {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--card-width) * 0.05);
   text-transform: uppercase;
   font-style: revert;
@@ -3020,7 +3045,7 @@
   display: none;
 }
 .card_main_192 .card_effect .card_tt {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3031,7 +3056,7 @@
   display: none;
 }
 .card_main_195 .card_effect .card_tt {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3790,7 +3815,7 @@
   border-radius: 30% 30% 0 0;
    */
   padding: 0.3vh;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   text-transform: uppercase;
 }
 
@@ -4144,7 +4169,7 @@
 }
 
 .standard_projects_title {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--stan-width) * 0.06);
 }
 
@@ -4182,7 +4207,7 @@
   background: gold;
   */
   position: absolute;
-  top: 27%;
+  top: 22%;
   right: 1%;
   width: 44%;
   display: flex;
@@ -4254,7 +4279,7 @@
 }
 
 #card_stanproj_6 {
-  top: 84%;
+  top: 83.5%;
 }
 #card_stanproj_6 .standard_projects_title {
   width: 29%;
@@ -4292,7 +4317,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--stan-width) * 0.1);
   left: 2%;
 }
@@ -4326,7 +4351,7 @@
 }
 .stanp_decor .token_img {
   margin-right: revert;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   font-size: calc(var(--resourcesize) * 0.6);
 }
 .stanp_decor .tile {
@@ -4356,7 +4381,7 @@
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
-  font-family: Prototype;
+  font-family: SpaceFont;
   color: white;
 }
 .outer_generation #generation_counter {
@@ -4521,7 +4546,7 @@
   background-position: -200% 0;
 }
 
-.token_img.tracker_m {
+.tracker_m {
   background-position: -300% 0;
 }
 
@@ -4573,7 +4598,7 @@
   background-position: -800% 0;
 }
 
-.token_img.tracker_tr {
+.tracker_tr {
   background-position: -900% 0;
 }
 
@@ -4617,7 +4642,7 @@
   grid-row-gap: 0px;
   width: calc(var(--resourcesize) * 1);
   height: calc(var(--resourcesize) * 2);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   position: relative;
   font-size: calc(var(--resourcesize) * 0.55);
   font-weight: normal;
@@ -4654,7 +4679,7 @@
   color: white;
   font-size: 14px;
   line-height: 16px;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 
 .player_score .fa-star {
@@ -4759,7 +4784,7 @@
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: calc(var(--pb_cellsize) * 0.4);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 
 .playerboard_header .player_tags .badge {
@@ -4842,7 +4867,7 @@
   position: absolute;
   z-index: 1;
   color: var(--plcolor);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   left: 0;
   min-width: calc(var(--card-width) * 1);
   display: flex;
@@ -4861,7 +4886,7 @@
   display: flex;
   --resourcesize: 2em;
   --producesize: 1.6em;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   flex-wrap: wrap;
 }
 .mcompact .playerboard_group {
@@ -4963,7 +4988,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
+  pointer-events: none;
 }
 .player_area .player_tags .tracker[data-state="0"] {
   display: none;
@@ -5159,6 +5185,45 @@
   /*position: absolute;*/
   opacity: 0;
 }
+.mcompact .tableau[data-visibility_0="1"] {
+  display: flex;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_2a {
+  order: 0;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_2 {
+  order: 1;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_1vp {
+  order: 2;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_3vp {
+  order: 3;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_1 {
+  order: 4;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_3 {
+  order: 5;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_2, .mcompact .tableau[data-visibility_0="1"] .cards_2a {
+  visibility: visible;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_1, .mcompact .tableau[data-visibility_0="1"] .cards_1vp {
+  visibility: visible;
+}
+.mcompact .tableau[data-visibility_0="1"] .cards_3, .mcompact .tableau[data-visibility_0="1"] .cards_3vp {
+  visibility: visible;
+}
+.mcompact .tableau[data-visibility_0="1"] .card[data-card-type="2"] {
+  opacity: 1;
+}
+.mcompact .tableau[data-visibility_0="1"] .card[data-card-type="1"] {
+  opacity: 1;
+}
+.mcompact .tableau[data-visibility_0="1"] .card[data-card-type="3"] {
+  opacity: 1;
+}
 .mcompact .cards_1, .mcompact .cards_3 {
   display: flex;
   /*
@@ -5310,7 +5375,7 @@
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: calc(var(--pb_cellsize) * 0.4);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 .mcompact .player_counters .playerboard_group {
   position: relative;
@@ -5323,8 +5388,8 @@
   grid-row-gap: 0px;
   width: calc(var(--resourcesize) * 2.2);
   height: calc(var(--resourcesize) * 1);
-  font-family: "Prototype";
-  font-size: calc(var(--resourcesize) * 0.4);
+  font-family: "SpaceFont";
+  font-size: calc(var(--resourcesize) * 0.5);
   margin: calc(var(--resourcesize) * 0.06);
 }
 .mcompact .player_counters .playerboard_group .playerboard_group_img {
@@ -5340,12 +5405,14 @@
   width: revert;
   height: revert;
   grid-area: 2/2/3/3;
+  overflow: hidden;
 }
 .mcompact .player_counters .playerboard_group .playerboard_own {
   width: revert;
   height: revert;
   background: rgba(255, 255, 255, 0.4901960784);
   grid-area: 1/2/2/3;
+  overflow: hidden;
 }
 .mcompact .player_counters .playerboard_group .player_tags .badge[data-state="0"], .mcompact .player_counters .playerboard_group .tracker[data-state="0"] {
   display: revert;
@@ -5384,6 +5451,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.mcompact .viewcards_button[data-cardtype="0"] .buttoncard {
+  background: linear-gradient(135deg, rgb(103, 177, 241) 0%, rgb(181, 255, 130) 50%, rgb(246, 76, 76) 100%);
 }
 .mcompact .viewcards_button[data-cardtype="1"] .buttoncard {
   background-color: #b5ff82;
@@ -5489,7 +5559,7 @@
   --resourcesize: 30px;
 }
 #generalactions .token_img {
-  font-family: Prototype;
+  font-family: SpaceFont;
   margin-left: 5px;
 }
 #generalactions .tracker_m {
@@ -5560,7 +5630,7 @@
 }
 
 .payment_item_value {
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   display: flex;
   justify-content: center;
   align-items: center;
@@ -5610,6 +5680,114 @@
   padding: 10px;
 }
 
+.prereq_notmet {
+  display: none;
+  font-style: italic;
+}
+
+.invalid_prereq .prereq_notmet {
+  display: block;
+}
+
+.mcompact {
+  --resourcesize: 6vh;
+}
+
+.mfull {
+  --resourcesize: 32px;
+}
+
+.tooltipimage.tracker {
+  width: var(--resourcesize);
+  height: var(--resourcesize);
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+}
+
+.tooltipimage.tracker.tracker_p {
+  background-position: 0 0;
+}
+
+.tooltipimage.tracker.tracker_h {
+  background-position: -200% 0;
+}
+
+.tooltipimage.tracker.tracker_m {
+  background-position: -300% 0;
+}
+
+.tooltipimage.tracker.tracker_e {
+  background-position: -500% 0;
+}
+
+.tooltipimage.tracker.tracker_s {
+  background-position: -700% 0;
+}
+
+.tooltipimage.tracker.tracker_u {
+  background-position: -800% 0;
+}
+
+.tooltipimage.tracker.tracker_pp {
+  background-position: 0 0;
+}
+
+.tooltipimage.tracker.tracker_ph {
+  background-position: -200% 0;
+}
+
+.tooltipimage.tracker.tracker_pm {
+  background-position: -300% 0;
+}
+
+.tooltipimage.tracker.tracker_pe {
+  background-position: -500% 0;
+}
+
+.tooltipimage.tracker.tracker_ps {
+  background-position: -700% 0;
+}
+
+.tooltipimage.tracker.tracker_pu {
+  background-position: -800% 0;
+}
+
+.tooltipimage.tracker.tracker_tr {
+  background-position: -900% 0;
+}
+
+.tooltipimage.tracker.badge {
+  background-image: url("img/badges.png");
+  background-size: 1200% 100%;
+}
+
+.tooltipimage.tracker.tracker_city {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -700% 0;
+}
+
+.tooltipimage.tracker.tracker_forest {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -300% -100%;
+}
+
+.tooltipimage.tracker.tracker_land {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -200% -100%;
+}
+
+.mcompact .tooltipimage.tracker.tracker_tr {
+  display: none;
+}
+.mcompact .tooltipimage.tracker.tracker_gen {
+  display: none;
+}
+.mcompact .tooltipimage.tracker.tracker_w {
+  display: none;
+}
 .mcompact .compact_card_tt {
   display: flex;
   --card-width: 25vh;
@@ -5659,8 +5837,8 @@
 .mcompact .card_stanproj_6_tooltipcontainer .tooltiptitle {
   display: flex;
   justify-content: center;
-  font-family: "Prototype";
-  font-size: 2.5vh;
+  font-family: "SpaceFont";
+  font-size: 2vh;
   background-color: rgba(87, 87, 87, 0.32);
 }
 .mcompact .card_tooltipcontainer .tooltipimage,
@@ -5715,12 +5893,12 @@
 .mcompact .tt_intertitle {
   text-transform: uppercase;
   font-size: 1.7vh;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   width: 100%;
   display: flex;
   justify-content: center;
   font-size: calc(var(--card-width) * 0.07);
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   background: #ffe9a8;
 }
 .mcompact .card_tooltipcontainer[data-card-type="1"] .tt_intertitle {
@@ -5739,6 +5917,22 @@
   position: relative;
   width: calc(var(--map-width) * 0.217);
   height: calc(var(--map-width) * 0.24);
+}
+.mcompact .card_tooltipimagecontainer .tracker.badge {
+  position: relative;
+  width: 7vh;
+  height: 7vh;
+}
+.mcompact .card_tooltipimagecontainer .tracker.badge::after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 7vh;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: 3.5vh;
+  font-family: "SpaceFont";
 }
 
 .mfull #ebd-body {
@@ -5777,7 +5971,6 @@
 }
 .mfull .tooltipcontainer,
 .mfull .tundra .dijitTooltipContainer {
-  background-color: transparent;
   border: unset;
   border-radius: unset;
   padding: unset;
@@ -6020,7 +6213,7 @@
 }
 .mfull .map_milesawardscontent {
   position: absolute;
-  top: 58%;
+  top: 8%;
   left: 2%;
   width: 100%;
   height: 100%;
@@ -6077,7 +6270,8 @@
   position: absolute;
   top: 10%;
   left: 76%;
-  clip-path: revert;
+  width: calc(var(--stan-width) * 0.45);
+  height: calc(var(--stan-width) * 0.54);
 }
 .mfull .player_area_name {
   background: none;
@@ -6176,838 +6370,6 @@
 .mfull .active_slot.card:hover {
   outline: unset;
 }
-.mfull .card_main_1 {
-  background-position: 0% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_2 {
-  background-position: 11.1111111111% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_3 {
-  background-position: 22.2222222222% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_4 {
-  background-position: 33.3333333333% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_5 {
-  background-position: 44.4444444444% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_6 {
-  background-position: 55.5555555556% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_7 {
-  background-position: 66.6666666667% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_8 {
-  background-position: 77.7777777778% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_9 {
-  background-position: 88.8888888889% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_10 {
-  background-position: 100% 0%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_11 {
-  background-position: 0% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_12 {
-  background-position: 11.1111111111% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_13 {
-  background-position: 22.2222222222% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_14 {
-  background-position: 33.3333333333% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_15 {
-  background-position: 44.4444444444% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_16 {
-  background-position: 55.5555555556% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_17 {
-  background-position: 66.6666666667% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_18 {
-  background-position: 77.7777777778% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_19 {
-  background-position: 88.8888888889% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_20 {
-  background-position: 100% 14.2857142857%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_21 {
-  background-position: 0% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_22 {
-  background-position: 11.1111111111% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_23 {
-  background-position: 22.2222222222% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_24 {
-  background-position: 33.3333333333% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_25 {
-  background-position: 44.4444444444% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_26 {
-  background-position: 55.5555555556% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_27 {
-  background-position: 66.6666666667% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_28 {
-  background-position: 77.7777777778% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_29 {
-  background-position: 88.8888888889% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_30 {
-  background-position: 100% 28.5714285714%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_31 {
-  background-position: 0% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_32 {
-  background-position: 11.1111111111% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_33 {
-  background-position: 22.2222222222% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_34 {
-  background-position: 33.3333333333% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_35 {
-  background-position: 44.4444444444% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_36 {
-  background-position: 55.5555555556% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_37 {
-  background-position: 66.6666666667% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_38 {
-  background-position: 77.7777777778% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_39 {
-  background-position: 88.8888888889% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_40 {
-  background-position: 100% 42.8571428571%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_41 {
-  background-position: 0% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_42 {
-  background-position: 11.1111111111% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_43 {
-  background-position: 22.2222222222% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_44 {
-  background-position: 33.3333333333% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_45 {
-  background-position: 44.4444444444% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_46 {
-  background-position: 55.5555555556% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_47 {
-  background-position: 66.6666666667% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_48 {
-  background-position: 77.7777777778% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_49 {
-  background-position: 88.8888888889% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_50 {
-  background-position: 100% 57.1428571429%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_51 {
-  background-position: 0% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_52 {
-  background-position: 11.1111111111% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_53 {
-  background-position: 22.2222222222% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_54 {
-  background-position: 33.3333333333% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_55 {
-  background-position: 44.4444444444% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_56 {
-  background-position: 55.5555555556% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_57 {
-  background-position: 66.6666666667% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_58 {
-  background-position: 77.7777777778% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_59 {
-  background-position: 88.8888888889% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_60 {
-  background-position: 100% 71.4285714286%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_61 {
-  background-position: 0% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_62 {
-  background-position: 11.1111111111% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_63 {
-  background-position: 22.2222222222% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_64 {
-  background-position: 33.3333333333% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_65 {
-  background-position: 44.4444444444% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_66 {
-  background-position: 55.5555555556% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_67 {
-  background-position: 66.6666666667% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_68 {
-  background-position: 77.7777777778% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_69 {
-  background-position: 88.8888888889% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_70 {
-  background-position: 100% 85.7142857143%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_71 {
-  background-position: 0% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_72 {
-  background-position: 11.1111111111% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_73 {
-  background-position: 22.2222222222% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_74 {
-  background-position: 33.3333333333% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_75 {
-  background-position: 44.4444444444% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_76 {
-  background-position: 55.5555555556% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_77 {
-  background-position: 66.6666666667% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_78 {
-  background-position: 77.7777777778% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_79 {
-  background-position: 88.8888888889% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_80 {
-  background-position: 100% 100%;
-  background-image: url(img/full/cards1.jpg);
-}
-.mfull .card_main_81 {
-  background-position: 0% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_82 {
-  background-position: 11.1111111111% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_83 {
-  background-position: 22.2222222222% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_84 {
-  background-position: 33.3333333333% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_85 {
-  background-position: 44.4444444444% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_86 {
-  background-position: 55.5555555556% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_87 {
-  background-position: 66.6666666667% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_88 {
-  background-position: 77.7777777778% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_89 {
-  background-position: 88.8888888889% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_90 {
-  background-position: 100% 0%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_91 {
-  background-position: 0% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_92 {
-  background-position: 11.1111111111% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_93 {
-  background-position: 22.2222222222% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_94 {
-  background-position: 33.3333333333% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_95 {
-  background-position: 44.4444444444% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_96 {
-  background-position: 55.5555555556% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_97 {
-  background-position: 66.6666666667% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_98 {
-  background-position: 77.7777777778% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_99 {
-  background-position: 88.8888888889% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_100 {
-  background-position: 100% 14.2857142857%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_101 {
-  background-position: 0% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_102 {
-  background-position: 11.1111111111% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_103 {
-  background-position: 22.2222222222% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_104 {
-  background-position: 33.3333333333% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_105 {
-  background-position: 44.4444444444% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_106 {
-  background-position: 55.5555555556% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_107 {
-  background-position: 66.6666666667% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_108 {
-  background-position: 77.7777777778% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_109 {
-  background-position: 88.8888888889% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_110 {
-  background-position: 100% 28.5714285714%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_111 {
-  background-position: 0% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_112 {
-  background-position: 11.1111111111% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_113 {
-  background-position: 22.2222222222% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_114 {
-  background-position: 33.3333333333% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_115 {
-  background-position: 44.4444444444% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_116 {
-  background-position: 55.5555555556% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_117 {
-  background-position: 66.6666666667% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_118 {
-  background-position: 77.7777777778% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_119 {
-  background-position: 88.8888888889% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_120 {
-  background-position: 100% 42.8571428571%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_121 {
-  background-position: 0% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_122 {
-  background-position: 11.1111111111% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_123 {
-  background-position: 22.2222222222% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_124 {
-  background-position: 33.3333333333% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_125 {
-  background-position: 44.4444444444% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_126 {
-  background-position: 55.5555555556% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_127 {
-  background-position: 66.6666666667% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_128 {
-  background-position: 77.7777777778% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_129 {
-  background-position: 88.8888888889% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_130 {
-  background-position: 100% 57.1428571429%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_131 {
-  background-position: 0% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_132 {
-  background-position: 11.1111111111% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_133 {
-  background-position: 22.2222222222% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_134 {
-  background-position: 33.3333333333% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_135 {
-  background-position: 44.4444444444% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_136 {
-  background-position: 55.5555555556% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_137 {
-  background-position: 66.6666666667% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_138 {
-  background-position: 77.7777777778% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_139 {
-  background-position: 88.8888888889% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_140 {
-  background-position: 100% 71.4285714286%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_141 {
-  background-position: 0% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_142 {
-  background-position: 11.1111111111% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_143 {
-  background-position: 22.2222222222% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_144 {
-  background-position: 33.3333333333% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_145 {
-  background-position: 44.4444444444% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_146 {
-  background-position: 55.5555555556% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_147 {
-  background-position: 66.6666666667% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_148 {
-  background-position: 77.7777777778% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_149 {
-  background-position: 88.8888888889% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_150 {
-  background-position: 100% 85.7142857143%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_151 {
-  background-position: 0% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_152 {
-  background-position: 11.1111111111% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_153 {
-  background-position: 22.2222222222% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_154 {
-  background-position: 33.3333333333% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_155 {
-  background-position: 44.4444444444% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_156 {
-  background-position: 55.5555555556% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_157 {
-  background-position: 66.6666666667% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_158 {
-  background-position: 77.7777777778% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_159 {
-  background-position: 88.8888888889% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_160 {
-  background-position: 100% 100%;
-  background-image: url(img/full/cards2.jpg);
-}
-.mfull .card_main_161 {
-  background-position: 0% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_162 {
-  background-position: 11.1111111111% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_163 {
-  background-position: 22.2222222222% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_164 {
-  background-position: 33.3333333333% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_165 {
-  background-position: 44.4444444444% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_166 {
-  background-position: 55.5555555556% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_167 {
-  background-position: 66.6666666667% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_168 {
-  background-position: 77.7777777778% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_169 {
-  background-position: 88.8888888889% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_170 {
-  background-position: 100% 0%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_171 {
-  background-position: 0% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_172 {
-  background-position: 11.1111111111% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_173 {
-  background-position: 22.2222222222% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_174 {
-  background-position: 33.3333333333% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_175 {
-  background-position: 44.4444444444% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_176 {
-  background-position: 55.5555555556% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_177 {
-  background-position: 66.6666666667% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_178 {
-  background-position: 77.7777777778% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_179 {
-  background-position: 88.8888888889% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_180 {
-  background-position: 100% 25%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_181 {
-  background-position: 0% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_182 {
-  background-position: 11.1111111111% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_183 {
-  background-position: 22.2222222222% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_184 {
-  background-position: 33.3333333333% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_185 {
-  background-position: 44.4444444444% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_186 {
-  background-position: 55.5555555556% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_187 {
-  background-position: 66.6666666667% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_188 {
-  background-position: 77.7777777778% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_189 {
-  background-position: 88.8888888889% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_190 {
-  background-position: 100% 50%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_191 {
-  background-position: 0% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_192 {
-  background-position: 11.1111111111% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_193 {
-  background-position: 22.2222222222% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_194 {
-  background-position: 33.3333333333% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_195 {
-  background-position: 44.4444444444% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_196 {
-  background-position: 55.5555555556% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_197 {
-  background-position: 66.6666666667% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_198 {
-  background-position: 77.7777777778% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_199 {
-  background-position: 88.8888888889% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_200 {
-  background-position: 100% 75%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_201 {
-  background-position: 0% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_202 {
-  background-position: 11.1111111111% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_203 {
-  background-position: 22.2222222222% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_204 {
-  background-position: 33.3333333333% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_205 {
-  background-position: 44.4444444444% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_206 {
-  background-position: 55.5555555556% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_207 {
-  background-position: 66.6666666667% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
-.mfull .card_main_208 {
-  background-position: 77.7777777778% 100%;
-  background-image: url(img/full/cards3.jpg);
-}
 .mfull .card.corp {
   background-size: 600% auto;
 }
@@ -7058,6 +6420,12 @@
 .mfull .card_corp_12 {
   background-position: 80% 50%;
   background-image: url(img/full/cardsC.jpg);
+}
+.mfull .card_corp_9 {
+  background-position: 0% 50%;
+}
+.mfull .card_corp_8 {
+  background-position: 20% 50%;
 }
 .mfull .playerboard_header .badge ~ .mini_counter[data-state="0"] {
   opacity: 0.2;
@@ -7271,6 +6639,1258 @@
   display: none;
 }
 
+.card.cardhelp {
+  background-size: 1000% auto;
+}
+
+.mfull .card_main_1,
+.cardhelp.card_main_1 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_2,
+.cardhelp.card_main_2 {
+  background-position: 11.1111111111% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_3,
+.cardhelp.card_main_3 {
+  background-position: 22.2222222222% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_4,
+.cardhelp.card_main_4 {
+  background-position: 33.3333333333% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_5,
+.cardhelp.card_main_5 {
+  background-position: 44.4444444444% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_6,
+.cardhelp.card_main_6 {
+  background-position: 55.5555555556% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_7,
+.cardhelp.card_main_7 {
+  background-position: 66.6666666667% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_8,
+.cardhelp.card_main_8 {
+  background-position: 77.7777777778% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_9,
+.cardhelp.card_main_9 {
+  background-position: 88.8888888889% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_10,
+.cardhelp.card_main_10 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_11,
+.cardhelp.card_main_11 {
+  background-position: 0% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_12,
+.cardhelp.card_main_12 {
+  background-position: 11.1111111111% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_13,
+.cardhelp.card_main_13 {
+  background-position: 22.2222222222% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_14,
+.cardhelp.card_main_14 {
+  background-position: 33.3333333333% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_15,
+.cardhelp.card_main_15 {
+  background-position: 44.4444444444% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_16,
+.cardhelp.card_main_16 {
+  background-position: 55.5555555556% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_17,
+.cardhelp.card_main_17 {
+  background-position: 66.6666666667% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_18,
+.cardhelp.card_main_18 {
+  background-position: 77.7777777778% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_19,
+.cardhelp.card_main_19 {
+  background-position: 88.8888888889% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_20,
+.cardhelp.card_main_20 {
+  background-position: 100% 14.2857142857%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_21,
+.cardhelp.card_main_21 {
+  background-position: 0% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_22,
+.cardhelp.card_main_22 {
+  background-position: 11.1111111111% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_23,
+.cardhelp.card_main_23 {
+  background-position: 22.2222222222% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_24,
+.cardhelp.card_main_24 {
+  background-position: 33.3333333333% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_25,
+.cardhelp.card_main_25 {
+  background-position: 44.4444444444% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_26,
+.cardhelp.card_main_26 {
+  background-position: 55.5555555556% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_27,
+.cardhelp.card_main_27 {
+  background-position: 66.6666666667% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_28,
+.cardhelp.card_main_28 {
+  background-position: 77.7777777778% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_29,
+.cardhelp.card_main_29 {
+  background-position: 88.8888888889% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_30,
+.cardhelp.card_main_30 {
+  background-position: 100% 28.5714285714%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_31,
+.cardhelp.card_main_31 {
+  background-position: 0% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_32,
+.cardhelp.card_main_32 {
+  background-position: 11.1111111111% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_33,
+.cardhelp.card_main_33 {
+  background-position: 22.2222222222% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_34,
+.cardhelp.card_main_34 {
+  background-position: 33.3333333333% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_35,
+.cardhelp.card_main_35 {
+  background-position: 44.4444444444% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_36,
+.cardhelp.card_main_36 {
+  background-position: 55.5555555556% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_37,
+.cardhelp.card_main_37 {
+  background-position: 66.6666666667% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_38,
+.cardhelp.card_main_38 {
+  background-position: 77.7777777778% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_39,
+.cardhelp.card_main_39 {
+  background-position: 88.8888888889% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_40,
+.cardhelp.card_main_40 {
+  background-position: 100% 42.8571428571%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_41,
+.cardhelp.card_main_41 {
+  background-position: 0% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_42,
+.cardhelp.card_main_42 {
+  background-position: 11.1111111111% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_43,
+.cardhelp.card_main_43 {
+  background-position: 22.2222222222% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_44,
+.cardhelp.card_main_44 {
+  background-position: 33.3333333333% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_45,
+.cardhelp.card_main_45 {
+  background-position: 44.4444444444% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_46,
+.cardhelp.card_main_46 {
+  background-position: 55.5555555556% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_47,
+.cardhelp.card_main_47 {
+  background-position: 66.6666666667% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_48,
+.cardhelp.card_main_48 {
+  background-position: 77.7777777778% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_49,
+.cardhelp.card_main_49 {
+  background-position: 88.8888888889% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_50,
+.cardhelp.card_main_50 {
+  background-position: 100% 57.1428571429%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_51,
+.cardhelp.card_main_51 {
+  background-position: 0% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_52,
+.cardhelp.card_main_52 {
+  background-position: 11.1111111111% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_53,
+.cardhelp.card_main_53 {
+  background-position: 22.2222222222% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_54,
+.cardhelp.card_main_54 {
+  background-position: 33.3333333333% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_55,
+.cardhelp.card_main_55 {
+  background-position: 44.4444444444% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_56,
+.cardhelp.card_main_56 {
+  background-position: 55.5555555556% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_57,
+.cardhelp.card_main_57 {
+  background-position: 66.6666666667% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_58,
+.cardhelp.card_main_58 {
+  background-position: 77.7777777778% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_59,
+.cardhelp.card_main_59 {
+  background-position: 88.8888888889% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_60,
+.cardhelp.card_main_60 {
+  background-position: 100% 71.4285714286%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_61,
+.cardhelp.card_main_61 {
+  background-position: 0% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_62,
+.cardhelp.card_main_62 {
+  background-position: 11.1111111111% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_63,
+.cardhelp.card_main_63 {
+  background-position: 22.2222222222% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_64,
+.cardhelp.card_main_64 {
+  background-position: 33.3333333333% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_65,
+.cardhelp.card_main_65 {
+  background-position: 44.4444444444% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_66,
+.cardhelp.card_main_66 {
+  background-position: 55.5555555556% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_67,
+.cardhelp.card_main_67 {
+  background-position: 66.6666666667% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_68,
+.cardhelp.card_main_68 {
+  background-position: 77.7777777778% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_69,
+.cardhelp.card_main_69 {
+  background-position: 88.8888888889% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_70,
+.cardhelp.card_main_70 {
+  background-position: 100% 85.7142857143%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_71,
+.cardhelp.card_main_71 {
+  background-position: 0% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_72,
+.cardhelp.card_main_72 {
+  background-position: 11.1111111111% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_73,
+.cardhelp.card_main_73 {
+  background-position: 22.2222222222% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_74,
+.cardhelp.card_main_74 {
+  background-position: 33.3333333333% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_75,
+.cardhelp.card_main_75 {
+  background-position: 44.4444444444% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_76,
+.cardhelp.card_main_76 {
+  background-position: 55.5555555556% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_77,
+.cardhelp.card_main_77 {
+  background-position: 66.6666666667% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_78,
+.cardhelp.card_main_78 {
+  background-position: 77.7777777778% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_79,
+.cardhelp.card_main_79 {
+  background-position: 88.8888888889% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_80,
+.cardhelp.card_main_80 {
+  background-position: 100% 100%;
+  background-image: url(img/full/cards1.jpg);
+}
+
+.mfull .card_main_81,
+.cardhelp.card_main_81 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_82,
+.cardhelp.card_main_82 {
+  background-position: 11.1111111111% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_83,
+.cardhelp.card_main_83 {
+  background-position: 22.2222222222% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_84,
+.cardhelp.card_main_84 {
+  background-position: 33.3333333333% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_85,
+.cardhelp.card_main_85 {
+  background-position: 44.4444444444% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_86,
+.cardhelp.card_main_86 {
+  background-position: 55.5555555556% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_87,
+.cardhelp.card_main_87 {
+  background-position: 66.6666666667% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_88,
+.cardhelp.card_main_88 {
+  background-position: 77.7777777778% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_89,
+.cardhelp.card_main_89 {
+  background-position: 88.8888888889% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_90,
+.cardhelp.card_main_90 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_91,
+.cardhelp.card_main_91 {
+  background-position: 0% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_92,
+.cardhelp.card_main_92 {
+  background-position: 11.1111111111% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_93,
+.cardhelp.card_main_93 {
+  background-position: 22.2222222222% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_94,
+.cardhelp.card_main_94 {
+  background-position: 33.3333333333% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_95,
+.cardhelp.card_main_95 {
+  background-position: 44.4444444444% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_96,
+.cardhelp.card_main_96 {
+  background-position: 55.5555555556% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_97,
+.cardhelp.card_main_97 {
+  background-position: 66.6666666667% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_98,
+.cardhelp.card_main_98 {
+  background-position: 77.7777777778% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_99,
+.cardhelp.card_main_99 {
+  background-position: 88.8888888889% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_100,
+.cardhelp.card_main_100 {
+  background-position: 100% 14.2857142857%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_101,
+.cardhelp.card_main_101 {
+  background-position: 0% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_102,
+.cardhelp.card_main_102 {
+  background-position: 11.1111111111% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_103,
+.cardhelp.card_main_103 {
+  background-position: 22.2222222222% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_104,
+.cardhelp.card_main_104 {
+  background-position: 33.3333333333% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_105,
+.cardhelp.card_main_105 {
+  background-position: 44.4444444444% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_106,
+.cardhelp.card_main_106 {
+  background-position: 55.5555555556% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_107,
+.cardhelp.card_main_107 {
+  background-position: 66.6666666667% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_108,
+.cardhelp.card_main_108 {
+  background-position: 77.7777777778% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_109,
+.cardhelp.card_main_109 {
+  background-position: 88.8888888889% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_110,
+.cardhelp.card_main_110 {
+  background-position: 100% 28.5714285714%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_111,
+.cardhelp.card_main_111 {
+  background-position: 0% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_112,
+.cardhelp.card_main_112 {
+  background-position: 11.1111111111% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_113,
+.cardhelp.card_main_113 {
+  background-position: 22.2222222222% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_114,
+.cardhelp.card_main_114 {
+  background-position: 33.3333333333% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_115,
+.cardhelp.card_main_115 {
+  background-position: 44.4444444444% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_116,
+.cardhelp.card_main_116 {
+  background-position: 55.5555555556% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_117,
+.cardhelp.card_main_117 {
+  background-position: 66.6666666667% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_118,
+.cardhelp.card_main_118 {
+  background-position: 77.7777777778% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_119,
+.cardhelp.card_main_119 {
+  background-position: 88.8888888889% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_120,
+.cardhelp.card_main_120 {
+  background-position: 100% 42.8571428571%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_121,
+.cardhelp.card_main_121 {
+  background-position: 0% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_122,
+.cardhelp.card_main_122 {
+  background-position: 11.1111111111% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_123,
+.cardhelp.card_main_123 {
+  background-position: 22.2222222222% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_124,
+.cardhelp.card_main_124 {
+  background-position: 33.3333333333% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_125,
+.cardhelp.card_main_125 {
+  background-position: 44.4444444444% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_126,
+.cardhelp.card_main_126 {
+  background-position: 55.5555555556% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_127,
+.cardhelp.card_main_127 {
+  background-position: 66.6666666667% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_128,
+.cardhelp.card_main_128 {
+  background-position: 77.7777777778% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_129,
+.cardhelp.card_main_129 {
+  background-position: 88.8888888889% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_130,
+.cardhelp.card_main_130 {
+  background-position: 100% 57.1428571429%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_131,
+.cardhelp.card_main_131 {
+  background-position: 0% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_132,
+.cardhelp.card_main_132 {
+  background-position: 11.1111111111% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_133,
+.cardhelp.card_main_133 {
+  background-position: 22.2222222222% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_134,
+.cardhelp.card_main_134 {
+  background-position: 33.3333333333% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_135,
+.cardhelp.card_main_135 {
+  background-position: 44.4444444444% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_136,
+.cardhelp.card_main_136 {
+  background-position: 55.5555555556% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_137,
+.cardhelp.card_main_137 {
+  background-position: 66.6666666667% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_138,
+.cardhelp.card_main_138 {
+  background-position: 77.7777777778% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_139,
+.cardhelp.card_main_139 {
+  background-position: 88.8888888889% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_140,
+.cardhelp.card_main_140 {
+  background-position: 100% 71.4285714286%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_141,
+.cardhelp.card_main_141 {
+  background-position: 0% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_142,
+.cardhelp.card_main_142 {
+  background-position: 11.1111111111% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_143,
+.cardhelp.card_main_143 {
+  background-position: 22.2222222222% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_144,
+.cardhelp.card_main_144 {
+  background-position: 33.3333333333% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_145,
+.cardhelp.card_main_145 {
+  background-position: 44.4444444444% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_146,
+.cardhelp.card_main_146 {
+  background-position: 55.5555555556% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_147,
+.cardhelp.card_main_147 {
+  background-position: 66.6666666667% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_148,
+.cardhelp.card_main_148 {
+  background-position: 77.7777777778% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_149,
+.cardhelp.card_main_149 {
+  background-position: 88.8888888889% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_150,
+.cardhelp.card_main_150 {
+  background-position: 100% 85.7142857143%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_151,
+.cardhelp.card_main_151 {
+  background-position: 0% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_152,
+.cardhelp.card_main_152 {
+  background-position: 11.1111111111% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_153,
+.cardhelp.card_main_153 {
+  background-position: 22.2222222222% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_154,
+.cardhelp.card_main_154 {
+  background-position: 33.3333333333% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_155,
+.cardhelp.card_main_155 {
+  background-position: 44.4444444444% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_156,
+.cardhelp.card_main_156 {
+  background-position: 55.5555555556% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_157,
+.cardhelp.card_main_157 {
+  background-position: 66.6666666667% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_158,
+.cardhelp.card_main_158 {
+  background-position: 77.7777777778% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_159,
+.cardhelp.card_main_159 {
+  background-position: 88.8888888889% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_160,
+.cardhelp.card_main_160 {
+  background-position: 100% 100%;
+  background-image: url(img/full/cards2.jpg);
+}
+
+.mfull .card_main_161,
+.cardhelp.card_main_161 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_162,
+.cardhelp.card_main_162 {
+  background-position: 11.1111111111% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_163,
+.cardhelp.card_main_163 {
+  background-position: 22.2222222222% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_164,
+.cardhelp.card_main_164 {
+  background-position: 33.3333333333% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_165,
+.cardhelp.card_main_165 {
+  background-position: 44.4444444444% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_166,
+.cardhelp.card_main_166 {
+  background-position: 55.5555555556% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_167,
+.cardhelp.card_main_167 {
+  background-position: 66.6666666667% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_168,
+.cardhelp.card_main_168 {
+  background-position: 77.7777777778% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_169,
+.cardhelp.card_main_169 {
+  background-position: 88.8888888889% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_170,
+.cardhelp.card_main_170 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_171,
+.cardhelp.card_main_171 {
+  background-position: 0% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_172,
+.cardhelp.card_main_172 {
+  background-position: 11.1111111111% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_173,
+.cardhelp.card_main_173 {
+  background-position: 22.2222222222% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_174,
+.cardhelp.card_main_174 {
+  background-position: 33.3333333333% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_175,
+.cardhelp.card_main_175 {
+  background-position: 44.4444444444% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_176,
+.cardhelp.card_main_176 {
+  background-position: 55.5555555556% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_177,
+.cardhelp.card_main_177 {
+  background-position: 66.6666666667% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_178,
+.cardhelp.card_main_178 {
+  background-position: 77.7777777778% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_179,
+.cardhelp.card_main_179 {
+  background-position: 88.8888888889% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_180,
+.cardhelp.card_main_180 {
+  background-position: 100% 25%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_181,
+.cardhelp.card_main_181 {
+  background-position: 0% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_182,
+.cardhelp.card_main_182 {
+  background-position: 11.1111111111% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_183,
+.cardhelp.card_main_183 {
+  background-position: 22.2222222222% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_184,
+.cardhelp.card_main_184 {
+  background-position: 33.3333333333% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_185,
+.cardhelp.card_main_185 {
+  background-position: 44.4444444444% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_186,
+.cardhelp.card_main_186 {
+  background-position: 55.5555555556% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_187,
+.cardhelp.card_main_187 {
+  background-position: 66.6666666667% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_188,
+.cardhelp.card_main_188 {
+  background-position: 77.7777777778% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_189,
+.cardhelp.card_main_189 {
+  background-position: 88.8888888889% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_190,
+.cardhelp.card_main_190 {
+  background-position: 100% 50%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_191,
+.cardhelp.card_main_191 {
+  background-position: 0% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_192,
+.cardhelp.card_main_192 {
+  background-position: 11.1111111111% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_193,
+.cardhelp.card_main_193 {
+  background-position: 22.2222222222% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_194,
+.cardhelp.card_main_194 {
+  background-position: 33.3333333333% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_195,
+.cardhelp.card_main_195 {
+  background-position: 44.4444444444% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_196,
+.cardhelp.card_main_196 {
+  background-position: 55.5555555556% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_197,
+.cardhelp.card_main_197 {
+  background-position: 66.6666666667% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_198,
+.cardhelp.card_main_198 {
+  background-position: 77.7777777778% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_199,
+.cardhelp.card_main_199 {
+  background-position: 88.8888888889% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_200,
+.cardhelp.card_main_200 {
+  background-position: 100% 75%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_201,
+.cardhelp.card_main_201 {
+  background-position: 0% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_202,
+.cardhelp.card_main_202 {
+  background-position: 11.1111111111% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_203,
+.cardhelp.card_main_203 {
+  background-position: 22.2222222222% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_204,
+.cardhelp.card_main_204 {
+  background-position: 33.3333333333% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_205,
+.cardhelp.card_main_205 {
+  background-position: 44.4444444444% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_206,
+.cardhelp.card_main_206 {
+  background-position: 55.5555555556% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_207,
+.cardhelp.card_main_207 {
+  background-position: 66.6666666667% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
+.mfull .card_main_208,
+.cardhelp.card_main_208 {
+  background-position: 77.7777777778% 100%;
+  background-image: url(img/full/cards3.jpg);
+}
+
 .mcompact #ebd-body.mobile_portrait {
   --map-width: calc(var(--localsetting_mapsize) * 0.7vw);
   --stan-width: calc(var(--localsetting_mapsize) * 0.2vw);
@@ -7318,12 +7938,49 @@
   justify-content: center;
 }
 
+/*
 @font-face {
   font-family: "Prototype";
   src: url("img/Prototype.woff2") format("woff2"), url("img/Prototype.woff") format("woff"), url("img/Prototype.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+}*/
+/* thai */
+@font-face {
+  font-family: "SpaceFont";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/kanit/v15/nKKU-Go6G5tXcr5mOBWzVaF5NQ.woff2) format("woff2");
+  unicode-range: U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+/* vietnamese */
+@font-face {
+  font-family: "SpaceFont";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/kanit/v15/nKKU-Go6G5tXcr5mOBWoVaF5NQ.woff2) format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "SpaceFont";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/kanit/v15/nKKU-Go6G5tXcr5mOBWpVaF5NQ.woff2) format("woff2");
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "SpaceFont";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/kanit/v15/nKKU-Go6G5tXcr5mOBWnVaE.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 #ebd-body {
   background-image: url("img/space.jpg");
@@ -7369,6 +8026,7 @@
 .tracker::after,
 .param::after {
   content: attr(data-state);
+  pointer-events: none;
 }
 
 .playerboard_produce .tracker::after {
@@ -7404,7 +8062,7 @@
   padding: 1%;*/
   font-size: calc(var(--stan-width) * 0.2);
   color: gold;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
 }
 
 #oceans_pile #tracker_w::after {
@@ -7476,7 +8134,7 @@
 
 .deck_line {
   color: white;
-  font-family: "Prototype";
+  font-family: "SpaceFont";
   display: flex;
   width: fit-content;
   font-size: calc(var(--stan-width) * 0.12);
@@ -7597,7 +8255,7 @@
   display: none;
 }
 
-#starting_player {
+.starting_player {
   position: relative;
   width: 36px;
   height: 36px;
@@ -7606,7 +8264,7 @@
   background-position: -500% -100%;
 }
 
-#starting_player::after {
+.starting_player::after {
   content: "";
 }
 

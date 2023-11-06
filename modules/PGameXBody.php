@@ -1416,7 +1416,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($win) {
                 $this->notifyMessage(clienttranslate('${player_name} wins'));
             } else {
-                $this->notifyMessage(clienttranslate('${player_name} looses since they did not achieve the goal, score is negated'));
+                $this->notifyMessage(clienttranslate('${player_name} loses since they did not achieve the goal, score is negated'));
                 $this->dbSetScore($player_id, -1);
             }
         }

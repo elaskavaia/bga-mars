@@ -33,109 +33,134 @@
   padding: 10px;
 }
 
-.prereq_notmet{
+.prereq_notmet {
   display: none;
   font-style: italic;
 }
 
 .invalid_prereq {
-  .prereq_notmet{
+  .prereq_notmet {
     display: block;
   }
 }
 
 .mcompact {
-  --resourcesize:6vh;
+  --resourcesize: 6vh;
+}
+.mfull {
+  --resourcesize:  32px;
+}
+
+.tooltipimage.tracker {
+  width: var(--resourcesize);
+  height: var(--resourcesize);
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+}
 
 
+.tooltipimage.tracker.tracker_p {
+  background-position: 0 0;
+}
 
-  .tooltipimage.tracker{
-    width: var(--resourcesize);
-    height: var(--resourcesize);
-    background-image: url("img/resources.png");
-    background-size: 1000% 200%;
-  }
-  .tooltipimage.tracker.tracker_tr{
-    display: none;
-  }
-  .tooltipimage.tracker.tracker_gen{
-    display: none;
-  }
-  .tooltipimage.tracker.tracker_w{
-       display: none;
-  }
-  .tooltipimage.tracker.tracker_p{
-    background-position: 0 0;
-  }
-  .tooltipimage.tracker.tracker_h{
-    background-position: -200% 0;
-  }
-  .tooltipimage.tracker.tracker_m {
-    background-position: -300% 0;
-  }
-  .tooltipimage.tracker.tracker_e{
-    background-position: -500% 0;
-  }
-  .tooltipimage.tracker.tracker_s{
-    background-position: -700% 0;
-  }
-  .tooltipimage.tracker.tracker_u {
-    background-position: -800% 0;
-  }
-  .tooltipimage.tracker.tracker_pp{
-    background-position: 0 0;
-  }
-  .tooltipimage.tracker.tracker_ph{
-    background-position: -200% 0;
-  }
-  .tooltipimage.tracker.tracker_pm {
-    background-position: -300% 0;
-  }
-  .tooltipimage.tracker.tracker_pe{
-    background-position: -500% 0;
-  }
-  .tooltipimage.tracker.tracker_ps{
-    background-position: -700% 0;
-  }
-  .tooltipimage.tracker.tracker_pu {
-    background-position: -800% 0;
-  }
-  .tooltipimage.tracker.tracker_tr {
-    background-position: -900% 0;
-  }
-  .tooltipimage.tracker.badge {
-    background-image: url("img/badges.png");
-    background-size: 1200% 100%;
-  }
+.tooltipimage.tracker.tracker_h {
+  background-position: -200% 0;
+}
 
-  .tooltipimage.tracker.tracker_city {
-    background-image: url("img/icons.png");
-    background-size: 1400% 200%;
-    background-position: -700% 0;
-  }
-  .tooltipimage.tracker.tracker_forest {
-    background-image: url("img/icons.png");
-    background-size: 1400% 200%;
-    background-position: -300% -100%;
-  }
-  .tooltipimage.tracker.tracker_land {
-    background-image: url("img/icons.png");
-    background-size: 1400% 200%;
-    background-position: -200% -100%;
-  }
-  .compact_card_tt{
+.tooltipimage.tracker.tracker_m {
+  background-position: -300% 0;
+}
+
+.tooltipimage.tracker.tracker_e {
+  background-position: -500% 0;
+}
+
+.tooltipimage.tracker.tracker_s {
+  background-position: -700% 0;
+}
+
+.tooltipimage.tracker.tracker_u {
+  background-position: -800% 0;
+}
+
+.tooltipimage.tracker.tracker_pp {
+  background-position: 0 0;
+}
+
+.tooltipimage.tracker.tracker_ph {
+  background-position: -200% 0;
+}
+
+.tooltipimage.tracker.tracker_pm {
+  background-position: -300% 0;
+}
+
+.tooltipimage.tracker.tracker_pe {
+  background-position: -500% 0;
+}
+
+.tooltipimage.tracker.tracker_ps {
+  background-position: -700% 0;
+}
+
+.tooltipimage.tracker.tracker_pu {
+  background-position: -800% 0;
+}
+
+.tooltipimage.tracker.tracker_tr {
+  background-position: -900% 0;
+}
+
+.tooltipimage.tracker.badge {
+  background-image: url("img/badges.png");
+  background-size: 1200% 100%;
+}
+
+.tooltipimage.tracker.tracker_city {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -700% 0;
+}
+
+.tooltipimage.tracker.tracker_forest {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -300% -100%;
+}
+
+.tooltipimage.tracker.tracker_land {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -200% -100%;
+}
+
+.mcompact {
+
+.tooltipimage.tracker.tracker_tr {
+  display: none;
+}
+
+.tooltipimage.tracker.tracker_gen {
+  display: none;
+}
+
+.tooltipimage.tracker.tracker_w {
+  display: none;
+}
+
+  .compact_card_tt {
     display: flex;
     --card-width: 25vh;
     --card-height: calc(var(--card-width)*1.40658174);
   }
 
   .compact_card_tt.standard_project {
-      .card_tooltipimagecontainer{
-        display: none;
-      }
+    .card_tooltipimagecontainer {
+      display: none;
+    }
   }
 
-  .tooltiptitle{
+  .tooltiptitle {
     /*font-size:initial ;*/
     font-size: 1.6vh;
   }
@@ -148,8 +173,7 @@
   .card_stanproj_3_tooltipcontainer,
   .card_stanproj_4_tooltipcontainer,
   .card_stanproj_5_tooltipcontainer,
-  .card_stanproj_6_tooltipcontainer
-  {
+  .card_stanproj_6_tooltipcontainer {
 
     font-family: Georgia;
     font-size: 1.6vh;
@@ -158,7 +182,7 @@
     max-width: 60vh;
     --map-width: 92vh;
 
-    .tooltip-body{
+    .tooltip-body {
       padding: 0;
     }
 
@@ -187,6 +211,7 @@
 
 
   }
+
   .award_tooltipcontainer,
   .milestone_tooltipcontainer,
   .card_stanproj_1_tooltipcontainer,
@@ -194,9 +219,8 @@
   .card_stanproj_3_tooltipcontainer,
   .card_stanproj_4_tooltipcontainer,
   .card_stanproj_5_tooltipcontainer,
-  .card_stanproj_6_tooltipcontainer
-{
-      max-width: 40vh;
+  .card_stanproj_6_tooltipcontainer {
+    max-width: 40vh;
   }
 
 
@@ -249,18 +273,19 @@
     }
   }
 
-  .card_tooltipimagecontainer{
-    .tracker.badge{
+  .card_tooltipimagecontainer {
+    .tracker.badge {
       position: relative;
       width: 7vh;
       height: 7vh;
     }
-    .tracker.badge::after{
+
+    .tracker.badge::after {
       position: absolute;
       width: 100%;
       height: 100%;
       text-align: center;
-      line-height:  7vh;
+      line-height: 7vh;
       text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
       color: white;
       font-size: 3.5vh;
@@ -317,7 +342,6 @@
 
   .tooltipcontainer,
   .tundra .dijitTooltipContainer {
-    background-color: transparent;
     border: unset;
     border-radius: unset;
     padding: unset;

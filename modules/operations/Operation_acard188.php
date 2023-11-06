@@ -43,7 +43,7 @@ class Operation_acard188 extends AbsOperation {
     }
 
     protected function getPrompt() {
-        return clienttranslate('Select a player to receive Flooding damage (loose 4 MC)'); 
+        return clienttranslate('Select a player to receive Flooding damage (lose 4 MC)'); 
     }
 
     function effect(string $owner, int $inc): int {

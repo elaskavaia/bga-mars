@@ -2602,6 +2602,9 @@ var GameTokens = /** @class */ (function (_super) {
     GameTokens.prototype.getTokenDisplayInfo = function (tokenId) {
         var _a, _b;
         var tokenInfo = this.getAllRules(tokenId);
+        if (!tokenInfo && tokenId && tokenId.startsWith('alt_')) {
+            tokenInfo = this.getAllRules(tokenId.substring(4));
+        }
         if (!tokenInfo) {
             tokenInfo = {
                 key: tokenId,
@@ -2769,9 +2772,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.clearReverseIdMap();
             this.customAnimation = new CustomAnimation(this);
             //layout
-            this.previousLayout = 'desktop';
+            this.previousLayout = "desktop";
             this.zoneWidth = 0;
             this.zoneHeight = 0;
+            this.local_counters["game"] = { cities: 0 };
             _super.prototype.setup.call(this, gamedatas);
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
@@ -2798,23 +2802,23 @@ var GameXBody = /** @class */ (function (_super) {
                 {
                     key: "showbadges",
                     label: _("Show Badges on minipanel"),
-                    choice: { "true": "true", "false": "false" },
+                    choice: { true: "true", false: "false" },
                     default: "true",
                 },
             ]);
             this.localSettings.setup();
             //this.localSettings.renderButton('player_config_row');
-            this.localSettings.renderContents('settings-controls-container');
+            this.localSettings.renderContents("settings-controls-container");
             //floating hand stuff
-            this.connect($('hand_area_button_pop'), 'onclick', function () {
-                $('hand_area').dataset.open = $('hand_area').dataset.open == "1" ? "0" : "1";
+            this.connect($("hand_area_button_pop"), "onclick", function () {
+                $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
             });
-            // dojo.place("player_board_params", "player_config", "last");    
-            if (!$('player_config').innerHTML.includes("player_board_params"))
+            // dojo.place("player_board_params", "player_config", "last");
+            if (!$("player_config").innerHTML.includes("player_board_params"))
                 dojo.place("player_board_params", "player_config", "last");
             document.querySelectorAll(".mini_counter").forEach(function (node) {
                 var id = node.id;
-                if (id.startsWith('alt_')) {
+                if (id.startsWith("alt_")) {
                     _this.updateTooltip(id.substring(4), node);
                 }
             });
@@ -2842,8 +2846,8 @@ var GameXBody = /** @class */ (function (_super) {
         //move own player board in main zone
         if (playerInfo.id == this.player_id) {
             var board = $("player_area_".concat(playerInfo.color));
-            dojo.place(board, 'main_board', 'after');
-            dojo.addClass(board, 'thisplayer_zone');
+            dojo.place(board, "main_board", "after");
+            dojo.addClass(board, "thisplayer_zone");
         }
     };
     GameXBody.prototype.setupHelpSheets = function () {
@@ -2851,7 +2855,7 @@ var GameXBody = /** @class */ (function (_super) {
         var cc = { main: 0, corp: 0 };
         for (var key in this.gamedatas.token_types) {
             var info = this.gamedatas.token_types[key];
-            if (key.startsWith('card')) {
+            if (key.startsWith("card")) {
                 var num = getPart(key, 2);
                 var type = getPart(key, 1);
                 var helpnode = document.querySelector("#allcards_".concat(type, " .expandablecontent"));
@@ -2862,7 +2866,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var token = {
                     key: "card_".concat(type, "_").concat(num, "_help"),
                     location: helpnode.id,
-                    state: 0
+                    state: 0,
                 };
                 var tokenNode = this.createToken(token);
                 this.syncTokenDisplayInfo(tokenNode);
@@ -2871,8 +2875,8 @@ var GameXBody = /** @class */ (function (_super) {
                 cc[type]++;
             }
         }
-        var ccmain = cc['main'];
-        var cccorp = cc['corp'];
+        var ccmain = cc["main"];
+        var cccorp = cc["corp"];
         $("allcards_main_title").innerHTML = _("All Project Cards (".concat(ccmain, ")"));
         $("allcards_corp_title").innerHTML = _("All Corporate Cards (".concat(cccorp, ")"));
         // clicks
@@ -2883,12 +2887,12 @@ var GameXBody = /** @class */ (function (_super) {
         dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
     };
     GameXBody.prototype.setupDiscard = function () {
-        this.connect($('discard_title'), 'onclick', function () {
+        this.connect($("discard_title"), "onclick", function () {
             var dlg = new ebg.popindialog();
             dlg.create("discard_dlg");
             dlg.setTitle(_("Discard pile contents"));
-            var cards_htm = $('discard_main').innerHTML.replaceAll('id="', 'id="discard_');
-            var html = '<div id="discard_dlg_content">' + cards_htm + '</div>';
+            var cards_htm = $("discard_main").innerHTML.replaceAll('id="', 'id="discard_');
+            var html = '<div id="discard_dlg_content">' + cards_htm + "</div>";
             dlg.setContent(html);
             dlg.show();
         });
@@ -2901,13 +2905,13 @@ var GameXBody = /** @class */ (function (_super) {
             //   console.log("changed res w,h", width, height);
             this.zoneWidth = width;
             this.zoneHeight = height;
-            if (dojo.hasClass('ebd-body', 'mobile_version') && this.previousLayout == 'desktop' && width < height) {
-                this.previousLayout = 'mobile';
-                dojo.addClass('ebd-body', 'mobile_portrait');
+            if (dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "desktop" && width < height) {
+                this.previousLayout = "mobile";
+                dojo.addClass("ebd-body", "mobile_portrait");
             }
-            else if (!dojo.hasClass('ebd-body', 'mobile_version') && this.previousLayout == 'mobile' && width > height) {
-                this.previousLayout = 'desktop';
-                dojo.removeClass('ebd-body', 'mobile_portrait');
+            else if (!dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "mobile" && width > height) {
+                this.previousLayout = "desktop";
+                dojo.removeClass("ebd-body", "mobile_portrait");
             }
         }
     };
@@ -2931,25 +2935,33 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);
-        this.darhflog('playing notif ' + notif.type + ' with args ', notif.args);
+        this.darhflog("playing notif " + notif.type + " with args ", notif.args);
         //Displays message in header while the notif is playing
-        var msg = this.format_string_recursive(notif.log, notif.args);
-        if (msg != '') {
-            $('gameaction_status').innerHTML = msg;
-            $('pagemaintitletext').innerHTML = msg;
+        if (!this.instantaneousMode && notif.log) {
+            if ($("gameaction_status_wrap").style.display != "none") {
+                var msg = this.format_string_recursive(notif.log, notif.args);
+                if (msg != "") {
+                    $("gameaction_status").innerHTML = msg;
+                    //$("pagemaintitletext").innerHTML = msg;
+                }
+            }
+            else {
+                // XXX this is very bad in multiple player all yout buttons dissapear
+                this.setDescriptionOnMyTurn(notif.log, notif.args);
+            }
         }
     };
     //make custom animations depending on situation
     GameXBody.prototype.notif_tokenMoved = function (notif) {
         _super.prototype.notif_tokenMoved.call(this, notif);
         //pop animation on Tiles
-        if (notif.args.token_id && notif.args.token_id.startsWith('tile_')) {
+        if (notif.args.token_id && notif.args.token_id.startsWith("tile_")) {
             return this.customAnimation.animateTilePop(notif.args.token_id);
         }
-        else if (notif.args.token_id && notif.args.token_id.startsWith('resource_') && notif.args.place_id.startsWith('card_main_')) {
+        else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("card_main_")) {
             return this.customAnimation.animatePlaceResourceOnCard(notif.args.token_id, notif.args.place_id);
         }
-        else if (notif.args.token_id && notif.args.token_id.startsWith('resource_') && notif.args.place_id.startsWith('tableau_')) {
+        else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("tableau_")) {
             return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
         }
     };
@@ -2963,7 +2975,7 @@ var GameXBody = /** @class */ (function (_super) {
         var counter_move = ["m", "s", "u", "p", "e", "h", "tr"].map(function (item) {
             return "tracker_" + item + "_";
         });
-        if ((notif.args.inc) && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
+        if (notif.args.inc && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
             this.customAnimation.animatetingle(notif.args.counter_name);
             return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
         }
@@ -2978,65 +2990,174 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.getCardTypeById = function (type) {
         switch (type) {
-            case 0: return _('Standard Project');
-            case 1: return _('Green Card');
-            case 3: return _('Event Card');
-            case 2: return _('Blue Card');
-            case 4: return _('Corporation');
-            case 5: return _('Prelude');
-            case 7: return _('Milestone');
-            case 8: return _('Award');
-            default: return '?';
+            case 0:
+                return _("Standard Project");
+            case 1:
+                return _("Green Card");
+            case 3:
+                return _("Event Card");
+            case 2:
+                return _("Blue Card");
+            case 4:
+                return _("Corporation");
+            case 5:
+                return _("Prelude");
+            case 7:
+                return _("Milestone");
+            case 8:
+                return _("Award");
+            default:
+                return "?";
         }
     };
     GameXBody.prototype.generateTooltipSection = function (label, body, optional, additional_class) {
         if (optional === void 0) { optional = true; }
         if (additional_class === void 0) { additional_class = ""; }
         if (optional && !body)
-            return '';
+            return "";
         return "<div class=\"tt_section ".concat(additional_class, "\"><div class=\"tt_intertitle\">").concat(label, "</div><div class='card_tt_effect'>").concat(body, "</div></div>");
     };
     GameXBody.prototype.generateCardTooltip_Compact = function (displayInfo) {
         var type = displayInfo.t;
-        var htm = '<div class="compact_card_tt %adcl"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' + type + '">' + this.generateCardTooltip(displayInfo) + '</div></div>';
-        var fullcardhtm = "";
+        var htm = '<div class="compact_card_tt %adcl"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' +
+            type +
+            '">%t</div></div>';
+        var fullitemhtm = "";
+        var fulltxt = "";
         var adClass = "";
-        if (type >= 1 && type <= 3) { //main cards
-            if (displayInfo.num && $('card_main_' + displayInfo.num)) {
-                fullcardhtm = $('card_main_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;', '');
-                if (fullcardhtm.includes('data-invalid_prereq="1"')) {
-                    adClass += 'invalid_prereq';
+        if (displayInfo.key.startsWith("card_main") ||
+            displayInfo.key.startsWith("card_corp_") ||
+            displayInfo.key.startsWith("card_stanproj") ||
+            displayInfo.key.startsWith("milestone_") ||
+            displayInfo.key.startsWith("award_")) {
+            fulltxt = this.generateCardTooltip(displayInfo);
+            if (type >= 1 && type <= 3) {
+                //main cards
+                if (displayInfo.num && $("card_main_" + displayInfo.num)) {
+                    fullitemhtm = $("card_main_" + displayInfo.num)
+                        .outerHTML.replaceAll('id="', 'id="tt_')
+                        .replace("opacity: 0;", "");
+                    if (fullitemhtm.includes('data-invalid_prereq="1"')) {
+                        adClass += "invalid_prereq";
+                    }
+                }
+                else {
+                    fullitemhtm = "<div>NOTFOUND</div>";
                 }
             }
+            else if (type == 4) {
+                //corp
+                if (displayInfo.num && $("card_corp_" + displayInfo.num)) {
+                    fullitemhtm = $("card_corp_" + displayInfo.num)
+                        .outerHTML.replaceAll('id="', 'id="tt_')
+                        .replace("opacity: 0;", "");
+                }
+            }
+            else if (type == 7 || type == 8) {
+                //milestones / awards
+                var elem = type == 7 ? "milestone_" + displayInfo.num : "award_" + displayInfo.num;
+                adClass += "award_milestone";
+                fullitemhtm = $(elem).outerHTML.replaceAll('id="', 'id="tt_');
+            }
+            else if (type == 0) {
+                //standard project
+                adClass += "standard_project";
+            }
+        }
+        else {
+            if ($(displayInfo.key)) {
+                if (displayInfo.key.startsWith("tracker_tr_")) {
+                    fullitemhtm = $(displayInfo.key).outerHTML.replaceAll('id="', 'id="tt_');
+                }
+                /*
+                  if (displayInfo.key.startsWith('tracker_m_') ||displayInfo.key.startsWith('tracker_s_') ||displayInfo.key.startsWith('tracker_u_')
+                    ||displayInfo.key.startsWith('tracker_p_') ||displayInfo.key.startsWith('tracker_e_')||displayInfo.key.startsWith('tracker_h')) {
+                        fullitemhtm="";
+                  }*/
+            }
+            fulltxt = this.generateItemTooltip(displayInfo);
+        }
+        return htm.replace("%adcl", adClass).replace("%c", fullitemhtm).replace("%t", fulltxt);
+    };
+    GameXBody.prototype.generateItemTooltip = function (displayInfo) {
+        if (!displayInfo)
+            return "?";
+        var txt = "";
+        var key = displayInfo.key.replace("alt_", "");
+        if (key.startsWith("tracker_tr_")) {
+            txt += this.generateTooltipSection(_("Terraforming Rating"), _("Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."));
+        }
+        else if (key.startsWith("tracker_tag")) {
+            txt += this.generateTooltipSection(_("Tags"), _("Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag)."));
+        }
+        else if (key.startsWith("tracker_city_") || key.startsWith("tracker_forest_") || key.startsWith("tracker_land_")) {
+            txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
+        }
+        else if (key.startsWith("tracker_m_")) {
+            txt += this.generateTooltipSection(_("MegaCredits"), _("The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."));
+        }
+        else if (key.startsWith("tracker_s_")) {
+            txt += this.generateTooltipSection(_("Steel"), _("Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel."));
+        }
+        else if (key.startsWith("tracker_u_")) {
+            txt += this.generateTooltipSection(_("Titanium"), _("Titanium represents resources in space or for the space industry. Titanium is used to pay for space cards, being worth 3 M€ per titanium."));
+        }
+        else if (key.startsWith("tracker_p_")) {
+            txt += this.generateTooltipSection(_("Plants"), _("Plants use photosynthesis. As an action, 8 plant resources can be converted into a greenery tile that you place on the board. This increases the oxygen level (and your TR) 1 step. Each greenery is worth 1 VP and generates 1 VP to each adjacent city tile."));
+        }
+        else if (key.startsWith("tracker_e_")) {
+            txt += this.generateTooltipSection(_("Energy"), _("Energy is used by many cities and industries. This usage may either be via an action on a blue card, or via a decrease in energy production. Leftover energy is converted into heat"));
+        }
+        else if (key.startsWith("tracker_h_")) {
+            txt += this.generateTooltipSection(_("Heat"), _("Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step."));
+        }
+        else if (key.startsWith("tracker_p")) {
+            txt += this.generateTooltipSection(_("Resource Production"), _("Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production."));
+        }
+        else if (key == "tracker_gen") {
+            txt += this.generateTooltipSection(_("Generations"), _("Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round."));
+        }
+        else if (key == "tracker_w") {
+            txt += this.generateTooltipSection(_("Oceans pile"), _("This global parameter starts with 9 tiles in a stack here, to be placed on the board during the game."));
+        }
+        else if (key == "tracker_o") {
+            txt += this.generateTooltipSection(_("Oxigen"), _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)"));
+        }
+        else if (key == "starting_player") {
+            txt += this.generateTooltipSection(_("First player marker"), _("Shifts clockwise each generation."));
+        }
+        else if (key.startsWith("counter_hand_")) {
+            txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
+        }
+        else if (key.startsWith("tile_")) {
+            if (displayInfo.tt == 3) {
+                txt += this.generateTooltipSection(_("Ocean"), _("Ocean tiles may only be placed on areas reserved for ocean (see map). Placing an ocean tile increases your TR 1 step. Ocean tiles are not owned by any player. Each ocean tile on the board provides a 2 M€ placement bonus for any player later placing a tile, even another ocean, next to it."));
+            }
+            else if (displayInfo.tt == 2) {
+                txt += this.generateTooltipSection(_("City"), _("May not be placed next to another city. Each city tile is worth 1 VP for each adjacent greenery tile (regardless of owner) at the end of the game."));
+            }
+            else if (displayInfo.tt == 1) {
+                txt += this.generateTooltipSection(_("Greenery"), _("If possible, greenery tiles must be placed next to another tile that you own. If you have no available area next to your tiles, or if you have no tile at all, you may place the greenery tile on any available area. When placing a greenery tile, you increase the oxygen level, if possible, and also your TR. If you can’t raise the oxygen level you don’t get the increase in TR either. Greenery tiles are worth 1 VP at the end of the game, and also provide 1 VP to any adjacent city."));
+            }
             else {
-                fullcardhtm = '<div>NOTFOUND</div>';
+                txt += this.generateTooltipSection(_("Special Tile"), _("Some cards allow you to place special tiles. Any function or placement restriction is described on the card. Place the tile, and place a player marker on it."));
             }
         }
-        else if (type == 4) { //corp
-            if (displayInfo.num && $('card_corp_' + displayInfo.num)) {
-                fullcardhtm = $('card_corp_' + displayInfo.num).outerHTML.replaceAll('id="', 'id="tt_').replace('opacity: 0;', '');
-            }
-        }
-        else if (type == 7 || type == 8) { //milestones / awards
-            var elem = type == 7 ? 'milestone_' + displayInfo.num : 'award_' + displayInfo.num;
-            adClass += 'award_milestone';
-            fullcardhtm = $(elem).outerHTML.replaceAll('id="', 'id="tt_');
-        }
-        else if (type == 0) { //standard project
-            adClass += 'standard_project';
-        }
-        return htm.replace('%adcl', adClass).replace('%c', fullcardhtm);
+        return txt;
     };
     GameXBody.prototype.generateCardTooltip = function (displayInfo) {
         var _a;
         if (!displayInfo)
             return "?";
         var type = displayInfo.t;
+        if (displayInfo.key.startsWith("tracker_")) {
+            return this.generateItemTooltip(displayInfo);
+        }
         var type_name = this.getCardTypeById(type);
-        var card_id = '';
+        var card_id = "";
         if (type > 0 && type < 7)
             card_id += (_a = " " + _(displayInfo.deck) + " #" + displayInfo.num) !== null && _a !== void 0 ? _a : "";
-        var res = '';
+        var res = "";
         var tags = "";
         if (displayInfo.tags) {
             for (var _i = 0, _b = displayInfo.tags.split(" "); _i < _b.length; _i++) {
@@ -3049,15 +3170,17 @@ var GameXBody = /** @class */ (function (_super) {
             vp = displayInfo.vp;
         res += this.generateTooltipSection(type_name, card_id);
         if (type != 4)
-            res += this.generateTooltipSection(_('Cost'), displayInfo.cost);
-        res += this.generateTooltipSection(_('Tags'), tags);
+            res += this.generateTooltipSection(_("Cost"), displayInfo.cost);
+        res += this.generateTooltipSection(_("Tags"), tags);
         var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
-        res += this.generateTooltipSection(_('Pre-Requisites'), prereqText, true, 'tt_prereq');
-        res += this.generateTooltipSection(_('When Played'), displayInfo.text);
-        res += this.generateTooltipSection(_('Effect'), displayInfo.text_effect);
-        res += this.generateTooltipSection(_('Action'), displayInfo.text_action);
-        res += this.generateTooltipSection(_('Holds'), _(displayInfo.holds));
-        res += this.generateTooltipSection(_('Victory Points'), vp);
+        if (prereqText != "")
+            prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
+        res += this.generateTooltipSection(_("Pre-Requisites"), prereqText, true, "tt_prereq");
+        res += this.generateTooltipSection(_("When Played"), displayInfo.text);
+        res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
+        res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
+        res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
+        res += this.generateTooltipSection(_("Victory Points"), vp);
         return res;
     };
     GameXBody.prototype.createHtmlForToken = function (tokenNode) {
@@ -3118,12 +3241,14 @@ var GameXBody = /** @class */ (function (_super) {
                 var decor = this.createDivNode(null, "card_decor", tokenNode.id);
                 var vp = "";
                 if (displayInfo.vp) {
-                    vp = parseInt(displayInfo.vp) ? '<div class="card_vp">' + displayInfo.vp + "</div>" : '<div class="card_vp">*</div>';
+                    vp = parseInt(displayInfo.vp)
+                        ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
+                        : '<div class="card_vp"><div class="number_inside">*</div></div>';
                 }
                 else {
                     vp = "";
                 }
-                var cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8, '0') : "";
+                var cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8, "0") : "";
                 //rules+rules styling
                 //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
                 var card_r = "";
@@ -3171,7 +3296,7 @@ var GameXBody = /** @class */ (function (_super) {
                 //card 206 hads rules in action part
                 if (displayInfo.num == 206) {
                     card_r = card_a;
-                    card_a = '';
+                    card_a = "";
                 }
                 //special for "res"
                 card_a = card_a.replaceAll("%res%", displayInfo.holds);
@@ -3180,8 +3305,12 @@ var GameXBody = /** @class */ (function (_super) {
                     card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
                 }
                 var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
-                var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' + holds + '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' + tokenNode.id.replace('card_main_', '') + '" class="resource_counter"  data-resource_counter="0"></div></div>';
-                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'>").concat(displayInfo.cost, "</div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace('card_main_', ''), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
+                var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +
+                    holds +
+                    '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' +
+                    tokenNode.id.replace("card_main_", "") +
+                    '" class="resource_counter"  data-resource_counter="0"></div></div>';
+                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
             }
             var div = this.createDivNode(null, "card_info_box", tokenNode.id);
             div.innerHTML = "\n          <div class='token_title'>".concat(displayInfo.name, "</div>\n          <div class='token_cost'>").concat(displayInfo.cost, "</div> \n          <div class='token_rules'>").concat(displayInfo.r, "</div>\n          <div class='token_descr'>").concat(displayInfo.text, "</div>\n          ");
@@ -3192,16 +3321,16 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if (displayInfo.mainType == "award" || displayInfo.mainType == "milestone") {
             //custom tooltip on awards and milestones
-            var dest = tokenNode.id.replace(displayInfo.mainType + '_', displayInfo.mainType + '_label_');
+            var dest = tokenNode.id.replace(displayInfo.mainType + "_", displayInfo.mainType + "_label_");
             $(dest).innerHTML = _(displayInfo.name);
             /* Disabled custom tt
-            const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-            ttdiv.innerHTML = `
-                <div class='token_title'>${displayInfo.name}</div>
-                <div class='card_effect'>${displayInfo.text}</div>
-            `;
-            tokenNode.appendChild(ttdiv);
-            */
+                const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
+                ttdiv.innerHTML = `
+                    <div class='token_title'>${displayInfo.name}</div>
+                    <div class='card_effect'>${displayInfo.text}</div>
+                `;
+                tokenNode.appendChild(ttdiv);
+                */
         }
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
@@ -3239,6 +3368,14 @@ var GameXBody = /** @class */ (function (_super) {
         if (node.id.startsWith("tracker_w")) {
             $(node.id).dataset.calc = (9 - parseInt(newState)).toString();
         }
+        //local : number of cities on mars
+        if (node.id.startsWith("tracker_city_")) {
+            this.local_counters["game"].cities = 0;
+            for (var plid in this.gamedatas.players) {
+                this.local_counters["game"].cities =
+                    this.local_counters["game"].cities + parseInt($("tracker_city_" + this.gamedatas.players[plid].color).dataset.state);
+            }
+        }
         //handle copies of trackers
         var trackerCopy = "alt_" + node.id;
         var nodeCopy = $(trackerCopy);
@@ -3269,7 +3406,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.updateHandPrereqs = function () {
         if (!this.player_id)
             return;
-        var nodes = dojo.query('#hand_area .card');
+        var nodes = dojo.query("#hand_area .card");
         for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
             var node = nodes_1[_i];
             // const card_id = node.id.replace('card_main_','');
@@ -3281,7 +3418,7 @@ var GameXBody = /** @class */ (function (_super) {
             var op = "";
             var what = "";
             var qty = 0;
-            if (typeof displayInfo.expr.pre === 'string') {
+            if (typeof displayInfo.expr.pre === "string") {
                 op = ">=";
                 what = displayInfo.expr.pre;
                 qty = 1;
@@ -3299,45 +3436,51 @@ var GameXBody = /** @class */ (function (_super) {
             var tracker = "";
             switch (what) {
                 case "o":
-                    tracker = 'tracker_o';
+                    tracker = "tracker_o";
                     break;
                 case "t":
-                    tracker = 'tracker_t';
+                    tracker = "tracker_t";
                     break;
                 case "tagScience":
-                    tracker = 'tracker_tagScience_' + this.getPlayerColor(this.player_id);
+                    tracker = "tracker_tagScience_" + this.getPlayerColor(this.player_id);
                     break;
                 case "tagEnergy":
-                    tracker = 'tracker_tagEnergy_' + this.getPlayerColor(this.player_id);
+                    tracker = "tracker_tagEnergy_" + this.getPlayerColor(this.player_id);
                     break;
                 case "tagJovian":
-                    tracker = 'tracker_tagJovian_' + this.getPlayerColor(this.player_id);
+                    tracker = "tracker_tagJovian_" + this.getPlayerColor(this.player_id);
                     break;
                 case "forest":
-                    tracker = 'tracker_tagForest_' + this.getPlayerColor(this.player_id);
+                    tracker = "tracker_tagForest_" + this.getPlayerColor(this.player_id);
                     break;
                 case "w":
-                    tracker = 'tracker_w';
+                    tracker = "tracker_w";
                     break;
                 case "ps":
-                    tracker = 'tracker_ps_' + this.getPlayerColor(this.player_id);
+                    tracker = "tracker_ps_" + this.getPlayerColor(this.player_id);
                     break;
                 case "all_city":
-                    // global city tracker exists ?
+                    tracker = "cities";
                     break;
             }
             if (tracker == "") {
                 continue;
             }
             var valid = false;
+            var actual = 0;
             // const actual = this.getTokenInfoState(tracker);
-            if (!$(tracker)) {
-                continue;
+            if (this.local_counters["game"][tracker] != undefined) {
+                actual = this.local_counters["game"][tracker];
             }
-            if (!$(tracker).dataset.state) {
-                continue;
+            else {
+                if (!$(tracker)) {
+                    continue;
+                }
+                if (!$(tracker).dataset.state) {
+                    continue;
+                }
+                actual = parseInt($(tracker).dataset.state);
             }
-            var actual = parseInt($(tracker).dataset.state);
             if (op == "<=") {
                 if (actual <= qty)
                     valid = true;
@@ -3380,7 +3523,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var original_cost = parseInt(displayInfo.cost);
                 var payop = card_info[card_id].payop;
                 var discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
-                if (discount_cost != original_cost) {
+                if (discount_cost != original_cost && $("cost_" + card_id)) {
                     $("cost_" + card_id).innerHTML = discount_cost.toString();
                     $("cost_" + card_id).classList.add("discounted");
                 }
@@ -3406,24 +3549,24 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tokenInfo.key.startsWith("milestone")) {
             result.nop = true;
         }
-        else if (tokenInfo.key == 'starting_player') {
-            result.location = tokenInfo.location.replace('tableau_', 'fpholder_');
+        else if (tokenInfo.key == "starting_player") {
+            result.location = tokenInfo.location.replace("tableau_", "fpholder_");
         }
         else if (tokenInfo.key.startsWith("resource_") && !this.isLayoutFull()) {
-            if (tokenInfo.location.startsWith('card_main_')) {
+            if (tokenInfo.location.startsWith("card_main_")) {
                 //resource added to card
-                result.location = tokenInfo.location.replace('card_main_', 'resource_holder_');
-                var dest_holder = tokenInfo.location.replace('card_main_', 'resource_holder_');
-                var dest_counter = tokenInfo.location.replace('card_main_', 'resource_holder_counter_');
+                result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
+                var dest_holder = tokenInfo.location.replace("card_main_", "resource_holder_");
+                var dest_counter = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
                 $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
                 $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
             }
-            else if (tokenInfo.location.startsWith('tableau_')) {
+            else if (tokenInfo.location.startsWith("tableau_")) {
                 //resource moved from card
                 //which card ?
                 var dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
                 if (dest_holder.includes("holder_")) {
-                    var dest_counter = dest_holder.replace('holder_', 'holder_counter_');
+                    var dest_counter = dest_holder.replace("holder_", "holder_counter_");
                     if (dojo.byId(dest_holder)) {
                         $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
                         $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
@@ -3432,11 +3575,11 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         else if (tokenInfo.key.startsWith("marker_")) {
-            if (tokenInfo.location.startsWith('award')) {
-                this.strikeNextAwardMilestoneCost('award');
+            if (tokenInfo.location.startsWith("award")) {
+                this.strikeNextAwardMilestoneCost("award");
             }
-            else if (tokenInfo.location.startsWith('milestone')) {
-                this.strikeNextAwardMilestoneCost('milestone');
+            else if (tokenInfo.location.startsWith("milestone")) {
+                this.strikeNextAwardMilestoneCost("milestone");
             }
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
@@ -3464,22 +3607,24 @@ var GameXBody = /** @class */ (function (_super) {
                 if (!this.isDoingSetup) {
                     if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
                         var original = 0;
-                        for (var i = 1; i <= 3; i++) {
+                        for (var i = 0; i <= 3; i++) {
                             if ($(tokenInfo.location).dataset["visibility_" + i] == "1")
                                 original = i;
                         }
-                        for (var i = 1; i <= 3; i++) {
-                            var btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
-                            if (i == t) {
-                                $(tokenInfo.location).dataset["visibility_" + i] = "1";
-                                $(btn).dataset.selected = "1";
+                        if (original != 0) {
+                            for (var i = 1; i <= 3; i++) {
+                                var btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+                                if (i == t) {
+                                    $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                                    $(btn).dataset.selected = "1";
+                                }
+                                else {
+                                    $(btn).dataset.selected = "0";
+                                    $(tokenInfo.location).dataset["visibility_" + i] = "0";
+                                }
                             }
-                            else {
-                                $(btn).dataset.selected = "0";
-                                $(tokenInfo.location).dataset["visibility_" + i] = "0";
-                            }
+                            this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
                         }
-                        this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
                     }
                 }
             }
@@ -3491,8 +3636,8 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.strikeNextAwardMilestoneCost = function (kind) {
         for (var idx = 1; idx <= 3; idx++) {
-            if ($(kind + '_cost_' + idx).dataset.striked != "1") {
-                $(kind + '_cost_' + idx).dataset.striked = "1";
+            if ($(kind + "_cost_" + idx).dataset.striked != "1") {
+                $(kind + "_cost_" + idx).dataset.striked = "1";
                 break;
             }
         }
@@ -3913,12 +4058,12 @@ var GameXBody = /** @class */ (function (_super) {
                     }, null, null, color);
                 }
                 if (color != "blue" && color != "red") {
-                    $('button_' + opId).classList.remove('bgabutton_blue');
-                    $('button_' + opId).classList.add('bgabutton_' + color);
+                    $("button_" + opId).classList.remove("bgabutton_blue");
+                    $("button_" + opId).classList.add("bgabutton_" + color);
                 }
                 if (contains_gfx) {
-                    $('button_' + opId).classList.add('gfx');
-                    $('button_' + opId).setAttribute('title', this_3.getButtonNameForOperation(opInfo));
+                    $("button_" + opId).classList.add("gfx");
+                    $("button_" + opId).setAttribute("title", this_3.getButtonNameForOperation(opInfo));
                 }
                 if (opargs.void) {
                     dojo.addClass("button_" + opId, "disabled");
@@ -3930,8 +4075,8 @@ var GameXBody = /** @class */ (function (_super) {
                     this_3.addActionButton("button_skip", _("Done"), function () {
                         _this.sendActionSkip();
                     });
-                    $('button_skip').classList.remove('bgabutton_blue');
-                    $('button_skip').classList.add('bgabutton_orange');
+                    $("button_skip").classList.remove("bgabutton_blue");
+                    $("button_skip").classList.add("bgabutton_orange");
                 }
             }
             i = i + 1;
@@ -3946,8 +4091,12 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
+        console.trace("addUndoButton");
         if (!$("button_undo")) {
             this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper_unchecked("undo"); }, undefined, undefined, "red");
+        }
+        else {
+            console.log("slip");
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
@@ -3965,6 +4114,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerDispatch = function (args) {
+        debugger;
         this.addUndoButton();
     };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
@@ -4031,7 +4181,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else {
             var value = "1";
-            for (var i = 1; i <= 3; i++) {
+            for (var i = 0; i <= 3; i++) {
                 $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
                 $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
             }

@@ -513,6 +513,9 @@ class GameTokens extends GameBasics {
 
   getTokenDisplayInfo(tokenId: string): TokenDisplayInfo {
     let tokenInfo = this.getAllRules(tokenId);
+    if (!tokenInfo && tokenId && tokenId.startsWith('alt_')) {
+      tokenInfo =  this.getAllRules(tokenId.substring(4));
+    }
 
     if (!tokenInfo) {
       tokenInfo = {

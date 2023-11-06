@@ -2,36 +2,24 @@ Random notes on todo items
 
 ## General
 
-* Pref to not confirm turn
+* Pref to not confirm turn DONE
 
 ## Server
 
 * undo - block on draw card
-* lose production does not offer yourself?
 * Missing undo button when inactive during research
+* first player messed up (reversed?)
 
 
 ## Client
 
-* Integrate Spend 8p to get 1 greenery in the player board - DONE
-* Better tooltips DONE
-  * Tooltips on Milestones + awards costs & explanations DONE
-  * Explanations/help on Tiles DONE
-  * Explanations/help on other elements DONE
+* Toolips on global params on miniboard
 * Finish Awards (still waiting official assets) - DONE will do like this for now
 * Show decoded error on when something cannot be selected/played
 * Show discounted card cost
   * Update from args ok - TODO initial
-* Show if prereq are not met - DONE
-* Tableau filtering - DONE
-* Show terraforming parameters - DONE
-* Resources in log - images not all defined DONE?
-* Animation of resources - DONE
-* Land tracker icon is missing - DONE
-* First player marker - DONE
 * Passing not obvious 
-* Titanim exchange rate during payment
-* Reverse ocean counter (should show how many tiles left) - DONE
+* Exchange rate during payment
 * Cubes on cards
 * Layout types based on size
 * Gewneration counter on player panel (common panel)
@@ -39,14 +27,14 @@ Random notes on todo items
 
 ## Client - Compact layout
 * Add options (local storage) for :
-  * hand placement (floating or on top) - DONE
   * size of elements - DONE
   * general layout - DONE
 * Fix some remaining cards rendering
 * Show VP worth on cards
 
+
 ## Client - Full layout
-* 
+* Tooltips of resources on miniboard - copy from compact layout
 
 
 ### Client Bonus Features

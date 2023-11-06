@@ -44,6 +44,7 @@
   .player_counters {
     display: none;
   }
+
   .counters_holder {
     width: unset;
   }
@@ -221,7 +222,7 @@
 
   .map_milesawardscontent {
     position: absolute;
-    top: 58%;
+    top: 8%;
     left: 2%;
     width: 100%;
     height: 100%;
@@ -288,7 +289,9 @@
     position: absolute;
     top: 10%;
     left: 76%;
-    clip-path: revert;
+
+    width: calc(var(--stan-width) * 0.45);
+    height: calc(var(--stan-width) * 0.54);
   }
 
 
@@ -463,6 +466,13 @@
     }
   }
 
+  .card_corp_9 {
+    background-position: 0% 50%;
+  }
+
+  .card_corp_8 {
+    background-position: 20% 50%;
+  }
 
   .playerboard_header .badge~.mini_counter[data-state="0"] {
     opacity: 0.2;
@@ -622,9 +632,11 @@
 @for $num from 1 through 80 {
   $i: $num - 1;
   $col: $i % 10;
-  $row: ($i - $col) / 10;
+  $row: (
+    $i - $col) / 10;
 
-    .mfull  .card_main_#{$num}, .cardhelp.card_main_#{$num} {
+  .mfull .card_main_#{$num},
+  .cardhelp.card_main_#{$num} {
     background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
     );
   background-image: url(img/full/cards1.jpg);
@@ -637,7 +649,8 @@
   $row: (
     $i - $col) / 10;
 
-    .mfull  .card_main_#{$num}, .cardhelp.card_main_#{$num}{
+  .mfull .card_main_#{$num},
+  .cardhelp.card_main_#{$num} {
     background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
     );
   background-image: url(img/full/cards2.jpg);
@@ -649,7 +662,8 @@
   $col: $i % 10;
   $row: calc(($i - $col) / 10);
 
-  .mfull  .card_main_#{$num}, .cardhelp.card_main_#{$num} {
+  .mfull .card_main_#{$num},
+  .cardhelp.card_main_#{$num} {
     background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
     background-image: url(img/full/cards3.jpg);
   }
