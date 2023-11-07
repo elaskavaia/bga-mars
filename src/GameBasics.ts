@@ -71,6 +71,7 @@ class GameBasics extends GameGui {
     if (this.laststate != stateName) {
       // delay firing this until onEnteringState is called so they always called in same order
       this.pendingUpdate = true;
+      this.restoreMainBar();
       return;
     }
     this.pendingUpdate = false;
@@ -91,6 +92,7 @@ class GameBasics extends GameGui {
         this.addActionButton("button_cancel", _("Cancel"), "onCancel", null, false, "red");
       }
     }
+    this.restoreMainBar();
   }
 
   /**
@@ -538,7 +540,6 @@ class GameBasics extends GameGui {
     </div>`;
   }
 
-
   getTr(name: any) {
     if (name === undefined) return null;
     if (name.log !== undefined) {
@@ -798,7 +799,7 @@ class GameBasics extends GameGui {
     return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
   }
 
-  addCancelButton (name?: string, handler?: any) {
+  addCancelButton(name?: string, handler?: any) {
     if (!name) name = _("Cancel");
     if (!handler) handler = () => this.cancelLocalStateEffects();
     if ($("button_cancel")) dojo.destroy("button_cancel");
@@ -959,8 +960,7 @@ class GameBasics extends GameGui {
     return true;
   }
 
-
-  setZoom (zoom: number) {
+  setZoom(zoom: number) {
     if (zoom === 0 || zoom < 0.1 || zoom > 10) {
       zoom = 1;
     }
@@ -999,7 +999,7 @@ class GameBasics extends GameGui {
     dojo.setAttr(chk, "bchecked", false);
     dojo.connect(chk, "onclick", () => {
       console.log("on check", chk);
-      const bchecked = ! chk.getAttribute("bchecked");
+      const bchecked = !chk.getAttribute("bchecked");
       //dojo.setAttr(chk, "bchecked", !chk.bchecked);
       this.toggleHelpMode(bchecked);
     });
@@ -1012,8 +1012,6 @@ class GameBasics extends GameGui {
 
     //$('help-mode-switch').style.display='none';
     this.setupSettings();
-
-
 
     this.setupPreference();
     //this.setupHelper();
@@ -1044,42 +1042,40 @@ class GameBasics extends GameGui {
     dojo.subscribe("log", this, "notif_log");
   }
 
-  subscribeNotification(notifName:string,duration:number=0,funcName:string=""):void{
-
-    if (funcName=="") funcName= notifName;
-    if (!(typeof this['notif_'+funcName] === 'function'))
-    {
-      console.error("Notification notif_"+funcName+" isn't set !");
+  subscribeNotification(notifName: string, duration: number = 0, funcName: string = ""): void {
+    if (funcName == "") funcName = notifName;
+    if (!(typeof this["notif_" + funcName] === "function")) {
+      console.error("Notification notif_" + funcName + " isn't set !");
     }
 
     dojo.subscribe(notifName, this, (notif) => this.playnotif(funcName, notif, duration));
-    if (duration==0)  {
+    if (duration == 0) {
       //variable duration
       //don't forget to call this.notifqueue.setSynchronousDuration(duration);
       this.notifqueue.setSynchronous(notifName);
-    }  else if (duration== 1) {
+    } else if (duration == 1) {
       //Notif has no animation, thus no delay
       this.notifqueue.setSynchronous(notifName, duration);
-    } else if (duration== -1) {
+    } else if (duration == -1) {
       //Notif has to be ignored for active player
       //something about this has been updated in the bga framework, don't know if the big delay is still necessary
-      this.notifqueue.setSynchronous(notifName,10000);
-      this.notifqueue.setIgnoreNotificationCheck(notifName, (notif:Notif) => (notif.args.player_id == this.player_id));
-    }  else {
+      this.notifqueue.setSynchronous(notifName, 10000);
+      this.notifqueue.setIgnoreNotificationCheck(notifName, (notif: Notif) => notif.args.player_id == this.player_id);
+    } else {
       //real fixed duration
       this.notifqueue.setSynchronous(notifName, duration);
     }
   }
 
-  playnotif(notifname:string, notif:Notif, setDelay:number):void {
-      console.log('playing notif ' + notifname + ' with args ', notif.args);
+  playnotif(notifname: string, notif: Notif, setDelay: number): void {
+    console.log("playing notif " + notifname + " with args ", notif.args);
 
     //setSynchronous has to set for non active player in ignored notif
-    if (setDelay==-1) {
+    if (setDelay == -1) {
       if (notif.args.player_id == this.player_id) {
         //     this.notifqueue.setSynchronous(notifname, 1);
       } else {
-           //   this.notifqueue.setSynchronous(notifname);
+        //   this.notifqueue.setSynchronous(notifname);
       }
     }
 
@@ -1093,41 +1089,37 @@ class GameBasics extends GameGui {
     this.prev_notif_uid = args.uid;
     */
 
-    let notiffunc = 'notif_' + notifname;
+    let notiffunc = "notif_" + notifname;
 
     if (!this[notiffunc]) {
-      this.showMessage("Notif: "+notiffunc+" not implemented yet",'error');
+      this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
     } else {
-      const startTime = Date.now()
-    //  this.onNotif(notif);//should be moved here
-      let p= this[notiffunc](notif);
-      if (setDelay==1) {
+      const startTime = Date.now();
+      //  this.onNotif(notif);//should be moved here
+      let p = this[notiffunc](notif);
+      if (setDelay == 1) {
         //nothing to do here
-      }
-      else if (p==undefined) {
+      } else if (p == undefined) {
         //no promise returned: no animation played
-       // console.log(notifname+' : no return, sync set to 1');
+        // console.log(notifname+' : no return, sync set to 1');
         this.notifqueue.setSynchronousDuration(1);
-      }  else {
-      //  this.animated=true;
+      } else {
+        //  this.animated=true;
         p.then(() => {
-         // console.log(notifname+' : waiting 50ms after returns');
-          return this.wait(50);})
-        .then(() => {
-            this.notifqueue.setSynchronousDuration(10);
-            const executionTime = Date.now() - startTime
+          // console.log(notifname+' : waiting 50ms after returns');
+          return this.wait(50);
+        }).then(() => {
+          this.notifqueue.setSynchronousDuration(10);
+          const executionTime = Date.now() - startTime;
           //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
-        //    this.animated=false;
+          //    this.animated=false;
         });
-
       }
     }
-
- }
-
+  }
 
   //return a timed promise
-  wait(ms:number):Promise<void> {
+  wait(ms: number): Promise<void> {
     return new Promise((resolve, reject) => {
       setTimeout(() => resolve(), ms);
     });
@@ -1161,12 +1153,36 @@ class GameBasics extends GameGui {
     this.onNotif(notif);
   }
 
-  ntf_gameStateMultipleActiveUpdate(notif) {
-    this.gamedatas.gamestate.descriptionmyturn = "...";
-    return this.inherited(arguments);
+  // ntf_gameStateMultipleActiveUpdate(notif) {
+  //   this.gamedatas.gamestate.descriptionmyturn = "...";
+  //   return this.inherited(arguments);
+  // }
+
+  onLockInterface(lock) {
+    this.inherited(arguments);
+    // if (lock.status == "queued") {
+    //    // do not hide the buttons when locking call comes from another player
+    // }
+
+    this.restoreMainBar();
+  }
+
+  /**
+   * This is the hack to keep the status bar on
+   */
+  restoreMainBar(){
+    console.trace("restore main bar");
+    dojo.style( 'pagemaintitle_wrap', 'display', 'block' );
+    dojo.style( 'gameaction_status_wrap', 'display', 'block' );
+    if (this.interface_status == "updated") {
+      // this is normal status nothing is pending
+      $("gameaction_status").innerHTML = '&nbsp;';
+      $('gameaction_status_wrap').setAttribute('data-interface-status',this.interface_status);
+    }
   }
 
   onNotif(notif: Notif) {
+    this.restoreMainBar();
     // if (!this.instantaneousMode && notif.log) {
     //   this.setDescriptionOnMyTurn(notif.log, notif.args);
     // }
@@ -1202,7 +1218,7 @@ class GameBasics extends GameGui {
       } else if ($(name)) {
         this.setDomTokenState(name, value);
       }
-        console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+      console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
     } catch (ex) {
       console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
     }

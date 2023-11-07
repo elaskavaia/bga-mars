@@ -73,6 +73,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.laststate != stateName) {
             // delay firing this until onEnteringState is called so they always called in same order
             this.pendingUpdate = true;
+            this.restoreMainBar();
             return;
         }
         this.pendingUpdate = false;
@@ -91,6 +92,7 @@ var GameBasics = /** @class */ (function (_super) {
                 this.addActionButton("button_cancel", _("Cancel"), "onCancel", null, false, "red");
             }
         }
+        this.restoreMainBar();
     };
     /**
      *
@@ -621,7 +623,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.isActiveSlot(element))
             return element;
         var parent = element.parentElement;
-        if (!parent || parent.id == 'thething' || parent == element)
+        if (!parent || parent.id == "thething" || parent == element)
             return null;
         return this.findActiveParent(parent);
     };
@@ -633,7 +635,7 @@ var GameBasics = /** @class */ (function (_super) {
         var id = event.currentTarget.id;
         // Stop this event propagation
         dojo.stopEvent(event); // XXX
-        if (id == 'thething') {
+        if (id == "thething") {
             var node = this.findActiveParent(event.target);
             id = node === null || node === void 0 ? void 0 : node.id;
         }
@@ -936,7 +938,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (funcName === void 0) { funcName = ""; }
         if (funcName == "")
             funcName = notifName;
-        if (!(typeof this['notif_' + funcName] === 'function')) {
+        if (!(typeof this["notif_" + funcName] === "function")) {
             console.error("Notification notif_" + funcName + " isn't set !");
         }
         dojo.subscribe(notifName, this, function (notif) { return _this_1.playnotif(funcName, notif, duration); });
@@ -953,7 +955,7 @@ var GameBasics = /** @class */ (function (_super) {
             //Notif has to be ignored for active player
             //something about this has been updated in the bga framework, don't know if the big delay is still necessary
             this.notifqueue.setSynchronous(notifName, 10000);
-            this.notifqueue.setIgnoreNotificationCheck(notifName, function (notif) { return (notif.args.player_id == _this_1.player_id); });
+            this.notifqueue.setIgnoreNotificationCheck(notifName, function (notif) { return notif.args.player_id == _this_1.player_id; });
         }
         else {
             //real fixed duration
@@ -962,7 +964,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.playnotif = function (notifname, notif, setDelay) {
         var _this_1 = this;
-        console.log('playing notif ' + notifname + ' with args ', notif.args);
+        console.log("playing notif " + notifname + " with args ", notif.args);
         //setSynchronous has to set for non active player in ignored notif
         if (setDelay == -1) {
             if (notif.args.player_id == this.player_id) {
@@ -981,9 +983,9 @@ var GameBasics = /** @class */ (function (_super) {
         }
         this.prev_notif_uid = args.uid;
         */
-        var notiffunc = 'notif_' + notifname;
+        var notiffunc = "notif_" + notifname;
         if (!this[notiffunc]) {
-            this.showMessage("Notif: " + notiffunc + " not implemented yet", 'error');
+            this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
         }
         else {
             var startTime_1 = Date.now();
@@ -1002,8 +1004,7 @@ var GameBasics = /** @class */ (function (_super) {
                 p.then(function () {
                     // console.log(notifname+' : waiting 50ms after returns');
                     return _this_1.wait(50);
-                })
-                    .then(function () {
+                }).then(function () {
                     _this_1.notifqueue.setSynchronousDuration(10);
                     var executionTime = Date.now() - startTime_1;
                     //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
@@ -1046,11 +1047,32 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.notif_message = function (notif) {
         this.onNotif(notif);
     };
-    GameBasics.prototype.ntf_gameStateMultipleActiveUpdate = function (notif) {
-        this.gamedatas.gamestate.descriptionmyturn = "...";
-        return this.inherited(arguments);
+    // ntf_gameStateMultipleActiveUpdate(notif) {
+    //   this.gamedatas.gamestate.descriptionmyturn = "...";
+    //   return this.inherited(arguments);
+    // }
+    GameBasics.prototype.onLockInterface = function (lock) {
+        this.inherited(arguments);
+        // if (lock.status == "queued") {
+        //    // do not hide the buttons when locking call comes from another player
+        // }
+        this.restoreMainBar();
+    };
+    /**
+     * This is the hack to keep the status bar on
+     */
+    GameBasics.prototype.restoreMainBar = function () {
+        console.trace("restore main bar");
+        dojo.style('pagemaintitle_wrap', 'display', 'block');
+        dojo.style('gameaction_status_wrap', 'display', 'block');
+        if (this.interface_status == "updated") {
+            // this is normal status nothing is pending
+            $("gameaction_status").innerHTML = '&nbsp;';
+            $('gameaction_status_wrap').setAttribute('data-interface-status', this.interface_status);
+        }
     };
     GameBasics.prototype.onNotif = function (notif) {
+        this.restoreMainBar();
         // if (!this.instantaneousMode && notif.log) {
         //   this.setDescriptionOnMyTurn(notif.log, notif.args);
         // }
@@ -2942,11 +2964,11 @@ var GameXBody = /** @class */ (function (_super) {
                 var msg = this.format_string_recursive(notif.log, notif.args);
                 if (msg != "") {
                     $("gameaction_status").innerHTML = msg;
-                    //$("pagemaintitletext").innerHTML = msg;
                 }
             }
             else {
                 // XXX this is very bad in multiple player all yout buttons dissapear
+                // currently gameaction_status should be visible
                 this.setDescriptionOnMyTurn(notif.log, notif.args);
             }
         }
@@ -4091,12 +4113,8 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
-        console.trace("addUndoButton");
         if (!$("button_undo")) {
             this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper_unchecked("undo"); }, undefined, undefined, "red");
-        }
-        else {
-            console.log("slip");
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
@@ -4114,7 +4132,6 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerDispatch = function (args) {
-        debugger;
         this.addUndoButton();
     };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {

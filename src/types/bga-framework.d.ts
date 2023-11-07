@@ -82,6 +82,7 @@ declare class GameGui {
   prefs: any[];
   table_id: number;
   metasiteurl: string;
+  interface_status: string;
 
   isCurrentPlayerActive(): boolean;
   getActivePlayerId(): number;

@@ -99,6 +99,10 @@
   text-shadow: 0px 0px 2px black;
 }
 
+#gameaction_status_wrap[data-interface-status=updated] .imgtext {
+  visibility: hidden;
+}
+
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -4989,7 +4993,6 @@
   justify-content: center;
   align-items: center;
   font-family: "SpaceFont";
-  pointer-events: none;
 }
 .player_area .player_tags .tracker[data-state="0"] {
   display: none;

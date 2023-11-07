@@ -217,10 +217,10 @@ class GameXBody extends GameTokens {
         let msg = this.format_string_recursive(notif.log, notif.args);
         if (msg != "") {
           $("gameaction_status").innerHTML = msg;
-          //$("pagemaintitletext").innerHTML = msg;
         }
       } else {
         // XXX this is very bad in multiple player all yout buttons dissapear
+        // currently gameaction_status should be visible
         this.setDescriptionOnMyTurn(notif.log, notif.args);
       }
     }
@@ -1510,11 +1510,8 @@ class GameXBody extends GameTokens {
   }
 
   addUndoButton() {
-    console.trace("addUndoButton");
     if (!$("button_undo")) {
       this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper_unchecked("undo"), undefined, undefined, "red");
-    } else {
-      console.log("slip");
     }
   }
 
@@ -1534,7 +1531,6 @@ class GameXBody extends GameTokens {
   }
 
   onUpdateActionButtons_multiplayerDispatch(args) {
-    debugger;
     this.addUndoButton();
   }
 
