@@ -856,7 +856,7 @@ class GameBasics extends GameGui {
     if (!backPrefs) return;
     if (this.isReadOnly()) return;
     for (var key in backPrefs) {
-      let value = backPrefs[key];
+      let value = parseInt(backPrefs[key]);
       let pref = key;
       let user_value = parseInt(this.prefs[pref].value);
       if (this.prefs[pref] !== undefined && user_value != value) {
@@ -1171,7 +1171,7 @@ class GameBasics extends GameGui {
    * This is the hack to keep the status bar on
    */
   restoreMainBar(){
-    console.trace("restore main bar");
+    //console.trace("restore main bar");
     dojo.style( 'pagemaintitle_wrap', 'display', 'block' );
     dojo.style( 'gameaction_status_wrap', 'display', 'block' );
     if (this.interface_status == "updated") {

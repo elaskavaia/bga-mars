@@ -60,6 +60,7 @@
 
   .hand.location:empty {
     display: block;
+    min-width: var(--card-width);
   }
 
 
