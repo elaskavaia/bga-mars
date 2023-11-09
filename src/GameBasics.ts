@@ -981,13 +981,13 @@ class GameBasics extends GameGui {
       inner.style.width = 100 / zoom + "%";
       div.style.height = inner.offsetHeight * zoom + "px";
     }
-    localStorage.setItem("mars_zoom", "" + this.zoom);
+    localStorage.setItem("mars.zoom", "" + this.zoom);
     this.onScreenWidthChange();
   }
 
   setupInfoPanel() {
     //dojo.place('player_board_config', 'player_boards', 'first');
-    var strzoom = localStorage.getItem("tapestry_zoom");
+    var strzoom = localStorage.getItem("mars.zoom");
     if (!strzoom) strzoom = "1";
     this.zoom = Number(strzoom);
     this.setZoom(this.zoom);
@@ -1159,6 +1159,7 @@ class GameBasics extends GameGui {
   // }
 
   onLockInterface(lock) {
+    $('gameaction_status_wrap').setAttribute('data-interface-status',lock?.status ?? 'updated');
     this.inherited(arguments);
     // if (lock.status == "queued") {
     //    // do not hide the buttons when locking call comes from another player

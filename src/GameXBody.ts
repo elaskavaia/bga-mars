@@ -32,6 +32,7 @@ class GameXBody extends GameTokens {
 
       this.local_counters["game"] = { cities: 0 };
 
+      this.setupLocalSettings();
       super.setup(gamedatas);
       // hexes are not moved so manually connect
       this.connectClass("hex", "onclick", "onToken");
@@ -49,27 +50,7 @@ class GameXBody extends GameTokens {
         dojo.destroy(node); // on undo this remains but another one generated
       });
 
-      //local settings
-      this.localSettings = new LocalSettings("mars", [
-        { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
-        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
-        { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
-        {
-          key: "playerarea",
-          label: _("Player zone placement"),
-          choice: { before: _("Before Map"), after: _("After Map") },
-          default: "after",
-        },
-        {
-          key: "showbadges",
-          label: _("Show Badges on minipanel"),
-          choice: { true: "true", false: "false" },
-          default: "true",
-        },
-      ]);
-      this.localSettings.setup();
-      //this.localSettings.renderButton('player_config_row');
-      this.localSettings.renderContents("settings-controls-container");
+
       //floating hand stuff
       this.connect($("hand_area_button_pop"), "onclick", () => {
         $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
@@ -113,6 +94,30 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
+  }
+
+  setupLocalSettings() {
+      //local settings, include user id into setting string so it different per local player
+      this.localSettings = new LocalSettings("mars."+this.player_id, [
+        { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+        { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+        {
+          key: "playerarea",
+          label: _("Player zone placement"),
+          choice: { before: _("Before Map"), after: _("After Map") },
+          default: "after",
+        },
+        {
+          key: "showbadges",
+          label: _("Show Badges on minipanel"),
+          choice: { true: "true", false: "false" },
+          default: "true",
+        },
+      ]);
+      this.localSettings.setup();
+      //this.localSettings.renderButton('player_config_row');
+      this.localSettings.renderContents("settings-controls-container");
   }
 
   setupHelpSheets() {

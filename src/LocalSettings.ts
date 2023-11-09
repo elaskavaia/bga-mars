@@ -10,6 +10,7 @@ interface LocalProp {
   };
   choice?: { [key: string]: string };
   default: string | number | null;
+  custom?: boolean;
 }
 
 class LocalSettings {
@@ -64,6 +65,11 @@ class LocalSettings {
 
   public renderContents(parentId: string): Boolean {
     if (!document.getElementById(parentId)) return false;
+    $(parentId)
+      .querySelectorAll(".localsettings_window")
+      .forEach((node) => {
+        dojo.destroy(node); // on undo this remains but another one generated
+      });
     let htm =
       '<div id="' +
       this.gameName +
@@ -76,7 +82,7 @@ class LocalSettings {
 
     let htmcontents = "";
     for (let prop of this.props) {
-      htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
+      if (!prop.custom) htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
     }
 
     htm = htm.replace("%contents%", htmcontents);
@@ -84,7 +90,7 @@ class LocalSettings {
 
     //add interactivity
     for (let prop of this.props) {
-      this.actionProp(prop);
+      if (!prop.custom) this.actionProp(prop);
     }
   }
 
@@ -96,39 +102,34 @@ class LocalSettings {
 
   public renderPropRange(prop: LocalProp): string {
     if (!prop.range) return;
-    const range  = prop.range;
+    const range = prop.range;
+    const inputid = `localsettings_prop_${prop.key}`;
     if (range.slider) {
-      const inputid = `localsettings_prop_${prop.key}`;
+ 
       return `
       <label for="${inputid}" class="localsettings_prop_label prop_range">${prop.label}</label>
+      <div class="localsettings_prop_range">
+      <div id="localsettings_prop_button_minus_${prop.key}" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>
       <input type="range" id="${inputid}" name="${inputid}" min="${range.min}" max="${range.max}" step="${range.inc}" value="${prop.value}">
-      `;
+      <div id="localsettings_prop_button_plus_${prop.key}" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>
+      </div>`;
     }
 
-    let htm = '<div class="localsettings_prop_label prop_range">' + prop.label + "</div>";
-    htm =
-      htm +
-      '<div class="localsettings_prop_range">' +
-      '<div id="localsettings_prop_button_minus_' +
-      prop.key +
-      '" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>' +
-      '<div id="localsettings_prop_rangevalue_' +
-      prop.key +
-      '" class="localsettings_prop_rangevalue">' +
-      prop.value +
-      "</div>" +
-      '<div id="localsettings_prop_button_plus_' +
-      prop.key +
-      '" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>' +
-      "</div>";
-
-    return htm;
+    return `
+      <div class="localsettings_prop_label prop_range">${prop.label}</div>
+      <div class="localsettings_prop_range">
+      <div id="localsettings_prop_button_minus_${prop.key}" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>
+      <div id="${inputid}" class="localsettings_prop_rangevalue">
+      ${prop.value}
+      </div>
+      <div id="localsettings_prop_button_plus_${prop.key}" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>
+      </div>`;
   }
 
   public renderPropChoice(prop: LocalProp): string {
     if (prop.choice.true) {
       const inputid = `localsettings_prop_${prop.key}`;
-      const checked = (prop.value === 'false' || !prop.value) ? "": "checked";
+      const checked = prop.value === "false" || !prop.value ? "" : "checked";
       return `
       <input type="checkbox" id="${inputid}" name="${inputid}" ${checked}>
       <label for="${inputid}" class="localsettings_prop_label">${prop.label}</label>
@@ -154,13 +155,12 @@ class LocalSettings {
 
   private actionPropRange(prop: LocalProp) {
     if (!prop.range) return;
-    const range  = prop.range;
+    const range = prop.range;
     if (range.slider) {
       $("localsettings_prop_" + prop.key).addEventListener("change", (event) => {
         // @ts-ignore
         this.applyChanges(prop, event.target.value);
       });
-      return;
     }
     $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", () => {
       this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
@@ -174,7 +174,7 @@ class LocalSettings {
   private actionPropChoice(prop: LocalProp) {
     if (prop.choice.true) {
       $("localsettings_prop_" + prop.key).addEventListener("click", (event) => {
-        this.applyChanges(prop, (event.target as HTMLInputElement).checked?'true':'false');
+        this.applyChanges(prop, (event.target as HTMLInputElement).checked ? "true" : "false");
       });
       return;
     }
@@ -183,7 +183,6 @@ class LocalSettings {
       this.applyChanges(prop, event.target.value);
     });
   }
-
 
   private setSanitizedValue(prop: LocalProp, newvalue: any) {
     if (prop.range) {
@@ -208,13 +207,17 @@ class LocalSettings {
     return prop.value;
   }
 
-  private applyChanges(prop: LocalProp, newvalue: any, write: boolean = true) {
+  public applyChanges(prop: LocalProp, newvalue: any, write: boolean = true) {
     // sanitize value so bad value is never stored
     let value = this.setSanitizedValue(prop, newvalue);
 
     if (prop.range) {
-      const lvar = "localsettings_prop_rangevalue_" + prop.key;
-      if ($(lvar)) $(lvar).innerHTML = value;
+      const lvar = "localsettings_prop_" + prop.key;
+      const node = $(lvar);
+      if (node) {
+        node.innerHTML = value;
+        node.value = value;
+      }
     }
     $("ebd-body").dataset["localsetting_" + prop.key] = value;
     $("ebd-body").style.setProperty("--localsetting_" + prop.key, value);
