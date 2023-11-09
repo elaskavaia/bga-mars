@@ -44,7 +44,7 @@ abstract class PGameXBody extends PGameMachine {
     protected function initTables() {
         try {
             $players = $this->loadPlayersBasicInfos();
-            $this->dbUserPrefs->setup($players,$this->player_preferences);
+            $this->dbUserPrefs->setup($players, $this->player_preferences);
             $this->setGameStateValue('gamestage', MA_STAGE_SETUP);
             $this->token_types_adjusted2 = false; // clear cache
             if ($this->isSolo()) {
@@ -56,7 +56,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->tokens->shuffle("deck_main");
             $this->tokens->shuffle("deck_corp");
             $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
-        
+
             $initial_draw = 10;
             $tr_value = 20;
             if ($this->isSolo()) {
@@ -99,7 +99,7 @@ abstract class PGameXBody extends PGameMachine {
 
             $player_id = $this->getFirstPlayer();
             $this->setCurrentStartingPlayer($player_id);
-            $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
+            $this->queuePlayersTurn($player_id, false);
         } catch (Exception $e) {
             $this->error($e);
         }
@@ -190,7 +190,7 @@ abstract class PGameXBody extends PGameMachine {
         $result = parent::getAllDatas();
         $current = $this->getCurrentPlayerId();
         if ($this->isRealPlayer($current))
-            $result ['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
+            $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
         return $result;
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -979,7 +979,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->systemAssertTrue("unauthorized action", $current_player_id == $player_id);
         $this->systemAssertTrue("unauthorized action", $this->isRealPlayer($player_id));
         $this->dbUserPrefs->setPrefValue($player_id, $pref, $value);
-        $this->notifyWithName('ack','',['pref_id'=>$pref,'pref_value'=>$value]);
+        $this->notifyWithName('ack', '', ['pref_id' => $pref, 'pref_value' => $value]);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1351,10 +1351,10 @@ abstract class PGameXBody extends PGameMachine {
             $this->machine->queue("confirm");
             return null;
         }
-        $player_id = $this->getCurrentStartingPlayer();
-        $next = $this->getPlayerAfter($player_id);
-        $this->setCurrentStartingPlayer($next);
-        $this->machine->queue("research");
+        $current_player_id = $this->getCurrentStartingPlayer();
+        $player_id = $this->getPlayerAfter($current_player_id);
+        $this->setCurrentStartingPlayer($player_id);
+        $this->machine->queue("research", 1, 1, $this->getPlayerColorById($player_id));
         return null;
     }
 
@@ -1597,7 +1597,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     public function isVoidSingle(string $type, string $color, ?int $count = 1, string $data = '') {
-        if ($data===null) $data='';
+        if ($data === null) $data = '';
         $opinst = $this->getOperationInstanceFromType($type, $color, $count, $data);
         return $opinst->isVoid();
     }
@@ -1655,16 +1655,20 @@ abstract class PGameXBody extends PGameMachine {
             // end of turn
             return $this->effect_endOfTurn();
         }
-        $this->setNextActivePlayerCustom($player_id);
-        $this->undoSavepoint();
+        $this->queuePlayersTurn($player_id);
         $turn = $this->getStat("turns_number", $player_id);
-        $color = $this->getActivePlayerColor();
-        $this->machine->push("turn", 1, 1, $color);
         if ($turn > 10000) {
             // recursion?
             $this->error("detected very high turn number $turn");
             return STATE_PLAYER_CONFIRM;
         }
         return null;
+    }
+
+    function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
+        $this->setNextActivePlayerCustom($player_id, $give_time, $inc_turn);
+        $color = $this->getPlayerColorById($player_id);
+        //$this->undoSavepoint();
+        $this->machine->queue("turn", 1, 1, $color); 
     }
 }

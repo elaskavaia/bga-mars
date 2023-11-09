@@ -54,6 +54,9 @@ class Operation_turn extends AbsOperation {
         } else {
             $this->game->queue($owner, "turn2");
         }
+    
+        $this->game->gamestate->changeActivePlayer($player_id);// XXX?
+        if (!$secondaction) $this->game->undoSavepoint();
         return 1;
     }
 }

@@ -18,7 +18,8 @@ define("GS_PLAYER_TURN_NUMBER", "playerturn_nbr");
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
 
 abstract class PGameBasic extends Table {
-    protected $player_colors;
+    protected $undoSaveOnMoveEndDup = false;
+    protected array $player_colors;
     function __construct() {
         parent::__construct();
     }
@@ -608,6 +609,49 @@ abstract class PGameBasic extends Table {
             $sql .= " AND player_id = $player_id";
         }
         self::DbQuery($sql);
+    }
+
+     /*
+     * @Override
+     * - have to override to track second copy of var flag as original one is private
+     */
+    function undoSavepoint() {
+        //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
+        $this->undoSaveOnMoveEndDup = true;
+    }
+
+    function setUndoSavepoint(bool $value) {
+        //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
+        $this->undoSaveOnMoveEndDup = $value;
+    }
+
+    /*
+     * @Override
+     * - I had to override this not fail in multiactive, it will just ignore it
+     * - fixed resetting the save flag when its done
+     */
+    function doUndoSavePoint() {
+        if ( !$this->undoSaveOnMoveEndDup)
+            return;
+        //$this->debug("*** doUndoSavePoint ***");
+        $state = $this->gamestate->state();
+        if ($state ['type'] == 'multipleactiveplayer') {
+            $name = $state ['name'];
+            $this->warn("using undo savepoint in multiactive state $name");
+            return;
+        }
+        parent::doUndoSavePoint();
+        $this->undoSaveOnMoveEndDup = false;
+    }
+
+      /*
+     * @Override
+     * fixed bug where it does not save state if there is no notifications
+     */
+    function sendNotifications() {
+        parent::sendNotifications();
+        if ($this->undoSaveOnMoveEndDup)
+            self::doUndoSavePoint();
     }
 }
 

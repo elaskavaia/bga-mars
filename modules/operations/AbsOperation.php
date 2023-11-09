@@ -160,6 +160,12 @@ abstract class AbsOperation {
         return $no;
     }
 
+    protected function getPlayerId() {
+        $owner = $this->getOwner();
+        $playerId = $this->game->getPlayerIdByColor($owner);
+        return $playerId;
+    }
+
 
     protected function getContext($index = 0) {
         $data = $this->op_info['data'] ?? '';

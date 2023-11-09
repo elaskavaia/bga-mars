@@ -27,5 +27,9 @@ class Operation_research extends AbsOperation {
             }
         }
         $this->game->effect_queueMultiDraw(4);
+        $c = $this->getOwner();
+        $player_id = $this->getPlayerId();
+        $this->game->systemAssertTrue("bom p=$player_id c=$c", $this->game->isRealPlayer($player_id));
+        $this->game->queuePlayersTurn($player_id);
     }
 }
