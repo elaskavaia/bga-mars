@@ -653,6 +653,15 @@ abstract class PGameBasic extends Table {
         if ($this->undoSaveOnMoveEndDup)
             self::doUndoSavePoint();
     }
+
+    function getPhpConstants($prefix = null) {
+        $res = [];
+        $cc = get_defined_constants(true) ['user'];
+        foreach ( $cc as $key => $value ) {
+            if (!$prefix  || startsWith($key, $prefix)) $res [$key] = $value; 
+        }
+        return $res;
+    }
 }
 
 

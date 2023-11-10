@@ -6210,8 +6210,8 @@
   position: relative;
   margin-bottom: 0.2em;
 }
-.mfull .milestone,
-.mfull .award {
+.mfull #main_board .milestone,
+.mfull #main_board .award {
   position: relative;
   background: none;
   width: 17%;

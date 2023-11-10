@@ -220,12 +220,15 @@
     margin-bottom: 0.2em;
   }
 
-  .milestone,
-  .award {
-    position: relative;
-    background: none;
-    width: 17%;
-    height: 100%;
+  #main_board {
+
+    .milestone,
+    .award {
+      position: relative;
+      background: none;
+      width: 17%;
+      height: 100%;
+    }
   }
 
   .map_milesawardsheader,

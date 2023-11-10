@@ -728,7 +728,7 @@ var GameBasics = /** @class */ (function (_super) {
         var bug = $("bug_button");
         if (!bug) {
             var url = this.metasiteurl + "/bug?id=0&table=" + this.table_id;
-            bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url });
+            bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url, target: '_blank' });
         }
         dojo.place(bug, "settings-controls-container", "last");
     };
@@ -2802,6 +2802,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.previousLayout = "desktop";
             this.zoneWidth = 0;
             this.zoneHeight = 0;
+            this.CON = gamedatas.constants;
             this.local_counters["game"] = { cities: 0 };
             this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
@@ -2872,7 +2873,7 @@ var GameXBody = /** @class */ (function (_super) {
             {
                 key: "hidebadges",
                 label: _("Hide Badges on minipanel"),
-                check: { checked: 'hide' },
+                check: { checked: "hide" },
                 default: false,
             },
         ]);
@@ -3199,18 +3200,31 @@ var GameXBody = /** @class */ (function (_super) {
         if (!vp)
             vp = displayInfo.vp;
         res += this.generateTooltipSection(type_name, card_id);
-        if (type != 4)
+        if (type != this.CON.MA_CARD_TYPE_CORP)
             res += this.generateTooltipSection(_("Cost"), displayInfo.cost);
         res += this.generateTooltipSection(_("Tags"), tags);
         var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
         if (prereqText != "")
             prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
-        res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
-        res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
-        res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
-        res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
-        res += this.generateTooltipSection(_("Victory Points"), vp);
+        if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
+            var text = _("If you meet the criteria of a milestone, you may\nclaim it by paying 8 M\u20AC and placing your player marker on\nit. A milestone may only be claimed by one player, and only\n3 of the 5 milestones may be claimed in total, so there is a\nrace for these! Each claimed milestone is worth 5 VPs at the\nend of the game.");
+            res += this.generateTooltipSection(_("Criteria"), displayInfo.text);
+            res += this.generateTooltipSection(_("Victory Points"), vp);
+            res += this.generateTooltipSection(_("Info"), text);
+        }
+        else if (type == this.CON.MA_CARD_TYPE_AWARD) {
+            res += this.generateTooltipSection(_("Condition"), displayInfo.text);
+            var text = _("The first player to fund an award pays 8 M\u20AC and\nplaces a player marker on it. The next player to fund an\naward pays 14 M\u20AC, the last pays 20 M\u20AC. Only three awards\nmay be funded. Each award can only be funded once. <p>\nIn the final scoring, each award is checked, and 5\nVPs are awarded to the player who wins that category - it\ndoes not matter who funded the award! The second place\ngets 2 VPs (except in a 2-player game where second place\ndoes not give any VPs). Ties are friendly: more than one\nplayer may get the first or second place bonus.\nIf more than one player gets 1st place bonus, no 2nd place is\nawarded.");
+            res += this.generateTooltipSection(_("Info"), text);
+        }
+        else {
+            res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
+            res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
+            res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
+            res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
+            res += this.generateTooltipSection(_("Victory Points"), vp);
+        }
         return res;
     };
     GameXBody.prototype.createHtmlForToken = function (tokenNode) {

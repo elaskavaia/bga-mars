@@ -9,6 +9,7 @@ class GameXBody extends GameTokens {
   private zoneWidth: number;
   private zoneHeight: number;
   private previousLayout: string;
+  private CON: { [key: string]: string };
   // private parses:any;
 
   constructor() {
@@ -29,6 +30,7 @@ class GameXBody extends GameTokens {
       this.previousLayout = "desktop";
       this.zoneWidth = 0;
       this.zoneHeight = 0;
+      this.CON = gamedatas.constants;
 
       this.local_counters["game"] = { cities: 0 };
 
@@ -111,7 +113,7 @@ class GameXBody extends GameTokens {
       {
         key: "hidebadges",
         label: _("Hide Badges on minipanel"),
-        check: { checked: 'hide' },
+        check: { checked: "hide" },
         default: false,
       },
     ]);
@@ -511,17 +513,49 @@ class GameXBody extends GameTokens {
     if (!vp) vp = displayInfo.vp;
 
     res += this.generateTooltipSection(type_name, card_id);
-    if (type != 4) res += this.generateTooltipSection(_("Cost"), displayInfo.cost);
+    if (type != this.CON.MA_CARD_TYPE_CORP) res += this.generateTooltipSection(_("Cost"), displayInfo.cost);
     res += this.generateTooltipSection(_("Tags"), tags);
     let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
     if (prereqText != "")
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
-    res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
-    res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
-    res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
-    res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
-    res += this.generateTooltipSection(_("Victory Points"), vp);
+
+    if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
+   
+      const text = _(`If you meet the criteria of a milestone, you may
+claim it by paying 8 M€ and placing your player marker on
+it. A milestone may only be claimed by one player, and only
+3 of the 5 milestones may be claimed in total, so there is a
+race for these! Each claimed milestone is worth 5 VPs at the
+end of the game.`);
+
+      res += this.generateTooltipSection(_("Criteria"), displayInfo.text);
+      res += this.generateTooltipSection(_("Victory Points"), vp);
+      res += this.generateTooltipSection(_("Info"), text);
+    } else if (type == this.CON.MA_CARD_TYPE_AWARD) {
+      res += this.generateTooltipSection(_("Condition"), displayInfo.text);
+      const text = _(`The first player to fund an award pays 8 M€ and
+places a player marker on it. The next player to fund an
+award pays 14 M€, the last pays 20 M€. Only three awards
+may be funded. Each award can only be funded once. <p>
+In the final scoring, each award is checked, and 5
+VPs are awarded to the player who wins that category - it
+does not matter who funded the award! The second place
+gets 2 VPs (except in a 2-player game where second place
+does not give any VPs). Ties are friendly: more than one
+player may get the first or second place bonus.
+If more than one player gets 1st place bonus, no 2nd place is
+awarded.`);
+      res += this.generateTooltipSection(_("Info"), text);
+    } else {
+      res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
+      res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
+      res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
+      res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
+      res += this.generateTooltipSection(_("Victory Points"), vp);
+    }
+
+
     return res;
   }
 
