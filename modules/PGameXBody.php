@@ -627,7 +627,7 @@ abstract class PGameXBody extends PGameMachine {
             return $opinst;
         } catch (Throwable $e) {
             $this->error($e);
-            throw new BgaSystemException("Cannot instantate $classname for $type");
+            throw new BgaSystemException("Cannot instantiate $classname for $type");
         }
     }
 

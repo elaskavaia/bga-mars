@@ -18,7 +18,8 @@ abstract class AbsOperation {
         $this->argresult = null;
         $this->user_args = null;
         $this->op_info =  $opinfo;
-        $this->color =  $opinfo["owner"];
+        $owner =  $opinfo["owner"];
+        $this->color =  is_string($owner) ? $owner  : '0';
         $this->params =  '';
     }
 
