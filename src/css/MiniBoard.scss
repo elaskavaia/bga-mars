@@ -183,7 +183,7 @@ display: none;
     grid-row-gap: 0px;
     width: calc(var(--resourcesize) * 1);
     height: calc(var(--resourcesize) * 2);
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
     position: relative;
     font-size: calc(var(--resourcesize) * 0.55);
     font-weight: normal;
@@ -227,8 +227,8 @@ display: none;
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: 14px;
-  line-height: 16px;
-  font-family: "SpaceFont";
+  line-height: 24px;
+  font-family: var(--mars-font);
 }
 
 

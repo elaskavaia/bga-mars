@@ -10,6 +10,13 @@
  * GameBody.scss
  *
  */
+
+@import url(../../../css/csslayer.css);
+
+#ebd-body {
+  --mars-font: 'SpaceFont';
+}
+
 /* the other files */
 @import "GameBasics";
 @import "GameTokens";
@@ -227,7 +234,7 @@
 .deck_line {
 
   color: white;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   display: flex;
   width: fit-content;
   font-size: calc(var(--stan-width)*0.12);

@@ -49,7 +49,7 @@
 }
 
 .card_cost {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   position: absolute;
   top: 0%;
   width: calc(var(--card-width) * 0.16);
@@ -83,7 +83,7 @@
 }
 
 .card_title{
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   position: absolute;
   top: 9.7%;
   left: 4%;
@@ -270,7 +270,7 @@ display: none;
   top: 60%;
   right: 3%;
   font-size: calc(var(--card-width) * 0.04);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   padding: calc(var(--card-width) * 0.005);
   background: #c1c1c1;
   border: 1px solid black;
@@ -283,7 +283,7 @@ display: none;
   width: 28%;
   display: flex;
   font-size: calc(var(--card-width) * 0.05);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   opacity: 0.3;
   justify-content: center;
 }
@@ -502,7 +502,7 @@ display: none;
   position: absolute;
   top: 2.8%;
   left: 21%;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.065);
   /*background: #f7d543;*/
   height: 6.2%;
@@ -618,7 +618,7 @@ display: none;
   position: absolute;
   bottom: 1%;
   right: 1%;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   color: white;
   display: flex;
   justify-content: center;
@@ -1101,7 +1101,7 @@ display: none;
     background: #d0c6b7a6;
     font-weight: lighter;
     font-size: calc(var(--card-width) * 0.08);
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
   }
 
   .tt_intertitle {
@@ -1109,7 +1109,7 @@ display: none;
     display: flex;
     justify-content: center;
     font-size: calc(var(--card-width) * 0.07);
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
   }
   .tt_linegroup{
     width: 100%;
@@ -1238,7 +1238,7 @@ display: none;
 
     font-size: calc(var(--resourcesize) * 0.8);
     text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
 
     .card_line_holder {
       width: 100%;

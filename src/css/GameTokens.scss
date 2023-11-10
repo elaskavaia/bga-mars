@@ -15,13 +15,14 @@
   position: relative;
 
 }
+
 .hand_area .location {
-  background-color:  #ffffff99;
+  background-color: #ffffff99;
   border-radius: 1vh;
-  padding: 10px 10px 10px  calc(var(--card-width)*0.2);
+  padding: 10px 10px 10px calc(var(--card-width)*0.2);
 }
 
-.hand, .draw, .draft {
+.handy {
   min-height: var(--card-height);
   display: flex;
   flex-direction: row;
@@ -29,21 +30,20 @@
   flex-wrap: wrap;
   position: relative;
 }
-.draw, .draft  {
+
+.draw,
+.draft {
   min-height: unset;
 }
 
-.hand:after, .draw:after, .draft:after {
+.handy::after {
+  content: attr(data-name);
   position: absolute;
   top: 0.7em;
   left: 0;
-  font-size:  calc(var(--card-width)*0.2);
-  font-family: "SpaceFont";
+  font-size: calc(var(--card-width)*0.2);
+  font-family: var(--mars-font);
   color: rgba(0, 0, 0, 0.34);
-/*  transform: rotate(-90deg);
-  transform-origin: bottom;*/
-
-
   transform: rotate(-90deg) translateX(-30px) translateY(-8px);
   transform-origin: .5em center 0;
   margin-right: -140px;
@@ -51,37 +51,33 @@
   height: calc(var(--card-width) * 0.2);
 }
 
-.hand:after{
-  content: 'Hand';
-}
-.draw:after{
-  content: 'Draw';
-}
-.draft:after{
-  content: 'Draft';
-}
 
-.draw:empty,.draft:empty {
-  display: none;
-}
-.draw:empty:after,.draft:empty:after {
+.draw:empty,
+.draft:empty {
   display: none;
 }
 
-.location > * {
+.draw:empty:after,
+.draft:empty:after {
+  display: none;
+}
+
+.location>* {
   display: inline-block;
   position: relative;
 }
-.location > .counter {
+
+.location>.counter {
   position: absolute;
   top: 0;
   left: 0;
 }
+
 .spectatorMode .hand {
   display: none;
 }
 
-.carddeck > .counter {
+.carddeck>.counter {
   position: absolute;
   top: 90%;
   left: calc(50% - 0.5em);
@@ -91,6 +87,7 @@
   cursor: pointer;
   box-shadow: 0px 0px 4px 2px #64b4ff !important;
 }
+
 .active_slot.card:hover {
   cursor: pointer;
   box-shadow: unset;
@@ -106,7 +103,7 @@
   box-shadow: #0b0b0bad 2px 2px 3px 1px;
 }
 
-$colors-list:(
+$colors-list: (
   _0000ff: #0000ff,
   _ff0000: #ff0000,
   _008000: #008000,
@@ -115,13 +112,15 @@ $colors-list:(
   _ffffff: #ffffff
 );
 
-@each $key,$val in $colors-list{
+@each $key, $val in $colors-list {
   .marker#{$key} {
     background-color: #{$val};
   }
+
   .color#{$key} {
     color: #{$val};
   }
+
   .plcolor#{$key} {
     --plcolor: #{$val};
   }

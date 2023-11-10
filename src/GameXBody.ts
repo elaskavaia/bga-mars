@@ -50,7 +50,6 @@ class GameXBody extends GameTokens {
         dojo.destroy(node); // on undo this remains but another one generated
       });
 
-
       //floating hand stuff
       this.connect($("hand_area_button_pop"), "onclick", () => {
         $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
@@ -97,27 +96,27 @@ class GameXBody extends GameTokens {
   }
 
   setupLocalSettings() {
-      //local settings, include user id into setting string so it different per local player
-      this.localSettings = new LocalSettings("mars."+this.player_id, [
-        { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
-        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
-        { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
-        {
-          key: "playerarea",
-          label: _("Player zone placement"),
-          choice: { before: _("Before Map"), after: _("After Map") },
-          default: "after",
-        },
-        {
-          key: "showbadges",
-          label: _("Show Badges on minipanel"),
-          choice: { true: "true", false: "false" },
-          default: "true",
-        },
-      ]);
-      this.localSettings.setup();
-      //this.localSettings.renderButton('player_config_row');
-      this.localSettings.renderContents("settings-controls-container");
+    //local settings, include user id into setting string so it different per local player
+    this.localSettings = new LocalSettings("mars." + this.player_id, [
+      { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+      { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+      { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+      {
+        key: "playerarea",
+        label: _("Player zone placement"),
+        choice: { before: _("Before Map"), after: _("After Map") },
+        default: "after",
+      },
+      {
+        key: "showbadges",
+        label: _("Show Badges on minipanel"),
+        choice: { true: "true", false: "false" },
+        default: "true",
+      },
+    ]);
+    this.localSettings.setup();
+    //this.localSettings.renderButton('player_config_row');
+    this.localSettings.renderContents("settings-controls-container");
   }
 
   setupHelpSheets() {
@@ -272,11 +271,11 @@ class GameXBody extends GameTokens {
       case 0:
         return _("Standard Project");
       case 1:
-        return _("Green Card");
+        return _("Project Card - Green");
       case 3:
-        return _("Event Card");
+        return _("Project Card - Event");
       case 2:
-        return _("Blue Card");
+        return _("Project Card - Blue");
       case 4:
         return _("Corporation");
       case 5:
@@ -516,8 +515,8 @@ class GameXBody extends GameTokens {
     let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
     if (prereqText != "")
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
-    res += this.generateTooltipSection(_("Pre-Requisites"), prereqText, true, "tt_prereq");
-    res += this.generateTooltipSection(_("When Played"), displayInfo.text);
+    res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
+    res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
     res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
     res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
     res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));

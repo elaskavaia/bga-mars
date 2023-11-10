@@ -299,7 +299,7 @@
   border-radius: 30% 30% 0 0;
    */
   padding: 0.3vh;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   text-transform: uppercase;
 }
 
@@ -481,7 +481,7 @@
   height: var(--stan-fullheight);
 }
 .standard_projects_title {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--stan-width) * 0.06);
 }
 
@@ -616,7 +616,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--stan-width) * 0.1);
   left:2%
 }
@@ -652,7 +652,7 @@
 
   .token_img {
     margin-right: revert;
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
     font-size:calc(var(--resourcesize) * 0.6);
   }
 

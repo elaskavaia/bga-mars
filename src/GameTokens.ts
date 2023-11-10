@@ -407,6 +407,9 @@ class GameTokens extends GameBasics {
       return;
     }
     var tokenInfo = this.getTokenDisplayInfo(token);
+    if (tokenInfo.name) {
+      attachNode.setAttribute("data-name", this.getTr(tokenInfo.name));
+    }
     if (tokenInfo.showtooltip == false) {
       return;
     }

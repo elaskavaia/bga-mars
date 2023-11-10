@@ -36,7 +36,7 @@
     position: absolute;
     z-index: 1;
     color: var(--plcolor);
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
     left: 0;
     min-width: calc(var(--card-width) * 1);
     display: flex;
@@ -56,7 +56,7 @@
     display: flex;
     --resourcesize: 2em;
     --producesize: 1.6em;
-    font-family: "SpaceFont";
+    font-family: var(--mars-font);
     flex-wrap: wrap;
   }
 
@@ -170,7 +170,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        font-family: "SpaceFont";
+        font-family: var(--mars-font);
   
       }
   
@@ -455,7 +455,7 @@
           text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
           color: white;
           font-size: calc(var(--pb_cellsize) * 0.4);
-          font-family: "SpaceFont";
+          font-family: var(--mars-font);
         }
       }
     }
@@ -471,7 +471,7 @@
       grid-row-gap: 0px;
       width: calc(var(--resourcesize)*2.2);
       height: calc(var(--resourcesize)*1);
-      font-family: "SpaceFont";
+      font-family: var(--mars-font);
       font-size:calc(var(--resourcesize) * 0.5);
       margin: calc(var(--resourcesize) * 0.06);
 

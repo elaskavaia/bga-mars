@@ -24,6 +24,7 @@ Random notes on todo items
 * Layout types based on size
 * Gewneration counter on player panel (common panel)
 * Mobile portrait layout
+* Temp global param - missing + when positive
 
 ## Client - Compact layout
 * Add options (local storage) for :
@@ -31,7 +32,7 @@ Random notes on todo items
   * general layout - DONE
 * Fix some remaining cards rendering
 * Show VP worth on cards
-
+* thermometer and scoreboard got out of sync 
 
 ## Client - Full layout
 * Tooltips of resources on miniboard - copy from compact layout

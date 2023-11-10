@@ -11,6 +11,11 @@
  * GameBody.scss
  *
  */
+@import url(../../../css/csslayer.css);
+#ebd-body {
+  --mars-font: "SpaceFont";
+}
+
 /* the other files */
 /**
  *------
@@ -24,7 +29,6 @@
  * GameBasics.scss
  *
  */
-@import url(../../../css/csslayer.css);
 /* animation */
 #oversurface {
   position: absolute;
@@ -125,7 +129,7 @@
   padding: 10px 10px 10px calc(var(--card-width) * 0.2);
 }
 
-.hand, .draw, .draft {
+.handy {
   min-height: var(--card-height);
   display: flex;
   flex-direction: row;
@@ -134,19 +138,19 @@
   position: relative;
 }
 
-.draw, .draft {
+.draw,
+.draft {
   min-height: unset;
 }
 
-.hand:after, .draw:after, .draft:after {
+.handy::after {
+  content: attr(data-name);
   position: absolute;
   top: 0.7em;
   left: 0;
   font-size: calc(var(--card-width) * 0.2);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   color: rgba(0, 0, 0, 0.34);
-  /*  transform: rotate(-90deg);
-    transform-origin: bottom;*/
   transform: rotate(-90deg) translateX(-30px) translateY(-8px);
   transform-origin: 0.5em center 0;
   margin-right: -140px;
@@ -154,23 +158,13 @@
   height: calc(var(--card-width) * 0.2);
 }
 
-.hand:after {
-  content: "Hand";
-}
-
-.draw:after {
-  content: "Draw";
-}
-
-.draft:after {
-  content: "Draft";
-}
-
-.draw:empty, .draft:empty {
+.draw:empty,
+.draft:empty {
   display: none;
 }
 
-.draw:empty:after, .draft:empty:after {
+.draw:empty:after,
+.draft:empty:after {
   display: none;
 }
 
@@ -336,7 +330,7 @@
 }
 
 .card_cost {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   position: absolute;
   top: 0%;
   width: calc(var(--card-width) * 0.16);
@@ -370,7 +364,7 @@
 }
 
 .card_title {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   position: absolute;
   top: 9.7%;
   left: 4%;
@@ -548,7 +542,7 @@
   top: 60%;
   right: 3%;
   font-size: calc(var(--card-width) * 0.04);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   padding: calc(var(--card-width) * 0.005);
   background: #c1c1c1;
   border: 1px solid black;
@@ -561,7 +555,7 @@
   width: 28%;
   display: flex;
   font-size: calc(var(--card-width) * 0.05);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   opacity: 0.3;
   justify-content: center;
 }
@@ -755,7 +749,7 @@
   position: absolute;
   top: 2.8%;
   left: 21%;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.065);
   /*background: #f7d543;*/
   height: 6.2%;
@@ -865,7 +859,7 @@
   position: absolute;
   bottom: 1%;
   right: 1%;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   color: white;
   display: flex;
   justify-content: center;
@@ -2625,14 +2619,14 @@
   background: rgba(208, 198, 183, 0.6509803922);
   font-weight: lighter;
   font-size: calc(var(--card-width) * 0.08);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
 }
 .card_hovertt .tt_intertitle {
   width: 100%;
   display: flex;
   justify-content: center;
   font-size: calc(var(--card-width) * 0.07);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
 }
 .card_hovertt .tt_linegroup {
   width: 100%;
@@ -2753,7 +2747,7 @@
   color: black;
   font-size: calc(var(--resourcesize) * 0.8);
   text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
 }
 .mcompact .card_resource_holder .card_line_holder {
   width: 100%;
@@ -2869,7 +2863,7 @@
   display: none;
 }
 .card_main_66 .card_tt {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-style: normal;
   font-size: calc(var(--card-width) * 0.06);
   text-align: center;
@@ -2927,7 +2921,7 @@
 }
 
 .card_main_110 .card_action .outer_gains {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.05);
 }
 .card_main_110 .card_action .card_action_text {
@@ -2938,7 +2932,7 @@
   display: none;
 }
 .card_main_111 .card_effect .card_tt {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3012,7 +3006,7 @@
   display: none;
 }
 .card_main_149 .card_effect .card_tt {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3031,7 +3025,7 @@
   flex-direction: column;
 }
 .card_main_173 .card_action_line.card_action_icono .groupline {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.05);
   text-transform: uppercase;
   font-style: revert;
@@ -3049,7 +3043,7 @@
   display: none;
 }
 .card_main_192 .card_effect .card_tt {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3060,7 +3054,7 @@
   display: none;
 }
 .card_main_195 .card_effect .card_tt {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--card-width) * 0.06);
   text-transform: uppercase;
   font-style: revert;
@@ -3819,7 +3813,7 @@
   border-radius: 30% 30% 0 0;
    */
   padding: 0.3vh;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   text-transform: uppercase;
 }
 
@@ -4173,7 +4167,7 @@
 }
 
 .standard_projects_title {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--stan-width) * 0.06);
 }
 
@@ -4321,7 +4315,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--stan-width) * 0.1);
   left: 2%;
 }
@@ -4355,7 +4349,7 @@
 }
 .stanp_decor .token_img {
   margin-right: revert;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--resourcesize) * 0.6);
 }
 .stanp_decor .tile {
@@ -4646,7 +4640,7 @@
   grid-row-gap: 0px;
   width: calc(var(--resourcesize) * 1);
   height: calc(var(--resourcesize) * 2);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   position: relative;
   font-size: calc(var(--resourcesize) * 0.55);
   font-weight: normal;
@@ -4682,8 +4676,8 @@
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: 14px;
-  line-height: 16px;
-  font-family: "SpaceFont";
+  line-height: 24px;
+  font-family: var(--mars-font);
 }
 
 .player_score .fa-star {
@@ -4871,7 +4865,7 @@
   position: absolute;
   z-index: 1;
   color: var(--plcolor);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   left: 0;
   min-width: calc(var(--card-width) * 1);
   display: flex;
@@ -4890,7 +4884,7 @@
   display: flex;
   --resourcesize: 2em;
   --producesize: 1.6em;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   flex-wrap: wrap;
 }
 .mcompact .playerboard_group {
@@ -4992,7 +4986,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
 }
 .player_area .player_tags .tracker[data-state="0"] {
   display: none;
@@ -5378,7 +5372,7 @@
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: calc(var(--pb_cellsize) * 0.4);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
 }
 .mcompact .player_counters .playerboard_group {
   position: relative;
@@ -5391,7 +5385,7 @@
   grid-row-gap: 0px;
   width: calc(var(--resourcesize) * 2.2);
   height: calc(var(--resourcesize) * 1);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: calc(var(--resourcesize) * 0.5);
   margin: calc(var(--resourcesize) * 0.06);
 }
@@ -5633,7 +5627,7 @@
 }
 
 .payment_item_value {
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -5840,7 +5834,7 @@
 .mcompact .card_stanproj_6_tooltipcontainer .tooltiptitle {
   display: flex;
   justify-content: center;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   font-size: 2vh;
   background-color: rgba(87, 87, 87, 0.32);
 }
@@ -5896,12 +5890,12 @@
 .mcompact .tt_intertitle {
   text-transform: uppercase;
   font-size: 1.7vh;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   width: 100%;
   display: flex;
   justify-content: center;
   font-size: calc(var(--card-width) * 0.07);
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   background: #ffe9a8;
 }
 .mcompact .card_tooltipcontainer[data-card-type="1"] .tt_intertitle {
@@ -5935,7 +5929,7 @@
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   color: white;
   font-size: 3.5vh;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
 }
 
 .mfull #ebd-body {
@@ -5954,6 +5948,7 @@
   --card-height: calc(var(--card-width)*1.40658174);
   min-width: var(--tt-width);
   min-height: var(--tt-height);
+  font-size: calc(var(--localsetting_cardsize) * 1.2%);
 }
 .mfull .tt_section > * {
   display: block;
@@ -6037,10 +6032,30 @@
 }
 
 .mfull {
+  /*
+    .player_area::after {
+      content: attr(data-name);
+      position: absolute;
+      top: 0.7em;
+      left: 0;
+      font-size: calc(var(--card-width)*0.2);
+      font-family: var(--mars-font);
+      color: rgba(0, 0, 0, 0.34);
+      transform: rotate(-90deg) translateX(-30px) translateY(-8px);
+      transform-origin: .5em center 0;
+      margin-right: -140px;
+      overflow-wrap: break-word;
+      height: calc(var(--card-width) * 0.2);
+    }
+  */
   /* Added by darhf, to prevent messing things up too much*/
 }
+.mfull #ebd-body {
+  background-image: url("img/full/tooltipbg.jpg");
+  background-size: contain;
+}
 .mfull .player-board {
-  background-color: #909090;
+  background-color: unset;
 }
 .mfull .bgabutton_gray {
   border: none;
@@ -6085,11 +6100,13 @@
 }
 .mfull .hand.location:empty {
   display: block;
+  min-width: var(--card-width);
 }
 .mfull #main_board {
   position: relative;
   width: calc(var(--map-board-with));
   height: calc(var(--map-board-with) * 0.85);
+  box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
 }
 .mfull #main_area {
   margin-top: unset;
@@ -8137,7 +8154,7 @@
 
 .deck_line {
   color: white;
-  font-family: "SpaceFont";
+  font-family: var(--mars-font);
   display: flex;
   width: fit-content;
   font-size: calc(var(--stan-width) * 0.12);

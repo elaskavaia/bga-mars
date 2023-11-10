@@ -12,9 +12,9 @@
 <div id="zoom-wrapper" class="zoom-wrapper">
   <div id="thething">
     <div id="hand_area" class="hand_area" data-open="0">
-      <div class="hand location" id="hand_{CURRENT_PLAYER_COLOR}"></div>
-      <div class="draw location" id="draw_{CURRENT_PLAYER_COLOR}"></div>
-      <div class="draft location" id="draft_{CURRENT_PLAYER_COLOR}"></div>
+      <div class="hand location handy" id="hand_{CURRENT_PLAYER_COLOR}"></div>
+      <div class="draw location handy" id="draw_{CURRENT_PLAYER_COLOR}"></div>
+      <div class="draft location handy" id="draft_{CURRENT_PLAYER_COLOR}"></div>
       <div id="hand_area_buttons">
         <div id="hand_area_button_pop">
           <div class="icon_hand"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div>

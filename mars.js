@@ -623,7 +623,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.isActiveSlot(element))
             return element;
         var parent = element.parentElement;
-        if (!parent || parent.id == "thething" || parent == element)
+        if (!parent || parent.id == 'thething' || parent == element)
             return null;
         return this.findActiveParent(parent);
     };
@@ -635,7 +635,7 @@ var GameBasics = /** @class */ (function (_super) {
         var id = event.currentTarget.id;
         // Stop this event propagation
         dojo.stopEvent(event); // XXX
-        if (id == "thething") {
+        if (id == 'thething') {
             var node = this.findActiveParent(event.target);
             id = node === null || node === void 0 ? void 0 : node.id;
         }
@@ -757,7 +757,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.isReadOnly())
             return;
         var _loop_1 = function () {
-            var value = backPrefs[key];
+            var value = parseInt(backPrefs[key]);
             var pref = key;
             var user_value = parseInt(this_1.prefs[pref].value);
             if (this_1.prefs[pref] !== undefined && user_value != value) {
@@ -881,13 +881,13 @@ var GameBasics = /** @class */ (function (_super) {
             inner.style.width = 100 / zoom + "%";
             div.style.height = inner.offsetHeight * zoom + "px";
         }
-        localStorage.setItem("mars_zoom", "" + this.zoom);
+        localStorage.setItem("mars.zoom", "" + this.zoom);
         this.onScreenWidthChange();
     };
     GameBasics.prototype.setupInfoPanel = function () {
         var _this_1 = this;
         //dojo.place('player_board_config', 'player_boards', 'first');
-        var strzoom = localStorage.getItem("tapestry_zoom");
+        var strzoom = localStorage.getItem("mars.zoom");
         if (!strzoom)
             strzoom = "1";
         this.zoom = Number(strzoom);
@@ -1052,6 +1052,8 @@ var GameBasics = /** @class */ (function (_super) {
     //   return this.inherited(arguments);
     // }
     GameBasics.prototype.onLockInterface = function (lock) {
+        var _a;
+        $('gameaction_status_wrap').setAttribute('data-interface-status', (_a = lock === null || lock === void 0 ? void 0 : lock.status) !== null && _a !== void 0 ? _a : 'updated');
         this.inherited(arguments);
         // if (lock.status == "queued") {
         //    // do not hide the buttons when locking call comes from another player
@@ -1062,7 +1064,7 @@ var GameBasics = /** @class */ (function (_super) {
      * This is the hack to keep the status bar on
      */
     GameBasics.prototype.restoreMainBar = function () {
-        console.trace("restore main bar");
+        //console.trace("restore main bar");
         dojo.style('pagemaintitle_wrap', 'display', 'block');
         dojo.style('gameaction_status_wrap', 'display', 'block');
         if (this.interface_status == "updated") {
@@ -2527,6 +2529,9 @@ var GameTokens = /** @class */ (function (_super) {
             return;
         }
         var tokenInfo = this.getTokenDisplayInfo(token);
+        if (tokenInfo.name) {
+            attachNode.setAttribute("data-name", this.getTr(tokenInfo.name));
+        }
         if (tokenInfo.showtooltip == false) {
             return;
         }
@@ -2798,6 +2803,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.zoneWidth = 0;
             this.zoneHeight = 0;
             this.local_counters["game"] = { cities: 0 };
+            this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
@@ -2810,27 +2816,6 @@ var GameXBody = /** @class */ (function (_super) {
             document.querySelectorAll("#player_config > #player_board_params").forEach(function (node) {
                 dojo.destroy(node); // on undo this remains but another one generated
             });
-            //local settings
-            this.localSettings = new LocalSettings("mars", [
-                { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
-                { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
-                { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
-                {
-                    key: "playerarea",
-                    label: _("Player zone placement"),
-                    choice: { before: _("Before Map"), after: _("After Map") },
-                    default: "after",
-                },
-                {
-                    key: "showbadges",
-                    label: _("Show Badges on minipanel"),
-                    choice: { true: "true", false: "false" },
-                    default: "true",
-                },
-            ]);
-            this.localSettings.setup();
-            //this.localSettings.renderButton('player_config_row');
-            this.localSettings.renderContents("settings-controls-container");
             //floating hand stuff
             this.connect($("hand_area_button_pop"), "onclick", function () {
                 $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
@@ -2871,6 +2856,29 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
         }
+    };
+    GameXBody.prototype.setupLocalSettings = function () {
+        //local settings, include user id into setting string so it different per local player
+        this.localSettings = new LocalSettings("mars." + this.player_id, [
+            { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+            { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+            { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
+            {
+                key: "playerarea",
+                label: _("Player zone placement"),
+                choice: { before: _("Before Map"), after: _("After Map") },
+                default: "after",
+            },
+            {
+                key: "showbadges",
+                label: _("Show Badges on minipanel"),
+                choice: { true: "true", false: "false" },
+                default: "true",
+            },
+        ]);
+        this.localSettings.setup();
+        //this.localSettings.renderButton('player_config_row');
+        this.localSettings.renderContents("settings-controls-container");
     };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;
@@ -3015,11 +3023,11 @@ var GameXBody = /** @class */ (function (_super) {
             case 0:
                 return _("Standard Project");
             case 1:
-                return _("Green Card");
+                return _("Project Card - Green");
             case 3:
-                return _("Event Card");
+                return _("Project Card - Event");
             case 2:
-                return _("Blue Card");
+                return _("Project Card - Blue");
             case 4:
                 return _("Corporation");
             case 5:
@@ -3197,8 +3205,8 @@ var GameXBody = /** @class */ (function (_super) {
         var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
         if (prereqText != "")
             prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
-        res += this.generateTooltipSection(_("Pre-Requisites"), prereqText, true, "tt_prereq");
-        res += this.generateTooltipSection(_("When Played"), displayInfo.text);
+        res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
+        res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
         res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
         res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
         res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
@@ -4268,6 +4276,11 @@ var LocalSettings = /** @class */ (function () {
     LocalSettings.prototype.renderContents = function (parentId) {
         if (!document.getElementById(parentId))
             return false;
+        $(parentId)
+            .querySelectorAll(".localsettings_window")
+            .forEach(function (node) {
+            dojo.destroy(node); // on undo this remains but another one generated
+        });
         var htm = '<div id="' +
             this.gameName +
             '_localsettings_window" class="localsettings_window">' +
@@ -4279,14 +4292,16 @@ var LocalSettings = /** @class */ (function () {
         var htmcontents = "";
         for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
             var prop = _a[_i];
-            htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
+            if (!prop.custom)
+                htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
         }
         htm = htm.replace("%contents%", htmcontents);
         document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
         //add interactivity
         for (var _b = 0, _c = this.props; _b < _c.length; _b++) {
             var prop = _c[_b];
-            this.actionProp(prop);
+            if (!prop.custom)
+                this.actionProp(prop);
         }
     };
     LocalSettings.prototype.renderProp = function (prop) {
@@ -4300,32 +4315,16 @@ var LocalSettings = /** @class */ (function () {
         if (!prop.range)
             return;
         var range = prop.range;
+        var inputid = "localsettings_prop_".concat(prop.key);
         if (range.slider) {
-            var inputid = "localsettings_prop_".concat(prop.key);
-            return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <input type=\"range\" id=\"").concat(inputid, "\" name=\"").concat(inputid, "\" min=\"").concat(range.min, "\" max=\"").concat(range.max, "\" step=\"").concat(range.inc, "\" value=\"").concat(prop.value, "\">\n      ");
+            return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <div class=\"localsettings_prop_range\">\n      <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i></div>\n      <input type=\"range\" id=\"").concat(inputid, "\" name=\"").concat(inputid, "\" min=\"").concat(range.min, "\" max=\"").concat(range.max, "\" step=\"").concat(range.inc, "\" value=\"").concat(prop.value, "\">\n      <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
         }
-        var htm = '<div class="localsettings_prop_label prop_range">' + prop.label + "</div>";
-        htm =
-            htm +
-                '<div class="localsettings_prop_range">' +
-                '<div id="localsettings_prop_button_minus_' +
-                prop.key +
-                '" class="localsettings_prop_button"><i class="fa fa-search-minus" aria-hidden="true"></i></div>' +
-                '<div id="localsettings_prop_rangevalue_' +
-                prop.key +
-                '" class="localsettings_prop_rangevalue">' +
-                prop.value +
-                "</div>" +
-                '<div id="localsettings_prop_button_plus_' +
-                prop.key +
-                '" class="localsettings_prop_button"><i class="fa fa-search-plus" aria-hidden="true"></i></div>' +
-                "</div>";
-        return htm;
+        return "\n      <div class=\"localsettings_prop_label prop_range\">".concat(prop.label, "</div>\n      <div class=\"localsettings_prop_range\">\n      <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i></div>\n      <div id=\"").concat(inputid, "\" class=\"localsettings_prop_rangevalue\">\n      ").concat(prop.value, "\n      </div>\n      <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
     };
     LocalSettings.prototype.renderPropChoice = function (prop) {
         if (prop.choice.true) {
             var inputid = "localsettings_prop_".concat(prop.key);
-            var checked = (prop.value === 'false' || !prop.value) ? "" : "checked";
+            var checked = prop.value === "false" || !prop.value ? "" : "checked";
             return "\n      <input type=\"checkbox\" id=\"".concat(inputid, "\" name=\"").concat(inputid, "\" ").concat(checked, ">\n      <label for=\"").concat(inputid, "\" class=\"localsettings_prop_label\">").concat(prop.label, "</label>\n      ");
         }
         var htm = '<div class="localsettings_prop_control prop_choice">' + prop.label + "</div>";
@@ -4353,7 +4352,6 @@ var LocalSettings = /** @class */ (function () {
                 // @ts-ignore
                 _this.applyChanges(prop, event.target.value);
             });
-            return;
         }
         $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", function () {
             _this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
@@ -4366,7 +4364,7 @@ var LocalSettings = /** @class */ (function () {
         var _this = this;
         if (prop.choice.true) {
             $("localsettings_prop_" + prop.key).addEventListener("click", function (event) {
-                _this.applyChanges(prop, event.target.checked ? 'true' : 'false');
+                _this.applyChanges(prop, event.target.checked ? "true" : "false");
             });
             return;
         }
@@ -4409,9 +4407,12 @@ var LocalSettings = /** @class */ (function () {
         // sanitize value so bad value is never stored
         var value = this.setSanitizedValue(prop, newvalue);
         if (prop.range) {
-            var lvar = "localsettings_prop_rangevalue_" + prop.key;
-            if ($(lvar))
-                $(lvar).innerHTML = value;
+            var lvar = "localsettings_prop_" + prop.key;
+            var node = $(lvar);
+            if (node) {
+                node.innerHTML = value;
+                node.value = value;
+            }
         }
         $("ebd-body").dataset["localsetting_" + prop.key] = value;
         $("ebd-body").style.setProperty("--localsetting_" + prop.key, value);

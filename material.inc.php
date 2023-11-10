@@ -3342,7 +3342,16 @@ $this->token_types = [
  'draw' => [  //
   'type' => 'location',
   'showtooltip' => 0,
-  'name' => clienttranslate("Look"),
+  'name' => clienttranslate("Draw"),
+  'location' => 'hand_area',
+  'scope' => 'player',
+  'counter' => 'hidden',
+  'content' => 'private',
+],
+ 'draft' => [  //
+  'type' => 'location',
+  'showtooltip' => 0,
+  'name' => clienttranslate("Draft"),
   'location' => 'hand_area',
   'scope' => 'player',
   'counter' => 'hidden',

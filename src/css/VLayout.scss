@@ -1,6 +1,12 @@
 .mfull {
+
+  #ebd-body {
+    background-image: url("img/full/tooltipbg.jpg");
+    background-size: contain;
+  }
+
   .player-board {
-    background-color: #909090;
+    background-color: unset;
   }
 
   .bgabutton_gray {
@@ -70,6 +76,7 @@
     position: relative;
     width: $mainw;
     height: $mainh;
+    box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
   }
 
   #main_area {
@@ -101,7 +108,22 @@
     flex-grow: 1;
   }
 
-
+  /*
+  .player_area::after {
+    content: attr(data-name);
+    position: absolute;
+    top: 0.7em;
+    left: 0;
+    font-size: calc(var(--card-width)*0.2);
+    font-family: var(--mars-font);
+    color: rgba(0, 0, 0, 0.34);
+    transform: rotate(-90deg) translateX(-30px) translateY(-8px);
+    transform-origin: .5em center 0;
+    margin-right: -140px;
+    overflow-wrap: break-word;
+    height: calc(var(--card-width) * 0.2);
+  }
+*/
 
   #players_area {
     display: none;

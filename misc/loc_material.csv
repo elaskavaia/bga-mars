@@ -5,7 +5,8 @@ deck_main|Deck|main_area|global|public|hidden|'auto_resuffle'=>'discard_main'
 deck_corp|Corporations Deck|limbo|global|hidden|hidden|
 discard_main|Discard|main_area|global|public|public|
 hand|Hand|hand_area|player|public|private|
-draw|Look|hand_area|player|hidden|private|
+draw|Draw|hand_area|player|hidden|private|
+draft|Draft|hand_area|player|hidden|private|
 tableau|Player Area|tableau_area|player|public|public|
 display_main|Display|main_area|global|public|public|
 limbo|Limbo||global|hidden|hidden|
