@@ -826,7 +826,7 @@ class GameBasics extends GameGui {
     var bug = $("bug_button");
     if (!bug) {
       var url = this.metasiteurl + "/bug?id=0&table=" + this.table_id;
-      bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url });
+      bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url, target: '_blank' });
     }
     dojo.place(bug, "settings-controls-container", "last");
   }
