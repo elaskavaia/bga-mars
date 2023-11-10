@@ -264,7 +264,7 @@ display: none;
 }
 
 
-#ebd-body[data-localsetting_showbadges='false'] {
+#ebd-body[data-localsetting_hidebadges='hide'] {
   .miniboard_tags {
     display: none;
   }

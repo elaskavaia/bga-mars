@@ -36,7 +36,7 @@ Random notes on todo items
 * SUGGESTION:  -30/+8C This is confusing.  Just showing "-30°C" would be clearer
 * SUGGESTION:  Having a tooltip on the general top area of the Milestones board would be nice, to explain that they're limited to 3 and cost 8 each etc.
 * PT: I wish it were easier to see what card was played from the log.
-
+* Floating Hand: X icon should be more like "Down"
 
 ## Client - Silicon layout
 * Fix some remaining cards rendering
@@ -45,12 +45,14 @@ Random notes on todo items
 * PT: NOTFOUND shown as card image in Card reference (at the bottom)
 * BUG:  Low-quality JPEG for ECOLINE corp tooltip image (any corp really).
 * BUG: Check Medical Lab rendering, the building tag should be circle
+* Specator section: pink
 
 ## Client - Cardboard layout
 * Cubes on cards
 * Printed player panels
 * BUG: wrong tooltip for cards in hard on player board
 * PT: tooltips oh .hex say "p, u"
+* Specator section: need to hide hand area
 
 
 ### Client Bonus Features

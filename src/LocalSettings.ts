@@ -1,15 +1,19 @@
 interface LocalProp {
-  key: string;
-  label: string;
+  key: string; //internal name and dataset ebd-body and css variable name
+  label: string; // label : display label
   value?: string;
   range?: {
+    //value can be any integer between values[0] and values[1] (like a slider)
     min: number;
     max: number;
     inc: number;
     slider?: boolean;
   };
-  choice?: { [key: string]: string };
-  default: string | number | null;
+  choice?: { [key: string]: string }; //value can be one of values[0..X] (like a dropdown)  it must be an object of {value1:label1,value2:label2,...}
+  check?: {
+    checked?: string;
+  };
+  default?: boolean | string | number;
   custom?: boolean;
 }
 
@@ -20,30 +24,6 @@ class LocalSettings {
   constructor(gameName: string, props: LocalProp[]) {
     this.gameName = gameName;
     this.props = props;
-    /*
-    props : array of objects
-            key : internal name and dataset ebd-body and css variable name
-            label : display label
-
-            -- kind of setting (only one possibility)
-                range : value can be any integer between values[0] and values[1] (like a slider)
-                choice : value can be one of values[0..X] (like a dropdown)
-                         it must be an object of {value1:label1,value2:label2,...}
-
-            default : default value (required)
-
-            example : [
-        { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
-        { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100 },
-        { key: "handplace", label: _("Hand placement"), choice: { ontop: _("On top"), floating: _("Floating") }, default: "ontop" },
-        {
-          key: "playerarea",
-          label: _("Player zone placement"),
-          choice: { before: _("Before Map"), after: _("After Map") },
-          default: "after",
-        },
-      ]);
-     */
   }
 
   //loads setttings, apply data values to main body
@@ -96,8 +76,7 @@ class LocalSettings {
 
   public renderProp(prop: LocalProp): string {
     if (prop.range) return this.renderPropRange(prop);
-    if (prop.choice) return this.renderPropChoice(prop);
-    return "<div>Error: invalid property type</div>";
+    else return this.renderPropChoice(prop);
   }
 
   public renderPropRange(prop: LocalProp): string {
@@ -105,7 +84,6 @@ class LocalSettings {
     const range = prop.range;
     const inputid = `localsettings_prop_${prop.key}`;
     if (range.slider) {
- 
       return `
       <label for="${inputid}" class="localsettings_prop_label prop_range">${prop.label}</label>
       <div class="localsettings_prop_range">
@@ -127,7 +105,7 @@ class LocalSettings {
   }
 
   public renderPropChoice(prop: LocalProp): string {
-    if (prop.choice.true) {
+    if (prop.check) {
       const inputid = `localsettings_prop_${prop.key}`;
       const checked = prop.value === "false" || !prop.value ? "" : "checked";
       return `
@@ -150,16 +128,14 @@ class LocalSettings {
 
   private actionProp(prop: LocalProp) {
     if (prop.range) this.actionPropRange(prop);
-    if (prop.choice) this.actionPropChoice(prop);
+    else this.actionPropChoice(prop);
   }
 
   private actionPropRange(prop: LocalProp) {
     if (!prop.range) return;
-    const range = prop.range;
-    if (range.slider) {
-      $("localsettings_prop_" + prop.key).addEventListener("change", (event) => {
-        // @ts-ignore
-        this.applyChanges(prop, event.target.value);
+    if (prop.range.slider) {
+      $(`localsettings_prop_${prop.key}`).addEventListener("change", (event) => {
+        this.applyChanges(prop, (event.target as HTMLInputElement).value);
       });
     }
     $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", () => {
@@ -172,16 +148,11 @@ class LocalSettings {
   }
 
   private actionPropChoice(prop: LocalProp) {
-    if (prop.choice.true) {
-      $("localsettings_prop_" + prop.key).addEventListener("click", (event) => {
-        this.applyChanges(prop, (event.target as HTMLInputElement).checked ? "true" : "false");
-      });
-      return;
-    }
-    $("localsettings_prop_" + prop.key).addEventListener("change", (event) => {
-      // @ts-ignore
-      this.applyChanges(prop, event.target.value);
+    $(`localsettings_prop_${prop.key}`).addEventListener("click", (event) => {
+      const target = event.target as HTMLInputElement;
+      this.applyChanges(prop, prop.check ? target.checked : target.value);
     });
+    return;
   }
 
   private setSanitizedValue(prop: LocalProp, newvalue: any) {
@@ -192,10 +163,18 @@ class LocalSettings {
       if (value < prop.range.min) value = prop.range.min;
       prop.value = String(value);
     } else if (prop.choice) {
-      if (!prop.choice[newvalue]) {
+      if (newvalue === undefined || !prop.choice[newvalue]) {
         prop.value = String(prop.default);
       } else {
         prop.value = String(newvalue);
+      }
+    } else if (prop.check) {
+      if (newvalue) {
+        prop.value = prop.check.checked ?? String(newvalue);
+      } else if (newvalue === undefined) {
+        prop.value = String(prop.default);
+      } else {
+        prop.value = "";
       }
     } else {
       if (!newvalue) {
@@ -216,7 +195,7 @@ class LocalSettings {
       const node = $(lvar);
       if (node) {
         node.innerHTML = value;
-        node.value = value;
+        (node as HTMLInputElement).value = value;
       }
     }
     $("ebd-body").dataset["localsetting_" + prop.key] = value;

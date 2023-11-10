@@ -4709,7 +4709,7 @@
   justify-content: space-between;
 }
 
-#ebd-body[data-localsetting_showbadges=false] .miniboard_tags {
+#ebd-body[data-localsetting_hidebadges=hide] .miniboard_tags {
   display: none;
 }
 
@@ -6005,7 +6005,7 @@
 }
 
 .localsettings_group {
-  width: 85%;
+  width: 100%;
 }
 
 .localsettings_prop_label {
@@ -6015,7 +6015,6 @@
 }
 
 .prop_choice {
-  width: 85%;
   margin: 0;
 }
 
