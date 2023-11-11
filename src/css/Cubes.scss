@@ -1,0 +1,108 @@
+/* 3D Cubes */
+
+.mcube {
+    --mcubesize: calc(var(--card-width) / 10);
+    --half-mcubesize: calc(var(--mcubesize) / 2);
+    --border-mcubesize: calc(var(--mcubesize) / 12);
+}
+
+
+.mcube {
+    /*transform: rotateX(15deg) rotateY(-10deg) rotateZ(0deg) translateZ(var(--half-mcubesize));  top down*/
+
+    /* isometric */
+    transform: rotateX(40deg) rotateY(0deg) rotateZ(40deg) translateZ(var(--half-mcubesize));
+
+}
+
+
+
+.board {
+    position: relative;
+}
+
+.board>* {
+    display: inline-block;
+    position: relative;
+    margin-right: calc(var(--half-mcubesize) + var(--border-mcubesize));
+}
+
+
+.mcube {
+    display: inline-block;
+    transition: all 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+    width: var(--mcubesize);
+    height: var(--mcubesize);
+    transform-style: preserve-3d;
+    transform-origin: 50%;
+}
+
+.mcube-face {
+    overflow: hidden;
+    border: var(--border-mcubesize) solid #888;
+    border-radius: 12%;
+    width: var(--mcubesize);
+    height: var(--mcubesize);
+}
+
+.mcube .mcube-face {
+    position: absolute;
+}
+
+.mcube-face-0 {
+    transform: translate3d(0, 0, var(--half-mcubesize));
+}
+
+.mcube-face-3 {
+    transform: rotateX(90deg) translate3d(0, 0, var(--half-mcubesize));
+}
+
+.mcube-face-4 {
+    transform: rotateX(-90deg) translate3d(0, 0, var(--half-mcubesize));
+}
+
+.mcube-face-1 {
+    transform: rotateY(-90deg) translate3d(0, 0, var(--half-mcubesize));
+}
+
+.mcube-face-2 {
+    transform: rotateY(90deg) translate3d(0, 0, var(--half-mcubesize));
+}
+
+.mcube-face-5 {
+    transform: rotateY(180deg) translate3d(0, 0, var(--half-mcubesize));
+}
+
+
+/* Translucent sides */
+
+.mcube-ff0000 .mcube-face {
+    background-color: #ff000066;
+    border: var(--border-mcubesize) solid red;
+}
+
+.mcube-008000 .mcube-face {
+    background-color: #00ff0066;
+    border: var(--border-mcubesize) solid #00bb00;
+}
+
+.mcube-0000ff .mcube-face {
+    background-color: #0000ff66;
+    border: var(--border-mcubesize) solid #0000ff;
+}
+
+.mcube-ffa500 .mcube-face {
+    background-color: #ffff0066;
+    border: var(--border-mcubesize) solid #aaaa00;
+}
+
+.mcube-773300 .mcube-face {
+    background-color: #aaaaaa66;
+    border: var(--border-mcubesize) solid #888888;
+}
+
+.mcube-ffffff .mcube-face {
+    background-color: #ffffff66;
+    border: var(--border-mcubesize) solid #dddddd;
+}

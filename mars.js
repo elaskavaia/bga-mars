@@ -2650,6 +2650,9 @@ var GameTokens = /** @class */ (function (_super) {
         tokenInfo.typeKey = tokenKey; // this is key in token_types structure
         tokenInfo.mainType = getPart(tokenId, 0); // first type
         tokenInfo.imageTypes = "".concat(tokenInfo.mainType, " ").concat(declaredTypes, " ").concat(imageTypes).trim(); // other types used for div
+        if (tokenInfo.create == 3 || tokenInfo.create == 4) {
+            tokenInfo.color = getPart(tokenId, 1);
+        }
         if (!tokenInfo.key) {
             tokenInfo.key = tokenId;
         }
@@ -2786,12 +2789,15 @@ var GameXBody = /** @class */ (function (_super) {
     __extends(GameXBody, _super);
     // private parses:any;
     function GameXBody() {
-        return _super.call(this) || this;
+        var _this = _super.call(this) || this;
+        _this.CON = {};
+        return _this;
     }
     GameXBody.prototype.setup = function (gamedatas) {
         var _this = this;
         try {
             this.isDoingSetup = true;
+            this.CON = gamedatas.CON;
             this.defaultTooltipDelay = 800;
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;
@@ -2802,7 +2808,6 @@ var GameXBody = /** @class */ (function (_super) {
             this.previousLayout = "desktop";
             this.zoneWidth = 0;
             this.zoneHeight = 0;
-            this.CON = gamedatas.constants;
             this.local_counters["game"] = { cities: 0 };
             this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
@@ -3227,9 +3232,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         return res;
     };
-    GameXBody.prototype.createHtmlForToken = function (tokenNode) {
+    GameXBody.prototype.createHtmlForToken = function (tokenNode, displayInfo) {
         var _a, _b, _c;
-        var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
         // use this to generate some fake parts of card, remove this when use images
         if (displayInfo.mainType == "card") {
             var tagshtm = "";
@@ -3386,7 +3390,10 @@ var GameXBody = /** @class */ (function (_super) {
             tokenNode.setAttribute("data-info", "1");
             this.connect(tokenNode, "onclick", "onToken");
             if (!this.isLayoutFull()) {
-                this.createHtmlForToken(tokenNode);
+                this.createHtmlForToken(tokenNode, displayInfo);
+            }
+            else {
+                this.vlayout.createHtmlForToken(tokenNode, displayInfo);
             }
         }
     };
@@ -4448,12 +4455,12 @@ var VLayout = /** @class */ (function () {
         $("tableau_".concat(color)).setAttribute("data-visibility_1", "1");
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
-        dojo.place("tableau_".concat(color, "_corp"), "tableau_".concat(color), 'first');
+        dojo.place("tableau_".concat(color, "_corp"), "tableau_".concat(color), "first");
         dojo.place("player_controls_".concat(color), "tableau_".concat(color, "_corp"));
-        dojo.removeClass("tableau_".concat(color, "_corp_effect"), 'corp_effect');
-        dojo.place("player_area_name_".concat(color), "tableau_".concat(color, "_corp"), 'first');
-        dojo.place("tableau_".concat(color, "_corp_logo"), "player_board_header_".concat(color), 'first');
-        var places = ['tracker_city', 'tracker_forest', 'tracker_land'];
+        dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
+        dojo.place("player_area_name_".concat(color), "tableau_".concat(color, "_corp"), "first");
+        dojo.place("tableau_".concat(color, "_corp_logo"), "player_board_header_".concat(color), "first");
+        var places = ["tracker_city", "tracker_forest", "tracker_land"];
         for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
             var key = places_1[_i];
             //alt_tracker_city_ff0000
@@ -4487,6 +4494,7 @@ var VLayout = /** @class */ (function () {
             var color = getPart(tokenNode.id, 2);
             if (!markerNode) {
                 markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
+                this.convertInto3DCube(markerNode, color);
             }
             var state = parseInt(tokenNode.getAttribute("data-state"));
             //this.game.setDomTokenState(markerNode, state);
@@ -4513,6 +4521,19 @@ var VLayout = /** @class */ (function () {
             }
             markerNode.style.left = "calc(10px + ".concat(lp, "% * 0.95)");
             markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
+        }
+    };
+    VLayout.prototype.convertInto3DCube = function (tokenNode, color) {
+        dojo.addClass(tokenNode, "mcube");
+        if (color)
+            dojo.addClass(tokenNode, "mcube-" + color);
+        for (var i = 0; i <= 5; i++) {
+            dojo.place("<div class=\"mcube-face  mcube-face-".concat(i, "\"></div>"), tokenNode);
+        }
+    };
+    VLayout.prototype.createHtmlForToken = function (tokenNode, displayInfo) {
+        if (displayInfo.mainType == "marker") {
+            this.convertInto3DCube(tokenNode, displayInfo.color);
         }
     };
     return VLayout;

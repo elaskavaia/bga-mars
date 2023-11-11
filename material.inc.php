@@ -4422,7 +4422,6 @@ $this->token_types = [
   'state' => 0,
   'tt'=>4,
 ],
-// #hex tiles
  'resource' => [  //
   'type' => 'resource',
   'create' => 3,

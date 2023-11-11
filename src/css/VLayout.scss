@@ -1,12 +1,18 @@
 .mfull {
 
   #ebd-body {
-    background-image: url("img/full/tooltipbg.jpg");
+    /* 
+    background-image: url("img/full/tooltipbg.jpg"); 
     background-size: contain;
+    */
+    background-image: unset;
+
   }
 
   .player-board {
     background-color: unset;
+    background-image: url("img/full/tooltipbg.jpg"); 
+    background-size: contain;
   }
 
   .bgabutton_gray {
@@ -131,8 +137,6 @@
 
   #map_middle {
     position: absolute;
-    padding-top: 0%;
-    padding-left: 0%;
     width: 100%;
     height: 90%;
   }
@@ -175,6 +179,12 @@
     top: 20%;
     width: 60%;
     height: 72%;
+  }
+
+  #map_hexes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
   }
 
   #oxygen_map {
@@ -514,6 +524,10 @@
     background-size: calc(52 * 100%);
   }
 
+  #tracker_gen::after {
+    display: none;
+  }
+
   #oxygen_map #tracker_o {
     position: absolute;
     width: 8%;
@@ -554,14 +568,6 @@
     display: inline-block;
   }
 
-  /* Added by darhf, to prevent messing things up too much*/
-  #map_hexes {
-    position: unset;
-    width: unset;
-    height: unset;
-    top: unset;
-    left: unset;
-  }
 
   .card_hovertt .card_effect {
     font-size: calc(var(--card-width) * 0.07);
@@ -646,6 +652,11 @@
 
   .viewcards_button[data-selected="0"] i {
     display: none;
+  }
+
+  .mini_counter.badge {
+    width: 39px;
+    height: 39px;
   }
 }
 

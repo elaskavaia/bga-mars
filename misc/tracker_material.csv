@@ -106,7 +106,6 @@ tile_140|Lava Flows|0|'tt'=>4
 tile_142|Mohole Area|0|'tt'=>4
 tile_199|Restricted Area|0|'tt'=>4
 
-#hex tiles
 #set create=3
 #set location=limbo
 #set count=0

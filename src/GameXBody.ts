@@ -14,11 +14,13 @@ class GameXBody extends GameTokens {
 
   constructor() {
     super();
+    this.CON = {};
   }
 
   setup(gamedatas: any) {
     try {
       this.isDoingSetup = true;
+      this.CON = gamedatas.CON;
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
@@ -30,7 +32,7 @@ class GameXBody extends GameTokens {
       this.previousLayout = "desktop";
       this.zoneWidth = 0;
       this.zoneHeight = 0;
-      this.CON = gamedatas.constants;
+
 
       this.local_counters["game"] = { cities: 0 };
 
@@ -559,8 +561,7 @@ awarded.`);
     return res;
   }
 
-  createHtmlForToken(tokenNode: HTMLElement) {
-    const displayInfo = this.getTokenDisplayInfo(tokenNode.id);
+  createHtmlForToken(tokenNode: HTMLElement,displayInfo: TokenDisplayInfo) {
     // use this to generate some fake parts of card, remove this when use images
     if (displayInfo.mainType == "card") {
       let tagshtm = "";
@@ -756,7 +757,9 @@ awarded.`);
       tokenNode.setAttribute("data-info", "1");
       this.connect(tokenNode, "onclick", "onToken");
       if (!this.isLayoutFull()) {
-        this.createHtmlForToken(tokenNode);
+        this.createHtmlForToken(tokenNode, displayInfo);
+      } else {
+        this.vlayout.createHtmlForToken(tokenNode, displayInfo);
       }
     }
   }

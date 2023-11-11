@@ -113,7 +113,7 @@ $colors-list: (
 );
 
 @each $key, $val in $colors-list {
-  .marker#{$key} {
+  .marker#{$key}:not(.mcube) {
     background-color: #{$val};
   }
 

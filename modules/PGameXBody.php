@@ -191,7 +191,7 @@ abstract class PGameXBody extends PGameMachine {
         $current = $this->getCurrentPlayerId();
         if ($this->isRealPlayer($current))
             $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
-        $result ['constants'] = $this->getPhpConstants("MA_");
+        $result ['CON'] = $this->getPhpConstants("MA_");
         return $result;
     }
     //////////////////////////////////////////////////////////////////////////////

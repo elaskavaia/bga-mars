@@ -13,13 +13,13 @@ class VLayout {
 
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
-    dojo.place(`tableau_${color}_corp`, `tableau_${color}`,'first');
-    dojo.place(`player_controls_${color}`,`tableau_${color}_corp`, );
-    dojo.removeClass(`tableau_${color}_corp_effect`,'corp_effect');
-    dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`,'first');
-    dojo.place(`tableau_${color}_corp_logo`, `player_board_header_${color}`,'first');
+    dojo.place(`tableau_${color}_corp`, `tableau_${color}`, "first");
+    dojo.place(`player_controls_${color}`, `tableau_${color}_corp`);
+    dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
+    dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
+    dojo.place(`tableau_${color}_corp_logo`, `player_board_header_${color}`, "first");
 
-    const places = ['tracker_city','tracker_forest','tracker_land'];
+    const places = ["tracker_city", "tracker_forest", "tracker_land"];
     for (const key of places) {
       //alt_tracker_city_ff0000
       dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
@@ -27,9 +27,6 @@ class VLayout {
     // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
     // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
     // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
-    
-
-    
 
     dojo.place("tracker_gen", "map_left");
     dojo.destroy("outer_generation");
@@ -61,6 +58,7 @@ class VLayout {
       const color = getPart(tokenNode.id, 2);
       if (!markerNode) {
         markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
+        this.convertInto3DCube(markerNode, color);
       }
 
       let state = parseInt(tokenNode.getAttribute("data-state"));
@@ -85,6 +83,20 @@ class VLayout {
       }
       markerNode.style.left = `calc(10px + ${lp}% * 0.95)`;
       markerNode.style.bottom = `calc(10px + ${bp}% * 0.95)`;
+    }
+  }
+
+  convertInto3DCube(tokenNode: HTMLElement, color?: string) {
+    dojo.addClass(tokenNode, "mcube");
+    if (color) dojo.addClass(tokenNode, "mcube-"+color);
+    for (let i = 0; i <= 5; i++) {
+      dojo.place(`<div class="mcube-face  mcube-face-${i}"></div>`, tokenNode);
+    }
+  }
+
+  createHtmlForToken(tokenNode: HTMLElement, displayInfo: TokenDisplayInfo) {
+    if (displayInfo.mainType == "marker") {
+      this.convertInto3DCube(tokenNode, displayInfo.color);
     }
   }
 }
