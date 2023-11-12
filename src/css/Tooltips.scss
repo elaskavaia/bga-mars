@@ -144,6 +144,10 @@
   display: none;
 }
 
+.tooltipimage.tracker.tracker_passed {
+  display: none;
+}
+
 .tooltipimage.tracker.tracker_w {
   display: none;
 }
@@ -276,8 +280,8 @@
   .card_tooltipimagecontainer {
     .tracker.badge {
       position: relative;
-      width: 7vh;
-      height: 7vh;
+     /* width: 7vh;
+      height: 7vh;*/
     }
 
     .tracker.badge::after {

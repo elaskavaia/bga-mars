@@ -160,7 +160,19 @@
 }
 
 .tracker_passed {
-display: none;
+   display: none;
+  position: absolute;
+  top: -17px;
+  right: 4px;
+  font-size: 12px;
+  color: black;
+
+}
+.tracker.tracker_passed::after {
+  content: attr(data-name);
+}
+.tracker_passed[data-state="1"] {
+  display: revert;
 }
 
 .miniboard.style_2 {

@@ -19,6 +19,7 @@
       tagPlant: { classes: "tracker badge tracker_tagPlant" },
       tagAnimal: { classes: "tracker badge tracker_tagAnimal" },
       tagJovian: { classes: "tracker badge tracker_tagJovian" },
+      tagBuilding: { classes: "tracker badge tracker_tagBuilding" },
       opp_tagSpace: { classes: "tracker badge tracker_tagSpace",redborder: 'resource' },
       tagSpace: { classes: "tracker badge tracker_tagSpace" },
       tagEvent: { classes: "tracker badge tracker_tagEvent" },
@@ -733,6 +734,6 @@
    }
 
    private static customcard_rules_207() {
-     return  '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2'+this.parseSingleItemToHTML(this.getParse('s',0),1)+'</div></div></div></div>';
+     return  '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2'+this.parseSingleItemToHTML(this.getParse('tagBuilding',0),1)+'</div></div></div></div>';
    }
  }

@@ -42,7 +42,6 @@
   background-color: orange;
 }
 
-
 /* effects face down */
 .tableau .card[data-state="0"] {
    filter: grayscale(1);
@@ -788,6 +787,11 @@ display: none;
   clip-path: circle(48% at 51% 51%);
 }
 
+.token_img.tracker_gen {
+  background-position: -700% -100%;
+  clip-path: circle(48% at 51% 51%);
+}
+
 .token_img.draw_icon {
   background-position: 0 0;
 }
@@ -1067,6 +1071,8 @@ display: none;
   }
 }
 */
+
+/*
 .corp_effect .card:hover {
   z-index: 10;
   transform: scale(3);
@@ -1075,7 +1081,7 @@ display: none;
   transition-delay: 500ms;
 
 }
-
+*/
 //hover tooltip
 .card_hovertt
 {

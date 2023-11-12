@@ -18,7 +18,7 @@
       <div id="hand_area_buttons">
         <div id="hand_area_button_pop">
           <div class="icon_hand"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div>
-          <div class="icon_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+          <div class="icon_close"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i></div>
         </div>
       </div>
     </div>
@@ -546,21 +546,27 @@
           <div class="token_img oxygen_icon"></div>
           <div class="groupline">
             <div id="alt_tracker_o" class="tracker param"></div>
-            / 14%
+            %
           </div>
         </div>
         <div class="params_line">
           <div class="token_img temperature_icon"></div>
           <div class="groupline">
             <div id="alt_tracker_t" class="tracker param"></div>
-            / +8°C
+            °C
           </div>
         </div>
         <div class="params_line">
           <div class="token_img tracker_w"></div>
           <div class="groupline">
             <div id="alt_tracker_w" class="tracker param"></div>
-            / 9
+
+          </div>
+        </div>
+        <div class="params_line">
+          <div class="token_img tracker_gen"></div>
+          <div class="groupline">
+            <div id="alt_tracker_gen" class="tracker param"></div>
           </div>
         </div>
       </div>

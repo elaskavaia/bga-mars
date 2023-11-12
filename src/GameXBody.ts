@@ -46,7 +46,16 @@ class GameXBody extends GameTokens {
       // hexes are not moved so manually connect
       this.connectClass("hex", "onclick", "onToken");
 
+
+      //player controls
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+      //Give tooltips to alt trackers in player boards
+      document.querySelectorAll(".player_controls .viewcards_button").forEach((node) => {
+
+        this.addTooltipHtml(node.id, this.getTooptipHtmlForToken(node.id), this.defaultTooltipDelay);
+      });
+
+
 
       //view discard content
       this.setupDiscard();
@@ -62,12 +71,27 @@ class GameXBody extends GameTokens {
       });
       dojo.place("player_board_params", "player_config", "last");
 
+      //give tooltips to params
+      document.querySelectorAll("#player_config .tracker.param").forEach((node) => {
+        this.updateTooltip(node.id, node);
+      });
+
+      //Give tooltips to trackers in mini boards
       document.querySelectorAll(".mini_counter").forEach((node) => {
         const id = node.id;
         if (id.startsWith("alt_")) {
           this.updateTooltip(id.substring(4), node);
         }
       });
+
+      //Give tooltips to alt trackers in player boards
+      document.querySelectorAll(".player_counters .tracker").forEach((node) => {
+        const id = node.id;
+        if (id.startsWith("alt_")) {
+          this.updateTooltip(id.substring(4), node);
+        }
+      });
+
       //update prereq on cards
       this.updateHandPrereqs();
 
@@ -97,6 +121,7 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
+
   }
 
   setupLocalSettings() {
@@ -424,11 +449,18 @@ class GameXBody extends GameTokens {
           "Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step.",
         ),
       );
-    } else if (key.startsWith("tracker_p")) {
+    } else if (key.startsWith("tracker_p" ) && !key.startsWith('tracker_passed')) {
       txt += this.generateTooltipSection(
         _("Resource Production"),
         _(
           "Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production.",
+        ),
+      );
+    } else if (key.startsWith('tracker_passed')) {
+      txt += this.generateTooltipSection(
+        _("Player passed"),
+        _(
+          "If you take no action at all (pass), you are out of the round and may not take any anymore actions this generation. When everyone has passed, the action phase ends.",
         ),
       );
     } else if (key == "tracker_gen") {
@@ -445,10 +477,20 @@ class GameXBody extends GameTokens {
       );
     } else if (key == "tracker_o") {
       txt += this.generateTooltipSection(
-        _("Oxigen"),
+        _("Oxygen"),
         _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)"),
       );
-    } else if (key == "starting_player") {
+    } else if (key == "tracker_t") {
+        txt += this.generateTooltipSection(
+          _("Temperature"),
+        _("This global parameter (mean temperature at the equator) starts at -30 ˚C."),
+      );
+    } else if (key.startsWith("player_viewcards_")) {
+      txt += this.generateTooltipSection(
+        _("Cards visibility toggle"),
+        _("Shows or hides cards of the corresponding color."),
+      );
+    }  else if (key == "starting_player") {
       txt += this.generateTooltipSection(_("First player marker"), _("Shifts clockwise each generation."));
     } else if (key.startsWith("counter_hand_")) {
       txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
@@ -827,11 +869,13 @@ awarded.`);
 
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
+
     if (this.isLayoutFull()) {
       tokenDisplayInfo.tooltip = this.generateTokenTooltip(tokenDisplayInfo);
     } else {
       tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
     }
+
 
     // if (this.isLocationByType(tokenDisplayInfo.key)) {
     //   tokenDisplayInfo.imageTypes += " infonode";
