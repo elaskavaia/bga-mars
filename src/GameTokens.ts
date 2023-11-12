@@ -9,6 +9,7 @@ interface Token {
 
 interface TokenDisplayInfo {
   key: string; // token id
+  tokenId: string; // original id of html node
   typeKey: string; // this is key in token_types structure
   mainType: string; // first type
   imageTypes: string; // all classes
@@ -95,13 +96,11 @@ class GameTokens extends GameBasics {
     super.cancelLocalStateEffects();
   }
 
-
-
   setupPlayer(playerInfo: any) {
     console.log("player info " + playerInfo.id, playerInfo);
     const mini = $(`miniboard_${playerInfo.color}`);
     const pp = `player_panel_content_${playerInfo.color}`;
-    document.querySelectorAll(`#${pp}>.miniboard`).forEach(node=>dojo.destroy(node));
+    document.querySelectorAll(`#${pp}>.miniboard`).forEach((node) => dojo.destroy(node));
     $(pp).appendChild(mini);
   }
 
@@ -219,7 +218,7 @@ class GameTokens extends GameBasics {
     if (!node) return;
     this.saveRestore(node);
     node.setAttribute("data-state", newState);
-    if (newState>0) {
+    if (newState > 0) {
       node.setAttribute("data-sign", "+");
     } else {
       node.removeAttribute("data-sign");
@@ -237,7 +236,7 @@ class GameTokens extends GameBasics {
   createToken(placeInfo: TokenMoveInfo) {
     const tokenId = placeInfo.key;
     var info = this.getTokenDisplayInfo(tokenId);
-    var place =  placeInfo.from ?? placeInfo.location ?? this.getRulesFor(tokenId, "location");
+    var place = placeInfo.from ?? placeInfo.location ?? this.getRulesFor(tokenId, "location");
     const tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
 
     if (placeInfo.onClick) {
@@ -310,7 +309,7 @@ class GameTokens extends GameBasics {
 
       if (tokenNode == null) {
         //debugger;
-        if (!placeInfo.from && args.place_from) placeInfo.from = args.place_from; 
+        if (!placeInfo.from && args.place_from) placeInfo.from = args.place_from;
         tokenNode = this.createToken(placeInfo);
       }
       this.syncTokenDisplayInfo(tokenNode);
@@ -354,7 +353,7 @@ class GameTokens extends GameBasics {
           top: placeInfo.y + "px",
         };
       }
- 
+
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
 
       this.renderSpecificToken(tokenNode);
@@ -400,7 +399,6 @@ class GameTokens extends GameBasics {
 
     if (!attachNode) return;
 
-
     // console.log("tooltips for "+token);
     if (typeof token != "string") {
       console.error("cannot calc tooltip" + token);
@@ -422,10 +420,10 @@ class GameTokens extends GameBasics {
       return;
     }
 
-    if (!tokenInfo.tooltip && tokenInfo.name) {
-      attachNode.setAttribute("title", this.getTr(tokenInfo.name));
-      return;
-    }
+    // if (!tokenInfo.tooltip && tokenInfo.name) {
+    //   attachNode.setAttribute("title", this.getTr(tokenInfo.name));
+    //   return;
+    // }
 
     var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
 
@@ -443,16 +441,28 @@ class GameTokens extends GameBasics {
               event.stopPropagation();
               return !this.showHelp(box.id, true);
             },
-            true
+            true,
           );
         }
       } else {
         this.addTooltipHtml(attachNode.id, main, delay ?? this.defaultTooltipDelay);
         attachNode.removeAttribute("title"); // unset title so both title and tooltip do not show up
       }
+      this.handleStackedTooltips(attachNode);
     } else {
       attachNode.classList.remove("withtooltip");
     }
+  }
+
+  handleStackedTooltips(attachNode: Element){
+
+  }
+
+  removeTooltip(nodeId: string): void {
+    if (this.tooltips[nodeId]) 
+        console.log('removing tooltip for ',nodeId);
+    this.inherited(arguments);
+    this.tooltips[nodeId] = null;
   }
 
   getTooptipHtmlForToken(token: string) {
@@ -516,8 +526,8 @@ class GameTokens extends GameBasics {
 
   getTokenDisplayInfo(tokenId: string): TokenDisplayInfo {
     let tokenInfo = this.getAllRules(tokenId);
-    if (!tokenInfo && tokenId && tokenId.startsWith('alt_')) {
-      tokenInfo =  this.getAllRules(tokenId.substring(4));
+    if (!tokenInfo && tokenId && tokenId.startsWith("alt_")) {
+      tokenInfo = this.getAllRules(tokenId.substring(4));
     }
 
     if (!tokenInfo) {
@@ -525,7 +535,7 @@ class GameTokens extends GameBasics {
         key: tokenId,
         _chain: tokenId,
         name: tokenId,
-        showtooltip: false
+        showtooltip: false,
       };
     } else {
       tokenInfo = dojo.clone(tokenInfo);
@@ -540,12 +550,14 @@ class GameTokens extends GameBasics {
     tokenInfo.mainType = getPart(tokenId, 0); // first type
     tokenInfo.imageTypes = `${tokenInfo.mainType} ${declaredTypes} ${imageTypes}`.trim(); // other types used for div
     if (tokenInfo.create == 3 || tokenInfo.create == 4) {
-      tokenInfo.color = getPart(tokenId, 1); 
+      tokenInfo.color = getPart(tokenId, 1);
     }
 
     if (!tokenInfo.key) {
       tokenInfo.key = tokenId;
     }
+
+    tokenInfo.tokenId = tokenId; 
 
     this.updateTokenDisplayInfo(tokenInfo);
 
@@ -561,7 +573,6 @@ class GameTokens extends GameBasics {
   /** @Override */
   format_string_recursive(log: string, args: any) {
     try {
-
       if (args.log_others !== undefined && this.player_id != args.player_id) {
         log = args.log_others;
       }
@@ -641,7 +652,7 @@ class GameTokens extends GameBasics {
     super.setupNotifications();
 
     this.subscribeNotification("tokenMoved");
-    this.subscribeNotification("tokenMovedAsync",1,"tokenMoved");// same as conter but no delay
+    this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
     /*
     dojo.subscribe("tokenMoved", this, "notif_tokenMoved");
     this.notifqueue.setSynchronous("tokenMoved", 500);

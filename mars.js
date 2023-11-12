@@ -687,11 +687,15 @@ var GameBasics = /** @class */ (function (_super) {
         var _a;
         return (_a = this.gamedatas.players[playerId].color) !== null && _a !== void 0 ? _a : "000000";
     };
+    GameBasics.prototype.getPlayerName = function (playerId) {
+        var _a;
+        return (_a = this.gamedatas.players[playerId].name) !== null && _a !== void 0 ? _a : _('Not a Player');
+    };
     GameBasics.prototype.getPlayerIdByColor = function (color) {
         for (var playerId in this.gamedatas.players) {
             var playerInfo = this.gamedatas.players[playerId];
             if (color == playerInfo.color) {
-                return playerId;
+                return parseInt(playerId);
             }
         }
         return undefined;
@@ -708,6 +712,23 @@ var GameBasics = /** @class */ (function (_super) {
         if ($("button_cancel"))
             dojo.destroy("button_cancel");
         this.addActionButton("button_cancel", name, handler, null, false, "red");
+    };
+    GameBasics.prototype.cloneAndFixIds = function (orig, postfix, removeInlineStyle) {
+        if (!$(orig)) {
+            var div_1 = document.createElement("div");
+            div_1.innerHTML = _('NOT FOUND') + " " + orig.toString();
+            return div_1;
+        }
+        var div = $(orig).cloneNode(true);
+        div.querySelectorAll("*").forEach(function (node) {
+            if (node.id) {
+                node.id = node.id + postfix;
+            }
+            if (removeInlineStyle) {
+                node.removeAttribute('style');
+            }
+        });
+        return div;
     };
     /* @Override */
     GameBasics.prototype.updatePlayerOrdering = function () {
@@ -2542,10 +2563,10 @@ var GameTokens = /** @class */ (function (_super) {
         if (!tokenInfo.tooltip && !tokenInfo.name) {
             return;
         }
-        if (!tokenInfo.tooltip && tokenInfo.name) {
-            attachNode.setAttribute("title", this.getTr(tokenInfo.name));
-            return;
-        }
+        // if (!tokenInfo.tooltip && tokenInfo.name) {
+        //   attachNode.setAttribute("title", this.getTr(tokenInfo.name));
+        //   return;
+        // }
         var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
         if (main) {
             attachNode.classList.add("withtooltip");
@@ -2564,10 +2585,19 @@ var GameTokens = /** @class */ (function (_super) {
                 this.addTooltipHtml(attachNode.id, main, delay !== null && delay !== void 0 ? delay : this.defaultTooltipDelay);
                 attachNode.removeAttribute("title"); // unset title so both title and tooltip do not show up
             }
+            this.handleStackedTooltips(attachNode);
         }
         else {
             attachNode.classList.remove("withtooltip");
         }
+    };
+    GameTokens.prototype.handleStackedTooltips = function (attachNode) {
+    };
+    GameTokens.prototype.removeTooltip = function (nodeId) {
+        if (this.tooltips[nodeId])
+            console.log('removing tooltip for ', nodeId);
+        this.inherited(arguments);
+        this.tooltips[nodeId] = null;
     };
     GameTokens.prototype.getTooptipHtmlForToken = function (token) {
         if (typeof token != "string") {
@@ -2629,7 +2659,7 @@ var GameTokens = /** @class */ (function (_super) {
     GameTokens.prototype.getTokenDisplayInfo = function (tokenId) {
         var _a, _b;
         var tokenInfo = this.getAllRules(tokenId);
-        if (!tokenInfo && tokenId && tokenId.startsWith('alt_')) {
+        if (!tokenInfo && tokenId && tokenId.startsWith("alt_")) {
             tokenInfo = this.getAllRules(tokenId.substring(4));
         }
         if (!tokenInfo) {
@@ -2637,7 +2667,7 @@ var GameTokens = /** @class */ (function (_super) {
                 key: tokenId,
                 _chain: tokenId,
                 name: tokenId,
-                showtooltip: false
+                showtooltip: false,
             };
         }
         else {
@@ -2656,6 +2686,7 @@ var GameTokens = /** @class */ (function (_super) {
         if (!tokenInfo.key) {
             tokenInfo.key = tokenId;
         }
+        tokenInfo.tokenId = tokenId;
         this.updateTokenDisplayInfo(tokenInfo);
         return tokenInfo;
     };
@@ -2797,7 +2828,7 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = this;
         try {
             this.isDoingSetup = true;
-            this.CON = gamedatas.CON;
+            this.CON = gamedatas.CON; // PHP contants for game
             this.defaultTooltipDelay = 800;
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;
@@ -2811,24 +2842,25 @@ var GameXBody = /** @class */ (function (_super) {
             this.local_counters["game"] = { cities: 0 };
             this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
+            // hex tooltips
+            document.querySelectorAll(".hex").forEach(function (node) {
+                if (node.childElementCount == 0)
+                    _this.updateTooltip(node.id);
+            });
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
-            document.querySelectorAll(".hex").forEach(function (node) {
-                _this.updateTooltip(node.id);
-            });
             this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
             //view discard content
             this.setupDiscard();
-            document.querySelectorAll("#player_config > #player_board_params").forEach(function (node) {
-                dojo.destroy(node); // on undo this remains but another one generated
-            });
             //floating hand stuff
             this.connect($("hand_area_button_pop"), "onclick", function () {
                 $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
             });
-            // dojo.place("player_board_params", "player_config", "last");
-            if (!$("player_config").innerHTML.includes("player_board_params"))
-                dojo.place("player_board_params", "player_config", "last");
+            // fixed for undo in fake player panel
+            document.querySelectorAll("#player_config > #player_board_params").forEach(function (node) {
+                dojo.destroy(node); // on undo this remains but another one generated
+            });
+            dojo.place("player_board_params", "player_config", "last");
             document.querySelectorAll(".mini_counter").forEach(function (node) {
                 var id = node.id;
                 if (id.startsWith("alt_")) {
@@ -2923,15 +2955,25 @@ var GameXBody = /** @class */ (function (_super) {
         dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
     };
     GameXBody.prototype.setupDiscard = function () {
+        var _this = this;
         this.connect($("discard_title"), "onclick", function () {
-            var dlg = new ebg.popindialog();
-            dlg.create("discard_dlg");
-            dlg.setTitle(_("Discard pile contents"));
-            var cards_htm = $("discard_main").innerHTML.replaceAll('id="', 'id="discard_');
-            var html = '<div id="discard_dlg_content">' + cards_htm + "</div>";
-            dlg.setContent(html);
-            dlg.show();
+            _this.showHiddenContent("discard_main", _("Discard pile contents"));
         });
+    };
+    GameXBody.prototype.showHiddenContent = function (id, title) {
+        var _this = this;
+        var dlg = new ebg.popindialog();
+        dlg.create("cards_dlg");
+        dlg.setTitle(title);
+        var cards_htm = this.cloneAndFixIds(id, "_tt", true).innerHTML;
+        var html = '<div id="card_dlg_content">' + cards_htm + "</div>";
+        dlg.setContent(html);
+        $("card_dlg_content")
+            .querySelectorAll(".token")
+            .forEach(function (node) {
+            _this.updateTooltip(node.id, node);
+        });
+        dlg.show();
     };
     GameXBody.prototype.onScreenWidthChange = function () {
         //  super.onScreenWidthChange();
@@ -3061,49 +3103,35 @@ var GameXBody = /** @class */ (function (_super) {
         var fullitemhtm = "";
         var fulltxt = "";
         var adClass = "";
-        if (displayInfo.key.startsWith("card_main") ||
-            displayInfo.key.startsWith("card_corp_") ||
-            displayInfo.key.startsWith("card_stanproj") ||
-            displayInfo.key.startsWith("milestone_") ||
-            displayInfo.key.startsWith("award_")) {
+        var elemId = displayInfo.key;
+        // XXX this function not suppose to look for js element in the DOM because it may not be there
+        if (!$(elemId) && $("".concat(elemId, "_help"))) {
+            elemId = "".concat(elemId, "_help");
+        }
+        if (type !== undefined) {
             fulltxt = this.generateCardTooltip(displayInfo);
             if (type >= 1 && type <= 3) {
                 //main cards
-                if (displayInfo.num && $("card_main_" + displayInfo.num)) {
-                    fullitemhtm = $("card_main_" + displayInfo.num)
-                        .outerHTML.replaceAll('id="', 'id="tt_')
-                        .replace("opacity: 0;", "");
-                    if (fullitemhtm.includes('data-invalid_prereq="1"')) {
-                        adClass += "invalid_prereq";
-                    }
-                }
-                else {
-                    fullitemhtm = "<div>NOTFOUND</div>";
+                var div = this.cloneAndFixIds(elemId, "_tt", true);
+                fullitemhtm = div.outerHTML;
+                if (div.getAttribute('data-invalid_prereq') == "1") {
+                    adClass += "invalid_prereq";
                 }
             }
-            else if (type == 4) {
-                //corp
-                if (displayInfo.num && $("card_corp_" + displayInfo.num)) {
-                    fullitemhtm = $("card_corp_" + displayInfo.num)
-                        .outerHTML.replaceAll('id="', 'id="tt_')
-                        .replace("opacity: 0;", "");
-                }
+            else if (type == this.CON.MA_CARD_TYPE_CORP) {
+                fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
             }
-            else if (type == 7 || type == 8) {
-                //milestones / awards
-                var elem = type == 7 ? "milestone_" + displayInfo.num : "award_" + displayInfo.num;
-                adClass += "award_milestone";
-                fullitemhtm = $(elem).outerHTML.replaceAll('id="', 'id="tt_');
+            else if (type == this.CON.MA_CARD_TYPE_MILESTONE || type == this.CON.MA_CARD_TYPE_AWARD) {
+                fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
             }
-            else if (type == 0) {
-                //standard project
+            else if (type == this.CON.MA_CARD_TYPE_STAN) {
                 adClass += "standard_project";
             }
         }
         else {
             if ($(displayInfo.key)) {
                 if (displayInfo.key.startsWith("tracker_tr_")) {
-                    fullitemhtm = $(displayInfo.key).outerHTML.replaceAll('id="', 'id="tt_');
+                    fullitemhtm = this.cloneAndFixIds(displayInfo.key, "_tt", true).outerHTML;
                 }
                 /*
                   if (displayInfo.key.startsWith('tracker_m_') ||displayInfo.key.startsWith('tracker_s_') ||displayInfo.key.startsWith('tracker_u_')
@@ -3179,16 +3207,36 @@ var GameXBody = /** @class */ (function (_super) {
                 txt += this.generateTooltipSection(_("Special Tile"), _("Some cards allow you to place special tiles. Any function or placement restriction is described on the card. Place the tile, and place a player marker on it."));
             }
         }
+        else if (key.startsWith("hex_")) {
+            txt += this.generateTooltipSection(_("Coordinates"), "".concat(displayInfo.x, ",").concat(displayInfo.y));
+            if (displayInfo.ocean == 1)
+                txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
+            else if (displayInfo.reserved == 1)
+                txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
+            if (displayInfo.expr.r) {
+                txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
+            }
+        }
+        if (!txt && displayInfo.tooltip)
+            return displayInfo.tooltip;
         return txt;
+    };
+    GameXBody.prototype.generateTokenTooltip = function (displayInfo) {
+        if (!displayInfo)
+            return "?";
+        if (displayInfo.t === undefined) {
+            return this.generateItemTooltip(displayInfo);
+        }
+        return this.generateCardTooltip(displayInfo);
     };
     GameXBody.prototype.generateCardTooltip = function (displayInfo) {
         var _a;
         if (!displayInfo)
             return "?";
-        var type = displayInfo.t;
-        if (displayInfo.key.startsWith("tracker_")) {
+        if (displayInfo.t === undefined) {
             return this.generateItemTooltip(displayInfo);
         }
+        var type = displayInfo.t;
         var type_name = this.getCardTypeById(type);
         var card_id = "";
         if (type > 0 && type < 7)
@@ -3409,10 +3457,10 @@ var GameXBody = /** @class */ (function (_super) {
             var plColor = node.id.replace("tracker_passed_", "");
             var plId = this.getPlayerIdByColor(plColor);
             if (newState == 1) {
-                this.disablePlayerPanel(parseInt(plId));
+                this.disablePlayerPanel(plId);
             }
             else {
-                this.enablePlayerPanel(parseInt(plId));
+                this.enablePlayerPanel(plId);
             }
         }
         //tracker w
@@ -3445,7 +3493,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.updateTokenDisplayInfo = function (tokenDisplayInfo) {
         // override to generate dynamic tooltips and such
         if (this.isLayoutFull()) {
-            tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
+            tokenDisplayInfo.tooltip = this.generateTokenTooltip(tokenDisplayInfo);
         }
         else {
             tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
@@ -4189,6 +4237,13 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.showError("Not implemented");
         }
+        else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
+            this.showHiddenContent("discard_main", _("Discard pile contents"));
+        }
+        else if (tid.startsWith("card_")) {
+            if ($(tid).parentElement.childElementCount >= 2)
+                this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
+        }
         else {
             this.showMoveUnauthorized();
         }
@@ -4235,6 +4290,21 @@ var GameXBody = /** @class */ (function (_super) {
             node.dataset.selected = value;
         }
         return true;
+    };
+    GameXBody.prototype.handleStackedTooltips = function (attachNode) {
+        if (attachNode.childElementCount > 0) {
+            if (attachNode.id.startsWith("hex")) {
+                this.removeTooltip(attachNode.id);
+                return;
+            }
+        }
+        var parentId = attachNode.parentElement.id;
+        if (parentId) {
+            if (parentId.startsWith("hex")) {
+                // remove tooltip from parent, it will likely just collide
+                this.removeTooltip(parentId);
+            }
+        }
     };
     // notifications
     GameXBody.prototype.setupNotifications = function () {
@@ -4448,6 +4518,7 @@ var VLayout = /** @class */ (function () {
         if (!this.game.isLayoutFull())
             return;
         var color = playerInfo.color;
+        var name = playerInfo.name;
         var div = $("main_area");
         var board = $("player_area_".concat(color));
         div.appendChild(board);
@@ -4458,8 +4529,14 @@ var VLayout = /** @class */ (function () {
         dojo.place("tableau_".concat(color, "_corp"), "tableau_".concat(color), "first");
         dojo.place("player_controls_".concat(color), "tableau_".concat(color, "_corp"));
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
-        dojo.place("player_area_name_".concat(color), "tableau_".concat(color, "_corp"), "first");
-        dojo.place("tableau_".concat(color, "_corp_logo"), "player_board_header_".concat(color), "first");
+        //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
+        var headerNode = $("player_board_header_".concat(color));
+        dojo.place("tableau_".concat(color, "_corp_logo"), headerNode, "first");
+        dojo.place("player_area_name_".concat(color), headerNode, "first");
+        dojo.removeClass(headerNode, 'playerboard_header');
+        dojo.addClass(headerNode, 'playerboard_header_v');
+        $("player_area_name_".concat(color)).setAttribute('data-player-name', name);
+        $("player_area_name_".concat(color)).innerHTML = '';
         var places = ["tracker_city", "tracker_forest", "tracker_land"];
         for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
             var key = places_1[_i];

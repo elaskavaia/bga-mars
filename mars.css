@@ -3703,13 +3703,16 @@
   background-color: rgb(86, 207, 110);
 }
 
+.map .tile {
+  position: absolute;
+}
+
 .tile {
   width: calc(var(--map-width) * 0.1085);
   height: calc(var(--map-width) * 0.12);
   background-image: url("img/tiles.png");
   background-size: 1000% 200%;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  position: absolute;
 }
 
 .tile.tile_2 {
@@ -4512,7 +4515,7 @@
   cursor: pointer;
 }
 
-#discard_dlg_content {
+#card_dlg_content {
   position: relative;
   justify-content: space-around;
   align-items: flex-start;
@@ -4520,11 +4523,11 @@
   flex-wrap: wrap;
   margin-top: 33px;
 }
-#discard_dlg_content .counter_discard_main {
+#card_dlg_content .counter {
   position: absolute;
   display: none;
 }
-#discard_dlg_content .card {
+#card_dlg_content .card {
   opacity: 1;
   width: var(--card-width);
   height: var(--card-height);
@@ -4711,7 +4714,7 @@
   background-position: -100% -100%;
 }
 
-.token_img.tracker_w {
+.tracker_w {
   background-position: -600% -100%;
 }
 
@@ -6079,24 +6082,6 @@
   cursor: pointer;
 }
 
-.mfull {
-  /*
-    .player_area::after {
-      content: attr(data-name);
-      position: absolute;
-      top: 0.7em;
-      left: 0;
-      font-size: calc(var(--card-width)*0.2);
-      font-family: var(--mars-font);
-      color: rgba(0, 0, 0, 0.34);
-      transform: rotate(-90deg) translateX(-30px) translateY(-8px);
-      transform-origin: .5em center 0;
-      margin-right: -140px;
-      overflow-wrap: break-word;
-      height: calc(var(--card-width) * 0.2);
-    }
-  */
-}
 .mfull #ebd-body {
   /* 
   background-image: url("img/full/tooltipbg.jpg"); 
@@ -6129,20 +6114,6 @@
 .mfull .card_effect {
   font-size: calc(var(--card-width) * 0.1);
 }
-.mfull .player_area {
-  border: unset;
-  position: relative;
-  border-radius: unset;
-  background: unset;
-  outline: 1px dashed var(--pcolor);
-  min-width: var(--map-board-with);
-}
-.mfull .player_counters {
-  display: none;
-}
-.mfull .counters_holder {
-  width: unset;
-}
 .mfull .card_decor {
   pointer-events: none;
   display: none;
@@ -6169,21 +6140,6 @@
 }
 .mfull #main_board {
   order: 2;
-}
-.mfull .thisplayer_zone {
-  order: 1;
-  flex-grow: 1;
-}
-.mfull .thisplayer_zone ~ .player_area {
-  order: 3;
-}
-.mfull .player_area {
-  min-width: calc(var(--map-board-with));
-  width: unset;
-  flex-grow: 1;
-}
-.mfull #players_area {
-  display: none;
 }
 .mfull #map_middle {
   position: absolute;
@@ -6348,17 +6304,6 @@
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
 }
-.mfull .player_area_name {
-  background: none;
-  padding: 0px;
-  z-index: 1;
-  left: unset;
-  right: unset;
-  border: none;
-  color: var(--plcolor);
-  top: calc(var(--card-width) * 0.9);
-  position: absolute;
-}
 .mfull #main_board::before {
   content: "";
   position: absolute;
@@ -6502,9 +6447,6 @@
 .mfull .card_corp_8 {
   background-position: 20% 50%;
 }
-.mfull .playerboard_header .badge ~ .mini_counter[data-state="0"] {
-  opacity: 0.2;
-}
 .mfull #tracker_o,
 .mfull #tracker_gen,
 .mfull #tracker_t {
@@ -6647,11 +6589,67 @@
 .mfull .card_hovertt .card_effect {
   font-size: calc(var(--card-width) * 0.07);
 }
-.mfull .playerboard_header {
+.mfull .thisplayer_zone {
+  order: 1;
+  flex-grow: 1;
+}
+.mfull .thisplayer_zone ~ .player_area {
+  order: 3;
+}
+.mfull .player_area {
+  width: unset;
+  flex-grow: 1;
+  border: unset;
+  position: relative;
+  border-radius: unset;
+  background: unset;
+  outline: 1px dashed var(--pcolor);
+  min-width: var(--map-board-with);
+  display: flex;
+}
+.mfull .player_counters {
+  display: none;
+}
+.mfull .playerboard_header_v .counters_holder {
+  width: unset;
+  display: none;
+}
+.mfull .playerboard_header_v .corp_logo {
+  display: none;
+}
+.mfull #players_area {
+  display: none;
+}
+.mfull .player_area_name {
+  background: none;
+  padding: 0px;
+  left: unset;
+  right: unset;
+  border: none;
+  position: absolute;
+  font-size: calc(var(--card-width) * 0.2);
+  font-family: var(--mars-font);
+  width: 32px;
+  height: var(--card-height);
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  color: var(--plcolor);
+}
+.mfull .player_area_name::after {
+  content: attr(data-player-name);
+  position: absolute;
+  transform: rotate(-90deg) translateX(-100%);
+  transform-origin: 0.5em 0.5em 0;
+}
+.mfull .playerboard_header_v {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  background-image: linear-gradient(to right, var(--plcolor), transparent);
+  /* background-image: linear-gradient(to right, var(--plcolor), transparent); */
+  width: 32px;
+}
+.mfull .playerboard_header_v .badge ~ .mini_counter[data-state="0"] {
+  opacity: 0.2;
 }
 .mfull .player_tags {
   width: unset;

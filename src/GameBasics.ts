@@ -785,11 +785,15 @@ class GameBasics extends GameGui {
     return this.gamedatas.players[playerId].color ?? "000000";
   }
 
-  getPlayerIdByColor(color: string) {
+  getPlayerName(playerId: number) {
+    return this.gamedatas.players[playerId].name ?? _('Not a Player');
+  }
+
+  getPlayerIdByColor(color: string): number | undefined {
     for (var playerId in this.gamedatas.players) {
       var playerInfo = this.gamedatas.players[playerId];
       if (color == playerInfo.color) {
-        return playerId;
+        return parseInt(playerId);
       }
     }
     return undefined;
@@ -804,6 +808,24 @@ class GameBasics extends GameGui {
     if (!handler) handler = () => this.cancelLocalStateEffects();
     if ($("button_cancel")) dojo.destroy("button_cancel");
     this.addActionButton("button_cancel", name, handler, null, false, "red");
+  }
+
+  cloneAndFixIds(orig: ElementOrId, postfix: string, removeInlineStyle?: boolean) {
+    if (!$(orig)) {
+      const div = document.createElement("div");
+      div.innerHTML = _('NOT FOUND')+" "+orig.toString();
+      return div;
+    }
+    const div = $(orig).cloneNode(true) as HTMLElement;
+    div.querySelectorAll("*").forEach(node => {
+      if (node.id) {
+        node.id = node.id + postfix;
+      }
+      if (removeInlineStyle) {
+        node.removeAttribute('style');
+      }
+    });
+    return div;
   }
 
   /* @Override */

@@ -149,7 +149,9 @@
 }
 
 
-
+.map .tile {
+  position: absolute;
+}
 
 .tile {
   width: calc(var(--map-width) * 0.1085);
@@ -157,7 +159,6 @@
   background-image: url("img/tiles.png");
   background-size: 1000% 200%;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  position: absolute;
 }
 
 
@@ -1018,7 +1019,7 @@
   cursor: pointer;
 }
 
-#discard_dlg_content {
+#card_dlg_content {
   position: relative;
   justify-content: space-around;
   align-items: flex-start;
@@ -1026,7 +1027,7 @@
   flex-wrap: wrap;
   margin-top: 33px;
 
-  .counter_discard_main {
+  .counter {
     position: absolute;
     display: none;
   }

@@ -4443,7 +4443,6 @@ $this->token_types = [
 // #ocean - 1 if reserved for ocean
  'hex_0_1' => [  //
   'name' => clienttranslate("Stanford Torus"),
-  'title' => 'Stanford Torus at (0,1) ',
   'location' => 'map_hexes',
   'reserved' => 1,
   'x' => 0,
@@ -4451,7 +4450,6 @@ $this->token_types = [
 ],
  'hex_0_2' => [  //
   'name' => clienttranslate("Phobos Space Haven"),
-  'title' => 'Phobos Space Haven at (0,2) ',
   'location' => 'map_hexes',
   'reserved' => 1,
   'x' => 0,
@@ -4459,7 +4457,6 @@ $this->token_types = [
 ],
  'hex_0_3' => [  //
   'name' => clienttranslate("Ganymede Colony"),
-  'title' => 'Ganymede Colony at (0,3) ',
   'location' => 'map_hexes',
   'reserved' => 1,
   'x' => 0,
@@ -4467,7 +4464,6 @@ $this->token_types = [
 ],
  'hex_3_5' => [  //
   'name' => clienttranslate("Noctis City"),
-  'title' => 'Noctis City at (3,5) 2p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'x' => 3,
@@ -4476,7 +4472,6 @@ $this->token_types = [
 ],
  'hex_4_1' => [  //
   'name' => clienttranslate("Hex at (4,1)"),
-  'title' => ' at (4,1) 2s',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4486,7 +4481,6 @@ $this->token_types = [
 ],
  'hex_6_1' => [  //
   'name' => clienttranslate("Hex at (6,1)"),
-  'title' => ' at (6,1) draw',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4496,7 +4490,6 @@ $this->token_types = [
 ],
  'hex_8_2' => [  //
   'name' => clienttranslate("Hex at (8,2)"),
-  'title' => ' at (8,2) 2draw',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4506,7 +4499,6 @@ $this->token_types = [
 ],
  'hex_9_4' => [  //
   'name' => clienttranslate("Hex at (9,4)"),
-  'title' => ' at (9,4) 2p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4516,7 +4508,6 @@ $this->token_types = [
 ],
  'hex_4_5' => [  //
   'name' => clienttranslate("Hex at (4,5)"),
-  'title' => ' at (4,5) 2p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4526,7 +4517,6 @@ $this->token_types = [
 ],
  'hex_5_5' => [  //
   'name' => clienttranslate("Hex at (5,5)"),
-  'title' => ' at (5,5) 2p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4536,7 +4526,6 @@ $this->token_types = [
 ],
  'hex_6_5' => [  //
   'name' => clienttranslate("Hex at (6,5)"),
-  'title' => ' at (6,5) 2p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4546,7 +4535,6 @@ $this->token_types = [
 ],
  'hex_7_6' => [  //
   'name' => clienttranslate("Hex at (7,6)"),
-  'title' => ' at (7,6) p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4556,7 +4544,6 @@ $this->token_types = [
 ],
  'hex_8_6' => [  //
   'name' => clienttranslate("Hex at (8,6)"),
-  'title' => ' at (8,6) p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4566,7 +4553,6 @@ $this->token_types = [
 ],
  'hex_9_6' => [  //
   'name' => clienttranslate("Hex at (9,6)"),
-  'title' => ' at (9,6) p',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4576,7 +4562,6 @@ $this->token_types = [
 ],
  'hex_7_9' => [  //
   'name' => clienttranslate("Hex at (7,9)"),
-  'title' => ' at (7,9) 2u',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4586,7 +4571,6 @@ $this->token_types = [
 ],
  'hex_7_1' => [  //
   'name' => clienttranslate("Hex at (7,1)"),
-  'title' => ' at (7,1) ',
   'location' => 'map_hexes',
   'reserved' => 1,
   'ocean' => 1,
@@ -4595,7 +4579,6 @@ $this->token_types = [
 ],
  'hex_3_1' => [  //
   'name' => clienttranslate("Hex at (3,1)"),
-  'title' => ' at (3,1) 2s',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 1,
@@ -4603,21 +4586,18 @@ $this->token_types = [
 ],
  'hex_5_1' => [  //
   'name' => clienttranslate("Hex at (5,1)"),
-  'title' => ' at (5,1) ',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 1,
 ],
  'hex_3_2' => [  //
   'name' => clienttranslate("Hex at (3,2)"),
-  'title' => ' at (3,2) ',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 2,
 ],
  'hex_4_2' => [  //
   'name' => clienttranslate("Tharsis Tholus"),
-  'title' => 'Tharsis Tholus at (4,2) s',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 2,
@@ -4625,28 +4605,24 @@ $this->token_types = [
 ],
  'hex_5_2' => [  //
   'name' => clienttranslate("Hex at (5,2)"),
-  'title' => ' at (5,2) ',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 2,
 ],
  'hex_6_2' => [  //
   'name' => clienttranslate("Hex at (6,2)"),
-  'title' => ' at (6,2) ',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 2,
 ],
  'hex_7_2' => [  //
   'name' => clienttranslate("Hex at (7,2)"),
-  'title' => ' at (7,2) ',
   'location' => 'map_hexes',
   'x' => 7,
   'y' => 2,
 ],
  'hex_2_3' => [  //
   'name' => clienttranslate("Ascraeus Mons"),
-  'title' => 'Ascraeus Mons at (2,3) draw',
   'location' => 'map_hexes',
   'x' => 2,
   'y' => 3,
@@ -4654,42 +4630,36 @@ $this->token_types = [
 ],
  'hex_3_3' => [  //
   'name' => clienttranslate("Hex at (3,3)"),
-  'title' => ' at (3,3) ',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 3,
 ],
  'hex_4_3' => [  //
   'name' => clienttranslate("Hex at (4,3)"),
-  'title' => ' at (4,3) ',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 3,
 ],
  'hex_5_3' => [  //
   'name' => clienttranslate("Hex at (5,3)"),
-  'title' => ' at (5,3) ',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 3,
 ],
  'hex_6_3' => [  //
   'name' => clienttranslate("Hex at (6,3)"),
-  'title' => ' at (6,3) ',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 3,
 ],
  'hex_7_3' => [  //
   'name' => clienttranslate("Hex at (7,3)"),
-  'title' => ' at (7,3) ',
   'location' => 'map_hexes',
   'x' => 7,
   'y' => 3,
 ],
  'hex_8_3' => [  //
   'name' => clienttranslate("Hex at (8,3)"),
-  'title' => ' at (8,3) s',
   'location' => 'map_hexes',
   'x' => 8,
   'y' => 3,
@@ -4697,7 +4667,6 @@ $this->token_types = [
 ],
  'hex_2_4' => [  //
   'name' => clienttranslate("Pavonis Mons"),
-  'title' => 'Pavonis Mons at (2,4) p,u',
   'location' => 'map_hexes',
   'x' => 2,
   'y' => 4,
@@ -4705,7 +4674,6 @@ $this->token_types = [
 ],
  'hex_3_4' => [  //
   'name' => clienttranslate("Hex at (3,4)"),
-  'title' => ' at (3,4) p',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 4,
@@ -4713,7 +4681,6 @@ $this->token_types = [
 ],
  'hex_4_4' => [  //
   'name' => clienttranslate("Hex at (4,4)"),
-  'title' => ' at (4,4) p',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 4,
@@ -4721,7 +4688,6 @@ $this->token_types = [
 ],
  'hex_5_4' => [  //
   'name' => clienttranslate("Hex at (5,4)"),
-  'title' => ' at (5,4) p',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 4,
@@ -4729,7 +4695,6 @@ $this->token_types = [
 ],
  'hex_6_4' => [  //
   'name' => clienttranslate("Hex at (6,4)"),
-  'title' => ' at (6,4) 2p',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 4,
@@ -4737,7 +4702,6 @@ $this->token_types = [
 ],
  'hex_7_4' => [  //
   'name' => clienttranslate("Hex at (7,4)"),
-  'title' => ' at (7,4) p',
   'location' => 'map_hexes',
   'x' => 7,
   'y' => 4,
@@ -4745,7 +4709,6 @@ $this->token_types = [
 ],
  'hex_8_4' => [  //
   'name' => clienttranslate("Hex at (8,4)"),
-  'title' => ' at (8,4) p',
   'location' => 'map_hexes',
   'x' => 8,
   'y' => 4,
@@ -4753,7 +4716,6 @@ $this->token_types = [
 ],
  'hex_1_5' => [  //
   'name' => clienttranslate("Arsia Mons"),
-  'title' => 'Arsia Mons at (1,5) 2p',
   'location' => 'map_hexes',
   'x' => 1,
   'y' => 5,
@@ -4761,7 +4723,6 @@ $this->token_types = [
 ],
  'hex_2_5' => [  //
   'name' => clienttranslate("Hex at (2,5)"),
-  'title' => ' at (2,5) 2p',
   'location' => 'map_hexes',
   'x' => 2,
   'y' => 5,
@@ -4769,7 +4730,6 @@ $this->token_types = [
 ],
  'hex_7_5' => [  //
   'name' => clienttranslate("Hex at (7,5)"),
-  'title' => ' at (7,5) 2p',
   'location' => 'map_hexes',
   'x' => 7,
   'y' => 5,
@@ -4777,7 +4737,6 @@ $this->token_types = [
 ],
  'hex_8_5' => [  //
   'name' => clienttranslate("Hex at (8,5)"),
-  'title' => ' at (8,5) 2p',
   'location' => 'map_hexes',
   'x' => 8,
   'y' => 5,
@@ -4785,7 +4744,6 @@ $this->token_types = [
 ],
  'hex_9_5' => [  //
   'name' => clienttranslate("Hex at (9,5)"),
-  'title' => ' at (9,5) 2p',
   'location' => 'map_hexes',
   'x' => 9,
   'y' => 5,
@@ -4793,7 +4751,6 @@ $this->token_types = [
 ],
  'hex_2_6' => [  //
   'name' => clienttranslate("Hex at (2,6)"),
-  'title' => ' at (2,6) p',
   'location' => 'map_hexes',
   'x' => 2,
   'y' => 6,
@@ -4801,7 +4758,6 @@ $this->token_types = [
 ],
  'hex_3_6' => [  //
   'name' => clienttranslate("Hex at (3,6)"),
-  'title' => ' at (3,6) 2p',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 6,
@@ -4809,7 +4765,6 @@ $this->token_types = [
 ],
  'hex_4_6' => [  //
   'name' => clienttranslate("Hex at (4,6)"),
-  'title' => ' at (4,6) p',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 6,
@@ -4817,7 +4772,6 @@ $this->token_types = [
 ],
  'hex_5_6' => [  //
   'name' => clienttranslate("Hex at (5,6)"),
-  'title' => ' at (5,6) p',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 6,
@@ -4825,7 +4779,6 @@ $this->token_types = [
 ],
  'hex_6_6' => [  //
   'name' => clienttranslate("Hex at (6,6)"),
-  'title' => ' at (6,6) p',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 6,
@@ -4833,42 +4786,36 @@ $this->token_types = [
 ],
  'hex_2_7' => [  //
   'name' => clienttranslate("Hex at (2,7)"),
-  'title' => ' at (2,7) ',
   'location' => 'map_hexes',
   'x' => 2,
   'y' => 7,
 ],
  'hex_3_7' => [  //
   'name' => clienttranslate("Hex at (3,7)"),
-  'title' => ' at (3,7) ',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 7,
 ],
  'hex_4_7' => [  //
   'name' => clienttranslate("Hex at (4,7)"),
-  'title' => ' at (4,7) ',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 7,
 ],
  'hex_5_7' => [  //
   'name' => clienttranslate("Hex at (5,7)"),
-  'title' => ' at (5,7) ',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 7,
 ],
  'hex_6_7' => [  //
   'name' => clienttranslate("Hex at (6,7)"),
-  'title' => ' at (6,7) ',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 7,
 ],
  'hex_7_7' => [  //
   'name' => clienttranslate("Hex at (7,7)"),
-  'title' => ' at (7,7) p',
   'location' => 'map_hexes',
   'x' => 7,
   'y' => 7,
@@ -4876,14 +4823,12 @@ $this->token_types = [
 ],
  'hex_8_7' => [  //
   'name' => clienttranslate("Hex at (8,7)"),
-  'title' => ' at (8,7) ',
   'location' => 'map_hexes',
   'x' => 8,
   'y' => 7,
 ],
  'hex_3_8' => [  //
   'name' => clienttranslate("Hex at (3,8)"),
-  'title' => ' at (3,8) 2s',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 8,
@@ -4891,14 +4836,12 @@ $this->token_types = [
 ],
  'hex_4_8' => [  //
   'name' => clienttranslate("Hex at (4,8)"),
-  'title' => ' at (4,8) ',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 8,
 ],
  'hex_5_8' => [  //
   'name' => clienttranslate("Hex at (5,8)"),
-  'title' => ' at (5,8) draw',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 8,
@@ -4906,7 +4849,6 @@ $this->token_types = [
 ],
  'hex_6_8' => [  //
   'name' => clienttranslate("Hex at (6,8)"),
-  'title' => ' at (6,8) draw',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 8,
@@ -4914,14 +4856,12 @@ $this->token_types = [
 ],
  'hex_7_8' => [  //
   'name' => clienttranslate("Hex at (7,8)"),
-  'title' => ' at (7,8) ',
   'location' => 'map_hexes',
   'x' => 7,
   'y' => 8,
 ],
  'hex_8_8' => [  //
   'name' => clienttranslate("Hex at (8,8)"),
-  'title' => ' at (8,8) u',
   'location' => 'map_hexes',
   'x' => 8,
   'y' => 8,
@@ -4929,7 +4869,6 @@ $this->token_types = [
 ],
  'hex_3_9' => [  //
   'name' => clienttranslate("Hex at (3,9)"),
-  'title' => ' at (3,9) s',
   'location' => 'map_hexes',
   'x' => 3,
   'y' => 9,
@@ -4937,7 +4876,6 @@ $this->token_types = [
 ],
  'hex_4_9' => [  //
   'name' => clienttranslate("Hex at (4,9)"),
-  'title' => ' at (4,9) 2s',
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 9,
@@ -4945,14 +4883,12 @@ $this->token_types = [
 ],
  'hex_5_9' => [  //
   'name' => clienttranslate("Hex at (5,9)"),
-  'title' => ' at (5,9) ',
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 9,
 ],
  'hex_6_9' => [  //
   'name' => clienttranslate("Hex at (6,9)"),
-  'title' => ' at (6,9) ',
   'location' => 'map_hexes',
   'x' => 6,
   'y' => 9,

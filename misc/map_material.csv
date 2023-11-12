@@ -1,7 +1,6 @@
 x|y|r|name
 #set id=hex_{x}_{y}
 #set name=Hex at ({x},{y})
-#set title={name} at ({x},{y}) {r}
 #set location=map_hexes
 #tharsis - can do variants later
 #r - placement bonus, p - plant, s - steal, u - titanium, draw - card

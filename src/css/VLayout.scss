@@ -11,7 +11,7 @@
 
   .player-board {
     background-color: unset;
-    background-image: url("img/full/tooltipbg.jpg"); 
+    background-image: url("img/full/tooltipbg.jpg");
     background-size: contain;
   }
 
@@ -44,22 +44,6 @@
     font-size: calc(var(--card-width) * 0.1);
   }
 
-  .player_area {
-    border: unset;
-    position: relative;
-    border-radius: unset;
-    background: unset;
-    outline: 1px dashed var(--pcolor);
-    min-width: var(--map-board-with);
-  }
-
-  .player_counters {
-    display: none;
-  }
-
-  .counters_holder {
-    width: unset;
-  }
 
   .card_decor {
     pointer-events: none;
@@ -98,42 +82,6 @@
     order: 2;
   }
 
-  .thisplayer_zone {
-    order: 1;
-    flex-grow: 1;
-  }
-
-  .thisplayer_zone~.player_area {
-    // second player
-    order: 3;
-  }
-
-  .player_area {
-    min-width: $mainw;
-    width: unset;
-    flex-grow: 1;
-  }
-
-  /*
-  .player_area::after {
-    content: attr(data-name);
-    position: absolute;
-    top: 0.7em;
-    left: 0;
-    font-size: calc(var(--card-width)*0.2);
-    font-family: var(--mars-font);
-    color: rgba(0, 0, 0, 0.34);
-    transform: rotate(-90deg) translateX(-30px) translateY(-8px);
-    transform-origin: .5em center 0;
-    margin-right: -140px;
-    overflow-wrap: break-word;
-    height: calc(var(--card-width) * 0.2);
-  }
-*/
-
-  #players_area {
-    display: none;
-  }
 
   #map_middle {
     position: absolute;
@@ -336,17 +284,7 @@
   //   background-color: rgba(148, 202, 216, 0.4);
   // }
 
-  .player_area_name {
-    background: none;
-    padding: 0px;
-    z-index: 1;
-    left: unset;
-    right: unset;
-    border: none;
-    color: var(--plcolor);
-    top: calc(var(--card-width) * 0.9);
-    position: absolute;
-  }
+
 
 
   #main_board::before {
@@ -510,9 +448,7 @@
     background-position: 20% 50%;
   }
 
-  .playerboard_header .badge~.mini_counter[data-state="0"] {
-    opacity: 0.2;
-  }
+
 
   #tracker_o,
   #tracker_gen,
@@ -573,11 +509,86 @@
     font-size: calc(var(--card-width) * 0.07);
   }
 
-  .playerboard_header {
+
+  .thisplayer_zone {
+    order: 1;
+    flex-grow: 1;
+  }
+
+  .thisplayer_zone~.player_area {
+    // second player
+    order: 3;
+  }
+
+
+  .player_area {
+    width: unset;
+    flex-grow: 1;
+    border: unset;
+    position: relative;
+    border-radius: unset;
+    background: unset;
+    outline: 1px dashed var(--pcolor);
+    min-width: var(--map-board-with);
+    display: flex;
+  }
+
+  .player_counters {
+    display: none;
+  }
+
+  .playerboard_header_v {
+
+    .counters_holder {
+      width: unset;
+      display: none;
+    }
+    .corp_logo {
+      display: none;
+    }
+
+  }
+
+
+
+  #players_area {
+    display: none;
+  }
+
+
+  .player_area_name {
+    background: none;
+    padding: 0px;
+    left: unset;
+    right: unset;
+    border: none;
+    position: absolute;
+    font-size: calc(var(--card-width) * 0.2);
+    font-family: var(--mars-font);
+    width: 32px;
+    height: var(--card-height);
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    color: var(--plcolor);
+  }
+
+  .player_area_name::after {
+    content: attr(data-player-name);
+    position: absolute;
+    transform: rotate(-90deg) translateX(-100%);
+    transform-origin: 0.5em 0.5em 0;
+  }
+
+  .playerboard_header_v {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    background-image: linear-gradient(to right, var(--plcolor), transparent);
+    /* background-image: linear-gradient(to right, var(--plcolor), transparent); */
+    width: 32px;
+  }
+
+  .playerboard_header_v .badge~.mini_counter[data-state="0"] {
+    opacity: 0.2;
   }
 
   .player_tags {

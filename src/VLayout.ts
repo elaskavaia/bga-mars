@@ -4,6 +4,7 @@ class VLayout {
   setupPlayer(playerInfo: any) {
     if (!this.game.isLayoutFull()) return;
     const color = playerInfo.color;
+    const name = playerInfo.name;
     const div = $("main_area");
     const board = $(`player_area_${color}`);
     div.appendChild(board);
@@ -16,14 +17,24 @@ class VLayout {
     dojo.place(`tableau_${color}_corp`, `tableau_${color}`, "first");
     dojo.place(`player_controls_${color}`, `tableau_${color}_corp`);
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
-    dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
-    dojo.place(`tableau_${color}_corp_logo`, `player_board_header_${color}`, "first");
+    //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
+
+    const headerNode = $(`player_board_header_${color}`);
+    dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
+    dojo.place(`player_area_name_${color}`,headerNode, "first");
+  
+    dojo.removeClass(headerNode,'playerboard_header');
+    dojo.addClass(headerNode,'playerboard_header_v');
+
+    $(`player_area_name_${color}`).setAttribute('data-player-name',name);
+    $(`player_area_name_${color}`).innerHTML = '';
 
     const places = ["tracker_city", "tracker_forest", "tracker_land"];
     for (const key of places) {
       //alt_tracker_city_ff0000
       dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
     }
+
     // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
     // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
     // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);

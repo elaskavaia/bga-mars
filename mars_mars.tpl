@@ -82,7 +82,7 @@
             <div class="hex_phobos"><div class="hex outer" id="hex_0_2"></div></div>
             <div class="hex_ganymede"><div class="hex outer" id="hex_0_3"></div></div>
           </div>
-          <div id="map">
+          <div id="map" class="map">
             <div class="map_bg"></div>
             <div id="map_hexes" class="map_hexes">
               <div class="hex" id="hex_3_1"></div>

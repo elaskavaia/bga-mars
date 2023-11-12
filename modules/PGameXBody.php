@@ -432,7 +432,7 @@ abstract class PGameXBody extends PGameMachine {
 
         $expr_keys = ['r', 'e', 'a'];
         foreach ($this->token_types as $key => &$info) {
-            if (startsWith($key, "card_")) {
+            if (startsWith($key, "card_") || startsWith($key, "hex_")) {
                 $info['expr'] = [];
                 foreach ($expr_keys as $field) {
                     $r = array_get($info, $field);

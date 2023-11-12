@@ -20,7 +20,7 @@ class GameXBody extends GameTokens {
   setup(gamedatas: any) {
     try {
       this.isDoingSetup = true;
-      this.CON = gamedatas.CON;
+      this.CON = gamedatas.CON; // PHP contants for game
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
@@ -33,34 +33,34 @@ class GameXBody extends GameTokens {
       this.zoneWidth = 0;
       this.zoneHeight = 0;
 
-
       this.local_counters["game"] = { cities: 0 };
 
       this.setupLocalSettings();
-      super.setup(gamedatas);
-      // hexes are not moved so manually connect
-      this.connectClass("hex", "onclick", "onToken");
 
+      super.setup(gamedatas);
+
+      // hex tooltips
       document.querySelectorAll(".hex").forEach((node) => {
         this.updateTooltip(node.id);
       });
+      // hexes are not moved so manually connect
+      this.connectClass("hex", "onclick", "onToken");
 
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
       //view discard content
       this.setupDiscard();
 
-      document.querySelectorAll("#player_config > #player_board_params").forEach((node) => {
-        dojo.destroy(node); // on undo this remains but another one generated
-      });
-
       //floating hand stuff
       this.connect($("hand_area_button_pop"), "onclick", () => {
         $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
       });
 
-      // dojo.place("player_board_params", "player_config", "last");
-      if (!$("player_config").innerHTML.includes("player_board_params")) dojo.place("player_board_params", "player_config", "last");
+      // fixed for undo in fake player panel
+      document.querySelectorAll("#player_config > #player_board_params").forEach((node) => {
+        dojo.destroy(node); // on undo this remains but another one generated
+      });
+      dojo.place("player_board_params", "player_config", "last");
 
       document.querySelectorAll(".mini_counter").forEach((node) => {
         const id = node.id;
@@ -163,14 +163,23 @@ class GameXBody extends GameTokens {
 
   setupDiscard(): void {
     this.connect($("discard_title"), "onclick", () => {
-      let dlg = new ebg.popindialog();
-      dlg.create("discard_dlg");
-      dlg.setTitle(_("Discard pile contents"));
-      const cards_htm = $("discard_main").innerHTML.replaceAll('id="', 'id="discard_');
-      const html = '<div id="discard_dlg_content">' + cards_htm + "</div>";
-      dlg.setContent(html);
-      dlg.show();
+      this.showHiddenContent("discard_main", _("Discard pile contents"));
     });
+  }
+
+  showHiddenContent(id: ElementOrId, title: string) {
+    let dlg = new ebg.popindialog();
+    dlg.create("cards_dlg");
+    dlg.setTitle(title);
+    const cards_htm = this.cloneAndFixIds(id,"_tt", true).innerHTML;
+    const html = '<div id="card_dlg_content">' + cards_htm + "</div>";
+    dlg.setContent(html);
+    $("card_dlg_content")
+      .querySelectorAll(".token")
+      .forEach((node) => {
+        this.updateTooltip(node.id, node);
+      });
+    dlg.show();
   }
 
   onScreenWidthChange() {
@@ -311,47 +320,33 @@ class GameXBody extends GameTokens {
     let fulltxt = "";
     let adClass = "";
 
-    if (
-      displayInfo.key.startsWith("card_main") ||
-      displayInfo.key.startsWith("card_corp_") ||
-      displayInfo.key.startsWith("card_stanproj") ||
-      displayInfo.key.startsWith("milestone_") ||
-      displayInfo.key.startsWith("award_")
-    ) {
+    let elemId = displayInfo.key;
+    // XXX this function not suppose to look for js element in the DOM because it may not be there
+    if (!$(elemId) && $(`${elemId}_help`)) {
+      elemId = `${elemId}_help`;
+    }
+
+    if (type !== undefined) {
       fulltxt = this.generateCardTooltip(displayInfo);
 
       if (type >= 1 && type <= 3) {
         //main cards
-        if (displayInfo.num && $("card_main_" + displayInfo.num)) {
-          fullitemhtm = $("card_main_" + displayInfo.num)
-            .outerHTML.replaceAll('id="', 'id="tt_')
-            .replace("opacity: 0;", "");
-          if (fullitemhtm.includes('data-invalid_prereq="1"')) {
-            adClass += "invalid_prereq";
-          }
-        } else {
-          fullitemhtm = "<div>NOTFOUND</div>";
+        const div = this.cloneAndFixIds(elemId,"_tt", true);
+        fullitemhtm = div.outerHTML;
+        if (div.getAttribute('data-invalid_prereq')=="1") {
+          adClass += "invalid_prereq";
         }
-      } else if (type == 4) {
-        //corp
-        if (displayInfo.num && $("card_corp_" + displayInfo.num)) {
-          fullitemhtm = $("card_corp_" + displayInfo.num)
-            .outerHTML.replaceAll('id="', 'id="tt_')
-            .replace("opacity: 0;", "");
-        }
-      } else if (type == 7 || type == 8) {
-        //milestones / awards
-        const elem = type == 7 ? "milestone_" + displayInfo.num : "award_" + displayInfo.num;
-        adClass += "award_milestone";
-        fullitemhtm = $(elem).outerHTML.replaceAll('id="', 'id="tt_');
-      } else if (type == 0) {
-        //standard project
+      } else if (type == this.CON.MA_CARD_TYPE_CORP) {      
+        fullitemhtm = this.cloneAndFixIds(elemId,"_tt", true).outerHTML;
+      } else if (type == this.CON.MA_CARD_TYPE_MILESTONE || type == this.CON.MA_CARD_TYPE_AWARD) {
+        fullitemhtm = this.cloneAndFixIds(elemId,"_tt", true).outerHTML;
+      } else if (type == this.CON.MA_CARD_TYPE_STAN) {
         adClass += "standard_project";
       }
     } else {
       if ($(displayInfo.key)) {
         if (displayInfo.key.startsWith("tracker_tr_")) {
-          fullitemhtm = $(displayInfo.key).outerHTML.replaceAll('id="', 'id="tt_');
+          fullitemhtm = this.cloneAndFixIds(displayInfo.key,"_tt", true).outerHTML;
         }
 
         /*
@@ -487,17 +482,37 @@ class GameXBody extends GameTokens {
           ),
         );
       }
+    } else if (key.startsWith("hex_")) {
+      txt += this.generateTooltipSection(_("Coordinates"), `${displayInfo.x},${displayInfo.y}`);
+      if (displayInfo.ocean == 1) txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
+      else if (displayInfo.reserved == 1) txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
+
+      if (displayInfo.expr.r) {
+        txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
+      }
     }
+    if (!txt && displayInfo.tooltip) return displayInfo.tooltip;
     return txt;
+  }
+
+  generateTokenTooltip(displayInfo: TokenDisplayInfo): string {
+    if (!displayInfo) return "?";
+
+    if (displayInfo.t === undefined) {
+      return this.generateItemTooltip(displayInfo);
+    }
+
+    return this.generateCardTooltip(displayInfo);
   }
 
   generateCardTooltip(displayInfo: TokenDisplayInfo): string {
     if (!displayInfo) return "?";
-    const type = displayInfo.t;
 
-    if (displayInfo.key.startsWith("tracker_")) {
+    if (displayInfo.t === undefined) {
       return this.generateItemTooltip(displayInfo);
     }
+
+    const type = displayInfo.t;
 
     let type_name = this.getCardTypeById(type);
     let card_id = "";
@@ -523,7 +538,6 @@ class GameXBody extends GameTokens {
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
     if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
-   
       const text = _(`If you meet the criteria of a milestone, you may
 claim it by paying 8 M€ and placing your player marker on
 it. A milestone may only be claimed by one player, and only
@@ -557,11 +571,10 @@ awarded.`);
       res += this.generateTooltipSection(_("Victory Points"), vp);
     }
 
-
     return res;
   }
 
-  createHtmlForToken(tokenNode: HTMLElement,displayInfo: TokenDisplayInfo) {
+  createHtmlForToken(tokenNode: HTMLElement, displayInfo: TokenDisplayInfo) {
     // use this to generate some fake parts of card, remove this when use images
     if (displayInfo.mainType == "card") {
       let tagshtm = "";
@@ -775,9 +788,9 @@ awarded.`);
       const plColor = node.id.replace("tracker_passed_", "");
       const plId = this.getPlayerIdByColor(plColor);
       if (newState == 1) {
-        this.disablePlayerPanel(parseInt(plId));
+        this.disablePlayerPanel(plId);
       } else {
-        this.enablePlayerPanel(parseInt(plId));
+        this.enablePlayerPanel(plId);
       }
     }
 
@@ -815,7 +828,7 @@ awarded.`);
   updateTokenDisplayInfo(tokenDisplayInfo: TokenDisplayInfo) {
     // override to generate dynamic tooltips and such
     if (this.isLayoutFull()) {
-      tokenDisplayInfo.tooltip = this.generateCardTooltip(tokenDisplayInfo);
+      tokenDisplayInfo.tooltip = this.generateTokenTooltip(tokenDisplayInfo);
     } else {
       tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
     }
@@ -1598,6 +1611,10 @@ awarded.`);
       const opId = info.op;
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
+    } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
+      this.showHiddenContent("discard_main", _("Discard pile contents"));
+    } else if (tid.startsWith("card_")) {
+      if ($(tid).parentElement.childElementCount >= 2) this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
     } else {
       this.showMoveUnauthorized();
     }
@@ -1653,6 +1670,22 @@ awarded.`);
       node.dataset.selected = value;
     }
     return true;
+  }
+
+  handleStackedTooltips(attachNode: Element) {
+    if (attachNode.childElementCount > 0) {
+      if (attachNode.id.startsWith("hex")) {
+        this.removeTooltip(attachNode.id);
+        return;
+      }
+    }
+    const parentId = attachNode.parentElement.id;
+    if (parentId) {
+      if (parentId.startsWith("hex")) {
+        // remove tooltip from parent, it will likely just collide
+        this.removeTooltip(parentId);
+      }
+    }
   }
 
   // notifications
