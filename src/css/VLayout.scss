@@ -284,7 +284,19 @@
   //   background-color: rgba(148, 202, 216, 0.4);
   // }
 
-
+  #ebd-body[data-localsetting_playerarea=before] #main_board {
+    order:2;
+  }
+  #ebd-body[data-localsetting_playerarea=before] .thisplayer_zone {
+    order:1;
+  }
+  #ebd-body[data-localsetting_playerarea=after] #main_board {
+    order:1;
+  }
+  #ebd-body[data-localsetting_playerarea=after] .thisplayer_zone {
+    order:2;
+  }
+  
 
 
   #main_board::before {
@@ -308,6 +320,13 @@
 
   .card {
     background-size: 1000% auto;
+  }
+
+  .pboard {
+    width: calc(var(--card-height) * 1.35 * 2);
+    height: calc(var(--card-height) * 2);
+    background-image: url(img/full/pboard.jpg);
+    background-size: contain;
   }
 
   .tableau {

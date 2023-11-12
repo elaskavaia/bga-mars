@@ -14,7 +14,7 @@ class VLayout {
 
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
-    dojo.place(`tableau_${color}_corp`, `tableau_${color}`, "first");
+    dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
     dojo.place(`player_controls_${color}`, `tableau_${color}_corp`);
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");

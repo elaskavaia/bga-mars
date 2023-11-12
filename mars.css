@@ -5021,6 +5021,9 @@
   height: calc(var(--pb_cellsize) * 0.5);
 }
 
+.mcompact .pboard {
+  display: none; /* real player board: hide for this layout */
+}
 .mcompact .playerboard_header {
   width: 100%;
   display: flex;
@@ -6304,6 +6307,18 @@
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
 }
+.mfull #ebd-body[data-localsetting_playerarea=before] #main_board {
+  order: 2;
+}
+.mfull #ebd-body[data-localsetting_playerarea=before] .thisplayer_zone {
+  order: 1;
+}
+.mfull #ebd-body[data-localsetting_playerarea=after] #main_board {
+  order: 1;
+}
+.mfull #ebd-body[data-localsetting_playerarea=after] .thisplayer_zone {
+  order: 2;
+}
 .mfull #main_board::before {
   content: "";
   position: absolute;
@@ -6322,6 +6337,12 @@
 }
 .mfull .card {
   background-size: 1000% auto;
+}
+.mfull .pboard {
+  width: calc(var(--card-height) * 1.35 * 2);
+  height: calc(var(--card-height) * 2);
+  background-image: url(img/full/pboard.jpg);
+  background-size: contain;
 }
 .mfull .tableau {
   display: flex;
@@ -6603,7 +6624,7 @@
   position: relative;
   border-radius: unset;
   background: unset;
-  outline: 1px dashed var(--plcolor);
+  /* outline: 1px dashed var(--plcolor); */
   min-width: var(--map-board-with);
   display: flex;
 }

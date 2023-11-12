@@ -4526,7 +4526,7 @@ var VLayout = /** @class */ (function () {
         $("tableau_".concat(color)).setAttribute("data-visibility_1", "1");
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
-        dojo.place("tableau_".concat(color, "_corp"), "tableau_".concat(color), "first");
+        dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
         dojo.place("player_controls_".concat(color), "tableau_".concat(color, "_corp"));
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
         //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
