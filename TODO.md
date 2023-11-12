@@ -29,20 +29,21 @@ Random notes on todo items
 * PT: Toolips on global params on miniboard missing
 * PT: Missing tooltip on total score
 * PT: I selected a corporation and clicked Undo.  It asks me to pick a corporation again, but the card isn't visually shown anymore (Note: its is there but not near the other corp)
-* PT: wrong tooltip title for cards in hard on player board
+* PT: wrong tooltip title for cards in hard on player mini board (says hand_0000ff counter)
 * PT: .hex transition: 100ms ease-in-out; ? what is this for?
-* SUGGESTION:  The "Send BUG" button should probably open a new tab/window if possible, not close the whole game
+* SUGGESTION:  The "Send BUG" button should probably open a new tab/window if possible, not close the whole game - FIXED
 * SUGGESTION:  Card selectors (square with eyes) should probably have tooltips because it took me a second to figure out what they do...though I know it's a simple concept.
 * SUGGESTION:  -30/+8C This is confusing.  Just showing "-30°C" would be clearer
-* SUGGESTION:  Having a tooltip on the general top area of the Milestones board would be nice, to explain that they're limited to 3 and cost 8 each etc.
+* SUGGESTION:  Having a tooltip on the general top area of the Milestones board would be nice, to explain that they're limited to 3 and cost 8 each etc. - FIXED
 * PT: I wish it were easier to see what card was played from the log.
 * Floating Hand: X icon should be more like "Down"
+* PT: tooltips oh .hex say "p, u" - FIXED
 
 ## Client - Silicon layout
 * Fix some remaining cards rendering
 * Show VP worth on cards
 * PT: thermometer and scoreboard got out of sync 
-* PT: NOTFOUND shown as card image in Card reference (at the bottom)
+* PT: NOTFOUND shown as card image in Card reference (at the bottom) - FIXED
 * BUG:  Low-quality JPEG for ECOLINE corp tooltip image (any corp really).
 * BUG: Check Medical Lab rendering, the building tag should be circle
 * Specator section: pink
@@ -50,8 +51,6 @@ Random notes on todo items
 ## Client - Cardboard layout
 * Cubes on cards
 * Printed player panels
-* BUG: wrong tooltip for cards in hard on player board
-* PT: tooltips oh .hex say "p, u"
 * Specator section: need to hide hand area
 
 
