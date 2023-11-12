@@ -2902,8 +2902,8 @@ var GameXBody = /** @class */ (function (_super) {
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
             {
                 key: "playerarea",
-                label: _("Player zone placement"),
-                choice: { before: _("Before Map"), after: _("After Map") },
+                label: _("Map placement"),
+                choice: { after: _("First"), before: _("Second") },
                 default: "after",
             },
             { key: "handplace", label: _("Floating Hand"), check: { checked: "floating" }, default: false },
@@ -3258,7 +3258,7 @@ var GameXBody = /** @class */ (function (_super) {
         res += this.generateTooltipSection(_("Tags"), tags);
         var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
         if (prereqText != "")
-            prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
+            prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
         if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
             var text = _("If you meet the criteria of a milestone, you may\nclaim it by paying 8 M\u20AC and placing your player marker on\nit. A milestone may only be claimed by one player, and only\n3 of the 5 milestones may be claimed in total, so there is a\nrace for these! Each claimed milestone is worth 5 VPs at the\nend of the game.");

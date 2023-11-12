@@ -413,15 +413,15 @@
 }
 
 .card[data-card-type="1"] {
-  background-color: lightgreen;
+  background-color: #327935;
 }
 
 .card[data-card-type="2"] {
-  background-color: lightblue;
+  background-color: #355ca4;
 }
 
 .card[data-card-type="3"] {
-  background-color: lightyellow;
+  background-color: orange;
 }
 
 /* effects face down */
@@ -6598,12 +6598,12 @@
 }
 .mfull .player_area {
   width: unset;
-  flex-grow: 1;
+  flex-grow: unset;
   border: unset;
   position: relative;
   border-radius: unset;
   background: unset;
-  outline: 1px dashed var(--pcolor);
+  outline: 1px dashed var(--plcolor);
   min-width: var(--map-board-with);
   display: flex;
 }

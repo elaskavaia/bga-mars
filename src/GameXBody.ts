@@ -41,7 +41,7 @@ class GameXBody extends GameTokens {
 
       // hex tooltips
       document.querySelectorAll(".hex").forEach((node) => {
-        this.updateTooltip(node.id);
+        if (node.childElementCount == 0) this.updateTooltip(node.id);
       });
       // hexes are not moved so manually connect
       this.connectClass("hex", "onclick", "onToken");
@@ -107,8 +107,8 @@ class GameXBody extends GameTokens {
 
       {
         key: "playerarea",
-        label: _("Player zone placement"),
-        choice: { before: _("Before Map"), after: _("After Map") },
+        label: _("Map placement"),
+        choice: { after: _("First"), before: _("Second") },
         default: "after",
       },
       { key: "handplace", label: _("Floating Hand"), check: { checked: "floating" }, default: false },
@@ -534,7 +534,7 @@ class GameXBody extends GameTokens {
     res += this.generateTooltipSection(_("Tags"), tags);
     let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
     if (prereqText != "")
-      prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card because pre-requisites are not met.)") + "</div>";
+      prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
     if (type == this.CON.MA_CARD_TYPE_MILESTONE) {

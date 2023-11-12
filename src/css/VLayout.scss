@@ -523,12 +523,12 @@
 
   .player_area {
     width: unset;
-    flex-grow: 1;
+    flex-grow: unset;
     border: unset;
     position: relative;
     border-radius: unset;
     background: unset;
-    outline: 1px dashed var(--pcolor);
+   /* outline: 1px dashed var(--plcolor); */
     min-width: var(--map-board-with);
     display: flex;
   }
