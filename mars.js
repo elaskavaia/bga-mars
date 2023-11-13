@@ -2128,7 +2128,7 @@ var CustomRenders = /** @class */ (function () {
             + '</div>';
     };
     CustomRenders.customcard_rules_207 = function () {
-        return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '</div></div></div></div>';
+        return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2' + this.parseSingleItemToHTML(this.getParse('tagBuilding', 0), 1) + '</div></div></div></div>';
     };
     CustomRenders.parses = {
         forest: { classes: "tracker tracker_forest" },
@@ -2146,6 +2146,7 @@ var CustomRenders = /** @class */ (function () {
         tagPlant: { classes: "tracker badge tracker_tagPlant" },
         tagAnimal: { classes: "tracker badge tracker_tagAnimal" },
         tagJovian: { classes: "tracker badge tracker_tagJovian" },
+        tagBuilding: { classes: "tracker badge tracker_tagBuilding" },
         opp_tagSpace: { classes: "tracker badge tracker_tagSpace", redborder: 'resource' },
         tagSpace: { classes: "tracker badge tracker_tagSpace" },
         tagEvent: { classes: "tracker badge tracker_tagEvent" },
@@ -2844,12 +2845,16 @@ var GameXBody = /** @class */ (function (_super) {
             _super.prototype.setup.call(this, gamedatas);
             // hex tooltips
             document.querySelectorAll(".hex").forEach(function (node) {
-                if (node.childElementCount == 0)
-                    _this.updateTooltip(node.id);
+                _this.updateTooltip(node.id);
             });
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
+            //player controls
             this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+            //Give tooltips to alt trackers in player boards
+            document.querySelectorAll(".player_controls .viewcards_button").forEach(function (node) {
+                _this.addTooltipHtml(node.id, _this.getTooptipHtmlForToken(node.id), _this.defaultTooltipDelay);
+            });
             //view discard content
             this.setupDiscard();
             //floating hand stuff
@@ -2861,7 +2866,19 @@ var GameXBody = /** @class */ (function (_super) {
                 dojo.destroy(node); // on undo this remains but another one generated
             });
             dojo.place("player_board_params", "player_config", "last");
+            //give tooltips to params
+            document.querySelectorAll("#player_config .params_line").forEach(function (node) {
+                _this.updateTooltip(node.id, node);
+            });
+            //Give tooltips to trackers in mini boards
             document.querySelectorAll(".mini_counter").forEach(function (node) {
+                var id = node.id;
+                if (id.startsWith("alt_")) {
+                    _this.updateTooltip(id.substring(4), node);
+                }
+            });
+            //Give tooltips to alt trackers in player boards
+            document.querySelectorAll(".player_counters .tracker").forEach(function (node) {
                 var id = node.id;
                 if (id.startsWith("alt_")) {
                     _this.updateTooltip(id.substring(4), node);
@@ -2885,7 +2902,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.local_counters[playerInfo.color] = {
             cards_1: 0,
             cards_2: 0,
-            cards_3: 0,
+            cards_3: 0
         };
         this.vlayout.setupPlayer(playerInfo);
         //move own player board in main zone
@@ -2896,23 +2913,25 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.setupLocalSettings = function () {
+        var _a;
         //local settings, include user id into setting string so it different per local player
-        this.localSettings = new LocalSettings("mars." + this.player_id, [
+        var theme = (_a = this.prefs[100].value) !== null && _a !== void 0 ? _a : 1;
+        this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
             { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
             {
                 key: "playerarea",
                 label: _("Map placement"),
                 choice: { after: _("First"), before: _("Second") },
-                default: "after",
+                default: "after"
             },
             { key: "handplace", label: _("Floating Hand"), check: { checked: "floating" }, default: false },
             {
                 key: "hidebadges",
                 label: _("Hide Badges on minipanel"),
                 check: { checked: "hide" },
-                default: false,
-            },
+                default: false
+            }
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
@@ -2934,7 +2953,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var token = {
                     key: "card_".concat(type, "_").concat(num, "_help"),
                     location: helpnode.id,
-                    state: 0,
+                    state: 0
                 };
                 var tokenNode = this.createToken(token);
                 this.syncTokenDisplayInfo(tokenNode);
@@ -3114,7 +3133,7 @@ var GameXBody = /** @class */ (function (_super) {
                 //main cards
                 var div = this.cloneAndFixIds(elemId, "_tt", true);
                 fullitemhtm = div.outerHTML;
-                if (div.getAttribute('data-invalid_prereq') == "1") {
+                if (div.getAttribute("data-invalid_prereq") == "1") {
                     adClass += "invalid_prereq";
                 }
             }
@@ -3147,50 +3166,62 @@ var GameXBody = /** @class */ (function (_super) {
         if (!displayInfo)
             return "?";
         var txt = "";
-        var key = displayInfo.key.replace("alt_", "");
-        if (key.startsWith("tracker_tr_")) {
-            txt += this.generateTooltipSection(_("Terraforming Rating"), _("Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."));
+        var key = displayInfo.typeKey;
+        var tokenId = displayInfo.tokenId;
+        switch (key) {
+            case "tracker_tr":
+                return this.generateTooltipSection(_("Terraform Rating"), _("Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."));
+            case "tracker_m":
+                return this.generateTooltipSection(_("MegaCredit"), _("The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."));
+            case "tracker_s":
+                return this.generateTooltipSection(_(displayInfo.name), _("Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel."));
+            case "tracker_u":
+                return this.generateTooltipSection(_(displayInfo.name), _("Titanium represents resources in space or for the space industry. Titanium is used to pay for space cards, being worth 3 M€ per titanium."));
+            case "tracker_p":
+                return this.generateTooltipSection(_(displayInfo.name), _("Plants use photosynthesis. As an action, 8 plant resources can be converted into a greenery tile that you place on the board. This increases the oxygen level (and your TR) 1 step. Each greenery is worth 1 VP and generates 1 VP to each adjacent city tile."));
+            case "tracker_e":
+                return this.generateTooltipSection(_(displayInfo.name), _("Energy is used by many cities and industries. This usage may either be via an action on a blue card, or via a decrease in energy production. Leftover energy is converted into heat"));
+            case "tracker_h":
+                return this.generateTooltipSection(_(displayInfo.name), _("Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step."));
+            case "tracker_passed":
+                return this.generateTooltipSection(_("Player passed"), _("If you take no action at all (pass), you are out of the round and may not take any anymore actions this generation. When everyone has passed, the action phase ends."));
+            case "tracker_gen":
+                return this.generateTooltipSection(_("Generations"), _("Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round."));
+            case "tracker_w":
+                return this.generateTooltipSection(_(displayInfo.name), _("This global parameter starts with 9 Ocean tiles in a stack, to be placed on the board during the game."));
+            case "tracker_o":
+                return this.generateTooltipSection(_(displayInfo.name), _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)"));
+            case "tracker_t":
+                return this.generateTooltipSection(_(displayInfo.name), _("This global parameter (mean temperature at the equator) starts at -30 ˚C."));
+            case "starting_player":
+                return this.generateTooltipSection(_(displayInfo.name), _("Shifts clockwise each generation."));
+            case "tracker_tagEvent":
+                return this.generateTooltipSection(_("Events"), _("Number of event cards played by the player. Unlike other tags, this is not a number of visible event tags, it a number of cards in event pile."));
         }
-        else if (key.startsWith("tracker_tag")) {
+        if (key.startsWith("hex")) {
+            txt += this.generateTooltipSection(_("Coordinates"), "".concat(displayInfo.x, ",").concat(displayInfo.y));
+            if (displayInfo.ocean == 1)
+                txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
+            else if (displayInfo.reserved == 1)
+                txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
+            if (displayInfo.expr.r) {
+                txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
+            }
+            return txt;
+        }
+        if (key.startsWith("tracker_tag")) {
             txt += this.generateTooltipSection(_("Tags"), _("Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag)."));
         }
-        else if (key.startsWith("tracker_city_") || key.startsWith("tracker_forest_") || key.startsWith("tracker_land_")) {
+        else if (key.startsWith("tracker_city") || key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
             txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
-        }
-        else if (key.startsWith("tracker_m_")) {
-            txt += this.generateTooltipSection(_("MegaCredits"), _("The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."));
-        }
-        else if (key.startsWith("tracker_s_")) {
-            txt += this.generateTooltipSection(_("Steel"), _("Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel."));
-        }
-        else if (key.startsWith("tracker_u_")) {
-            txt += this.generateTooltipSection(_("Titanium"), _("Titanium represents resources in space or for the space industry. Titanium is used to pay for space cards, being worth 3 M€ per titanium."));
-        }
-        else if (key.startsWith("tracker_p_")) {
-            txt += this.generateTooltipSection(_("Plants"), _("Plants use photosynthesis. As an action, 8 plant resources can be converted into a greenery tile that you place on the board. This increases the oxygen level (and your TR) 1 step. Each greenery is worth 1 VP and generates 1 VP to each adjacent city tile."));
-        }
-        else if (key.startsWith("tracker_e_")) {
-            txt += this.generateTooltipSection(_("Energy"), _("Energy is used by many cities and industries. This usage may either be via an action on a blue card, or via a decrease in energy production. Leftover energy is converted into heat"));
-        }
-        else if (key.startsWith("tracker_h_")) {
-            txt += this.generateTooltipSection(_("Heat"), _("Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step."));
         }
         else if (key.startsWith("tracker_p")) {
             txt += this.generateTooltipSection(_("Resource Production"), _("Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production."));
         }
-        else if (key == "tracker_gen") {
-            txt += this.generateTooltipSection(_("Generations"), _("Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round."));
+        else if (tokenId.startsWith("player_viewcards_")) {
+            txt += this.generateTooltipSection(_("Cards visibility toggle"), _("Shows or hides cards of the corresponding color."));
         }
-        else if (key == "tracker_w") {
-            txt += this.generateTooltipSection(_("Oceans pile"), _("This global parameter starts with 9 tiles in a stack here, to be placed on the board during the game."));
-        }
-        else if (key == "tracker_o") {
-            txt += this.generateTooltipSection(_("Oxigen"), _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)"));
-        }
-        else if (key == "starting_player") {
-            txt += this.generateTooltipSection(_("First player marker"), _("Shifts clockwise each generation."));
-        }
-        else if (key.startsWith("counter_hand_")) {
+        else if (tokenId.startsWith("counter_hand_")) {
             txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
         }
         else if (key.startsWith("tile_")) {
@@ -3205,16 +3236,6 @@ var GameXBody = /** @class */ (function (_super) {
             }
             else {
                 txt += this.generateTooltipSection(_("Special Tile"), _("Some cards allow you to place special tiles. Any function or placement restriction is described on the card. Place the tile, and place a player marker on it."));
-            }
-        }
-        else if (key.startsWith("hex_")) {
-            txt += this.generateTooltipSection(_("Coordinates"), "".concat(displayInfo.x, ",").concat(displayInfo.y));
-            if (displayInfo.ocean == 1)
-                txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
-            else if (displayInfo.reserved == 1)
-                txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
-            if (displayInfo.expr.r) {
-                txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
             }
         }
         if (!txt && displayInfo.tooltip)
@@ -3760,12 +3781,12 @@ var GameXBody = /** @class */ (function (_super) {
         if (!args)
             args = {};
         this.ajaxuseraction("resolve", {
-            ops: [__assign({ op: op }, args)],
+            ops: [__assign({ op: op }, args)]
         });
     };
     GameXBody.prototype.sendActionDecline = function (op) {
         this.ajaxuseraction("decline", {
-            ops: [{ op: op }],
+            ops: [{ op: op }]
         });
     };
     GameXBody.prototype.sendActionSkip = function () {
@@ -3827,7 +3848,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.sendActionResolveWithTarget = function (opId, target) {
         this.sendActionResolve(opId, {
-            target: target,
+            target: target
         });
         return;
     };
@@ -3855,13 +3876,13 @@ var GameXBody = /** @class */ (function (_super) {
                     if (from > 0)
                         this.addActionButton("button_" + opId + "_0", from, function () {
                             _this.sendActionResolve(opId, {
-                                count: from,
+                                count: from
                             });
                         });
                     if (from == 0 && count > 1) {
                         this.addActionButton("button_" + opId + "_1", "1", function () {
                             _this.sendActionResolve(opId, {
-                                count: 1,
+                                count: 1
                             });
                         });
                     }
@@ -3869,7 +3890,7 @@ var GameXBody = /** @class */ (function (_super) {
                         this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
                             // XXX
                             _this.sendActionResolve(opId, {
-                                count: count,
+                                count: count
                             });
                         });
                 }
@@ -3999,7 +4020,7 @@ var GameXBody = /** @class */ (function (_super) {
             needed: info.count,
             selected: {},
             available: [],
-            rate: [],
+            rate: []
         };
         var items_htm = "";
         for (var res in info.resources) {
@@ -4102,7 +4123,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.reverseIdLookup.set(divId, {
             op: opId,
             param_name: param_name !== null && param_name !== void 0 ? param_name : "target",
-            target: target !== null && target !== void 0 ? target : divId,
+            target: target !== null && target !== void 0 ? target : divId
         });
     };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {

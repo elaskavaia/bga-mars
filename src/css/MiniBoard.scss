@@ -90,84 +90,24 @@
   order: 12;
 }
 
-.token_img.tracker_p{
-  background-position: 0 0;
-}
-.token_img.tracker_resAnimal{
-  background-position: -100% 0;
-}
-.token_img.tracker_h{
-  background-position: -200% 0;
-}
-.tracker_m {
-  background-position: -300% 0;
-}
-.token_img.tracker_resMicrobe{
-  background-position: -400% 0;
-}
-.token_img.tracker_resFighter{
-  background-position: -400% -100%;
-}
 
-.token_img.tracker_e{
-  background-position: -500% 0;
-}
-.token_img.tracker_resScience{
-  background-position: -600% 0;
-}
 
-.token_img.tracker_s{
-  background-position: -700% 0;
-}
-.token_img.tracker_u {
-  background-position: -800% 0;
-}
-.token_img.tracker_pp{
-  background-position: 0 0;
-}
-.token_img.tracker_ph{
-  background-position: -200% 0;
-}
-.token_img.tracker_pm {
-  background-position: -300% 0;
-}
-.token_img.tracker_pe{
-  background-position: -500% 0;
-}
-.token_img.tracker_ps{
-  background-position: -700% 0;
-}
-.token_img.tracker_pu {
-  background-position: -800% 0;
-}
-.tracker_tr {
-  background-position: -900% 0;
-}
 .token_img.cardback {
   background-position: 0 -100%;
   background-color: black;
   width: calc(var(--resourcesize) * 0.78);
 }
 
-.token_img.tracker_t{
-  background-position: -200% -100%;
-}
-.token_img.tracker_o{
-  background-position: -100% -100%;
-}
-.tracker_w{
-  background-position: -600% -100%;
-}
 
 .tracker_passed {
-   display: none;
+  display: none;
   position: absolute;
   top: -17px;
   right: 4px;
   font-size: 12px;
   color: black;
-
 }
+
 .tracker.tracker_passed::after {
   content: attr(data-name);
 }
@@ -224,6 +164,10 @@
     grid-area: 2/1/2/1;
     width: 100%;
   }
+}
+
+.playerboard_own .tracker, .playerboard_produce .tracker, .groupline .tracker {
+  background-image: unset;
 }
 
 .player_score_value {

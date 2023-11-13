@@ -85,6 +85,7 @@
 #thething {
   display: flex;
   flex-direction: column;
+  font-family: var(--mars-font);
 }
 
 #main_area {
@@ -105,9 +106,6 @@
   order:1;
 }
 
-#decks_area > * {
-/*  display: inline-block;*/
-}
 
 #decks_area {
   display: flex;
@@ -163,6 +161,7 @@
   font-size: calc(var(--stan-width) * 0.2);
   color: gold;
   font-family: 'SpaceFont';
+  background-image: unset;
 }
 
 #oceans_pile #tracker_w::after {
@@ -349,19 +348,6 @@
   display: none;
 }
 
-.starting_player{
-  position: relative;
-  width: 36px;
-  height: 36px;
-  background-image: url('img/resources.png');
-  background-size: 1000% 200%;
-  background-position: -500% -100%;
-}
-
-.starting_player::after{
-  content: ""; // override tracker value
-}
-
 .bgabutton.overpay {
   background: red;
 }
@@ -475,6 +461,145 @@
   height: 26px;
   line-height: 26px;
 }
+/* --------------- Base Resource Images ---------- */
+
+.tracker {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+}
+
+.token_img > .tracker {
+  background-image:  unset;
+}
+
+.tracker.micon {
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+}
+.tracker.badge {
+  background-image: url("img/badges.png");
+  background-size: 1200% 100%;
+}
+
+
+.tracker_resAnimal{
+  background-position: -100% 0;
+}
+.tracker_resMicrobe{
+  background-position: -400% 0;
+}
+.tracker_resFighter{
+  background-position: -400% -100%;
+}
+.tracker_resScience{
+  background-position: -600% 0;
+}
+
+.tracker_m, .tracker_s, .tracker_gen, .tracker_u, .tracker_p, .tracker_e, .tracker_h, .tracker_tr {
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+}
+
+
+.tracker_m {
+  background-position: -300% 0;
+}
+.tracker_s{
+  background-position: -700% 0;
+}
+.tracker_u {
+  background-position: -800% 0;
+}
+.tracker_p{
+  background-position: 0 0;
+}
+.tracker_e{
+  background-position: -500% 0;
+}
+.tracker_h{
+  background-position: -200% 0;
+}
+.tracker_pp{
+  background-position: 0 0;
+}
+.tracker_ph{
+  background-position: -200% 0;
+}
+.tracker_pm {
+  background-position: -300% 0;
+}
+.tracker_pe{
+  background-position: -500% 0;
+}
+.tracker_ps{
+  background-position: -700% 0;
+}
+.tracker_pu {
+  background-position: -800% 0;
+}
+
+.tracker_gen {
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+  background-position: -700% -100%;
+  clip-path: circle(48% at 51% 51%);
+}
+
+.tracker_tr {
+  background-position: -900% 0;
+}
+
+.tracker_t{
+  background-position: -200% -100%;
+}
+.tracker_o{
+  background-position: -100% -100%;
+}
+.tracker_w{
+  background-position: -600% -100%;
+}
+
+.tracker.tracker_ers{ 
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: 0 -100%; order:-2;
+}
+.tracker.tracker_eru{ 
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -100% -100%;order:-1;
+}
+
+.tracker.tracker_city{ 
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -700% 0;
+}
+.tracker.tracker_forest{ 
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -300% -100%;
+}
+.tracker.tracker_land{ 
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -200% -100%;
+}
+
+.starting_player{
+  position: relative;
+  width: 36px;
+  height: 36px;
+  background-image: url('img/resources.png');
+  background-size: 1000% 200%;
+  background-position: -500% -100%;
+}
+
+.starting_player::after{
+  content: ""; // override tracker value
+}
+
+
 /* --------------- LOGS -------------------- */
 
 .log .token_img {

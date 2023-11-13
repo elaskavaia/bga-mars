@@ -4113,7 +4113,7 @@ $this->token_types = [
   'type' => 'tracker',
   'create' => 1,
   'location' => 'limbo',
-  'name' => clienttranslate("Starting Player Marker"),
+  'name' => clienttranslate("First Player Marker"),
 ],
 // #terraforming parameters
  'tracker_o' => [  //

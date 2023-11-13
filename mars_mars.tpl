@@ -47,11 +47,7 @@
               </div>
             </div>
             <div class="outer_generation" id="outer_generation">
-              <div class="generation_decor">
-                <div id="generation_counter">
-                  <div id="tracker_gen" class="tracker"></div>
-                </div>
-              </div>
+              <div id="tracker_gen" class="tracker"></div>
               <div class="generation_bottom">
                 <div id="generation_text">Gen</div>
               </div>
@@ -542,28 +538,27 @@
     <div id="limbo">
       <div id="starting_player"></div>
       <div id="player_board_params">
-        <div class="params_line">
+        <div id="tracker_o_param" class="params_line">
           <div class="token_img oxygen_icon"></div>
           <div class="groupline">
             <div id="alt_tracker_o" class="tracker param"></div>
             %
           </div>
         </div>
-        <div class="params_line">
+        <div id="tracker_t_param" class="params_line">
           <div class="token_img temperature_icon"></div>
           <div class="groupline">
             <div id="alt_tracker_t" class="tracker param"></div>
             °C
           </div>
         </div>
-        <div class="params_line">
-          <div class="token_img tracker_w"></div>
+        <div id="tracker_w_param" class="params_line">
+          <div  class="token_img tracker_w"></div>
           <div class="groupline">
             <div id="alt_tracker_w" class="tracker param"></div>
-
           </div>
         </div>
-        <div class="params_line">
+        <div id="tracker_gen_param" class="params_line">
           <div class="token_img tracker_gen"></div>
           <div class="groupline">
             <div id="alt_tracker_gen" class="tracker param"></div>

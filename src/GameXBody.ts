@@ -41,21 +41,17 @@ class GameXBody extends GameTokens {
 
       // hex tooltips
       document.querySelectorAll(".hex").forEach((node) => {
-        if (node.childElementCount == 0) this.updateTooltip(node.id);
+        this.updateTooltip(node.id);
       });
       // hexes are not moved so manually connect
       this.connectClass("hex", "onclick", "onToken");
-
 
       //player controls
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
       //Give tooltips to alt trackers in player boards
       document.querySelectorAll(".player_controls .viewcards_button").forEach((node) => {
-
         this.addTooltipHtml(node.id, this.getTooptipHtmlForToken(node.id), this.defaultTooltipDelay);
       });
-
-
 
       //view discard content
       this.setupDiscard();
@@ -72,7 +68,7 @@ class GameXBody extends GameTokens {
       dojo.place("player_board_params", "player_config", "last");
 
       //give tooltips to params
-      document.querySelectorAll("#player_config .tracker.param").forEach((node) => {
+      document.querySelectorAll("#player_config .params_line").forEach((node) => {
         this.updateTooltip(node.id, node);
       });
 
@@ -112,7 +108,7 @@ class GameXBody extends GameTokens {
     this.local_counters[playerInfo.color] = {
       cards_1: 0,
       cards_2: 0,
-      cards_3: 0,
+      cards_3: 0
     };
     this.vlayout.setupPlayer(playerInfo);
     //move own player board in main zone
@@ -121,12 +117,12 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
-
   }
 
   setupLocalSettings() {
     //local settings, include user id into setting string so it different per local player
-    this.localSettings = new LocalSettings("mars." + this.player_id, [
+    const theme = this.prefs[100].value ?? 1;
+    this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
       { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
 
@@ -134,15 +130,15 @@ class GameXBody extends GameTokens {
         key: "playerarea",
         label: _("Map placement"),
         choice: { after: _("First"), before: _("Second") },
-        default: "after",
+        default: "after"
       },
       { key: "handplace", label: _("Floating Hand"), check: { checked: "floating" }, default: false },
       {
         key: "hidebadges",
         label: _("Hide Badges on minipanel"),
         check: { checked: "hide" },
-        default: false,
-      },
+        default: false
+      }
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
@@ -164,7 +160,7 @@ class GameXBody extends GameTokens {
         const token = {
           key: `card_${type}_${num}_help`,
           location: helpnode.id,
-          state: 0,
+          state: 0
         };
         const tokenNode = this.createToken(token);
         this.syncTokenDisplayInfo(tokenNode);
@@ -196,7 +192,7 @@ class GameXBody extends GameTokens {
     let dlg = new ebg.popindialog();
     dlg.create("cards_dlg");
     dlg.setTitle(title);
-    const cards_htm = this.cloneAndFixIds(id,"_tt", true).innerHTML;
+    const cards_htm = this.cloneAndFixIds(id, "_tt", true).innerHTML;
     const html = '<div id="card_dlg_content">' + cards_htm + "</div>";
     dlg.setContent(html);
     $("card_dlg_content")
@@ -356,22 +352,22 @@ class GameXBody extends GameTokens {
 
       if (type >= 1 && type <= 3) {
         //main cards
-        const div = this.cloneAndFixIds(elemId,"_tt", true);
+        const div = this.cloneAndFixIds(elemId, "_tt", true);
         fullitemhtm = div.outerHTML;
-        if (div.getAttribute('data-invalid_prereq')=="1") {
+        if (div.getAttribute("data-invalid_prereq") == "1") {
           adClass += "invalid_prereq";
         }
-      } else if (type == this.CON.MA_CARD_TYPE_CORP) {      
-        fullitemhtm = this.cloneAndFixIds(elemId,"_tt", true).outerHTML;
+      } else if (type == this.CON.MA_CARD_TYPE_CORP) {
+        fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
       } else if (type == this.CON.MA_CARD_TYPE_MILESTONE || type == this.CON.MA_CARD_TYPE_AWARD) {
-        fullitemhtm = this.cloneAndFixIds(elemId,"_tt", true).outerHTML;
+        fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
       } else if (type == this.CON.MA_CARD_TYPE_STAN) {
         adClass += "standard_project";
       }
     } else {
       if ($(displayInfo.key)) {
         if (displayInfo.key.startsWith("tracker_tr_")) {
-          fullitemhtm = this.cloneAndFixIds(displayInfo.key,"_tt", true).outerHTML;
+          fullitemhtm = this.cloneAndFixIds(displayInfo.key, "_tt", true).outerHTML;
         }
 
         /*
@@ -389,148 +385,159 @@ class GameXBody extends GameTokens {
   generateItemTooltip(displayInfo: TokenDisplayInfo): string {
     if (!displayInfo) return "?";
     let txt = "";
-    const key = displayInfo.key.replace("alt_", "");
+    const key = displayInfo.typeKey;
+    const tokenId = displayInfo.tokenId;
 
-    if (key.startsWith("tracker_tr_")) {
-      txt += this.generateTooltipSection(
-        _("Terraforming Rating"),
-        _(
-          "Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20.",
-        ),
-      );
-    } else if (key.startsWith("tracker_tag")) {
-      txt += this.generateTooltipSection(
-        _("Tags"),
-        _(
-          "Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag).",
-        ),
-      );
-    } else if (key.startsWith("tracker_city_") || key.startsWith("tracker_forest_") || key.startsWith("tracker_land_")) {
-      txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
-    } else if (key.startsWith("tracker_m_")) {
-      txt += this.generateTooltipSection(
-        _("MegaCredits"),
-        _(
-          "The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards.",
-        ),
-      );
-    } else if (key.startsWith("tracker_s_")) {
-      txt += this.generateTooltipSection(
-        _("Steel"),
-        _(
-          "Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel.",
-        ),
-      );
-    } else if (key.startsWith("tracker_u_")) {
-      txt += this.generateTooltipSection(
-        _("Titanium"),
-        _(
-          "Titanium represents resources in space or for the space industry. Titanium is used to pay for space cards, being worth 3 M€ per titanium.",
-        ),
-      );
-    } else if (key.startsWith("tracker_p_")) {
-      txt += this.generateTooltipSection(
-        _("Plants"),
-        _(
-          "Plants use photosynthesis. As an action, 8 plant resources can be converted into a greenery tile that you place on the board. This increases the oxygen level (and your TR) 1 step. Each greenery is worth 1 VP and generates 1 VP to each adjacent city tile.",
-        ),
-      );
-    } else if (key.startsWith("tracker_e_")) {
-      txt += this.generateTooltipSection(
-        _("Energy"),
-        _(
-          "Energy is used by many cities and industries. This usage may either be via an action on a blue card, or via a decrease in energy production. Leftover energy is converted into heat",
-        ),
-      );
-    } else if (key.startsWith("tracker_h_")) {
-      txt += this.generateTooltipSection(
-        _("Heat"),
-        _(
-          "Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step.",
-        ),
-      );
-    } else if (key.startsWith("tracker_p" ) && !key.startsWith('tracker_passed')) {
-      txt += this.generateTooltipSection(
-        _("Resource Production"),
-        _(
-          "Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production.",
-        ),
-      );
-    } else if (key.startsWith('tracker_passed')) {
-      txt += this.generateTooltipSection(
-        _("Player passed"),
-        _(
-          "If you take no action at all (pass), you are out of the round and may not take any anymore actions this generation. When everyone has passed, the action phase ends.",
-        ),
-      );
-    } else if (key == "tracker_gen") {
-      txt += this.generateTooltipSection(
-        _("Generations"),
-        _(
-          "Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round.",
-        ),
-      );
-    } else if (key == "tracker_w") {
-      txt += this.generateTooltipSection(
-        _("Oceans pile"),
-        _("This global parameter starts with 9 tiles in a stack here, to be placed on the board during the game."),
-      );
-    } else if (key == "tracker_o") {
-      txt += this.generateTooltipSection(
-        _("Oxygen"),
-        _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)"),
-      );
-    } else if (key == "tracker_t") {
-        txt += this.generateTooltipSection(
-          _("Temperature"),
-        _("This global parameter (mean temperature at the equator) starts at -30 ˚C."),
-      );
-    } else if (key.startsWith("player_viewcards_")) {
-      txt += this.generateTooltipSection(
-        _("Cards visibility toggle"),
-        _("Shows or hides cards of the corresponding color."),
-      );
-    }  else if (key == "starting_player") {
-      txt += this.generateTooltipSection(_("First player marker"), _("Shifts clockwise each generation."));
-    } else if (key.startsWith("counter_hand_")) {
-      txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
-    } else if (key.startsWith("tile_")) {
-      if (displayInfo.tt == 3) {
-        txt += this.generateTooltipSection(
-          _("Ocean"),
+    switch (key) {
+      case "tracker_tr":
+        return this.generateTooltipSection(
+          _("Terraform Rating"),
           _(
-            "Ocean tiles may only be placed on areas reserved for ocean (see map). Placing an ocean tile increases your TR 1 step. Ocean tiles are not owned by any player. Each ocean tile on the board provides a 2 M€ placement bonus for any player later placing a tile, even another ocean, next to it.",
-          ),
+            "Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."
+          )
         );
-      } else if (displayInfo.tt == 2) {
-        txt += this.generateTooltipSection(
-          _("City"),
+      case "tracker_m":
+        return this.generateTooltipSection(
+          _("MegaCredit"),
           _(
-            "May not be placed next to another city. Each city tile is worth 1 VP for each adjacent greenery tile (regardless of owner) at the end of the game.",
-          ),
+            "The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."
+          )
         );
-      } else if (displayInfo.tt == 1) {
-        txt += this.generateTooltipSection(
-          _("Greenery"),
+      case "tracker_s":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
           _(
-            "If possible, greenery tiles must be placed next to another tile that you own. If you have no available area next to your tiles, or if you have no tile at all, you may place the greenery tile on any available area. When placing a greenery tile, you increase the oxygen level, if possible, and also your TR. If you can’t raise the oxygen level you don’t get the increase in TR either. Greenery tiles are worth 1 VP at the end of the game, and also provide 1 VP to any adjacent city.",
-          ),
+            "Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel."
+          )
         );
-      } else {
-        txt += this.generateTooltipSection(
-          _("Special Tile"),
+      case "tracker_u":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
           _(
-            "Some cards allow you to place special tiles. Any function or placement restriction is described on the card. Place the tile, and place a player marker on it.",
-          ),
+            "Titanium represents resources in space or for the space industry. Titanium is used to pay for space cards, being worth 3 M€ per titanium."
+          )
         );
-      }
-    } else if (key.startsWith("hex_")) {
+      case "tracker_p":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _(
+            "Plants use photosynthesis. As an action, 8 plant resources can be converted into a greenery tile that you place on the board. This increases the oxygen level (and your TR) 1 step. Each greenery is worth 1 VP and generates 1 VP to each adjacent city tile."
+          )
+        );
+      case "tracker_e":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _(
+            "Energy is used by many cities and industries. This usage may either be via an action on a blue card, or via a decrease in energy production. Leftover energy is converted into heat"
+          )
+        );
+      case "tracker_h":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _(
+            "Heat warms up the Martian atmosphere. As an action, 8 heat resources may be spent to increase temperature (and therefore your TR) 1 step."
+          )
+        );
+      case "tracker_passed":
+        return this.generateTooltipSection(
+          _("Player passed"),
+          _(
+            "If you take no action at all (pass), you are out of the round and may not take any anymore actions this generation. When everyone has passed, the action phase ends."
+          )
+        );
+      case "tracker_gen":
+        return this.generateTooltipSection(
+          _("Generations"),
+          _(
+            "Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round."
+          )
+        );
+
+      case "tracker_w":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _("This global parameter starts with 9 Ocean tiles in a stack, to be placed on the board during the game.")
+        );
+      case "tracker_o":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)")
+        );
+      case "tracker_t":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _("This global parameter (mean temperature at the equator) starts at -30 ˚C.")
+        );
+      case "starting_player":
+        return this.generateTooltipSection(_(displayInfo.name),, _("Shifts clockwise each generation."));
+      case "tracker_tagEvent":
+        return this.generateTooltipSection(
+          _("Events"),
+          _(
+            "Number of event cards played by the player. Unlike other tags, this is not a number of visible event tags, it a number of cards in event pile."
+          )
+        );
+    }
+
+    if (key.startsWith("hex")) {
       txt += this.generateTooltipSection(_("Coordinates"), `${displayInfo.x},${displayInfo.y}`);
       if (displayInfo.ocean == 1) txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
       else if (displayInfo.reserved == 1) txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
 
       if (displayInfo.expr.r) {
         txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
+      }
+      return txt;
+    }
+    if (key.startsWith("tracker_tag")) {
+      txt += this.generateTooltipSection(
+        _("Tags"),
+        _(
+          "Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag)."
+        )
+      );
+    } else if (key.startsWith("tracker_city") || key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
+      txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
+    } else if (key.startsWith("tracker_p")) {
+      txt += this.generateTooltipSection(
+        _("Resource Production"),
+        _(
+          "Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production."
+        )
+      );
+    } else if (tokenId.startsWith("player_viewcards_")) {
+      txt += this.generateTooltipSection(_("Cards visibility toggle"), _("Shows or hides cards of the corresponding color."));
+    } else if (tokenId.startsWith("counter_hand_")) {
+      txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
+    } else if (key.startsWith("tile_")) {
+      if (displayInfo.tt == 3) {
+        txt += this.generateTooltipSection(
+          _("Ocean"),
+          _(
+            "Ocean tiles may only be placed on areas reserved for ocean (see map). Placing an ocean tile increases your TR 1 step. Ocean tiles are not owned by any player. Each ocean tile on the board provides a 2 M€ placement bonus for any player later placing a tile, even another ocean, next to it."
+          )
+        );
+      } else if (displayInfo.tt == 2) {
+        txt += this.generateTooltipSection(
+          _("City"),
+          _(
+            "May not be placed next to another city. Each city tile is worth 1 VP for each adjacent greenery tile (regardless of owner) at the end of the game."
+          )
+        );
+      } else if (displayInfo.tt == 1) {
+        txt += this.generateTooltipSection(
+          _("Greenery"),
+          _(
+            "If possible, greenery tiles must be placed next to another tile that you own. If you have no available area next to your tiles, or if you have no tile at all, you may place the greenery tile on any available area. When placing a greenery tile, you increase the oxygen level, if possible, and also your TR. If you can’t raise the oxygen level you don’t get the increase in TR either. Greenery tiles are worth 1 VP at the end of the game, and also provide 1 VP to any adjacent city."
+          )
+        );
+      } else {
+        txt += this.generateTooltipSection(
+          _("Special Tile"),
+          _(
+            "Some cards allow you to place special tiles. Any function or placement restriction is described on the card. Place the tile, and place a player marker on it."
+          )
+        );
       }
     }
     if (!txt && displayInfo.tooltip) return displayInfo.tooltip;
@@ -876,7 +883,6 @@ awarded.`);
       tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
     }
 
-
     // if (this.isLocationByType(tokenDisplayInfo.key)) {
     //   tokenDisplayInfo.imageTypes += " infonode";
     // }
@@ -1126,13 +1132,13 @@ awarded.`);
   sendActionResolve(op: number, args?: any) {
     if (!args) args = {};
     this.ajaxuseraction("resolve", {
-      ops: [{ op: op, ...args }],
+      ops: [{ op: op, ...args }]
     });
   }
 
   sendActionDecline(op: number) {
     this.ajaxuseraction("decline", {
-      ops: [{ op: op }],
+      ops: [{ op: op }]
     });
   }
   sendActionSkip() {
@@ -1192,7 +1198,7 @@ awarded.`);
 
   sendActionResolveWithTarget(opId: number, target: string) {
     this.sendActionResolve(opId, {
-      target: target,
+      target: target
     });
     return;
   }
@@ -1220,13 +1226,13 @@ awarded.`);
           if (from > 0)
             this.addActionButton("button_" + opId + "_0", from, () => {
               this.sendActionResolve(opId, {
-                count: from,
+                count: from
               });
             });
           if (from == 0 && count > 1) {
             this.addActionButton("button_" + opId + "_1", "1", () => {
               this.sendActionResolve(opId, {
-                count: 1,
+                count: 1
               });
             });
           }
@@ -1235,7 +1241,7 @@ awarded.`);
             this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
               // XXX
               this.sendActionResolve(opId, {
-                count: count,
+                count: count
               });
             });
         }
@@ -1282,7 +1288,7 @@ awarded.`);
             },
             undefined,
             false,
-            "gray",
+            "gray"
           );
           if (name) $(buttonId).style.color = "#" + tid;
         }
@@ -1311,7 +1317,7 @@ awarded.`);
               Object.entries(opts.resources).reduce(
                 (sum: number, [key, val]: [string, unknown]) =>
                   sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0),
-                0,
+                0
               ) > 0
             ) {
               this.createCustomPayment(opId, opts);
@@ -1333,7 +1339,7 @@ awarded.`);
               },
               undefined,
               false,
-              buttonColor,
+              buttonColor
             );
           }
         }
@@ -1376,7 +1382,7 @@ awarded.`);
       needed: info.count,
       selected: {},
       available: [],
-      rate: [],
+      rate: []
     };
 
     let items_htm = "";
@@ -1503,7 +1509,7 @@ awarded.`);
     this.reverseIdLookup.set(divId, {
       op: opId,
       param_name: param_name ?? "target",
-      target: target ?? divId,
+      target: target ?? divId
     });
   }
 
@@ -1557,12 +1563,12 @@ awarded.`);
                 (id: string) => {
                   // onToken
                   this.onSelectTarget(opId, id);
-                },
+                }
               );
             },
             null,
             null,
-            color,
+            color
           );
         } else {
           this.addActionButton(
@@ -1573,7 +1579,7 @@ awarded.`);
             },
             null,
             null,
-            color,
+            color
           );
         }
 

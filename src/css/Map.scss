@@ -76,9 +76,12 @@
   height: calc(var(--map-width) * 0.122);
   border-radius: 30%;
   outline: 1px solid black;
-  position: absolute;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   transition: 100ms ease-in-out;
+}
+
+.map .hex{
+  position: absolute;
 }
 
 @for $col from 1 through 9 {
@@ -433,7 +436,7 @@
   box-shadow: #ffcb00 0px 0px 0px 3px;
   left: 42%;
   transition: 600ms all;
-
+  background-image: unset;
 }
 
 #temperature_map #tracker_t::after {
@@ -570,6 +573,7 @@
   border-radius: 50%;
   transition: 600ms all;
   padding: 0.3%;
+  background-image: unset;
 }
 
 #oxygen_map #tracker_o::after {
@@ -977,26 +981,20 @@
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
-  font-family: SpaceFont;
   color: white;
+  font-size: calc(var(--map-width) * 0.05);
 
-  #generation_counter {
-    font-size: calc(var(--map-width) * 0.05);
-  }
-
-  .generation_decor {
+  .tracker_gen {
     position: absolute;
     top: 0;
     width: 75%;
     height: 75%;
     display: flex;
     justify-content: center;
-    align-items: center;
     border-radius: 50%;
-    background: #ffe4c43d;
     left: 12.5%;
     box-shadow: 0 0 0 calc(var(--map-width) * 0.006) #ff000070;
-
+    clip-path: unset;
   }
 
   .generation_bottom {
