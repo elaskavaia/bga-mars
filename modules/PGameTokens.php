@@ -131,12 +131,13 @@ abstract class PGameTokens extends PGameBasic {
 
     function createCounterInfoForLocation($location) {
         $counter = $this->counterNameOf($location);
+        $location_name = $this->getRulesFor($location,'name');
         return [
             "counter_name" => $counter,
             "location" => $location,
             "name" => [
                 "log" => clienttranslate('${location_name} Counter'),
-                "args" => ["location_name" => $location],
+                "args" => ["location_name" => $location_name, 'i18n' => ['location_name']],
             ],
         ];
     }
