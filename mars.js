@@ -25,17 +25,17 @@ GameGui = /** @class */ (function () {
 var GameBasics = /** @class */ (function (_super) {
     __extends(GameBasics, _super);
     function GameBasics() {
-        var _this_1 = _super.call(this) || this;
-        _this_1.classActiveSlot = "active_slot";
-        _this_1.defaultTooltipDelay = 800;
-        _this_1.defaultAnimationDuration = 500;
-        _this_1._helpMode = false; // help mode where tooltip shown instead of click action
-        _this_1._displayedTooltip = null; // used in help mode
-        _this_1.zoom = 1.0;
+        var _this = _super.call(this) || this;
+        _this.classActiveSlot = "active_slot";
+        _this.defaultTooltipDelay = 800;
+        _this.defaultAnimationDuration = 500;
+        _this._helpMode = false; // help mode where tooltip shown instead of click action
+        _this._displayedTooltip = null; // used in help mode
+        _this.zoom = 1.0;
         console.log("game constructor");
-        _this_1.laststate = null;
-        _this_1.pendingUpdate = false;
-        return _this_1;
+        _this.laststate = null;
+        _this.pendingUpdate = false;
+        return _this;
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
@@ -229,7 +229,7 @@ var GameBasics = /** @class */ (function (_super) {
      * new parent immediately, so parent is correct during animation
      */
     GameBasics.prototype.slideToObjectRelative = function (tokenId, finalPlace, duration, delay, onEnd, relation, mobileStyle) {
-        var _this_1 = this;
+        var _this = this;
         var mobileNode = $(tokenId);
         duration = duration !== null && duration !== void 0 ? duration : this.defaultAnimationDuration;
         this.delayedExec(function () {
@@ -238,16 +238,16 @@ var GameBasics = /** @class */ (function (_super) {
                 mobileStyle = {
                     position: "relative",
                     top: "0px",
-                    left: "0px",
+                    left: "0px"
                 };
             }
-            var box = _this_1.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
+            var box = _this.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
             mobileNode.style.transition = "all " + duration + "ms ease-in-out";
             mobileNode.style.left = box.left + "px";
             mobileNode.style.top = box.top + "px";
         }, function () {
             mobileNode.style.removeProperty("transition");
-            _this_1.stripPosition(mobileNode);
+            _this.stripPosition(mobileNode);
             mobileNode.classList.remove("moving_token");
             setStyleAttributes(mobileNode, mobileStyle);
             if (onEnd)
@@ -255,7 +255,7 @@ var GameBasics = /** @class */ (function (_super) {
         }, duration, delay);
     };
     GameBasics.prototype.slideToObjectAbsolute = function (tokenId, finalPlace, x, y, duration, delay, onEnd, relation, mobileStyle) {
-        var _this_1 = this;
+        var _this = this;
         var mobileNode = $(tokenId);
         duration = duration !== null && duration !== void 0 ? duration : this.defaultAnimationDuration;
         this.delayedExec(function () {
@@ -264,10 +264,10 @@ var GameBasics = /** @class */ (function (_super) {
                 mobileStyle = {
                     position: "absolute",
                     left: x + "px",
-                    top: y + "px",
+                    top: y + "px"
                 };
             }
-            _this_1.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
+            _this.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
             mobileNode.style.transition = "all " + duration + "ms ease-in-out";
             mobileNode.style.left = x + "px";
             mobileNode.style.top = y + "px";
@@ -549,9 +549,9 @@ var GameBasics = /** @class */ (function (_super) {
         this.connect(node, "click", handler);
     };
     GameBasics.prototype.connectAllTemp = function (query, handler) {
-        var _this_1 = this;
+        var _this = this;
         document.querySelectorAll(query).forEach(function (node) {
-            _this_1.connectClickTemp(node, handler);
+            _this.connectClickTemp(node, handler);
         });
     };
     GameBasics.prototype.disconnectClickTemp = function (node) {
@@ -559,12 +559,12 @@ var GameBasics = /** @class */ (function (_super) {
         this.disconnect(node, "click");
     };
     GameBasics.prototype.disconnectAllTemp = function (query) {
-        var _this_1 = this;
+        var _this = this;
         if (!query)
             query = ".temp_click_handler";
         document.querySelectorAll(query).forEach(function (node) {
             //console.log("disconnecting => " + node.id);
-            _this_1.disconnectClickTemp(node);
+            _this.disconnectClickTemp(node);
         });
     };
     /**
@@ -589,9 +589,9 @@ var GameBasics = /** @class */ (function (_super) {
      * @param args - args passes to setClientState
      */
     GameBasics.prototype.setClientStateUpd = function (name, onUpdate, args) {
-        var _this_1 = this;
+        var _this = this;
         this["onUpdateActionButtons_".concat(name)] = onUpdate;
-        setTimeout(function () { return _this_1.setClientState(name, args); }, 1);
+        setTimeout(function () { return _this.setClientState(name, args); }, 1);
     };
     // ASSORTED UTILITY
     GameBasics.prototype.setDomTokenState = function (tokenId, newState) {
@@ -623,7 +623,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.isActiveSlot(element))
             return element;
         var parent = element.parentElement;
-        if (!parent || parent.id == 'thething' || parent == element)
+        if (!parent || parent.id == "thething" || parent == element)
             return null;
         return this.findActiveParent(parent);
     };
@@ -635,7 +635,7 @@ var GameBasics = /** @class */ (function (_super) {
         var id = event.currentTarget.id;
         // Stop this event propagation
         dojo.stopEvent(event); // XXX
-        if (id == 'thething') {
+        if (id == "thething") {
             var node = this.findActiveParent(event.target);
             id = node === null || node === void 0 ? void 0 : node.id;
         }
@@ -689,7 +689,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.getPlayerName = function (playerId) {
         var _a;
-        return (_a = this.gamedatas.players[playerId].name) !== null && _a !== void 0 ? _a : _('Not a Player');
+        return (_a = this.gamedatas.players[playerId].name) !== null && _a !== void 0 ? _a : _("Not a Player");
     };
     GameBasics.prototype.getPlayerIdByColor = function (color) {
         for (var playerId in this.gamedatas.players) {
@@ -704,11 +704,11 @@ var GameBasics = /** @class */ (function (_super) {
         return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
     };
     GameBasics.prototype.addCancelButton = function (name, handler) {
-        var _this_1 = this;
+        var _this = this;
         if (!name)
             name = _("Cancel");
         if (!handler)
-            handler = function () { return _this_1.cancelLocalStateEffects(); };
+            handler = function () { return _this.cancelLocalStateEffects(); };
         if ($("button_cancel"))
             dojo.destroy("button_cancel");
         this.addActionButton("button_cancel", name, handler, null, false, "red");
@@ -716,7 +716,7 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.cloneAndFixIds = function (orig, postfix, removeInlineStyle) {
         if (!$(orig)) {
             var div_1 = document.createElement("div");
-            div_1.innerHTML = _('NOT FOUND') + " " + orig.toString();
+            div_1.innerHTML = _("NOT FOUND") + " " + orig.toString();
             return div_1;
         }
         var div = $(orig).cloneNode(true);
@@ -725,7 +725,7 @@ var GameBasics = /** @class */ (function (_super) {
                 node.id = node.id + postfix;
             }
             if (removeInlineStyle) {
-                node.removeAttribute('style');
+                node.removeAttribute("style");
             }
         });
         return div;
@@ -735,76 +735,106 @@ var GameBasics = /** @class */ (function (_super) {
         this.inherited(arguments);
         dojo.place("player_board_config", "player_boards", "first");
     };
+    GameBasics.prototype.destroyDivOtherCopies = function (id) {
+        var _a;
+        var panels = document.querySelectorAll("#" + id);
+        panels.forEach(function (p, i) {
+            if (i < panels.length - 1)
+                p.parentNode.removeChild(p);
+        });
+        return (_a = panels[0]) !== null && _a !== void 0 ? _a : null;
+    };
     GameBasics.prototype.setupSettings = function () {
-        var panels = document.querySelectorAll("#player_board_config");
-        if (panels.length > 1) {
-            panels[0].parentNode.removeChild(panels[0]);
-        }
+        var _this = this;
+        // re-place fake mini board
+        this.destroyDivOtherCopies('player_board_config');
         dojo.place("player_board_config", "player_boards", "first");
-        for (var index = 100; index <= 110; index++) {
-            var element = $("preference_control_" + index);
-            if (element)
-                dojo.place(element.parentNode.parentNode, "settings-controls-container");
+        // move preference in gear tab 
+        var userPrefContainerId = "settings-controls-container-prefs";
+        $(userPrefContainerId).setAttribute("data-name", _("Preferences"));
+        for (var index = 100; index <= 199; index++) {
+            var pref_id = "preference_control_" + index;
+            var element = this.destroyDivOtherCopies(pref_id);
+            if (element) {
+                var parent_1 = element.parentNode.parentNode;
+                if (parent_1.parentNode.id != userPrefContainerId) {
+                    dojo.place(parent_1, userPrefContainerId);
+                    // remove the class because otherwise framework will hook its own listener there
+                    parent_1.querySelectorAll(".game_preference_control").forEach(function (node) { return dojo.removeClass(node, "game_preference_control"); });
+                    if (this.refaceUserPreference(index, parent_1) == false)
+                        dojo.connect(parent_1, "onchange", function (e) { return _this.onChangePreferenceCustom(e); });
+                }
+            }
         }
+        // add bug button
         var bug = $("bug_button");
         if (!bug) {
             var url = this.metasiteurl + "/bug?id=0&table=" + this.table_id;
-            bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url, target: '_blank' });
+            bug = dojo.create("a", {
+                id: "bug_button",
+                class: "action-button bgabutton bgabutton_gray",
+                innerHTML: "Send BUG",
+                href: url,
+                target: "_blank"
+            });
         }
         dojo.place(bug, "settings-controls-container", "last");
     };
-    GameBasics.prototype.setupPreference = function () {
-        this.checkPreferencesConsistency(this.gamedatas.server_prefs);
+    GameBasics.prototype.refaceUserPreference = function (pref_id, node) {
+        // can override to change apperance
+        return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+    };
+    GameBasics.prototype.onChangePreferenceCustom = function (e) {
+        var target = e.target;
+        if (!target.id)
+            return;
+        var match = target.id.match(/^preference_[cf]ontrol_(\d+).*$/);
+        if (!match) {
+            return;
+        }
         // Extract the ID and value from the UI control
-        var _this = this;
-        function onchange(e) {
-            var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-            if (!match) {
-                return;
-            }
-            var prefId = +match[1];
-            var prefValue = +e.target.value;
-            _this.prefs[prefId].value = prefValue;
-            _this.onPreferenceChange(prefId, prefValue);
-        }
-        dojo.query(".preference_control").connect("onchange", onchange);
-        // Call onPreferenceChange() now
-        dojo.query("#ingame_menu_content .preference_control").forEach(function (el) { return onchange({ target: el }); });
+        var prefId = +match[1];
+        var prefValue = +target.value;
+        this.ajaxCallChangePreferenceCustom(prefId, prefValue);
     };
-    GameBasics.prototype.checkPreferencesConsistency = function (backPrefs) {
-        //console.log('check pref',backPrefs,this.prefs);
-        if (!backPrefs)
-            return;
-        if (this.isReadOnly())
-            return;
-        var _loop_1 = function () {
-            var value = parseInt(backPrefs[key]);
-            var pref = key;
-            var user_value = parseInt(this_1.prefs[pref].value);
-            if (this_1.prefs[pref] !== undefined && user_value != value) {
-                args = { pref_id: pref, pref_value: user_value, player_id: this_1.player_id, lock: false };
-                backPrefs[key] = user_value;
-                this_1.ajaxcallwrapper_unchecked("changePreference", args, function (err, res) {
-                    if (err)
-                        console.error("changePreference callback failed " + res);
-                    else
-                        console.log("changePreference sent " + pref + "=" + user_value);
-                });
+    GameBasics.prototype.ajaxCallChangePreferenceCustom = function (pref_id, value) {
+        console.log("ajaxCallChangePreference", pref_id, value);
+        value = parseInt(value);
+        this.prefs[pref_id].value = value;
+        // send to mainsite to update
+        this.ajaxcall("/table/table/changePreference.html", {
+            id: pref_id,
+            value: value,
+            game: this.game_name
+        }, this, function (result) {
+            console.log("=> back", result);
+            if (result.status == "reload") {
+                this.showMessage(_("Done, reload in progress..."), "info");
+                window.location.hash = "";
+                window.location.reload();
             }
-        };
-        var this_1 = this, args;
-        for (var key in backPrefs) {
-            _loop_1();
-        }
-    };
-    GameBasics.prototype.onPreferenceChange = function (prefId, prefValue) {
-        console.log("Preference changed", prefId, prefValue);
-        this.checkPreferencesConsistency(this.gamedatas.server_prefs);
+            else {
+                if (result.pref_id == this.GAMEPREFERENCE_DISPLAYTOOLTIPS) {
+                    this.switchDisplayTooltips(result.value);
+                }
+                else {
+                    // send to our game to update per game table
+                    this.gamedatas.server_prefs[pref_id] = value;
+                    var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
+                    this.ajaxcallwrapper_unchecked("changePreference", args, function (err, res) {
+                        if (err)
+                            console.error("changePreference callback failed " + res);
+                        else
+                            console.log("changePreference sent " + pref_id + "=" + value);
+                    });
+                }
+            }
+        });
     };
     GameBasics.prototype.toggleSettings = function () {
         console.log("toggle setting");
         dojo.toggleClass("settings-controls-container", "settingsControlsHidden");
-        this.setupSettings();
+        // do not call setupSettings() here it has to be only called once
         // Hacking BGA framework
         if (dojo.hasClass("ebd-body", "mobile_version")) {
             dojo.query(".player-board").forEach(function (elt) {
@@ -822,7 +852,7 @@ var GameBasics = /** @class */ (function (_super) {
             this.deactivateHelpMode();
     };
     GameBasics.prototype.activateHelpMode = function () {
-        var _this_1 = this;
+        var _this = this;
         var chk = $("help-mode-switch");
         dojo.setAttr(chk, "bchecked", true);
         this._helpMode = true;
@@ -831,7 +861,7 @@ var GameBasics = /** @class */ (function (_super) {
         document.body.addEventListener("click", this.closeCurrentTooltip.bind(this));
         this.setDescriptionOnMyTurn(_("HELP MODE Activated. Click on game elements to get tooltips"));
         dojo.empty("generalactions");
-        this.addCancelButton(undefined, function () { return _this_1.deactivateHelpMode(); });
+        this.addCancelButton(undefined, function () { return _this.deactivateHelpMode(); });
         var handler = this.onClickForHelp.bind(this);
         document.querySelectorAll(".withtooltip").forEach(function (node) {
             node.addEventListener("click", handler, false);
@@ -906,14 +936,14 @@ var GameBasics = /** @class */ (function (_super) {
         this.onScreenWidthChange();
     };
     GameBasics.prototype.setupInfoPanel = function () {
-        var _this_1 = this;
+        var _this = this;
         //dojo.place('player_board_config', 'player_boards', 'first');
         var strzoom = localStorage.getItem("mars.zoom");
         if (!strzoom)
             strzoom = "1";
         this.zoom = Number(strzoom);
         this.setZoom(this.zoom);
-        dojo.connect($("show-settings"), "onclick", function () { return _this_1.toggleSettings(); });
+        dojo.connect($("show-settings"), "onclick", function () { return _this.toggleSettings(); });
         this.addTooltip("show-settings", "", _("Display game preferences"));
         var chk = $("help-mode-switch");
         dojo.setAttr(chk, "bchecked", false);
@@ -921,15 +951,14 @@ var GameBasics = /** @class */ (function (_super) {
             console.log("on check", chk);
             var bchecked = !chk.getAttribute("bchecked");
             //dojo.setAttr(chk, "bchecked", !chk.bchecked);
-            _this_1.toggleHelpMode(bchecked);
+            _this.toggleHelpMode(bchecked);
         });
         this.addTooltip(chk.id, "", _("Toggle help mode"));
         // ZOOM
-        this.connect($("zoom-out"), "onclick", function () { return _this_1.setZoom(_this_1.zoom - 0.2); });
-        this.connect($("zoom-in"), "onclick", function () { return _this_1.setZoom(_this_1.zoom + 0.2); });
+        this.connect($("zoom-out"), "onclick", function () { return _this.setZoom(_this.zoom - 0.2); });
+        this.connect($("zoom-in"), "onclick", function () { return _this.setZoom(_this.zoom + 0.2); });
         //$('help-mode-switch').style.display='none';
         this.setupSettings();
-        this.setupPreference();
         //this.setupHelper();
         //this.setupTour();
         this.addTooltip("zoom-in", "", _("Zoom in"));
@@ -954,7 +983,7 @@ var GameBasics = /** @class */ (function (_super) {
         dojo.subscribe("log", this, "notif_log");
     };
     GameBasics.prototype.subscribeNotification = function (notifName, duration, funcName) {
-        var _this_1 = this;
+        var _this = this;
         if (duration === void 0) { duration = 0; }
         if (funcName === void 0) { funcName = ""; }
         if (funcName == "")
@@ -962,7 +991,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (!(typeof this["notif_" + funcName] === "function")) {
             console.error("Notification notif_" + funcName + " isn't set !");
         }
-        dojo.subscribe(notifName, this, function (notif) { return _this_1.playnotif(funcName, notif, duration); });
+        dojo.subscribe(notifName, this, function (notif) { return _this.playnotif(funcName, notif, duration); });
         if (duration == 0) {
             //variable duration
             //don't forget to call this.notifqueue.setSynchronousDuration(duration);
@@ -976,7 +1005,7 @@ var GameBasics = /** @class */ (function (_super) {
             //Notif has to be ignored for active player
             //something about this has been updated in the bga framework, don't know if the big delay is still necessary
             this.notifqueue.setSynchronous(notifName, 10000);
-            this.notifqueue.setIgnoreNotificationCheck(notifName, function (notif) { return notif.args.player_id == _this_1.player_id; });
+            this.notifqueue.setIgnoreNotificationCheck(notifName, function (notif) { return notif.args.player_id == _this.player_id; });
         }
         else {
             //real fixed duration
@@ -984,7 +1013,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
     };
     GameBasics.prototype.playnotif = function (notifname, notif, setDelay) {
-        var _this_1 = this;
+        var _this = this;
         console.log("playing notif " + notifname + " with args ", notif.args);
         //setSynchronous has to set for non active player in ignored notif
         if (setDelay == -1) {
@@ -1024,9 +1053,9 @@ var GameBasics = /** @class */ (function (_super) {
                 //  this.animated=true;
                 p.then(function () {
                     // console.log(notifname+' : waiting 50ms after returns');
-                    return _this_1.wait(50);
+                    return _this.wait(50);
                 }).then(function () {
-                    _this_1.notifqueue.setSynchronousDuration(10);
+                    _this.notifqueue.setSynchronousDuration(10);
                     var executionTime = Date.now() - startTime_1;
                     //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
                     //    this.animated=false;
@@ -1074,7 +1103,7 @@ var GameBasics = /** @class */ (function (_super) {
     // }
     GameBasics.prototype.onLockInterface = function (lock) {
         var _a;
-        $('gameaction_status_wrap').setAttribute('data-interface-status', (_a = lock === null || lock === void 0 ? void 0 : lock.status) !== null && _a !== void 0 ? _a : 'updated');
+        $("gameaction_status_wrap").setAttribute("data-interface-status", (_a = lock === null || lock === void 0 ? void 0 : lock.status) !== null && _a !== void 0 ? _a : "updated");
         this.inherited(arguments);
         // if (lock.status == "queued") {
         //    // do not hide the buttons when locking call comes from another player
@@ -1086,12 +1115,12 @@ var GameBasics = /** @class */ (function (_super) {
      */
     GameBasics.prototype.restoreMainBar = function () {
         //console.trace("restore main bar");
-        dojo.style('pagemaintitle_wrap', 'display', 'block');
-        dojo.style('gameaction_status_wrap', 'display', 'block');
+        dojo.style("pagemaintitle_wrap", "display", "block");
+        dojo.style("gameaction_status_wrap", "display", "block");
         if (this.interface_status == "updated") {
             // this is normal status nothing is pending
-            $("gameaction_status").innerHTML = '&nbsp;';
-            $('gameaction_status_wrap').setAttribute('data-interface-status', this.interface_status);
+            $("gameaction_status").innerHTML = "&nbsp;";
+            $("gameaction_status_wrap").setAttribute("data-interface-status", this.interface_status);
         }
     };
     GameBasics.prototype.onNotif = function (notif) {
@@ -1122,7 +1151,7 @@ var GameBasics = /** @class */ (function (_super) {
                 var counters = {};
                 counters[name_1] = {
                     counter_name: name_1,
-                    counter_value: value,
+                    counter_value: value
                 };
                 if (this.gamedatas_server && this.gamedatas_server.counters[name_1])
                     this.gamedatas_server.counters[name_1].counter_value = value;
@@ -1322,7 +1351,7 @@ var CustomAnimation = /** @class */ (function () {
             qty = -1;
         }
         var htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
-        var _loop_2 = function (i) {
+        var _loop_1 = function (i) {
             var tmpid = 'tmp_' + String(Math.random() * 1000000000);
             var visiblenode = "";
             if (dojo.style('gameaction_status_wrap', "display") != "none") {
@@ -1340,12 +1369,12 @@ var CustomAnimation = /** @class */ (function () {
             }
             var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
             var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
-            if (!this_2.nodeExists(origin_1) && origin_1.startsWith('alt_'))
+            if (!this_1.nodeExists(origin_1) && origin_1.startsWith('alt_'))
                 origin_1 = tracker;
-            if (!this_2.nodeExists(destination) && destination.startsWith('alt_'))
+            if (!this_1.nodeExists(destination) && destination.startsWith('alt_'))
                 destination = tracker;
             dojo.place(htm.replace('%t', tmpid), origin_1);
-            this_2.wait(delay).then(function () {
+            this_1.wait(delay).then(function () {
                 if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
                     dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
                 }
@@ -1363,9 +1392,9 @@ var CustomAnimation = /** @class */ (function () {
             );*/
             delay += 100;
         };
-        var this_2 = this;
+        var this_1 = this;
         for (var i = 0; i < Math.abs(qty); i++) {
-            _loop_2(i);
+            _loop_1(i);
         }
         return this.wait(delay + 500);
     };
@@ -4142,7 +4171,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (xop == "+" && !single)
             this.setDescriptionOnMyTurn("${you} must choose order of operations");
         var i = 0;
-        var _loop_3 = function (opIdS) {
+        var _loop_2 = function (opIdS) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opargs = opInfo.args;
@@ -4152,17 +4181,17 @@ var GameXBody = /** @class */ (function (_super) {
             //  name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
             //  contains_gfx=true;
             // } else {
-            name_3 = this_3.getButtonNameForOperation(opInfo);
+            name_3 = this_2.getButtonNameForOperation(opInfo);
             //  }
-            var color = this_3.getButtonColorForOperation(opInfo);
+            var color = this_2.getButtonColorForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
-            this_3.updateVisualsFromOp(opInfo, opId);
-            this_3.activateSlots(opInfo, opId, singleOrFirst);
+            this_2.updateVisualsFromOp(opInfo, opId);
+            this_2.activateSlots(opInfo, opId, singleOrFirst);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
-                    this_3.addActionButton("button_" + opId, name_3, function () {
+                    this_2.addActionButton("button_" + opId, name_3, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
@@ -4174,7 +4203,7 @@ var GameXBody = /** @class */ (function (_super) {
                     }, null, null, color);
                 }
                 else {
-                    this_3.addActionButton("button_" + opId, name_3, function () {
+                    this_2.addActionButton("button_" + opId, name_3, function () {
                         _this.sendActionResolve(opId);
                     }, null, null, color);
                 }
@@ -4184,7 +4213,7 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 if (contains_gfx) {
                     $("button_" + opId).classList.add("gfx");
-                    $("button_" + opId).setAttribute("title", this_3.getButtonNameForOperation(opInfo));
+                    $("button_" + opId).setAttribute("title", this_2.getButtonNameForOperation(opInfo));
                 }
                 if (opargs.void) {
                     dojo.addClass("button_" + opId, "disabled");
@@ -4193,7 +4222,7 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0) {
-                    this_3.addActionButton("button_skip", _("Done"), function () {
+                    this_2.addActionButton("button_skip", _("Done"), function () {
                         _this.sendActionSkip();
                     });
                     $("button_skip").classList.remove("bgabutton_blue");
@@ -4202,9 +4231,9 @@ var GameXBody = /** @class */ (function (_super) {
             }
             i = i + 1;
         };
-        var this_3 = this;
+        var this_2 = this;
         for (var opIdS in operations) {
-            _loop_3(opIdS);
+            _loop_2(opIdS);
         }
         //refresh prereqs rendering on hand cards
         //TODO : check if this place is pertinent

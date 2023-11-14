@@ -581,7 +581,11 @@
 
           <button id="show-settings" class="config-control fa fa-cog fa-2x"></button>
         </div>
-        <div class="settingsControlsHidden" id="settings-controls-container"></div>
+        <div class="settingsControlsHidden" id="settings-controls-container">
+          <div id="settings-controls-container-prefs">
+            
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -272,7 +272,7 @@ class GameBasics extends GameGui {
           mobileStyle = {
             position: "relative",
             top: "0px",
-            left: "0px",
+            left: "0px"
           };
         }
 
@@ -313,7 +313,7 @@ class GameBasics extends GameGui {
           mobileStyle = {
             position: "absolute",
             left: x + "px",
-            top: y + "px",
+            top: y + "px"
           };
         }
         this.attachToNewParentNoDestroy(mobileNode, finalPlace, relation, mobileStyle);
@@ -716,7 +716,7 @@ class GameBasics extends GameGui {
   findActiveParent(element: HTMLElement) {
     if (this.isActiveSlot(element)) return element;
     const parent = element.parentElement;
-    if (!parent || parent.id=='thething' || parent == element) return null;
+    if (!parent || parent.id == "thething" || parent == element) return null;
     return this.findActiveParent(parent);
   }
 
@@ -728,7 +728,7 @@ class GameBasics extends GameGui {
     let id = (event.currentTarget as HTMLElement).id;
     // Stop this event propagation
     dojo.stopEvent(event); // XXX
-    if (id == 'thething') { 
+    if (id == "thething") {
       let node = this.findActiveParent(event.target as HTMLElement);
       id = node?.id;
     }
@@ -786,7 +786,7 @@ class GameBasics extends GameGui {
   }
 
   getPlayerName(playerId: number) {
-    return this.gamedatas.players[playerId].name ?? _('Not a Player');
+    return this.gamedatas.players[playerId].name ?? _("Not a Player");
   }
 
   getPlayerIdByColor(color: string): number | undefined {
@@ -813,16 +813,16 @@ class GameBasics extends GameGui {
   cloneAndFixIds(orig: ElementOrId, postfix: string, removeInlineStyle?: boolean) {
     if (!$(orig)) {
       const div = document.createElement("div");
-      div.innerHTML = _('NOT FOUND')+" "+orig.toString();
+      div.innerHTML = _("NOT FOUND") + " " + orig.toString();
       return div;
     }
     const div = $(orig).cloneNode(true) as HTMLElement;
-    div.querySelectorAll("*").forEach(node => {
+    div.querySelectorAll("*").forEach((node) => {
       if (node.id) {
         node.id = node.id + postfix;
       }
       if (removeInlineStyle) {
-        node.removeAttribute('style');
+        node.removeAttribute("style");
       }
     });
     return div;
@@ -834,74 +834,110 @@ class GameBasics extends GameGui {
     dojo.place("player_board_config", "player_boards", "first");
   }
 
+  destroyDivOtherCopies(id: string) {
+    const panels = document.querySelectorAll("#" + id);
+    panels.forEach((p, i) => {
+      if (i < panels.length - 1) p.parentNode.removeChild(p);
+    });
+    return panels[0] ?? null;
+  }
+
   setupSettings() {
-    var panels = document.querySelectorAll("#player_board_config");
-    if (panels.length > 1) {
-      panels[0].parentNode.removeChild(panels[0]);
-    }
+    // re-place fake mini board
+    this.destroyDivOtherCopies('player_board_config');
     dojo.place("player_board_config", "player_boards", "first");
-    for (let index = 100; index <= 110; index++) {
-      const element = $("preference_control_" + index);
-      if (element) dojo.place(element.parentNode.parentNode, "settings-controls-container");
+
+    // move preference in gear tab 
+    const userPrefContainerId = "settings-controls-container-prefs";
+    $(userPrefContainerId).setAttribute("data-name", _("Preferences"));
+    for (let index = 100; index <= 199; index++) {
+      const pref_id = "preference_control_" + index;
+      const element = this.destroyDivOtherCopies(pref_id);
+      if (element) {
+        let parent = element.parentNode.parentNode;
+        if ((parent.parentNode as HTMLElement).id != userPrefContainerId) {
+          dojo.place(parent, userPrefContainerId);
+          // remove the class because otherwise framework will hook its own listener there
+          parent.querySelectorAll(".game_preference_control").forEach((node) => dojo.removeClass(node, "game_preference_control"));
+          if (this.refaceUserPreference(index, parent as Element) == false)
+            dojo.connect(parent, "onchange", (e: any) => this.onChangePreferenceCustom(e));
+        }
+      }
     }
 
+    // add bug button
     var bug = $("bug_button");
     if (!bug) {
       var url = this.metasiteurl + "/bug?id=0&table=" + this.table_id;
-      bug = dojo.create("a", { id: "bug_button", class: "action-button bgabutton bgabutton_gray", innerHTML: "Send BUG", href: url, target: '_blank' });
+      bug = dojo.create("a", {
+        id: "bug_button",
+        class: "action-button bgabutton bgabutton_gray",
+        innerHTML: "Send BUG",
+        href: url,
+        target: "_blank"
+      });
     }
     dojo.place(bug, "settings-controls-container", "last");
   }
 
-  setupPreference() {
-    this.checkPreferencesConsistency(this.gamedatas.server_prefs);
+  refaceUserPreference(pref_id: number, node: Element) {
+    // can override to change apperance
+    return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+  }
+
+  onChangePreferenceCustom(e: any) {
+    const target = e.target;
+    if (!target.id) return;
+    var match = target.id.match(/^preference_[cf]ontrol_(\d+).*$/);
+    if (!match) {
+      return;
+    }
     // Extract the ID and value from the UI control
-    var _this = this;
-    function onchange(e: any) {
-      var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-      if (!match) {
-        return;
-      }
-      var prefId = +match[1];
-      var prefValue = +e.target.value;
-      _this.prefs[prefId].value = prefValue;
-      _this.onPreferenceChange(prefId, prefValue);
-    }
-
-    dojo.query(".preference_control").connect("onchange", onchange);
-    // Call onPreferenceChange() now
-    dojo.query("#ingame_menu_content .preference_control").forEach((el) => onchange({ target: el }));
+    const prefId = +match[1];
+    const prefValue = +target.value;
+    this.ajaxCallChangePreferenceCustom(prefId, prefValue);
   }
 
-  checkPreferencesConsistency(backPrefs) {
-    //console.log('check pref',backPrefs,this.prefs);
-    if (!backPrefs) return;
-    if (this.isReadOnly()) return;
-    for (var key in backPrefs) {
-      let value = parseInt(backPrefs[key]);
-      let pref = key;
-      let user_value = parseInt(this.prefs[pref].value);
-      if (this.prefs[pref] !== undefined && user_value != value) {
-        var args = { pref_id: pref, pref_value: user_value, player_id: this.player_id, lock: false };
-        backPrefs[key] = user_value;
-        this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
-          if (err) console.error("changePreference callback failed " + res);
-          else console.log("changePreference sent " + pref + "=" + user_value);
-        });
+  ajaxCallChangePreferenceCustom(pref_id: number, value: any) {
+    console.log("ajaxCallChangePreference", pref_id, value);
+    value = parseInt(value);
+    this.prefs[pref_id].value = value;
+    // send to mainsite to update
+    this.ajaxcall(
+      "/table/table/changePreference.html",
+      {
+        id: pref_id,
+        value: value,
+        game: this.game_name
+      },
+      this,
+      function (result) {
+        console.log("=> back", result);
+        if (result.status == "reload") {
+          this.showMessage(_("Done, reload in progress..."), "info");
+          window.location.hash = "";
+          window.location.reload();
+        } else {
+          if (result.pref_id == this.GAMEPREFERENCE_DISPLAYTOOLTIPS) {
+            this.switchDisplayTooltips(result.value);
+          } else {
+            // send to our game to update per game table
+            this.gamedatas.server_prefs[pref_id] = value;
+            var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
+            this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
+              if (err) console.error("changePreference callback failed " + res);
+              else console.log("changePreference sent " + pref_id + "=" + value);
+            });
+          }
+        }
       }
-    }
-  }
-
-  onPreferenceChange(prefId: number, prefValue: number) {
-    console.log("Preference changed", prefId, prefValue);
-    this.checkPreferencesConsistency(this.gamedatas.server_prefs);
+    );
   }
 
   toggleSettings() {
     console.log("toggle setting");
     dojo.toggleClass("settings-controls-container", "settingsControlsHidden");
-
-    this.setupSettings();
+    // do not call setupSettings() here it has to be only called once
 
     // Hacking BGA framework
     if (dojo.hasClass("ebd-body", "mobile_version")) {
@@ -1034,8 +1070,6 @@ class GameBasics extends GameGui {
 
     //$('help-mode-switch').style.display='none';
     this.setupSettings();
-
-    this.setupPreference();
     //this.setupHelper();
     //this.setupTour();
 
@@ -1047,11 +1081,11 @@ class GameBasics extends GameGui {
 
   setupNotifications(): void {
     console.log("notifications subscriptions setup");
-   //  dojo.subscribe("counter", this, "notif_counter");
-   // this.notifqueue.setSynchronous("counter", 500);
-   // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+    //  dojo.subscribe("counter", this, "notif_counter");
+    // this.notifqueue.setSynchronous("counter", 500);
+    // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
     this.subscribeNotification("counter");
-    this.subscribeNotification("counterAsync",1,"counter");// same as conter but no delay
+    this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
 
     dojo.subscribe("score", this, "notif_score");
     this.notifqueue.setSynchronous("score", 50); // XXX
@@ -1181,7 +1215,7 @@ class GameBasics extends GameGui {
   // }
 
   onLockInterface(lock) {
-    $('gameaction_status_wrap').setAttribute('data-interface-status',lock?.status ?? 'updated');
+    $("gameaction_status_wrap").setAttribute("data-interface-status", lock?.status ?? "updated");
     this.inherited(arguments);
     // if (lock.status == "queued") {
     //    // do not hide the buttons when locking call comes from another player
@@ -1193,14 +1227,14 @@ class GameBasics extends GameGui {
   /**
    * This is the hack to keep the status bar on
    */
-  restoreMainBar(){
+  restoreMainBar() {
     //console.trace("restore main bar");
-    dojo.style( 'pagemaintitle_wrap', 'display', 'block' );
-    dojo.style( 'gameaction_status_wrap', 'display', 'block' );
+    dojo.style("pagemaintitle_wrap", "display", "block");
+    dojo.style("gameaction_status_wrap", "display", "block");
     if (this.interface_status == "updated") {
       // this is normal status nothing is pending
-      $("gameaction_status").innerHTML = '&nbsp;';
-      $('gameaction_status_wrap').setAttribute('data-interface-status',this.interface_status);
+      $("gameaction_status").innerHTML = "&nbsp;";
+      $("gameaction_status_wrap").setAttribute("data-interface-status", this.interface_status);
     }
   }
 
@@ -1234,7 +1268,7 @@ class GameBasics extends GameGui {
         const counters = {};
         counters[name] = {
           counter_name: name,
-          counter_value: value,
+          counter_value: value
         };
         if (this.gamedatas_server && this.gamedatas_server.counters[name]) this.gamedatas_server.counters[name].counter_value = value;
         this.updateCountersSafe(counters);

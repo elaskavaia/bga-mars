@@ -5906,6 +5906,18 @@
   cursor: pointer;
 }
 
+#settings-controls-container-prefs {
+  position: relative;
+}
+
+#settings-controls-container-prefs::before, .localsettings_header {
+  content: attr(data-name);
+  width: 100%;
+  position: relative;
+  background-color: #e8a33c;
+  display: block;
+}
+
 .mfull #ebd-body {
   /* 
   background-image: url("img/full/tooltipbg.jpg"); 

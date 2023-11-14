@@ -88,7 +88,7 @@ declare class GameGui {
   getActivePlayerId(): number;
   addActionButton(id: string, label: string, method: string | eventhandler, destination?: string, blinking?: boolean, color?: string): void;
   checkAction(action: any): boolean;
-  ajaxcall(url: string, args: object, bind: GameGui, resultHandler: (result: any) => void, allHandler: (err: any) => void): void;
+  ajaxcall(url: string, args: object, bind: GameGui, resultHandler: (result: any) => void, allHandler?: (err: any, result?: any) => void): void;
   connect(node: ElementOrId, ontype: string, handler: any): void;
   disconnect(node: ElementOrId, ontype: string): void;
   connectClass(cls:string, ontype: string, handler: any):void;
