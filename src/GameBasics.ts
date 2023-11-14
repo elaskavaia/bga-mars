@@ -817,6 +817,7 @@ class GameBasics extends GameGui {
       return div;
     }
     const div = $(orig).cloneNode(true) as HTMLElement;
+
     div.querySelectorAll("*").forEach((node) => {
       if (node.id) {
         node.id = node.id + postfix;
@@ -825,6 +826,13 @@ class GameBasics extends GameGui {
         node.removeAttribute("style");
       }
     });
+    //the above code doesn't include root node, so I duplicated it here for root node
+    if (div.id) {
+      div.id = div.id + postfix;
+    }
+    if (removeInlineStyle) {
+      div.removeAttribute("style");
+    }
     return div;
   }
 
