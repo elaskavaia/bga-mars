@@ -2917,20 +2917,21 @@ var GameXBody = /** @class */ (function (_super) {
         //local settings, include user id into setting string so it different per local player
         var theme = (_a = this.prefs[100].value) !== null && _a !== void 0 ? _a : 1;
         this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
-            { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
-            { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+            { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
+            { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             {
                 key: "playerarea",
                 label: _("Map placement"),
                 choice: { after: _("First"), before: _("Second") },
                 default: "after"
             },
-            { key: "handplace", label: _("Floating Hand"), check: { checked: "floating" }, default: false },
+            { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
             {
                 key: "hidebadges",
                 label: _("Hide Badges on minipanel"),
-                check: { checked: "hide" },
-                default: false
+                choice: { hide: true },
+                default: false,
+                ui: "checkbox"
             }
         ]);
         this.localSettings.setup();
@@ -4380,7 +4381,7 @@ var LocalSettings = /** @class */ (function () {
         var htmcontents = "";
         for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
             var prop = _a[_i];
-            if (!prop.custom)
+            if (prop.ui !== false)
                 htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
         }
         htm = htm.replace("%contents%", htmcontents);
@@ -4388,7 +4389,7 @@ var LocalSettings = /** @class */ (function () {
         //add interactivity
         for (var _b = 0, _c = this.props; _b < _c.length; _b++) {
             var prop = _c[_b];
-            if (!prop.custom)
+            if (prop.ui !== false)
                 this.actionProp(prop);
         }
     };
@@ -4403,13 +4404,17 @@ var LocalSettings = /** @class */ (function () {
             return;
         var range = prop.range;
         var inputid = "localsettings_prop_".concat(prop.key);
-        if (range.slider) {
-            return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <div class=\"localsettings_prop_range\">\n      <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i></div>\n      <input type=\"range\" id=\"").concat(inputid, "\" name=\"").concat(inputid, "\" min=\"").concat(range.min, "\" max=\"").concat(range.max, "\" step=\"").concat(range.inc, "\" value=\"").concat(prop.value, "\">\n      <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
+        var valuecontrol = '';
+        if (prop.ui == 'slider') {
+            valuecontrol = "<input type=\"range\" id=\"".concat(inputid, "\" name=\"").concat(inputid, "\" min=\"").concat(range.min, "\" max=\"").concat(range.max, "\" step=\"").concat(range.inc, "\" value=\"").concat(prop.value, "\">");
         }
-        return "\n      <div class=\"localsettings_prop_label prop_range\">".concat(prop.label, "</div>\n      <div class=\"localsettings_prop_range\">\n      <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i></div>\n      <div id=\"").concat(inputid, "\" class=\"localsettings_prop_rangevalue\">\n      ").concat(prop.value, "\n      </div>\n      <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
+        else {
+            valuecontrol = "<div id=\"".concat(inputid, "\" class=\"localsettings_prop_rangevalue\">").concat(prop.value, "</div>");
+        }
+        return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <div class=\"localsettings_prop_range\">\n          <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i></div>\n          ").concat(valuecontrol, "\n          <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
     };
     LocalSettings.prototype.renderPropChoice = function (prop) {
-        if (prop.check) {
+        if (prop.ui == 'checkbox') {
             var inputid = "localsettings_prop_".concat(prop.key);
             var checked = prop.value === "false" || !prop.value ? "" : "checked";
             return "\n      <input type=\"checkbox\" id=\"".concat(inputid, "\" name=\"").concat(inputid, "\" ").concat(checked, ">\n      <label for=\"").concat(inputid, "\" class=\"localsettings_prop_label\">").concat(prop.label, "</label>\n      ");
@@ -4433,7 +4438,7 @@ var LocalSettings = /** @class */ (function () {
         var _this = this;
         if (!prop.range)
             return;
-        if (prop.range.slider) {
+        if (prop.ui == 'slider') {
             $("localsettings_prop_".concat(prop.key)).addEventListener("change", function (event) {
                 _this.applyChanges(prop, event.target.value);
             });
@@ -4449,7 +4454,7 @@ var LocalSettings = /** @class */ (function () {
         var _this = this;
         $("localsettings_prop_".concat(prop.key)).addEventListener("click", function (event) {
             var target = event.target;
-            _this.applyChanges(prop, prop.check ? target.checked : target.value);
+            _this.applyChanges(prop, prop.ui == 'checkbox' ? target.checked : target.value);
         });
         return;
     };
@@ -4465,23 +4470,25 @@ var LocalSettings = /** @class */ (function () {
                 value = prop.range.min;
             prop.value = String(value);
         }
+        else if (prop.ui == 'checkbox') {
+            if (newvalue) {
+                var key = Object.keys(prop.choice)[0];
+                prop.value = key !== null && key !== void 0 ? key : String(newvalue);
+            }
+            else if (newvalue === undefined) {
+                prop.value = String(prop.default);
+            }
+            else {
+                var key = (_a = Object.keys(prop.choice)[1]) !== null && _a !== void 0 ? _a : '';
+                prop.value = key;
+            }
+        }
         else if (prop.choice) {
             if (newvalue === undefined || !prop.choice[newvalue]) {
                 prop.value = String(prop.default);
             }
             else {
                 prop.value = String(newvalue);
-            }
-        }
-        else if (prop.check) {
-            if (newvalue) {
-                prop.value = (_a = prop.check.checked) !== null && _a !== void 0 ? _a : String(newvalue);
-            }
-            else if (newvalue === undefined) {
-                prop.value = String(prop.default);
-            }
-            else {
-                prop.value = "";
             }
         }
         else {
@@ -4499,11 +4506,11 @@ var LocalSettings = /** @class */ (function () {
         // sanitize value so bad value is never stored
         var value = this.setSanitizedValue(prop, newvalue);
         if (prop.range) {
-            var lvar = "localsettings_prop_" + prop.key;
-            var node = $(lvar);
+            var node = $("localsettings_prop_".concat(prop.key));
             if (node) {
                 node.innerHTML = value;
-                node.value = value;
+                if (node.value != value)
+                    node.value = value;
             }
         }
         $("ebd-body").dataset["localsetting_" + prop.key] = value;

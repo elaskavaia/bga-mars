@@ -123,8 +123,8 @@ class GameXBody extends GameTokens {
     //local settings, include user id into setting string so it different per local player
     const theme = this.prefs[100].value ?? 1;
     this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
-      { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
-      { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5, slider: true }, default: 100 },
+      { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
+      { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
 
       {
         key: "playerarea",
@@ -132,12 +132,13 @@ class GameXBody extends GameTokens {
         choice: { after: _("First"), before: _("Second") },
         default: "after"
       },
-      { key: "handplace", label: _("Floating Hand"), check: { checked: "floating" }, default: false },
+      { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
       {
         key: "hidebadges",
         label: _("Hide Badges on minipanel"),
-        check: { checked: "hide" },
-        default: false
+        choice: { hide: true },
+        default: false,
+        ui: "checkbox"
       }
     ]);
     this.localSettings.setup();
@@ -469,7 +470,7 @@ class GameXBody extends GameTokens {
           _("This global parameter (mean temperature at the equator) starts at -30 ˚C.")
         );
       case "starting_player":
-        return this.generateTooltipSection(_(displayInfo.name),, _("Shifts clockwise each generation."));
+        return this.generateTooltipSection(_(displayInfo.name),_("Shifts clockwise each generation."));
       case "tracker_tagEvent":
         return this.generateTooltipSection(
           _("Events"),

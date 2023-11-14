@@ -9,19 +9,21 @@
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
 -------
 -->
+<div id="hand_area" class="hand_area" data-open="0">
+  <!-- hand area has to be outside of zoom-wrapper to float properly -->
+  <div class="hand location handy" id="hand_{CURRENT_PLAYER_COLOR}"></div>
+  <div class="draw location handy" id="draw_{CURRENT_PLAYER_COLOR}"></div>
+  <div class="draft location handy" id="draft_{CURRENT_PLAYER_COLOR}"></div>
+  <div id="hand_area_buttons">
+    <div id="hand_area_button_pop">
+      <div class="icon_hand"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div>
+      <div class="icon_close"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i></div>
+    </div>
+  </div>
+</div>
 <div id="zoom-wrapper" class="zoom-wrapper">
   <div id="thething">
-    <div id="hand_area" class="hand_area" data-open="0">
-      <div class="hand location handy" id="hand_{CURRENT_PLAYER_COLOR}"></div>
-      <div class="draw location handy" id="draw_{CURRENT_PLAYER_COLOR}"></div>
-      <div class="draft location handy" id="draft_{CURRENT_PLAYER_COLOR}"></div>
-      <div id="hand_area_buttons">
-        <div id="hand_area_button_pop">
-          <div class="icon_hand"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div>
-          <div class="icon_close"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i></div>
-        </div>
-      </div>
-    </div>
+
     <div id="main_area">
       <div id="main_board">
         <div id="map_middle">
@@ -568,7 +570,7 @@
     </div>
     <div id="params"></div>
     <div id="dev_null" class="defhidden"></div>
-    <div id="oversurface"></div>
+
     <div id="player_board_config" class="player-board">
       <div id="player_config">
         <div id="player_config_row">
@@ -584,4 +586,5 @@
     </div>
   </div>
 </div>
+<div id="oversurface"></div>
 {OVERALL_GAME_FOOTER}
