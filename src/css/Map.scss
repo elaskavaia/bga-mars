@@ -102,8 +102,12 @@
 }
 
 #hex_0_1 {
+  /*Stanford Torus*/
   left: 1%;
   top: 25%;
+  position: absolute;
+  display: none;
+  pointer-events: none;
 }
 
 #hex_0_2 {
@@ -322,19 +326,23 @@
 
 
 .milestone_label {
-  bottom: 10%;
+  bottom: 3%;
   position: absolute;
   width: 89%;
   left: 6%;
   text-align: center;
+  text-transform: uppercase;
+  font-size: calc(var(--map-width) * 0.017);
 }
 
 .award_label {
-  bottom: 5%;
+  bottom: -4%;
   position: absolute;
   width: 89%;
   left: 6%;
   text-align: center;
+  font-family: var(--awards-font);
+  font-size: calc(var(--map-width) * 0.027);
 }
 
 
@@ -367,10 +375,12 @@
     justify-content: flex-end;
     align-items: center;
 
+
     .token_img {
       position: relative;
       --resourcesize: calc(var(--map-width) * 0.03);
       margin-right: 5%;
+      font-weight: normal;
     }
 
     .token_img[data-striked="1"] {

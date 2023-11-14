@@ -112,7 +112,7 @@ class GameXBody extends GameTokens {
     };
     this.vlayout.setupPlayer(playerInfo);
     //move own player board in main zone
-    if (playerInfo.id == this.player_id) {
+    if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && ! document.querySelector('.thisplayer_zone'))) {
       const board = $(`player_area_${playerInfo.color}`);
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
