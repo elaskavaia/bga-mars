@@ -146,6 +146,33 @@ class GameXBody extends GameTokens {
     this.localSettings.renderContents("settings-controls-container");
   }
 
+  refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
+    // can override to change apperance
+    const pref = this.prefs[pref_id];
+    console.log("PREF",pref);
+    if (pref_id==100 || pref_id==101) {
+      const pp = $(prefDivId).parentElement;
+      pp.removeChild($(prefDivId));
+      const pc = this.createDivNode(prefDivId,"custom_pref "+prefDivId,pp);
+      for (const v in pref.values) {
+         const optionValue = pref.values[v];
+         const option = this.createDivNode(`${prefDivId}_v${v}`,`custom_pref_option pref_${optionValue.cssPref??''}`, pc);
+         option.setAttribute('value', v);
+         option.innerHTML = optionValue.name;
+         if (pref.value == v) {
+           option.setAttribute("selected", "selected");
+         }
+         dojo.connect(option, "onclick", (e: any) => {
+          pc.querySelectorAll(".custom_pref_option").forEach(node=>node.removeAttribute('selected'));
+          e.target.setAttribute("selected", "selected");
+          this.onChangePreferenceCustom(e);
+         });
+      }
+      return true;
+    }
+    return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+  }
+
   setupHelpSheets() {
     const cc = { main: 0, corp: 0 };
     for (const key in this.gamedatas.token_types) {
@@ -870,7 +897,7 @@ awarded.`);
   }
 
   //finer control on how to place things
-  createDivNode(id?: string | undefined, classes?: string, location?: string): HTMLDivElement {
+  createDivNode(id?: string | undefined, classes?: string, location?: ElementOrId): HTMLDivElement {
     const div = super.createDivNode(id, classes, location);
     return div;
   }

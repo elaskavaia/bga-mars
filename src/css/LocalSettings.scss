@@ -30,6 +30,43 @@
   cursor: pointer;
 }
 
+/* User preferences */
+
+#show-settings:hover {
+  animation: fa-spin 2s linear;
+}
+
+#settings-controls-container {
+  position: relative;
+  text-align: center;
+  border-top: 1px solid gray;
+  margin-top: 10px;
+
+  .row-data {
+    border: none;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid gray;
+  }
+
+  .row-data .row-label {
+    width: 100%;
+    float: none;
+    color: black;
+    padding-bottom: 0px;
+    text-overflow: initial;
+    white-space: normal;
+    padding: 2px 4px 0px;
+  }
+
+  .row-data .row-value {
+    width: 98%;
+    margin: 0;
+  }
+}
+
 #settings-controls-container-prefs {
   position: relative;
 }
@@ -39,4 +76,56 @@
   position: relative;
   background-color: #e8a33c;
   display: block;
+}
+
+/*custom preferences override styling */
+.custom_pref {
+  background-color: #00000022;
+}
+.custom_pref_option:hover {
+  cursor: pointer;
+  outline-style: outset;
+  outline-color: gray;
+  outline-width: 2px;
+}
+
+.custom_pref_option {
+  display: flex;
+  justify-content: flex-start;
+  padding: 2px;
+  align-items: center; 
+  gap: 5px;
+  
+}
+.custom_pref_option:before {
+  content: "\f10c";  /* .fa-circle-o */
+
+ font-family: FontAwesome;
+ font-size: x-large;
+ flex-grow: 0;
+}
+.custom_pref_option[selected=selected]:before {
+ /* .fa-checked-circle-o */
+ content: "\f05d";
+}
+
+
+.custom_pref_option.pref_mcompact::after {
+  content: "";
+  position: relative;
+  height: 32px;
+  width: 32px;
+  background-position-x: -500%; /* tagSpace */
+  background-image: url("img/badges.png");
+  background-size: 1200% 100%;
+}
+
+.custom_pref_option.pref_mfull::after {
+  content: "";
+  position: relative;
+  height: 32px;
+  width: 32px;
+  background-position-x: -800%; /* tagBuilding */
+  background-image: url("img/badges.png");
+  background-size: 1200% 100%;
 }
