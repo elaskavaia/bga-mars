@@ -2508,7 +2508,6 @@ var GameTokens = /** @class */ (function (_super) {
             }
             if (placeInfo.nop) {
                 // no placement
-                this.renderSpecificToken(tokenNode);
                 return;
             }
             if (!$(location_1)) {
@@ -2538,13 +2537,6 @@ var GameTokens = /** @class */ (function (_super) {
                 };
             }
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
-            this.renderSpecificToken(tokenNode);
-            if (this.instantaneousMode) {
-                // skip counters update
-            }
-            else {
-                //this.updateMyCountersAll();
-            }
         }
         catch (e) {
             console.error("Exception thrown", e, e.stack);
@@ -2728,7 +2720,6 @@ var GameTokens = /** @class */ (function (_super) {
         this.updateTokenDisplayInfo(tokenInfo);
         return tokenInfo;
     };
-    GameTokens.prototype.renderSpecificToken = function (tokenNode) { };
     GameTokens.prototype.getTokenPresentaton = function (type, tokenKey) {
         return this.getTokenName(tokenKey); // just a name for now
     };
@@ -3023,7 +3014,6 @@ var GameXBody = /** @class */ (function (_super) {
                 };
                 var tokenNode = this.createToken(token);
                 this.syncTokenDisplayInfo(tokenNode);
-                this.renderSpecificToken(tokenNode);
                 this.updateTooltip("card_".concat(type, "_").concat(num), tokenNode);
                 cc[type]++;
             }
@@ -3562,15 +3552,13 @@ var GameXBody = /** @class */ (function (_super) {
                     this.local_counters["game"].cities + parseInt($("tracker_city_" + this.gamedatas.players[plid].color).dataset.state);
             }
         }
+        this.vlayout.renderSpecificToken(node);
         //handle copies of trackers
         var trackerCopy = "alt_" + node.id;
         var nodeCopy = $(trackerCopy);
         if (nodeCopy) {
             _super.prototype.setDomTokenState.call(this, trackerCopy, newState);
         }
-    };
-    GameXBody.prototype.renderSpecificToken = function (tokenNode) {
-        this.vlayout.renderSpecificToken(tokenNode);
     };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
@@ -4691,6 +4679,36 @@ var VLayout = /** @class */ (function () {
             }
             markerNode.style.left = "calc(10px + ".concat(lp, "% * 0.95)");
             markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
+            return;
+        }
+        var ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+        if (tokenNode.id.startsWith("tracker_")) {
+            var type = getPart(tokenNode.id, 1);
+            if (ptrackers.includes(type)) {
+                var color = getPart(tokenNode.id, 2);
+                var marker = "marker_" + tokenNode.id;
+                var markerNode = $(marker);
+                if (!markerNode) {
+                    markerNode = this.game.createDivNode(marker, "marker marker_".concat(type, " marker_").concat(color), "pboard_".concat(color));
+                    this.convertInto3DCube(markerNode, color);
+                }
+                var state = parseInt(tokenNode.getAttribute("data-state"));
+                var rem = state % 10;
+                var x = rem;
+                var y = 0;
+                if (rem > 5) {
+                    x = rem - 5;
+                    y = 1;
+                }
+                else if (state < 0) {
+                    x = state + 6;
+                    y = -1;
+                }
+                var xp = x * 3.7;
+                var yp = y * 4;
+                markerNode.style.marginLeft = "".concat(xp, "%");
+                markerNode.style.marginTop = "".concat(yp, "%");
+            }
         }
     };
     VLayout.prototype.convertInto3DCube = function (tokenNode, color) {

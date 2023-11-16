@@ -106,3 +106,7 @@
     background-color: #ffffff66;
     border: var(--border-mcubesize) solid #dddddd;
 }
+
+.mcube .mcube-face {
+    pointer-events: none;
+}

@@ -192,7 +192,6 @@ class GameXBody extends GameTokens {
         };
         const tokenNode = this.createToken(token);
         this.syncTokenDisplayInfo(tokenNode);
-        this.renderSpecificToken(tokenNode);
         this.updateTooltip(`card_${type}_${num}`, tokenNode);
         cc[type]++;
       }
@@ -885,6 +884,9 @@ awarded.`);
       }
     }
 
+    this.vlayout.renderSpecificToken(node);
+  
+
     //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
     const nodeCopy = $(trackerCopy);
@@ -892,9 +894,7 @@ awarded.`);
       super.setDomTokenState(trackerCopy, newState);
     }
   }
-  renderSpecificToken(tokenNode: HTMLElement) {
-    this.vlayout.renderSpecificToken(tokenNode);
-  }
+
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: ElementOrId): HTMLDivElement {

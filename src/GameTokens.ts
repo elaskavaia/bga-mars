@@ -322,12 +322,10 @@ class GameTokens extends GameBasics {
         this.placeInfoBox(tokenNode);
       }
 
-      if (placeInfo.nop) {
+     if (placeInfo.nop) {
         // no placement
-        this.renderSpecificToken(tokenNode);
         return;
       }
-
       if (!$(location)) {
         if (location) console.error("Unknown place '" + location + "' for '" + tokenInfo.key + "' " + token);
         return;
@@ -355,13 +353,6 @@ class GameTokens extends GameBasics {
       }
 
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
-
-      this.renderSpecificToken(tokenNode);
-      if (this.instantaneousMode) {
-        // skip counters update
-      } else {
-        //this.updateMyCountersAll();
-      }
     } catch (e) {
       console.error("Exception thrown", e, e.stack);
       // this.showMessage(token + " -> FAILED -> " + place + "\n" + e, "error");
@@ -564,7 +555,6 @@ class GameTokens extends GameBasics {
     return tokenInfo;
   }
 
-  renderSpecificToken(tokenNode: HTMLElement) {}
 
   getTokenPresentaton(type: string, tokenKey: string): string {
     return this.getTokenName(tokenKey); // just a name for now

@@ -688,6 +688,41 @@
     width: 39px;
     height: 39px;
   }
+
+  .pboard .marker {
+    position: absolute;
+
+  }
+
+  .marker_pm {
+    top: 43%;
+    left: 17%;
+  }
+
+  .marker_ps {
+    top: 38%;
+    left: 44%;
+  }
+
+  .marker_pu {
+    top: 38%;
+    left: 71%;
+  }
+
+  .marker_pp {
+    top: 58%;
+    left: 9%;
+  }
+
+  .marker_pe {
+    top: 58%;
+    left: 40%;
+  }
+
+  .marker_ph {
+    top: 58%;
+    left: 69%;
+  }
 }
 
 .card.cardhelp {

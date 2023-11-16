@@ -94,6 +94,38 @@ class VLayout {
       }
       markerNode.style.left = `calc(10px + ${lp}% * 0.95)`;
       markerNode.style.bottom = `calc(10px + ${bp}% * 0.95)`;
+      return;
+    }
+    const ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+    if (tokenNode.id.startsWith("tracker_")) {
+      const type = getPart(tokenNode.id, 1);
+      if (ptrackers.includes(type)) {
+
+        const color = getPart(tokenNode.id, 2);
+        const marker = "marker_" + tokenNode.id;
+        let markerNode = $(marker);
+
+        if (!markerNode) {
+          markerNode = this.game.createDivNode(marker, `marker marker_${type} marker_${color}`, `pboard_${color}`);
+          this.convertInto3DCube(markerNode, color);
+        }
+
+        const state = parseInt(tokenNode.getAttribute("data-state"));
+        const rem = state % 10;
+        let x = rem;
+        let y = 0;
+        if (rem>5) {
+          x = rem - 5;
+          y = 1;
+        } else if (state < 0) {
+          x = state + 6;
+          y = -1;
+        }
+        let xp = x * 3.7;
+        let yp = y * 4;
+        markerNode.style.marginLeft = `${xp}%`;
+        markerNode.style.marginTop = `${yp}%`;
+      }
     }
   }
 

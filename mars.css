@@ -382,6 +382,10 @@
   border: var(--border-mcubesize) solid #dddddd;
 }
 
+.mcube .mcube-face {
+  pointer-events: none;
+}
+
 /*card bg ratio : 1.40658174*/
 #ebd-body {
   --card-width: calc(var(--localsetting_cardsize)*.15vh);
@@ -6659,6 +6663,33 @@
 .mfull .mini_counter.badge {
   width: 39px;
   height: 39px;
+}
+.mfull .pboard .marker {
+  position: absolute;
+}
+.mfull .marker_pm {
+  top: 43%;
+  left: 17%;
+}
+.mfull .marker_ps {
+  top: 38%;
+  left: 44%;
+}
+.mfull .marker_pu {
+  top: 38%;
+  left: 71%;
+}
+.mfull .marker_pp {
+  top: 58%;
+  left: 9%;
+}
+.mfull .marker_pe {
+  top: 58%;
+  left: 40%;
+}
+.mfull .marker_ph {
+  top: 58%;
+  left: 69%;
 }
 
 .card.cardhelp {
