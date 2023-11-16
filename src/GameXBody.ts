@@ -1674,7 +1674,7 @@ awarded.`);
       else this.addUndoButton();
     }
 
-    this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
+    //this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
   onSelectTarget(opId: number, target: string) {
     // can add prompt

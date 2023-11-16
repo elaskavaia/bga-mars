@@ -6275,6 +6275,7 @@
   height: calc(var(--card-height) * 2);
   background-image: url(img/full/pboard.jpg);
   background-size: contain;
+  display: none; /* turn off for now */
 }
 .mfull .tableau {
   display: flex;

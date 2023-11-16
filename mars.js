@@ -4294,7 +4294,7 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.addUndoButton();
         }
-        this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
+        //this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt

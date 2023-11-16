@@ -1310,6 +1310,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyMessage(clienttranslate('${player_name} draws ${token_count} cards'), [
             "token_count" => count($tokens),
         ], $player_id);
+        $this->undoSavepoint();
         return $tokens;
     }
 
