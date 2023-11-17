@@ -498,14 +498,14 @@ class GameBasics extends GameGui {
     return div;
   }
 
-  createDivNode(id?: string | undefined, classes?: string, location?: string) {
+  createDivNode(id?: string | undefined, classes?: string, location?: ElementOrId) {
     const div = document.createElement("div");
     if (id) div.id = id;
     if (classes) {
       const classesList = classes.split(/  */);
       div.classList.add(...classesList);
     }
-    const parentNode = location ? document.getElementById(location) : null;
+    const parentNode = location ? $(location) : null;
     if (parentNode) parentNode.appendChild(div);
     else if (location) {
       console.error("Cannot find location [" + location + "] for ", div);
@@ -810,29 +810,25 @@ class GameBasics extends GameGui {
     this.addActionButton("button_cancel", name, handler, null, false, "red");
   }
 
+
   cloneAndFixIds(orig: ElementOrId, postfix: string, removeInlineStyle?: boolean) {
     if (!$(orig)) {
       const div = document.createElement("div");
       div.innerHTML = _("NOT FOUND") + " " + orig.toString();
       return div;
     }
-    const div = $(orig).cloneNode(true) as HTMLElement;
-
-    div.querySelectorAll("*").forEach((node) => {
+    const fixIds  = function (node: HTMLElement) {
       if (node.id) {
         node.id = node.id + postfix;
       }
       if (removeInlineStyle) {
         node.removeAttribute("style");
-      }
-    });
-    //the above code doesn't include root node, so I duplicated it here for root node
-    if (div.id) {
-      div.id = div.id + postfix;
-    }
-    if (removeInlineStyle) {
-      div.removeAttribute("style");
-    }
+      }  
+    };
+    const div = $(orig).cloneNode(true) as HTMLElement;
+    div.querySelectorAll("*").forEach(fixIds);
+    fixIds(div);
+
     return div;
   }
 
@@ -859,15 +855,15 @@ class GameBasics extends GameGui {
     const userPrefContainerId = "settings-controls-container-prefs";
     $(userPrefContainerId).setAttribute("data-name", _("Preferences"));
     for (let index = 100; index <= 199; index++) {
-      const pref_id = "preference_control_" + index;
-      const element = this.destroyDivOtherCopies(pref_id);
+      const prefDivId = "preference_control_" + index;
+      const element = this.destroyDivOtherCopies(prefDivId);
       if (element) {
         let parent = element.parentNode.parentNode;
         if ((parent.parentNode as HTMLElement).id != userPrefContainerId) {
           dojo.place(parent, userPrefContainerId);
           // remove the class because otherwise framework will hook its own listener there
           parent.querySelectorAll(".game_preference_control").forEach((node) => dojo.removeClass(node, "game_preference_control"));
-          if (this.refaceUserPreference(index, parent as Element) == false)
+          if (this.refaceUserPreference(index, parent as Element, prefDivId) == false)
             dojo.connect(parent, "onchange", (e: any) => this.onChangePreferenceCustom(e));
         }
       }
@@ -888,7 +884,7 @@ class GameBasics extends GameGui {
     dojo.place(bug, "settings-controls-container", "last");
   }
 
-  refaceUserPreference(pref_id: number, node: Element) {
+  refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
     return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
   }
@@ -902,7 +898,7 @@ class GameBasics extends GameGui {
     }
     // Extract the ID and value from the UI control
     const prefId = +match[1];
-    const prefValue = +target.value;
+    const prefValue = +(target.value ?? target.getAttribute('value'));
     this.ajaxCallChangePreferenceCustom(prefId, prefValue);
   }
 
@@ -926,6 +922,7 @@ class GameBasics extends GameGui {
           window.location.hash = "";
           window.location.reload();
         } else {
+
           if (result.pref_id == this.GAMEPREFERENCE_DISPLAYTOOLTIPS) {
             this.switchDisplayTooltips(result.value);
           } else {
@@ -934,7 +931,12 @@ class GameBasics extends GameGui {
             var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
             this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
               if (err) console.error("changePreference callback failed " + res);
-              else console.log("changePreference sent " + pref_id + "=" + value);
+              else {
+                console.log("changePreference sent " + pref_id + "=" + value);
+                const opname =  _(this.prefs[pref_id].name);
+                const opvalue =  _(this.prefs[pref_id].values[value].name);
+                this.showMessage(_('Done, preference changed:')+" "+opname+ " => "+opvalue, "info");
+              }
             });
           }
         }

@@ -431,7 +431,7 @@ var GameBasics = /** @class */ (function (_super) {
             var classesList = classes.split(/  */);
             (_a = div.classList).add.apply(_a, classesList);
         }
-        var parentNode = location ? document.getElementById(location) : null;
+        var parentNode = location ? $(location) : null;
         if (parentNode)
             parentNode.appendChild(div);
         else if (location) {
@@ -719,15 +719,17 @@ var GameBasics = /** @class */ (function (_super) {
             div_1.innerHTML = _("NOT FOUND") + " " + orig.toString();
             return div_1;
         }
-        var div = $(orig).cloneNode(true);
-        div.querySelectorAll("*").forEach(function (node) {
+        var fixIds = function (node) {
             if (node.id) {
                 node.id = node.id + postfix;
             }
             if (removeInlineStyle) {
                 node.removeAttribute("style");
             }
-        });
+        };
+        var div = $(orig).cloneNode(true);
+        div.querySelectorAll("*").forEach(fixIds);
+        fixIds(div);
         return div;
     };
     /* @Override */
@@ -753,15 +755,15 @@ var GameBasics = /** @class */ (function (_super) {
         var userPrefContainerId = "settings-controls-container-prefs";
         $(userPrefContainerId).setAttribute("data-name", _("Preferences"));
         for (var index = 100; index <= 199; index++) {
-            var pref_id = "preference_control_" + index;
-            var element = this.destroyDivOtherCopies(pref_id);
+            var prefDivId = "preference_control_" + index;
+            var element = this.destroyDivOtherCopies(prefDivId);
             if (element) {
                 var parent_1 = element.parentNode.parentNode;
                 if (parent_1.parentNode.id != userPrefContainerId) {
                     dojo.place(parent_1, userPrefContainerId);
                     // remove the class because otherwise framework will hook its own listener there
                     parent_1.querySelectorAll(".game_preference_control").forEach(function (node) { return dojo.removeClass(node, "game_preference_control"); });
-                    if (this.refaceUserPreference(index, parent_1) == false)
+                    if (this.refaceUserPreference(index, parent_1, prefDivId) == false)
                         dojo.connect(parent_1, "onchange", function (e) { return _this.onChangePreferenceCustom(e); });
                 }
             }
@@ -780,11 +782,12 @@ var GameBasics = /** @class */ (function (_super) {
         }
         dojo.place(bug, "settings-controls-container", "last");
     };
-    GameBasics.prototype.refaceUserPreference = function (pref_id, node) {
+    GameBasics.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
         return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
     };
     GameBasics.prototype.onChangePreferenceCustom = function (e) {
+        var _a;
         var target = e.target;
         if (!target.id)
             return;
@@ -794,7 +797,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         // Extract the ID and value from the UI control
         var prefId = +match[1];
-        var prefValue = +target.value;
+        var prefValue = +((_a = target.value) !== null && _a !== void 0 ? _a : target.getAttribute('value'));
         this.ajaxCallChangePreferenceCustom(prefId, prefValue);
     };
     GameBasics.prototype.ajaxCallChangePreferenceCustom = function (pref_id, value) {
@@ -807,6 +810,7 @@ var GameBasics = /** @class */ (function (_super) {
             value: value,
             game: this.game_name
         }, this, function (result) {
+            var _this = this;
             console.log("=> back", result);
             if (result.status == "reload") {
                 this.showMessage(_("Done, reload in progress..."), "info");
@@ -824,8 +828,12 @@ var GameBasics = /** @class */ (function (_super) {
                     this.ajaxcallwrapper_unchecked("changePreference", args, function (err, res) {
                         if (err)
                             console.error("changePreference callback failed " + res);
-                        else
+                        else {
                             console.log("changePreference sent " + pref_id + "=" + value);
+                            var opname = _(_this.prefs[pref_id].name);
+                            var opvalue = _(_this.prefs[pref_id].values[value].name);
+                            _this.showMessage(_('Done, preference changed:') + " " + opname + " => " + opvalue, "info");
+                        }
                     });
                 }
             }
@@ -2500,7 +2508,6 @@ var GameTokens = /** @class */ (function (_super) {
             }
             if (placeInfo.nop) {
                 // no placement
-                this.renderSpecificToken(tokenNode);
                 return;
             }
             if (!$(location_1)) {
@@ -2530,13 +2537,6 @@ var GameTokens = /** @class */ (function (_super) {
                 };
             }
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
-            this.renderSpecificToken(tokenNode);
-            if (this.instantaneousMode) {
-                // skip counters update
-            }
-            else {
-                //this.updateMyCountersAll();
-            }
         }
         catch (e) {
             console.error("Exception thrown", e, e.stack);
@@ -2720,7 +2720,6 @@ var GameTokens = /** @class */ (function (_super) {
         this.updateTokenDisplayInfo(tokenInfo);
         return tokenInfo;
     };
-    GameTokens.prototype.renderSpecificToken = function (tokenNode) { };
     GameTokens.prototype.getTokenPresentaton = function (type, tokenKey) {
         return this.getTokenName(tokenKey); // just a name for now
     };
@@ -2935,7 +2934,7 @@ var GameXBody = /** @class */ (function (_super) {
         };
         this.vlayout.setupPlayer(playerInfo);
         //move own player board in main zone
-        if (playerInfo.id == this.player_id) {
+        if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector('.thisplayer_zone'))) {
             var board = $("player_area_".concat(playerInfo.color));
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
@@ -2967,6 +2966,34 @@ var GameXBody = /** @class */ (function (_super) {
         //this.localSettings.renderButton('player_config_row');
         this.localSettings.renderContents("settings-controls-container");
     };
+    GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
+        var _this = this;
+        var _a;
+        // can override to change apperance
+        var pref = this.prefs[pref_id];
+        console.log("PREF", pref);
+        if (pref_id == 100 || pref_id == 101) {
+            var pp = $(prefDivId).parentElement;
+            pp.removeChild($(prefDivId));
+            var pc_1 = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
+            for (var v in pref.values) {
+                var optionValue = pref.values[v];
+                var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ''), pc_1);
+                option.setAttribute('value', v);
+                option.innerHTML = optionValue.name;
+                if (pref.value == v) {
+                    option.setAttribute("selected", "selected");
+                }
+                dojo.connect(option, "onclick", function (e) {
+                    pc_1.querySelectorAll(".custom_pref_option").forEach(function (node) { return node.removeAttribute('selected'); });
+                    e.target.setAttribute("selected", "selected");
+                    _this.onChangePreferenceCustom(e);
+                });
+            }
+            return true;
+        }
+        return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+    };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;
         var cc = { main: 0, corp: 0 };
@@ -2987,7 +3014,6 @@ var GameXBody = /** @class */ (function (_super) {
                 };
                 var tokenNode = this.createToken(token);
                 this.syncTokenDisplayInfo(tokenNode);
-                this.renderSpecificToken(tokenNode);
                 this.updateTooltip("card_".concat(type, "_").concat(num), tokenNode);
                 cc[type]++;
             }
@@ -3526,15 +3552,13 @@ var GameXBody = /** @class */ (function (_super) {
                     this.local_counters["game"].cities + parseInt($("tracker_city_" + this.gamedatas.players[plid].color).dataset.state);
             }
         }
+        this.vlayout.renderSpecificToken(node);
         //handle copies of trackers
         var trackerCopy = "alt_" + node.id;
         var nodeCopy = $(trackerCopy);
         if (nodeCopy) {
             _super.prototype.setDomTokenState.call(this, trackerCopy, newState);
         }
-    };
-    GameXBody.prototype.renderSpecificToken = function (tokenNode) {
-        this.vlayout.renderSpecificToken(tokenNode);
     };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
@@ -4270,7 +4294,7 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.addUndoButton();
         }
-        this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
+        //this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt
@@ -4655,6 +4679,36 @@ var VLayout = /** @class */ (function () {
             }
             markerNode.style.left = "calc(10px + ".concat(lp, "% * 0.95)");
             markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
+            return;
+        }
+        var ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+        if (tokenNode.id.startsWith("tracker_")) {
+            var type = getPart(tokenNode.id, 1);
+            if (ptrackers.includes(type)) {
+                var color = getPart(tokenNode.id, 2);
+                var marker = "marker_" + tokenNode.id;
+                var markerNode = $(marker);
+                if (!markerNode) {
+                    markerNode = this.game.createDivNode(marker, "marker marker_".concat(type, " marker_").concat(color), "pboard_".concat(color));
+                    this.convertInto3DCube(markerNode, color);
+                }
+                var state = parseInt(tokenNode.getAttribute("data-state"));
+                var rem = state % 10;
+                var x = rem;
+                var y = 0;
+                if (rem > 5) {
+                    x = rem - 5;
+                    y = 1;
+                }
+                else if (state < 0) {
+                    x = state + 6;
+                    y = -1;
+                }
+                var xp = x * 3.7;
+                var yp = y * 4;
+                markerNode.style.marginLeft = "".concat(xp, "%");
+                markerNode.style.marginTop = "".concat(yp, "%");
+            }
         }
     };
     VLayout.prototype.convertInto3DCube = function (tokenNode, color) {

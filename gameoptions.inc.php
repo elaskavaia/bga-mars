@@ -97,8 +97,8 @@ $game_preferences = [
         'name' => totranslate('Graphics'),
         'needReload' => true, // after user changes this preference game interface would auto-reload
         'values' => array(
-            1 => ['name' => totranslate('Constructed'), 'cssPref' => 'mcompact'],
-            2 => ['name' => totranslate('Printed (Engish)'), 'cssPref' => 'mfull'],
+            1 => ['name' => totranslate('Digital'), 'cssPref' => 'mcompact'],
+            2 => ['name' => totranslate('Cardboard'), 'cssPref' => 'mfull'],
         ),
         'default' => 1
     ],
