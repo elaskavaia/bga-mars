@@ -67,6 +67,12 @@
   }
 }
 
+.card_main_52 {
+  .card_effect {
+    width: 72%;
+  }
+}
+
 .card_main_59 {
   .card_effect.rows{
     flex-direction:row;
@@ -129,6 +135,12 @@
   }
 }
 
+.card_main_81{
+  .card_effect {
+    width: 85%;
+  }
+}
+
 /* 2 informations on top of each other instead of columns */
 .card_main_82,.card_main_83,.card_main_86,.card_main_91,.card_main_92
 ,.card_main_99,.card_main_102,.card_main_106,.card_main_130,.card_main_132
@@ -143,6 +155,14 @@
     }
   }
 }
+
+.card_main_92 {
+  .card_effect {
+    width: 72%;
+  }
+}
+
+
 
 .card_main_102 {
   .card_effect{
@@ -255,13 +275,14 @@
 .card_main_128 {
   .card_effect{
       flex-direction: row;
-
+       width: 72%;
     .card_tt {
       font-size: calc(var(--card-width) * 0.04);
     }
 
   }
 }
+
 
 .card_main_146 {
   .card_tt {
@@ -289,6 +310,16 @@
       font-style: revert;
       text-align: center;
 
+    }
+  }
+}
+
+.card_main_135{
+  .card_prereq{
+    left:20%;
+    .prereq_content .badge{
+      width: calc(var(--card-width) * 0.08);
+      height: calc(var(--card-width) * 0.08);
     }
   }
 }
@@ -323,10 +354,15 @@
 }
 
 .card_main_184 {
+  .card_effect {
+    width: 72%;
+  }
   .card_tt {
     font-size: calc(var(--card-width) * 0.04);
   }
 }
+
+
 
 .card_main_192 {
   .card_effect {

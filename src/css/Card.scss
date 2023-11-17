@@ -623,11 +623,28 @@ display: none;
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  font-size: calc(var(--card-width) * 0.12);
+  font-size: calc(var(--card-width) * 0.10);
+  text-shadow: #fbe571 0px 0px 2px, #fbe571 0px 0px 2px, #fbe571 0px 0px 2px, #fbe571 0px 0px 2px, #fbe571 0px 0px 2px, #fbe571 0px 0px 2px;
+  color: black;
 
   .number_inside{
     top: -5%;
     position: relative;
+  }
+}
+.card_vp.vp_custom {
+  width: calc(var(--card-width) * 0.25);
+  height: calc(var(--card-width) * 0.25);
+  font-size: calc(var(--card-width) * 0.08);
+  --resourcesize: calc(var(--card-width) * 0.08);
+  flex-wrap: nowrap;
+  .badge {
+    width: calc(var(--card-width) * 0.1);
+    height: calc(var(--card-width) * 0.1);
+  }
+  .tracker{
+    width: calc(var(--card-width) * 0.1);
+    height: calc(var(--card-width) * 0.1);
   }
 }
 
@@ -803,7 +820,12 @@ display: none;
 /* corp specific */
 .card_corp_1 {
   .card_title {
-    display: flex;
+    display: flex !important;
+    top: 16.7%;
+    left: 15%;
+    width: 69%;
+    height: 13%;
+    font-size: calc(var(--card-width) * 0.08);
   }
   .card_effect{
     left: 56%;

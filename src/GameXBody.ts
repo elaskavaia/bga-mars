@@ -615,6 +615,10 @@ class GameXBody extends GameTokens {
     let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
     if (prereqText != "")
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
+
+    //special case
+    if (card_id==" Basic #135") prereqText=_('Requires 1 plant tag, 1 microbe tag and 1 animal tag.');
+
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
     if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
@@ -670,13 +674,14 @@ awarded.`);
         //Corp formatting
         const decor = this.createDivNode(null, "card_decor", tokenNode.id);
         // const texts = displayInfo.text.split(';');
-        let card_initial = displayInfo.text || "";
-        let card_effect = displayInfo.text_effect || "";
-
+        const card_initial = displayInfo.text || "";
+        const card_effect = displayInfo.text_effect || "";
+        const card_title = displayInfo.name || "";
         //   if (texts.length>0) card_initial = texts[0];
         //  if (texts.length>1) card_effect= texts[1];
         decor.innerHTML = `
                   <div class="card_bg"></div>
+                  <div class="card_title">${card_title}</div>
                   <div class="card_initial">${card_initial}</div>
                   <div class="card_effect">${card_effect}</div>
             `;
@@ -718,10 +723,15 @@ awarded.`);
         }
         const decor = this.createDivNode(null, "card_decor", tokenNode.id);
         let vp = "";
+
         if (displayInfo.vp) {
-          vp = parseInt(displayInfo.vp)
-            ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
-            : '<div class="card_vp"><div class="number_inside">*</div></div>';
+          if ( CustomRenders['customcard_vp_'+displayInfo.num]) {
+            vp= '<div class="card_vp vp_custom">' +CustomRenders['customcard_vp_'+displayInfo.num]()+ "</div></div>";
+          } else  {
+            vp = parseInt(displayInfo.vp)
+              ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
+              : '<div class="card_vp"><div class="number_inside">*</div></div>';
+          }
         } else {
           vp = "";
         }
@@ -976,6 +986,10 @@ awarded.`);
           tracker = "cities";
           break;
       }
+      //special
+      if (node.id=="card_main_135") {
+        tracker="card_main_135";
+      }
 
       if (tracker == "") {
         continue;
@@ -1004,6 +1018,16 @@ awarded.`);
         if (actual > qty) valid = true;
       } else if (op == ">=") {
         if (actual >= qty) valid = true;
+      }
+
+      //Special cases
+      if (node.id=="card_main_135") {
+        if (   parseInt($('tracker_tagAnimal_' + this.getPlayerColor(this.player_id)).dataset.state)>0
+            && parseInt($('tracker_tagMicrobe_' + this.getPlayerColor(this.player_id)).dataset.state)>0
+            && parseInt($('tracker_tagPlant_' + this.getPlayerColor(this.player_id)).dataset.state)>0
+        ) {
+          valid=true;
+        }
       }
 
       if (!valid) {
@@ -1041,9 +1065,7 @@ awarded.`);
     }
   }
   updatePlayerLocalCounters(plColor: string): void {
-    this.darhflog("update pl counters", this.local_counters[plColor]);
     for (let key of Object.keys(this.local_counters[plColor])) {
-      //this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
       $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
     }
   }

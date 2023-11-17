@@ -60,17 +60,21 @@
 
 .mcompact {
 
-.tooltipimage.tracker.tracker_tr {
-  display: none;
-}
+  .tooltipimage.tracker.tracker_tr {
+    display: none;
+  }
 
-.tooltipimage.tracker.tracker_gen {
-  display: none;
-}
+  .tooltipimage.tracker.tracker_gen {
+    display: none;
+  }
 
-.tooltipimage.tracker.tracker_passed {
-  display: none;
-}
+  .tooltipimage.tracker.tracker_passed {
+    display: none;
+  }
+
+  .tooltipimage.hex {
+    display: none;
+  }
 
   .compact_card_tt {
     display: flex;

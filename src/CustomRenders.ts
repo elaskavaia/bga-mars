@@ -566,17 +566,35 @@
 
 
    //custom card stuff
+   private static customcard_vp_5() {
+     return this.parseSingleItemToHTML(this.getParse('res_Science',0),1)+'<div class="vp_qty">*:3</div>';
+   }
 
    private static customcard_action_6() {
      return '<div class="groupline">'+this.parseSingleItemToHTML(this.getParse(':',0),1)+_('ACTION:LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT')+'</div>';
    }
 
+
    private static customcard_action_7() {
     return  '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="cnt_media token_img tracker_e depth_1"></div></div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_2">1</div> / <div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>*</div></div>'
    }
 
+   private static customcard_vp_8() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('w',0),1)+'<div class="vp_qty">*</div>';
+   }
+   private static customcard_vp_12() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('tagJovian',0),1);
+   }
+   private static customcard_vp_24() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+
    private static customcard_effect_25() {
      return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="cnt_media tracker badge tracker_tagSpace depth_1"></div></div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_1">-2</div></div></div>';
+   }
+
+   private static customcard_vp_28() {
+     return '<div class="vp_qty">1/</div><div class="cnt_media token_img tracker_resFighter depth_1"></div>';
    }
 
    private static customcard_action_33() {
@@ -587,6 +605,10 @@
    private static customcard_action_34() {
      return '<div class="groupline">'+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'</div>'
        +'<div class="groupline">OR&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',1),2)+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('t',0),1)+'</div>'
+   }
+
+   private static customcard_vp_35() {
+     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1);
    }
 
    private static customcard_rules_37() {
@@ -604,6 +626,10 @@
          +'<div class="outer_gains">'+this.parseSingleItemToHTML(this.getParse('tr',0),2)+this.parseSingleItemToHTML(this.getParse('t',0),1)
         +'</div>'
        +'</div>'
+   }
+
+   private static customcard_vp_49() {
+     return '<div class="vp_qty">1/4</div>'+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1);
    }
 
    private static customcard_rules_50() {
@@ -624,6 +650,12 @@
      //  '<div class="card_tt">'+_('Remove up to 2 animals or 5 plants from any player.')+'</div>';
 
    }
+   private static customcard_vp_52() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+   private static customcard_vp_54() {
+     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
 
    private static customcard_action_69() {
     return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">'+this.parseSingleItemToHTML(this.getParse('p',0),1)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('s',0),1)+'</div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">'+this.parseSingleItemToHTML(this.getParse('m',0),7)+'</div></div></div>';
@@ -636,6 +668,11 @@
        '</div></div>';
    }
 
+   private static customcard_vp_72() {
+     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+
+
    private static  customcard_effect_74() {
      return '<div class="groupline">'
        +this.parseSingleItemToHTML(this.getParse('tagPlant',0),1) +'/'+this.parseSingleItemToHTML(this.getParse('tagMicrobe',0),1)+'/'+this.parseSingleItemToHTML(this.getParse('tagAnimal',0),1)
@@ -643,13 +680,25 @@
        +this.parseSingleItemToHTML(this.getParse('p',0),1)+'/'+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'<div class="resource_exponent">*</div>/'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1)+'<div class="resource_exponent">*</div>'
        +'</div>';
    }
-
+   private static customcard_vp_81() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('tagJovian',0),1);
+   }
+   private static customcard_vp_85() {
+     return '<div class="vp_qty">1/</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>'+'<div class="vp_qty">*</div>';
+   }
    private static  customcard_rules_86() {
      return  '<div class="groupline">'+_('COPY A %i').replace('%i',
        '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="badge tag_Building"></div></div></div></div></div>')
      +'</div>';
-
    }
+
+   private static customcard_vp_92() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('tagJovian',0),1);
+   }
+   private static customcard_vp_95() {
+     return '<div class="vp_qty">2/</div>'+this.parseSingleItemToHTML(this.getParse('res_Science',0),1);
+   }
+
    private static  customcard_rules_102() {
      return '<div class="groupline"><div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production">'+this.parseSingleItemToHTML(this.getParse('e',0),1)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagEnergy',0),1)+'</div></div></div></div></div>';
    }
@@ -673,6 +722,12 @@
        +this.parseSingleItemToHTML(this.getParse('res_Animal',0),1)
        +'</div>'
    }
+
+   private static customcard_vp_128() {
+     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+
+
    private static customcard_effect_131() {
      return '<div class="groupline">'
        +this.parseSingleItemToHTML(this.getParse('tagPlant',0),1) +'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagAnimal',0),1)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('tagMicrobe',0),1)
@@ -680,6 +735,11 @@
        +this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)
        +'</div>'
    }
+
+   private static customcard_vp_131() {
+     return '<div class="vp_qty">1/3</div>'+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1);
+   }
+
 
    private static customcard_rules_143() {
      return '<div class="card_icono icono_gains cnt_gains">'
@@ -689,6 +749,11 @@
        +this.parseSingleItemToHTML(this.getParse('p',0),5)+'&nbsp;/&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),4)+'*'
        +'</div>'
    }
+
+   private static customcard_vp_147() {
+     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+
 
    private static customcard_rules_152() {
      return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div>X&nbsp;<div class="outer_production">'+this.parseSingleItemToHTML(this.getParse('h',0),1)+'</div><div class="plusminus">+</div><div class="outer_production"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div></div>';
@@ -710,13 +775,28 @@
        +'<div class="groupline">OR&nbsp;3&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',1),1)+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('tr',0),1)+'</div>'
    }
 
+   private static customcard_vp_172() {
+     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+
+
    private static customcard_effect_173() {
      return '<div class="groupline">'+_('OPPONENTS MAT NOT REMOVE YOUR')+'</div>'
      +'<div class="groupline">'+this.parseSingleItemToHTML(this.getParse('p',0),1)+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'</div>';
 
    }
+
+   private static customcard_vp_184() {
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+   }
+
+
    private static customcard_effect_185() {
      return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">'+this.parseSingleItemToHTML(this.getParse('tagScience',0),1)+'</div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">'+this.parseSingleItemToHTML(this.getParse('res_Science',0),1)+('OR')+'-'+this.parseSingleItemToHTML(this.getParse('res_Science',0),1)+'&nbsp;+<div class=" cnt_media token_img cardback depth_3"></div></div></div></div>';
+   }
+
+   private static customcard_vp_198() {
+     return '<div class="vp_qty">1/3</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>';
    }
 
    private static  customcard_action_194() {
