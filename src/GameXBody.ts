@@ -235,6 +235,10 @@ class GameXBody extends GameTokens {
     const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
+    if (!this.isLayoutFull()) {
+      dojo.style('page-content', 'zoom', '');
+    }
+
     if (this.zoneWidth != width || this.zoneHeight != height) {
       //   console.log("changed res w,h", width, height);
 

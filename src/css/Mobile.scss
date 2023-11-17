@@ -1,12 +1,51 @@
 .mcompact {
+  --dpiratio:1;
+
   #ebd-body.mobile_portrait {
-    --map-width: calc(var(--localsetting_mapsize) * 0.7vw);
-    --stan-width: calc(var(--localsetting_mapsize) * 0.2vw);
-    --card-width: calc(var(--localsetting_cardsize) * .25vw);
-    --pb_cellsize: 10vw;
+
+    /*1x defaults */
+    --default-map-width: 0.67vw;
+    --default-stan-width: 0.17vw;
+    --default-card-width: 0.2vw;
+    --default-pb_cellsize: 9vw;
+    --default-resourcesize: 5vw;
+
+
+    --map-width: calc(var(--localsetting_mapsize) * var(--default-map-width) );
+    --stan-width: calc(var(--localsetting_mapsize) * var(--default-stan-width) );
+    --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width) );
+    --pb_cellsize:var(--default-pb_cellsize);
+
+    .milestone_label {
+      bottom: 6%;
+      font-size: calc(var(--map-width) * 0.03);
+    }
+
+    .award_label {
+      bottom: -2%;
+      font-size: calc(var(--map-width) * 0.05);
+    }
+
+    .compact_card_tt {
+      .milestone_label {
+        bottom: 5%;
+        font-size: calc(var(--map-width) * 0.017);
+        width: 88%;
+        left: 4%;
+      }
+      .award_label {
+        bottom: -3%;
+        font-size: calc(var(--map-width) * 0.027);
+      }
+    }
+
+    .counters_holder{
+      --resourcesize:   var(--default-resourcesize);
+    }
 
     .player_counters {
-      --resourcesize: 7.5vw;
+     /* 1X --resourcesize: 7.5vw;*/
+      --resourcesize:   var(--default-resourcesize);
       flex-wrap: wrap;
     }
 
