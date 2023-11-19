@@ -323,11 +323,10 @@
   }
 
   .pboard {
-    width: calc(var(--card-height) * 1.35 * 2);
-    height: calc(var(--card-height) * 2);
+    width: calc(var(--card-width) * 22.2 / 6.5);
+    height: calc(var(--card-height) * 16 / 9);
     background-image: url(img/full/pboard.jpg);
     background-size: contain;
-    display: none; /* turn off for now */
   }
 
   .tableau {

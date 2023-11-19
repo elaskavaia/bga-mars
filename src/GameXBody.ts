@@ -95,10 +95,21 @@ class GameXBody extends GameTokens {
       this.setupHelpSheets();
       // Panel ZOOM
       if (this.isLayoutFull()) {
-        this.setZoom(undefined);
-        this.connect($("zoom-out"), "onclick", () => this.incZoom(-0.2));
-        this.connect($("zoom-in"), "onclick", () => this.incZoom(0.2));
+        //this.setZoom(undefined);
       }
+      this.connect($("zoom-out"), "onclick", () => {
+        const ms = this.localSettings.getLocalSettingById("mapsize");
+        this.localSettings.doAction(ms, "minus");
+        const cs = this.localSettings.getLocalSettingById("cardsize");
+        this.localSettings.doAction(cs, "minus");
+      });
+      this.connect($("zoom-in"), "onclick", () => {
+        const ms = this.localSettings.getLocalSettingById("mapsize");
+        this.localSettings.doAction(ms, "plus");
+        const cs = this.localSettings.getLocalSettingById("cardsize");
+        this.localSettings.doAction(cs, "plus");
+      });
+      
 
       this.isDoingSetup = false;
     } catch (e) {
@@ -129,6 +140,7 @@ class GameXBody extends GameTokens {
     //local settings, include user id into setting string so it different per local player
     const theme = this.prefs[100].value ?? 1;
     this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
+      { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
       { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
 
@@ -138,7 +150,7 @@ class GameXBody extends GameTokens {
         choice: { after: _("First"), before: _("Second") },
         default: "after"
       },
-      { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
+
       {
         key: "hidebadges",
         label: _("Hide Badges on minipanel"),

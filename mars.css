@@ -4629,10 +4629,6 @@
   font-weight: bold;
 }
 
-.mcompact #zoom-in, .mcompact #zoom-out {
-  display: none;
-}
-
 .player_boards .token_img {
   margin-right: 4px;
 }
@@ -6293,11 +6289,10 @@
   background-size: 1000% auto;
 }
 .mfull .pboard {
-  width: calc(var(--card-height) * 1.35 * 2);
-  height: calc(var(--card-height) * 2);
+  width: calc(var(--card-width) * 22.2 / 6.5);
+  height: calc(var(--card-height) * 16 / 9);
   background-image: url(img/full/pboard.jpg);
   background-size: contain;
-  display: none; /* turn off for now */
 }
 .mfull .tableau {
   display: flex;

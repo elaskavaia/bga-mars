@@ -2696,8 +2696,8 @@ var GameTokens = /** @class */ (function (_super) {
     GameTokens.prototype.handleStackedTooltips = function (attachNode) {
     };
     GameTokens.prototype.removeTooltip = function (nodeId) {
-        if (this.tooltips[nodeId])
-            console.log('removing tooltip for ', nodeId);
+        // if (this.tooltips[nodeId]) 
+        //     console.log('removing tooltip for ',nodeId);
         this.inherited(arguments);
         this.tooltips[nodeId] = null;
     };
@@ -2990,10 +2990,20 @@ var GameXBody = /** @class */ (function (_super) {
             this.setupHelpSheets();
             // Panel ZOOM
             if (this.isLayoutFull()) {
-                this.setZoom(undefined);
-                this.connect($("zoom-out"), "onclick", function () { return _this.incZoom(-0.2); });
-                this.connect($("zoom-in"), "onclick", function () { return _this.incZoom(0.2); });
+                //this.setZoom(undefined);
             }
+            this.connect($("zoom-out"), "onclick", function () {
+                var ms = _this.localSettings.getLocalSettingById("mapsize");
+                _this.localSettings.doAction(ms, "minus");
+                var cs = _this.localSettings.getLocalSettingById("cardsize");
+                _this.localSettings.doAction(cs, "minus");
+            });
+            this.connect($("zoom-in"), "onclick", function () {
+                var ms = _this.localSettings.getLocalSettingById("mapsize");
+                _this.localSettings.doAction(ms, "plus");
+                var cs = _this.localSettings.getLocalSettingById("cardsize");
+                _this.localSettings.doAction(cs, "plus");
+            });
             this.isDoingSetup = false;
         }
         catch (e) {
@@ -3023,6 +3033,7 @@ var GameXBody = /** @class */ (function (_super) {
         //local settings, include user id into setting string so it different per local player
         var theme = (_a = this.prefs[100].value) !== null && _a !== void 0 ? _a : 1;
         this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
+            { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
             { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             {
@@ -3031,7 +3042,6 @@ var GameXBody = /** @class */ (function (_super) {
                 choice: { after: _("First"), before: _("Second") },
                 default: "after"
             },
-            { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
             {
                 key: "hidebadges",
                 label: _("Hide Badges on minipanel"),
@@ -4510,6 +4520,14 @@ var LocalSettings = /** @class */ (function () {
             this.applyChanges(prop, stored, false);
         }
     };
+    LocalSettings.prototype.getLocalSettingById = function (key) {
+        for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
+            var prop = _a[_i];
+            if (key == prop.key)
+                return prop;
+        }
+        return null;
+    };
     LocalSettings.prototype.renderButton = function (parentId) {
         if (!document.getElementById(parentId))
             return false;
@@ -4561,17 +4579,17 @@ var LocalSettings = /** @class */ (function () {
             return;
         var range = prop.range;
         var inputid = "localsettings_prop_".concat(prop.key);
-        var valuecontrol = '';
-        if (prop.ui == 'slider') {
+        var valuecontrol = "";
+        if (prop.ui == "slider") {
             valuecontrol = "<input type=\"range\" id=\"".concat(inputid, "\" name=\"").concat(inputid, "\" min=\"").concat(range.min, "\" max=\"").concat(range.max, "\" step=\"").concat(range.inc, "\" value=\"").concat(prop.value, "\">");
         }
         else {
             valuecontrol = "<div id=\"".concat(inputid, "\" class=\"localsettings_prop_rangevalue\">").concat(prop.value, "</div>");
         }
-        return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <div class=\"localsettings_prop_range\">\n          <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i></div>\n          ").concat(valuecontrol, "\n          <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-search-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
+        return "\n      <label for=\"".concat(inputid, "\" class=\"localsettings_prop_label prop_range\">").concat(prop.label, "</label>\n      <div class=\"localsettings_prop_range\">\n          <div id=\"localsettings_prop_button_minus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-minus\" aria-hidden=\"true\"></i></div>\n          ").concat(valuecontrol, "\n          <div id=\"localsettings_prop_button_plus_").concat(prop.key, "\" class=\"localsettings_prop_button\"><i class=\"fa fa-plus\" aria-hidden=\"true\"></i></div>\n      </div>");
     };
     LocalSettings.prototype.renderPropChoice = function (prop) {
-        if (prop.ui == 'checkbox') {
+        if (prop.ui == "checkbox") {
             var inputid = "localsettings_prop_".concat(prop.key);
             var checked = prop.value === "false" || !prop.value ? "" : "checked";
             return "\n      <input type=\"checkbox\" id=\"".concat(inputid, "\" name=\"").concat(inputid, "\" ").concat(checked, ">\n      <label for=\"").concat(inputid, "\" class=\"localsettings_prop_label\">").concat(prop.label, "</label>\n      ");
@@ -4595,25 +4613,38 @@ var LocalSettings = /** @class */ (function () {
         var _this = this;
         if (!prop.range)
             return;
-        if (prop.ui == 'slider') {
+        if (prop.ui == "slider") {
             $("localsettings_prop_".concat(prop.key)).addEventListener("change", function (event) {
-                _this.applyChanges(prop, event.target.value);
+                _this.doAction(prop, "change", event.target.value);
             });
         }
         $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", function () {
-            _this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
+            _this.doAction(prop, "minus");
         });
         $("localsettings_prop_button_plus_" + prop.key).addEventListener("click", function () {
-            _this.applyChanges(prop, parseFloat(prop.value) + prop.range.inc);
+            _this.doAction(prop, "plus");
         });
     };
     LocalSettings.prototype.actionPropChoice = function (prop) {
         var _this = this;
         $("localsettings_prop_".concat(prop.key)).addEventListener("click", function (event) {
             var target = event.target;
-            _this.applyChanges(prop, prop.ui == 'checkbox' ? target.checked : target.value);
+            _this.applyChanges(prop, prop.ui == "checkbox" ? target.checked : target.value);
         });
         return;
+    };
+    LocalSettings.prototype.doAction = function (prop, action, value) {
+        switch (action) {
+            case "change":
+                this.applyChanges(prop, value);
+                break;
+            case "plus":
+                this.applyChanges(prop, parseFloat(prop.value) + prop.range.inc);
+                break;
+            case "minus":
+                this.applyChanges(prop, parseFloat(prop.value) - prop.range.inc);
+                break;
+        }
     };
     LocalSettings.prototype.setSanitizedValue = function (prop, newvalue) {
         var _a;
@@ -4627,7 +4658,7 @@ var LocalSettings = /** @class */ (function () {
                 value = prop.range.min;
             prop.value = String(value);
         }
-        else if (prop.ui == 'checkbox') {
+        else if (prop.ui == "checkbox") {
             if (newvalue) {
                 var key = Object.keys(prop.choice)[0];
                 prop.value = key !== null && key !== void 0 ? key : String(newvalue);
@@ -4636,7 +4667,7 @@ var LocalSettings = /** @class */ (function () {
                 prop.value = String(prop.default);
             }
             else {
-                var key = (_a = Object.keys(prop.choice)[1]) !== null && _a !== void 0 ? _a : '';
+                var key = (_a = Object.keys(prop.choice)[1]) !== null && _a !== void 0 ? _a : "";
                 prop.value = key;
             }
         }
