@@ -6,7 +6,7 @@ Random notes on todo items
 
 ## Server
 
-* undo - block on draw card
+* undo - block on draw card DONE
 * Missing undo button when inactive during research
 * rolling score option
 * BUG: If you click 1 (max) without clicking the drawn card, Inventor's Guild, it does this because I don't have enough money.
@@ -27,11 +27,11 @@ Random notes on todo items
 * Generation counter on player panel (common panel)
   * DONE
 * Mobile portrait layout
-* PT: Temp global param - missing + when positive
-* PT: Toolips on global params on miniboard missing
+* PT: Temp global param - missing + when positive FIXED
+* PT: Toolips on global params on miniboard missing FIXED
 * PT: Missing tooltip on total score
 * PT: I selected a corporation and clicked Undo.  It asks me to pick a corporation again, but the card isn't visually shown anymore (Note: its is there but not near the other corp)
-* PT: wrong tooltip title for cards in hard on player mini board (says hand_0000ff counter)
+* PT: wrong tooltip title for cards in hard on player mini board (says hand_0000ff counter) FIXED
 * PT: .hex transition: 100ms ease-in-out; ? what is this for?
 * SUGGESTION:  The "Send BUG" button should probably open a new tab/window if possible, not close the whole game - FIXED
 * SUGGESTION:  Card selectors (square with eyes) should probably have tooltips because it took me a second to figure out what they do...though I know it's a simple concept.
