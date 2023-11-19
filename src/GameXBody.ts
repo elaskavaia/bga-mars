@@ -93,6 +93,12 @@ class GameXBody extends GameTokens {
 
       // card reference
       this.setupHelpSheets();
+      // Panel ZOOM
+      if (this.isLayoutFull()) {
+        this.setZoom(undefined);
+        this.connect($("zoom-out"), "onclick", () => this.incZoom(-0.2));
+        this.connect($("zoom-in"), "onclick", () => this.incZoom(0.2));
+      }
 
       this.isDoingSetup = false;
     } catch (e) {
@@ -112,7 +118,7 @@ class GameXBody extends GameTokens {
     };
     this.vlayout.setupPlayer(playerInfo);
     //move own player board in main zone
-    if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && ! document.querySelector('.thisplayer_zone'))) {
+    if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
       const board = $(`player_area_${playerInfo.color}`);
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
@@ -149,24 +155,24 @@ class GameXBody extends GameTokens {
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
     const pref = this.prefs[pref_id];
-    console.log("PREF",pref);
-    if (pref_id==100 || pref_id==101) {
+    console.log("PREF", pref);
+    if (pref_id == 100 || pref_id == 101) {
       const pp = $(prefDivId).parentElement;
       pp.removeChild($(prefDivId));
-      const pc = this.createDivNode(prefDivId,"custom_pref "+prefDivId,pp);
+      const pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
       for (const v in pref.values) {
-         const optionValue = pref.values[v];
-         const option = this.createDivNode(`${prefDivId}_v${v}`,`custom_pref_option pref_${optionValue.cssPref??''}`, pc);
-         option.setAttribute('value', v);
-         option.innerHTML = optionValue.name;
-         if (pref.value == v) {
-           option.setAttribute("selected", "selected");
-         }
-         dojo.connect(option, "onclick", (e: any) => {
-          pc.querySelectorAll(".custom_pref_option").forEach(node=>node.removeAttribute('selected'));
+        const optionValue = pref.values[v];
+        const option = this.createDivNode(`${prefDivId}_v${v}`, `custom_pref_option pref_${optionValue.cssPref ?? ""}`, pc);
+        option.setAttribute("value", v);
+        option.innerHTML = optionValue.name;
+        if (pref.value == v) {
+          option.setAttribute("selected", "selected");
+        }
+        dojo.connect(option, "onclick", (e: any) => {
+          pc.querySelectorAll(".custom_pref_option").forEach((node) => node.removeAttribute("selected"));
           e.target.setAttribute("selected", "selected");
           this.onChangePreferenceCustom(e);
-         });
+        });
       }
       return true;
     }
@@ -231,26 +237,27 @@ class GameXBody extends GameTokens {
   }
 
   onScreenWidthChange() {
-    //  super.onScreenWidthChange();
-    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    if (this.isLayoutFull()) {
+       super.onScreenWidthChange();
+    } else {
+      const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-    if (!this.isLayoutFull()) {
-      dojo.style('page-content', 'zoom', '');
-    }
+      dojo.style("page-content", "zoom", "");
 
-    if (this.zoneWidth != width || this.zoneHeight != height) {
-      //   console.log("changed res w,h", width, height);
+      if (this.zoneWidth != width || this.zoneHeight != height) {
+        //   console.log("changed res w,h", width, height);
 
-      this.zoneWidth = width;
-      this.zoneHeight = height;
+        this.zoneWidth = width;
+        this.zoneHeight = height;
 
-      if (dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "desktop" && width < height) {
-        this.previousLayout = "mobile";
-        dojo.addClass("ebd-body", "mobile_portrait");
-      } else if (!dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "mobile" && width > height) {
-        this.previousLayout = "desktop";
-        dojo.removeClass("ebd-body", "mobile_portrait");
+        if (dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "desktop" && width < height) {
+          this.previousLayout = "mobile";
+          dojo.addClass("ebd-body", "mobile_portrait");
+        } else if (!dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "mobile" && width > height) {
+          this.previousLayout = "desktop";
+          dojo.removeClass("ebd-body", "mobile_portrait");
+        }
       }
     }
   }
@@ -500,7 +507,7 @@ class GameXBody extends GameTokens {
           _("This global parameter (mean temperature at the equator) starts at -30 ˚C.")
         );
       case "starting_player":
-        return this.generateTooltipSection(_(displayInfo.name),_("Shifts clockwise each generation."));
+        return this.generateTooltipSection(_(displayInfo.name), _("Shifts clockwise each generation."));
       case "tracker_tagEvent":
         return this.generateTooltipSection(
           _("Events"),
@@ -617,7 +624,7 @@ class GameXBody extends GameTokens {
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
 
     //special case
-    if (card_id==" Basic #135") prereqText=_('Requires 1 plant tag, 1 microbe tag and 1 animal tag.');
+    if (card_id == " Basic #135") prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag.");
 
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
@@ -725,9 +732,9 @@ awarded.`);
         let vp = "";
 
         if (displayInfo.vp) {
-          if ( CustomRenders['customcard_vp_'+displayInfo.num]) {
-            vp= '<div class="card_vp vp_custom">' +CustomRenders['customcard_vp_'+displayInfo.num]()+ "</div></div>";
-          } else  {
+          if (CustomRenders["customcard_vp_" + displayInfo.num]) {
+            vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
+          } else {
             vp = parseInt(displayInfo.vp)
               ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
               : '<div class="card_vp"><div class="number_inside">*</div></div>';
@@ -899,7 +906,6 @@ awarded.`);
     }
 
     this.vlayout.renderSpecificToken(node);
-  
 
     //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
@@ -908,7 +914,6 @@ awarded.`);
       super.setDomTokenState(trackerCopy, newState);
     }
   }
-
 
   //finer control on how to place things
   createDivNode(id?: string | undefined, classes?: string, location?: ElementOrId): HTMLDivElement {
@@ -987,8 +992,8 @@ awarded.`);
           break;
       }
       //special
-      if (node.id=="card_main_135") {
-        tracker="card_main_135";
+      if (node.id == "card_main_135") {
+        tracker = "card_main_135";
       }
 
       if (tracker == "") {
@@ -1021,12 +1026,13 @@ awarded.`);
       }
 
       //Special cases
-      if (node.id=="card_main_135") {
-        if (   parseInt($('tracker_tagAnimal_' + this.getPlayerColor(this.player_id)).dataset.state)>0
-            && parseInt($('tracker_tagMicrobe_' + this.getPlayerColor(this.player_id)).dataset.state)>0
-            && parseInt($('tracker_tagPlant_' + this.getPlayerColor(this.player_id)).dataset.state)>0
+      if (node.id == "card_main_135") {
+        if (
+          parseInt($("tracker_tagAnimal_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
+          parseInt($("tracker_tagMicrobe_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
+          parseInt($("tracker_tagPlant_" + this.getPlayerColor(this.player_id)).dataset.state) > 0
         ) {
-          valid=true;
+          valid = true;
         }
       }
 
@@ -1699,8 +1705,8 @@ awarded.`);
       if (this.on_client_state) this.addCancelButton();
       else this.addUndoButton();
     }
-
-    //this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
+    var parent = document.querySelector(".debug_section"); // studio only
+    if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
   onSelectTarget(opId: number, target: string) {
     // can add prompt

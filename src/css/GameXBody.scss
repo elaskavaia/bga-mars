@@ -120,10 +120,13 @@
   width: 22%;
 }
 
-.tracker::after,
-.param::after {
+.tracker::after, .param::after  {
   content: attr(data-state);
   pointer-events: none;
+}
+
+#alt_tracker_t {
+  content: attr(data-sign) attr(data-state); // plus sign for temperature
 }
 
 .playerboard_produce {

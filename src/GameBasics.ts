@@ -1028,37 +1028,55 @@ class GameBasics extends GameGui {
     return true;
   }
 
-  setZoom(zoom: number) {
-    if (zoom === 0 || zoom < 0.1 || zoom > 10) {
+  checkZoom(zoom: any): number {
+    zoom = parseFloat(zoom);
+    if (!zoom || zoom < 0.1 || zoom > 10) {
       zoom = 1;
     }
-    this.zoom = zoom;
+    return zoom;
+  }
 
-    //var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
-    //dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
-    //dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+  setZoom(zoom: number | string) {
+    if (!zoom) zoom = localStorage.getItem("mars.zoom");
+    this.zoom = this.doSetZoom(this.checkZoom(zoom));
+    localStorage.setItem("mars.zoom", "" + this.zoom);
+  }
+
+  incZoom(inc: number) {
+    this.setZoom(this.checkZoom(this.zoom) + inc);
+  }
+
+  doSetZoom(zoom: number) {
+    //console.log("set zoom "+zoom);
+    zoom = this.checkZoom(zoom);
     var inner = document.getElementById("thething");
-    var div = document.getElementById("zoom-wrapper");
+    const prevzoom = inner.getAttribute('data-zoom');
+    if (parseInt(prevzoom)==zoom) return;
+    var div = inner.parentElement;
     if (zoom == 1) {
       inner.style.removeProperty("transform");
       inner.style.removeProperty("width");
       div.style.removeProperty("height");
     } else {
-      inner.style.transform = "scale(" + zoom + ")";
+      //inner.style.transform = "scale(" + zoom + ")";
+      inner.offsetHeight; // reflow
       inner.style.transformOrigin = "0 0";
+      inner.style.scale = ""+zoom;
       inner.style.width = 100 / zoom + "%";
       div.style.height = inner.offsetHeight * zoom + "px";
     }
-    localStorage.setItem("mars.zoom", "" + this.zoom);
-    this.onScreenWidthChange();
+    inner.setAttribute('data-zoom',""+zoom);
+    return zoom;
+  }
+
+  onScreenWidthChange() {
+    // override
+    this.zoom=this.doSetZoom(this.zoom);
   }
 
   setupInfoPanel() {
     //dojo.place('player_board_config', 'player_boards', 'first');
-    var strzoom = localStorage.getItem("mars.zoom");
-    if (!strzoom) strzoom = "1";
-    this.zoom = Number(strzoom);
-    this.setZoom(this.zoom);
+
 
     dojo.connect($("show-settings"), "onclick", () => this.toggleSettings());
     this.addTooltip("show-settings", "", _("Display game preferences"));
@@ -1072,11 +1090,6 @@ class GameBasics extends GameGui {
       this.toggleHelpMode(bchecked);
     });
     this.addTooltip(chk.id, "", _("Toggle help mode"));
-
-    // ZOOM
-
-    this.connect($("zoom-out"), "onclick", () => this.setZoom(this.zoom - 0.2));
-    this.connect($("zoom-in"), "onclick", () => this.setZoom(this.zoom + 0.2));
 
     //$('help-mode-switch').style.display='none';
     this.setupSettings();

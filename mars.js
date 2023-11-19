@@ -919,38 +919,53 @@ var GameBasics = /** @class */ (function (_super) {
         }
         return true;
     };
-    GameBasics.prototype.setZoom = function (zoom) {
-        if (zoom === 0 || zoom < 0.1 || zoom > 10) {
+    GameBasics.prototype.checkZoom = function (zoom) {
+        zoom = parseFloat(zoom);
+        if (!zoom || zoom < 0.1 || zoom > 10) {
             zoom = 1;
         }
-        this.zoom = zoom;
-        //var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
-        //dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
-        //dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+        return zoom;
+    };
+    GameBasics.prototype.setZoom = function (zoom) {
+        if (!zoom)
+            zoom = localStorage.getItem("mars.zoom");
+        this.zoom = this.doSetZoom(this.checkZoom(zoom));
+        localStorage.setItem("mars.zoom", "" + this.zoom);
+    };
+    GameBasics.prototype.incZoom = function (inc) {
+        this.setZoom(this.checkZoom(this.zoom) + inc);
+    };
+    GameBasics.prototype.doSetZoom = function (zoom) {
+        //console.log("set zoom "+zoom);
+        zoom = this.checkZoom(zoom);
         var inner = document.getElementById("thething");
-        var div = document.getElementById("zoom-wrapper");
+        var prevzoom = inner.getAttribute('data-zoom');
+        if (parseInt(prevzoom) == zoom)
+            return;
+        var div = inner.parentElement;
         if (zoom == 1) {
             inner.style.removeProperty("transform");
             inner.style.removeProperty("width");
             div.style.removeProperty("height");
         }
         else {
-            inner.style.transform = "scale(" + zoom + ")";
+            //inner.style.transform = "scale(" + zoom + ")";
+            inner.offsetHeight; // reflow
             inner.style.transformOrigin = "0 0";
+            inner.style.scale = "" + zoom;
             inner.style.width = 100 / zoom + "%";
             div.style.height = inner.offsetHeight * zoom + "px";
         }
-        localStorage.setItem("mars.zoom", "" + this.zoom);
-        this.onScreenWidthChange();
+        inner.setAttribute('data-zoom', "" + zoom);
+        return zoom;
+    };
+    GameBasics.prototype.onScreenWidthChange = function () {
+        // override
+        this.zoom = this.doSetZoom(this.zoom);
     };
     GameBasics.prototype.setupInfoPanel = function () {
-        var _this = this;
         //dojo.place('player_board_config', 'player_boards', 'first');
-        var strzoom = localStorage.getItem("mars.zoom");
-        if (!strzoom)
-            strzoom = "1";
-        this.zoom = Number(strzoom);
-        this.setZoom(this.zoom);
+        var _this = this;
         dojo.connect($("show-settings"), "onclick", function () { return _this.toggleSettings(); });
         this.addTooltip("show-settings", "", _("Display game preferences"));
         var chk = $("help-mode-switch");
@@ -962,9 +977,6 @@ var GameBasics = /** @class */ (function (_super) {
             _this.toggleHelpMode(bchecked);
         });
         this.addTooltip(chk.id, "", _("Toggle help mode"));
-        // ZOOM
-        this.connect($("zoom-out"), "onclick", function () { return _this.setZoom(_this.zoom - 0.2); });
-        this.connect($("zoom-in"), "onclick", function () { return _this.setZoom(_this.zoom + 0.2); });
         //$('help-mode-switch').style.display='none';
         this.setupSettings();
         //this.setupHelper();
@@ -2023,14 +2035,29 @@ var CustomRenders = /** @class */ (function () {
         return ret;
     };
     //custom card stuff
+    CustomRenders.customcard_vp_5 = function () {
+        return this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1) + '<div class="vp_qty">*:3</div>';
+    };
     CustomRenders.customcard_action_6 = function () {
         return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + _('ACTION:LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT') + '</div>';
     };
     CustomRenders.customcard_action_7 = function () {
         return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="cnt_media token_img tracker_e depth_1"></div></div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_2">1</div> / <div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>*</div></div>';
     };
+    CustomRenders.customcard_vp_8 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('w', 0), 1) + '<div class="vp_qty">*</div>';
+    };
+    CustomRenders.customcard_vp_12 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('tagJovian', 0), 1);
+    };
+    CustomRenders.customcard_vp_24 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
     CustomRenders.customcard_effect_25 = function () {
         return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="cnt_media tracker badge tracker_tagSpace depth_1"></div></div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_1">-2</div></div></div>';
+    };
+    CustomRenders.customcard_vp_28 = function () {
+        return '<div class="vp_qty">1/</div><div class="cnt_media token_img tracker_resFighter depth_1"></div>';
     };
     CustomRenders.customcard_action_33 = function () {
         return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':'), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe'), 1) + '</div>'
@@ -2039,6 +2066,9 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.customcard_action_34 = function () {
         return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>'
             + '<div class="groupline">OR&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 1), 2) + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('t', 0), 1) + '</div>';
+    };
+    CustomRenders.customcard_vp_35 = function () {
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1);
     };
     CustomRenders.customcard_rules_37 = function () {
         return '<div class="card_icono icono_prod">' +
@@ -2055,6 +2085,9 @@ var CustomRenders = /** @class */ (function () {
             + '<div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('tr', 0), 2) + this.parseSingleItemToHTML(this.getParse('t', 0), 1)
             + '</div>'
             + '</div>';
+    };
+    CustomRenders.customcard_vp_49 = function () {
+        return '<div class="vp_qty">1/4</div>' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1);
     };
     CustomRenders.customcard_rules_50 = function () {
         return '<div class="card_icono icono_gains cnt_gains">' +
@@ -2073,6 +2106,12 @@ var CustomRenders = /** @class */ (function () {
             '     </div>';
         //  '<div class="card_tt">'+_('Remove up to 2 animals or 5 plants from any player.')+'</div>';
     };
+    CustomRenders.customcard_vp_52 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
+    CustomRenders.customcard_vp_54 = function () {
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
     CustomRenders.customcard_action_69 = function () {
         return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '</div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('m', 0), 7) + '</div></div></div>';
     };
@@ -2082,6 +2121,9 @@ var CustomRenders = /** @class */ (function () {
             '<div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '&nbsp;:&nbsp;+' + this.parseSingleItemToHTML(this.getParse('m', 0), 1) + '</div>' +
             '</div></div>';
     };
+    CustomRenders.customcard_vp_72 = function () {
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
     CustomRenders.customcard_effect_74 = function () {
         return '<div class="groupline">'
             + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '/' + this.parseSingleItemToHTML(this.getParse('tagMicrobe', 0), 1) + '/' + this.parseSingleItemToHTML(this.getParse('tagAnimal', 0), 1)
@@ -2089,9 +2131,21 @@ var CustomRenders = /** @class */ (function () {
             + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + '/' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '<div class="resource_exponent">*</div>/' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1) + '<div class="resource_exponent">*</div>'
             + '</div>';
     };
+    CustomRenders.customcard_vp_81 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('tagJovian', 0), 1);
+    };
+    CustomRenders.customcard_vp_85 = function () {
+        return '<div class="vp_qty">1/</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>' + '<div class="vp_qty">*</div>';
+    };
     CustomRenders.customcard_rules_86 = function () {
         return '<div class="groupline">' + _('COPY A %i').replace('%i', '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="badge tag_Building"></div></div></div></div></div>')
             + '</div>';
+    };
+    CustomRenders.customcard_vp_92 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('tagJovian', 0), 1);
+    };
+    CustomRenders.customcard_vp_95 = function () {
+        return '<div class="vp_qty">2/</div>' + this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1);
     };
     CustomRenders.customcard_rules_102 = function () {
         return '<div class="groupline"><div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production">' + this.parseSingleItemToHTML(this.getParse('e', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagEnergy', 0), 1) + '</div></div></div></div></div>';
@@ -2114,12 +2168,18 @@ var CustomRenders = /** @class */ (function () {
             + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1)
             + '</div>';
     };
+    CustomRenders.customcard_vp_128 = function () {
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
     CustomRenders.customcard_effect_131 = function () {
         return '<div class="groupline">'
             + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagAnimal', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagMicrobe', 0), 1)
             + '&nbsp;:&nbsp;'
             + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1)
             + '</div>';
+    };
+    CustomRenders.customcard_vp_131 = function () {
+        return '<div class="vp_qty">1/3</div>' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1);
     };
     CustomRenders.customcard_rules_143 = function () {
         return '<div class="card_icono icono_gains cnt_gains">'
@@ -2128,6 +2188,9 @@ var CustomRenders = /** @class */ (function () {
             + '&nbsp;&nbsp;'
             + this.parseSingleItemToHTML(this.getParse('p', 0), 5) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 4) + '*'
             + '</div>';
+    };
+    CustomRenders.customcard_vp_147 = function () {
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
     };
     CustomRenders.customcard_rules_152 = function () {
         return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div>X&nbsp;<div class="outer_production">' + this.parseSingleItemToHTML(this.getParse('h', 0), 1) + '</div><div class="plusminus">+</div><div class="outer_production"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div></div>';
@@ -2145,12 +2208,21 @@ var CustomRenders = /** @class */ (function () {
         return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>'
             + '<div class="groupline">OR&nbsp;3&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 1), 1) + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('tr', 0), 1) + '</div>';
     };
+    CustomRenders.customcard_vp_172 = function () {
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
     CustomRenders.customcard_effect_173 = function () {
         return '<div class="groupline">' + _('OPPONENTS MAT NOT REMOVE YOUR') + '</div>'
             + '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>';
     };
+    CustomRenders.customcard_vp_184 = function () {
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+    };
     CustomRenders.customcard_effect_185 = function () {
         return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('tagScience', 0), 1) + '</div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1) + ('OR') + '-' + this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1) + '&nbsp;+<div class=" cnt_media token_img cardback depth_3"></div></div></div></div>';
+    };
+    CustomRenders.customcard_vp_198 = function () {
+        return '<div class="vp_qty">1/3</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>';
     };
     CustomRenders.customcard_action_194 = function () {
         return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">X<div class="cnt_media token_img tracker_e depth_2"></div></div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div>';
@@ -2916,6 +2988,12 @@ var GameXBody = /** @class */ (function (_super) {
             this.updateHandPrereqs();
             // card reference
             this.setupHelpSheets();
+            // Panel ZOOM
+            if (this.isLayoutFull()) {
+                this.setZoom(undefined);
+                this.connect($("zoom-out"), "onclick", function () { return _this.incZoom(-0.2); });
+                this.connect($("zoom-in"), "onclick", function () { return _this.incZoom(0.2); });
+            }
             this.isDoingSetup = false;
         }
         catch (e) {
@@ -2934,7 +3012,7 @@ var GameXBody = /** @class */ (function (_super) {
         };
         this.vlayout.setupPlayer(playerInfo);
         //move own player board in main zone
-        if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector('.thisplayer_zone'))) {
+        if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
             var board = $("player_area_".concat(playerInfo.color));
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
@@ -2978,14 +3056,14 @@ var GameXBody = /** @class */ (function (_super) {
             var pc_1 = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
             for (var v in pref.values) {
                 var optionValue = pref.values[v];
-                var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ''), pc_1);
-                option.setAttribute('value', v);
+                var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ""), pc_1);
+                option.setAttribute("value", v);
                 option.innerHTML = optionValue.name;
                 if (pref.value == v) {
                     option.setAttribute("selected", "selected");
                 }
                 dojo.connect(option, "onclick", function (e) {
-                    pc_1.querySelectorAll(".custom_pref_option").forEach(function (node) { return node.removeAttribute('selected'); });
+                    pc_1.querySelectorAll(".custom_pref_option").forEach(function (node) { return node.removeAttribute("selected"); });
                     e.target.setAttribute("selected", "selected");
                     _this.onChangePreferenceCustom(e);
                 });
@@ -3051,20 +3129,25 @@ var GameXBody = /** @class */ (function (_super) {
         dlg.show();
     };
     GameXBody.prototype.onScreenWidthChange = function () {
-        //  super.onScreenWidthChange();
-        var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-        var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        if (this.zoneWidth != width || this.zoneHeight != height) {
-            //   console.log("changed res w,h", width, height);
-            this.zoneWidth = width;
-            this.zoneHeight = height;
-            if (dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "desktop" && width < height) {
-                this.previousLayout = "mobile";
-                dojo.addClass("ebd-body", "mobile_portrait");
-            }
-            else if (!dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "mobile" && width > height) {
-                this.previousLayout = "desktop";
-                dojo.removeClass("ebd-body", "mobile_portrait");
+        if (this.isLayoutFull()) {
+            _super.prototype.onScreenWidthChange.call(this);
+        }
+        else {
+            var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            dojo.style("page-content", "zoom", "");
+            if (this.zoneWidth != width || this.zoneHeight != height) {
+                //   console.log("changed res w,h", width, height);
+                this.zoneWidth = width;
+                this.zoneHeight = height;
+                if (dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "desktop" && width < height) {
+                    this.previousLayout = "mobile";
+                    dojo.addClass("ebd-body", "mobile_portrait");
+                }
+                else if (!dojo.hasClass("ebd-body", "mobile_version") && this.previousLayout == "mobile" && width > height) {
+                    this.previousLayout = "desktop";
+                    dojo.removeClass("ebd-body", "mobile_portrait");
+                }
             }
         }
     };
@@ -3336,6 +3419,9 @@ var GameXBody = /** @class */ (function (_super) {
         var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
         if (prereqText != "")
             prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
+        //special case
+        if (card_id == " Basic #135")
+            prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag.");
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
         if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
             var text = _("If you meet the criteria of a milestone, you may\nclaim it by paying 8 M\u20AC and placing your player marker on\nit. A milestone may only be claimed by one player, and only\n3 of the 5 milestones may be claimed in total, so there is a\nrace for these! Each claimed milestone is worth 5 VPs at the\nend of the game.");
@@ -3374,9 +3460,10 @@ var GameXBody = /** @class */ (function (_super) {
                 // const texts = displayInfo.text.split(';');
                 var card_initial = displayInfo.text || "";
                 var card_effect = displayInfo.text_effect || "";
+                var card_title = displayInfo.name || "";
                 //   if (texts.length>0) card_initial = texts[0];
                 //  if (texts.length>1) card_effect= texts[1];
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_initial\">".concat(card_initial, "</div>\n                  <div class=\"card_effect\">").concat(card_effect, "</div>\n            ");
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(card_title, "</div>\n                  <div class=\"card_initial\">").concat(card_initial, "</div>\n                  <div class=\"card_effect\">").concat(card_effect, "</div>\n            ");
             }
             else if (tokenNode.id.startsWith("card_stanproj")) {
                 //standard project formatting:
@@ -3414,9 +3501,14 @@ var GameXBody = /** @class */ (function (_super) {
                 var decor = this.createDivNode(null, "card_decor", tokenNode.id);
                 var vp = "";
                 if (displayInfo.vp) {
-                    vp = parseInt(displayInfo.vp)
-                        ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
-                        : '<div class="card_vp"><div class="number_inside">*</div></div>';
+                    if (CustomRenders["customcard_vp_" + displayInfo.num]) {
+                        vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
+                    }
+                    else {
+                        vp = parseInt(displayInfo.vp)
+                            ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
+                            : '<div class="card_vp"><div class="number_inside">*</div></div>';
+                    }
                 }
                 else {
                     vp = "";
@@ -3637,6 +3729,10 @@ var GameXBody = /** @class */ (function (_super) {
                     tracker = "cities";
                     break;
             }
+            //special
+            if (node.id == "card_main_135") {
+                tracker = "card_main_135";
+            }
             if (tracker == "") {
                 continue;
             }
@@ -3670,6 +3766,14 @@ var GameXBody = /** @class */ (function (_super) {
             else if (op == ">=") {
                 if (actual >= qty)
                     valid = true;
+            }
+            //Special cases
+            if (node.id == "card_main_135") {
+                if (parseInt($("tracker_tagAnimal_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
+                    parseInt($("tracker_tagMicrobe_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
+                    parseInt($("tracker_tagPlant_" + this.getPlayerColor(this.player_id)).dataset.state) > 0) {
+                    valid = true;
+                }
             }
             if (!valid) {
                 node.dataset.invalid_prereq = 1;
@@ -3705,10 +3809,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.updatePlayerLocalCounters = function (plColor) {
-        this.darhflog("update pl counters", this.local_counters[plColor]);
         for (var _i = 0, _a = Object.keys(this.local_counters[plColor]); _i < _a.length; _i++) {
             var key = _a[_i];
-            //this.darhflog("updating ", "local_counter_" + plColor + "_" + key, "to ", this.local_counters[plColor][key]);
             $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
         }
     };
@@ -4294,7 +4396,9 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.addUndoButton();
         }
-        //this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
+        var parent = document.querySelector(".debug_section"); // studio only
+        if (parent)
+            this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt
