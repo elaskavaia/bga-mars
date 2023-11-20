@@ -29,7 +29,7 @@
         <div id="map_middle">
           <div id="map_top">
             <div id="oxygen_map">
-              <div id="tracker_o" class="tracker param"></div>
+              <div id="alt_tracker_o" class="tracker param tracker_o"></div>
               <div class="oxygen_scale">
                 <div class="oxygen_scale_item" data-val="0"></div>
                 <div class="oxygen_scale_item" data-val="1"></div>
@@ -49,7 +49,7 @@
               </div>
             </div>
             <div class="outer_generation" id="outer_generation">
-              <div id="tracker_gen" class="tracker"></div>
+              <div id="alt_tracker_gen" class="tracker tracker_gen"></div>
               <div class="generation_bottom">
                 <div id="generation_text">Gen</div>
               </div>
@@ -67,7 +67,7 @@
               </div>
 
               <div id="oceans_pile" class="tile tile_3">
-                <div id="tracker_w" class="tracker param"></div>
+                <div id="alt_tracker_w" class="tracker param tracker_w"></div>
               </div>
             </div>
             <div id="standard_projects_area">
@@ -156,7 +156,7 @@
           </div>
           <div id="map_right">
             <div id="temperature_map">
-              <div id="tracker_t" class="tracker param"></div>
+              <div id="alt_tracker_t" class="tracker param tracker_t"></div>
               <div class="temperature_scale">
                 <div class="temperature_scale_item" data-val="-30"></div>
                 <div class="temperature_scale_item" data-val="-28"></div>
@@ -402,7 +402,14 @@
       </div>
 
         <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
-          <div id="pboard_{PLAYER_COLOR}" class="pboard"></div>
+          <div id="pboard_{PLAYER_COLOR}" class="pboard">
+            <div id="resarea_m_{PLAYER_COLOR}" class="resarea resarea_m"></div>
+            <div id="resarea_s_{PLAYER_COLOR}" class="resarea resarea_s"></div>
+            <div id="resarea_u_{PLAYER_COLOR}" class="resarea resarea_u"></div>
+            <div id="resarea_p_{PLAYER_COLOR}" class="resarea resarea_p"></div>
+            <div id="resarea_e_{PLAYER_COLOR}" class="resarea resarea_e"></div>
+            <div id="resarea_h_{PLAYER_COLOR}" class="resarea resarea_h"></div>
+          </div>
           <div id="tableau_{PLAYER_COLOR}_cards_4" class="cards_4 cards_bin"></div>
           <div id="tableau_{PLAYER_COLOR}_cards_2a" class="cards_2a cards_bin"></div>
           <div id="tableau_{PLAYER_COLOR}_cards_2" class="cards_2 cards_bin stacked"></div>
@@ -543,27 +550,27 @@
         <div id="tracker_o_param" class="params_line">
           <div class="token_img oxygen_icon"></div>
           <div class="groupline">
-            <div id="alt_tracker_o" class="tracker param"></div>
+            <div id="tracker_o" class="tracker param"></div>
             %
           </div>
         </div>
         <div id="tracker_t_param" class="params_line">
           <div class="token_img temperature_icon"></div>
           <div class="groupline">
-            <div id="alt_tracker_t" class="tracker param"></div>
+            <div id="tracker_t" class="tracker param"></div>
             °C
           </div>
         </div>
         <div id="tracker_w_param" class="params_line">
           <div  class="token_img tracker_w"></div>
           <div class="groupline">
-            <div id="alt_tracker_w" class="tracker param"></div>
+            <div id="tracker_w" class="tracker param"></div>
           </div>
         </div>
         <div id="tracker_gen_param" class="params_line">
           <div class="token_img tracker_gen"></div>
           <div class="groupline">
-            <div id="alt_tracker_gen" class="tracker param"></div>
+            <div id="tracker_gen" class="tracker param"></div>
           </div>
         </div>
       </div>

@@ -1,5 +1,50 @@
-.mfull {
+.card.cardhelp {
+  background-size: 1000% auto;
+}
 
+
+@for $num from 1 through 80 {
+  $i: $num - 1;
+  $col: $i % 10;
+  $row: (
+    $i - $col) / 10;
+
+  .mfull .card_main_#{$num},
+  .cardhelp.card_main_#{$num} {
+    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
+    );
+  background-image: url(img/full/cards1.jpg);
+}
+}
+
+@for $num from 81 through 160 {
+  $i: $num - 81;
+  $col: $i % 10;
+  $row: (
+    $i - $col) / 10;
+
+  .mfull .card_main_#{$num},
+  .cardhelp.card_main_#{$num} {
+    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
+    );
+  background-image: url(img/full/cards2.jpg);
+}
+}
+
+@for $num from 161 through 208 {
+  $i: $num - 161;
+  $col: $i % 10;
+  $row: calc(($i - $col) / 10);
+
+  .mfull .card_main_#{$num},
+  .cardhelp.card_main_#{$num} {
+    background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
+    background-image: url(img/full/cards3.jpg);
+  }
+}
+
+
+.mfull {
   #ebd-body {
     /* 
     background-image: url("img/full/tooltipbg.jpg"); 
@@ -285,18 +330,21 @@
   // }
 
   #ebd-body[data-localsetting_playerarea=before] #main_board {
-    order:2;
+    order: 2;
   }
+
   #ebd-body[data-localsetting_playerarea=before] .thisplayer_zone {
-    order:1;
+    order: 1;
   }
+
   #ebd-body[data-localsetting_playerarea=after] #main_board {
-    order:1;
+    order: 1;
   }
+
   #ebd-body[data-localsetting_playerarea=after] .thisplayer_zone {
-    order:2;
+    order: 2;
   }
-  
+
 
 
   #main_board::before {
@@ -327,7 +375,53 @@
     height: calc(var(--card-height) * 16 / 9);
     background-image: url(img/full/pboard.jpg);
     background-size: contain;
+    position: relative;
   }
+
+  .resarea {
+    position: absolute;
+  }
+
+  .resarea_m {
+    width: 36%;
+    height: 26%;
+    left: 5%;
+    top: 7%;
+  }
+
+  .resarea_s {
+    width: 26%;
+    height: 26%;
+    left: 43%;
+    top: 7%;
+  }
+  .resarea_u {
+    width: 26%;
+    height: 26%;
+    left: 69%;
+    top: 7%;
+  }
+
+  .resarea_p {
+    width: 31%;
+    height: 22%;
+    left: 5%;
+    top: 71%;
+  }
+
+  .resarea_e {
+    width: 26%;
+    height: 22%;
+    left: 38%;
+    top: 71%;
+  }
+  .resarea_h {
+    width: 28%;
+    height: 22%;
+    left: 66%;
+    top: 71%;
+  }
+
 
   .tableau {
     //height: calc(var(--card-height) * 2);
@@ -469,9 +563,9 @@
 
 
 
-  #tracker_o,
-  #tracker_gen,
-  #tracker_t {
+  #oxygen_map .tracker_o,
+  #main_board .tracker_gen,
+  #temperature_map .tracker_t {
     width: 64px;
     height: 64px;
     background-image: url(img/resources.png);
@@ -479,11 +573,11 @@
     background-size: calc(52 * 100%);
   }
 
-  #tracker_gen::after {
+  #main_board .tracker_gen::after {
     display: none;
   }
 
-  #oxygen_map #tracker_o {
+  #oxygen_map .tracker_o {
     position: absolute;
     width: 8%;
     height: 24%;
@@ -492,7 +586,7 @@
     padding: 0;
   }
 
-  #temperature_map #tracker_t {
+  #temperature_map .tracker_t {
     position: absolute;
     height: 7%;
     width: 39%;
@@ -502,7 +596,7 @@
     padding: 0;
   }
 
-  #tracker_gen {
+  #main_board .tracker_gen {
     position: absolute;
     width: calc(var(--stan-width) * 0.2);
     height: calc(var(--stan-width) * 0.2);
@@ -511,7 +605,7 @@
   @for $num from 1 through 25 {
     $row: $num - 1;
 
-    #tracker_gen[data-state="#{$num}"] {
+    #main_board .tracker_gen[data-state="#{$num}"] {
       left: -74%;
       top: calc(100% - $row * (100% / 24));
     }
@@ -547,7 +641,7 @@
     position: relative;
     border-radius: unset;
     background: unset;
-   /* outline: 1px dashed var(--plcolor); */
+    /* outline: 1px dashed var(--plcolor); */
     min-width: var(--map-board-with);
     display: flex;
   }
@@ -562,6 +656,7 @@
       width: unset;
       display: none;
     }
+
     .corp_logo {
       display: none;
     }
@@ -723,49 +818,16 @@
     top: 58%;
     left: 69%;
   }
-}
 
-.card.cardhelp {
-  background-size: 1000% auto;
-}
-
-
-@for $num from 1 through 80 {
-  $i: $num - 1;
-  $col: $i % 10;
-  $row: (
-    $i - $col) / 10;
-
-  .mfull .card_main_#{$num},
-  .cardhelp.card_main_#{$num} {
-    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
-    );
-  background-image: url(img/full/cards1.jpg);
-}
-}
-
-@for $num from 81 through 160 {
-  $i: $num - 81;
-  $col: $i % 10;
-  $row: (
-    $i - $col) / 10;
-
-  .mfull .card_main_#{$num},
-  .cardhelp.card_main_#{$num} {
-    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
-    );
-  background-image: url(img/full/cards2.jpg);
-}
-}
-
-@for $num from 161 through 208 {
-  $i: $num - 161;
-  $col: $i % 10;
-  $row: calc(($i - $col) / 10);
-
-  .mfull .card_main_#{$num},
-  .cardhelp.card_main_#{$num} {
-    background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
-    background-image: url(img/full/cards3.jpg);
+  .res_n1 {
+    width: 20px;
+    height: 20px;
+    background-color: unset;
+    box-shadow: rgba(11, 11, 11, 0.6784313725) 2px 2px 3px 1px;
+    margin-top: 3px;
+    background-image: url(img/resources.png);
+    background-position: 84.3% 99%;
+    border-radius: 25%;
+    background-size: 2250%;
   }
 }

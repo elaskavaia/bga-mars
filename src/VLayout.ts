@@ -39,7 +39,7 @@ class VLayout {
     // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
     // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
 
-    dojo.place("tracker_gen", "map_left");
+    dojo.place("alt_tracker_gen", "map_left");
     dojo.destroy("outer_generation");
 
     dojo.place("deck_main", "decks_area");
@@ -58,6 +58,12 @@ class VLayout {
       $("tableau_" + color).dataset["visibility_" + i] = "1";
       $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
     }
+
+    var parent = document.querySelector(".debug_section"); // studio only
+    if (!parent)
+        $(`pboard_${color}`).style.display  = 'none'; // disable for now
+  
+
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {
@@ -97,6 +103,8 @@ class VLayout {
       return;
     }
     const ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+    const rtrackers = ["m", "s", "u", "p", "e", "h"];
+
     if (tokenNode.id.startsWith("tracker_")) {
       const type = getPart(tokenNode.id, 1);
       if (ptrackers.includes(type)) {
@@ -125,6 +133,11 @@ class VLayout {
         let yp = y * 4;
         markerNode.style.marginLeft = `${xp}%`;
         markerNode.style.marginTop = `${yp}%`;
+      } else
+      if (rtrackers.includes(type)) {
+        const color = getPart(tokenNode.id, 2);
+        const state = parseInt(tokenNode.getAttribute("data-state"));
+        new ScatteredResourceZone(this.game, `resarea_${type}_${color}`).setValue(state);
       }
     }
   }

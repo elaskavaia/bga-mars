@@ -147,7 +147,7 @@
   align-items: center;
 }
 
-#oceans_pile #tracker_w {
+#oceans_pile .tracker_w {
   /*
   position: absolute;
   top: -11%;
@@ -165,11 +165,10 @@
   padding: 1%;*/
   font-size: calc(var(--stan-width) * 0.2);
   color: gold;
-  font-family: 'SpaceFont';
   background-image: unset;
 }
 
-#oceans_pile #tracker_w::after {
+#oceans_pile .tracker_w::after {
   content:attr(data-calc);
 }
 

@@ -439,7 +439,8 @@
   content: attr(data-val);
 }
 
-#temperature_map #tracker_t {
+#temperature_map {
+.tracker_t {
   position: absolute;
   height: 3%;
   width: 29%;
@@ -449,11 +450,11 @@
   background-image: unset;
 }
 
-#temperature_map #tracker_t::after {
+.tracker_t::after {
   content: revert;
 }
 
-#temperature_map #tracker_t[data-state="-30"] {
+.tracker_t[data-state="-30"] {
   bottom: 1%;
   height: 12%;
   width: 68%;
@@ -461,83 +462,83 @@
   border-radius: 50%;
 }
 
-#temperature_map #tracker_t[data-state="-28"] {
+.tracker_t[data-state="-28"] {
   bottom: 12.8%;
 }
 
-#temperature_map #tracker_t[data-state="-26"] {
+.tracker_t[data-state="-26"] {
   bottom: 17.3%;
 }
 
-#temperature_map #tracker_t[data-state="-24"] {
+.tracker_t[data-state="-24"] {
   bottom: 21.8%;
 }
 
-#temperature_map #tracker_t[data-state="-22"] {
+.tracker_t[data-state="-22"] {
   bottom: 26.3%;
 }
 
-#temperature_map #tracker_t[data-state="-20"] {
+.tracker_t[data-state="-20"] {
   bottom: 30.8%;
 }
 
-#temperature_map #tracker_t[data-state="-18"] {
+.tracker_t[data-state="-18"] {
   bottom: 35.3%;
 }
 
-#temperature_map #tracker_t[data-state="-16"] {
+.tracker_t[data-state="-16"] {
   bottom: 39.8%;
 }
 
-#temperature_map #tracker_t[data-state="-14"] {
+.tracker_t[data-state="-14"] {
   bottom: 44.3%;
 }
 
-#temperature_map #tracker_t[data-state="-12"] {
+.tracker_t[data-state="-12"] {
   bottom: 48.8%;
 }
 
-#temperature_map #tracker_t[data-state="-10"] {
+.tracker_t[data-state="-10"] {
   bottom: 53.3%;
 }
 
-#temperature_map #tracker_t[data-state="-8"] {
+.tracker_t[data-state="-8"] {
   bottom: 57.8%;
 }
 
-#temperature_map #tracker_t[data-state="-6"] {
+.tracker_t[data-state="-6"] {
   bottom: 62.3%;
 }
 
-#temperature_map #tracker_t[data-state="-4"] {
+.tracker_t[data-state="-4"] {
   bottom: 66.8%;
 }
 
-#temperature_map #tracker_t[data-state="-2"] {
+.tracker_t[data-state="-2"] {
   bottom: 71.3%;
 }
 
-#temperature_map #tracker_t[data-state="0"] {
+.tracker_t[data-state="0"] {
   bottom: 75.8%;
 }
 
-#temperature_map #tracker_t[data-state="2"] {
+.tracker_t[data-state="2"] {
   bottom: 80.3%;
 }
 
-#temperature_map #tracker_t[data-state="4"] {
+.tracker_t[data-state="4"] {
   bottom: 84.8%;
 }
 
-#temperature_map #tracker_t[data-state="6"] {
+.tracker_t[data-state="6"] {
   bottom: 89.3%;
 }
 
-#temperature_map #tracker_t[data-state="8"] {
+.tracker_t[data-state="8"] {
   bottom: 93.8%;
 }
 
-
+}
 
 #oxygen_map {
   /* gfx ratio : 0.2815315*/
@@ -571,175 +572,176 @@
 
 }
 
-.oxygen_scale_item::after {
-  /* content: attr(data-val);*/
-}
 
-#oxygen_map #tracker_o {
-  position: absolute;
-  width: 4%;
-  height: 14%;
-  box-shadow: #ffcb00 0px 0px 0px 3px;
-  border-radius: 50%;
-  transition: 600ms all;
-  padding: 0.3%;
-  background-image: unset;
-}
+#oxygen_map {
+  .tracker_o {
+    position: absolute;
+    width: 4%;
+    height: 14%;
+    box-shadow: #ffcb00 0px 0px 0px 3px;
+    border-radius: 50%;
+    transition: 600ms all;
+    padding: 0.3%;
+    background-image: unset;
+    background-position: unset;
+  }
 
-#oxygen_map #tracker_o::after {
-  content: revert;
-}
+  .tracker_o::after {
+    content: revert;
+  }
 
-.oxygen_scale_item[data-val="0"] {
-  left: 6%;
-  top: 64%;
-}
 
-.oxygen_scale_item[data-val="1"] {
-  left: 11%;
-  top: 51%
-}
+  .oxygen_scale_item[data-val="0"] {
+    left: 6%;
+    top: 64%;
+  }
 
-.oxygen_scale_item[data-val="2"] {
-  left: 16.5%;
-  top: 36%
-}
+  .oxygen_scale_item[data-val="1"] {
+    left: 11%;
+    top: 51%
+  }
 
-.oxygen_scale_item[data-val="3"] {
-  left: 22%;
-  top: 26%
-}
+  .oxygen_scale_item[data-val="2"] {
+    left: 16.5%;
+    top: 36%
+  }
 
-.oxygen_scale_item[data-val="4"] {
-  left: 29%;
-  top: 17%
-}
+  .oxygen_scale_item[data-val="3"] {
+    left: 22%;
+    top: 26%
+  }
 
-.oxygen_scale_item[data-val="5"] {
-  left: 34.5%;
-  top: 11%
-}
+  .oxygen_scale_item[data-val="4"] {
+    left: 29%;
+    top: 17%
+  }
 
-.oxygen_scale_item[data-val="6"] {
-  left: 41%;
-  top: 7%
-}
+  .oxygen_scale_item[data-val="5"] {
+    left: 34.5%;
+    top: 11%
+  }
 
-.oxygen_scale_item[data-val="7"] {
-  left: 47.5%;
-  top: 6%
-}
+  .oxygen_scale_item[data-val="6"] {
+    left: 41%;
+    top: 7%
+  }
 
-.oxygen_scale_item[data-val="8"] {
-  left: 54%;
-  top: 7%
-}
+  .oxygen_scale_item[data-val="7"] {
+    left: 47.5%;
+    top: 6%
+  }
 
-.oxygen_scale_item[data-val="9"] {
-  left: 60%;
-  top: 11%
-}
+  .oxygen_scale_item[data-val="8"] {
+    left: 54%;
+    top: 7%
+  }
 
-.oxygen_scale_item[data-val="10"] {
-  left: 67%;
-  top: 17%
-}
+  .oxygen_scale_item[data-val="9"] {
+    left: 60%;
+    top: 11%
+  }
 
-.oxygen_scale_item[data-val="11"] {
-  left: 72.5%;
-  top: 24.5%
-}
+  .oxygen_scale_item[data-val="10"] {
+    left: 67%;
+    top: 17%
+  }
 
-.oxygen_scale_item[data-val="12"] {
-  left: 78.5%;
-  top: 35%
-}
+  .oxygen_scale_item[data-val="11"] {
+    left: 72.5%;
+    top: 24.5%
+  }
 
-.oxygen_scale_item[data-val="13"] {
-  left: 84%;
-  top: 48%
-}
+  .oxygen_scale_item[data-val="12"] {
+    left: 78.5%;
+    top: 35%
+  }
 
-.oxygen_scale_item[data-val="14"] {
-  left: 89.5%;
-  top: 63%
-}
+  .oxygen_scale_item[data-val="13"] {
+    left: 84%;
+    top: 48%
+  }
 
-#oxygen_map #tracker_o[data-state="0"] {
+  .oxygen_scale_item[data-val="14"] {
+    left: 89.5%;
+    top: 63%
+  }
+
+.tracker_o[data-state="0"] {
   display: revert;
   opacity: 1;
   left: 6%;
   top: 64%;
 }
 
-#oxygen_map #tracker_o[data-state="1"] {
+.tracker_o[data-state="1"] {
   left: 10.5%;
   top: 50%
 }
 
-#oxygen_map #tracker_o[data-state="2"] {
+.tracker_o[data-state="2"] {
   left: 16.5%;
   top: 36%
 }
 
-#oxygen_map #tracker_o[data-state="3"] {
+.tracker_o[data-state="3"] {
   left: 22%;
   top: 25%
 }
 
-#oxygen_map #tracker_o[data-state="4"] {
+.tracker_o[data-state="4"] {
   left: 28.5%;
   top: 17%
 }
 
-#oxygen_map #tracker_o[data-state="5"] {
+.tracker_o[data-state="5"] {
   left: 34.5%;
   top: 11%
 }
 
-#oxygen_map #tracker_o[data-state="6"] {
+.tracker_o[data-state="6"] {
   left: 40.7%;
   top: 7%
 }
 
-#oxygen_map #tracker_o[data-state="7"] {
+.tracker_o[data-state="7"] {
   left: 47%;
   top: 5.5%
 }
 
-#oxygen_map #tracker_o[data-state="8"] {
+.tracker_o[data-state="8"] {
   left: 53.5%;
   top: 7%
 }
 
-#oxygen_map #tracker_o[data-state="9"] {
+.tracker_o[data-state="9"] {
   left: 60%;
   top: 10%
 }
 
-#oxygen_map #tracker_o[data-state="10"] {
+.tracker_o[data-state="10"] {
   left: 66.5%;
   top: 16%
 }
 
-#oxygen_map #tracker_o[data-state="11"] {
+.tracker_o[data-state="11"] {
   left: 72%;
   top: 24%
 }
 
-#oxygen_map #tracker_o[data-state="12"] {
+.tracker_o[data-state="12"] {
   left: 78.3%;
   top: 34%
 }
 
-#oxygen_map #tracker_o[data-state="13"] {
+.tracker_o[data-state="13"] {
   left: 84%;
   top: 46%
 }
 
-#oxygen_map #tracker_o[data-state="14"] {
+.tracker_o[data-state="14"] {
   left: 89%;
   top: 62%
+}
 }
 
 /*standard projects*/

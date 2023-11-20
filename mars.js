@@ -2483,12 +2483,6 @@ var GameTokens = /** @class */ (function (_super) {
             return;
         this.saveRestore(node);
         node.setAttribute("data-state", newState);
-        if (newState > 0) {
-            node.setAttribute("data-sign", "+");
-        }
-        else {
-            node.removeAttribute("data-sign");
-        }
     };
     GameTokens.prototype.getDomTokenLocation = function (tokenId) {
         return $(tokenId).parentNode.id;
@@ -2536,7 +2530,7 @@ var GameTokens = /** @class */ (function (_super) {
         this.placeTokenWithTips(tokenId, tokenInfo, args);
     };
     GameTokens.prototype.placeToken = function (token, tokenInfo, args) {
-        var _a;
+        var _a, _b;
         try {
             var tokenNode = $(token);
             if (args === undefined) {
@@ -2560,7 +2554,7 @@ var GameTokens = /** @class */ (function (_super) {
                 }
                 noAnnimation = true;
             }
-            var placeInfo = this.getPlaceRedirect(tokenInfo);
+            var placeInfo = (_a = args.placeInfo) !== null && _a !== void 0 ? _a : this.getPlaceRedirect(tokenInfo);
             var location_1 = placeInfo.location;
             // console.log(token + ": " + " -place-> " + place + " " + tokenInfo.state);
             this.saveRestore(token);
@@ -2595,7 +2589,7 @@ var GameTokens = /** @class */ (function (_super) {
                 noAnnimation = true;
             }
             // console.log(token + ": " + tokenInfo.key + " -move-> " + place + " " + tokenInfo.state);
-            var animtime = (_a = placeInfo.animtime) !== null && _a !== void 0 ? _a : this.defaultAnimationDuration;
+            var animtime = (_b = placeInfo.animtime) !== null && _b !== void 0 ? _b : this.defaultAnimationDuration;
             if (!tokenNode.parentNode)
                 noAnnimation = true;
             if (noAnnimation)
@@ -3631,6 +3625,15 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         if (!node.id)
             return;
+        // to show + signs in some cases
+        if (node.id.startsWith("tracker_")) {
+            if (newState > 0) {
+                node.setAttribute("data-sign", "+");
+            }
+            else {
+                node.removeAttribute("data-sign");
+            }
+        }
         //intercept player passed state
         if (node.id.startsWith("tracker_passed_")) {
             var plColor = node.id.replace("tracker_passed_", "");
@@ -3641,10 +3644,6 @@ var GameXBody = /** @class */ (function (_super) {
             else {
                 this.enablePlayerPanel(plId);
             }
-        }
-        //tracker w
-        if (node.id.startsWith("tracker_w")) {
-            $(node.id).dataset.calc = (9 - parseInt(newState)).toString();
         }
         //local : number of cities on mars
         if (node.id.startsWith("tracker_city_")) {
@@ -3660,6 +3659,10 @@ var GameXBody = /** @class */ (function (_super) {
         var nodeCopy = $(trackerCopy);
         if (nodeCopy) {
             _super.prototype.setDomTokenState.call(this, trackerCopy, newState);
+            //alt_tracker_w (on the map)
+            if (node.id.startsWith("tracker_w")) {
+                $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();
+            }
         }
     };
     //finer control on how to place things
@@ -3838,24 +3841,28 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tokenInfo.key == "starting_player") {
             result.location = tokenInfo.location.replace("tableau_", "fpholder_");
         }
-        else if (tokenInfo.key.startsWith("resource_") && !this.isLayoutFull()) {
-            if (tokenInfo.location.startsWith("card_main_")) {
-                //resource added to card
-                result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
-                var dest_holder = tokenInfo.location.replace("card_main_", "resource_holder_");
-                var dest_counter = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
-                $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
-                $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
+        else if (tokenInfo.key.startsWith("resource_")) {
+            if (this.isLayoutFull()) {
             }
-            else if (tokenInfo.location.startsWith("tableau_")) {
-                //resource moved from card
-                //which card ?
-                var dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
-                if (dest_holder.includes("holder_")) {
-                    var dest_counter = dest_holder.replace("holder_", "holder_counter_");
-                    if (dojo.byId(dest_holder)) {
-                        $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
-                        $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
+            else {
+                if (tokenInfo.location.startsWith("card_main_")) {
+                    //resource added to card
+                    result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
+                    var dest_holder = tokenInfo.location.replace("card_main_", "resource_holder_");
+                    var dest_counter = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
+                    $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
+                    $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
+                }
+                else if (tokenInfo.location.startsWith("tableau_")) {
+                    //resource moved from card
+                    //which card ?
+                    var dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
+                    if (dest_holder.includes("holder_")) {
+                        var dest_counter = dest_holder.replace("holder_", "holder_counter_");
+                        if (dojo.byId(dest_holder)) {
+                            $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
+                            $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
+                        }
                     }
                 }
             }
@@ -4726,6 +4733,65 @@ var LocalSettings = /** @class */ (function () {
     };
     return LocalSettings;
 }());
+/**
+ * This represents ui zone that containers resource token usually randomly scattered
+ * This normally can be represented by resouce count alone but doing the visual effect for shits and giggles
+ */
+var ScatteredResourceZone = /** @class */ (function () {
+    function ScatteredResourceZone(game, zoneId, resclass) {
+        if (resclass === void 0) { resclass = "res"; }
+        this.game = game;
+        this.resclass = resclass;
+        this.zoneId = zoneId;
+    }
+    ScatteredResourceZone.prototype.setValue = function (value, redraw) {
+        if (redraw === void 0) { redraw = true; }
+        this.value = value;
+        if (redraw)
+            this.redraw();
+    };
+    ScatteredResourceZone.prototype.redraw = function () {
+        if (!$(this.zoneId))
+            return;
+        var nom = 1;
+        var divs = $(this.zoneId).querySelectorAll(".".concat(this.resclass, "_n").concat(nom));
+        var curvalue = divs.length;
+        while (curvalue < this.value) {
+            this.addResource(nom);
+            curvalue++;
+        }
+    };
+    ScatteredResourceZone.prototype.addResource = function (nom) {
+        if (nom === void 0) { nom = 1; }
+        var all = document.querySelectorAll(".".concat(this.resclass, "_n").concat(nom));
+        var num = all.length + 1;
+        var id = "".concat(this.resclass, "_n").concat(nom, "_").concat(num);
+        var parent = $(this.zoneId);
+        var size = 20; // XXX
+        var w = parent.offsetWidth;
+        if (!w)
+            w = 100; // XXX why its not working?
+        var h = parent.offsetHeight;
+        if (!h)
+            h = 100;
+        var x = Math.floor((Math.random() * (w - size))) + size / 2;
+        var y = Math.floor((Math.random() * (h - size))) + size / 2;
+        var pi = {
+            location: this.zoneId,
+            key: id,
+            state: nom,
+            x: x,
+            y: y,
+            position: 'absolute',
+            from: 'main_board'
+        };
+        //console.log("adding res "+id+" on "+this.zoneId);
+        this.game.placeTokenLocal(id, this.zoneId, nom, { placeInfo: pi });
+        $(id).classList.add(this.resclass);
+        $(id).classList.add("".concat(this.resclass, "_n").concat(nom));
+    };
+    return ScatteredResourceZone;
+}());
 var VLayout = /** @class */ (function () {
     function VLayout(game) {
         this.game = game;
@@ -4762,7 +4828,7 @@ var VLayout = /** @class */ (function () {
         // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
         // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
         // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
-        dojo.place("tracker_gen", "map_left");
+        dojo.place("alt_tracker_gen", "map_left");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
         dojo.place("discard_main", "decks_area");
@@ -4776,6 +4842,9 @@ var VLayout = /** @class */ (function () {
             $("tableau_" + color).dataset["visibility_" + i] = "1";
             $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
         }
+        var parent = document.querySelector(".debug_section"); // studio only
+        if (!parent)
+            $("pboard_".concat(color)).style.display = 'none'; // disable for now
     };
     VLayout.prototype.renderSpecificToken = function (tokenNode) {
         if (!this.game.isLayoutFull())
@@ -4817,6 +4886,7 @@ var VLayout = /** @class */ (function () {
             return;
         }
         var ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+        var rtrackers = ["m", "s", "u", "p", "e", "h"];
         if (tokenNode.id.startsWith("tracker_")) {
             var type = getPart(tokenNode.id, 1);
             if (ptrackers.includes(type)) {
@@ -4843,6 +4913,11 @@ var VLayout = /** @class */ (function () {
                 var yp = y * 4;
                 markerNode.style.marginLeft = "".concat(xp, "%");
                 markerNode.style.marginTop = "".concat(yp, "%");
+            }
+            else if (rtrackers.includes(type)) {
+                var color = getPart(tokenNode.id, 2);
+                var state = parseInt(tokenNode.getAttribute("data-state"));
+                new ScatteredResourceZone(this.game, "resarea_".concat(type, "_").concat(color)).setValue(state);
             }
         }
     };

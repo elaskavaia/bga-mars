@@ -892,6 +892,15 @@ awarded.`);
     if (!node) return;
     if (!node.id) return;
 
+    // to show + signs in some cases
+    if (node.id.startsWith("tracker_")) {
+      if (newState > 0) {
+        node.setAttribute("data-sign", "+");
+      } else {
+        node.removeAttribute("data-sign");
+      }
+    }
+
     //intercept player passed state
     if (node.id.startsWith("tracker_passed_")) {
       const plColor = node.id.replace("tracker_passed_", "");
@@ -901,11 +910,6 @@ awarded.`);
       } else {
         this.enablePlayerPanel(plId);
       }
-    }
-
-    //tracker w
-    if (node.id.startsWith("tracker_w")) {
-      $(node.id).dataset.calc = (9 - parseInt(newState)).toString();
     }
 
     //local : number of cities on mars
@@ -924,6 +928,11 @@ awarded.`);
     const nodeCopy = $(trackerCopy);
     if (nodeCopy) {
       super.setDomTokenState(trackerCopy, newState);
+
+      //alt_tracker_w (on the map)
+      if (node.id.startsWith("tracker_w")) {
+        $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();
+      }
     }
   }
 
@@ -1097,23 +1106,27 @@ awarded.`);
       result.nop = true;
     } else if (tokenInfo.key == "starting_player") {
       result.location = tokenInfo.location.replace("tableau_", "fpholder_");
-    } else if (tokenInfo.key.startsWith("resource_") && !this.isLayoutFull()) {
-      if (tokenInfo.location.startsWith("card_main_")) {
-        //resource added to card
-        result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
-        const dest_holder: string = tokenInfo.location.replace("card_main_", "resource_holder_");
-        const dest_counter: string = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
-        $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
-        $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
-      } else if (tokenInfo.location.startsWith("tableau_")) {
-        //resource moved from card
-        //which card ?
-        const dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
-        if (dest_holder.includes("holder_")) {
-          const dest_counter = dest_holder.replace("holder_", "holder_counter_");
-          if (dojo.byId(dest_holder)) {
-            $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
-            $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
+    } else if (tokenInfo.key.startsWith("resource_")) {
+      if (this.isLayoutFull()) {
+
+      } else {
+        if (tokenInfo.location.startsWith("card_main_")) {
+          //resource added to card
+          result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
+          const dest_holder: string = tokenInfo.location.replace("card_main_", "resource_holder_");
+          const dest_counter: string = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
+          $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
+          $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
+        } else if (tokenInfo.location.startsWith("tableau_")) {
+          //resource moved from card
+          //which card ?
+          const dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
+          if (dest_holder.includes("holder_")) {
+            const dest_counter = dest_holder.replace("holder_", "holder_counter_");
+            if (dojo.byId(dest_holder)) {
+              $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
+              $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
+            }
           }
         }
       }
