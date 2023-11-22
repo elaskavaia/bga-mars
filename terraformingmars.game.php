@@ -2,13 +2,13 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * mars implementation : © Alena Laskavaia <laskava@gmail.com>
+ * game implementation : © Alena Laskavaia <laskava@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  * -----
  *
- * mars.game.php
+ * .game.php
  *
  * This is the main file for your game logic.
  *]
@@ -18,14 +18,14 @@
 
 require_once "modules/PGameXBody.php";
 
-class mars extends PGameXBody {
+class terraformingmars extends PGameXBody {
     function __construct() {
         parent::__construct();
     }
 
     protected function getGameName() {
         // Used for translations and stuff. Please do not modify.
-        return "mars";
+        return "terraformingmars";
     }
 
     /*

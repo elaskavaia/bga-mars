@@ -1,13 +1,13 @@
 {
-  "name": "bga.mars",
+  "name": "bga.terraformingmars",
   "version": "1.0.0",
   "description": "",
-  "main": "mars.js",
+  "main": "terraformingmars.js",
   "scripts": {
     "build:ts": "tsc",
     "watch:ts": "tsc --watch",
-    "build:scss": "sass --no-source-map src/css/GameXBody.scss mars.css",
-    "watch:scss": "sass --watch  src/css/GameXBody.scss mars.css",
+    "build:scss": "sass --no-source-map src/css/GameXBody.scss terraformingmars.css",
+    "watch:scss": "sass --watch  src/css/GameXBody.scss terraformingmars.css",
     "watch": "npm run watch:ts && npm run watch:scss",
     "build": "npm run build:ts && npm run build:scss",
     "test": "cd modules; APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ phpunit --bootstrap ./_autoload.php --colors=always tests",
