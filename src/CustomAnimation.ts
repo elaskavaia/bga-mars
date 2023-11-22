@@ -85,6 +85,47 @@ class CustomAnimation {
                             }
                     `
       };
+    this.animations['fadein_and_drop'] =
+      {
+        name: 'fadein_and_drop', duration: 800, easing: 'ease-out',
+        keyframes: `   
+                         0% {
+                                 transform: translateY(-1000%);
+                                 opacity:0;
+                            }
+                        50% {
+                                 opacity:1;
+                            }
+                         100% {
+                                 transform: translateY(0);
+                                 opacity:1;
+                            }
+                    `
+      };
+     this.animations['award_pop'] =
+      {
+        name: 'award_pop', duration: 800, easing: 'ease-in',
+        keyframes: `   
+                         0% {
+                                transform: translateY(0) scale(1) rotateY(360deg);
+                            }
+                        100% {
+                                transform: translateY(-200%) scale(1.2) rotateY(0deg);
+                            }
+                    `
+      };
+    this.animations['award_depop'] =
+      {
+        name: 'award_depop', duration: 800, easing: 'ease-in',
+        keyframes: `   
+                        0% {
+                                transform: translateY(-200%) scale(1.2)  rotateY(0deg);
+                            }
+                        100% {
+                                transform: translateY(0) scale(1) rotateY(360deg);
+                            }
+                    `
+      };
     this.addAnimationsToDocument(this.animations);
 
   }
@@ -162,7 +203,60 @@ class CustomAnimation {
     });
   }
 
-  moveResources(tracker:string,qty:number) {
+  animatePlaceMarker(marker_id:string, place_id:string):Promise<any> {
+    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+
+    let unclip:string[]=[];
+    if (place_id.startsWith('tile')) {
+      unclip.push(place_id);
+      unclip.push($(place_id).parentElement.id);
+    }
+
+    let p_start:Promise<any>;
+    if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+      p_start= this.playCssAnimation(place_id,'award_pop',()=>{
+        dojo.style(marker_id,'opacity','0');
+        $(place_id).setAttribute('style', 'box-shadow: none !important;');
+      },()=>{
+        $(place_id).setAttribute('style', 'transform: translateY(-200%) scale(1.2); box-shadow: none !important;');
+      });
+    } else {
+      p_start= this.getImmediatePromise();
+    }
+    let p_mid= p_start
+      .then(()=>{return this.playCssAnimation(marker_id, 'fadein_and_drop', ()=>{
+       dojo.style(marker_id,'z-index','10');
+        dojo.style(marker_id,'opacity','');
+      for (let item of unclip) {
+        $(item).setAttribute('style', 'clip-path: none; outline: none; box-shadow: none !important; background-color: revert;');
+      }
+
+    }, ()=>{
+      dojo.style(marker_id,'z-index','');
+      for (let item of unclip) {
+           $(item).setAttribute('style', '');
+      }
+    });});
+
+    if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+        return p_mid.then( ()=>{
+          return this.playCssAnimation(place_id,'award_depop',()=>{
+            $(place_id).setAttribute('style', 'box-shadow: none !important;');
+            }
+          ,()=>{
+              $(place_id).setAttribute('style', '');
+                })
+        });
+    } else {
+      return this.getImmediatePromise();
+    }
+
+
+
+
+  }
+
+  moveResources(tracker:string,qty:number):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     if (qty==0) return this.getImmediatePromise();
 
@@ -312,12 +406,10 @@ class CustomAnimation {
 
   }
 
-  slideToObjectAndAttach(movingId, destinationId,  rotation = 0,posX=undefined, posY=undefined) {
+  slideToObjectAndAttach(movingId:string, destinationId:string,  rotation:number = 0,posX:number=undefined, posY:number=undefined) {
     const object =document.getElementById(movingId);
     const destination = document.getElementById(destinationId);
     const zoom = 1;
-
-
 
     if (destination.contains(object)) {
       return Promise.resolve(true);
@@ -379,7 +471,7 @@ class CustomAnimation {
     });
 }
 
-  nodeExists(node_id:string) {
+  nodeExists(node_id:string):boolean {
     var node = dojo.byId(node_id);
     if (!node) {
       return false;
