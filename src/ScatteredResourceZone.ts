@@ -29,13 +29,24 @@ class ScatteredResourceZone {
       this.addResource(nom);
       curvalue++;
     }
+    while (curvalue > this.value) {
+      this.removeResource(nom);
+      curvalue--;
+    }
   }
 
   public addResource(nom: number = 1) {
+    const supply = 'main_board';
+    const avail = $(supply).querySelector(`.${this.resclass}_n${nom}`);
+    if (avail) {
+      var id = avail.id;
+    } else {
+      const all = document.querySelectorAll(`.${this.resclass}_n${nom}`);
+      const num = all.length + 1;
+      var id = `${this.resclass}_n${nom}_${num}`;
+    }
     
-    const all = document.querySelectorAll(`.${this.resclass}_n${nom}`);
-    const num = all.length + 1;
-    const id = `${this.resclass}_n${nom}_${num}`;
+
     const parent = $(this.zoneId);
     const size = 20; // XXX
 
@@ -57,5 +68,19 @@ class ScatteredResourceZone {
     this.game.placeTokenLocal(id, this.zoneId, nom, { placeInfo: pi });
     $(id).classList.add(this.resclass);
     $(id).classList.add(`${this.resclass}_n${nom}`);
+  }
+
+
+  public removeResource(nom: number = 1) {
+    
+    const parent = $(this.zoneId);
+    const cube = parent.querySelector(`.${this.resclass}_n${nom}`);
+    if (!cube) return;
+    
+    const id = cube.id
+
+    //console.log("removing res "+id+" on "+this.zoneId);
+    this.game.stripPosition(id);
+    this.game.placeTokenLocal(id, 'main_board');
   }
 }

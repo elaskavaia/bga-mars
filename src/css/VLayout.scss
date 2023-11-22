@@ -507,6 +507,12 @@
     }
   }
 
+  .tableau[data-visibility_0="0"] {
+    .pboard {
+      display: none;
+    }
+  }
+
   .location .card:hover {
     z-index: 10;
     transform: unset;
@@ -766,6 +772,10 @@
 
   .viewcards_button[data-cardtype="3"] .buttoncard {
     background-color: #e1ac18;
+  }
+
+  .viewcards_button[data-cardtype="0"] .buttoncard {
+       background-color: #8b452d;
   }
 
   .viewcards_button[data-selected="0"] i {

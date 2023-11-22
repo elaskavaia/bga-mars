@@ -9,9 +9,6 @@ class VLayout {
     const board = $(`player_area_${color}`);
     div.appendChild(board);
 
-    $(`tableau_${color}`).setAttribute("data-visibility_3", "1");
-    $(`tableau_${color}`).setAttribute("data-visibility_1", "1");
-
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
@@ -21,13 +18,13 @@ class VLayout {
 
     const headerNode = $(`player_board_header_${color}`);
     dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-    dojo.place(`player_area_name_${color}`,headerNode, "first");
-  
-    dojo.removeClass(headerNode,'playerboard_header');
-    dojo.addClass(headerNode,'playerboard_header_v');
+    dojo.place(`player_area_name_${color}`, headerNode, "first");
 
-    $(`player_area_name_${color}`).setAttribute('data-player-name',name);
-    $(`player_area_name_${color}`).innerHTML = '';
+    dojo.removeClass(headerNode, "playerboard_header");
+    dojo.addClass(headerNode, "playerboard_header_v");
+
+    $(`player_area_name_${color}`).setAttribute("data-player-name", name);
+    $(`player_area_name_${color}`).innerHTML = "";
 
     const places = ["tracker_city", "tracker_forest", "tracker_land"];
     for (const key of places) {
@@ -54,16 +51,25 @@ class VLayout {
 
     dojo.place(`counter_draw_${color}`, `limbo`);
 
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 0; i <= 3; i++) {
       $("tableau_" + color).dataset["visibility_" + i] = "1";
       $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
     }
 
-    var parent = document.querySelector(".debug_section"); // studio only
-    if (!parent)
-        $(`pboard_${color}`).style.display  = 'none'; // disable for now
-  
 
+
+    // var parent = document.querySelector(".debug_section"); // studio only
+    // if (!parent)
+    //     $(`pboard_${color}`).style.display  = 'none'; // disable for now
+  }
+
+  setupDone() {
+    const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
+
+    document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {
+      // have to attach tooltip directly, this element does not have a game model
+      this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
+    });
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {
@@ -108,7 +114,6 @@ class VLayout {
     if (tokenNode.id.startsWith("tracker_")) {
       const type = getPart(tokenNode.id, 1);
       if (ptrackers.includes(type)) {
-
         const color = getPart(tokenNode.id, 2);
         const marker = "marker_" + tokenNode.id;
         let markerNode = $(marker);
@@ -122,7 +127,7 @@ class VLayout {
         const rem = state % 10;
         let x = rem;
         let y = 0;
-        if (rem>5) {
+        if (rem > 5) {
           x = rem - 5;
           y = 1;
         } else if (state < 0) {
@@ -133,8 +138,7 @@ class VLayout {
         let yp = y * 4;
         markerNode.style.marginLeft = `${xp}%`;
         markerNode.style.marginTop = `${yp}%`;
-      } else
-      if (rtrackers.includes(type)) {
+      } else if (rtrackers.includes(type)) {
         const color = getPart(tokenNode.id, 2);
         const state = parseInt(tokenNode.getAttribute("data-state"));
         new ScatteredResourceZone(this.game, `resarea_${type}_${color}`).setValue(state);
@@ -144,7 +148,7 @@ class VLayout {
 
   convertInto3DCube(tokenNode: HTMLElement, color?: string) {
     dojo.addClass(tokenNode, "mcube");
-    if (color) dojo.addClass(tokenNode, "mcube-"+color);
+    if (color) dojo.addClass(tokenNode, "mcube-" + color);
     for (let i = 0; i <= 5; i++) {
       dojo.place(`<div class="mcube-face  mcube-face-${i}"></div>`, tokenNode);
     }

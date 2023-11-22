@@ -447,6 +447,7 @@ class GameBasics extends GameGui {
       return;
     }
     var clone = this.projectOnto(mobileNode, "_temp");
+    clone.style.transitionDuration = "0";
     mobileNode.style.opacity = "0"; // hide original
 
     const rel = mobileStyle?.relation;
@@ -464,8 +465,8 @@ class GameBasics extends GameGui {
 
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
     setStyleAttributes(desti, mobileStyle);
-    clone.style.transitionProperty = "all";
     clone.style.transitionDuration = duration + "ms";
+    clone.style.transitionProperty = "all";
     clone.style.visibility = "visible";
     clone.style.opacity = "1";
     // that will cause animation

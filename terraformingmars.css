@@ -7582,6 +7582,9 @@
   width: 0px;
   height: 20px;
 }
+.mfull .tableau[data-visibility_0="0"] .pboard {
+  display: none;
+}
 .mfull .location .card:hover {
   z-index: 10;
   transform: unset;
@@ -7907,6 +7910,9 @@
 }
 .mfull .viewcards_button[data-cardtype="3"] .buttoncard {
   background-color: #e1ac18;
+}
+.mfull .viewcards_button[data-cardtype="0"] .buttoncard {
+  background-color: #8b452d;
 }
 .mfull .viewcards_button[data-selected="0"] i {
   display: none;

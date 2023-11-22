@@ -373,6 +373,7 @@ var GameBasics = /** @class */ (function (_super) {
             return;
         }
         var clone = this.projectOnto(mobileNode, "_temp");
+        clone.style.transitionDuration = "0";
         mobileNode.style.opacity = "0"; // hide original
         var rel = mobileStyle === null || mobileStyle === void 0 ? void 0 : mobileStyle.relation;
         if (rel) {
@@ -388,8 +389,8 @@ var GameBasics = /** @class */ (function (_super) {
         mobileNode.offsetHeight; // recalc
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
         setStyleAttributes(desti, mobileStyle);
-        clone.style.transitionProperty = "all";
         clone.style.transitionDuration = duration + "ms";
+        clone.style.transitionProperty = "all";
         clone.style.visibility = "visible";
         clone.style.opacity = "1";
         // that will cause animation
@@ -2516,7 +2517,7 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.placeTokenLocal = function (tokenId, location, state, args) {
         var tokenInfo = this.setTokenInfo(tokenId, location, state, false);
-        this.on_client_state = true;
+        //this.on_client_state = true;
         this.placeTokenWithTips(tokenId, tokenInfo, args);
         if (this.instantaneousMode) {
             // skip counters update
@@ -2946,8 +2947,10 @@ var GameXBody = /** @class */ (function (_super) {
             //player controls
             this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
             //Give tooltips to alt trackers in player boards
+            var togglehtml_1 = this.getTooptipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", _("Click to show or hide cards"));
             document.querySelectorAll(".player_controls .viewcards_button").forEach(function (node) {
-                _this.addTooltipHtml(node.id, _this.getTooptipHtmlForToken(node.id), _this.defaultTooltipDelay);
+                // have to attach tooltip directly, this element does not have a game model
+                _this.addTooltipHtml(node.id, togglehtml_1, _this.defaultTooltipDelay);
             });
             //view discard content
             this.setupDiscard();
@@ -2972,7 +2975,7 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             });
             //Give tooltips to alt trackers in player boards
-            document.querySelectorAll(".player_counters .tracker").forEach(function (node) {
+            document.querySelectorAll(".tracker").forEach(function (node) {
                 var id = node.id;
                 if (id.startsWith("alt_")) {
                     _this.updateTooltip(id.substring(4), node);
@@ -2982,10 +2985,6 @@ var GameXBody = /** @class */ (function (_super) {
             this.updateHandPrereqs();
             // card reference
             this.setupHelpSheets();
-            // Panel ZOOM
-            if (this.isLayoutFull()) {
-                //this.setZoom(undefined);
-            }
             this.connect($("zoom-out"), "onclick", function () {
                 var ms = _this.localSettings.getLocalSettingById("mapsize");
                 _this.localSettings.doAction(ms, "minus");
@@ -3360,9 +3359,6 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (key.startsWith("tracker_p")) {
             txt += this.generateTooltipSection(_("Resource Production"), _("Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production."));
-        }
-        else if (tokenId.startsWith("player_viewcards_")) {
-            txt += this.generateTooltipSection(_("Cards visibility toggle"), _("Shows or hides cards of the corresponding color."));
         }
         else if (tokenId.startsWith("counter_hand_")) {
             txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
@@ -4365,7 +4361,8 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0) {
-                    this_2.addActionButton("button_skip", _("Done"), function () {
+                    var name_4 = (single && paramargs.length <= 1) ? _("Reject") : _("Done");
+                    this_2.addActionButton("button_skip", name_4, function () {
                         _this.sendActionSkip();
                     });
                     $("button_skip").classList.remove("bgabutton_blue");
@@ -4760,12 +4757,23 @@ var ScatteredResourceZone = /** @class */ (function () {
             this.addResource(nom);
             curvalue++;
         }
+        while (curvalue > this.value) {
+            this.removeResource(nom);
+            curvalue--;
+        }
     };
     ScatteredResourceZone.prototype.addResource = function (nom) {
         if (nom === void 0) { nom = 1; }
-        var all = document.querySelectorAll(".".concat(this.resclass, "_n").concat(nom));
-        var num = all.length + 1;
-        var id = "".concat(this.resclass, "_n").concat(nom, "_").concat(num);
+        var supply = 'main_board';
+        var avail = $(supply).querySelector(".".concat(this.resclass, "_n").concat(nom));
+        if (avail) {
+            var id = avail.id;
+        }
+        else {
+            var all = document.querySelectorAll(".".concat(this.resclass, "_n").concat(nom));
+            var num = all.length + 1;
+            var id = "".concat(this.resclass, "_n").concat(nom, "_").concat(num);
+        }
         var parent = $(this.zoneId);
         var size = 20; // XXX
         var w = parent.offsetWidth;
@@ -4790,6 +4798,17 @@ var ScatteredResourceZone = /** @class */ (function () {
         $(id).classList.add(this.resclass);
         $(id).classList.add("".concat(this.resclass, "_n").concat(nom));
     };
+    ScatteredResourceZone.prototype.removeResource = function (nom) {
+        if (nom === void 0) { nom = 1; }
+        var parent = $(this.zoneId);
+        var cube = parent.querySelector(".".concat(this.resclass, "_n").concat(nom));
+        if (!cube)
+            return;
+        var id = cube.id;
+        //console.log("removing res "+id+" on "+this.zoneId);
+        this.game.stripPosition(id);
+        this.game.placeTokenLocal(id, 'main_board');
+    };
     return ScatteredResourceZone;
 }());
 var VLayout = /** @class */ (function () {
@@ -4804,8 +4823,6 @@ var VLayout = /** @class */ (function () {
         var div = $("main_area");
         var board = $("player_area_".concat(color));
         div.appendChild(board);
-        $("tableau_".concat(color)).setAttribute("data-visibility_3", "1");
-        $("tableau_".concat(color)).setAttribute("data-visibility_1", "1");
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
@@ -4815,10 +4832,10 @@ var VLayout = /** @class */ (function () {
         var headerNode = $("player_board_header_".concat(color));
         dojo.place("tableau_".concat(color, "_corp_logo"), headerNode, "first");
         dojo.place("player_area_name_".concat(color), headerNode, "first");
-        dojo.removeClass(headerNode, 'playerboard_header');
-        dojo.addClass(headerNode, 'playerboard_header_v');
-        $("player_area_name_".concat(color)).setAttribute('data-player-name', name);
-        $("player_area_name_".concat(color)).innerHTML = '';
+        dojo.removeClass(headerNode, "playerboard_header");
+        dojo.addClass(headerNode, "playerboard_header_v");
+        $("player_area_name_".concat(color)).setAttribute("data-player-name", name);
+        $("player_area_name_".concat(color)).innerHTML = "";
         var places = ["tracker_city", "tracker_forest", "tracker_land"];
         for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
             var key = places_1[_i];
@@ -4838,13 +4855,21 @@ var VLayout = /** @class */ (function () {
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
-        for (var i = 1; i <= 3; i++) {
+        for (var i = 0; i <= 3; i++) {
             $("tableau_" + color).dataset["visibility_" + i] = "1";
             $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
         }
-        var parent = document.querySelector(".debug_section"); // studio only
-        if (!parent)
-            $("pboard_".concat(color)).style.display = 'none'; // disable for now
+        // var parent = document.querySelector(".debug_section"); // studio only
+        // if (!parent)
+        //     $(`pboard_${color}`).style.display  = 'none'; // disable for now
+    };
+    VLayout.prototype.setupDone = function () {
+        var _this = this;
+        var togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
+        document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach(function (node) {
+            // have to attach tooltip directly, this element does not have a game model
+            _this.game.addTooltipHtml(node.id, togglehtml, _this.game.defaultTooltipDelay);
+        });
     };
     VLayout.prototype.renderSpecificToken = function (tokenNode) {
         if (!this.game.isLayoutFull())

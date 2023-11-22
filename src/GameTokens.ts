@@ -257,7 +257,7 @@ class GameTokens extends GameBasics {
 
   placeTokenLocal(tokenId: string, location: string, state?: number, args?: any) {
     const tokenInfo = this.setTokenInfo(tokenId, location, state, false);
-    this.on_client_state = true;
+    //this.on_client_state = true;
     this.placeTokenWithTips(tokenId, tokenInfo, args);
     if (this.instantaneousMode) {
       // skip counters update

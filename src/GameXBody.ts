@@ -49,8 +49,15 @@ class GameXBody extends GameTokens {
       //player controls
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
       //Give tooltips to alt trackers in player boards
+    
+
+
+      const togglehtml =  this.getTooptipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", 
+      _("Click to show or hide cards"));
+
       document.querySelectorAll(".player_controls .viewcards_button").forEach((node) => {
-        this.addTooltipHtml(node.id, this.getTooptipHtmlForToken(node.id), this.defaultTooltipDelay);
+        // have to attach tooltip directly, this element does not have a game model
+        this.addTooltipHtml(node.id, togglehtml, this.defaultTooltipDelay);
       });
 
       //view discard content
@@ -81,7 +88,7 @@ class GameXBody extends GameTokens {
       });
 
       //Give tooltips to alt trackers in player boards
-      document.querySelectorAll(".player_counters .tracker").forEach((node) => {
+      document.querySelectorAll(".tracker").forEach((node) => {
         const id = node.id;
         if (id.startsWith("alt_")) {
           this.updateTooltip(id.substring(4), node);
@@ -93,10 +100,8 @@ class GameXBody extends GameTokens {
 
       // card reference
       this.setupHelpSheets();
-      // Panel ZOOM
-      if (this.isLayoutFull()) {
-        //this.setZoom(undefined);
-      }
+ 
+      
       this.connect($("zoom-out"), "onclick", () => {
         const ms = this.localSettings.getLocalSettingById("mapsize");
         this.localSettings.doAction(ms, "minus");
@@ -555,8 +560,6 @@ class GameXBody extends GameTokens {
           "Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production."
         )
       );
-    } else if (tokenId.startsWith("player_viewcards_")) {
-      txt += this.generateTooltipSection(_("Cards visibility toggle"), _("Shows or hides cards of the corresponding color."));
     } else if (tokenId.startsWith("counter_hand_")) {
       txt += this.generateTooltipSection(_("Hand count"), _("Amount of cards in player's hand."));
     } else if (key.startsWith("tile_")) {
@@ -1684,7 +1687,8 @@ awarded.`);
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0) {
-          this.addActionButton("button_skip", _("Done"), () => {
+          const name =     (single && paramargs.length <=1) ? _("Reject"):_("Done");
+          this.addActionButton("button_skip", name, () => {
             this.sendActionSkip();
           });
           $("button_skip").classList.remove("bgabutton_blue");
