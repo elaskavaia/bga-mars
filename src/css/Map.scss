@@ -55,6 +55,8 @@
     top: 1.7%;
     left: 0.75%;
   }
+
+
 }
 
 #map {
@@ -75,7 +77,7 @@
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.122);
   border-radius: 30%;
-  outline: 1px solid black;
+ /* outline: 1px solid black;*/
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   transition: 100ms ease-in-out;
 }
@@ -234,7 +236,7 @@
 .tile .marker {
   position: absolute;
   top: 42%;
-  left: 40%;
+  left: 38%;
   width: calc(var(--map-width) * 0.025);
   height: calc(var(--map-width) * 0.025);
   box-shadow: #0b0b0bad 2px 2px 3px 1px;
@@ -264,6 +266,10 @@
   background-size: cover;
   position: relative;
 
+  .marker {
+    width: calc(var(--map-width) * 0.025);
+    height: calc(var(--map-width) * 0.025);
+  }
 
 }
 
