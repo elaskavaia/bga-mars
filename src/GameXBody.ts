@@ -114,7 +114,9 @@ class GameXBody extends GameTokens {
         const cs = this.localSettings.getLocalSettingById("cardsize");
         this.localSettings.doAction(cs, "plus");
       });
-      
+
+      this.setupResourceFiltering();
+
 
       this.isDoingSetup = false;
     } catch (e) {
@@ -236,6 +238,19 @@ class GameXBody extends GameTokens {
     this.connect($("discard_title"), "onclick", () => {
       this.showHiddenContent("discard_main", _("Discard pile contents"));
     });
+  }
+
+  setupResourceFiltering():void {
+    const exclude_compact:string[]=["full/cards1.jpg","full/cards2.jpg","full/cards3.jpg","full/cardsC.jpg","full/pboard.jpg","full/TMgameboard.jpg","full/tooltipbg.jpg"];
+    const exclude_full:string[]=["cards_illustrations.jpg","awards_back.png","cards_bg.png","cards_bg_2_blue_action_bottom.png","cards_bg_2_blue_action_texture.jpg",
+      "corporations.jpg","map.png","milestones_awards.png","oxygen.png","space.jpg","stanproj_hold.png","temperature.png"];
+
+    const exclude_list:string[]= this.isLayoutFull() ? exclude_full : exclude_compact;
+
+    for (let item of exclude_list) {
+      this.dontPreloadImage(item);
+    }
+
   }
 
   showHiddenContent(id: ElementOrId, title: string) {
