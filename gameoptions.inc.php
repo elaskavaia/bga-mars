@@ -94,7 +94,7 @@ $game_options = array(
 );
 $game_preferences = [
     100 => [
-        'name' => totranslate('Graphics'),
+        'name' => totranslate('Theme'),
         'needReload' => true, // after user changes this preference game interface would auto-reload
         'values' => array(
             1 => ['name' => totranslate('Digital'), 'cssPref' => 'mcompact'],

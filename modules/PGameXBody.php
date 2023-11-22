@@ -191,6 +191,8 @@ abstract class PGameXBody extends PGameMachine {
         $current = $this->getCurrentPlayerId();
         if ($this->isRealPlayer($current))
             $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
+        else
+            $result['server_prefs'] = [];
         $result ['CON'] = $this->getPhpConstants("MA_");
         return $result;
     }
@@ -982,9 +984,17 @@ abstract class PGameXBody extends PGameMachine {
         // anytime action, no checks
         $current_player_id = $this->getCurrentPlayerId();
         $this->systemAssertTrue("unauthorized action", $current_player_id == $player_id);
-        $this->systemAssertTrue("unauthorized action", $this->isRealPlayer($player_id));
-        $this->dbUserPrefs->setPrefValue($player_id, $pref, $value);
-        $this->notifyWithName('ack', '', ['pref_id' => $pref, 'pref_value' => $value]);
+        $message = '';
+        if ($this->isRealPlayer($player_id)) {
+            $this->dbUserPrefs->setPrefValue($player_id, $pref, $value);
+       
+            if ($pref==100) {
+                // record the theme for bug report info
+                $message = clienttranslate('${player_name} changed "Theme" to value ${pref_value}');
+            }
+         
+        }
+        $this->notifyWithName('ack', $message, ['pref_id' => $pref, 'pref_value' => $value]);
     }
 
     //////////////////////////////////////////////////////////////////////////////

@@ -750,9 +750,9 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.setupSettings = function () {
         var _this = this;
         // re-place fake mini board
-        this.destroyDivOtherCopies('player_board_config');
+        this.destroyDivOtherCopies("player_board_config");
         dojo.place("player_board_config", "player_boards", "first");
-        // move preference in gear tab 
+        // move preference in gear tab
         var userPrefContainerId = "settings-controls-container-prefs";
         $(userPrefContainerId).setAttribute("data-name", _("Preferences"));
         for (var index = 100; index <= 199; index++) {
@@ -787,18 +787,27 @@ var GameBasics = /** @class */ (function (_super) {
         // can override to change apperance
         return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
     };
+    /**
+     * Control where click is registered has to have matching id (where part will be the pref_id) or have attribute data-pref_id set
+     * @param e Event
+     */
     GameBasics.prototype.onChangePreferenceCustom = function (e) {
         var _a;
         var target = e.target;
         if (!target.id)
             return;
         var match = target.id.match(/^preference_[cf]ontrol_(\d+).*$/);
-        if (!match) {
-            return;
+        var prefId;
+        if (match) {
+            // Extract the ID and value from the UI control
+            prefId = +match[1];
         }
-        // Extract the ID and value from the UI control
-        var prefId = +match[1];
-        var prefValue = +((_a = target.value) !== null && _a !== void 0 ? _a : target.getAttribute('value'));
+        else {
+            prefId = target.getAttribute("data-pref-id");
+            if (!prefId)
+                return; // error?
+        }
+        var prefValue = +((_a = target.value) !== null && _a !== void 0 ? _a : target.getAttribute("value"));
         this.ajaxCallChangePreferenceCustom(prefId, prefValue);
     };
     GameBasics.prototype.ajaxCallChangePreferenceCustom = function (pref_id, value) {
@@ -813,6 +822,22 @@ var GameBasics = /** @class */ (function (_super) {
         }, this, function (result) {
             var _this = this;
             console.log("=> back", result);
+            // send to our game to update per game table
+            this.gamedatas.server_prefs[pref_id] = value;
+            if (pref_id >= 100 && pref_id < 200) {
+                var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
+                this.ajaxcallwrapper_unchecked("changePreference", args, function (err, res) {
+                    if (err)
+                        console.error("changePreference callback failed " + res);
+                    else {
+                        console.log("changePreference sent " + pref_id + "=" + value);
+                        var opname = _(_this.prefs[pref_id].name);
+                        var opvalue = _(_this.prefs[pref_id].values[value].name);
+                        _this.showMessage(_("Done, preference changed:") + " " + opname + " => " + opvalue, "info");
+                    }
+                });
+            }
+            // this is async to other server send, its ok
             if (result.status == "reload") {
                 this.showMessage(_("Done, reload in progress..."), "info");
                 window.location.hash = "";
@@ -821,21 +846,6 @@ var GameBasics = /** @class */ (function (_super) {
             else {
                 if (result.pref_id == this.GAMEPREFERENCE_DISPLAYTOOLTIPS) {
                     this.switchDisplayTooltips(result.value);
-                }
-                else {
-                    // send to our game to update per game table
-                    this.gamedatas.server_prefs[pref_id] = value;
-                    var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
-                    this.ajaxcallwrapper_unchecked("changePreference", args, function (err, res) {
-                        if (err)
-                            console.error("changePreference callback failed " + res);
-                        else {
-                            console.log("changePreference sent " + pref_id + "=" + value);
-                            var opname = _(_this.prefs[pref_id].name);
-                            var opvalue = _(_this.prefs[pref_id].values[value].name);
-                            _this.showMessage(_('Done, preference changed:') + " " + opname + " => " + opvalue, "info");
-                        }
-                    });
                 }
             }
         });
@@ -940,7 +950,7 @@ var GameBasics = /** @class */ (function (_super) {
         //console.log("set zoom "+zoom);
         zoom = this.checkZoom(zoom);
         var inner = document.getElementById("thething");
-        var prevzoom = inner.getAttribute('data-zoom');
+        var prevzoom = inner.getAttribute("data-zoom");
         if (parseInt(prevzoom) == zoom)
             return;
         var div = inner.parentElement;
@@ -957,7 +967,7 @@ var GameBasics = /** @class */ (function (_super) {
             inner.style.width = 100 / zoom + "%";
             div.style.height = inner.offsetHeight * zoom + "px";
         }
-        inner.setAttribute('data-zoom', "" + zoom);
+        inner.setAttribute("data-zoom", "" + zoom);
         return zoom;
     };
     GameBasics.prototype.onScreenWidthChange = function () {

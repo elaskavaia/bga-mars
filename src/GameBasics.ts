@@ -811,20 +811,19 @@ class GameBasics extends GameGui {
     this.addActionButton("button_cancel", name, handler, null, false, "red");
   }
 
-
   cloneAndFixIds(orig: ElementOrId, postfix: string, removeInlineStyle?: boolean) {
     if (!$(orig)) {
       const div = document.createElement("div");
       div.innerHTML = _("NOT FOUND") + " " + orig.toString();
       return div;
     }
-    const fixIds  = function (node: HTMLElement) {
+    const fixIds = function (node: HTMLElement) {
       if (node.id) {
         node.id = node.id + postfix;
       }
       if (removeInlineStyle) {
         node.removeAttribute("style");
-      }  
+      }
     };
     const div = $(orig).cloneNode(true) as HTMLElement;
     div.querySelectorAll("*").forEach(fixIds);
@@ -849,10 +848,10 @@ class GameBasics extends GameGui {
 
   setupSettings() {
     // re-place fake mini board
-    this.destroyDivOtherCopies('player_board_config');
+    this.destroyDivOtherCopies("player_board_config");
     dojo.place("player_board_config", "player_boards", "first");
 
-    // move preference in gear tab 
+    // move preference in gear tab
     const userPrefContainerId = "settings-controls-container-prefs";
     $(userPrefContainerId).setAttribute("data-name", _("Preferences"));
     for (let index = 100; index <= 199; index++) {
@@ -890,16 +889,24 @@ class GameBasics extends GameGui {
     return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
   }
 
-  onChangePreferenceCustom(e: any) {
+  /**
+   * Control where click is registered has to have matching id (where part will be the pref_id) or have attribute data-pref_id set
+   * @param e Event
+   */
+  onChangePreferenceCustom(e: any): void {
     const target = e.target;
     if (!target.id) return;
     var match = target.id.match(/^preference_[cf]ontrol_(\d+).*$/);
-    if (!match) {
-      return;
+    let prefId;
+    if (match) {
+      // Extract the ID and value from the UI control
+      prefId = +match[1];
+    } else {
+      prefId = target.getAttribute("data-pref-id");
+      if (!prefId) return; // error?
     }
-    // Extract the ID and value from the UI control
-    const prefId = +match[1];
-    const prefValue = +(target.value ?? target.getAttribute('value'));
+
+    const prefValue = +(target.value ?? target.getAttribute("value"));
     this.ajaxCallChangePreferenceCustom(prefId, prefValue);
   }
 
@@ -918,27 +925,29 @@ class GameBasics extends GameGui {
       this,
       function (result) {
         console.log("=> back", result);
+
+        // send to our game to update per game table
+        this.gamedatas.server_prefs[pref_id] = value;
+        if (pref_id >= 100 && pref_id < 200) {
+          var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
+          this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
+            if (err) console.error("changePreference callback failed " + res);
+            else {
+              console.log("changePreference sent " + pref_id + "=" + value);
+              const opname = _(this.prefs[pref_id].name);
+              const opvalue = _(this.prefs[pref_id].values[value].name);
+              this.showMessage(_("Done, preference changed:") + " " + opname + " => " + opvalue, "info");
+            }
+          });
+        }
+        // this is async to other server send, its ok
         if (result.status == "reload") {
           this.showMessage(_("Done, reload in progress..."), "info");
           window.location.hash = "";
           window.location.reload();
         } else {
-
           if (result.pref_id == this.GAMEPREFERENCE_DISPLAYTOOLTIPS) {
             this.switchDisplayTooltips(result.value);
-          } else {
-            // send to our game to update per game table
-            this.gamedatas.server_prefs[pref_id] = value;
-            var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
-            this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
-              if (err) console.error("changePreference callback failed " + res);
-              else {
-                console.log("changePreference sent " + pref_id + "=" + value);
-                const opname =  _(this.prefs[pref_id].name);
-                const opvalue =  _(this.prefs[pref_id].values[value].name);
-                this.showMessage(_('Done, preference changed:')+" "+opname+ " => "+opvalue, "info");
-              }
-            });
           }
         }
       }
@@ -1051,8 +1060,8 @@ class GameBasics extends GameGui {
     //console.log("set zoom "+zoom);
     zoom = this.checkZoom(zoom);
     var inner = document.getElementById("thething");
-    const prevzoom = inner.getAttribute('data-zoom');
-    if (parseInt(prevzoom)==zoom) return;
+    const prevzoom = inner.getAttribute("data-zoom");
+    if (parseInt(prevzoom) == zoom) return;
     var div = inner.parentElement;
     if (zoom == 1) {
       inner.style.removeProperty("transform");
@@ -1062,22 +1071,21 @@ class GameBasics extends GameGui {
       //inner.style.transform = "scale(" + zoom + ")";
       inner.offsetHeight; // reflow
       inner.style.transformOrigin = "0 0";
-      inner.style.scale = ""+zoom;
+      inner.style.scale = "" + zoom;
       inner.style.width = 100 / zoom + "%";
       div.style.height = inner.offsetHeight * zoom + "px";
     }
-    inner.setAttribute('data-zoom',""+zoom);
+    inner.setAttribute("data-zoom", "" + zoom);
     return zoom;
   }
 
   onScreenWidthChange() {
     // override
-    this.zoom=this.doSetZoom(this.zoom);
+    this.zoom = this.doSetZoom(this.zoom);
   }
 
   setupInfoPanel() {
     //dojo.place('player_board_config', 'player_boards', 'first');
-
 
     dojo.connect($("show-settings"), "onclick", () => this.toggleSettings());
     this.addTooltip("show-settings", "", _("Display game preferences"));
