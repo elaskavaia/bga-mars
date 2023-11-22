@@ -683,6 +683,9 @@ function getPart($haystack, $i, $bNoexeption = false) {
     if ($bNoexeption && $i >= $len) {
         return "";
     }
+    if ($i >= $len) {
+        die("Access to $i >= $len for $haystack");
+    }
     return $parts[$i];
 }
 

@@ -7271,10 +7271,6 @@
 .mfull .corp .card_decor {
   display: block;
 }
-.mfull .hand.location:empty {
-  display: block;
-  min-width: var(--card-width);
-}
 .mfull #main_board {
   position: relative;
   width: calc(var(--map-board-with));

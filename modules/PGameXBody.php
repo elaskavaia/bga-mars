@@ -924,14 +924,18 @@ abstract class PGameXBody extends PGameMachine {
         $loc = $this->tokens->getTokenLocation('starting_player');
         if (!$loc)
             return $this->getFirstPlayer();
-        $color = getPart($loc, 1);
+        $color = getPart($loc, 1, true);
+        if (!$color)
+            return $this->getFirstPlayer();
         return $this->getPlayerIdByColor($color);
     }
 
     function setCurrentStartingPlayer(int $playerId) {
         $color = $this->getPlayerColorById($playerId);
         $this->gamestate->changeActivePlayer($playerId);
-        $this->dbSetTokenLocation('starting_player', "tableau_$color", 0, clienttranslate('${player_name} is starting player for this generation'), [], $playerId);
+        if (!$this->isSolo()) {
+            $this->dbSetTokenLocation('starting_player', "tableau_$color", 0, clienttranslate('${player_name} is starting player for this generation'), [], $playerId);
+        }
     }
 
     function isEndOfGameAchived() {

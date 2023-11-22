@@ -67,7 +67,7 @@ $machinestates = [
         "description" => "",
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => ["" => STATE_PLAYER_CONFIRM],
+        "transitions" => ["" => STATE_GAME_DISPATCH],
     ],
 
     STATE_PLAYER_CONFIRM => [
