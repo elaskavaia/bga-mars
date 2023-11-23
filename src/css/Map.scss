@@ -115,6 +115,7 @@
 #hex_0_2 {
   left: 10%;
   top: 5%;
+  position: absolute;
 }
 
 #hex_0_3 {
@@ -417,10 +418,7 @@
   width: calc(var(--map-width) * 0.157);
   background-image: url("img/temperature.png");
   background-size: cover;
-
-  //  border: 1px solid red;
-  // background: linear-gradient(180deg, rgba(255,0,8,1) 0%, rgba(47,0,255,1) 75%, rgba(0,255,252,1) 100%);
-
+  transform-origin: right;
 }
 
 .temperature_scale {
@@ -558,6 +556,8 @@
   top: -65%;
   pointer-events: none;
   left: 16.5%;
+  transform-origin: top;
+
 }
 
 .oxygen_scale {
@@ -1001,6 +1001,7 @@
   height: calc(var(--map-width) * 0.1);
   color: white;
   font-size: calc(var(--map-width) * 0.05);
+  transform-origin: top right;
 
   .tracker_gen {
     position: absolute;

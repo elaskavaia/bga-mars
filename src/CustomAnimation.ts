@@ -1,7 +1,6 @@
 class CustomAnimation {
-
-  animations = {};
-  slide_duration=800;
+  private animations = {};
+  private slide_duration:number=800;
 
   constructor(public game: GameXBody) {
 
@@ -59,9 +58,9 @@ class CustomAnimation {
                             }
                     `
       };
-    this.animations['pop_and_tilt'] =
+    this.animations['pop'] =
       {
-        name: 'pop_and_tilt', duration: 300, easing: 'ease-in',
+        name: 'pop', duration: 300, easing: 'ease-in',
         keyframes: `   
                          0% {
                                transform:scale(1);
@@ -72,9 +71,9 @@ class CustomAnimation {
                             }
                     `
       };
-    this.animations['depop_and_tilt'] =
+    this.animations['depop'] =
       {
-        name: 'depop_and_tilt', duration: 300, easing: 'ease-in',
+        name: 'depop', duration: 300, easing: 'ease-in',
         keyframes: `   
                          0% {
                                transform:scale(1.2);
@@ -126,8 +125,23 @@ class CustomAnimation {
                             }
                     `
       };
+
     this.addAnimationsToDocument(this.animations);
 
+  }
+
+  getSlideDuration():number {
+    if (this.areAnimationsPlayed()) return 0;
+    return this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
+  }
+
+  getWaitDuration(wait:number):number {
+    if (this.areAnimationsPlayed()) return 0;
+    return wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+  }
+
+  getAnimationAmount() {
+    return parseInt(this.game.getSetting('animationamount'));
   }
 
   setOriginalFilter(tableau_id:string,original:number,actual:number) {
@@ -142,7 +156,7 @@ class CustomAnimation {
     };
 
     if (this.areAnimationsPlayed()) {
-      this.wait(1500).then(()=>{
+      this.wait(this.getWaitDuration(1500)).then(()=>{
         exec();
       });
     } else {
@@ -150,7 +164,7 @@ class CustomAnimation {
     }
   }
   animateTilePop(token_id: string) {
-    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+    if (!this.areAnimationsPlayed() || this.getAnimationAmount()==2) return this.getImmediatePromise();
     return this.playCssAnimation(token_id, 'grow_appear', null, null);
   }
 
@@ -166,11 +180,17 @@ class CustomAnimation {
     let animate_token = resource_id;
     if(!this.game.isLayoutFull()  && place_id.startsWith('card_main_') ) animate_token = place_id.replace('card_main_','resource_holder_');
 
-    const anim_1:Promise<any> =   this.playCssAnimation(place_id, 'pop_and_tilt', ()=>{
-      dojo.style(place_id,'filter','grayscale(0)');
+    let anim_1:Promise<any>;
+    if (this.getAnimationAmount()==2) {
+      anim_1=this.getImmediatePromise();
+    } else {
+      anim_1 =   this.playCssAnimation(place_id, 'pop', ()=>{
+        dojo.style(place_id,'filter','grayscale(0)');
       }, ()=>{
         dojo.style(place_id,'transform','scale(1.2)');
       });
+    }
+
 
       const anim_2:Promise<any>= anim_1.then(()=>{
         return this.playCssAnimation(animate_token, 'great_tingle', ()=>{
@@ -180,13 +200,18 @@ class CustomAnimation {
         });
       });
 
-     return anim_2.then(()=>{
-       return this.playCssAnimation(place_id, 'depop_and_tilt', ()=>{
-         dojo.style(place_id,'transform','');
-       }, ()=>{
-         dojo.style(place_id,'filter','');
-       });
-     });
+    if (this.getAnimationAmount()==2) {
+      return anim_2;
+    } else {
+      return anim_2.then(()=>{
+        return this.playCssAnimation(place_id, 'depop', ()=>{
+          dojo.style(place_id,'transform','');
+        }, ()=>{
+          dojo.style(place_id,'filter','');
+        });
+      });
+    }
+
   }
 
   animateRemoveResourceFromCard(resource_id:string):Promise<any> {
@@ -213,7 +238,7 @@ class CustomAnimation {
     }
 
     let p_start:Promise<any>;
-    if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+    if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount()==3) {
       p_start= this.playCssAnimation(place_id,'award_pop',()=>{
         dojo.style(marker_id,'opacity','0');
         $(place_id).setAttribute('style', 'box-shadow: none !important;');
@@ -238,7 +263,7 @@ class CustomAnimation {
       }
     });});
 
-    if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+    if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount()==3) {
         return p_mid.then( ()=>{
           return this.playCssAnimation(place_id,'award_depop',()=>{
             $(place_id).setAttribute('style', 'box-shadow: none !important;');
@@ -251,9 +276,24 @@ class CustomAnimation {
       return this.getImmediatePromise();
     }
 
+  }
 
+  animateMapItemAwareness(item_id:string):Promise<any> {
+    if (!this.areAnimationsPlayed() ||  this.getAnimationAmount()==2) return this.getImmediatePromise();
 
+    const anim_1= this.playCssAnimation(item_id, 'pop', ()=>{
+      dojo.style(item_id,'z-index','10000');
+    }, ()=>{
+      dojo.style(item_id,'transform','scale(1.2)');
+    });
 
+    return anim_1.then(()=>{return this.wait(this.getWaitDuration(800))}).then(()=>{
+      return this.playCssAnimation(item_id, 'depop', ()=>{
+        dojo.style(item_id,'transform','');
+      }, ()=>{
+        dojo.style(item_id,'z-index','');
+      });
+    })
   }
 
   moveResources(tracker:string,qty:number):Promise<any> {
@@ -298,7 +338,7 @@ class CustomAnimation {
         if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
           dojo.place('<div id="move_from_'+tmpid+'" class="topbar_movefrom"></div>','thething');
         }
-        this.game.slideAndPlace(tmpid,destination,500,undefined,()=>{
+        this.game.slideAndPlace(tmpid,destination,this.getWaitDuration(500),undefined,()=>{
         if (dojo.byId(tmpid)) dojo.destroy(tmpid);
         if (dojo.byId('move_from_'+tmpid)) dojo.destroy('move_from_'+tmpid);
       }); });
@@ -308,10 +348,10 @@ class CustomAnimation {
           dojo.destroy(tmpid);
         }
       );*/
-      delay+=100;
+      delay+=this.getWaitDuration(100);
 
     }
-    return this.wait(delay+500);
+    return this.wait(delay+this.getWaitDuration(500));
   }
 
   addAnimationsToDocument(animations: any): void {
@@ -324,7 +364,8 @@ class CustomAnimation {
 
       let anim = animations[idx];
       css = css + '.anim_' + anim.name + ' {\n';
-      css = css + ' animation: key_anim_' + anim.name + ' ' + anim.duration + 'ms ' + anim.easing + ';\n'
+    //  css = css + ' animation: key_anim_' + anim.name + ' ' + anim.duration + 'ms ' + anim.easing + ';\n'
+      css = css + ' animation: key_anim_' + anim.name + ' calc(var(--localsetting_animationspeed) * ' + anim.duration/100 + 'ms) ' + anim.easing + ';\n'
       css = css + '}\n';
 
       css = css + '@keyframes key_anim_' + anim.name + ' {\n';
@@ -339,6 +380,7 @@ class CustomAnimation {
   areAnimationsPlayed(): boolean {
     //if(this.game.animated) return true;
     if (this.game.instantaneousMode) return false;
+    if (this.getAnimationAmount()==1) return false;
     if (document.hidden || document.visibilityState === 'hidden') return false;
 
     return true;

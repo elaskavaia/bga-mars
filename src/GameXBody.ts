@@ -167,7 +167,10 @@ class GameXBody extends GameTokens {
         choice: { hide: true },
         default: false,
         ui: "checkbox"
-      }
+      },
+      { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
+      { key: "animationspeed", label: _("Animation time"), range: { min:25, max: 200, inc: 5 }, default: 100, ui: "slider" },
+
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
@@ -374,18 +377,22 @@ class GameXBody extends GameTokens {
     this.darhflog("playing notif " + notif.type + " with args ", notif.args);
 
     //Displays message in header while the notif is playing
-    if (!this.instantaneousMode && notif.log) {
-      if ($("gameaction_status_wrap").style.display != "none") {
-        let msg = this.format_string_recursive(notif.log, notif.args);
-        if (msg != "") {
-          $("gameaction_status").innerHTML = msg;
+    //deactivated if animations aren't played
+    if (this.customAnimation.areAnimationsPlayed()==true) {
+      if (!this.instantaneousMode && notif.log) {
+        if ($("gameaction_status_wrap").style.display != "none") {
+          let msg = this.format_string_recursive(notif.log, notif.args);
+          if (msg != "") {
+            $("gameaction_status").innerHTML = msg;
+          }
+        } else {
+          // XXX this is very bad in multiple player all yout buttons dissapear
+          // currently gameaction_status should be visible
+          this.setDescriptionOnMyTurn(notif.log, notif.args);
         }
-      } else {
-        // XXX this is very bad in multiple player all yout buttons dissapear
-        // currently gameaction_status should be visible
-        this.setDescriptionOnMyTurn(notif.log, notif.args);
       }
     }
+
   }
 
   //make custom animations depending on situation
@@ -406,13 +413,25 @@ class GameXBody extends GameTokens {
   notif_counter(notif: Notif): any {
     super.notif_counter(notif);
     //move animation on main player board counters
-    /*
-    const counter_move=["m","pm","s","ps","u","pu","p","pp","e","pe","h","ph"].map((item)=>{
-      return "tracker_"+item+"_";
-    });*/
     const counter_move = ["m", "s", "u", "p", "e", "h", "tr"].map((item) => {
       return "tracker_" + item + "_";
     });
+
+
+    //temperature & oxygen - compact only as full doesn't have individual rendered elements
+    if (!this.isLayoutFull()) {
+      if (notif.args.counter_name=='tracker_t') {
+        this.customAnimation.animateMapItemAwareness('temperature_map');
+      } else if (notif.args.counter_name=='tracker_o') {
+        this.customAnimation.animateMapItemAwareness('oxygen_map');
+       }
+    }
+    //ocean's pile
+    if (notif.args.counter_name=='tracker_w') {
+      this.customAnimation.animateMapItemAwareness('oceans_pile');
+    } else if (notif.args.counter_name=='tracker_gen') {
+      this.customAnimation.animateMapItemAwareness('outer_generation');
+    }
 
     if (notif.args.inc && counter_move.some((trk) => notif.args.counter_name.startsWith(trk))) {
       this.customAnimation.animatetingle(notif.args.counter_name);
@@ -421,9 +440,10 @@ class GameXBody extends GameTokens {
       if ($(notif.args.counter_name)) {
         return this.customAnimation.animatetingle(notif.args.counter_name);
       } else {
-        return this.customAnimation.wait(200);
+        return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
       }
     }
+
   }
 
   getCardTypeById(type: number) {
@@ -1769,7 +1789,6 @@ awarded.`);
     }
 
     //refresh prereqs rendering on hand cards
-    //TODO : check if this place is pertinent
     this.updateHandPrereqs();
   }
 
@@ -1900,6 +1919,26 @@ awarded.`);
   // notifications
   setupNotifications(): void {
     super.setupNotifications();
+  }
+
+  //get settings
+  getSetting(key:string):string {
+    return this.localSettings.readProp(key);
+  }
+
+  //Prevent moving parts when animations are set to none
+  phantomMove(
+    mobileId: ElementOrId,
+    newparentId: ElementOrId,
+    duration?: number,
+    mobileStyle?: StringProperties,
+    onEnd?: (node?: HTMLElement) => void
+  ) {
+    if (!this.customAnimation.areAnimationsPlayed()) {
+      return super.phantomMove(mobileId,newparentId,-1,mobileStyle,onEnd);
+    }  else {
+      return super.phantomMove(mobileId,newparentId,duration,mobileStyle,onEnd);
+    }
   }
 }
 
