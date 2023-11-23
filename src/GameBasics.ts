@@ -881,7 +881,7 @@ class GameBasics extends GameGui {
         target: "_blank"
       });
     }
-    dojo.place(bug, "settings-controls-container", "last");
+    dojo.place(bug, "settings-controls-container", "first");
   }
 
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
@@ -1081,7 +1081,7 @@ class GameBasics extends GameGui {
 
   onScreenWidthChange() {
     // override
-    this.zoom = this.doSetZoom(this.zoom);
+    //this.zoom = this.doSetZoom(this.zoom);
   }
 
   setupInfoPanel() {

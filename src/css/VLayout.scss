@@ -322,19 +322,19 @@
   //   background-color: rgba(148, 202, 216, 0.4);
   // }
 
-  #ebd-body[data-localsetting_playerarea=before] #main_board {
+  #ebd-body #main_board {
     order: 2;
   }
 
-  #ebd-body[data-localsetting_playerarea=before] .thisplayer_zone {
+  #ebd-body .thisplayer_zone {
     order: 1;
   }
 
-  #ebd-body[data-localsetting_playerarea=after] #main_board {
+  #ebd-body[data-localsetting_mapplacement=first] #main_board {
     order: 1;
   }
 
-  #ebd-body[data-localsetting_playerarea=after] .thisplayer_zone {
+  #ebd-body[data-localsetting_mapplacement=first] .thisplayer_zone {
     order: 2;
   }
 

@@ -14,12 +14,8 @@ interface LocalProp {
 }
 
 class LocalSettings {
-  private gameName: string;
-  private props: LocalProp[];
+  constructor(private gameName: string, private props: LocalProp[]) {
 
-  constructor(gameName: string, props: LocalProp[]) {
-    this.gameName = gameName;
-    this.props = props;
   }
 
 
@@ -50,33 +46,40 @@ class LocalSettings {
 
   public renderContents(parentId: string): Boolean {
     if (!document.getElementById(parentId)) return false;
+
     $(parentId)
       .querySelectorAll(".localsettings_window")
       .forEach((node) => {
         dojo.destroy(node); // on undo this remains but another one generated
       });
-    let htm =
-      '<div id="' +
-      this.gameName +
-      '_localsettings_window" class="localsettings_window">' +
-      '<div class="localsettings_header">' +
-      _("Local Settings") +
-      "</div>" +
-      "%contents%" +
-      "</div>";
+    let title = _("Local Settings");
+
 
     let htmcontents = "";
     for (let prop of this.props) {
       if (prop.ui !== false) htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
     }
 
-    htm = htm.replace("%contents%", htmcontents);
+    const restore_tooltip = _('Click to restore to original values');
+    let htm = `
+      <div id="${this.gameName}_localsettings_window" class="localsettings_window">
+         <div class="localsettings_header">${title}<span id="localsettings_restore" title="${restore_tooltip}" class="fa fa-eraser"></span></div>
+         ${htmcontents}
+      </div>
+      `;
     document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
 
     //add interactivity
     for (let prop of this.props) {
       if (prop.ui !== false) this.actionProp(prop);
     }
+
+    $('localsettings_restore').addEventListener("click", (event) => {
+      const target = event.target as HTMLInputElement;
+      this.clear();
+      this.setup();
+      this.renderContents(parentId);
+    });
   }
 
   public renderProp(prop: LocalProp): string {
@@ -218,16 +221,28 @@ class LocalSettings {
     if (write) this.writeProp(prop.key, value);
   }
 
-  public load(): Boolean {
-    if (!this.readProp("init")) return false;
-    return true;
+  public isActivated(): boolean {
+    return !!this.readProp("activated");
   }
+
+  public setActivated(a: boolean = true) {
+    this.writeProp("activated", a?"1":"");
+  }
+
+  public clear() {
+    localStorage.clear();
+  }
+
+  public getLocalStorageItemId(key: string) {
+     return this.gameName + "." + key;
+  }
+
   public readProp(key: string): string {
-    return localStorage.getItem(this.gameName + "." + key);
+    return localStorage.getItem(this.getLocalStorageItemId(key));
   }
   public writeProp(key: string, val: string): Boolean {
     try {
-      localStorage.setItem(this.gameName + "." + key, val);
+      localStorage.setItem(this.getLocalStorageItemId(key), val);
       return true;
     } catch (e) {
       console.error(e);

@@ -3290,7 +3290,7 @@
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.122);
   border-radius: 30%;
-  outline: 1px solid black;
+  /* outline: 1px solid black;*/
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   transition: 100ms ease-in-out;
 }
@@ -3839,7 +3839,7 @@
 .tile .marker {
   position: absolute;
   top: 42%;
-  left: 40%;
+  left: 38%;
   width: calc(var(--map-width) * 0.025);
   height: calc(var(--map-width) * 0.025);
   box-shadow: rgba(11, 11, 11, 0.6784313725) 2px 2px 3px 1px;
@@ -3866,6 +3866,11 @@
   background-image: url("img/awards_back.png");
   background-size: cover;
   position: relative;
+}
+#main_awards .marker,
+#main_milestones .marker {
+  width: calc(var(--map-width) * 0.025);
+  height: calc(var(--map-width) * 0.025);
 }
 
 .map_milesawardscontent {
@@ -5857,8 +5862,13 @@
   border-bottom: 1px solid gray;
 }
 
+#localsettings_restore {
+  float: right;
+}
+
 .localsettings_group {
   width: 100%;
+  text-align: left;
 }
 
 .localsettings_prop_label {
@@ -7450,16 +7460,16 @@
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
 }
-.mfull #ebd-body[data-localsetting_playerarea=before] #main_board {
+.mfull #ebd-body #main_board {
   order: 2;
 }
-.mfull #ebd-body[data-localsetting_playerarea=before] .thisplayer_zone {
+.mfull #ebd-body .thisplayer_zone {
   order: 1;
 }
-.mfull #ebd-body[data-localsetting_playerarea=after] #main_board {
+.mfull #ebd-body[data-localsetting_mapplacement=first] #main_board {
   order: 1;
 }
-.mfull #ebd-body[data-localsetting_playerarea=after] .thisplayer_zone {
+.mfull #ebd-body[data-localsetting_mapplacement=first] .thisplayer_zone {
   order: 2;
 }
 .mfull #main_board::before {
@@ -8102,12 +8112,20 @@
   justify-content: center;
 }
 
-#ebd-body[data-localsetting_playerarea=before] #main_board {
+#ebd-body #main_board {
   order: 3;
 }
 
-#ebd-body[data-localsetting_playerarea=before] .thisplayer_zone {
+#ebd-body .thisplayer_zone {
   order: 1;
+}
+
+#ebd-body[data-localsetting_mapplacement=first] #main_board {
+  order: 1;
+}
+
+#ebd-body[data-localsetting_mapplacement=first] .thisplayer_zone {
+  order: 2;
 }
 
 #decks_area {

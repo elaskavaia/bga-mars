@@ -117,6 +117,8 @@ class GameXBody extends GameTokens {
 
       this.setupResourceFiltering();
 
+      this.vlayout.setupDone();
+      
 
       this.isDoingSetup = false;
     } catch (e) {
@@ -144,23 +146,24 @@ class GameXBody extends GameTokens {
   }
 
   setupLocalSettings() {
-    //local settings, include user id into setting string so it different per local player
+    //local settings, include user id into setting string so it different per local player and theme
     const theme = this.prefs[100].value ?? 1;
     this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
-      { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
+ 
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
       { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
-
+      { key: "handplace", label: _("Make floating hand"), choice: { floating: true }, default: false, ui: "checkbox" },
       {
-        key: "playerarea",
-        label: _("Map placement"),
-        choice: { after: _("First"), before: _("Second") },
-        default: "after"
+        key: "mapplacement",
+        label: _("Place map first"),
+        choice: {  first: true },
+        default: false,
+        ui: "checkbox"
       },
 
       {
         key: "hidebadges",
-        label: _("Hide Badges on minipanel"),
+        label: _("Hide badges on minipanel"),
         choice: { hide: true },
         default: false,
         ui: "checkbox"

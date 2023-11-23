@@ -99,15 +99,22 @@
   justify-content: center;
 }
 
-#ebd-body[data-localsetting_playerarea="before"] #main_board {
-  //flex-direction: row-reverse;//
-  order:3;
-}
-#ebd-body[data-localsetting_playerarea="before"] .thisplayer_zone {
-  //flex-direction: row-reverse;//
-  order:1;
+// map ordereding control by mapplacement local setting
+#ebd-body #main_board {
+  order: 3;
 }
 
+#ebd-body .thisplayer_zone {
+  order: 1;
+}
+
+#ebd-body[data-localsetting_mapplacement=first] #main_board {
+  order: 1;
+}
+
+#ebd-body[data-localsetting_mapplacement=first] .thisplayer_zone {
+  order: 2;
+}
 
 #decks_area {
   display: flex;

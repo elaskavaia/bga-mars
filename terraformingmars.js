@@ -781,7 +781,7 @@ var GameBasics = /** @class */ (function (_super) {
                 target: "_blank"
             });
         }
-        dojo.place(bug, "settings-controls-container", "last");
+        dojo.place(bug, "settings-controls-container", "first");
     };
     GameBasics.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
@@ -972,7 +972,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.onScreenWidthChange = function () {
         // override
-        this.zoom = this.doSetZoom(this.zoom);
+        //this.zoom = this.doSetZoom(this.zoom);
     };
     GameBasics.prototype.setupInfoPanel = function () {
         //dojo.place('player_board_config', 'player_boards', 'first');
@@ -1295,6 +1295,21 @@ var CustomAnimation = /** @class */ (function () {
                 name: 'depop_and_tilt', duration: 300, easing: 'ease-in',
                 keyframes: "   \n                         0% {\n                               transform:scale(1.2);\n                            }\n                         100% {\n                               transform:scale(1);\n                               \n                            }\n                    "
             };
+        this.animations['fadein_and_drop'] =
+            {
+                name: 'fadein_and_drop', duration: 800, easing: 'ease-out',
+                keyframes: "   \n                         0% {\n                                 transform: translateY(-1000%);\n                                 opacity:0;\n                            }\n                        50% {\n                                 opacity:1;\n                            }\n                         100% {\n                                 transform: translateY(0);\n                                 opacity:1;\n                            }\n                    "
+            };
+        this.animations['award_pop'] =
+            {
+                name: 'award_pop', duration: 800, easing: 'ease-in',
+                keyframes: "   \n                         0% {\n                                transform: translateY(0) scale(1) rotateY(360deg);\n                            }\n                        100% {\n                                transform: translateY(-200%) scale(1.2) rotateY(0deg);\n                            }\n                    "
+            };
+        this.animations['award_depop'] =
+            {
+                name: 'award_depop', duration: 800, easing: 'ease-in',
+                keyframes: "   \n                        0% {\n                                transform: translateY(-200%) scale(1.2)  rotateY(0deg);\n                            }\n                        100% {\n                                transform: translateY(0) scale(1) rotateY(360deg);\n                            }\n                    "
+            };
         this.addAnimationsToDocument(this.animations);
     }
     CustomAnimation.prototype.setOriginalFilter = function (tableau_id, original, actual) {
@@ -1367,6 +1382,57 @@ var CustomAnimation = /** @class */ (function () {
         }, function () {
             dojo.style(animate_token, 'z-index', '');
         });
+    };
+    CustomAnimation.prototype.animatePlaceMarker = function (marker_id, place_id) {
+        var _this = this;
+        if (!this.areAnimationsPlayed())
+            return this.getImmediatePromise();
+        var unclip = [];
+        if (place_id.startsWith('tile')) {
+            unclip.push(place_id);
+            unclip.push($(place_id).parentElement.id);
+        }
+        var p_start;
+        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+            p_start = this.playCssAnimation(place_id, 'award_pop', function () {
+                dojo.style(marker_id, 'opacity', '0');
+                $(place_id).setAttribute('style', 'box-shadow: none !important;');
+            }, function () {
+                $(place_id).setAttribute('style', 'transform: translateY(-200%) scale(1.2); box-shadow: none !important;');
+            });
+        }
+        else {
+            p_start = this.getImmediatePromise();
+        }
+        var p_mid = p_start
+            .then(function () {
+            return _this.playCssAnimation(marker_id, 'fadein_and_drop', function () {
+                dojo.style(marker_id, 'z-index', '10');
+                dojo.style(marker_id, 'opacity', '');
+                for (var _i = 0, unclip_1 = unclip; _i < unclip_1.length; _i++) {
+                    var item = unclip_1[_i];
+                    $(item).setAttribute('style', 'clip-path: none; outline: none; box-shadow: none !important; background-color: revert;');
+                }
+            }, function () {
+                dojo.style(marker_id, 'z-index', '');
+                for (var _i = 0, unclip_2 = unclip; _i < unclip_2.length; _i++) {
+                    var item = unclip_2[_i];
+                    $(item).setAttribute('style', '');
+                }
+            });
+        });
+        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+            return p_mid.then(function () {
+                return _this.playCssAnimation(place_id, 'award_depop', function () {
+                    $(place_id).setAttribute('style', 'box-shadow: none !important;');
+                }, function () {
+                    $(place_id).setAttribute('style', '');
+                });
+            });
+        }
+        else {
+            return this.getImmediatePromise();
+        }
     };
     CustomAnimation.prototype.moveResources = function (tracker, qty) {
         var _this = this;
@@ -3007,6 +3073,8 @@ var GameXBody = /** @class */ (function (_super) {
                 var cs = _this.localSettings.getLocalSettingById("cardsize");
                 _this.localSettings.doAction(cs, "plus");
             });
+            this.setupResourceFiltering();
+            this.vlayout.setupDone();
             this.isDoingSetup = false;
         }
         catch (e) {
@@ -3033,21 +3101,22 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.setupLocalSettings = function () {
         var _a;
-        //local settings, include user id into setting string so it different per local player
+        //local settings, include user id into setting string so it different per local player and theme
         var theme = (_a = this.prefs[100].value) !== null && _a !== void 0 ? _a : 1;
         this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
-            { key: "handplace", label: _("Floating Hand"), choice: { floating: true }, default: false, ui: "checkbox" },
             { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
+            { key: "handplace", label: _("Make floating hand"), choice: { floating: true }, default: false, ui: "checkbox" },
             {
-                key: "playerarea",
-                label: _("Map placement"),
-                choice: { after: _("First"), before: _("Second") },
-                default: "after"
+                key: "mapplacement",
+                label: _("Place map first"),
+                choice: { first: true },
+                default: false,
+                ui: "checkbox"
             },
             {
                 key: "hidebadges",
-                label: _("Hide Badges on minipanel"),
+                label: _("Hide badges on minipanel"),
                 choice: { hide: true },
                 default: false,
                 ui: "checkbox"
@@ -3125,6 +3194,16 @@ var GameXBody = /** @class */ (function (_super) {
         this.connect($("discard_title"), "onclick", function () {
             _this.showHiddenContent("discard_main", _("Discard pile contents"));
         });
+    };
+    GameXBody.prototype.setupResourceFiltering = function () {
+        var exclude_compact = ["full/cards1.jpg", "full/cards2.jpg", "full/cards3.jpg", "full/cardsC.jpg", "full/pboard.jpg", "full/TMgameboard.jpg", "full/tooltipbg.jpg"];
+        var exclude_full = ["cards_illustrations.jpg", "awards_back.png", "cards_bg.png", "cards_bg_2_blue_action_bottom.png", "cards_bg_2_blue_action_texture.jpg",
+            "corporations.jpg", "map.png", "milestones_awards.png", "oxygen.png", "space.jpg", "stanproj_hold.png", "temperature.png"];
+        var exclude_list = this.isLayoutFull() ? exclude_full : exclude_compact;
+        for (var _i = 0, exclude_list_1 = exclude_list; _i < exclude_list_1.length; _i++) {
+            var item = exclude_list_1[_i];
+            this.dontPreloadImage(item);
+        }
     };
     GameXBody.prototype.showHiddenContent = function (id, title) {
         var _this = this;
@@ -3212,6 +3291,9 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("tableau_")) {
             return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
+        }
+        else if (notif.args.token_id && notif.args.token_id.startsWith("marker_") && (notif.args.place_id.startsWith("tile_") || notif.args.place_id.startsWith("award_") || notif.args.place_id.startsWith("milestone_"))) {
+            return this.customAnimation.animatePlaceMarker(notif.args.token_id, notif.args.place_id);
         }
     };
     GameXBody.prototype.notif_counter = function (notif) {
@@ -4552,6 +4634,7 @@ var LocalSettings = /** @class */ (function () {
         return true;
     };
     LocalSettings.prototype.renderContents = function (parentId) {
+        var _this = this;
         if (!document.getElementById(parentId))
             return false;
         $(parentId)
@@ -4559,21 +4642,15 @@ var LocalSettings = /** @class */ (function () {
             .forEach(function (node) {
             dojo.destroy(node); // on undo this remains but another one generated
         });
-        var htm = '<div id="' +
-            this.gameName +
-            '_localsettings_window" class="localsettings_window">' +
-            '<div class="localsettings_header">' +
-            _("Local Settings") +
-            "</div>" +
-            "%contents%" +
-            "</div>";
+        var title = _("Local Settings");
         var htmcontents = "";
         for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
             var prop = _a[_i];
             if (prop.ui !== false)
                 htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
         }
-        htm = htm.replace("%contents%", htmcontents);
+        var restore_tooltip = _('Click to restore to original values');
+        var htm = "\n      <div id=\"".concat(this.gameName, "_localsettings_window\" class=\"localsettings_window\">\n         <div class=\"localsettings_header\">").concat(title, "<span id=\"localsettings_restore\" title=\"").concat(restore_tooltip, "\" class=\"fa fa-eraser\"></span></div>\n         ").concat(htmcontents, "\n      </div>\n      ");
         document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
         //add interactivity
         for (var _b = 0, _c = this.props; _b < _c.length; _b++) {
@@ -4581,6 +4658,12 @@ var LocalSettings = /** @class */ (function () {
             if (prop.ui !== false)
                 this.actionProp(prop);
         }
+        $('localsettings_restore').addEventListener("click", function (event) {
+            var target = event.target;
+            _this.clear();
+            _this.setup();
+            _this.renderContents(parentId);
+        });
     };
     LocalSettings.prototype.renderProp = function (prop) {
         if (prop.range)
@@ -4720,17 +4803,25 @@ var LocalSettings = /** @class */ (function () {
         if (write)
             this.writeProp(prop.key, value);
     };
-    LocalSettings.prototype.load = function () {
-        if (!this.readProp("init"))
-            return false;
-        return true;
+    LocalSettings.prototype.isActivated = function () {
+        return !!this.readProp("activated");
+    };
+    LocalSettings.prototype.setActivated = function (a) {
+        if (a === void 0) { a = true; }
+        this.writeProp("activated", a ? "1" : "");
+    };
+    LocalSettings.prototype.clear = function () {
+        localStorage.clear();
+    };
+    LocalSettings.prototype.getLocalStorageItemId = function (key) {
+        return this.gameName + "." + key;
     };
     LocalSettings.prototype.readProp = function (key) {
-        return localStorage.getItem(this.gameName + "." + key);
+        return localStorage.getItem(this.getLocalStorageItemId(key));
     };
     LocalSettings.prototype.writeProp = function (key, val) {
         try {
-            localStorage.setItem(this.gameName + "." + key, val);
+            localStorage.setItem(this.getLocalStorageItemId(key), val);
             return true;
         }
         catch (e) {

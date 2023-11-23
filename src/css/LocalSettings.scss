@@ -6,8 +6,14 @@
   border-bottom: 1px solid gray;
 }
 
+// restore local settings
+#localsettings_restore {
+  float: right;
+}
+
 .localsettings_group {
   width: 100%;
+  text-align: left; // checkboxes do not look good with center
 }
 
 .localsettings_prop_label {
