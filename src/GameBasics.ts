@@ -464,7 +464,7 @@ class GameBasics extends GameGui {
     mobileNode.offsetHeight; // recalc
 
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
-    setStyleAttributes(desti, mobileStyle);
+    //setStyleAttributes(desti, mobileStyle);
     clone.style.transitionDuration = duration + "ms";
     clone.style.transitionProperty = "all";
     clone.style.visibility = "visible";
@@ -903,9 +903,8 @@ class GameBasics extends GameGui {
       prefId = +match[1];
     } else {
       prefId = target.getAttribute("data-pref-id");
-      if (!prefId) return; // error?
     }
-
+    if (!prefId) return; // error?
     const prefValue = +(target.value ?? target.getAttribute("value"));
     this.ajaxCallChangePreferenceCustom(prefId, prefValue);
   }

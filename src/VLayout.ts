@@ -64,6 +64,7 @@ class VLayout {
   }
 
   setupDone() {
+    if (!this.game.isLayoutFull()) return;
     const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
 
     document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {

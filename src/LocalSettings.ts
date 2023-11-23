@@ -221,14 +221,6 @@ class LocalSettings {
     if (write) this.writeProp(prop.key, value);
   }
 
-  public isActivated(): boolean {
-    return !!this.readProp("activated");
-  }
-
-  public setActivated(a: boolean = true) {
-    this.writeProp("activated", a?"1":"");
-  }
-
   public clear() {
     localStorage.clear();
   }

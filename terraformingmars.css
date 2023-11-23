@@ -8101,6 +8101,7 @@
   display: flex;
   flex-direction: column;
   font-family: var(--mars-font);
+  position: relative;
 }
 
 #main_area {

@@ -116,18 +116,18 @@ class GameXBody extends GameTokens {
       });
 
       this.setupResourceFiltering();
-
       this.vlayout.setupDone();
-      
-
-      this.isDoingSetup = false;
+      this.setupOneTimePrompt();
+    
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
-      this.isDoingSetup = false;
       this.showError("Error during game setup: " + e);
+    } finally {
+      this.isDoingSetup = false;
     }
   }
+
 
   setupPlayer(playerInfo: any) {
     super.setupPlayer(playerInfo);
@@ -148,7 +148,7 @@ class GameXBody extends GameTokens {
   setupLocalSettings() {
     //local settings, include user id into setting string so it different per local player and theme
     const theme = this.prefs[100].value ?? 1;
-    this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
+    this.localSettings = new LocalSettings(this.game_name+"-" + theme + "-" + this.player_id, [
  
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
       { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
@@ -174,31 +174,81 @@ class GameXBody extends GameTokens {
     this.localSettings.renderContents("settings-controls-container");
   }
 
+
+  /**
+   * This asks to select the theme, only on for alpha
+   */
+  setupOneTimePrompt() {
+    if (typeof g_replayFrom != "undefined" || g_archive_mode) return;
+    const ls = new LocalSettings(this.game_name,[]); // need another instance to save once per machine not per user/theme like others
+   
+    if (ls.readProp("activated")) return;
+    ls.writeProp("activated", "1");
+  
+
+    const dialog = new ebg.popindialog();
+    dialog.create("theme_selector");
+    const op1 = this.prefs[100].values[1];
+    const op2 = this.prefs[100].values[2];
+    // not translating this - will be removed after alpha
+    const desc = `
+        Please select one of themes below - the user interface will look slighly different <br>
+        <ul>
+        <li> ${op1.name}  - ${op1.description} 
+        <li> ${op2.name}  - ${op2.description} 
+        </ul>
+        You can change it later as well - for Theme and more settings use settinsg menu - Gear button <i class="fa fa-gear"></i> on the top right.
+        If you find a bug use Send BUG button located in settings meanu which will automatically insert proper table id.
+      `;// NO I18N
+    var html = this.getThemeSelectorDialogHtml('theme_selector_area','Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
+    dialog.setContent(html);
+    this.createCustomPreferenceNode(100,"pp100",'theme_selector_area');
+    dialog.show();
+ }
+
+ getThemeSelectorDialogHtml(id: string, title: string, desc: string=''){
+
+    return `
+    <div class="${id}_title">${title}</div>
+    <div class="${id}_desc">${desc}</div>
+    <div id="${id}" class="${id}"></div>
+    `;
+ }
+
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
-    const pref = this.prefs[pref_id];
-    console.log("PREF", pref);
+    console.log("PREF", pref_id);
     if (pref_id == 100 || pref_id == 101) {
       const pp = $(prefDivId).parentElement;
       pp.removeChild($(prefDivId));
-      const pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
-      for (const v in pref.values) {
-        const optionValue = pref.values[v];
-        const option = this.createDivNode(`${prefDivId}_v${v}`, `custom_pref_option pref_${optionValue.cssPref ?? ""}`, pc);
-        option.setAttribute("value", v);
-        option.innerHTML = optionValue.name;
-        if (pref.value == v) {
-          option.setAttribute("selected", "selected");
-        }
-        dojo.connect(option, "onclick", (e: any) => {
-          pc.querySelectorAll(".custom_pref_option").forEach((node) => node.removeAttribute("selected"));
-          e.target.setAttribute("selected", "selected");
-          this.onChangePreferenceCustom(e);
-        });
-      }
+      this.createCustomPreferenceNode(pref_id, prefDivId, pp);
       return true;
     }
     return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+  }
+
+  createCustomPreferenceNode(pref_id: number, prefDivId: string, pp?: ElementOrId) {
+    const pref = this.prefs[pref_id];
+    const pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
+    pc.setAttribute("data-pref-id", pref_id + "");
+    for (const v in pref.values) {
+      const optionValue = pref.values[v];
+      const option = this.createDivNode(`${prefDivId}_v${v}`, `custom_pref_option pref_${optionValue.cssPref ?? ""}`, pc);
+      option.setAttribute("value", v);
+      option.innerHTML = optionValue.name;
+      option.setAttribute("data-pref-id", pref_id + "");
+      if (optionValue.description) 
+        this.addTooltip(option.id,optionValue.description,'');
+      if (pref.value == v) {
+        option.setAttribute("selected", "selected");
+      }
+      dojo.connect(option, "onclick", (e: any) => {
+        pc.querySelectorAll(".custom_pref_option").forEach((node) => node.removeAttribute("selected"));
+        e.target.setAttribute("selected", "selected");
+        this.onChangePreferenceCustom(e);
+      });
+    }
+    return pc;
   }
 
   setupHelpSheets() {

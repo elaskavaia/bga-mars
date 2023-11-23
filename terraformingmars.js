@@ -388,7 +388,7 @@ var GameBasics = /** @class */ (function (_super) {
         setStyleAttributes(mobileNode, mobileStyle);
         mobileNode.offsetHeight; // recalc
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
-        setStyleAttributes(desti, mobileStyle);
+        //setStyleAttributes(desti, mobileStyle);
         clone.style.transitionDuration = duration + "ms";
         clone.style.transitionProperty = "all";
         clone.style.visibility = "visible";
@@ -804,9 +804,9 @@ var GameBasics = /** @class */ (function (_super) {
         }
         else {
             prefId = target.getAttribute("data-pref-id");
-            if (!prefId)
-                return; // error?
         }
+        if (!prefId)
+            return; // error?
         var prefValue = +((_a = target.value) !== null && _a !== void 0 ? _a : target.getAttribute("value"));
         this.ajaxCallChangePreferenceCustom(prefId, prefValue);
     };
@@ -3075,13 +3075,15 @@ var GameXBody = /** @class */ (function (_super) {
             });
             this.setupResourceFiltering();
             this.vlayout.setupDone();
-            this.isDoingSetup = false;
+            this.setupOneTimePrompt();
         }
         catch (e) {
             console.error(e);
             console.log("Ending game setup");
-            this.isDoingSetup = false;
             this.showError("Error during game setup: " + e);
+        }
+        finally {
+            this.isDoingSetup = false;
         }
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
@@ -3103,7 +3105,7 @@ var GameXBody = /** @class */ (function (_super) {
         var _a;
         //local settings, include user id into setting string so it different per local player and theme
         var theme = (_a = this.prefs[100].value) !== null && _a !== void 0 ? _a : 1;
-        this.localSettings = new LocalSettings("mars-" + theme + "-" + this.player_id, [
+        this.localSettings = new LocalSettings(this.game_name + "-" + theme + "-" + this.player_id, [
             { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "handplace", label: _("Make floating hand"), choice: { floating: true }, default: false, ui: "checkbox" },
@@ -3126,33 +3128,66 @@ var GameXBody = /** @class */ (function (_super) {
         //this.localSettings.renderButton('player_config_row');
         this.localSettings.renderContents("settings-controls-container");
     };
+    /**
+     * This asks to select the theme, only on for alpha
+     */
+    GameXBody.prototype.setupOneTimePrompt = function () {
+        if (typeof g_replayFrom != "undefined" || g_archive_mode)
+            return;
+        var ls = new LocalSettings(this.game_name, []); // need another instance to save once per machine not per user/theme like others
+        if (ls.readProp("activated"))
+            return;
+        ls.writeProp("activated", "1");
+        var dialog = new ebg.popindialog();
+        dialog.create("theme_selector");
+        var op1 = this.prefs[100].values[1];
+        var op2 = this.prefs[100].values[2];
+        // not translating this - will be removed after alpha
+        var desc = "\n        Please select one of themes below - the user interface will look slighly different <br>\n        <ul>\n        <li> ".concat(op1.name, "  - ").concat(op1.description, " \n        <li> ").concat(op2.name, "  - ").concat(op2.description, " \n        </ul>\n        You can change it later as well - for Theme and more settings use settinsg menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n        If you find a bug use Send BUG button located in settings meanu which will automatically insert proper table id.\n      "); // NO I18N
+        var html = this.getThemeSelectorDialogHtml('theme_selector_area', 'Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
+        dialog.setContent(html);
+        this.createCustomPreferenceNode(100, "pp100", 'theme_selector_area');
+        dialog.show();
+    };
+    GameXBody.prototype.getThemeSelectorDialogHtml = function (id, title, desc) {
+        if (desc === void 0) { desc = ''; }
+        return "\n    <div class=\"".concat(id, "_title\">").concat(title, "</div>\n    <div class=\"").concat(id, "_desc\">").concat(desc, "</div>\n    <div id=\"").concat(id, "\" class=\"").concat(id, "\"></div>\n    ");
+    };
     GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
-        var _this = this;
-        var _a;
         // can override to change apperance
-        var pref = this.prefs[pref_id];
-        console.log("PREF", pref);
+        console.log("PREF", pref_id);
         if (pref_id == 100 || pref_id == 101) {
             var pp = $(prefDivId).parentElement;
             pp.removeChild($(prefDivId));
-            var pc_1 = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
-            for (var v in pref.values) {
-                var optionValue = pref.values[v];
-                var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ""), pc_1);
-                option.setAttribute("value", v);
-                option.innerHTML = optionValue.name;
-                if (pref.value == v) {
-                    option.setAttribute("selected", "selected");
-                }
-                dojo.connect(option, "onclick", function (e) {
-                    pc_1.querySelectorAll(".custom_pref_option").forEach(function (node) { return node.removeAttribute("selected"); });
-                    e.target.setAttribute("selected", "selected");
-                    _this.onChangePreferenceCustom(e);
-                });
-            }
+            this.createCustomPreferenceNode(pref_id, prefDivId, pp);
             return true;
         }
         return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+    };
+    GameXBody.prototype.createCustomPreferenceNode = function (pref_id, prefDivId, pp) {
+        var _this = this;
+        var _a;
+        var pref = this.prefs[pref_id];
+        var pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
+        pc.setAttribute("data-pref-id", pref_id + "");
+        for (var v in pref.values) {
+            var optionValue = pref.values[v];
+            var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ""), pc);
+            option.setAttribute("value", v);
+            option.innerHTML = optionValue.name;
+            option.setAttribute("data-pref-id", pref_id + "");
+            if (optionValue.description)
+                this.addTooltip(option.id, optionValue.description, '');
+            if (pref.value == v) {
+                option.setAttribute("selected", "selected");
+            }
+            dojo.connect(option, "onclick", function (e) {
+                pc.querySelectorAll(".custom_pref_option").forEach(function (node) { return node.removeAttribute("selected"); });
+                e.target.setAttribute("selected", "selected");
+                _this.onChangePreferenceCustom(e);
+            });
+        }
+        return pc;
     };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;
@@ -4803,13 +4838,6 @@ var LocalSettings = /** @class */ (function () {
         if (write)
             this.writeProp(prop.key, value);
     };
-    LocalSettings.prototype.isActivated = function () {
-        return !!this.readProp("activated");
-    };
-    LocalSettings.prototype.setActivated = function (a) {
-        if (a === void 0) { a = true; }
-        this.writeProp("activated", a ? "1" : "");
-    };
     LocalSettings.prototype.clear = function () {
         localStorage.clear();
     };
@@ -4966,6 +4994,8 @@ var VLayout = /** @class */ (function () {
     };
     VLayout.prototype.setupDone = function () {
         var _this = this;
+        if (!this.game.isLayoutFull())
+            return;
         var togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
         document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach(function (node) {
             // have to attach tooltip directly, this element does not have a game model
