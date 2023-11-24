@@ -12,19 +12,28 @@ class VLayout {
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
-    dojo.place(`player_controls_${color}`, `tableau_${color}_corp`);
+    dojo.place(`player_controls_${color}`, `player_board_header_${color}`);
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
 
-    const headerNode = $(`player_board_header_${color}`);
-    dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-    dojo.place(`player_area_name_${color}`, headerNode, "first");
+    const headerNode = this.game.createDivNode(`playerboard_side_${color}`,"playerboard_side");
+    //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
+    dojo.place(headerNode,  `player_area_${color}`, "first");
+    const settingNode = $(`player_board_header_${color}`);
+    dojo.place(settingNode, `player_area_${color}`,"first");    
+    settingNode.style.display = 'none';
+    const gear = this.game.createDivNode(`playerboard_side_gear_${color}`,"playerboard_side_gear", headerNode);
+    gear.addEventListener('click',()=>{
+      if (  settingNode.style.display == 'none') {
+        settingNode.style.display = 'flex';
+      } else {
+        settingNode.style.display = 'none';
+      }
+    });
 
-    dojo.removeClass(headerNode, "playerboard_header");
-    dojo.addClass(headerNode, "playerboard_header_v");
+    const namediv = this.game.createDivNode(`playerboard_side_name_${color}`,"playerboard_side_name", headerNode);
+    namediv.setAttribute("data-player-name", name);
 
-    $(`player_area_name_${color}`).setAttribute("data-player-name", name);
-    $(`player_area_name_${color}`).innerHTML = "";
 
     const places = ["tracker_city", "tracker_forest", "tracker_land"];
     for (const key of places) {

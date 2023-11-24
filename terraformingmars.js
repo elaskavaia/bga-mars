@@ -368,13 +368,11 @@ var GameBasics = /** @class */ (function (_super) {
             throw new Error("Does not exists ".concat(newparentId));
         if (!duration)
             duration = this.defaultAnimationDuration;
-        if (duration <= 0 || !mobileNode.parentNode) {
-            newparent.appendChild(mobileNode);
-            return;
+        var noanimation = duration <= 0 || !mobileNode.parentNode;
+        if (!noanimation) {
+            var clone = this.projectOnto(mobileNode, "_temp");
+            mobileNode.style.opacity = "0"; // hide original
         }
-        var clone = this.projectOnto(mobileNode, "_temp");
-        clone.style.transitionDuration = "0";
-        mobileNode.style.opacity = "0"; // hide original
         var rel = mobileStyle === null || mobileStyle === void 0 ? void 0 : mobileStyle.relation;
         if (rel) {
             delete mobileStyle.relation;
@@ -387,6 +385,9 @@ var GameBasics = /** @class */ (function (_super) {
         }
         setStyleAttributes(mobileNode, mobileStyle);
         mobileNode.offsetHeight; // recalc
+        if (!noanimation) {
+            return;
+        }
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
         //setStyleAttributes(desti, mobileStyle);
         clone.style.transitionDuration = duration + "ms";
@@ -1285,14 +1286,14 @@ var CustomAnimation = /** @class */ (function () {
                 name: 'great_tingle', duration: 500, easing: 'ease-in',
                 keyframes: "   \n                         0% {\n                               transform:scale(1);\n                               color:white;\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(2);\n                            }\n                         100% {\n                              color:white;\n                               transform:scale(1);\n\n                            }\n                    "
             };
-        this.animations['pop_and_tilt'] =
+        this.animations['pop'] =
             {
-                name: 'pop_and_tilt', duration: 300, easing: 'ease-in',
+                name: 'pop', duration: 300, easing: 'ease-in',
                 keyframes: "   \n                         0% {\n                               transform:scale(1);\n                            }\n                         100% {\n                               transform:scale(1.2);\n                               \n                            }\n                    "
             };
-        this.animations['depop_and_tilt'] =
+        this.animations['depop'] =
             {
-                name: 'depop_and_tilt', duration: 300, easing: 'ease-in',
+                name: 'depop', duration: 300, easing: 'ease-in',
                 keyframes: "   \n                         0% {\n                               transform:scale(1.2);\n                            }\n                         100% {\n                               transform:scale(1);\n                               \n                            }\n                    "
             };
         this.animations['fadein_and_drop'] =
@@ -1312,6 +1313,19 @@ var CustomAnimation = /** @class */ (function () {
             };
         this.addAnimationsToDocument(this.animations);
     }
+    CustomAnimation.prototype.getSlideDuration = function () {
+        if (this.areAnimationsPlayed())
+            return 0;
+        return this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
+    };
+    CustomAnimation.prototype.getWaitDuration = function (wait) {
+        if (this.areAnimationsPlayed())
+            return 0;
+        return wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+    };
+    CustomAnimation.prototype.getAnimationAmount = function () {
+        return parseInt(this.game.getSetting('animationamount'));
+    };
     CustomAnimation.prototype.setOriginalFilter = function (tableau_id, original, actual) {
         var btn_original = "player_viewcards_" + original + "_" + tableau_id.replace("tableau_", "");
         var btn_actual = "player_viewcards_" + actual + "_" + tableau_id.replace("tableau_", "");
@@ -1322,7 +1336,7 @@ var CustomAnimation = /** @class */ (function () {
             $(btn_actual).dataset.selected = "0";
         };
         if (this.areAnimationsPlayed()) {
-            this.wait(1500).then(function () {
+            this.wait(this.getWaitDuration(1500)).then(function () {
                 exec();
             });
         }
@@ -1331,7 +1345,7 @@ var CustomAnimation = /** @class */ (function () {
         }
     };
     CustomAnimation.prototype.animateTilePop = function (token_id) {
-        if (!this.areAnimationsPlayed())
+        if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
             return this.getImmediatePromise();
         return this.playCssAnimation(token_id, 'grow_appear', null, null);
     };
@@ -1349,11 +1363,17 @@ var CustomAnimation = /** @class */ (function () {
         var animate_token = resource_id;
         if (!this.game.isLayoutFull() && place_id.startsWith('card_main_'))
             animate_token = place_id.replace('card_main_', 'resource_holder_');
-        var anim_1 = this.playCssAnimation(place_id, 'pop_and_tilt', function () {
-            dojo.style(place_id, 'filter', 'grayscale(0)');
-        }, function () {
-            dojo.style(place_id, 'transform', 'scale(1.2)');
-        });
+        var anim_1;
+        if (this.getAnimationAmount() == 2) {
+            anim_1 = this.getImmediatePromise();
+        }
+        else {
+            anim_1 = this.playCssAnimation(place_id, 'pop', function () {
+                dojo.style(place_id, 'filter', 'grayscale(0)');
+            }, function () {
+                dojo.style(place_id, 'transform', 'scale(1.2)');
+            });
+        }
         var anim_2 = anim_1.then(function () {
             return _this.playCssAnimation(animate_token, 'great_tingle', function () {
                 dojo.style(animate_token, 'z-index', '10');
@@ -1361,13 +1381,18 @@ var CustomAnimation = /** @class */ (function () {
                 dojo.style(animate_token, 'z-index', '');
             });
         });
-        return anim_2.then(function () {
-            return _this.playCssAnimation(place_id, 'depop_and_tilt', function () {
-                dojo.style(place_id, 'transform', '');
-            }, function () {
-                dojo.style(place_id, 'filter', '');
+        if (this.getAnimationAmount() == 2) {
+            return anim_2;
+        }
+        else {
+            return anim_2.then(function () {
+                return _this.playCssAnimation(place_id, 'depop', function () {
+                    dojo.style(place_id, 'transform', '');
+                }, function () {
+                    dojo.style(place_id, 'filter', '');
+                });
             });
-        });
+        }
     };
     CustomAnimation.prototype.animateRemoveResourceFromCard = function (resource_id) {
         if (!this.areAnimationsPlayed())
@@ -1393,7 +1418,7 @@ var CustomAnimation = /** @class */ (function () {
             unclip.push($(place_id).parentElement.id);
         }
         var p_start;
-        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
             p_start = this.playCssAnimation(place_id, 'award_pop', function () {
                 dojo.style(marker_id, 'opacity', '0');
                 $(place_id).setAttribute('style', 'box-shadow: none !important;');
@@ -1421,7 +1446,7 @@ var CustomAnimation = /** @class */ (function () {
                 }
             });
         });
-        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull()) {
+        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
             return p_mid.then(function () {
                 return _this.playCssAnimation(place_id, 'award_depop', function () {
                     $(place_id).setAttribute('style', 'box-shadow: none !important;');
@@ -1433,6 +1458,23 @@ var CustomAnimation = /** @class */ (function () {
         else {
             return this.getImmediatePromise();
         }
+    };
+    CustomAnimation.prototype.animateMapItemAwareness = function (item_id) {
+        var _this = this;
+        if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
+            return this.getImmediatePromise();
+        var anim_1 = this.playCssAnimation(item_id, 'pop', function () {
+            dojo.style(item_id, 'z-index', '10000');
+        }, function () {
+            dojo.style(item_id, 'transform', 'scale(1.2)');
+        });
+        return anim_1.then(function () { return _this.wait(_this.getWaitDuration(800)); }).then(function () {
+            return _this.playCssAnimation(item_id, 'depop', function () {
+                dojo.style(item_id, 'transform', '');
+            }, function () {
+                dojo.style(item_id, 'z-index', '');
+            });
+        });
     };
     CustomAnimation.prototype.moveResources = function (tracker, qty) {
         var _this = this;
@@ -1475,7 +1517,7 @@ var CustomAnimation = /** @class */ (function () {
                 if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
                     dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
                 }
-                _this.game.slideAndPlace(tmpid, destination, 500, undefined, function () {
+                _this.game.slideAndPlace(tmpid, destination, _this.getWaitDuration(500), undefined, function () {
                     if (dojo.byId(tmpid))
                         dojo.destroy(tmpid);
                     if (dojo.byId('move_from_' + tmpid))
@@ -1487,13 +1529,13 @@ var CustomAnimation = /** @class */ (function () {
                 dojo.destroy(tmpid);
               }
             );*/
-            delay += 100;
+            delay += this_1.getWaitDuration(100);
         };
         var this_1 = this;
         for (var i = 0; i < Math.abs(qty); i++) {
             _loop_1(i);
         }
-        return this.wait(delay + 500);
+        return this.wait(delay + this.getWaitDuration(500));
     };
     CustomAnimation.prototype.addAnimationsToDocument = function (animations) {
         var head = document.getElementsByTagName('head')[0];
@@ -1505,7 +1547,8 @@ var CustomAnimation = /** @class */ (function () {
             var idx = _a[_i];
             var anim = animations[idx];
             css = css + '.anim_' + anim.name + ' {\n';
-            css = css + ' animation: key_anim_' + anim.name + ' ' + anim.duration + 'ms ' + anim.easing + ';\n';
+            //  css = css + ' animation: key_anim_' + anim.name + ' ' + anim.duration + 'ms ' + anim.easing + ';\n'
+            css = css + ' animation: key_anim_' + anim.name + ' calc(var(--localsetting_animationspeed) * ' + anim.duration / 100 + 'ms) ' + anim.easing + ';\n';
             css = css + '}\n';
             css = css + '@keyframes key_anim_' + anim.name + ' {\n';
             css = css + anim.keyframes;
@@ -1517,6 +1560,8 @@ var CustomAnimation = /** @class */ (function () {
     CustomAnimation.prototype.areAnimationsPlayed = function () {
         //if(this.game.animated) return true;
         if (this.game.instantaneousMode)
+            return false;
+        if (this.getAnimationAmount() == 1)
             return false;
         if (document.hidden || document.visibilityState === 'hidden')
             return false;
@@ -2988,6 +3033,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var LAYOUT_PREF_ID = 100;
 var GameXBody = /** @class */ (function (_super) {
     __extends(GameXBody, _super);
     // private parses:any;
@@ -2998,9 +3044,13 @@ var GameXBody = /** @class */ (function (_super) {
     }
     GameXBody.prototype.setup = function (gamedatas) {
         var _this = this;
+        var _a;
         try {
             this.isDoingSetup = true;
             this.CON = gamedatas.CON; // PHP contants for game
+            var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
+            var root = document.children[0]; // weird
+            dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
             this.defaultTooltipDelay = 800;
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;
@@ -3104,7 +3154,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setupLocalSettings = function () {
         var _a;
         //local settings, include user id into setting string so it different per local player and theme
-        var theme = (_a = this.prefs[100].value) !== null && _a !== void 0 ? _a : 1;
+        var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
         this.localSettings = new LocalSettings(this.game_name + "-" + theme + "-" + this.player_id, [
             { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
@@ -3122,7 +3172,9 @@ var GameXBody = /** @class */ (function (_super) {
                 choice: { hide: true },
                 default: false,
                 ui: "checkbox"
-            }
+            },
+            { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
+            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" },
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
@@ -3140,13 +3192,13 @@ var GameXBody = /** @class */ (function (_super) {
         ls.writeProp("activated", "1");
         var dialog = new ebg.popindialog();
         dialog.create("theme_selector");
-        var op1 = this.prefs[100].values[1];
-        var op2 = this.prefs[100].values[2];
+        var op1 = this.prefs[LAYOUT_PREF_ID].values[1];
+        var op2 = this.prefs[LAYOUT_PREF_ID].values[2];
         // not translating this - will be removed after alpha
         var desc = "\n        Please select one of themes below - the user interface will look slighly different <br>\n        <ul>\n        <li> ".concat(op1.name, "  - ").concat(op1.description, " \n        <li> ").concat(op2.name, "  - ").concat(op2.description, " \n        </ul>\n        You can change it later as well - for Theme and more settings use settinsg menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n        If you find a bug use Send BUG button located in settings meanu which will automatically insert proper table id.\n      "); // NO I18N
         var html = this.getThemeSelectorDialogHtml('theme_selector_area', 'Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
         dialog.setContent(html);
-        this.createCustomPreferenceNode(100, "pp100", 'theme_selector_area');
+        this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, 'theme_selector_area');
         dialog.show();
     };
     GameXBody.prototype.getThemeSelectorDialogHtml = function (id, title, desc) {
@@ -3156,7 +3208,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
         console.log("PREF", pref_id);
-        if (pref_id == 100 || pref_id == 101) {
+        if (pref_id == LAYOUT_PREF_ID || pref_id == 101) {
             var pp = $(prefDivId).parentElement;
             pp.removeChild($(prefDivId));
             this.createCustomPreferenceNode(pref_id, prefDivId, pp);
@@ -3300,17 +3352,20 @@ var GameXBody = /** @class */ (function (_super) {
         _super.prototype.onNotif.call(this, notif);
         this.darhflog("playing notif " + notif.type + " with args ", notif.args);
         //Displays message in header while the notif is playing
-        if (!this.instantaneousMode && notif.log) {
-            if ($("gameaction_status_wrap").style.display != "none") {
-                var msg = this.format_string_recursive(notif.log, notif.args);
-                if (msg != "") {
-                    $("gameaction_status").innerHTML = msg;
+        //deactivated if animations aren't played
+        if (this.customAnimation.areAnimationsPlayed() == true) {
+            if (!this.instantaneousMode && notif.log) {
+                if ($("gameaction_status_wrap").style.display != "none") {
+                    var msg = this.format_string_recursive(notif.log, notif.args);
+                    if (msg != "") {
+                        $("gameaction_status").innerHTML = msg;
+                    }
                 }
-            }
-            else {
-                // XXX this is very bad in multiple player all yout buttons dissapear
-                // currently gameaction_status should be visible
-                this.setDescriptionOnMyTurn(notif.log, notif.args);
+                else {
+                    // XXX this is very bad in multiple player all yout buttons dissapear
+                    // currently gameaction_status should be visible
+                    this.setDescriptionOnMyTurn(notif.log, notif.args);
+                }
             }
         }
     };
@@ -3334,13 +3389,25 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.notif_counter = function (notif) {
         _super.prototype.notif_counter.call(this, notif);
         //move animation on main player board counters
-        /*
-        const counter_move=["m","pm","s","ps","u","pu","p","pp","e","pe","h","ph"].map((item)=>{
-          return "tracker_"+item+"_";
-        });*/
         var counter_move = ["m", "s", "u", "p", "e", "h", "tr"].map(function (item) {
             return "tracker_" + item + "_";
         });
+        //temperature & oxygen - compact only as full doesn't have individual rendered elements
+        if (!this.isLayoutFull()) {
+            if (notif.args.counter_name == 'tracker_t') {
+                this.customAnimation.animateMapItemAwareness('temperature_map');
+            }
+            else if (notif.args.counter_name == 'tracker_o') {
+                this.customAnimation.animateMapItemAwareness('oxygen_map');
+            }
+        }
+        //ocean's pile
+        if (notif.args.counter_name == 'tracker_w') {
+            this.customAnimation.animateMapItemAwareness('oceans_pile');
+        }
+        else if (notif.args.counter_name == 'tracker_gen') {
+            this.customAnimation.animateMapItemAwareness('outer_generation');
+        }
         if (notif.args.inc && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
             this.customAnimation.animatetingle(notif.args.counter_name);
             return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
@@ -3350,7 +3417,7 @@ var GameXBody = /** @class */ (function (_super) {
                 return this.customAnimation.animatetingle(notif.args.counter_name);
             }
             else {
-                return this.customAnimation.wait(200);
+                return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
             }
         }
     };
@@ -4059,7 +4126,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.isLayoutVariant = function (num) {
-        return this.prefs[100].value == num;
+        return this.prefs[LAYOUT_PREF_ID].value == num;
     };
     GameXBody.prototype.isLayoutFull = function () {
         return this.isLayoutVariant(2);
@@ -4503,7 +4570,6 @@ var GameXBody = /** @class */ (function (_super) {
             _loop_2(opIdS);
         }
         //refresh prereqs rendering on hand cards
-        //TODO : check if this place is pertinent
         this.updateHandPrereqs();
     };
     GameXBody.prototype.addUndoButton = function () {
@@ -4629,6 +4695,19 @@ var GameXBody = /** @class */ (function (_super) {
     // notifications
     GameXBody.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
+    };
+    //get settings
+    GameXBody.prototype.getSetting = function (key) {
+        return this.localSettings.readProp(key);
+    };
+    //Prevent moving parts when animations are set to none
+    GameXBody.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
+        if (!this.customAnimation.areAnimationsPlayed()) {
+            return _super.prototype.phantomMove.call(this, mobileId, newparentId, -1, mobileStyle, onEnd);
+        }
+        else {
+            return _super.prototype.phantomMove.call(this, mobileId, newparentId, duration, mobileStyle, onEnd);
+        }
     };
     return GameXBody;
 }(GameTokens));
@@ -4893,6 +4972,7 @@ var ScatteredResourceZone = /** @class */ (function () {
     };
     ScatteredResourceZone.prototype.addResource = function (nom) {
         if (nom === void 0) { nom = 1; }
+        //debugger;
         var supply = 'main_board';
         var avail = $(supply).querySelector(".".concat(this.resclass, "_n").concat(nom));
         if (avail) {
@@ -4955,16 +5035,26 @@ var VLayout = /** @class */ (function () {
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
-        dojo.place("player_controls_".concat(color), "tableau_".concat(color, "_corp"));
+        dojo.place("player_controls_".concat(color), "player_board_header_".concat(color));
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
         //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
-        var headerNode = $("player_board_header_".concat(color));
-        dojo.place("tableau_".concat(color, "_corp_logo"), headerNode, "first");
-        dojo.place("player_area_name_".concat(color), headerNode, "first");
-        dojo.removeClass(headerNode, "playerboard_header");
-        dojo.addClass(headerNode, "playerboard_header_v");
-        $("player_area_name_".concat(color)).setAttribute("data-player-name", name);
-        $("player_area_name_".concat(color)).innerHTML = "";
+        var headerNode = this.game.createDivNode("playerboard_side_".concat(color), "playerboard_side");
+        //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
+        dojo.place(headerNode, "player_area_".concat(color), "first");
+        var settingNode = $("player_board_header_".concat(color));
+        dojo.place(settingNode, "player_area_".concat(color), "first");
+        settingNode.style.display = 'none';
+        var gear = this.game.createDivNode("playerboard_side_gear_".concat(color), "playerboard_side_gear", headerNode);
+        gear.addEventListener('click', function () {
+            if (settingNode.style.display == 'none') {
+                settingNode.style.display = 'flex';
+            }
+            else {
+                settingNode.style.display = 'none';
+            }
+        });
+        var namediv = this.game.createDivNode("playerboard_side_name_".concat(color), "playerboard_side_name", headerNode);
+        namediv.setAttribute("data-player-name", name);
         var places = ["tracker_city", "tracker_forest", "tracker_land"];
         for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
             var key = places_1[_i];

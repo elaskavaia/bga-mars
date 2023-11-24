@@ -68,6 +68,8 @@
   }
 
   #ebd-body {
+    --localsetting_mapsize: 100;
+    --localsetting_cardsize: 100;
     --map-width: calc(var(--localsetting_mapsize) / 100 * 600px);
     --map-board-with: calc(var(--map-width) * 1.66);
     --map-height: calc(var(--map-width) * 0.92);
@@ -388,6 +390,7 @@
     left: 43%;
     top: 7%;
   }
+
   .resarea_u {
     width: 26%;
     height: 26%;
@@ -408,6 +411,7 @@
     left: 38%;
     top: 71%;
   }
+
   .resarea_h {
     width: 28%;
     height: 22%;
@@ -643,24 +647,13 @@
     /* outline: 1px dashed var(--plcolor); */
     min-width: var(--map-board-with);
     display: flex;
+    flex-wrap: wrap;
   }
 
   .player_counters {
     display: none;
   }
 
-  .playerboard_header_v {
-
-    .counters_holder {
-      width: unset;
-      display: none;
-    }
-
-    .corp_logo {
-      display: none;
-    }
-
-  }
 
 
 
@@ -669,14 +662,7 @@
   }
 
 
-  .player_area_name {
-    background: none;
-    padding: 0px;
-    left: unset;
-    right: unset;
-    border: none;
-    position: absolute;
-    font-size: calc(var(--card-width) * 0.2);
+  .playerboard_side_name {
     font-family: var(--mars-font);
     width: 32px;
     height: var(--card-height);
@@ -685,39 +671,77 @@
     color: var(--plcolor);
   }
 
-  .player_area_name::after {
+  .playerboard_side_name::before {
     content: attr(data-player-name);
     position: absolute;
     transform: rotate(-90deg) translateX(-100%);
-    transform-origin: 0.5em 0.5em 0;
+    transform-origin: 0.5em 0.75em 0;
   }
 
-  .playerboard_header_v {
+  .playerboard_side_gear::after {
+    content: "\f013";
+    position: absolute;
+    font-family: FontAwesome;
+    color: gray;
+  }
+
+  .playerboard_side_gear:hover::after {
+    animation: fa-spin 2s linear;
+  }
+
+  .playerboard_side {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     /* background-image: linear-gradient(to right, var(--plcolor), transparent); */
     width: 32px;
+    font-size: 32px;
   }
 
-  .playerboard_header_v .badge~.mini_counter[data-state="0"] {
-    opacity: 0.2;
+  .player_area {
+    .player_area_name {
+      display: none;
+    }
+
+    .playerboard_header {
+      display: flex;
+      width: 100%;
+    }
+
+    .playerboard_header .badge~.mini_counter[data-state="0"] {
+      opacity: 0.2;
+    }
+
+    .playerboard_header  {
+      .counters_holder {
+        width: unset;
+      }
+
+      .corp_logo {
+        display: block;
+      }
+    }
+    .playerboard_controls {
+      display: block;
+    }
+  
   }
+
 
   .player_tags {
     width: unset;
   }
 
-  .playerboard_controls {
-    display: none;
-  }
+
 
   .player_controls {
     position: relative;
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-evenly;
-    padding: 0.5em;
+    gap: 0.5em;
+    width: fit-content;
   }
 
 
@@ -735,7 +759,7 @@
     display: flex;
     width: fit-content;
     height: fit-content;
-    border-radius: 3%;
+    border-radius: 10%;
     cursor: pointer;
   }
 
@@ -745,15 +769,8 @@
     align-items: center;
     flex-direction: column;
     font-weight: normal;
-  }
-
-  .corp_holder .card_icon {
-    // card form factor is 3/4
     width: 24px;
     height: 32px;
-
-    border: 1px solid black;
-    border-radius: 20%;
     border: 1px solid gray;
     border-radius: 20%;
   }
@@ -775,7 +792,7 @@
   }
 
   .viewcards_button[data-cardtype="0"] .buttoncard {
-       background-color: #8b452d;
+    background-color: #8b452d;
   }
 
   .viewcards_button[data-selected="0"] i {

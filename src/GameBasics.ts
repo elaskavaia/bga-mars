@@ -442,13 +442,12 @@ class GameBasics extends GameGui {
     var newparent = $(newparentId);
     if (!newparent) throw new Error(`Does not exists ${newparentId}`);
     if (!duration) duration = this.defaultAnimationDuration;
-    if (duration <= 0 || !mobileNode.parentNode) {
-      newparent.appendChild(mobileNode);
-      return;
+    const noanimation = duration <= 0 || !mobileNode.parentNode;
+    if (!noanimation) {
+      var clone = this.projectOnto(mobileNode, "_temp");
+      mobileNode.style.opacity = "0"; // hide original
     }
-    var clone = this.projectOnto(mobileNode, "_temp");
-    clone.style.transitionDuration = "0";
-    mobileNode.style.opacity = "0"; // hide original
+
 
     const rel = mobileStyle?.relation;
     if (rel) {
@@ -462,6 +461,10 @@ class GameBasics extends GameGui {
 
     setStyleAttributes(mobileNode, mobileStyle);
     mobileNode.offsetHeight; // recalc
+
+    if (!noanimation) {
+      return;
+    }
 
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
     //setStyleAttributes(desti, mobileStyle);

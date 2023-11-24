@@ -3724,6 +3724,7 @@
 #hex_0_2 {
   left: 10%;
   top: 5%;
+  position: absolute;
 }
 
 #hex_0_3 {
@@ -4002,6 +4003,7 @@
   width: calc(var(--map-width) * 0.157);
   background-image: url("img/temperature.png");
   background-size: cover;
+  transform-origin: right;
 }
 
 .temperature_scale {
@@ -4114,6 +4116,7 @@
   top: -65%;
   pointer-events: none;
   left: 16.5%;
+  transform-origin: top;
 }
 
 .oxygen_scale {
@@ -4499,6 +4502,7 @@
   height: calc(var(--map-width) * 0.1);
   color: white;
   font-size: calc(var(--map-width) * 0.05);
+  transform-origin: top right;
 }
 .outer_generation .tracker_gen {
   position: absolute;
@@ -4867,7 +4871,7 @@
   border-radius: 1vh;
   background: linear-gradient(-35deg, rgba(51, 51, 51, 0.7) 0%, rgba(225, 225, 225, 0.5) 24%, rgba(158, 158, 158, 0.5) 82%, rgba(225, 225, 225, 0.9) 100%);
   --card-count:1;
-  margin-bottom: 3vh;
+  margin-bottom: 1vh;
 }
 .mcompact .player_area_name {
   /*    padding: 0.3vh;
@@ -7261,6 +7265,8 @@
   text-shadow: none;
 }
 .mfull #ebd-body {
+  --localsetting_mapsize: 100;
+  --localsetting_cardsize: 100;
   --map-width: calc(var(--localsetting_mapsize) / 100 * 600px);
   --map-board-with: calc(var(--map-width) * 1.66);
   --map-height: calc(var(--map-width) * 0.92);
@@ -7823,28 +7829,15 @@
   /* outline: 1px dashed var(--plcolor); */
   min-width: var(--map-board-with);
   display: flex;
+  flex-wrap: wrap;
 }
 .mfull .player_counters {
-  display: none;
-}
-.mfull .playerboard_header_v .counters_holder {
-  width: unset;
-  display: none;
-}
-.mfull .playerboard_header_v .corp_logo {
   display: none;
 }
 .mfull #players_area {
   display: none;
 }
-.mfull .player_area_name {
-  background: none;
-  padding: 0px;
-  left: unset;
-  right: unset;
-  border: none;
-  position: absolute;
-  font-size: calc(var(--card-width) * 0.2);
+.mfull .playerboard_side_name {
   font-family: var(--mars-font);
   width: 32px;
   height: var(--card-height);
@@ -7852,34 +7845,59 @@
   text-wrap: nowrap;
   color: var(--plcolor);
 }
-.mfull .player_area_name::after {
+.mfull .playerboard_side_name::before {
   content: attr(data-player-name);
   position: absolute;
   transform: rotate(-90deg) translateX(-100%);
-  transform-origin: 0.5em 0.5em 0;
+  transform-origin: 0.5em 0.75em 0;
 }
-.mfull .playerboard_header_v {
+.mfull .playerboard_side_gear::after {
+  content: "\f013";
+  position: absolute;
+  font-family: FontAwesome;
+  color: gray;
+}
+.mfull .playerboard_side_gear:hover::after {
+  animation: fa-spin 2s linear;
+}
+.mfull .playerboard_side {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   /* background-image: linear-gradient(to right, var(--plcolor), transparent); */
   width: 32px;
+  font-size: 32px;
 }
-.mfull .playerboard_header_v .badge ~ .mini_counter[data-state="0"] {
+.mfull .player_area .player_area_name {
+  display: none;
+}
+.mfull .player_area .playerboard_header {
+  display: flex;
+  width: 100%;
+}
+.mfull .player_area .playerboard_header .badge ~ .mini_counter[data-state="0"] {
   opacity: 0.2;
+}
+.mfull .player_area .playerboard_header .counters_holder {
+  width: unset;
+}
+.mfull .player_area .playerboard_header .corp_logo {
+  display: block;
+}
+.mfull .player_area .playerboard_controls {
+  display: block;
 }
 .mfull .player_tags {
   width: unset;
-}
-.mfull .playerboard_controls {
-  display: none;
 }
 .mfull .player_controls {
   position: relative;
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-evenly;
-  padding: 0.5em;
+  gap: 0.5em;
+  width: fit-content;
 }
 .mfull .corp_logo {
   width: calc(var(--card-width) * 0.5);
@@ -7892,7 +7910,7 @@
   display: flex;
   width: fit-content;
   height: fit-content;
-  border-radius: 3%;
+  border-radius: 10%;
   cursor: pointer;
 }
 .mfull .buttoncard {
@@ -7900,12 +7918,8 @@
   align-items: center;
   flex-direction: column;
   font-weight: normal;
-}
-.mfull .corp_holder .card_icon {
   width: 24px;
   height: 32px;
-  border: 1px solid black;
-  border-radius: 20%;
   border: 1px solid gray;
   border-radius: 20%;
 }
@@ -8162,6 +8176,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transform-origin: top left;
 }
 
 #oceans_pile .tracker_w {

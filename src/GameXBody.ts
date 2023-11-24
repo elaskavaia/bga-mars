@@ -1,3 +1,5 @@
+const LAYOUT_PREF_ID = 100;
+
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_pay: any;
@@ -10,6 +12,7 @@ class GameXBody extends GameTokens {
   private zoneHeight: number;
   private previousLayout: string;
   private CON: { [key: string]: string };
+
   // private parses:any;
 
   constructor() {
@@ -21,6 +24,9 @@ class GameXBody extends GameTokens {
     try {
       this.isDoingSetup = true;
       this.CON = gamedatas.CON; // PHP contants for game
+      const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
+      const root = document.children[0];// weird
+      dojo.addClass(root,this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
@@ -147,7 +153,7 @@ class GameXBody extends GameTokens {
 
   setupLocalSettings() {
     //local settings, include user id into setting string so it different per local player and theme
-    const theme = this.prefs[100].value ?? 1;
+    const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
     this.localSettings = new LocalSettings(this.game_name+"-" + theme + "-" + this.player_id, [
  
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
@@ -191,8 +197,8 @@ class GameXBody extends GameTokens {
 
     const dialog = new ebg.popindialog();
     dialog.create("theme_selector");
-    const op1 = this.prefs[100].values[1];
-    const op2 = this.prefs[100].values[2];
+    const op1 = this.prefs[LAYOUT_PREF_ID].values[1];
+    const op2 = this.prefs[LAYOUT_PREF_ID].values[2];
     // not translating this - will be removed after alpha
     const desc = `
         Please select one of themes below - the user interface will look slighly different <br>
@@ -205,7 +211,7 @@ class GameXBody extends GameTokens {
       `;// NO I18N
     var html = this.getThemeSelectorDialogHtml('theme_selector_area','Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
     dialog.setContent(html);
-    this.createCustomPreferenceNode(100,"pp100",'theme_selector_area');
+    this.createCustomPreferenceNode(LAYOUT_PREF_ID,"pp"+LAYOUT_PREF_ID,'theme_selector_area');
     dialog.show();
  }
 
@@ -221,7 +227,7 @@ class GameXBody extends GameTokens {
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
     console.log("PREF", pref_id);
-    if (pref_id == 100 || pref_id == 101) {
+    if (pref_id == LAYOUT_PREF_ID || pref_id == 101) {
       const pp = $(prefDivId).parentElement;
       pp.removeChild($(prefDivId));
       this.createCustomPreferenceNode(pref_id, prefDivId, pp);
@@ -1293,8 +1299,9 @@ awarded.`);
     }
   }
 
+
   isLayoutVariant(num: number) {
-    return this.prefs[100].value == num;
+    return this.prefs[LAYOUT_PREF_ID].value == num;
   }
 
   isLayoutFull() {

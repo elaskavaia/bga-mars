@@ -36,6 +36,7 @@ class ScatteredResourceZone {
   }
 
   public addResource(nom: number = 1) {
+    //debugger;
     const supply = 'main_board';
     const avail = $(supply).querySelector(`.${this.resclass}_n${nom}`);
     if (avail) {
