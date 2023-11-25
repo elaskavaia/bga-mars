@@ -8,14 +8,14 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertTrue;
 
-require_once "../mars.game.php";
+require_once "../terraformingmars.game.php";
 require_once "TokensInMem.php";
 
 
 class GameStateInMem extends GameState {
 }
 
-class GameUT extends mars {
+class GameUT extends terraformingmars {
     var $multimachine;
     var $xtable;
     function __construct() {
