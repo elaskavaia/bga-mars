@@ -201,17 +201,17 @@ abstract class PGameBasic extends Table {
     function debugChat($message) {
         $object = $this;
         $message = html_entity_decode($message);
-        $parts = explode("->", $message);
-        if (count($parts) > 1) {
-            try {
-                $code = 'return $this->' . $parts[0] . ";";
-                $message = $parts[1];
-                $object = eval("$code");
-            } catch (Throwable $t) {
-                self::notifyPlayer($this->getCurrentPlayerId(), "simplenotif", "DEBUG: running $code; Error: method $t", []);
-                return false;
-            }
-        }
+        // $parts = explode("->", $message);
+        // if (count($parts) > 1) {
+        //     try {
+        //         $code = 'return $this->' . $parts[0] . ";";
+        //         $message = $parts[1];
+        //         $object = eval("$code");
+        //     } catch (Throwable $t) {
+        //         self::notifyPlayer($this->getCurrentPlayerId(), "simplenotif", "DEBUG: running $code; Error: method $t", []);
+        //         return false;
+        //     }
+        // }
         $res = [];
         preg_match("/^([a-zA-Z_0-9]*) *\((.*)\)$/", $message, $res);
         if (count($res) == 3) {

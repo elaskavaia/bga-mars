@@ -41,7 +41,7 @@ class MathTerminalExpression extends MathExpression {
         if (!$value) {
             return 0;
         }
-        throw new Exception("Failed to resolved '$value'");
+        throw new feException("Failed to resolved MathTerminalExpression '$value'");
     }
     public function __toString() {
         return $this->left;
@@ -67,8 +67,9 @@ class MathUnaryExpression extends MathExpression {
     public function evaluate($mapper) {
         $right = $this->right->evaluate($mapper);
         $op = $this->op;
-        $res = eval("return $op($right);");
-        return (int)($res);
+        throw new feException("Cannot evaluate MathUnaryExpression");
+        //$res = eval("return $op($right);");
+        //return (int)($res);
     }
 
     public function toArray(){
@@ -101,7 +102,23 @@ class MathBinaryExpression extends MathExpression {
         $left = $this->left->evaluate($mapper);
         $right = $this->right->evaluate($mapper);
         $op = $this->op;
-        $res = eval("return $left $op $right;");
+        //$res = eval("return $left $op $right;");
+        $res = 0;
+        switch($op) {
+            case "+": $res =  $left + $right; break;
+            case "-": $res =  $left - $right; break;
+            case "/": $res =  $left / $right; break;
+            case "%": $res =  $left % $right; break;
+            case "*": $res =  $left * $right; break;
+            case "<": $res =  $left < $right; break;
+            case "<=": $res =  $left <= $right; break;
+            case ">": $res =  $left > $right; break;
+            case ">=": $res =  $left >= $right; break;
+            case "==": $res =  $left == $right; break;
+            case "&": $res =  $left & $right; break;
+            case "|": $res =  $left | $right; break;
+        
+        }
         return (int)($res);
     }
 }
@@ -185,6 +202,7 @@ class MathLexer extends OpLexer {
         $this->terminals = array_merge($this->terminals, [
             "/^(>=)/" => "T_OP",
             "/^(<=)/" => "T_OP",
+            "/^(==)/" => "T_OP",
             "/^(-\s*\d+)/" => "T_NUMBER",
         ]);
     }
