@@ -151,10 +151,14 @@ class GameXBody extends GameTokens {
     }
   }
 
+  getLocalSettingNamespace(extra: string | number = ''){
+    return `${this.game_name}-${this.player_id}-${extra}`;
+  }
+
   setupLocalSettings() {
     //local settings, include user id into setting string so it different per local player and theme
     const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
-    this.localSettings = new LocalSettings(this.game_name+"-" + theme + "-" + this.player_id, [
+    this.localSettings = new LocalSettings(this.getLocalSettingNamespace(theme), [
  
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
       { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
@@ -189,7 +193,7 @@ class GameXBody extends GameTokens {
    */
   setupOneTimePrompt() {
     if (typeof g_replayFrom != "undefined" || g_archive_mode) return;
-    const ls = new LocalSettings(this.game_name,[]); // need another instance to save once per machine not per user/theme like others
+    const ls = new LocalSettings(this.getLocalSettingNamespace()); // need another instance to save once per machine not per user/theme like others
    
     if (ls.readProp("activated")) return;
     ls.writeProp("activated", "1");
@@ -1892,7 +1896,7 @@ awarded.`);
     if (this.isLayoutFull()) {
       // toggle
       value = node.dataset.selected == "0" ? "1" : "0";
-      const perColorSettings = new LocalSettings(`${this.game_name}_${plcolor}`,[]);
+      const perColorSettings = new LocalSettings(this.getLocalSettingNamespace(plcolor));
       perColorSettings.writeProp(tblitem,value);
     } else {
       // unselec others (why?)

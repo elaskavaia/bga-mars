@@ -4663,6 +4663,7 @@
   right: 4px;
   font-size: 12px;
   color: black;
+  background-image: none !important;
 }
 
 .tracker.tracker_passed::after {
@@ -7571,6 +7572,7 @@
 }
 .mfull .cards_4 {
   grid-column: 1;
+  padding: 2px;
 }
 .mfull .cards_3 {
   grid-column: 1;
@@ -8680,6 +8682,7 @@
 
 .log .tracker_pm, .log .tracker_ps, .log .tracker_pu, .log .tracker_pp, .log .tracker_pe, .log .tracker_ph {
   outline: 4px solid #b7915e;
+  background-color: #b7915e;
   margin-left: 3px;
   margin-right: 3px;
 }

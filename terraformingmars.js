@@ -3182,11 +3182,15 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.addClass(board, "thisplayer_zone");
         }
     };
+    GameXBody.prototype.getLocalSettingNamespace = function (extra) {
+        if (extra === void 0) { extra = ''; }
+        return "".concat(this.game_name, "-").concat(this.player_id, "-").concat(extra);
+    };
     GameXBody.prototype.setupLocalSettings = function () {
         var _a;
         //local settings, include user id into setting string so it different per local player and theme
         var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
-        this.localSettings = new LocalSettings(this.game_name + "-" + theme + "-" + this.player_id, [
+        this.localSettings = new LocalSettings(this.getLocalSettingNamespace(theme), [
             { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
             { key: "handplace", label: _("Make floating hand"), choice: { floating: true }, default: false, ui: "checkbox" },
@@ -3217,7 +3221,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setupOneTimePrompt = function () {
         if (typeof g_replayFrom != "undefined" || g_archive_mode)
             return;
-        var ls = new LocalSettings(this.game_name, []); // need another instance to save once per machine not per user/theme like others
+        var ls = new LocalSettings(this.getLocalSettingNamespace()); // need another instance to save once per machine not per user/theme like others
         if (ls.readProp("activated"))
             return;
         ls.writeProp("activated", "1");
@@ -4695,7 +4699,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (this.isLayoutFull()) {
             // toggle
             value = node.dataset.selected == "0" ? "1" : "0";
-            var perColorSettings = new LocalSettings("".concat(this.game_name, "_").concat(plcolor), []);
+            var perColorSettings = new LocalSettings(this.getLocalSettingNamespace(plcolor));
             perColorSettings.writeProp(tblitem, value);
         }
         else {
@@ -4750,6 +4754,7 @@ var Operation = /** @class */ (function () {
 }());
 var LocalSettings = /** @class */ (function () {
     function LocalSettings(gameName, props) {
+        if (props === void 0) { props = []; }
         this.gameName = gameName;
         this.props = props;
     }
@@ -5109,7 +5114,7 @@ var VLayout = /** @class */ (function () {
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
-        var perColorSettings = new LocalSettings("".concat(this.game.game_name, "_").concat(color), []);
+        var perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
         for (var i = 0; i <= 4; i++) {
             var settingKey = "visibility_" + i;
             var value = perColorSettings.readProp(settingKey, "1");

@@ -59,7 +59,7 @@ class VLayout {
 
     dojo.place(`counter_draw_${color}`, `limbo`);
 
-    const perColorSettings = new LocalSettings(`${this.game.game_name}_${color}`,[]);
+    const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
     for (let i = 0; i <= 4; i++) {
       const settingKey = "visibility_" + i;
       const value = perColorSettings.readProp(settingKey,"1");

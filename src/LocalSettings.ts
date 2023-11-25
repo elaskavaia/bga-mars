@@ -14,7 +14,7 @@ interface LocalProp {
 }
 
 class LocalSettings {
-  constructor(private gameName: string, private props: LocalProp[]) {
+  constructor(private gameName: string, private props: LocalProp[] = []) {
 
   }
 
