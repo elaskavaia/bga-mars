@@ -438,13 +438,16 @@ class GameBasics extends GameGui {
     onEnd?: (node?: HTMLElement) => void
   ) {
     var mobileNode = $(mobileId) as HTMLElement;
+
     if (!mobileNode) throw new Error(`Does not exists ${mobileId}`);
     var newparent = $(newparentId);
     if (!newparent) throw new Error(`Does not exists ${newparentId}`);
     if (!duration) duration = this.defaultAnimationDuration;
+    if (!duration || duration<0) duration=0;
     const noanimation = duration <= 0 || !mobileNode.parentNode;
+    var clone = null;
     if (!noanimation) {
-      var clone = this.projectOnto(mobileNode, "_temp");
+      clone = this.projectOnto(mobileNode, "_temp");
       mobileNode.style.opacity = "0"; // hide original
     }
 
@@ -462,27 +465,34 @@ class GameBasics extends GameGui {
     setStyleAttributes(mobileNode, mobileStyle);
     mobileNode.offsetHeight; // recalc
 
-    if (!noanimation) {
+    if (noanimation) {
       return;
     }
 
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
-    //setStyleAttributes(desti, mobileStyle);
-    clone.style.transitionDuration = duration + "ms";
-    clone.style.transitionProperty = "all";
-    clone.style.visibility = "visible";
-    clone.style.opacity = "1";
-    // that will cause animation
-    clone.style.left = desti.style.left;
-    clone.style.top = desti.style.top;
-    clone.style.transform = desti.style.transform;
-    // now we don't need destination anymore
-    desti.parentNode.removeChild(desti);
-    setTimeout(() => {
-      mobileNode.style.removeProperty("opacity"); // restore visibility of original
-      if (clone.parentNode) clone.parentNode.removeChild(clone); // destroy clone
-      if (onEnd) onEnd(mobileNode);
-    }, duration);
+    try {
+      //setStyleAttributes(desti, mobileStyle);
+      clone.style.transitionDuration = duration + "ms";
+      clone.style.transitionProperty = "all";
+      clone.style.visibility = "visible";
+      clone.style.opacity = "1";
+      // that will cause animation
+      clone.style.left = desti.style.left;
+      clone.style.top = desti.style.top;
+      clone.style.transform = desti.style.transform;
+      // now we don't need destination anymore
+      desti.parentNode.removeChild(desti);
+      setTimeout(() => {
+        mobileNode.style.removeProperty("opacity"); // restore visibility of original
+        if (clone.parentNode) clone.parentNode.removeChild(clone); // destroy clone
+        if (onEnd) onEnd(mobileNode);
+      }, duration);
+    } catch (e) {
+      // if bad thing happen we have to clean up clones
+      console.error(e);
+      dojo.destroy(clone);
+      dojo.destroy(desti);
+    }
   }
 
   // HTML MANIPULATIONS
