@@ -465,6 +465,7 @@
 
   .cards_4 {
     grid-column: 1;
+    padding: 2px;
   }
 
   .cards_3 {
@@ -745,7 +746,7 @@
     .player_area_name {
       display: none;
     }
-    
+
     .player_tags {
       width: unset;
       padding: 2px;
