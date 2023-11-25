@@ -229,8 +229,10 @@ class LocalSettings {
      return this.gameName + "." + key;
   }
 
-  public readProp(key: string): string {
-    return localStorage.getItem(this.getLocalStorageItemId(key));
+  public readProp(key: string, def: string = ''): string {
+    const value = localStorage.getItem(this.getLocalStorageItemId(key));
+    if (value==undefined) return def;
+    return value;
   }
   public writeProp(key: string, val: string): Boolean {
     try {

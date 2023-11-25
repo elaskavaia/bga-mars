@@ -514,6 +514,9 @@
   .viewcards_button[data-cardtype="3"] .buttoncard  {
     background-color: #f64c4c;
   }
+  .viewcards_button[data-cardtype="4"]  {
+    display: none; // not shown for mcompact
+  }
 
   .viewcards_button[data-selected="0"] i {
     display: none;

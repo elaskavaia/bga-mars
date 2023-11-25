@@ -368,9 +368,12 @@ var GameBasics = /** @class */ (function (_super) {
             throw new Error("Does not exists ".concat(newparentId));
         if (!duration)
             duration = this.defaultAnimationDuration;
+        if (!duration || duration < 0)
+            duration = 0;
         var noanimation = duration <= 0 || !mobileNode.parentNode;
+        var clone = null;
         if (!noanimation) {
-            var clone = this.projectOnto(mobileNode, "_temp");
+            clone = this.projectOnto(mobileNode, "_temp");
             mobileNode.style.opacity = "0"; // hide original
         }
         var rel = mobileStyle === null || mobileStyle === void 0 ? void 0 : mobileStyle.relation;
@@ -385,28 +388,36 @@ var GameBasics = /** @class */ (function (_super) {
         }
         setStyleAttributes(mobileNode, mobileStyle);
         mobileNode.offsetHeight; // recalc
-        if (!noanimation) {
+        if (noanimation) {
             return;
         }
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
-        //setStyleAttributes(desti, mobileStyle);
-        clone.style.transitionDuration = duration + "ms";
-        clone.style.transitionProperty = "all";
-        clone.style.visibility = "visible";
-        clone.style.opacity = "1";
-        // that will cause animation
-        clone.style.left = desti.style.left;
-        clone.style.top = desti.style.top;
-        clone.style.transform = desti.style.transform;
-        // now we don't need destination anymore
-        desti.parentNode.removeChild(desti);
-        setTimeout(function () {
-            mobileNode.style.removeProperty("opacity"); // restore visibility of original
-            if (clone.parentNode)
-                clone.parentNode.removeChild(clone); // destroy clone
-            if (onEnd)
-                onEnd(mobileNode);
-        }, duration);
+        try {
+            //setStyleAttributes(desti, mobileStyle);
+            clone.style.transitionDuration = duration + "ms";
+            clone.style.transitionProperty = "all";
+            clone.style.visibility = "visible";
+            clone.style.opacity = "1";
+            // that will cause animation
+            clone.style.left = desti.style.left;
+            clone.style.top = desti.style.top;
+            clone.style.transform = desti.style.transform;
+            // now we don't need destination anymore
+            desti.parentNode.removeChild(desti);
+            setTimeout(function () {
+                mobileNode.style.removeProperty("opacity"); // restore visibility of original
+                if (clone.parentNode)
+                    clone.parentNode.removeChild(clone); // destroy clone
+                if (onEnd)
+                    onEnd(mobileNode);
+            }, duration);
+        }
+        catch (e) {
+            // if bad thing happen we have to clean up clones
+            console.error(e);
+            dojo.destroy(clone);
+            dojo.destroy(desti);
+        }
     };
     // HTML MANIPULATIONS
     /**
@@ -4680,21 +4691,22 @@ var GameXBody = /** @class */ (function (_super) {
         var plcolor = node.dataset.player;
         var btncolor = node.dataset.cardtype;
         var tblitem = "visibility_" + btncolor;
+        var value = "1";
         if (this.isLayoutFull()) {
-            var selected = node.dataset.selected == "1";
-            var value = !selected ? "1" : "0";
-            $("tableau_" + plcolor).dataset[tblitem] = value;
-            node.dataset.selected = value;
+            // toggle
+            value = node.dataset.selected == "0" ? "1" : "0";
+            var perColorSettings = new LocalSettings("".concat(this.game_name, "_").concat(plcolor), []);
+            perColorSettings.writeProp(tblitem, value);
         }
         else {
-            var value = "1";
+            // unselec others (why?)
             for (var i = 0; i <= 3; i++) {
                 $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
                 $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
             }
-            $("tableau_" + plcolor).dataset[tblitem] = value;
-            node.dataset.selected = value;
         }
+        $("tableau_" + plcolor).dataset[tblitem] = value;
+        node.dataset.selected = value;
         return true;
     };
     GameXBody.prototype.handleStackedTooltips = function (attachNode) {
@@ -4943,8 +4955,12 @@ var LocalSettings = /** @class */ (function () {
     LocalSettings.prototype.getLocalStorageItemId = function (key) {
         return this.gameName + "." + key;
     };
-    LocalSettings.prototype.readProp = function (key) {
-        return localStorage.getItem(this.getLocalStorageItemId(key));
+    LocalSettings.prototype.readProp = function (key, def) {
+        if (def === void 0) { def = ''; }
+        var value = localStorage.getItem(this.getLocalStorageItemId(key));
+        if (value == undefined)
+            return def;
+        return value;
     };
     LocalSettings.prototype.writeProp = function (key, val) {
         try {
@@ -5054,8 +5070,10 @@ var VLayout = /** @class */ (function () {
         div.appendChild(board);
         dojo.destroy("tableau_".concat(color, "_cards_3vp"));
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
+        dojo.place("pboard_".concat(color), "tableau_".concat(color, "_cards_4"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
-        dojo.place("player_controls_".concat(color), "player_board_header_".concat(color));
+        dojo.place("player_controls_".concat(color), "player_board_header_".concat(color), 'first');
+        $("local_counter_".concat(color, "_cards_0")).innerHTML = '';
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
         //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
         var headerNode = this.game.createDivNode("playerboard_side_".concat(color), "playerboard_side");
@@ -5075,15 +5093,12 @@ var VLayout = /** @class */ (function () {
         });
         var namediv = this.game.createDivNode("playerboard_side_name_".concat(color), "playerboard_side_name", headerNode);
         namediv.setAttribute("data-player-name", name);
+        // relocate tile trackers from tags
         var places = ["tracker_city", "tracker_forest", "tracker_land"];
         for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
             var key = places_1[_i];
-            //alt_tracker_city_ff0000
             dojo.place($("alt_".concat(key, "_").concat(color)), "miniboardentry_".concat(color));
         }
-        // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
-        // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
-        // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
         dojo.place("alt_tracker_gen", "map_left");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
@@ -5094,9 +5109,12 @@ var VLayout = /** @class */ (function () {
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
-        for (var i = 0; i <= 3; i++) {
-            $("tableau_" + color).dataset["visibility_" + i] = "1";
-            $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
+        var perColorSettings = new LocalSettings("".concat(this.game.game_name, "_").concat(color), []);
+        for (var i = 0; i <= 4; i++) {
+            var settingKey = "visibility_" + i;
+            var value = perColorSettings.readProp(settingKey, "1");
+            $("tableau_" + color).dataset[settingKey] = value;
+            $("player_viewcards_" + i + "_" + color).dataset.selected = value;
         }
         // var parent = document.querySelector(".debug_section"); // studio only
         // if (!parent)

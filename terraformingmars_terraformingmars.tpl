@@ -387,15 +387,25 @@
               <i class="fa fa-eye" aria-hidden="true"></i>
             </div>
           </div>
-          <div
-                  id="player_viewcards_0_{PLAYER_COLOR}"
+          <div id="player_viewcards_0_{PLAYER_COLOR}"
                   class="viewcards_button"
                   data-cardtype="0"
                   data-selected="0"
                   data-player="{PLAYER_COLOR}"
-          >
+            >
             <div class="buttoncard card_icon">
               <div id="local_counter_{PLAYER_COLOR}_cards_0" class="viewcardbutton_counter">*</div>
+              <i class="fa fa-eye" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div id="player_viewcards_4_{PLAYER_COLOR}"
+            class="viewcards_button"
+            data-cardtype="4"
+            data-selected="0"
+            data-player="{PLAYER_COLOR}"
+            >
+            <div class="buttoncard card_icon">
+              <div id="local_counter_{PLAYER_COLOR}_cards_4" class="viewcardbutton_counter"></div>
               <i class="fa fa-eye" aria-hidden="true"></i>
             </div>
           </div>

@@ -83,7 +83,7 @@
     --stan-fullheight: calc(var(--stan-width) * 1.604095);
   }
 
-  $ratio: 1.445 / 1.7;
+  $ratio: 0.849;
   $mainh: calc(var(--map-board-with) * $ratio);
   $mainw: calc(var(--map-board-with));
 
@@ -517,6 +517,12 @@
     }
   }
 
+  .tableau[data-visibility_4="0"] {
+    .corp_holder {
+      display: none;
+    }
+  }
+
   .location .card:hover {
     z-index: 10;
     transform: unset;
@@ -654,7 +660,7 @@
     grid-gap: 2px;
     grid-template-rows: min-content auto;
     grid-template-areas:
-      "header   header"
+      "sidebar  header"
       "sidebar  content";
     /* outline: 1px dashed var(--plcolor); */
   }
@@ -739,12 +745,15 @@
     .player_area_name {
       display: none;
     }
+    
+    .player_tags {
+      width: unset;
+      padding: 2px;
+    }
+  
   }
 
 
-  .player_tags {
-    width: unset;
-  }
 
 
 
@@ -755,6 +764,8 @@
     justify-content: space-evenly;
     gap: 0.5em;
     width: fit-content;
+    margin-right: 10px;
+    margin-left: 10px;
   }
 
 
@@ -806,6 +817,9 @@
 
   .viewcards_button[data-cardtype="0"] .buttoncard {
     background-color: #8b452d;
+  }
+  .viewcards_button[data-cardtype="4"] .buttoncard {
+    background-color: white; // corporation selector
   }
 
   .viewcards_button[data-selected="0"] i {

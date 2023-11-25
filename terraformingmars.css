@@ -5397,6 +5397,9 @@
 .mcompact .viewcards_button[data-cardtype="3"] .buttoncard {
   background-color: #f64c4c;
 }
+.mcompact .viewcards_button[data-cardtype="4"] {
+  display: none;
+}
 .mcompact .viewcards_button[data-selected="0"] i {
   display: none;
 }
@@ -7290,7 +7293,7 @@
 .mfull #main_board {
   position: relative;
   width: calc(var(--map-board-with));
-  height: calc(var(--map-board-with) * 0.85);
+  height: calc(var(--map-board-with) * 0.849);
   box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
 }
 .mfull #main_area {
@@ -7601,6 +7604,9 @@
 .mfull .tableau[data-visibility_0="0"] .pboard {
   display: none;
 }
+.mfull .tableau[data-visibility_4="0"] .corp_holder {
+  display: none;
+}
 .mfull .location .card:hover {
   z-index: 10;
   transform: unset;
@@ -7831,7 +7837,7 @@
   grid-template-columns: min-content auto;
   grid-gap: 2px;
   grid-template-rows: min-content auto;
-  grid-template-areas: "header   header" "sidebar  content";
+  grid-template-areas: "sidebar  header" "sidebar  content";
   /* outline: 1px dashed var(--plcolor); */
 }
 .mfull .player_counters {
@@ -7896,8 +7902,9 @@
 .mfull .player_area .player_area_name {
   display: none;
 }
-.mfull .player_tags {
+.mfull .player_area .player_tags {
   width: unset;
+  padding: 2px;
 }
 .mfull .player_controls {
   position: relative;
@@ -7906,6 +7913,8 @@
   justify-content: space-evenly;
   gap: 0.5em;
   width: fit-content;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 .mfull .corp_logo {
   width: calc(var(--card-width) * 0.5);
@@ -7945,6 +7954,9 @@
 }
 .mfull .viewcards_button[data-cardtype="0"] .buttoncard {
   background-color: #8b452d;
+}
+.mfull .viewcards_button[data-cardtype="4"] .buttoncard {
+  background-color: white;
 }
 .mfull .viewcards_button[data-selected="0"] i {
   display: none;

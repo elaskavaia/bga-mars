@@ -11,8 +11,11 @@ class VLayout {
 
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
+    dojo.place(`pboard_${color}`,`tableau_${color}_cards_4`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
-    dojo.place(`player_controls_${color}`, `player_board_header_${color}`);
+    dojo.place(`player_controls_${color}`, `player_board_header_${color}`, 'first');
+
+    $(`local_counter_${color}_cards_0`).innerHTML = '';
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
 
@@ -35,15 +38,11 @@ class VLayout {
     namediv.setAttribute("data-player-name", name);
 
 
+    // relocate tile trackers from tags
     const places = ["tracker_city", "tracker_forest", "tracker_land"];
     for (const key of places) {
-      //alt_tracker_city_ff0000
       dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
     }
-
-    // dojo.place(`player_viewcards_2_${color}`, `miniboardentry_${color}`);
-    // dojo.place(`player_viewcards_1_${color}`, `miniboardentry_${color}`);
-    // dojo.place(`player_viewcards_3_${color}`, `miniboardentry_${color}`);
 
     dojo.place("alt_tracker_gen", "map_left");
     dojo.destroy("outer_generation");
@@ -60,9 +59,12 @@ class VLayout {
 
     dojo.place(`counter_draw_${color}`, `limbo`);
 
-    for (let i = 0; i <= 3; i++) {
-      $("tableau_" + color).dataset["visibility_" + i] = "1";
-      $("player_viewcards_" + i + "_" + color).dataset.selected = "1";
+    const perColorSettings = new LocalSettings(`${this.game.game_name}_${color}`,[]);
+    for (let i = 0; i <= 4; i++) {
+      const settingKey = "visibility_" + i;
+      const value = perColorSettings.readProp(settingKey,"1");
+      $("tableau_" + color).dataset[settingKey] = value;
+      $("player_viewcards_" + i + "_" + color).dataset.selected = value;
     }
 
 

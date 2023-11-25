@@ -1887,23 +1887,22 @@ awarded.`);
     const plcolor = node.dataset.player;
     const btncolor = node.dataset.cardtype;
     const tblitem = "visibility_" + btncolor;
+    let value = "1";
 
     if (this.isLayoutFull()) {
-      const selected = node.dataset.selected == "1";
-      const value = !selected ? "1" : "0";
-
-      $("tableau_" + plcolor).dataset[tblitem] = value;
-      node.dataset.selected = value;
+      // toggle
+      value = node.dataset.selected == "0" ? "1" : "0";
+      const perColorSettings = new LocalSettings(`${this.game_name}_${plcolor}`,[]);
+      perColorSettings.writeProp(tblitem,value);
     } else {
-      const value = "1";
-
+      // unselec others (why?)
       for (let i = 0; i <= 3; i++) {
         $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
         $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
       }
-      $("tableau_" + plcolor).dataset[tblitem] = value;
-      node.dataset.selected = value;
     }
+    $("tableau_" + plcolor).dataset[tblitem] = value;
+    node.dataset.selected = value;
     return true;
   }
 
