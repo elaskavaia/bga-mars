@@ -2045,20 +2045,29 @@ var CustomRenders = /** @class */ (function () {
         var op = "";
         var what = "";
         var qty = 0;
-        if (typeof pre === 'string') {
+        if (typeof pre === "string") {
             op = ">=";
             what = pre;
             qty = 1;
         }
-        else {
+        else if (Array.isArray(pre)) {
             if (pre.length < 3) {
-                return "";
+                return "?";
             }
             else {
                 op = pre[0];
                 what = pre[1];
                 qty = pre[2];
             }
+            if (typeof what !== "string") {
+                what = this.parsePrereqToHTML(what);
+            }
+        }
+        else if (!pre) {
+            return "";
+        }
+        else {
+            return "?";
         }
         var suffix = "";
         var icon = CustomRenders.parseActionsToHTML(what);
@@ -2102,15 +2111,24 @@ var CustomRenders = /** @class */ (function () {
             what = pre;
             qty = 1;
         }
-        else {
+        else if (Array.isArray(pre)) {
             if (pre.length < 3) {
-                return "";
+                return "?";
             }
             else {
                 op = pre[0];
                 what = pre[1];
                 qty = pre[2];
             }
+            if (typeof what !== "string") {
+                what = this.parsePrereqToText(what, game);
+            }
+        }
+        else if (!pre) {
+            return "";
+        }
+        else {
+            return "?";
         }
         var mode = "min";
         if (op == "<=") {
@@ -2125,7 +2143,7 @@ var CustomRenders = /** @class */ (function () {
                 ret = mode == "min" ? _("Requires $v°C or warmer.") : _("It must be $v°C or colder.");
                 break;
             case "w":
-                ret = mode == "min" ? (ret = _("Requires $v ocean/s tiles.")) : _("$v ocean/s tiles or less.");
+                ret = mode == "min" ? _("Requires $v ocean/s tiles.") : _("$v ocean/s tiles or less.");
                 break;
             case "forest":
                 ret = _("Requires $v forest/s tiles.");
@@ -2150,7 +2168,9 @@ var CustomRenders = /** @class */ (function () {
                     ret = ret.replace("$tag", game.getTokenName(what));
                     break;
                 }
-                ret = "NOT FOUND :" + what;
+                else {
+                    ret = "NOT FOUND :" + what;
+                }
                 break;
         }
         ret = ret.replace('$v', String(qty));

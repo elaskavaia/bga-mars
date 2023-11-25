@@ -443,19 +443,25 @@
      let what = "";
      let qty=0;
 
-     if (typeof pre === 'string') {
+     if (typeof pre === "string") {
        op = ">=";
        what = pre;
-       qty=1;
-     } else {
-       if (pre.length<3) {
-        return "";
-
+       qty = 1;
+     } else if (Array.isArray(pre)) {
+       if (pre.length < 3) {
+         return "?";
        } else {
          op = pre[0];
          what = pre[1];
-         qty=pre[2];
+         qty = pre[2];
        }
+       if (typeof what !== "string") {
+         what = this.parsePrereqToHTML(what);
+       }
+     } else if (!pre) {
+       return "";
+     } else {
+       return "?";
      }
 
 
@@ -508,14 +514,21 @@
        op = ">=";
        what = pre;
        qty = 1;
-     } else {
+     } else if (Array.isArray(pre)){
        if (pre.length < 3) {
-         return "";
+         return "?";
        } else {
          op = pre[0];
          what = pre[1];
          qty = pre[2];
        }
+       if (typeof what !== "string") {
+         what = this.parsePrereqToText(what, game);
+       }
+     } else if (!pre) {
+        return "";
+     } else {
+        return "?";
      }
 
      let mode = "min";
@@ -531,7 +544,7 @@
          ret = mode == "min" ? _("Requires $v°C or warmer.") : _("It must be $v°C or colder.");
          break;
        case "w":
-         ret = mode == "min" ? (ret = _("Requires $v ocean/s tiles.")) : _("$v ocean/s tiles or less.");
+         ret = mode == "min" ? _("Requires $v ocean/s tiles.") : _("$v ocean/s tiles or less.");
          break;
        case "forest":
          ret = _("Requires $v forest/s tiles.");
@@ -555,8 +568,9 @@
 
            ret = ret.replace("$tag", game.getTokenName(what));
            break;
+         } else {
+           ret = "NOT FOUND :" + what;
          }
-         ret = "NOT FOUND :" + what;
          break;
      }
      ret =ret.replace('$v',String(qty));
