@@ -3070,6 +3070,8 @@ var GameXBody = /** @class */ (function (_super) {
     // private parses:any;
     function GameXBody() {
         var _this = _super.call(this) || this;
+        _this.productionTrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+        _this.resourceTrackers = ["m", "s", "u", "p", "e", "h"];
         _this.CON = {};
         return _this;
     }
@@ -3478,8 +3480,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.customAnimation.animateMapItemAwareness('outer_generation');
         }
         if (notif.args.inc && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
-            this.customAnimation.animatetingle(notif.args.counter_name);
-            return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
+            if (!this.isLayoutFull()) { // cardboard layout animating cubes on playerboard instead
+                this.customAnimation.animatetingle(notif.args.counter_name);
+                return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
+            }
         }
         else {
             if ($(notif.args.counter_name)) {
@@ -5208,8 +5212,8 @@ var VLayout = /** @class */ (function () {
             markerNode.style.bottom = "calc(10px + ".concat(bp, "% * 0.95)");
             return;
         }
-        var ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
-        var rtrackers = ["m", "s", "u", "p", "e", "h"];
+        var ptrackers = this.game.productionTrackers;
+        var rtrackers = this.game.resourceTrackers;
         if (tokenNode.id.startsWith("tracker_")) {
             var type = getPart(tokenNode.id, 1);
             if (ptrackers.includes(type)) {

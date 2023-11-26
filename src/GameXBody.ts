@@ -12,6 +12,8 @@ class GameXBody extends GameTokens {
   private zoneHeight: number;
   private previousLayout: string;
   private CON: { [key: string]: string };
+  public readonly productionTrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
+  public readonly resourceTrackers = ["m", "s", "u", "p", "e", "h"];
 
   // private parses:any;
 
@@ -480,8 +482,10 @@ class GameXBody extends GameTokens {
     }
 
     if (notif.args.inc && counter_move.some((trk) => notif.args.counter_name.startsWith(trk))) {
-      this.customAnimation.animatetingle(notif.args.counter_name);
-      return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
+      if (!this.isLayoutFull()) {     // cardboard layout animating cubes on playerboard instead
+        this.customAnimation.animatetingle(notif.args.counter_name);
+        return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
+      }
     } else {
       if ($(notif.args.counter_name)) {
         return this.customAnimation.animatetingle(notif.args.counter_name);

@@ -120,8 +120,8 @@ class VLayout {
       markerNode.style.bottom = `calc(10px + ${bp}% * 0.95)`;
       return;
     }
-    const ptrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
-    const rtrackers = ["m", "s", "u", "p", "e", "h"];
+    const ptrackers = this.game.productionTrackers;
+    const rtrackers = this.game.resourceTrackers;
 
     if (tokenNode.id.startsWith("tracker_")) {
       const type = getPart(tokenNode.id, 1);
