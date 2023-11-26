@@ -3284,7 +3284,7 @@ var GameXBody = /** @class */ (function (_super) {
             if (key.startsWith("card")) {
                 var num = getPart(key, 2);
                 var type = getPart(key, 1);
-                var helpnode = document.querySelector("#allcards_".concat(type, " .expandablecontent"));
+                var helpnode = document.querySelector("#allcards_".concat(type, " .expandablecontent_cards"));
                 if (!helpnode)
                     continue;
                 // XXX hook proper rendering
@@ -3305,11 +3305,45 @@ var GameXBody = /** @class */ (function (_super) {
         $("allcards_main_title").innerHTML = _("All Project Cards (".concat(ccmain, ")"));
         $("allcards_corp_title").innerHTML = _("All Corporate Cards (".concat(cccorp, ")"));
         // clicks
-        dojo.query(".expandablecontent > *").connect("onclick", this, function (event) {
+        dojo.query(".expandablecontent_cards > *").connect("onclick", this, function (event) {
             var id = event.currentTarget.id;
             _this.showHelp(id, true);
         });
         dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
+        // filter controls
+        var refroot = $('allcards');
+        refroot.querySelectorAll(".filter-text").forEach(function (node) {
+            node.addEventListener("input", function (event) {
+                var fnode = event.target;
+                _this.applyCardFilter(fnode.parentNode.parentNode);
+            });
+            node.setAttribute('placeholder', _('Search...'));
+        });
+        refroot.querySelectorAll(".filter-text-clear").forEach(function (clearButton) {
+            clearButton.addEventListener("click", function (event) {
+                var cnode = event.target;
+                var expandableNode = cnode.parentNode.parentNode;
+                var fnode = expandableNode.querySelector(".filter-text");
+                fnode.value = "";
+                _this.applyCardFilter(expandableNode);
+            });
+        });
+    };
+    GameXBody.prototype.applyCardFilter = function (expandableNode) {
+        var _this = this;
+        var hiddenOpacity = "none";
+        var fnode = expandableNode.querySelector(".filter-text");
+        var text = fnode.value.trim().toLowerCase();
+        var contentnode = expandableNode.querySelector(".expandablecontent_cards");
+        contentnode.querySelectorAll(".card").forEach(function (card) {
+            card.style.removeProperty('display');
+        });
+        contentnode.querySelectorAll(".card").forEach(function (card) {
+            var cardtext = _this.getTooptipHtmlForToken(card.id);
+            if (!cardtext.toLowerCase().includes(text)) {
+                card.style.display = hiddenOpacity;
+            }
+        });
     };
     GameXBody.prototype.setupDiscard = function () {
         var _this = this;
@@ -4662,7 +4696,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.showHiddenContent("discard_main", _("Discard pile contents"));
         }
         else if (tid.startsWith("card_")) {
-            if ($(tid).parentElement.childElementCount >= 2)
+            if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help"))
                 this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
         }
         else {

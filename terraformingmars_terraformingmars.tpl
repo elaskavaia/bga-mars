@@ -542,7 +542,13 @@
             <span id="allcards_main_title"></span>
           </a>
         </div>
-        <div class="expandablecontent"  id="allcards_main_content"></div>
+        <div class="expandablecontent" >
+           <div id="filter-allcards_main_content" class="cards-filter">
+              <input type="text" placeholder="Search..." id="filter-allcards_main_content-fuzzy" class="filter-text" size="30"></input>
+              <i class="fa fa-remove filter-text-clear"></i>
+           </div>
+           <div id="allcards_main_content" class="expandablecontent_cards"></div>
+        </div>
       </div>
       <div id="allcards_corp" class="allcards_corp expandable">
         <div class="expandabletitle">	
@@ -551,7 +557,10 @@
             <span id="allcards_corp_title"></span>
           </a>
         </div>
-        <div class="expandablecontent"  id="allcards_corp_content"></div>
+        <div class="expandablecontent">
+          <div id="filter-allcards_corp_content" class="cards-filter"></div>
+          <div id="allcards_corp_content" class="expandablecontent_cards"></div>
+        </div>
       </div>
     </div>
     <div id="limbo">

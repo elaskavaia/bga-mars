@@ -271,7 +271,7 @@ class GameXBody extends GameTokens {
       if (key.startsWith("card")) {
         const num = getPart(key, 2);
         const type = getPart(key, 1);
-        var helpnode = document.querySelector(`#allcards_${type} .expandablecontent`);
+        var helpnode = document.querySelector(`#allcards_${type} .expandablecontent_cards`);
         if (!helpnode) continue;
         // XXX hook proper rendering
         //const div = dojo.place(`<div id='card_${type}_${num}_help' class='card token card_${type} card_${type}_${num}'></div>`, helpnode);
@@ -293,11 +293,47 @@ class GameXBody extends GameTokens {
     $(`allcards_corp_title`).innerHTML = _(`All Corporate Cards (${cccorp})`);
 
     // clicks
-    dojo.query(".expandablecontent > *").connect("onclick", this, (event) => {
+    dojo.query(".expandablecontent_cards > *").connect("onclick", this, (event) => {
       var id = event.currentTarget.id;
       this.showHelp(id, true);
     });
     dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
+    // filter controls
+    const refroot = $('allcards');
+
+    refroot.querySelectorAll(".filter-text").forEach(node=>{
+      node.addEventListener("input",(event) => {
+        const fnode = event.target as any;
+        this.applyCardFilter( fnode.parentNode.parentNode);
+      });
+      node.setAttribute('placeholder',_('Search...'));
+    });
+    refroot.querySelectorAll(".filter-text-clear").forEach((clearButton) => {
+      clearButton.addEventListener("click", (event) => {
+        const cnode = event.target as any;
+        const expandableNode =  cnode.parentNode.parentNode;
+        const fnode = expandableNode.querySelector(".filter-text") as HTMLInputElement;
+        fnode.value = "";
+        this.applyCardFilter( expandableNode);
+      });
+    });
+  }
+
+  applyCardFilter(expandableNode: Element) {
+    const hiddenOpacity = "none";
+    const fnode = expandableNode.querySelector(".filter-text") as HTMLInputElement;
+    const text = fnode.value.trim().toLowerCase();
+    const contentnode = expandableNode.querySelector(".expandablecontent_cards");
+    contentnode.querySelectorAll(".card").forEach((card: any) => {
+
+        card.style.removeProperty('display');
+    });
+    contentnode.querySelectorAll(".card").forEach((card: any) => {
+      const cardtext = this.getTooptipHtmlForToken(card.id);
+      if (!cardtext.toLowerCase().includes(text)) {
+        card.style.display = hiddenOpacity;
+      }
+    });
   }
 
   setupDiscard(): void {
@@ -1853,7 +1889,8 @@ awarded.`);
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
       this.showHiddenContent("discard_main", _("Discard pile contents"));
     } else if (tid.startsWith("card_")) {
-      if ($(tid).parentElement.childElementCount >= 2) this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
+      if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help")) 
+          this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
     } else {
       this.showMoveUnauthorized();
     }
