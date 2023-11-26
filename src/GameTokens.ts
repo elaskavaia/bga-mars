@@ -586,7 +586,9 @@ class GameTokens extends GameBasics {
             var res = "";
             for (let l = 0; l < list.length; l++) {
               const value = list[l];
+              if (l>0)  res += ', ';
               res += this.getTokenPresentaton(key, value);
+      
             }
             res = res.trim();
             if (res) args[key] = res;
