@@ -32,7 +32,8 @@ class action_terraformingmars extends APP_GameAction {
             self::trace("Complete reinitialization of board game");
         }
     }
-
+    
+    // REST API FUNCTIONS
     public function undo() {
         self::setAjaxMode();
         $this->game->action_undo();
@@ -57,9 +58,20 @@ class action_terraformingmars extends APP_GameAction {
         self::ajaxResponse();
     }
 
-    function invoke($action, $args) {
+    public function getRollingVp() {
+        self::setAjaxMode();
+
+        $category = self::getArg("category", AT_alphanum, false, ''); // if only interested in score for specific category
+        $player_id = (int) self::getArg("player_id", AT_posint, false, 0); // if only interested in score for specific player (otherwise all)
+        
+        $res = $this->game->getRollingVp($player_id, $category);
+        self::ajaxResponseWithResult([ 'contents' => $res,'length' => count($res) ]);
+    }
+
+    // UTILS
+    private function invoke($action, $args) {
         $game = $this->game;
-        $game->checkAction($action);
+        $game->checkAction($action); // this makes sure action is in the list of declared action by state, so its not a limited list 
         $method = new ReflectionMethod(get_class($game), "action_${action}");
         if (!$method) {
             return;
@@ -67,13 +79,13 @@ class action_terraformingmars extends APP_GameAction {
         $method->invoke($game, $args);
     }
 
-    function getJsArg($var) {
+    private  function getJsArg($var) {
         $value = self::getArg($var, AT_json, true);
         $this->validateJSonAlphaNum($value, $var);
         return $value;
     }
 
-    function validateJSonAlphaNum($value, $argName = "unknown") {
+    private  function validateJSonAlphaNum($value, $argName = "unknown") {
         if (is_array($value)) {
             foreach ($value as $key => $v) {
                 $this->validateJSonAlphaNum($key, $argName);

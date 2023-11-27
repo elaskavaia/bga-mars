@@ -193,7 +193,7 @@ abstract class PGameXBody extends PGameMachine {
             $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
         else
             $result['server_prefs'] = [];
-        $result ['CON'] = $this->getPhpConstants("MA_");
+        $result['CON'] = $this->getPhpConstants("MA_");
         return $result;
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_q() {
-        //$player_id = $this->getCurrentPlayerId();
+        $player_id = $this->getCurrentPlayerId();
         //$this->machine->push("a",1,$player_id);
         //$this->machine->interrupt();
         //$this->machine->normalize();
@@ -223,9 +223,14 @@ abstract class PGameXBody extends PGameMachine {
         //return $this->debug_oparg("counter(all_city),m", $card);
         //$this->gamestate->nextState("next");
 
-        $player_id = $this->getFirstPlayer();
-        $this->setCurrentStartingPlayer($player_id);
-        $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
+        // $player_id = $this->getFirstPlayer();
+        // $this->setCurrentStartingPlayer($player_id);
+        // $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
+
+
+        $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
+            'target' => 'tile_3_1', // target of score animation
+        ]);
     }
 
     function debug_drawCard($num) {
@@ -530,7 +535,7 @@ abstract class PGameXBody extends PGameMachine {
         return 0;
     }
 
-    function evaluateExpression($cond, $owner = 0, $context = null, $mods = null) {
+    function evaluateExpression($cond, $owner = 0, $context = null, $mods = null): int {
         try {
             if (!$owner)
                 $owner = $this->getActivePlayerColor();
@@ -987,12 +992,11 @@ abstract class PGameXBody extends PGameMachine {
         $message = '';
         if ($this->isRealPlayer($player_id)) {
             $this->dbUserPrefs->setPrefValue($player_id, $pref, $value);
-       
-            if ($pref==100) {
+
+            if ($pref == 100) {
                 // record the theme for bug report info
                 $message = clienttranslate('${player_name} changed "Theme" to value ${pref_value}');
             }
-         
         }
         $this->notifyWithName('ack', $message, ['pref_id' => $pref, 'pref_value' => $value]);
     }
@@ -1293,13 +1297,17 @@ abstract class PGameXBody extends PGameMachine {
             $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max'), $token_id);
         }
         // check bonus
-        $nvalue = $value >= 0 ? $value : "n" . (-$value);
-        $bounus_name = "param_${type}_${nvalue}";
-        $bonus = $this->getRulesFor($bounus_name, 'r');
-        if ($bonus) {
-            //$this->debugLog("-param bonus $bonus");
-            $this->putInEffectPool($color, $bonus);
+        for ($i=$perstep;$i<=$inc;$i+=$perstep) {
+            $v=$current+$i;
+            $nvalue = $v >= 0 ? $v : "n" . (-$v);
+            $bounus_name = "param_${type}_${nvalue}";
+            $bonus = $this->getRulesFor($bounus_name, 'r');
+            if ($bonus) {
+                //$this->debugLog("-param bonus $bonus");
+                $this->putInEffectPool($color, $bonus);
+            }
         }
+
         $this->effect_incTerraformingRank($color, $steps);
         if ($this->getTerraformingProgression() >= 100) {
             $this->notifyWithName('message_warning', clienttranslate("The terraforming is complete!!!"));
@@ -1311,7 +1319,7 @@ abstract class PGameXBody extends PGameMachine {
         $op = 'tr';
         $this->effect_incCount($owner, $op, $inc);
         $this->dbIncScoreValueAndNotify($this->getPlayerIdByColor($owner), $inc, '', "game_vp_tr", [
-            'place' => $this->getTrackerId($owner, $op)
+            'target' => $this->getTrackerId($owner, $op)
         ]);
     }
 
@@ -1377,27 +1385,7 @@ abstract class PGameXBody extends PGameMachine {
     function effect_finalScoring(): int {
         $this->debugConsole("-- final scoring --");
         $players = $this->loadPlayersBasicInfos();
-        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
-        foreach ($markers as $id => $rec) {
-            $loc = $rec['location']; // award_x
-            $this->scoreAward($loc);
-        }
-        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
-        foreach ($markers as $id => $rec) {
-            $loc = $rec['location']; // milestone_x
-            $color = explode('_', $id)[1];
-            $player_id = $this->getPlayerIdByColor($color);
-            $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s for milestone'), "game_vp_ms", [
-                'place' => $loc
-            ]);
-        }
-        // score map, this is split per type for animation effects
-        foreach ($players as $player) {
-            $this->scoreMap($player["player_color"]);
-        }
-        foreach ($players as $player) {
-            $this->scoreCards($player["player_color"]);
-        }
+        $this->scoreAll();
         foreach ($players as $player_id => $player) {
             $score = $this->dbGetScore($player_id);
             $this->setStat($score, 'game_vp_total', $player_id);
@@ -1439,14 +1427,93 @@ abstract class PGameXBody extends PGameMachine {
         return 1;
     }
 
-    function scoreAward(string $award) {
+    function scoreAll(array &$table = null) {
+        $players = $this->loadPlayersBasicInfos();
+        if ($table !== null) {
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $curr = $this->tokens->getTokenState("tracker_tr_${color}");
+                $this->scoreTableVp($table, $player_id, 'tr', "tracker_tr_${color}", $curr);
+
+                $this->scoreTableVp($table, $player_id,  'awards');
+                $this->scoreTableVp($table, $player_id,  'milestones');
+            }
+        }
+
+        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
+        foreach ($markers as $id => $rec) {
+            $loc = $rec['location']; // award_x
+            $this->scoreAward($loc, $table);
+        }
+        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
+        foreach ($markers as $id => $rec) {
+            $loc = $rec['location']; // milestone_x
+            $this->scoreMilestone($loc, $id, $table);
+        }
+        // score map, this is split per type for animation effects
+        foreach ($players as $player) {
+            $this->scoreMap($player["player_color"], $table);
+        }
+        foreach ($players as $player) {
+            $this->scoreCards($player["player_color"], $table);
+        }
+    }
+
+    function scoreTableVp(?array &$table, int $player_id, string $category, ?string $token_key = null, int $inc = 0) {
+        if ($table === null) return;
+        if (!array_key_exists($player_id, $table)) {
+            $table[$player_id] = [];
+        }
+        if (!array_key_exists('total', $table[$player_id])) {
+            $table[$player_id]['total'] = 0;
+        }
+        if (!array_key_exists('total_details', $table[$player_id])) {
+            $table[$player_id]['total_details'] = [];
+        }
+        if (!array_key_exists($category, $table[$player_id]['total_details'])) {
+            $table[$player_id]['total_details'][$category] = 0;
+        }
+
+
+        $table[$player_id]['total_details'][$category] += $inc;
+        $table[$player_id]['total'] += $inc;
+
+   
+        $this->scoreTableSet($table, $player_id, $category, $token_key, 'vp', $inc);
+    }
+    function scoreTableSet(?array &$table, int $player_id, string $category, ?string $token_key, string $key, $value) {
+        if ($table === null) return;
+        if ($token_key)
+            $table[$player_id]['details'][$category][$token_key][$key] = $value;
+    }
+
+    function scoreMilestone(string $loc, string $id, array &$table = null) {
+        $commit = ($table === null);      // only record the data, do not update the score or send notif
+
+        $color = getPart($id, 1);
+        $player_id = $this->getPlayerIdByColor($color);
+        $score_category = 'milestones';
+        $points = 5;
+        if ($commit) $this->dbIncScoreValueAndNotify($player_id, $points, clienttranslate('${player_name} scores ${inc} point/s for milestone'), "game_vp_ms", [
+            'target' => $loc
+        ]);
+        $this->scoreTableVp($table, $player_id, $score_category, $loc, $points);
+    }
+
+    function scoreAward(string $award, array &$table = null) {
+        $commit = ($table === null);      // only record the data, do not update the score or send notif
+
         $expr = $this->getRulesFor($award, 'r');
         $scores = [];
+        $score_category =  'awards';
         $players = $this->loadPlayersBasicInfos();
-        foreach ($players as $player) {
+        foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             $res = $this->evaluateExpression($expr, $color);
             $scores[$color] = $res;
+
+            $this->scoreTableVp($table, $player_id, $score_category, $award, 0);
+            $this->scoreTableSet($table, $player_id, $score_category, $award, 'counter', (int) $res); // count of things for award
         }
         arsort($scores);
         $place = 1;
@@ -1454,84 +1521,110 @@ abstract class PGameXBody extends PGameMachine {
         $i = 0;
         foreach ($scores as $color => $res) {
             if ($res == 0) break;
+            $player_id = $this->getPlayerIdByColor($color);
+            $this->scoreTableSet($table, $player_id, $score_category, $award, 'place', $place);
             if ($lastres > 0 && $lastres != $res) {
                 $place += 1;
+                $this->scoreTableSet($table, $player_id, $score_category, $award, 'place', $place);
                 if ($place == 2) {
                     if ($this->getPlayersNumber() == 2) {
-                        $this->notifyMessage(clienttranslate('second place is not awarded for 2 player game'));
+                        $note = clienttranslate('second place is not awarded for 2 player game');
+                        if ($commit) $this->notifyMessage($note);
                         break;
                     }
                     if ($i >= 2) {
-                        $this->notifyMessage(clienttranslate('second place is not awarded because 1st place is shared'));
+                        $note = clienttranslate('second place is not awarded because 1st place is shared');
+                        if ($commit) $this->notifyMessage($note);
                         break;
                     }
                 }
                 if ($place > 2) break;
             }
 
-            $player_id = $this->getPlayerIdByColor($color);
+
             if ($place == 1) $points = 5;
             else if ($place == 2) $points = 2;
             else break;
-            $this->dbIncScoreValueAndNotify($player_id, $points, clienttranslate('${player_name} scores ${inc} point/s for award ${award_name} with max value of ${award_counter}'), "game_vp_award", [
-                'place' => $award, // XXX?
-                'award_name' => $this->getTokenName($award),
-                'award_counter' => $res
-            ]);
+            $this->scoreTableVp($table, $player_id, $score_category, $award, $points);
+
+
+            if ($commit) {
+                $this->dbIncScoreValueAndNotify($player_id, $points, clienttranslate('${player_name} scores ${inc} point/s for award ${award_name} with max value of ${award_counter}'), "game_vp_award", [
+                    'target' => $award, // target of score animation
+                    'award_name' => $this->getTokenName($award),
+                    'award_counter' => $res
+                ]);
+            }
             $i++;
             $lastres = $res;
         }
     }
 
-    function scoreMap(string $owner) {
+    function scoreMap(string $owner, array &$table = null) {
+        $commit = ($table === null);      // only record the data, do not update the score or send notif
+
         $map = $this->getPlanetMap();
         $player_id = $this->getPlayerIdByColor($owner);
         $greenery = 0;
         $cities = 0;
+        $score_category_city = 'cities';
+        $score_category_greenery = 'greeneries';
+        $this->scoreTableVp($table, $player_id,  $score_category_city);
+        $this->scoreTableVp($table, $player_id,  $score_category_greenery);
         foreach ($map as $hex => $info) {
             $hexowner = $info['owner'] ?? '';
             if ($hexowner !== $owner)
                 continue;
             $tile = $info['tile'];
             $this->systemAssertTrue("should be tile here", $tile);
+
             $tt = $this->getRulesFor($tile, 'tt');
             if ($tt == MA_TILE_CITY) {
                 $cf = count($this->getAdjecentHexesOfType($hex, MA_TILE_FOREST));
-                $this->dbIncScoreValueAndNotify($player_id, $cf, clienttranslate('${player_name} scores ${inc} point/s for city tile at ${place_name}'), "game_vp_cities", [
-                    'place' => $hex, 'place_name' => $this->getTokenName($hex)
+                if ($commit) $this->dbIncScoreValueAndNotify($player_id, $cf, clienttranslate('${player_name} scores ${inc} point/s for city tile at ${place_name}'), "game_vp_cities", [
+                    'target' => $hex, 'place_name' => $this->getTokenName($hex)
                 ]);
                 $cities += 1;
-            }
-            if ($tt == MA_TILE_FOREST) {
-                $this->dbIncScoreValueAndNotify($player_id, 1, '', "game_vp_forest", ['place' => $hex]);
+                $this->scoreTableVp($table, $player_id,  $score_category_city, $tile, $cf);
+            } else  if ($tt == MA_TILE_FOREST) {
+                if ($commit) $this->dbIncScoreValueAndNotify($player_id, 1, '', "game_vp_forest", ['target' => $hex]);
                 $greenery += 1;
+                $this->scoreTableVp($table, $player_id,  $score_category_greenery, $tile, 1);
             }
         }
-        $this->notifyWithName('message', clienttranslate('${player_name} scores ${inc} points for Greenery tiles'), [
-            'inc' => $greenery
-        ],  $player_id);
+        if ($commit)
+            $this->notifyWithName('message', clienttranslate('${player_name} scores ${inc} points for Greenery tiles'), [
+                'inc' => $greenery
+            ],  $player_id);
     }
 
-    function scoreCards(string $owner) {
+    function scoreCards(string $owner, array &$table = null) {
+        $commit = ($table === null);      // only record the data, do not update the score or send notif
+
         // get all cards, calculate VP field
         $player_id = $this->getPlayerIdByColor($owner);
         $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_$owner");
         $vpdirect = 0;
+        $score_category = 'cards';
+        $this->scoreTableVp($table, $player_id,  $score_category);
         foreach ($cards as $card => $cardrec) {
             $vp = $this->getRulesFor($card, 'vp');
             //$this->debugConsole(" $card -> $vp");
             if (!$vp)
                 continue;
             if (is_numeric($vp)) {
-                $this->dbIncScoreValueAndNotify($player_id, $vp, '', "game_vp_cards", ['place' => $card]);
+                if ($commit)
+                    $this->dbIncScoreValueAndNotify($player_id, $vp, '', "game_vp_cards", ['target' => $card]);
                 $vpdirect += $vp;
+                $this->scoreTableVp($table, $player_id,   $score_category, $card, $vp);
                 continue;
             }
             try {
                 $value = $this->evaluateExpression($vp, $owner, $card);
-                if ($value) {
+                $this->scoreTableVp($table, $player_id,   $score_category, $card, $value);
+                if ($value && $commit) {
                     $this->dbIncScoreValueAndNotify($player_id, $value, clienttranslate('${player_name} scores ${inc} point/s for card ${token_name}'), "game_vp_cards", [
-                        'place' => $card, 'token_name' => $card
+                        'target' => $card, 'token_name' => $card
                     ]);
                     continue;
                 }
@@ -1541,9 +1634,10 @@ abstract class PGameXBody extends PGameMachine {
                 $this->error($e);
             }
         }
-        $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with implicit points'), [
-            'inc' => $vpdirect
-        ], $player_id);
+        if ($commit)
+            $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with implicit points'), [
+                'inc' => $vpdirect
+            ], $player_id);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1685,6 +1779,26 @@ abstract class PGameXBody extends PGameMachine {
         $this->setNextActivePlayerCustom($player_id, $give_time, $inc_turn);
         $color = $this->getPlayerColorById($player_id);
         //$this->undoSavepoint();
-        $this->machine->queue("turn", 1, 1, $color); 
+        $this->machine->queue("turn", 1, 1, $color);
+    }
+
+    function getRollingVp($player_id = 0, string $category = '') {
+        $table = [];
+        $this->scoreAll($table);
+
+        foreach ($table as $p => $pinfo) {
+            if ($player_id && $p != $player_id) {
+                unset($table[$p]);
+                continue;
+            }
+            foreach ($pinfo['details'] as $cat => $catinfo) {
+                if ($category && $cat != $category) {
+                    unset($table[$p]['details'][$cat]);
+                    continue;
+                }
+            }
+        }
+
+        return $table;
     }
 }
