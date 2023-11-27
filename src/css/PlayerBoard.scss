@@ -2,7 +2,9 @@
   --pb_cellsize:6vh;
 }
 
-// need to change the background of player area, pink does not work with the theme
+.roundedbox.player-board.spectator-mode  *{
+  background-color: #9E9E9E;
+}
 .player-board {
   background-color: #9E9E9E;
 }

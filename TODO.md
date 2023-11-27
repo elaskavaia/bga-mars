@@ -19,9 +19,9 @@ Random notes on todo items
   * Noted during play test (PT) also
 * Show discounted card cost
   * Update from args ok - TODO initial
-* Exchange rate during payment
+* Exchange rate during payment - done
 * Layout types based on size
-* Mobile portrait layout
+* Mobile portrait layout - done (digital)
 * PT: Missing tooltip on total score
 * PT: I selected a corporation and clicked Undo.  It asks me to pick a corporation again, but the card isn't visually shown anymore (Note: its is there but not near the other corp)
 * Need to "unstack" show all VP cards during final scoring (it show scoring animation on them)
@@ -35,7 +35,7 @@ Random notes on todo items
   * VL: I think it was related to tracker sincronization and its fixed
 * BUG:  Low-quality JPEG for ECOLINE corp tooltip image (any corp really).
   * Removed zoom effect
-* Specator section: pink (You are spectator section)
+* Specator section: pink (You are spectator section) - done
 * Incorrectly shows that requirements are not met - the server sent correct info that card is playable (case where requirement adjusted by ability +/- params of corp or other card)
 
 ## Client - Cardboard layout

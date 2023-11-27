@@ -61,7 +61,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 51|Miranda Resort|1|counter(tagEarth),pm|||12||Space Jovian|1|Corporate|Increase your MC production 1 step for each Earth tag you have.||||
 52|Fish|2|npp_Any|res||9|t>=2|Animal|resCard|Basic|Decrease any plant production 1 step. 1 VP for each animal on this card.|Add 1 animal to this card.|||'holds' => 'Animal'
 53|Lake Marineris|1|2w|||18|t>=0||2|Basic|Place 2 ocean tiles.||||
-54|Small Animals|2|npp_Any|res||6|o>=6|Animal|resCard|Basic|Decrease any plant production 1 step.|Add 1 animal to this card.||1 VP per 2 animals on this card.|'holds' => 'Animal'
+54|Small Animals|2|npp_Any|res||6|o>=6|Animal|resCard/2|Basic|Decrease any plant production 1 step.|Add 1 animal to this card.||1 VP per 2 animals on this card.|'holds' => 'Animal'
 55|Kelp Farming|1|2pm,3pp,2p|||17|w>=6||1|Basic|Increase your MC production 2 steps and your plant production 3 steps. Gain 2 plants.||||
 56|Mine|1|ps|||4||Building|0|Corporate|Increase your steel production 1 step.||||
 57|Vesta Shipyard|1|pu|||15||Space Jovian|1|Corporate|Increase your titanium production 1 step.||||
@@ -135,7 +135,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 125|Hackers|1|npe,2npm_Any,2pm|||3|||-1|Corporate|Decrease your energy production 1 step and any MC production 2 steps. Increase your MC production 2 steps.||||
 126|GHG Factories|1|npe,4ph|||11||Building|0|Basic|Decrease your energy production 1 step and increase your heat production 4 steps.||||
 127|Subterranean Reservoir|3|w|||11||Event||Basic|Place 1 ocean tile.||||
-128|Ecological Zone|2|tile(adj_forest)||play_tagPlant:res;play_tagAnimal:res|12|forest>0|Plant Animal|resCard/2|Basic|Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.||When you play an animal or a plant tag (including these 2), add an animal to this card.||'holds' => 'Animal'
+128|Ecological Zone|2|tile(adj_forest)||play_tagPlant:res;play_tagAnimal:res|12|forest>0|Plant Animal|resCard/2|Basic|Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card.||When you play an animal or a plant tag (including these 2), add an animal to this card.|1 VP per 2 animals on this card|'holds' => 'Animal'
 129|Zeppelins|1|counter(all_city),pm|||13|o>=5||1|Basic|Increase your MC production 1 step for each city tile ON MARS.||||
 130|Worms|1|counter(tagMicrobe/2),pp|||8|o>=4|Microbe|0|Basic|Increase your plant production 1 step for every 2 microbe tags you have, including this.||||
 131|Decomposers|2|||play_tagPlant:res;play_tagMicrobe:res;play_tagAnimal:res|5|o>=3|Microbe|resCard/3|Basic|||When you play an animal, plant, or microbe tag, including this, add a microbe to this card.|1 VP per 3 microbes on this card.|'holds' => 'Microbe'
@@ -154,7 +154,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 144|Titanium Mine|1|pu|||7||Building|0|Corporate|Increase your titanium production 1 step.||||
 145|Tectonic Stress Power|1|3pe|||18|tagScience>=2|Building Energy|1|Basic|Increase your energy production 3 steps.||||
 146|Nitrophilic Moss|1|2pp,2np|||8|w>=3|Plant|0|Basic|Increase your plant production 2 steps.||||
-147|Herbivores|2|res,npp_Any||place_forest:res:this|12|o>=8|Animal|resCard/2|Basic|Add 1 animal to this card. Decrease any plant production 1 step.||When you place a greenery tile, add an animal to this card.|1 VP per 2 animals on this card,|'holds' => 'Animal'
+147|Herbivores|2|res,npp_Any||place_forest:res:this|12|o>=8|Animal|resCard/2|Basic|Add 1 animal to this card. Decrease any plant production 1 step.||When you place a greenery tile, add an animal to this card.|1 VP per 2 animals on this card|'holds' => 'Animal'
 148|Insects|1|counter(tagPlant),pp|||9|o>=6|Microbe|0|Basic|Increase your plant production 1 step for each plant tag you have.||||
 149|CEO's Favourite Project|3|acard149|||1||Event|0|Corporate|Add 1 resource to a card with at least 1 resource on it.||||
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Corporate|||When you play a card, you pay 2 MC less for it.||
@@ -181,7 +181,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 171|Magnetic Field Dome|1|2npe,pp,tr|||5||Building|0|Basic|Decrease your energy production 2 steps and increase your plant production 1 step. Raise your terraform rating 1 step.||||
 172|Pets|2|res||play_city:res:this:any|10||Animal Earth|res/2|Basic|Add 1 animal to this card.||When any city tile is placed, add an animal to this card. Animals may not be removed from this card|1 VP per 2 animals here.|'holds' => 'Animal'
 173|Protected Habitats|2|||defensePlant:nop:this:any;defenseAnimal:nop:this:any;defenseMicrobe:nop:this:any|5|||0|Corporate|||Opponents may not remove your [plants, animals or microbes]||
-174|Protected Valley|1|2pm,forest(ocean)|||23||Building Plant|0|Basic|Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.||||
+174|Protected Valley|1|2pm,forest(ocean)|||23||Building Plant|0|Basic|Increase your M€ production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.||||
 175|Satellites|1|counter(tagSpace)pm|||10||Space|0|Corporate|Increase your MC production 1 step for each space tag you have, including this one.||||
 176|Noctis Farming|1|pm,2p|||10|t>=-20|Building Plant|1|Basic| Increase your MC production 1 step and gain 2 plants.||||
 177|Water Splitting Plant|2||3ne:o||12|w>=2|Building|0|Basic||Spend 3 energy to raise oxygen 1 step.|||
@@ -240,7 +240,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 4|Helion|4|3ph|||-42||Space|0|Basic|You start with 3 heat production and 42 MC.||You may use heat as MC. You may not use MC as heat.||
 5|Interplanetary Cinematics|4|20s||play_cardEvent:2m|-30||Building|0|Basic|You start with 20 steel and 30 MC.||Each time you play an event, you gain 2 MC.||
 6|Inventrix|4|2pdelta|||-45||Science|0|Basic|As your first action in the game, draw 3 cards. Start with 45 MC,||Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.||'a1'=>'3draw'
-7|Mining Guild|4|5s,ps||place_bonus_u:ps;place_bonus_s:ps|-30||Building|0|Basic|You start with 5 steel, 1 steel production and 30 MC,||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
+7|Mining Guild|4|5s,ps||place_bonus_u:ps;place_bonus_s:ps|-30||Building Building|0|Basic|You start with 5 steel, 1 steel production and 30 MC,||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
 8|Saturn Systems|4|pu||play_tagJovian:pm|-42||Jovian|0|Corporate|You start with 1 titanium production and 42 MC.||Each time any Jovian tag is put into play, including this, increase your MC production 1 step.||
 9|PhoboLog|4|10u,eru|||-23||Space|0|Basic|You start with 10 titanium and 23 MC,||Your titanium resources are each worth 1 MC extra.||
 10|Teractor|4|||onPay_tagEarth:3m|-60||Earth|0|Corporate|You start with 60 MC.||When playing an Earth card, you pay 3 MC less for it.||

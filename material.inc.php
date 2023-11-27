@@ -833,7 +833,7 @@ $this->token_types = [
   'cost' => 6,
   'pre' => 'o>=6',
   'tags' => 'Animal',
-  'vp' => 'resCard',
+  'vp' => 'resCard/2',
   'deck' => 'Basic',
   'text' => clienttranslate("Decrease any plant production 1 step."),
   'text_action' => clienttranslate("Add 1 animal to this card."),
@@ -1827,6 +1827,7 @@ $this->token_types = [
   'deck' => 'Basic',
   'text' => clienttranslate("Requires that you have a greenery tile. Place [the Ecological Zone] tile ADJACENT TO ANY GREENERY TILE. 1 VP per 2 animals on this card."),
   'text_effect' => clienttranslate("When you play an animal or a plant tag (including these 2), add an animal to this card."),
+  'text-vp'=>clienttranslate("1 VP per 2 animals on this card"),
   'holds' => 'Animal',
 ],
  'card_main_129' => [  //
@@ -2088,7 +2089,7 @@ $this->token_types = [
   'deck' => 'Basic',
   'text' => clienttranslate("Add 1 animal to this card. Decrease any plant production 1 step."),
   'text_effect' => clienttranslate("When you place a greenery tile, add an animal to this card."),
-  'text_vp' => clienttranslate("1 VP per 2 animals on this card,"),
+  'text_vp' => clienttranslate("1 VP per 2 animals on this card"),
   'holds' => 'Animal',
 ],
  'card_main_148' => [  //
@@ -2453,7 +2454,7 @@ $this->token_types = [
   'tags' => 'Building Plant',
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step."),
+  'text' => clienttranslate("Increase your M€ production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step."),
 ],
  'card_main_175' => [  //
   'location' => 'deck_main',
@@ -3024,7 +3025,7 @@ $this->token_types = [
   'r' => '5s,ps',
   'e' => 'place_bonus_u:ps;place_bonus_s:ps',
   'cost' => -30,
-  'tags' => 'Building',
+  'tags' => 'Building Building',
   'vp' => 0,
   'deck' => 'Basic',
   'text' => clienttranslate("You start with 5 steel, 1 steel production and 30 MC,"),
