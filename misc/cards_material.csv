@@ -105,7 +105,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 95|Physics Complex|2||6ne:res||12||Science Building|resCard*2|Corporate||Spend 6 energy to add a science resource to this card.||2 VP for each science resource on this card.|'holds' => 'Science'
 96|Greenhouses|1|counter(all_city) p|||6||Building Plant|0|Basic|Gain 1 plant for each city tile in play.||||
 97|Nuclear Zone|1|2t,tile|||10||Earth|-2|Basic|Place [the nuclear zone] tile and raise the temperature 2 steps.||||
-98|Tropical Resort|1|3pm,2nph|||13||Building|2|Corporate|Decrease your heat production 2 steps and increase your MC production 3 steps.||||
+98|Tropical Resort|1|2nph,3pm|||13||Building|2|Corporate|Decrease your heat production 2 steps and increase your MC production 3 steps.||||
 99|Toll Station|1|counter(opp_tagSpace) pm|||12||Space|0|Corporate|Increase your MC production 1 step for each space tag your OPPONENTS have.||||
 100|Fueled Generators|1|1npm,pe|||1||Building Energy|0|Basic|Decrease your MC production 1 step and increase your energy production 1 step.||||
 101|Ironworks|2||4ne:s,o||11||Building|0|Basic||Spend 4 energy to gain 1 steel and increase oxygen 1 step.|||
