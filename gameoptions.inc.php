@@ -26,9 +26,9 @@
 
 $game_options = array(
     100 => [
-        'name' => totranslate('Begginers Corporations'),
+        'name' => totranslate('Beginners Corporations'),
         'values' => [
-            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Begginers Corporations'), 'firstgameonly' => true],
+            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Beginners Corporations'), 'firstgameonly' => true],
             0 => ['name' => totranslate('No'), 'nobeginner' => true],
         ],
         'default' => 0
@@ -97,7 +97,7 @@ $game_preferences = [
         'name' => totranslate('Theme'),
         'needReload' => true, // after user changes this preference game interface would auto-reload
         'values' => array(
-            1 => ['name' => totranslate('Digital'), 'cssPref' => 'mcompact', 'description' => totranslate('Layout is optimized for your screen, unnecessary game elements are hidden. Cards are rended with translated text (if translation is available)')],
+            1 => ['name' => totranslate('Digital'), 'cssPref' => 'mcompact', 'description' => totranslate('Layout is optimized for your screen, unnecessary game elements are hidden. Cards are rendered with translated text (if translation is available)')],
             2 => ['name' => totranslate('Cardboard'), 'cssPref' => 'mfull', 'description' => totranslate('Just like the original cardboard game, have full board, game player board and cubes. Cards are rendered as printed in English (toolips are translated)')],
         ),
         'default' => 1
