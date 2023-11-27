@@ -139,6 +139,11 @@ class GameXBody extends GameTokens {
 
   setupPlayer(playerInfo: any) {
     super.setupPlayer(playerInfo);
+
+    $(`player_score_${playerInfo.id}`).addEventListener('click',()=>{
+      this.onShowScoringTable(playerInfo.id);
+    });
+
     this.local_counters[playerInfo.color] = {
       cards_1: 0,
       cards_2: 0,
@@ -151,6 +156,14 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
+  }
+
+  onShowScoringTable(playerId: number){
+    let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
+    this.ajaxcall(url, [], this, (result) => {
+      // HOOK gui here
+      console.log(result); // result is JSON with data
+    });
   }
 
   getLocalSettingNamespace(extra: string | number = ''){
@@ -1879,6 +1892,7 @@ awarded.`);
   }
   onSelectTarget(opId: number, target: string) {
     // can add prompt
+    if (!this.checkActiveSlot(target)) return;
     return this.sendActionResolveWithTarget(opId, target);
   }
 
