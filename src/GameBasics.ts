@@ -1132,7 +1132,7 @@ class GameBasics extends GameGui {
     this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
 
     dojo.subscribe("score", this, "notif_score");
-    this.notifqueue.setSynchronous("score", 50); // XXX
+    this.notifqueue.setSynchronous("score", 5000); // reset in notif handler
     dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
     dojo.subscribe("message_warning", this, "notif_message_warning");
     dojo.subscribe("message_info", this, "notif_message_info");
@@ -1284,6 +1284,7 @@ class GameBasics extends GameGui {
 
   onNotif(notif: Notif) {
     this.restoreMainBar();
+    console.log("notif", notif);
     // if (!this.instantaneousMode && notif.log) {
     //   this.setDescriptionOnMyTurn(notif.log, notif.args);
     // }
@@ -1334,8 +1335,11 @@ class GameBasics extends GameGui {
     this.scoreCtrl[args.player_id].toValue(args.player_score);
     if (args.target) {
       const duration = notif.args.duration ? notif.args.duration : 1000;
-      this.notifqueue.setSynchronous("score", duration);
-      const color = this.gamedatas.this.displayScoring(args.target, args.color, inc, args.duration);
+      this.notifqueue.setSynchronousDuration(duration);
+      const color = args.color ?? this.getPlayerIdByColor(args.player_id);
+      this.displayScoring(args.target, color, inc, args.duration);
+    } else {
+      this.notifqueue.setSynchronousDuration(50);  
     }
   }
 }
