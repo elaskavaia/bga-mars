@@ -4623,7 +4623,7 @@ var GameXBody = /** @class */ (function (_super) {
                             _this.activateSlots(opInfo, opId, true);
                         }, function (id) {
                             // onToken
-                            _this.onSelectTarget(opId, id);
+                            _this.onSelectTarget(opId, id, true);
                         });
                     }, null, null, color);
                 }
@@ -4699,9 +4699,10 @@ var GameXBody = /** @class */ (function (_super) {
         if (parent)
             this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
     };
-    GameXBody.prototype.onSelectTarget = function (opId, target) {
+    GameXBody.prototype.onSelectTarget = function (opId, target, checkActive) {
+        if (checkActive === void 0) { checkActive = false; }
         // can add prompt
-        if (!this.checkActiveSlot(target))
+        if ($(target) && checkActive && !this.checkActiveSlot(target))
             return;
         return this.sendActionResolveWithTarget(opId, target);
     };

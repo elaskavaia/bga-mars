@@ -1804,7 +1804,7 @@ awarded.`);
                 },
                 (id: string) => {
                   // onToken
-                  this.onSelectTarget(opId, id);
+                  this.onSelectTarget(opId, id, true);
                 }
               );
             },
@@ -1890,9 +1890,9 @@ awarded.`);
     var parent = document.querySelector(".debug_section"); // studio only
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
-  onSelectTarget(opId: number, target: string) {
+  onSelectTarget(opId: number, target: string, checkActive: boolean = false) {
     // can add prompt
-    if (!this.checkActiveSlot(target)) return;
+    if ($(target) && checkActive && !this.checkActiveSlot(target)) return;
     return this.sendActionResolveWithTarget(opId, target);
   }
 
