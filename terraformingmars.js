@@ -1016,7 +1016,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.subscribeNotification("counter");
         this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
         dojo.subscribe("score", this, "notif_score");
-        this.notifqueue.setSynchronous("score", 50); // XXX
+        this.notifqueue.setSynchronous("score", 5000); // reset in notif handler
         dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
         dojo.subscribe("message_warning", this, "notif_message_warning");
         dojo.subscribe("message_info", this, "notif_message_info");
@@ -1168,6 +1168,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.onNotif = function (notif) {
         this.restoreMainBar();
+        console.log("notif", notif);
         // if (!this.instantaneousMode && notif.log) {
         //   this.setDescriptionOnMyTurn(notif.log, notif.args);
         // }
@@ -1210,6 +1211,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
     };
     GameBasics.prototype.notif_score = function (notif) {
+        var _a;
         this.onNotif(notif);
         var args = notif.args;
         console.log(notif);
@@ -1218,8 +1220,12 @@ var GameBasics = /** @class */ (function (_super) {
         this.scoreCtrl[args.player_id].toValue(args.player_score);
         if (args.target) {
             var duration = notif.args.duration ? notif.args.duration : 1000;
-            this.notifqueue.setSynchronous("score", duration);
-            var color = this.gamedatas.this.displayScoring(args.target, args.color, inc, args.duration);
+            this.notifqueue.setSynchronousDuration(duration);
+            var color = (_a = args.color) !== null && _a !== void 0 ? _a : this.getPlayerIdByColor(args.player_id);
+            this.displayScoring(args.target, color, inc, args.duration);
+        }
+        else {
+            this.notifqueue.setSynchronousDuration(50);
         }
     };
     return GameBasics;
@@ -2969,6 +2975,8 @@ var GameTokens = /** @class */ (function (_super) {
                         var res = "";
                         for (var l = 0; l < list.length; l++) {
                             var value = list[l];
+                            if (l > 0)
+                                res += ', ';
                             res += this.getTokenPresentaton(key, value);
                         }
                         res = res.trim();
@@ -3170,7 +3178,11 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
+        var _this = this;
         _super.prototype.setupPlayer.call(this, playerInfo);
+        $("player_score_".concat(playerInfo.id)).addEventListener('click', function () {
+            _this.onShowScoringTable(playerInfo.id);
+        });
         this.local_counters[playerInfo.color] = {
             cards_1: 0,
             cards_2: 0,
@@ -3183,6 +3195,13 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
         }
+    };
+    GameXBody.prototype.onShowScoringTable = function (playerId) {
+        var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
+        this.ajaxcall(url, [], this, function (result) {
+            // HOOK gui here
+            console.log(result); // result is JSON with data
+        });
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ''; }
@@ -4682,6 +4701,8 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onSelectTarget = function (opId, target) {
         // can add prompt
+        if (!this.checkActiveSlot(target))
+            return;
         return this.sendActionResolveWithTarget(opId, target);
     };
     // on click hooks

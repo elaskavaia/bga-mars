@@ -24,6 +24,7 @@ Random notes on todo items
 * Mobile portrait layout
 * PT: Missing tooltip on total score
 * PT: I selected a corporation and clicked Undo.  It asks me to pick a corporation again, but the card isn't visually shown anymore (Note: its is there but not near the other corp)
+* Need to "unstack" show all VP cards during final scoring (it show scoring animation on them)
 
 
 ## Client - Digital layout
@@ -35,11 +36,12 @@ Random notes on todo items
 * BUG:  Low-quality JPEG for ECOLINE corp tooltip image (any corp really).
   * Removed zoom effect
 * Specator section: pink (You are spectator section)
+* Incorrectly shows that requirements are not met - the server sent correct info that card is playable (case where requirement adjusted by ability +/- params of corp or other card)
 
 ## Client - Cardboard layout
 * Cubes on player board, add gold and silver
 * Add map side area to hold cubes and cards
-
+* Show card discount
 
 ### Client Bonus Features
 
