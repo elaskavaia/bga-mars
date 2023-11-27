@@ -217,12 +217,15 @@ abstract class PGameBasic extends Table {
         if (count($res) == 3) {
             $method = $res[1];
             $args = explode(",", $res[2]);
+            if ($res[2]==="") {
+                $args = [];
+            }
             foreach ($args as &$value) {
                 if ($value === "null") {
                     $value = null;
                 } elseif ($value === "[]") {
                     $value = [];
-                }
+                } 
             }
             if (method_exists($object, $method)) {
                 self::notifyAllPlayers("simplenotif", "DEBUG: calling $message", []);
