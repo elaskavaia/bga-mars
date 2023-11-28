@@ -133,7 +133,15 @@ class AbsOperationPayWithRes extends AbsOperation {
     function canResolveAutomatically() {
         $possible = $this->getStateArg('target');
         if (count($possible) == 1) return false; // this is only Custom option
-        if (count($possible) == 2) return true; // custom + a singe choice, means other resources are at 0
+        $info = $this->getStateArg('info');
+        if ($info['payment']['rescount']['m']==0) return false; // no money, force choice
+        $alltypes = $this->getTypes();
+        $uniqueRes = 0;
+        foreach ($alltypes as $type) {
+            $typecount = $info['payment']['rescount'][$type];
+            if ($typecount) $uniqueRes++;
+        }
+        if (count($possible) == 2 && $uniqueRes==1) return true; // custom + a singe choice, means other resources are at 0
         return false;
     }
 
