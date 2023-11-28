@@ -36,6 +36,8 @@ abstract class PGameXBody extends PGameMachine {
             "var_draft" => 103,
         ]);
         $this->dbUserPrefs = new DbUserPrefs();
+        $this->tokens->autoreshuffle = true;
+        $this->tokens->autoreshuffle_custom['deck_main']='discard_main';
     }
 
     /**
@@ -228,9 +230,10 @@ abstract class PGameXBody extends PGameMachine {
         // $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
 
 
-        $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
-            'target' => 'tile_3_1', // target of score animation
-        ]);
+        // $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
+        //     'target' => 'tile_3_1', // target of score animation
+        // ]);
+        $this->tokens->pickTokensForLocation(155,'deck_main','discard_main');
     }
 
     function debug_drawCard($num) {
@@ -1047,7 +1050,7 @@ abstract class PGameXBody extends PGameMachine {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
             $cost = -$this->getRulesFor($card_id, 'cost');
-            $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('You picked corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
+            $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('private: ${player_name} chooses corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
                 "_private" => true,
                 "cost" => $cost
             ], $player_id);
@@ -1332,7 +1335,8 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_draw($color, $deck, $to, $inc) {
-        $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, 0);
+        $was_reshuffled = false;
+        $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, 0, false, $was_reshuffled);
         $player_id = $this->getPlayerIdByColor($color);
         $this->dbSetTokensLocation($tokens, $to, null, clienttranslate('private: ${player_name} draws ${token_names}'), [
             "_private" => true, "place_from" => $deck,
@@ -1340,6 +1344,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyMessage(clienttranslate('${player_name} draws ${token_count} cards'), [
             "token_count" => count($tokens),
         ], $player_id);
+        if ($was_reshuffled) {
+            $this->notifyMessage(clienttranslate('${player_name} reshuffles project card deck'), [], $player_id);
+            $this->notifyCounterChanged($this->tokens->autoreshuffle_custom[$deck], ["nod" => true]);
+        }
         $this->undoSavepoint();
         return $tokens;
     }
