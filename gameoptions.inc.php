@@ -78,7 +78,9 @@ $game_options = array(
     103 => [
         'name' => totranslate('Draft'),
         'values' => [
-            1 => ['name' => totranslate('Yes'), 'tmdisplay' => totranslate('Draft'), 'nobeginner' => true],
+            1 => ['name' => totranslate('Yes'), 
+                  'description' => totranslate( 'Draft 4 cards during Research phase, 1st generation is NOT included' ),
+                  'tmdisplay' => totranslate('Draft'), 'nobeginner' => true],
             0 => ['name' => totranslate('No')],
         ],
         'displaycondition' => array(

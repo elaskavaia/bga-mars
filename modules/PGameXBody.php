@@ -1126,7 +1126,8 @@ abstract class PGameXBody extends PGameMachine {
 
     function effect_queueMultiDraw($numcards = 4, $corps = 0) {
         $players = $this->loadPlayersBasicInfos();
-        if ($this->isDraftVariant()) {
+        $setup = $corps > 0;
+        if ($this->isDraftVariant() && !$setup) {
             $this->notifyAllPlayers('message', clienttranslate('research draft'), []);
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -1153,7 +1154,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($corps) $this->multiplayerqueue($color, "keepcorp");
             $this->multiplayerqueue($color, "${numcards}?buycard");
         }
-        if ($corps == 0) { // only do this when not setup, setup has special command
+        if (!$setup) { // only do this when not setup, setup has special command
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->queue($color, "prediscard");
