@@ -949,8 +949,10 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->isSolo()) {
             $gen = $this->tokens->getTokenState("tracker_gen");
             $maxgen = $this->getRulesFor('solo', 'gen');
-            if ($gen == $maxgen) {
+            if ($gen >= $maxgen) {
                 return true;
+            } else {
+                return false; // game ends after gen 14 even terraforming is complete before
             }
         }
         return $this->getTerraformingProgression() >= 100;
