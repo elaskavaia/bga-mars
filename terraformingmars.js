@@ -2163,6 +2163,8 @@ var CustomRenders = /** @class */ (function () {
                 ret = mode == "min" ? _("Requires $v ocean/s tiles.") : _("$v ocean/s tiles or less.");
                 break;
             case "forest":
+                if (qty == 0)
+                    qty = 1;
                 ret = _("Requires $v forest/s tiles.");
                 break;
             case "all_city":

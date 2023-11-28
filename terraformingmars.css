@@ -4858,6 +4858,10 @@
   --pb_cellsize:6vh;
 }
 
+.roundedbox.player-board.spectator-mode * {
+  background-color: #9E9E9E;
+}
+
 .player-board {
   background-color: #9E9E9E;
 }

@@ -179,7 +179,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 169|Tundra Farming|1|2pm,pp,p|||16|t>=-6|Plant|2|Basic|Increase your plant production 1 step and your MC production 2 steps. Gain 1 plant.||||
 170|Aerobraked Ammonia Asteroid|3|2ores(Microbe),pp,3ph|||26||Space Event|0|Basic|Add 2 microbes to ANOTHER card. Increase your heat production 3 steps and your plant production 1 step.||||
 171|Magnetic Field Dome|1|2npe,pp,tr|||5||Building|0|Basic|Decrease your energy production 2 steps and increase your plant production 1 step. Raise your terraform rating 1 step.||||
-172|Pets|2|res||play_city:res:this:any|10||Animal Earth|res/2|Basic|Add 1 animal to this card.||When any city tile is placed, add an animal to this card. Animals may not be removed from this card|1 VP per 2 animals here.|'holds' => 'Animal'
+172|Pets|2|res||place_city:res:this:any|10||Animal Earth|resCard/2|Basic|Add 1 animal to this card.||When any city tile is placed, add an animal to this card. Animals may not be removed from this card|1 VP per 2 animals here.|'holds' => 'Animal'
 173|Protected Habitats|2|||defensePlant:nop:this:any;defenseAnimal:nop:this:any;defenseMicrobe:nop:this:any|5|||0|Corporate|||Opponents may not remove your [plants, animals or microbes]||
 174|Protected Valley|1|2pm,forest(ocean)|||23||Building Plant|0|Basic|Increase your M€ production 2 steps. Place a greenery tile ON AN AREA RESERVED FOR OCEAN, disregarding normal placement restrictions, and increase oxygen 1 step.||||
 175|Satellites|1|counter(tagSpace)pm|||10||Space|0|Corporate|Increase your MC production 1 step for each space tag you have, including this one.||||
