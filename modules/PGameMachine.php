@@ -68,7 +68,9 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function debug_dumpMachine() {
-        $this->debugLog("all stack", ["t" => $this->machine->gettableexpr()]);
+        $t = $this->machine->gettableexpr();
+        $this->debugLog("all stack", ["t" => $t]);
+        return $t;
     }
 
 
