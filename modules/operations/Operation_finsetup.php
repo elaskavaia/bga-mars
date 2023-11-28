@@ -15,11 +15,16 @@ class Operation_finsetup extends AbsOperation {
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
         }
+        $count =  count($selected);
+        if ($count)
+            $this->game->notifyWithName('message', clienttranslate('${player_name} keeps ${count} card/s'), [
+                'count' => $count
+            ], $this->getPlayerId());
 
         // discard second cord
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_${color}");
         foreach ($rest as $card_id => $card) {
-            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '${player_name} discards ${token_name}');
+            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
         }
 
         // discard unbough cards
