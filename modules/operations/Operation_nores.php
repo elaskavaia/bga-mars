@@ -17,6 +17,7 @@ class Operation_nores extends AbsOperation {
         }
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($par, $protected) {
             if (array_get($protected, $color)) return MA_ERR_RESERVED;
+            if ($tokenId==='card_main_172') return MA_ERR_RESERVED; // Pets protected - hardcoded
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par) return MA_ERR_NOTAPPLICABLE;

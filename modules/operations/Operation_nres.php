@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/**
+ * Remove resource from your own card
+ */
 class Operation_nres extends AbsOperation {
 
     function argPrimaryDetails() {
