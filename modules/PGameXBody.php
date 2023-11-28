@@ -1174,32 +1174,37 @@ abstract class PGameXBody extends PGameMachine {
         $selected = $this->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
         $count = count($selected);
         $rest = $this->tokens->getTokensInLocation("draw_$color");
-        $has_corp = 0;
+        $left_corp = 0;
         foreach ($rest as $card_id => $card) {
             if (startsWith($card_id, 'card_corp')) {
-                $has_corp += 1;
+                $left_corp += 1;
             }
         }
+        $has_corp = $left_corp == 1 ? 1: 0;
 
-        if ($count == 0 && $has_corp == false) throw new BgaUserException(self::_("Nothing to undo"));
+        if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
         $ops = $this->getTopOperations($color);
         $this->userAssertTrue("Cannot undo", count($ops) == 1);
         $op = array_shift($ops);
-
-
-
-        if ($op['type'] == 'prediscard') {
+        $optype = $op['type'];
+         // can be nothing in initial setup
+        if ($optype== 'prediscard') {
             // nothing is left
-        } else if ($op['type'] == 'buycard') {
+        } else if ($optype == 'buycard') {
             // partial undo
             $this->machine->hide($op);
+        } else if ($optype == 'finsetup') {
+            // setup 
         } else {
-            $this->userAssertTrue("Cannot undo");
+            $this->userAssertTrue("Cannot undo $optype");
         }
         $total = $count + count($rest) - $has_corp;
         $this->multiplayerpush($color, $total . '?buycard');
 
         foreach ($selected as $card_id => $card) {
+            if (!startsWith($card_id, 'card_main')) {
+                continue;
+            }
             $this->dbSetTokenLocation($card_id, "draw_$color", 0, '');
             $this->effect_incCount($color, 'm', 3, ['message' => '']);
         }
