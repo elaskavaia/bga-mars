@@ -48,7 +48,7 @@ class ComplexOperation extends AbsOperation {
         return  ['log' => $log, 'args' => $args];
     }
 
-    public function getOpName() {
+    protected function getOpName() {
         $rules = $this->rules();
         if ($rules) return $rules['name'];
         $op = $this->operation;

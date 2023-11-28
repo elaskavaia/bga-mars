@@ -639,8 +639,8 @@ abstract class PGameBasic extends Table {
         //$this->debug("*** doUndoSavePoint ***");
         $state = $this->gamestate->state();
         if ($state ['type'] == 'multipleactiveplayer') {
-            $name = $state ['name'];
-            $this->warn("using undo savepoint in multiactive state $name");
+            // $name = $state ['name'];
+            //$this->warn("using undo savepoint in multiactive state $name");
             return;
         }
         parent::doUndoSavePoint();

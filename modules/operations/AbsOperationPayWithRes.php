@@ -172,7 +172,7 @@ class AbsOperationPayWithRes extends AbsOperation {
                     }
                     $rate = $info[$value]['rate'][$type];
                     $realinc += $rate * $ut;
-                    $this->game->warn("User pay $type: $ut of $tt * $rate => $realinc/$inc");
+                    //$this->game->warn("User pay $type: $ut of $tt * $rate => $realinc/$inc");
                 } else {
 
                     throw new BgaUserException("Invalid payment of type $type"); // FIX XSS

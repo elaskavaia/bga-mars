@@ -94,7 +94,7 @@ abstract class AbsOperation {
         return clienttranslate('${name} x ${count}');
     }
 
-    public function getOpName() {
+    protected function getOpName() {
         $rules = $this->rules();
         if ($rules) return $rules['name'];
         return $this->mnemonic;
