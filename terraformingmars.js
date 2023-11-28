@@ -3253,7 +3253,7 @@ var GameXBody = /** @class */ (function (_super) {
         var op1 = this.prefs[LAYOUT_PREF_ID].values[1];
         var op2 = this.prefs[LAYOUT_PREF_ID].values[2];
         // not translating this - will be removed after alpha
-        var desc = "\n        Please select one of themes below - the user interface will look slighly different <br>\n        <ul>\n        <li> ".concat(op1.name, "  - ").concat(op1.description, " \n        <li> ").concat(op2.name, "  - ").concat(op2.description, " \n        </ul>\n        You can change it later as well - for Theme and more settings use settinsg menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n        If you find a bug use Send BUG button located in settings meanu which will automatically insert proper table id.\n      "); // NO I18N
+        var desc = "\n    Please select a theme below - the user interface will look slightly different. You can change this later.<br>\n    <ul>\n    <li> ".concat(op1.name, "  - ").concat(op1.description, " \n    <li> ").concat(op2.name, "  - ").concat(op2.description, " \n    </ul>\n    For theme and other settings, use the settings menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n    If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.\n    "); // NO I18N
         var html = this.getThemeSelectorDialogHtml('theme_selector_area', 'Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
         dialog.setContent(html);
         this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, 'theme_selector_area');
