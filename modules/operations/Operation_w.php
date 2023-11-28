@@ -16,14 +16,36 @@ class Operation_w extends AbsOperationTile {
         return 0;
     }
 
+    function argPrimaryDetails() {
+        $oceans = $this->game->getTrackerValue('', 'w');
+        if ($oceans >= 9) {
+            $keys = ['none'];
+            return $this->game->createArgInfo($this->color, $keys, function ($color, $key) {
+                return [
+                    'q'=>MA_OK
+                ];
+            });
+        }
+        return parent::argPrimaryDetails();
+    }
+
     function getTileType(): int {
         return MA_TILE_OCEAN;
     }
 
     function effect(string $owner, int $inc): int {
         //if ($inc != 1) throw new feException("Cannot use counter $inc for this operation");
-        $tile = $this->effect_placeTile();
+        $oceans = $this->game->getTrackerValue('', 'w');
+        if ($oceans >= 9) {
+            $this->game->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max, skipping increase'), 'tracker_w');
+            $target = $this->getCheckedArg('target');
+            if ($target == 'none') return 1; // skipped, this is ok  when no oceans left
+            return 1; // skip placing tile
+        }
+
         $this->game->effect_increaseParam($owner, "w", 1);
+
+        $tile = $this->effect_placeTile();
         $this->game->notifyEffect($owner, 'place_ocean', $tile);
 
         //special handling card_main_188
@@ -34,4 +56,5 @@ class Operation_w extends AbsOperationTile {
 
         return 1;
     }
+
 }
