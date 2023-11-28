@@ -4367,8 +4367,8 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.setActiveSlot(divId);
                     _this.setReverseIdMap(divId, opId, tid);
                     if (single) {
-                        if (paramargs.length <= 5) {
-                            // magic number?
+                        if (paramargs.length <= 6) {
+                            // new magic number is 6 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
                             _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
                                 _this.sendActionResolveWithTarget(opId, tid);
                             });

@@ -1503,8 +1503,8 @@ awarded.`);
           this.setActiveSlot(divId);
           this.setReverseIdMap(divId, opId, tid);
           if (single) {
-            if (paramargs.length <= 5) {
-              // magic number?
+            if (paramargs.length <= 6) {
+              // new magic number is 6 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
               this.addActionButton("button_" + tid, this.getTokenName(tid), () => {
                 this.sendActionResolveWithTarget(opId, tid);
               });
