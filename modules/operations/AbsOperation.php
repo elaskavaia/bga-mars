@@ -232,10 +232,8 @@ abstract class AbsOperation {
     }
 
     function auto(string $owner, int &$count): bool {
-        $this->game->debugConsole("auto $owner $count $this->mnemonic ".get_class($this));
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
-        $this->game->debugConsole("can res");
         $this->checkVoid();
         $count = $this->effect($owner, $count, null);
         return true;
