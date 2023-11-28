@@ -6,7 +6,7 @@ declare(strict_types=1);
 class Operation_draft extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} drafts a card ${token_name}'), [
+        $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} drafts a card ${token_name}'), [
             "_private"=>true
         ]);
         //$this->game->notifyCounterChanged("draft_$color", ["nod" => true]);

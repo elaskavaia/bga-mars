@@ -14,7 +14,7 @@ class Operation_buycard extends AbsOperation {
         } else {
             $this->game->multiplayerpush($color, "${cost}nm", "$card_id:a");
         }
-        $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys a card ${token_name}'), [
+        $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} buys a card ${token_name}'), [
             "_private"=>true
         ]);
         $this->game->notifyCounterChanged("hand_$color", ["nod" => true]);
