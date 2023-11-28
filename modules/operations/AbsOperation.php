@@ -94,7 +94,7 @@ abstract class AbsOperation {
         return clienttranslate('${name} x ${count}');
     }
 
-    protected function getOpName() {
+    public function getOpName() {
         $rules = $this->rules();
         if ($rules) return $rules['name'];
         return $this->mnemonic;
@@ -139,7 +139,7 @@ abstract class AbsOperation {
         return array_get($args, $key, null);
     }
 
-    protected function getStateArg($key) {
+    public function getStateArg($key) {
         $actionArgs = $this->getAllStateArgs();
         $this->game->systemAssertTrue("Missing argument $key", array_key_exists($key, $actionArgs));
         $target = $actionArgs[$key];
@@ -232,8 +232,10 @@ abstract class AbsOperation {
     }
 
     function auto(string $owner, int &$count): bool {
+        $this->game->debugConsole("auto $owner $count $this->mnemonic ".get_class($this));
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        $this->game->debugConsole("can res");
         $this->checkVoid();
         $count = $this->effect($owner, $count, null);
         return true;
