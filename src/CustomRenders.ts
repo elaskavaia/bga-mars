@@ -685,7 +685,7 @@
    }
 
    private static customcard_vp_72() {
-     return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
+     return '<div class="vp_qty">1/</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
    }
 
 
