@@ -198,6 +198,28 @@ final class GameTest extends TestCase {
         $m->effect_playCard(PCOLOR, "card_main_173");
         $res = $m->collectListeners(BCOLOR, "defensePlant");
         $this->assertEquals(1, count($res));
+        $res = $m->collectListeners(null, "defenseAnimal");
+        $this->assertEquals(1, count($res));
+    }
+
+    public function testProtectedHabitats() {
+        $m = $this->game();
+
+        $p2 = BCOLOR;
+        $hab= $m->mtFind('name','Protected Habitats');
+        $fish = $m->mtFind('name','Fish');
+
+        $m->effect_playCard(BCOLOR, $fish);
+        $m->dbSetTokenLocation("resource_${p2}_1",$fish,0); // add a fish
+        /** @var Operation_nores */
+        $op = $m->getOperationInstanceFromType("nores(Animal)", PCOLOR);
+        $args = $op->argPrimaryDetails();
+        $this->assertNotNull(array_get($args, $fish));
+        $this->assertEquals(MA_OK,$args[$fish]['q']); // first is ok to kill fish
+        $m->effect_playCard(BCOLOR, $hab);
+        $args = $op->argPrimaryDetails();
+        $this->assertNotNull(array_get($args, $fish));
+        $this->assertEquals(MA_ERR_RESERVED,$args[$fish]['q']); // second its protected
     }
 
     public function testMultiplayer() {

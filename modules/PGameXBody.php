@@ -37,7 +37,7 @@ abstract class PGameXBody extends PGameMachine {
         ]);
         $this->dbUserPrefs = new DbUserPrefs();
         $this->tokens->autoreshuffle = true;
-        $this->tokens->autoreshuffle_custom['deck_main']='discard_main';
+        $this->tokens->autoreshuffle_custom['deck_main'] = 'discard_main';
     }
 
     /**
@@ -233,11 +233,20 @@ abstract class PGameXBody extends PGameMachine {
         // $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
         //     'target' => 'tile_3_1', // target of score animation
         // ]);
-        $this->tokens->pickTokensForLocation(155,'deck_main','discard_main');
+        $this->tokens->pickTokensForLocation(155, 'deck_main', 'discard_main');
     }
 
     function debug_drawCard($num) {
-        $token = "card_main_$num";
+        if (is_numeric($num)) {
+            $token = "card_main_$num";
+            if (!array_get($this->token_types, $token)) {
+                return "card not found $token";
+            }
+        } else if (is_string($num)) {
+            $token = $this->mtFind('name',$num);
+            if (!$token)
+                return "card not found $num";
+        }
         $color = $this->getCurrentPlayerColor();
         $this->dbSetTokenLocation($token, "hand_$color");
     }
@@ -248,9 +257,9 @@ abstract class PGameXBody extends PGameMachine {
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
-    function debug_money() {
+    function debug_money($x = 40) {
         $color = $this->getCurrentPlayerColor();
-        $this->effect_incCount($color, 'm', 40);
+        $this->effect_incCount($color, 'm', $x);
     }
     function debug_res($m = 0, $s = 0, $u = 0, $p = 0, $e = 0, $h = 0, $color = 0) {
         if (!$color) $color = $this->getCurrentPlayerColor();
@@ -853,6 +862,16 @@ abstract class PGameXBody extends PGameMachine {
         return $res;
     }
 
+    /** Find stuff in material file */
+    function mtFind(string $field, ?string $value, bool $ignorecase = true) {
+        foreach ($this->token_types as $key => $rules) {
+            $cur = array_get($rules, $field, null);
+            if ($cur == $value) return $key;
+            if ($ignorecase && strcasecmp($cur, $value)==0) return $key;
+        }
+        return null;
+    }
+
     /**
      * Triggered action syntax:
      * <list> ::= <trigger_rule> || <trigger_rule> ';' <list>
@@ -1185,15 +1204,15 @@ abstract class PGameXBody extends PGameMachine {
                 $left_corp += 1;
             }
         }
-        $has_corp = $left_corp == 1 ? 1: 0;
+        $has_corp = $left_corp == 1 ? 1 : 0;
 
         if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
         $ops = $this->getTopOperations($color);
         $this->userAssertTrue("Cannot undo", count($ops) == 1);
         $op = array_shift($ops);
         $optype = $op['type'];
-         // can be nothing in initial setup
-        if ($optype== 'prediscard') {
+        // can be nothing in initial setup
+        if ($optype == 'prediscard') {
             // nothing is left
         } else if ($optype == 'buycard') {
             // partial undo
@@ -1308,8 +1327,8 @@ abstract class PGameXBody extends PGameMachine {
             $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max'), $token_id);
         }
         // check bonus
-        for ($i=$perstep;$i<=$inc;$i+=$perstep) {
-            $v=$current+$i;
+        for ($i = $perstep; $i <= $inc; $i += $perstep) {
+            $v = $current + $i;
             $nvalue = $v >= 0 ? $v : "n" . (-$v);
             $bounus_name = "param_${type}_${nvalue}";
             $bonus = $this->getRulesFor($bounus_name, 'r');
@@ -1494,7 +1513,7 @@ abstract class PGameXBody extends PGameMachine {
         $table[$player_id]['total_details'][$category] += $inc;
         $table[$player_id]['total'] += $inc;
 
-   
+
         $this->scoreTableSet($table, $player_id, $category, $token_key, 'vp', $inc);
     }
     function scoreTableSet(?array &$table, int $player_id, string $category, ?string $token_key, string $key, $value) {

@@ -9,18 +9,22 @@ class Operation_nores extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
         $par = $this->params;
-        $keys = array_keys($this->game->getCardsWithResource($par));
-        $listeners = $this->game->collectListeners($color, ["defense$par"]); 
+        $cards = $this->game->getCardsWithResource($par);
+        $keys = array_keys($cards);
+        $listeners = $this->game->collectListeners(null, ["defense$par"]);
         $protected = [];
         foreach ($listeners as $lisinfo) {
             $protected[$lisinfo['owner']] = 1;
         }
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($par, $protected) {
-            if (array_get($protected, $color)) return MA_ERR_RESERVED;
-            if ($tokenId==='card_main_172') return MA_ERR_RESERVED; // Pets protected - hardcoded
+        return $this->game->createArgInfo($color, $keys, function ($_color, $tokenId) use ($par, $protected) {
+            if ($tokenId === 'card_main_172') return MA_ERR_RESERVED; // Pets protected - hardcoded
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par) return MA_ERR_NOTAPPLICABLE;
+
+            $cardowner = getPart($this->game->tokens->getTokenLocation($tokenId), 1);
+            if (array_get($protected, $cardowner)) return MA_ERR_RESERVED;
+
             return 0;
         });
     }
