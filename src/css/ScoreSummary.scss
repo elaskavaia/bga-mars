@@ -1,0 +1,54 @@
+#scoretable{
+  /*display: table;*/
+  display: flex;
+  flex-direction: row;
+  font-family: var(--mars-font);
+  width: fit-content;
+  border-radius: 0.5em;
+  outline: 0.3em solid #840000;
+  border-collapse: separate;
+
+
+  .scorecol{
+    display: flex;
+    flex-direction: column;
+}
+
+
+  .scorecell{
+    display: table-cell;
+    padding: 0.5em;
+    border-left: 0.1em solid black;
+    border-top: 0.1em solid black;
+    text-align: center;
+    background-color: #F5E9DB;
+  }
+
+  .score {
+    font-family:'Kanit';
+    font-weight:300;
+  }
+  .header{
+    background-color: #D0AE8C;
+  }
+  .scoreheader {
+    .scorecell{
+      text-align: right;
+      border-left: none;
+    }
+  }
+
+  .scorecell.corp{
+    height: 1.5em;
+  }
+
+  .corp_logo {
+    width: 4.5em;
+    height: 1.5em;
+  }
+
+}
+
+#popin_score_dlg {
+  background-image: url("img/full/tooltipbg.jpg");
+}

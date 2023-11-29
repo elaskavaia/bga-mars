@@ -14,7 +14,9 @@ class GameXBody extends GameTokens {
   private CON: { [key: string]: string };
   public readonly productionTrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
   public readonly resourceTrackers = ["m", "s", "u", "p", "e", "h"];
-
+//score cache
+  private cachedScoreMoveNbr:string = "0";
+  private cachedScoreHtm:string = "";
   // private parses:any;
 
   constructor() {
@@ -173,12 +175,65 @@ class GameXBody extends GameTokens {
 
   }
 
-  onShowScoringTable(playerId: number){
-    let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
-    this.ajaxcall(url, [], this, (result) => {
-      // HOOK gui here
-      console.log(result); // result is JSON with data
-    });
+  onShowScoringTable(playerId: number) {
+    const mv: string = $('move_nbr').innerHTML;
+    let finalhtm: string = '';
+
+    const showFunc= (htm:string) =>{
+      let dlg = new ebg.popindialog();
+      dlg.create("score_dlg");
+      dlg.setTitle(_("Score summary"));
+      dlg.setContent(htm);
+      dlg.show();
+    }
+
+    if (mv === this.cachedScoreMoveNbr && this.cachedScoreHtm!="") {
+      showFunc(this.cachedScoreHtm);
+    } else {
+          let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
+          this.ajaxcall(url, [], this, (result) => {
+          const tablehtm: string = `
+             <div id="scoretable">
+                <div class="scoreheader scorecol">
+                      <div class="scorecell header">Player</div>
+                      <div class="scorecell header corp">Corp</div>
+                      <div class="scorecell ">TR</div>
+                      <div class="scorecell ">Cities</div>
+                      <div class="scorecell ">Greeneries</div>
+                      <div class="scorecell ">Awards</div>
+                      <div class="scorecell ">Milestones</div>
+                      <div class="scorecell ">Cards</div>
+                      <div class="scorecell header total">Total</div>
+                </div>
+                %lines%
+              </div>`;
+
+          let lines: string = '';
+          for (let plid in result.data.contents) {
+            const entry: any = result.data.contents[plid];
+            const plcolor: any = this.getPlayerColor(parseInt(plid));
+            const corp: string = $('tableau_' + plcolor + '_corp_logo').dataset.corp;
+            lines = lines + `
+                <div class=" scorecol">
+                      <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+                      <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
+                      <div class="scorecell score">${entry.total_details.tr}</div>
+                      <div class="scorecell score">${entry.total_details.cities}</div>
+                      <div class="scorecell score">${entry.total_details.greeneries}</div>
+                      <div class="scorecell score">${entry.total_details.awards}</div>
+                      <div class="scorecell score">${entry.total_details.milestones}</div>
+                      <div class="scorecell score">${entry.total_details.cards}</div>
+                      <div class="scorecell score header total">${entry.total}</div>
+                </div>`;
+          }
+          finalhtm = tablehtm.replace('%lines%', lines);
+          this.cachedScoreMoveNbr=mv;
+          this.cachedScoreHtm=finalhtm;
+          showFunc(finalhtm);
+      });
+    }
+
+
   }
 
   getLocalSettingNamespace(extra: string | number = ''){
