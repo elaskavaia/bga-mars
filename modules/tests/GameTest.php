@@ -130,6 +130,41 @@ final class GameTest extends TestCase {
         $op = array_shift($ops);
         $this->assertEquals(8, $op['count']);
     }
+    public function testCounterComplex() {
+        $m = $this->game();
+        $m->incTrackerValue(PCOLOR, 'pp', 0);
+
+        $m->effect_playCard(PCOLOR, $m->mtFind('name','Algae'));
+        $m->effect_playCard(PCOLOR, $m->mtFind('name','Mangrove'));
+        $m->effect_playCard(PCOLOR, $m->mtFind('name','Trees'));
+
+        $m->machine->insertRule("counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp", 1, 1, 1, PCOLOR);
+        $ops = $m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $m->executeOperationSingle($op);
+        $ops = $m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $this->assertEquals(4, $op['count']);
+        $m->executeOperationSingle($op);
+        $this->assertEquals(4, $m->getTrackerValue(PCOLOR, 'pp'));
+    }
+    public function testCounterComplex1() {
+        $m = $this->game();
+        $m->incTrackerValue(PCOLOR, 'pp', 0);
+
+        $m->effect_playCard(PCOLOR, $m->mtFind('name','Algae'));
+
+
+        $m->machine->insertRule("counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp", 1, 1, 1, PCOLOR);
+        $ops = $m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $m->executeOperationSingle($op);
+        $ops = $m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $this->assertEquals(1, $op['count']);
+        $m->executeOperationSingle($op);
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'pp'));
+    }
 
     public function testPut() {
         $m = $this->game();
@@ -206,20 +241,20 @@ final class GameTest extends TestCase {
         $m = $this->game();
 
         $p2 = BCOLOR;
-        $hab= $m->mtFind('name','Protected Habitats');
-        $fish = $m->mtFind('name','Fish');
+        $hab = $m->mtFind('name', 'Protected Habitats');
+        $fish = $m->mtFind('name', 'Fish');
 
         $m->effect_playCard(BCOLOR, $fish);
-        $m->dbSetTokenLocation("resource_${p2}_1",$fish,0); // add a fish
+        $m->dbSetTokenLocation("resource_${p2}_1", $fish, 0); // add a fish
         /** @var Operation_nores */
         $op = $m->getOperationInstanceFromType("nores(Animal)", PCOLOR);
         $args = $op->argPrimaryDetails();
         $this->assertNotNull(array_get($args, $fish));
-        $this->assertEquals(MA_OK,$args[$fish]['q']); // first is ok to kill fish
+        $this->assertEquals(MA_OK, $args[$fish]['q']); // first is ok to kill fish
         $m->effect_playCard(BCOLOR, $hab);
         $args = $op->argPrimaryDetails();
         $this->assertNotNull(array_get($args, $fish));
-        $this->assertEquals(MA_ERR_RESERVED,$args[$fish]['q']); // second its protected
+        $this->assertEquals(MA_ERR_RESERVED, $args[$fish]['q']); // second its protected
     }
 
     public function testMultiplayer() {
@@ -263,24 +298,24 @@ final class GameTest extends TestCase {
         $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
         $this->assertNotNull($bu);
 
-        $subrules = $bu->getProductionOnlyRules('npe,h','card_main_1');
-        $this->assertEquals("npe",$subrules);
+        $subrules = $bu->getProductionOnlyRules('npe,h', 'card_main_1');
+        $this->assertEquals("npe", $subrules);
 
-        $m->dbSetTokenLocation('tile_64','hex_7_9',1);
-        $m->dbSetTokenLocation('tile_67','hex_4_1',1);
+        $m->dbSetTokenLocation('tile_64', 'hex_7_9', 1);
+        $m->dbSetTokenLocation('tile_67', 'hex_4_1', 1);
 
-        $subrules = $bu->getProductionOnlyRules('','card_main_64');
-        $this->assertEquals("pu",$subrules);
+        $subrules = $bu->getProductionOnlyRules('', 'card_main_64');
+        $this->assertEquals("pu", $subrules);
 
-        $count =0;
-        foreach($m->token_types as $key => $info) {
-            if (!startsWith($key,'card_main')) continue;
-            if (!strstr(array_get($info,'tags',''),'Building')) continue;
-            $r=array_get($info,'r','');
-            $subrules = $bu->getProductionOnlyRules($r,$key);
+        $count = 0;
+        foreach ($m->token_types as $key => $info) {
+            if (!startsWith($key, 'card_main')) continue;
+            if (!strstr(array_get($info, 'tags', ''), 'Building')) continue;
+            $r = array_get($info, 'r', '');
+            $subrules = $bu->getProductionOnlyRules($r, $key);
             //if ($r) $this->assertTrue(!!$subrules,"rules $r");    
-            if ($subrules) $count+=1;        
+            if ($subrules) $count += 1;
         }
-        $this->assertEquals(48,$count);
+        $this->assertEquals(48, $count);
     }
 }

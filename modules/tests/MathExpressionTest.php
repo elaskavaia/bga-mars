@@ -73,6 +73,7 @@ final class MathExpressionTest extends TestCase {
                 case 'a': return 3;
                 case 'b': return 7;
                 case 't': return -3;
+                case 'g': return 1;
                 default: return $x;
             }
         };
@@ -83,6 +84,9 @@ final class MathExpressionTest extends TestCase {
         $this->checkExprValue("t>=-10",1,$mapper);
         $this->checkExprValue("t<-1",1,$mapper);
         $this->checkExprValue("t>-1",0,$mapper);
+
+        $this->checkExprValue("(g>=3)*4",0,$mapper);
+        
         
         //$this->checkExpr("- a",-3,$mapper);
     }

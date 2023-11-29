@@ -597,7 +597,7 @@ $this->token_types = [
   'num' => 37,
   'name' => clienttranslate("Nitrogen-Rich Asteroid"),
   't' => 3,
-  'r' => "2tr,t,(pp/counter('(tagPlant>=3)*4') pp)",
+  'r' => "2tr,t,counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp",
   'cost' => 31,
   'tags' => 'Space Event',
   'vp' => 0,
