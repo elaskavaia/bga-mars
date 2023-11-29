@@ -723,6 +723,8 @@ class GameXBody extends GameTokens {
       );
     } else if (key.startsWith("tracker_city") || key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
       txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
+    } else if (key.startsWith("tracker_pdelta")) {
+      txt += this.generateTooltipSection(_("Global parameters delta"), _("Your temperature, oxygen, and ocean requirements are +X or -X steps, your choice in each case."));
     } else if (key.startsWith("tracker_p")) {
       txt += this.generateTooltipSection(
         _("Resource Production"),
