@@ -56,9 +56,9 @@ class GameXBody extends GameTokens {
 
       //player controls
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
-      //Give tooltips to alt trackers in player boards
-    
 
+
+      //Give tooltips to alt trackers in player boards
 
       const togglehtml =  this.getTooptipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", 
       _("Click to show or hide cards"));
@@ -156,6 +156,21 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
+
+    //read last saved value for filter in digital view
+    if (!this.isLayoutFull()) {
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color+'_'+this.table_id));
+      const selected= localColorSetting.readProp('digital_cardfilter','0');
+
+      for (let i = 0; i <= 3; i++) {
+        $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
+        $("player_viewcards_" + i + "_" + playerInfo.color).dataset.selected = "0";
+      }
+
+      $("tableau_" + playerInfo.color).dataset['visibility_'+selected] = "1";
+      $("player_viewcards_" + selected+ "_" + playerInfo.color).dataset.selected = "1";
+    }
+
   }
 
   onShowScoringTable(playerId: number){
@@ -1936,6 +1951,11 @@ awarded.`);
     $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
     $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
 
+    if (!this.isLayoutFull()) {
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace('mcompact_colorfilter'));
+      localColorSetting.writeProp('selected',btncolor);
+    }
+
     return true;
   }
 
@@ -1961,6 +1981,9 @@ awarded.`);
         $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
         $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
       }
+      //save as local setting (per table)
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor+'_'+this.table_id));
+      localColorSetting.writeProp('digital_cardfilter',btncolor);
     }
     $("tableau_" + plcolor).dataset[tblitem] = value;
     node.dataset.selected = value;

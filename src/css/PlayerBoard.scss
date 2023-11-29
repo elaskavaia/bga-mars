@@ -155,6 +155,13 @@
     font-size: calc(var(--pb_cellsize) * 0.3);
     margin-right: calc(var(--pb_cellsize) * 0.3);
   }
+
+  .player_tags .tracker.tracker_pdelta {
+    width: calc(var(--pb_cellsize) * 2);
+    height: calc(var(--pb_cellsize) * 0.5);
+    margin-right: calc(var(--pb_cellsize) * 0.6);
+    grid-template-columns: calc(var(--pb_cellsize) * 2) calc(var(--pb_cellsize) * 0.3);
+  }
 }
 
 
@@ -231,7 +238,8 @@
 .mcompact {
   .tableau[data-visibility_2="0"] {
     .cards_2, .cards_2a {
-      visibility: hidden;
+     /* visibility: hidden;*/
+      display: none;
     }
     .card[data-card-type="2"] {
       /*position: absolute;*/
@@ -240,7 +248,8 @@
   }
   .tableau[data-visibility_1="0"] {
     .cards_1,  .cards_1vp  {
-      visibility: hidden;
+      /* visibility: hidden;*/
+      display: none;
     }
     .card[data-card-type="1"] {
       /*position: absolute;*/
@@ -249,7 +258,8 @@
   }
   .tableau[data-visibility_3="0"] {
     .cards_3, .cards_3vp {
-      visibility: hidden;
+      /* visibility: hidden;*/
+      display: none;
     }
     .card[data-card-type="3"] {
       /*position: absolute;*/
@@ -279,13 +289,16 @@
     }
 
     .cards_2, .cards_2a {
-      visibility: visible;
+     /* visibility: visible;*/
+      display: revert;
     }
     .cards_1,  .cards_1vp  {
-      visibility: visible;
+      /* visibility: visible;*/
+      display: revert;
     }
     .cards_3, .cards_3vp {
-      visibility: visible;
+      /* visibility: visible;*/
+      display: revert;
 
     }
     .card[data-card-type="2"] {
@@ -301,41 +314,6 @@
 
     .cards_1, .cards_3 {
       display: flex;
-
-      /*
-      .card:not(:last-child):not(:hover) {
-        height: calc(var(--card-height) * 0.18);
-        overflow: hidden;
-
-        .card_bg{
-          height:calc(var(--card-height));
-        }
-        .card_illustration{
-          display: none;
-        }
-        .card_vp{
-          display: none;
-        }
-        .card_title {
-          height:revert;
-          height: 28%;
-          top:62%;
-        }
-        .card_action{
-          display: none;
-        }
-        .card_effect{
-          display: none;
-        }
-      }
-
-      .card:hover {
-        z-index:10;
-        transform: translateY(-5%);
-        transition: all 100ms;
-      }
-
-       */
     }
   }
 

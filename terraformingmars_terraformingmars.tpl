@@ -355,7 +355,7 @@
             id="player_viewcards_2_{PLAYER_COLOR}"
             class="viewcards_button"
             data-cardtype="2"
-            data-selected="1"
+            data-selected="0"
             data-player="{PLAYER_COLOR}"
           >
             <div class="buttoncard card_icon">
@@ -390,7 +390,7 @@
           <div id="player_viewcards_0_{PLAYER_COLOR}"
                   class="viewcards_button"
                   data-cardtype="0"
-                  data-selected="0"
+                  data-selected="1"
                   data-player="{PLAYER_COLOR}"
             >
             <div class="buttoncard card_icon">
@@ -411,7 +411,7 @@
           </div>
       </div>
 
-        <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_2="1" data-visibility_1="0" data-visibility_3="0">
+        <div id="tableau_{PLAYER_COLOR}" class="tableau"data-visibility_0="1" data-visibility_2="0" data-visibility_1="0" data-visibility_3="0">
           <div id="pboard_{PLAYER_COLOR}" class="pboard">
             <div id="resarea_m_{PLAYER_COLOR}" class="resarea resarea_m"></div>
             <div id="resarea_s_{PLAYER_COLOR}" class="resarea resarea_s"></div>

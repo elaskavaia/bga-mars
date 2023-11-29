@@ -56,6 +56,14 @@
   height: var(--resourcesize);
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
+
+
+}
+.tooltipimage.tracker.pdelta {
+  background-image: url("img/p_delta.jpg");
+  background-size: contain;
+  width: calc(var(--resourcesize)*2);
+  height: var(--resourcesize);
 }
 
 .mcompact {
