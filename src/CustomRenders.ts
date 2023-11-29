@@ -124,6 +124,7 @@
             } else {
               //card patches
               if (card_num == 20) parse.qty = -1;
+              if (card_num == 105) parse.qty = -3;
               if ([70,79,94,150,166].includes(card_num)) parse.qty = -2;
 
               gains.push({ item: parse, qty: parse.qty });

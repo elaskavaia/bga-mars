@@ -353,9 +353,10 @@ class GameXBody extends GameTokens {
   }
 
   setupDiscard(): void {
+    /*
     this.connect($("discard_title"), "onclick", () => {
       this.showHiddenContent("discard_main", _("Discard pile contents"));
-    });
+    });*/
   }
 
   setupResourceFiltering():void {
@@ -1906,7 +1907,7 @@ awarded.`);
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-      this.showHiddenContent("discard_main", _("Discard pile contents"));
+   //   this.showHiddenContent("discard_main", _("Discard pile contents"));
     } else if (tid.startsWith("card_")) {
       if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help")) 
           this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
@@ -1989,7 +1990,9 @@ awarded.`);
 
   //get settings
   getSetting(key:string):string {
-    return this.localSettings.readProp(key);
+    //doesn't work.
+   // return this.localSettings.readProp(key);
+    return $('ebd-body').dataset['localsetting_'+key];
   }
 
   //Prevent moving parts when animations are set to none

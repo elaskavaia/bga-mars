@@ -131,13 +131,16 @@ class CustomAnimation {
   }
 
   getSlideDuration():number {
-    if (this.areAnimationsPlayed()) return 0;
-    return this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
+    if (!this.areAnimationsPlayed()) return 0;
+    let ret= this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
+    console.log('anim is ',ret);
   }
 
   getWaitDuration(wait:number):number {
-    if (this.areAnimationsPlayed()) return 0;
-    return wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+    let ret=0;
+    if (!this.areAnimationsPlayed()) return 0;
+    ret= wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+    return ret;
   }
 
   getAnimationAmount() {
@@ -348,7 +351,7 @@ class CustomAnimation {
           dojo.destroy(tmpid);
         }
       );*/
-      delay+=this.getWaitDuration(100);
+      delay+=this.getWaitDuration(200);
 
     }
     return this.wait(delay+this.getWaitDuration(500));

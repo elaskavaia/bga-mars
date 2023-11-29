@@ -153,7 +153,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 143|Large Convoy|3|w,2draw,(5p/4ores(Animal))|||36||Space Earth Event|2|Basic|Place an ocean tile and draw 2 cards. Gain 5 plants, or add 4 animals to ANOTHER card.||||
 144|Titanium Mine|1|pu|||7||Building|0|Corporate|Increase your titanium production 1 step.||||
 145|Tectonic Stress Power|1|3pe|||18|tagScience>=2|Building Energy|1|Basic|Increase your energy production 3 steps.||||
-146|Nitrophilic Moss|1|2pp,2np|||8|w>=3|Plant|0|Basic|Increase your plant production 2 steps.||||
+146|Nitrophilic Moss|1|2pp,2np|||8|w>=3|Plant|0|Basic|Requires that you lose 2 plants. Increase your plant production 2 steps.||||
 147|Herbivores|2|res,npp_Any||place_forest:res:this|12|o>=8|Animal|resCard/2|Basic|Add 1 animal to this card. Decrease any plant production 1 step.||When you place a greenery tile, add an animal to this card.|1 VP per 2 animals on this card|'holds' => 'Animal'
 148|Insects|1|counter(tagPlant),pp|||9|o>=6|Microbe|0|Basic|Increase your plant production 1 step for each plant tag you have.||||
 149|CEO's Favourite Project|3|acard149|||1||Event|0|Corporate|Add 1 resource to a card with at least 1 resource on it.||||
