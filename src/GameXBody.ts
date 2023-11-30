@@ -1861,7 +1861,8 @@ awarded.`);
       const singleOrFirst = single || (ordered && i == 0);
 
       this.updateVisualsFromOp(opInfo, opId);
-      this.activateSlots(opInfo, opId, singleOrFirst);
+      if (singleOrFirst || !ordered) this.activateSlots(opInfo, opId, singleOrFirst);
+
       if (!single && !ordered) {
         // xxx add something for remaining ops in ordered case?
         if (paramargs.length > 0) {

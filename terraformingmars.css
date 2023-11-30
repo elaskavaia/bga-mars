@@ -865,9 +865,10 @@
 }
 
 .card[data-invalid_prereq="1"] .card_prereq::after {
-  content: "🛇";
+  content: "🚫";
   color: red;
   font-weight: bold;
+  font-family: Roboto, Arial, Noto;
 }
 
 .card[data-invalid_prereq="1"] .card_tt_prereq {
@@ -875,8 +876,9 @@
 }
 
 .card[data-invalid_prereq="1"] .card_tt_prereq::before {
-  content: "🛇";
+  content: "🚫";
   color: red;
+  font-family: Roboto, Arial, Noto;
 }
 
 .prereq_content {
@@ -3019,6 +3021,10 @@
   display: none;
 }
 
+.card_main_72 .card_effect {
+  width: 70%;
+}
+
 .card_main_73 .before {
   visibility: revert;
 }
@@ -3143,6 +3149,7 @@
 .card_main_146 .card_effect {
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: 1fr 1fr;
+  display: grid;
 }
 
 .card_main_149 .card_effect .card_icono.icono_gains {
@@ -4530,7 +4537,7 @@
 }
 
 #discard_title {
-  cursor: pointer;
+  /* cursor: pointer;*/
 }
 
 #card_dlg_content {
@@ -4734,6 +4741,7 @@
   font-size: 14px;
   line-height: 24px;
   font-family: var(--mars-font);
+  cursor: help;
 }
 
 .player_score .fa-star {
@@ -5000,6 +5008,12 @@
   font-size: calc(var(--pb_cellsize) * 0.3);
   margin-right: calc(var(--pb_cellsize) * 0.3);
 }
+.playerboard_header .player_tags .tracker.tracker_pdelta {
+  width: calc(var(--pb_cellsize) * 2);
+  height: calc(var(--pb_cellsize) * 0.5);
+  margin-right: calc(var(--pb_cellsize) * 0.6);
+  grid-template-columns: calc(var(--pb_cellsize) * 2) calc(var(--pb_cellsize) * 0.3);
+}
 
 .player_area .player_tags .tracker::after {
   content: attr(data-state);
@@ -5103,21 +5117,24 @@
 }
 
 .mcompact .tableau[data-visibility_2="0"] .cards_2, .mcompact .tableau[data-visibility_2="0"] .cards_2a {
-  visibility: hidden;
+  /* visibility: hidden;*/
+  display: none;
 }
 .mcompact .tableau[data-visibility_2="0"] .card[data-card-type="2"] {
   /*position: absolute;*/
   opacity: 0;
 }
 .mcompact .tableau[data-visibility_1="0"] .cards_1, .mcompact .tableau[data-visibility_1="0"] .cards_1vp {
-  visibility: hidden;
+  /* visibility: hidden;*/
+  display: none;
 }
 .mcompact .tableau[data-visibility_1="0"] .card[data-card-type="1"] {
   /*position: absolute;*/
   opacity: 0;
 }
 .mcompact .tableau[data-visibility_3="0"] .cards_3, .mcompact .tableau[data-visibility_3="0"] .cards_3vp {
-  visibility: hidden;
+  /* visibility: hidden;*/
+  display: none;
 }
 .mcompact .tableau[data-visibility_3="0"] .card[data-card-type="3"] {
   /*position: absolute;*/
@@ -5145,13 +5162,16 @@
   order: 5;
 }
 .mcompact .tableau[data-visibility_0="1"] .cards_2, .mcompact .tableau[data-visibility_0="1"] .cards_2a {
-  visibility: visible;
+  /* visibility: visible;*/
+  display: revert;
 }
 .mcompact .tableau[data-visibility_0="1"] .cards_1, .mcompact .tableau[data-visibility_0="1"] .cards_1vp {
-  visibility: visible;
+  /* visibility: visible;*/
+  display: revert;
 }
 .mcompact .tableau[data-visibility_0="1"] .cards_3, .mcompact .tableau[data-visibility_0="1"] .cards_3vp {
-  visibility: visible;
+  /* visibility: visible;*/
+  display: revert;
 }
 .mcompact .tableau[data-visibility_0="1"] .card[data-card-type="2"] {
   opacity: 1;
@@ -5164,40 +5184,6 @@
 }
 .mcompact .cards_1, .mcompact .cards_3 {
   display: flex;
-  /*
-  .card:not(:last-child):not(:hover) {
-    height: calc(var(--card-height) * 0.18);
-    overflow: hidden;
-
-    .card_bg{
-      height:calc(var(--card-height));
-    }
-    .card_illustration{
-      display: none;
-    }
-    .card_vp{
-      display: none;
-    }
-    .card_title {
-      height:revert;
-      height: 28%;
-      top:62%;
-    }
-    .card_action{
-      display: none;
-    }
-    .card_effect{
-      display: none;
-    }
-  }
-
-  .card:hover {
-    z-index:10;
-    transform: translateY(-5%);
-    transition: all 100ms;
-  }
-
-   */
 }
 
 .corp_holder {
@@ -5643,6 +5629,13 @@
   background-size: 1000% 200%;
 }
 
+.tooltipimage.tracker.pdelta {
+  background-image: url("img/p_delta.jpg");
+  background-size: contain;
+  width: calc(var(--resourcesize) * 2);
+  height: var(--resourcesize);
+}
+
 .mcompact .tooltipimage.tracker.tracker_tr {
   display: none;
 }
@@ -6000,6 +5993,51 @@
   background-position-x: -800%; /* tagBuilding */
   background-image: url("img/badges.png");
   background-size: 1200% 100%;
+}
+
+#scoretable {
+  /*display: table;*/
+  display: flex;
+  flex-direction: row;
+  font-family: var(--mars-font);
+  width: fit-content;
+  border-radius: 0.5em;
+  outline: 0.3em solid #840000;
+  border-collapse: separate;
+}
+#scoretable .scorecol {
+  display: flex;
+  flex-direction: column;
+}
+#scoretable .scorecell {
+  display: table-cell;
+  padding: 0.5em;
+  border-left: 0.1em solid black;
+  border-top: 0.1em solid black;
+  text-align: center;
+  background-color: #F5E9DB;
+}
+#scoretable .score {
+  font-family: "Kanit";
+  font-weight: 300;
+}
+#scoretable .header {
+  background-color: #D0AE8C;
+}
+#scoretable .scoreheader .scorecell {
+  text-align: right;
+  border-left: none;
+}
+#scoretable .scorecell.corp {
+  height: 1.5em;
+}
+#scoretable .corp_logo {
+  width: 4.5em;
+  height: 1.5em;
+}
+
+#popin_score_dlg {
+  background-image: url("img/full/tooltipbg.jpg");
 }
 
 .card.cardhelp {
@@ -8133,6 +8171,16 @@
   src: url(https://fonts.gstatic.com/s/kanit/v15/nKKU-Go6G5tXcr5mOBWnVaE.woff2) format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+/*Lighter space font*/
+/* latin */
+@font-face {
+  font-family: "Kanit";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/kanit/v15/nKKU-Go6G5tXcr4-ORWnVaE.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 #ebd-body {
   background-image: url("img/space.jpg");
 }
@@ -8558,6 +8606,11 @@
   background-size: 1000% 200%;
 }
 
+.tracker_pdelta {
+  background-image: url("img/p_delta.jpg");
+  background-size: contain;
+}
+
 .tracker_m {
   background-position: -300% 0;
 }
@@ -8691,7 +8744,13 @@
   margin-right: 3px;
 }
 
-#page-title .token_img {
+.log .token_img.tracker_pdelta {
+  background-image: url("img/p_delta.jpg");
+  width: 96px;
+  background-size: contain;
+}
+
+#page-title .token_img, .head_infomsg_item .token_img {
   width: 30px;
   height: 30px;
   display: inline-block;

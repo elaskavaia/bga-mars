@@ -1331,14 +1331,17 @@ var CustomAnimation = /** @class */ (function () {
         this.addAnimationsToDocument(this.animations);
     }
     CustomAnimation.prototype.getSlideDuration = function () {
-        if (this.areAnimationsPlayed())
+        if (!this.areAnimationsPlayed())
             return 0;
-        return this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
+        var ret = this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
+        console.log('anim is ', ret);
     };
     CustomAnimation.prototype.getWaitDuration = function (wait) {
-        if (this.areAnimationsPlayed())
+        var ret = 0;
+        if (!this.areAnimationsPlayed())
             return 0;
-        return wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+        ret = wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+        return ret;
     };
     CustomAnimation.prototype.getAnimationAmount = function () {
         return parseInt(this.game.getSetting('animationamount'));
@@ -1546,7 +1549,7 @@ var CustomAnimation = /** @class */ (function () {
                 dojo.destroy(tmpid);
               }
             );*/
-            delay += this_1.getWaitDuration(100);
+            delay += this_1.getWaitDuration(200);
         };
         var this_1 = this;
         for (var i = 0; i < Math.abs(qty); i++) {
@@ -1750,6 +1753,8 @@ var CustomRenders = /** @class */ (function () {
                         //card patches
                         if (card_num == 20)
                             parse.qty = -1;
+                        if (card_num == 105)
+                            parse.qty = -3;
                         if ([70, 79, 94, 150, 166].includes(card_num))
                             parse.qty = -2;
                         gains.push({ item: parse, qty: parse.qty });
@@ -2283,7 +2288,7 @@ var CustomRenders = /** @class */ (function () {
             '</div></div>';
     };
     CustomRenders.customcard_vp_72 = function () {
-        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
     };
     CustomRenders.customcard_effect_74 = function () {
         return '<div class="groupline">'
@@ -3082,6 +3087,9 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.productionTrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
         _this.resourceTrackers = ["m", "s", "u", "p", "e", "h"];
+        //score cache
+        _this.cachedScoreMoveNbr = "0";
+        _this.cachedScoreHtm = "";
         _this.CON = {};
         return _this;
     }
@@ -3197,13 +3205,49 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
         }
+        //read last saved value for filter in digital view
+        if (!this.isLayoutFull()) {
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color + '_' + this.table_id));
+            var selected = localColorSetting.readProp('digital_cardfilter', '0');
+            for (var i = 0; i <= 3; i++) {
+                $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
+                $("player_viewcards_" + i + "_" + playerInfo.color).dataset.selected = "0";
+            }
+            $("tableau_" + playerInfo.color).dataset['visibility_' + selected] = "1";
+            $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
+        }
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
-        var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
-        this.ajaxcall(url, [], this, function (result) {
-            // HOOK gui here
-            console.log(result); // result is JSON with data
-        });
+        var _this = this;
+        var mv = $('move_nbr').innerHTML;
+        var finalhtm = '';
+        var showFunc = function (htm) {
+            var dlg = new ebg.popindialog();
+            dlg.create("score_dlg");
+            dlg.setTitle(_("Score summary"));
+            dlg.setContent(htm);
+            dlg.show();
+        };
+        if (mv === this.cachedScoreMoveNbr && this.cachedScoreHtm != "") {
+            showFunc(this.cachedScoreHtm);
+        }
+        else {
+            var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
+            this.ajaxcall(url, [], this, function (result) {
+                var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">Player</div>\n                      <div class=\"scorecell header corp\">Corp</div>\n                      <div class=\"scorecell \">TR</div>\n                      <div class=\"scorecell \">Cities</div>\n                      <div class=\"scorecell \">Greeneries</div>\n                      <div class=\"scorecell \">Awards</div>\n                      <div class=\"scorecell \">Milestones</div>\n                      <div class=\"scorecell \">Cards</div>\n                      <div class=\"scorecell header total\">Total</div>\n                </div>\n                %lines%\n              </div>";
+                var lines = '';
+                for (var plid in result.data.contents) {
+                    var entry = result.data.contents[plid];
+                    var plcolor = _this.getPlayerColor(parseInt(plid));
+                    var corp = $('tableau_' + plcolor + '_corp_logo').dataset.corp;
+                    lines = lines + "\n                <div class=\" scorecol\">\n                      <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(_this.gamedatas.players[plid].name, "</div>\n                      <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.awards, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.milestones, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n                      <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n                </div>");
+                }
+                finalhtm = tablehtm.replace('%lines%', lines);
+                _this.cachedScoreMoveNbr = mv;
+                _this.cachedScoreHtm = finalhtm;
+                showFunc(finalhtm);
+            });
+        }
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ''; }
@@ -3369,10 +3413,10 @@ var GameXBody = /** @class */ (function (_super) {
         });
     };
     GameXBody.prototype.setupDiscard = function () {
-        var _this = this;
-        this.connect($("discard_title"), "onclick", function () {
-            _this.showHiddenContent("discard_main", _("Discard pile contents"));
-        });
+        /*
+        this.connect($("discard_title"), "onclick", () => {
+          this.showHiddenContent("discard_main", _("Discard pile contents"));
+        });*/
     };
     GameXBody.prototype.setupResourceFiltering = function () {
         var exclude_compact = ["full/cards1.jpg", "full/cards2.jpg", "full/cards3.jpg", "full/cardsC.jpg", "full/pboard.jpg", "full/TMgameboard.jpg", "full/tooltipbg.jpg"];
@@ -3644,6 +3688,9 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (key.startsWith("tracker_city") || key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
             txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
+        }
+        else if (key.startsWith("tracker_pdelta")) {
+            txt += this.generateTooltipSection(_("Global parameters delta"), _("Your temperature, oxygen, and ocean requirements are +X or -X steps, your choice in each case."));
         }
         else if (key.startsWith("tracker_p")) {
             txt += this.generateTooltipSection(_("Resource Production"), _("Resource icons inside brown boxes refer to production of that resource. During the production phase you add resources equal to your production."));
@@ -4614,7 +4661,8 @@ var GameXBody = /** @class */ (function (_super) {
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
-            this_2.activateSlots(opInfo, opId, singleOrFirst);
+            if (singleOrFirst || !ordered)
+                this_2.activateSlots(opInfo, opId, singleOrFirst);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
@@ -4721,7 +4769,7 @@ var GameXBody = /** @class */ (function (_super) {
                 this.showError("Not implemented");
         }
         else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-            this.showHiddenContent("discard_main", _("Discard pile contents"));
+            //   this.showHiddenContent("discard_main", _("Discard pile contents"));
         }
         else if (tid.startsWith("card_")) {
             if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help"))
@@ -4747,6 +4795,10 @@ var GameXBody = /** @class */ (function (_super) {
         var tblitem = "visibility" + btncolor;
         $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
         $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
+        if (!this.isLayoutFull()) {
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace('mcompact_colorfilter'));
+            localColorSetting.writeProp('selected', btncolor);
+        }
         return true;
     };
     GameXBody.prototype.onShowTableauCardsOfColor = function (event) {
@@ -4770,6 +4822,9 @@ var GameXBody = /** @class */ (function (_super) {
                 $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
                 $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
             }
+            //save as local setting (per table)
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + '_' + this.table_id));
+            localColorSetting.writeProp('digital_cardfilter', btncolor);
         }
         $("tableau_" + plcolor).dataset[tblitem] = value;
         node.dataset.selected = value;
@@ -4796,7 +4851,9 @@ var GameXBody = /** @class */ (function (_super) {
     };
     //get settings
     GameXBody.prototype.getSetting = function (key) {
-        return this.localSettings.readProp(key);
+        //doesn't work.
+        // return this.localSettings.readProp(key);
+        return $('ebd-body').dataset['localsetting_' + key];
     };
     //Prevent moving parts when animations are set to none
     GameXBody.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
