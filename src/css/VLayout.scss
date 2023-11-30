@@ -6,8 +6,7 @@
 @for $num from 1 through 80 {
   $i: $num - 1;
   $col: $i % 10;
-  $row: (
-    $i - $col) / 10;
+  $row: calc(($i - $col) / 10);
 
   .mfull .card_main_#{$num},
   .cardhelp.card_main_#{$num} {
@@ -20,8 +19,7 @@
 @for $num from 81 through 160 {
   $i: $num - 81;
   $col: $i % 10;
-  $row: (
-    $i - $col) / 10;
+  $row: calc(($i - $col) / 10);
 
   .mfull .card_main_#{$num},
   .cardhelp.card_main_#{$num} {
