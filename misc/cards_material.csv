@@ -241,7 +241,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 5|Interplanetary Cinematics|4|20s||play_cardEvent:2m|-30||Building|0|Basic|You start with 20 steel and 30 MC.||Each time you play an event, you gain 2 MC.||
 6|Inventrix|4|2pdelta|||-45||Science|0|Basic|As your first action in the game, draw 3 cards. Start with 45 MC,||Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.||'a1'=>'3draw'
 7|Mining Guild|4|5s,ps||place_bonus_u:ps;place_bonus_s:ps|-30||Building Building|0|Basic|You start with 5 steel, 1 steel production and 30 MC,||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
-8|Saturn Systems|4|pu||play_tagJovian:pm|-42||Jovian|0|Corporate|You start with 1 titanium production and 42 MC.||Each time any Jovian tag is put into play, including this, increase your MC production 1 step.||
+8|Saturn Systems|4|pu||play_tagJovian:pm:this:any|-42||Jovian|0|Corporate|You start with 1 titanium production and 42 MC.||Each time any Jovian tag is put into play, including this, increase your MC production 1 step.||
 9|PhoboLog|4|10u,eru|||-23||Space|0|Basic|You start with 10 titanium and 23 MC,||Your titanium resources are each worth 1 MC extra.||
 10|Teractor|4|||onPay_tagEarth:3m|-60||Earth|0|Corporate|You start with 60 MC.||When playing an Earth card, you pay 3 MC less for it.||
 11|Tharsis Republic|4|||place_city:pm:this:any;place_city:3m|-40||Building|0|Basic|You start with 40 MC. As your first action in the game, place a city tile.||When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.||'a1'=>'city'
