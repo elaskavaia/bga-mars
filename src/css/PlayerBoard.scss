@@ -290,15 +290,15 @@
 
     .cards_2, .cards_2a {
      /* visibility: visible;*/
-      display: revert;
+      display: flex;
     }
     .cards_1,  .cards_1vp  {
       /* visibility: visible;*/
-      display: revert;
+      display: flex;
     }
     .cards_3, .cards_3vp {
       /* visibility: visible;*/
-      display: revert;
+      display: flex;
 
     }
     .card[data-card-type="2"] {
