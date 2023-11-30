@@ -1324,7 +1324,9 @@ abstract class PGameXBody extends PGameMachine {
             "token_name" => $token_id,
         ], $this->getPlayerIdByColor($color));
         if ($value >= $max) {
-            $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max'), $token_id);
+            $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max'), $token_id, $color, [
+                '_notifType' => 'message_warning'
+            ]);
         }
         // check bonus
         for ($i = $perstep; $i <= $inc; $i += $perstep) {
