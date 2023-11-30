@@ -10,7 +10,8 @@ class Operation_buycard extends AbsOperation {
         $cost = 3;
         if ($money>=$cost) {
             // use money if can
-            $this->game->executeImmediately($color,"nm",$cost);
+            //$this->game->executeImmediately($color,"nm",$cost);
+            $this->game->effect_incCount($color, "m", -$cost); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
         } else {
             $this->game->multiplayerpush($color, "${cost}nm", "$card_id:a");
         }
