@@ -36,6 +36,11 @@ class Operation_city extends AbsOperationTile {
         $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'city');
         $this->game->notifyEffect($owner, 'place_city', $tile);
+        $hex = $this->getCheckedArg('target');
+        if (!$this->game->getRulesFor($hex,'inspace')) {
+            $this->game->incTrackerValue($owner, 'cityonmars');
+            $this->game->notifyEffect($owner, 'place_cityonmars', $tile);
+        }
         return 1;
     }
 }

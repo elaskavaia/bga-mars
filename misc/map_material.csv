@@ -6,9 +6,11 @@ x|y|r|name
 #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
 #ocean - 1 if reserved for ocean
 #set reserved=1
+#set inspace=1
 0|1||Stanford Torus
 0|2||Phobos Space Haven
 0|3||Ganymede Colony
+#set inspace=
 3|5|2p|Noctis City
 #set ocean=1
 4|1|2s|

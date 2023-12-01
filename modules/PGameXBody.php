@@ -1,4 +1,7 @@
 <?php
+
+use PhpParser\Node\Stmt\Continue_;
+
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
@@ -243,7 +246,7 @@ abstract class PGameXBody extends PGameMachine {
                 return "card not found $token";
             }
         } else if (is_string($num)) {
-            $token = $this->mtFind('name',$num);
+            $token = $this->mtFind('name', $num);
             if (!$token)
                 return "card not found $num";
         }
@@ -563,21 +566,31 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function evaluateTerm($x, $owner, $context = null, $mods = null) {
-        $type = $this->getRulesFor("tracker_$x", 'type', '');
-        if ($type == 'param') {
-            $value = $this->tokens->getTokenState("tracker_${x}");
-            if (!$mods) return $value;
-            return $value + $mods;
-        }
         if ($x == 'chand') {
             return $this->tokens->countTokensInLocation("hand_$owner");
         }
+
+        if ($x == 'cityonmars') {
+            return $this->getCountOfCitiesOnMars("$owner");
+        }
+        if ($x == 'all_cityonmars') {
+            return $this->getCountOfCitiesOnMars(null);
+        }
+
         if ($x == 'resCard') {
             return $this->tokens->countTokensInLocation("$context"); // number of resources on the card
         }
         if ($x == 'cost') {
             return $this->getRulesFor($context, 'cost');
         }
+
+        $type = $this->getRulesFor("tracker_$x", 'type', '');
+        if ($type == 'param') {
+            $value = $this->tokens->getTokenState("tracker_${x}");
+            if (!$mods) return $value;
+            return $value + $mods;
+        }
+
         $opp = startsWith($x, 'opp_');
         if (startsWith($x, 'all_') || $opp) {
             $x = substr($x, 4);
@@ -867,7 +880,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($this->token_types as $key => $rules) {
             $cur = array_get($rules, $field, null);
             if ($cur == $value) return $key;
-            if ($ignorecase && strcasecmp($cur, $value)==0) return $key;
+            if ($ignorecase && strcasecmp($cur, $value) == 0) return $key;
         }
         return null;
     }
@@ -1409,7 +1422,7 @@ abstract class PGameXBody extends PGameMachine {
 
             $this->machine->queue("lastforest");
             $this->machine->queue("finalscoring");
-            $this->machine->queue("confirm");
+            if ($this->isStudio()) $this->machine->queue("confirm");
             return null;
         }
         $current_player_id = $this->getCurrentStartingPlayer();
@@ -1595,6 +1608,30 @@ abstract class PGameXBody extends PGameMachine {
             $i++;
             $lastres = $res;
         }
+    }
+
+    function getCountOfCitiesOnMars($owner) {
+        $map = $this->getPlanetMap();
+        $cities = 0;
+
+        foreach ($map as $hex => $info) {
+            $inspace = $this->getRulesFor($hex, 'inspace');
+            if ($inspace==1) continue; // not ON MARS
+            $hexowner = $info['owner'] ?? '';
+            if  (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+
+            $tile = $info['tile'] ?? null;
+            if (!$tile) continue;
+
+            $tt = $this->getRulesFor($tile, 'tt');
+            if ($tt == MA_TILE_CITY) {
+                $cities++;
+            }
+        }
+
+        return $cities;
     }
 
     function scoreMap(string $owner, array &$table = null) {

@@ -25,6 +25,7 @@ Random notes on todo items
 * PT: Missing tooltip on total score
 * PT: I selected a corporation and clicked Undo.  It asks me to pick a corporation again, but the card isn't visually shown anymore (Note: its is there but not near the other corp)
 * Need to "unstack" show all VP cards during final scoring (it show scoring animation on them)
+* Effects sometimes activate ability of other players, current actiin buttons just say Gain 2 Plants - but its actually not active player who gains them
 
 
 ## Client - Digital layout

@@ -2408,6 +2408,7 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.parses = {
         forest: { classes: "tracker tracker_forest" },
         all_city: { classes: "tracker tracker_city", redborder: 'hex' },
+        all_cityonmars: { classes: "tracker tracker_city", redborder: 'hex', after: '*' },
         all_tagEvent: { classes: "tracker badge tracker_tagEvent", after: '*' },
         play_cardEvent: { classes: "tracker badge tracker_tagEvent" },
         city: { classes: "tracker micon tracker_city" },
