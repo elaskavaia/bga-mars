@@ -90,10 +90,24 @@ abstract class AbsOperationTile extends AbsOperation {
     abstract function getTileType(): int;
 
     function effect_placeTile() {
-        $target = $this->getCheckedArg('target');
+        $hex = $this->getCheckedArg('target');
         $object = $this->getStateArg('object');
+        $owner = $this->color;
 
-        $this->game->effect_placeTile($this->color, $object, $target);
+        $tile = $this->game->effect_placeTile($owner, $object, $hex);
+        $tt = $this->game->getRulesFor($tile,'tt');
+
+        if ($tt == MA_TILE_CITY) { 
+            // the effect triggered here because its not only "city" action that can place cities
+            $this->game->incTrackerValue($owner, 'city');
+            $this->game->notifyEffect($owner, 'place_city', $tile);
+        
+            if (!$this->game->getRulesFor($hex, 'inspace')) {
+                $this->game->incTrackerValue($owner, 'cityonmars');
+                $this->game->notifyEffect($owner, 'place_cityonmars', $tile);
+            }
+        }
+
         return $object;
     }
 }

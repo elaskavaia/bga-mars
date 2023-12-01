@@ -64,7 +64,7 @@ class Operation_tile extends AbsOperationTile {
         $this->debugtilecretae();
         
         $tile = $this->effect_placeTile();
-        $this->game->systemAssertTrue("Tile is missing is action $tileid",$tile);
+        $this->game->systemAssertTrue("Tile is missing in action $tileid",$tile);
         $this->game->systemAssertTrue("Tile is not matching $tileid $tile",$tile==$tileid);
 
         // special handling for mining tiles
