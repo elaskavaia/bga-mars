@@ -220,7 +220,7 @@ abstract class AbsOperation {
         if ($this->isVoid()) {
             $op = $this->mnemonic;
             $usertarget = $args['target'] ?? '';
-            $this->game->systemAssertTrue("Operation cannot be executed '$op'",  $usertarget);
+            $this->game->userAssertTrue(totranslate("This move is not allowed by the rules"),  $usertarget, "Operation is void $op");
             $info = $this->arg()['target'];
             $infotarget = array_get($info, $usertarget);
             $err = $infotarget['q'];
