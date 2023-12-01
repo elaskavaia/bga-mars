@@ -380,6 +380,17 @@
   background: red;
 }
 
+// show action of other players
+.bgabutton.otherplayer::after {
+  content: "";
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  background-color: var(--plcolor);
+}
+
 /*--------------- Floating hand -------------------- */
 #hand_area_buttons{
   display: none;

@@ -14,9 +14,9 @@ class GameXBody extends GameTokens {
   private CON: { [key: string]: string };
   public readonly productionTrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
   public readonly resourceTrackers = ["m", "s", "u", "p", "e", "h"];
-//score cache
-  private cachedScoreMoveNbr:string = "0";
-  private cachedScoreHtm:string = "";
+  //score cache
+  private cachedScoreMoveNbr: string = "0";
+  private cachedScoreHtm: string = "";
   // private parses:any;
 
   constructor() {
@@ -29,8 +29,8 @@ class GameXBody extends GameTokens {
       this.isDoingSetup = true;
       this.CON = gamedatas.CON; // PHP contants for game
       const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
-      const root = document.children[0];// weird
-      dojo.addClass(root,this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
+      const root = document.children[0]; // weird
+      dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
@@ -59,11 +59,14 @@ class GameXBody extends GameTokens {
       //player controls
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
-
       //Give tooltips to alt trackers in player boards
 
-      const togglehtml =  this.getTooptipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", 
-      _("Click to show or hide cards"));
+      const togglehtml = this.getTooptipHtml(
+        _("Card visibility toggle"),
+        _("Shows number of cards of corresponding color on tableau"),
+        "",
+        _("Click to show or hide cards")
+      );
 
       document.querySelectorAll(".player_controls .viewcards_button").forEach((node) => {
         // have to attach tooltip directly, this element does not have a game model
@@ -110,8 +113,7 @@ class GameXBody extends GameTokens {
 
       // card reference
       this.setupHelpSheets();
- 
-      
+
       this.connect($("zoom-out"), "onclick", () => {
         const ms = this.localSettings.getLocalSettingById("mapsize");
         this.localSettings.doAction(ms, "minus");
@@ -128,7 +130,6 @@ class GameXBody extends GameTokens {
       this.setupResourceFiltering();
       this.vlayout.setupDone();
       this.setupOneTimePrompt();
-    
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
@@ -138,11 +139,10 @@ class GameXBody extends GameTokens {
     }
   }
 
-
   setupPlayer(playerInfo: any) {
     super.setupPlayer(playerInfo);
 
-    $(`player_score_${playerInfo.id}`).addEventListener('click',()=>{
+    $(`player_score_${playerInfo.id}`).addEventListener("click", () => {
       this.onShowScoringTable(playerInfo.id);
     });
 
@@ -161,38 +161,37 @@ class GameXBody extends GameTokens {
 
     //read last saved value for filter in digital view
     if (!this.isLayoutFull()) {
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color+'_'+this.table_id));
-      const selected= localColorSetting.readProp('digital_cardfilter','0');
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color + "_" + this.table_id));
+      const selected = localColorSetting.readProp("digital_cardfilter", "0");
 
       for (let i = 0; i <= 3; i++) {
         $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
         $("player_viewcards_" + i + "_" + playerInfo.color).dataset.selected = "0";
       }
 
-      $("tableau_" + playerInfo.color).dataset['visibility_'+selected] = "1";
-      $("player_viewcards_" + selected+ "_" + playerInfo.color).dataset.selected = "1";
+      $("tableau_" + playerInfo.color).dataset["visibility_" + selected] = "1";
+      $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
     }
-
   }
 
   onShowScoringTable(playerId: number) {
-    const mv: string = $('move_nbr').innerHTML;
-    let finalhtm: string = '';
+    const mv: string = $("move_nbr").innerHTML;
+    let finalhtm: string = "";
 
-    const showFunc= (htm:string) =>{
+    const showFunc = (htm: string) => {
       let dlg = new ebg.popindialog();
       dlg.create("score_dlg");
       dlg.setTitle(_("Score summary"));
       dlg.setContent(htm);
       dlg.show();
-    }
+    };
 
-    if (mv === this.cachedScoreMoveNbr && this.cachedScoreHtm!="") {
+    if (mv === this.cachedScoreMoveNbr && this.cachedScoreHtm != "") {
       showFunc(this.cachedScoreHtm);
     } else {
-          let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
-          this.ajaxcall(url, [], this, (result) => {
-          const tablehtm: string = `
+      let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
+      this.ajaxcall(url, [], this, (result) => {
+        const tablehtm: string = `
              <div id="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">Player</div>
@@ -208,12 +207,14 @@ class GameXBody extends GameTokens {
                 %lines%
               </div>`;
 
-          let lines: string = '';
-          for (let plid in result.data.contents) {
-            const entry: any = result.data.contents[plid];
-            const plcolor: any = this.getPlayerColor(parseInt(plid));
-            const corp: string = $('tableau_' + plcolor + '_corp_logo').dataset.corp;
-            lines = lines + `
+        let lines: string = "";
+        for (let plid in result.data.contents) {
+          const entry: any = result.data.contents[plid];
+          const plcolor: any = this.getPlayerColor(parseInt(plid));
+          const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+          lines =
+            lines +
+            `
                 <div class=" scorecol">
                       <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
                       <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
@@ -225,18 +226,16 @@ class GameXBody extends GameTokens {
                       <div class="scorecell score">${entry.total_details.cards}</div>
                       <div class="scorecell score header total">${entry.total}</div>
                 </div>`;
-          }
-          finalhtm = tablehtm.replace('%lines%', lines);
-          this.cachedScoreMoveNbr=mv;
-          this.cachedScoreHtm=finalhtm;
-          showFunc(finalhtm);
+        }
+        finalhtm = tablehtm.replace("%lines%", lines);
+        this.cachedScoreMoveNbr = mv;
+        this.cachedScoreHtm = finalhtm;
+        showFunc(finalhtm);
       });
     }
-
-
   }
 
-  getLocalSettingNamespace(extra: string | number = ''){
+  getLocalSettingNamespace(extra: string | number = "") {
     return `${this.game_name}-${this.player_id}-${extra}`;
   }
 
@@ -244,14 +243,13 @@ class GameXBody extends GameTokens {
     //local settings, include user id into setting string so it different per local player and theme
     const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
     this.localSettings = new LocalSettings(this.getLocalSettingNamespace(theme), [
- 
       { key: "cardsize", label: _("Card size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
       { key: "mapsize", label: _("Map size"), range: { min: 15, max: 200, inc: 5 }, default: 100, ui: "slider" },
       { key: "handplace", label: _("Make floating hand"), choice: { floating: true }, default: false, ui: "checkbox" },
       {
         key: "mapplacement",
         label: _("Place map first"),
-        choice: {  first: true },
+        choice: { first: true },
         default: false,
         ui: "checkbox"
       },
@@ -264,14 +262,12 @@ class GameXBody extends GameTokens {
         ui: "checkbox"
       },
       { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-      { key: "animationspeed", label: _("Animation time"), range: { min:25, max: 200, inc: 5 }, default: 100, ui: "slider" },
-
+      { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
     this.localSettings.renderContents("settings-controls-container");
   }
-
 
   /**
    * This asks to select the theme, only on for alpha
@@ -279,10 +275,9 @@ class GameXBody extends GameTokens {
   setupOneTimePrompt() {
     if (typeof g_replayFrom != "undefined" || g_archive_mode) return;
     const ls = new LocalSettings(this.getLocalSettingNamespace()); // need another instance to save once per machine not per user/theme like others
-   
+
     if (ls.readProp("activated")) return;
     ls.writeProp("activated", "1");
-  
 
     const dialog = new ebg.popindialog();
     dialog.create("theme_selector");
@@ -297,22 +292,21 @@ class GameXBody extends GameTokens {
     </ul>
     For theme and other settings, use the settings menu - Gear button <i class="fa fa-gear"></i> on the top right.
     If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.
-    `;// NO I18N
-    
-    var html = this.getThemeSelectorDialogHtml('theme_selector_area','Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
+    `; // NO I18N
+
+    var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
     dialog.setContent(html);
-    this.createCustomPreferenceNode(LAYOUT_PREF_ID,"pp"+LAYOUT_PREF_ID,'theme_selector_area');
+    this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, "theme_selector_area");
     dialog.show();
- }
+  }
 
- getThemeSelectorDialogHtml(id: string, title: string, desc: string=''){
-
+  getThemeSelectorDialogHtml(id: string, title: string, desc: string = "") {
     return `
     <div class="${id}_title">${title}</div>
     <div class="${id}_desc">${desc}</div>
     <div id="${id}" class="${id}"></div>
     `;
- }
+  }
 
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
@@ -336,8 +330,7 @@ class GameXBody extends GameTokens {
       option.setAttribute("value", v);
       option.innerHTML = optionValue.name;
       option.setAttribute("data-pref-id", pref_id + "");
-      if (optionValue.description) 
-        this.addTooltip(option.id,optionValue.description,'');
+      if (optionValue.description) this.addTooltip(option.id, optionValue.description, "");
       if (pref.value == v) {
         option.setAttribute("selected", "selected");
       }
@@ -385,22 +378,22 @@ class GameXBody extends GameTokens {
     });
     dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
     // filter controls
-    const refroot = $('allcards');
+    const refroot = $("allcards");
 
-    refroot.querySelectorAll(".filter-text").forEach(node=>{
-      node.addEventListener("input",(event) => {
+    refroot.querySelectorAll(".filter-text").forEach((node) => {
+      node.addEventListener("input", (event) => {
         const fnode = event.target as any;
-        this.applyCardFilter( fnode.parentNode.parentNode);
+        this.applyCardFilter(fnode.parentNode.parentNode);
       });
-      node.setAttribute('placeholder',_('Search...'));
+      node.setAttribute("placeholder", _("Search..."));
     });
     refroot.querySelectorAll(".filter-text-clear").forEach((clearButton) => {
       clearButton.addEventListener("click", (event) => {
         const cnode = event.target as any;
-        const expandableNode =  cnode.parentNode.parentNode;
+        const expandableNode = cnode.parentNode.parentNode;
         const fnode = expandableNode.querySelector(".filter-text") as HTMLInputElement;
         fnode.value = "";
-        this.applyCardFilter( expandableNode);
+        this.applyCardFilter(expandableNode);
       });
     });
   }
@@ -411,8 +404,7 @@ class GameXBody extends GameTokens {
     const text = fnode.value.trim().toLowerCase();
     const contentnode = expandableNode.querySelector(".expandablecontent_cards");
     contentnode.querySelectorAll(".card").forEach((card: any) => {
-
-        card.style.removeProperty('display');
+      card.style.removeProperty("display");
     });
     contentnode.querySelectorAll(".card").forEach((card: any) => {
       const cardtext = this.getTooptipHtmlForToken(card.id);
@@ -429,17 +421,36 @@ class GameXBody extends GameTokens {
     });*/
   }
 
-  setupResourceFiltering():void {
-    const exclude_compact:string[]=["full/cards1.jpg","full/cards2.jpg","full/cards3.jpg","full/cardsC.jpg","full/pboard.jpg","full/TMgameboard.jpg","full/tooltipbg.jpg"];
-    const exclude_full:string[]=["cards_illustrations.jpg","awards_back.png","cards_bg.png","cards_bg_2_blue_action_bottom.png","cards_bg_2_blue_action_texture.jpg",
-      "corporations.jpg","map.png","milestones_awards.png","oxygen.png","space.jpg","stanproj_hold.png","temperature.png"];
+  setupResourceFiltering(): void {
+    const exclude_compact: string[] = [
+      "full/cards1.jpg",
+      "full/cards2.jpg",
+      "full/cards3.jpg",
+      "full/cardsC.jpg",
+      "full/pboard.jpg",
+      "full/TMgameboard.jpg",
+      "full/tooltipbg.jpg"
+    ];
+    const exclude_full: string[] = [
+      "cards_illustrations.jpg",
+      "awards_back.png",
+      "cards_bg.png",
+      "cards_bg_2_blue_action_bottom.png",
+      "cards_bg_2_blue_action_texture.jpg",
+      "corporations.jpg",
+      "map.png",
+      "milestones_awards.png",
+      "oxygen.png",
+      "space.jpg",
+      "stanproj_hold.png",
+      "temperature.png"
+    ];
 
-    const exclude_list:string[]= this.isLayoutFull() ? exclude_full : exclude_compact;
+    const exclude_list: string[] = this.isLayoutFull() ? exclude_full : exclude_compact;
 
     for (let item of exclude_list) {
       this.dontPreloadImage(item);
     }
-
   }
 
   showHiddenContent(id: ElementOrId, title: string) {
@@ -459,7 +470,7 @@ class GameXBody extends GameTokens {
 
   onScreenWidthChange() {
     if (this.isLayoutFull()) {
-       super.onScreenWidthChange();
+      super.onScreenWidthChange();
     } else {
       const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -511,7 +522,7 @@ class GameXBody extends GameTokens {
 
     //Displays message in header while the notif is playing
     //deactivated if animations aren't played
-    if (this.customAnimation.areAnimationsPlayed()==true) {
+    if (this.customAnimation.areAnimationsPlayed() == true) {
       if (!this.instantaneousMode && notif.log) {
         if ($("gameaction_status_wrap").style.display != "none") {
           let msg = this.format_string_recursive(notif.log, notif.args);
@@ -525,7 +536,6 @@ class GameXBody extends GameTokens {
         }
       }
     }
-
   }
 
   //make custom animations depending on situation
@@ -538,8 +548,12 @@ class GameXBody extends GameTokens {
       return this.customAnimation.animatePlaceResourceOnCard(notif.args.token_id, notif.args.place_id);
     } else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("tableau_")) {
       return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
-    } else if  (notif.args.token_id && notif.args.token_id.startsWith("marker_")  && (notif.args.place_id.startsWith("tile_") ||  notif.args.place_id.startsWith("award_") ||  notif.args.place_id.startsWith("milestone_"))) {
-      return this.customAnimation.animatePlaceMarker(notif.args.token_id,notif.args.place_id);
+    } else if (
+      notif.args.token_id &&
+      notif.args.token_id.startsWith("marker_") &&
+      (notif.args.place_id.startsWith("tile_") || notif.args.place_id.startsWith("award_") || notif.args.place_id.startsWith("milestone_"))
+    ) {
+      return this.customAnimation.animatePlaceMarker(notif.args.token_id, notif.args.place_id);
     }
   }
 
@@ -550,24 +564,24 @@ class GameXBody extends GameTokens {
       return "tracker_" + item + "_";
     });
 
-
     //temperature & oxygen - compact only as full doesn't have individual rendered elements
     if (!this.isLayoutFull()) {
-      if (notif.args.counter_name=='tracker_t') {
-        this.customAnimation.animateMapItemAwareness('temperature_map');
-      } else if (notif.args.counter_name=='tracker_o') {
-        this.customAnimation.animateMapItemAwareness('oxygen_map');
-       }
+      if (notif.args.counter_name == "tracker_t") {
+        this.customAnimation.animateMapItemAwareness("temperature_map");
+      } else if (notif.args.counter_name == "tracker_o") {
+        this.customAnimation.animateMapItemAwareness("oxygen_map");
+      }
     }
     //ocean's pile
-    if (notif.args.counter_name=='tracker_w') {
-      this.customAnimation.animateMapItemAwareness('oceans_pile');
-    } else if (notif.args.counter_name=='tracker_gen') {
-      this.customAnimation.animateMapItemAwareness('outer_generation');
+    if (notif.args.counter_name == "tracker_w") {
+      this.customAnimation.animateMapItemAwareness("oceans_pile");
+    } else if (notif.args.counter_name == "tracker_gen") {
+      this.customAnimation.animateMapItemAwareness("outer_generation");
     }
 
     if (notif.args.inc && counter_move.some((trk) => notif.args.counter_name.startsWith(trk))) {
-      if (!this.isLayoutFull()) {     // cardboard layout animating cubes on playerboard instead
+      if (!this.isLayoutFull()) {
+        // cardboard layout animating cubes on playerboard instead
         this.customAnimation.animatetingle(notif.args.counter_name);
         return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
       }
@@ -578,7 +592,6 @@ class GameXBody extends GameTokens {
         return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
       }
     }
-
   }
 
   getCardTypeById(type: number) {
@@ -776,10 +789,13 @@ class GameXBody extends GameTokens {
           "Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag)."
         )
       );
-    } else if (key.startsWith("tracker_city") || key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
+    } else if (key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
       txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
     } else if (key.startsWith("tracker_pdelta")) {
-      txt += this.generateTooltipSection(_("Global parameters delta"), _("Your temperature, oxygen, and ocean requirements are +X or -X steps, your choice in each case."));
+      txt += this.generateTooltipSection(
+        _("Global parameters delta"),
+        _("Your temperature, oxygen, and ocean requirements are +X or -X steps, your choice in each case.")
+      );
     } else if (key.startsWith("tracker_p")) {
       txt += this.generateTooltipSection(
         _("Resource Production"),
@@ -1338,7 +1354,6 @@ awarded.`);
       result.location = tokenInfo.location.replace("tableau_", "fpholder_");
     } else if (tokenInfo.key.startsWith("resource_")) {
       if (this.isLayoutFull()) {
-
       } else {
         if (tokenInfo.location.startsWith("card_main_")) {
           //resource added to card
@@ -1429,7 +1444,6 @@ awarded.`);
       }
     }
   }
-
 
   isLayoutVariant(num: number) {
     return this.prefs[LAYOUT_PREF_ID].value == num;
@@ -1863,60 +1877,50 @@ awarded.`);
       this.updateVisualsFromOp(opInfo, opId);
       if (singleOrFirst || !ordered) this.activateSlots(opInfo, opId, singleOrFirst);
 
+      const buttonId = `button_${opId}`;
       if (!single && !ordered) {
         // xxx add something for remaining ops in ordered case?
         if (paramargs.length > 0) {
-          this.addActionButton(
-            "button_" + opId,
-            name,
-            () => {
-              this.setClientStateUpdOn(
-                "client_collect",
-                (args) => {
-                  // on update action buttons
-                  this.clearReverseIdMap();
-                  this.activateSlots(opInfo, opId, true);
-                },
-                (id: string) => {
-                  // onToken
-                  this.onSelectTarget(opId, id, true);
-                }
-              );
-            },
-            null,
-            null,
-            color
-          );
+          this.addActionButton(buttonId, name, () => {
+            this.setClientStateUpdOn(
+              "client_collect",
+              (args) => {
+                // on update action buttons
+                this.clearReverseIdMap();
+                this.activateSlots(opInfo, opId, true);
+              },
+              (id: string) => {
+                // onToken
+                this.onSelectTarget(opId, id, true);
+              }
+            );
+          });
         } else {
-          this.addActionButton(
-            "button_" + opId,
-            name,
-            () => {
-              this.sendActionResolve(opId);
-            },
-            null,
-            null,
-            color
-          );
+          this.addActionButton(buttonId, name, () => {
+            this.sendActionResolve(opId);
+          });
         }
+        const buttonDiv= $(buttonId);
+        if (opInfo.owner && opInfo.owner != this.player_color) 
+            buttonDiv.classList.add("otherplayer", "plcolor_" + opInfo.owner);
 
-        if (color != "blue" && color != "red") {
-          $("button_" + opId).classList.remove("bgabutton_blue");
-          $("button_" + opId).classList.add("bgabutton_" + color);
-        }
-        if (contains_gfx) {
-          $("button_" + opId).classList.add("gfx");
-          $("button_" + opId).setAttribute("title", this.getButtonNameForOperation(opInfo));
-        }
+
+        buttonDiv.classList.remove("bgabutton_blue");
+        buttonDiv.classList.add("bgabutton_" + color);
+        
+        // if (contains_gfx) {
+        //   $(buttonId).classList.add("gfx");
+        //   $(buttonId).setAttribute("title", this.getButtonNameForOperation(opInfo));
+        // }
 
         if (opargs.void) {
-          dojo.addClass("button_" + opId, "disabled");
+          buttonDiv.classList.add("disabled");
         }
       }
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0) {
-          const name =     (single && paramargs.length <=1) ? _("Reject"):_("Done");
+          const name = single && paramargs.length <= 1 ? _("Reject") : _("Done");
           this.addActionButton("button_skip", name, () => {
             this.sendActionSkip();
           });
@@ -1980,10 +1984,10 @@ awarded.`);
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-   //   this.showHiddenContent("discard_main", _("Discard pile contents"));
+      //   this.showHiddenContent("discard_main", _("Discard pile contents"));
     } else if (tid.startsWith("card_")) {
-      if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help")) 
-          this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
+      if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help"))
+        this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
     } else {
       this.showMoveUnauthorized();
     }
@@ -2010,8 +2014,8 @@ awarded.`);
     $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
 
     if (!this.isLayoutFull()) {
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace('mcompact_colorfilter'));
-      localColorSetting.writeProp('selected',btncolor);
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("mcompact_colorfilter"));
+      localColorSetting.writeProp("selected", btncolor);
     }
 
     return true;
@@ -2032,7 +2036,7 @@ awarded.`);
       // toggle
       value = node.dataset.selected == "0" ? "1" : "0";
       const perColorSettings = new LocalSettings(this.getLocalSettingNamespace(plcolor));
-      perColorSettings.writeProp(tblitem,value);
+      perColorSettings.writeProp(tblitem, value);
     } else {
       // unselec others (why?)
       for (let i = 0; i <= 3; i++) {
@@ -2040,8 +2044,8 @@ awarded.`);
         $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
       }
       //save as local setting (per table)
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor+'_'+this.table_id));
-      localColorSetting.writeProp('digital_cardfilter',btncolor);
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + "_" + this.table_id));
+      localColorSetting.writeProp("digital_cardfilter", btncolor);
     }
     $("tableau_" + plcolor).dataset[tblitem] = value;
     node.dataset.selected = value;
@@ -2070,10 +2074,10 @@ awarded.`);
   }
 
   //get settings
-  getSetting(key:string):string {
+  getSetting(key: string): string {
     //doesn't work.
-   // return this.localSettings.readProp(key);
-    return $('ebd-body').dataset['localsetting_'+key];
+    // return this.localSettings.readProp(key);
+    return $("ebd-body").dataset["localsetting_" + key];
   }
 
   //Prevent moving parts when animations are set to none
@@ -2085,9 +2089,9 @@ awarded.`);
     onEnd?: (node?: HTMLElement) => void
   ) {
     if (!this.customAnimation.areAnimationsPlayed()) {
-      return super.phantomMove(mobileId,newparentId,-1,mobileStyle,onEnd);
-    }  else {
-      return super.phantomMove(mobileId,newparentId,duration,mobileStyle,onEnd);
+      return super.phantomMove(mobileId, newparentId, -1, mobileStyle, onEnd);
+    } else {
+      return super.phantomMove(mobileId, newparentId, duration, mobileStyle, onEnd);
     }
   }
 }

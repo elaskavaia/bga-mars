@@ -8472,6 +8472,16 @@
   background: red;
 }
 
+.bgabutton.otherplayer::after {
+  content: "";
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  background-color: var(--plcolor);
+}
+
 /*--------------- Floating hand -------------------- */
 #hand_area_buttons {
   display: none;
@@ -8814,7 +8824,5 @@
 .expandable {
   border-radius: 10px;
   box-shadow: 0px 0px 4px 0px #555;
-  background-color: hsla(27, 28.6%, 13.7%, 0.11);
+  background-color: hsla(27deg, 28.6%, 13.7%, 0.11);
 }
-
-/*# sourceMappingURL=marsdarhf.css.map */

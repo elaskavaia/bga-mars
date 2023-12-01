@@ -3191,7 +3191,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setupPlayer = function (playerInfo) {
         var _this = this;
         _super.prototype.setupPlayer.call(this, playerInfo);
-        $("player_score_".concat(playerInfo.id)).addEventListener('click', function () {
+        $("player_score_".concat(playerInfo.id)).addEventListener("click", function () {
             _this.onShowScoringTable(playerInfo.id);
         });
         this.local_counters[playerInfo.color] = {
@@ -3208,20 +3208,20 @@ var GameXBody = /** @class */ (function (_super) {
         }
         //read last saved value for filter in digital view
         if (!this.isLayoutFull()) {
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color + '_' + this.table_id));
-            var selected = localColorSetting.readProp('digital_cardfilter', '0');
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color + "_" + this.table_id));
+            var selected = localColorSetting.readProp("digital_cardfilter", "0");
             for (var i = 0; i <= 3; i++) {
                 $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
                 $("player_viewcards_" + i + "_" + playerInfo.color).dataset.selected = "0";
             }
-            $("tableau_" + playerInfo.color).dataset['visibility_' + selected] = "1";
+            $("tableau_" + playerInfo.color).dataset["visibility_" + selected] = "1";
             $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
         }
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
         var _this = this;
-        var mv = $('move_nbr').innerHTML;
-        var finalhtm = '';
+        var mv = $("move_nbr").innerHTML;
+        var finalhtm = "";
         var showFunc = function (htm) {
             var dlg = new ebg.popindialog();
             dlg.create("score_dlg");
@@ -3236,14 +3236,16 @@ var GameXBody = /** @class */ (function (_super) {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
             this.ajaxcall(url, [], this, function (result) {
                 var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">Player</div>\n                      <div class=\"scorecell header corp\">Corp</div>\n                      <div class=\"scorecell \">TR</div>\n                      <div class=\"scorecell \">Cities</div>\n                      <div class=\"scorecell \">Greeneries</div>\n                      <div class=\"scorecell \">Awards</div>\n                      <div class=\"scorecell \">Milestones</div>\n                      <div class=\"scorecell \">Cards</div>\n                      <div class=\"scorecell header total\">Total</div>\n                </div>\n                %lines%\n              </div>";
-                var lines = '';
+                var lines = "";
                 for (var plid in result.data.contents) {
                     var entry = result.data.contents[plid];
                     var plcolor = _this.getPlayerColor(parseInt(plid));
-                    var corp = $('tableau_' + plcolor + '_corp_logo').dataset.corp;
-                    lines = lines + "\n                <div class=\" scorecol\">\n                      <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(_this.gamedatas.players[plid].name, "</div>\n                      <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.awards, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.milestones, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n                      <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n                </div>");
+                    var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+                    lines =
+                        lines +
+                            "\n                <div class=\" scorecol\">\n                      <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(_this.gamedatas.players[plid].name, "</div>\n                      <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.awards, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.milestones, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n                      <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n                </div>");
                 }
-                finalhtm = tablehtm.replace('%lines%', lines);
+                finalhtm = tablehtm.replace("%lines%", lines);
                 _this.cachedScoreMoveNbr = mv;
                 _this.cachedScoreHtm = finalhtm;
                 showFunc(finalhtm);
@@ -3251,7 +3253,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
-        if (extra === void 0) { extra = ''; }
+        if (extra === void 0) { extra = ""; }
         return "".concat(this.game_name, "-").concat(this.player_id, "-").concat(extra);
     };
     GameXBody.prototype.setupLocalSettings = function () {
@@ -3277,7 +3279,7 @@ var GameXBody = /** @class */ (function (_super) {
                 ui: "checkbox"
             },
             { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" },
+            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
@@ -3299,13 +3301,13 @@ var GameXBody = /** @class */ (function (_super) {
         var op2 = this.prefs[LAYOUT_PREF_ID].values[2];
         // not translating this - will be removed after alpha
         var desc = "\n    Please select a theme below - the user interface will look slightly different. You can change this later.<br>\n    <ul>\n    <li> ".concat(op1.name, "  - ").concat(op1.description, " \n    <li> ").concat(op2.name, "  - ").concat(op2.description, " \n    </ul>\n    For theme and other settings, use the settings menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n    If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.\n    "); // NO I18N
-        var html = this.getThemeSelectorDialogHtml('theme_selector_area', 'Welcome to Alpha Testing of Terraforming Mars!', desc); // NO I18N
+        var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
         dialog.setContent(html);
-        this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, 'theme_selector_area');
+        this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, "theme_selector_area");
         dialog.show();
     };
     GameXBody.prototype.getThemeSelectorDialogHtml = function (id, title, desc) {
-        if (desc === void 0) { desc = ''; }
+        if (desc === void 0) { desc = ""; }
         return "\n    <div class=\"".concat(id, "_title\">").concat(title, "</div>\n    <div class=\"").concat(id, "_desc\">").concat(desc, "</div>\n    <div id=\"").concat(id, "\" class=\"").concat(id, "\"></div>\n    ");
     };
     GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
@@ -3332,7 +3334,7 @@ var GameXBody = /** @class */ (function (_super) {
             option.innerHTML = optionValue.name;
             option.setAttribute("data-pref-id", pref_id + "");
             if (optionValue.description)
-                this.addTooltip(option.id, optionValue.description, '');
+                this.addTooltip(option.id, optionValue.description, "");
             if (pref.value == v) {
                 option.setAttribute("selected", "selected");
             }
@@ -3379,13 +3381,13 @@ var GameXBody = /** @class */ (function (_super) {
         });
         dojo.query("#allcards .expandabletoggle").connect("onclick", this, "onToggleAllCards");
         // filter controls
-        var refroot = $('allcards');
+        var refroot = $("allcards");
         refroot.querySelectorAll(".filter-text").forEach(function (node) {
             node.addEventListener("input", function (event) {
                 var fnode = event.target;
                 _this.applyCardFilter(fnode.parentNode.parentNode);
             });
-            node.setAttribute('placeholder', _('Search...'));
+            node.setAttribute("placeholder", _("Search..."));
         });
         refroot.querySelectorAll(".filter-text-clear").forEach(function (clearButton) {
             clearButton.addEventListener("click", function (event) {
@@ -3404,7 +3406,7 @@ var GameXBody = /** @class */ (function (_super) {
         var text = fnode.value.trim().toLowerCase();
         var contentnode = expandableNode.querySelector(".expandablecontent_cards");
         contentnode.querySelectorAll(".card").forEach(function (card) {
-            card.style.removeProperty('display');
+            card.style.removeProperty("display");
         });
         contentnode.querySelectorAll(".card").forEach(function (card) {
             var cardtext = _this.getTooptipHtmlForToken(card.id);
@@ -3420,9 +3422,29 @@ var GameXBody = /** @class */ (function (_super) {
         });*/
     };
     GameXBody.prototype.setupResourceFiltering = function () {
-        var exclude_compact = ["full/cards1.jpg", "full/cards2.jpg", "full/cards3.jpg", "full/cardsC.jpg", "full/pboard.jpg", "full/TMgameboard.jpg", "full/tooltipbg.jpg"];
-        var exclude_full = ["cards_illustrations.jpg", "awards_back.png", "cards_bg.png", "cards_bg_2_blue_action_bottom.png", "cards_bg_2_blue_action_texture.jpg",
-            "corporations.jpg", "map.png", "milestones_awards.png", "oxygen.png", "space.jpg", "stanproj_hold.png", "temperature.png"];
+        var exclude_compact = [
+            "full/cards1.jpg",
+            "full/cards2.jpg",
+            "full/cards3.jpg",
+            "full/cardsC.jpg",
+            "full/pboard.jpg",
+            "full/TMgameboard.jpg",
+            "full/tooltipbg.jpg"
+        ];
+        var exclude_full = [
+            "cards_illustrations.jpg",
+            "awards_back.png",
+            "cards_bg.png",
+            "cards_bg_2_blue_action_bottom.png",
+            "cards_bg_2_blue_action_texture.jpg",
+            "corporations.jpg",
+            "map.png",
+            "milestones_awards.png",
+            "oxygen.png",
+            "space.jpg",
+            "stanproj_hold.png",
+            "temperature.png"
+        ];
         var exclude_list = this.isLayoutFull() ? exclude_full : exclude_compact;
         for (var _i = 0, exclude_list_1 = exclude_list; _i < exclude_list_1.length; _i++) {
             var item = exclude_list_1[_i];
@@ -3519,7 +3541,9 @@ var GameXBody = /** @class */ (function (_super) {
         else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("tableau_")) {
             return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
         }
-        else if (notif.args.token_id && notif.args.token_id.startsWith("marker_") && (notif.args.place_id.startsWith("tile_") || notif.args.place_id.startsWith("award_") || notif.args.place_id.startsWith("milestone_"))) {
+        else if (notif.args.token_id &&
+            notif.args.token_id.startsWith("marker_") &&
+            (notif.args.place_id.startsWith("tile_") || notif.args.place_id.startsWith("award_") || notif.args.place_id.startsWith("milestone_"))) {
             return this.customAnimation.animatePlaceMarker(notif.args.token_id, notif.args.place_id);
         }
     };
@@ -3531,22 +3555,23 @@ var GameXBody = /** @class */ (function (_super) {
         });
         //temperature & oxygen - compact only as full doesn't have individual rendered elements
         if (!this.isLayoutFull()) {
-            if (notif.args.counter_name == 'tracker_t') {
-                this.customAnimation.animateMapItemAwareness('temperature_map');
+            if (notif.args.counter_name == "tracker_t") {
+                this.customAnimation.animateMapItemAwareness("temperature_map");
             }
-            else if (notif.args.counter_name == 'tracker_o') {
-                this.customAnimation.animateMapItemAwareness('oxygen_map');
+            else if (notif.args.counter_name == "tracker_o") {
+                this.customAnimation.animateMapItemAwareness("oxygen_map");
             }
         }
         //ocean's pile
-        if (notif.args.counter_name == 'tracker_w') {
-            this.customAnimation.animateMapItemAwareness('oceans_pile');
+        if (notif.args.counter_name == "tracker_w") {
+            this.customAnimation.animateMapItemAwareness("oceans_pile");
         }
-        else if (notif.args.counter_name == 'tracker_gen') {
-            this.customAnimation.animateMapItemAwareness('outer_generation');
+        else if (notif.args.counter_name == "tracker_gen") {
+            this.customAnimation.animateMapItemAwareness("outer_generation");
         }
         if (notif.args.inc && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
-            if (!this.isLayoutFull()) { // cardboard layout animating cubes on playerboard instead
+            if (!this.isLayoutFull()) {
+                // cardboard layout animating cubes on playerboard instead
                 this.customAnimation.animatetingle(notif.args.counter_name);
                 return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
             }
@@ -3687,7 +3712,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (key.startsWith("tracker_tag")) {
             txt += this.generateTooltipSection(_("Tags"), _("Number of tags played by the player. A tag places the card in certain categories, which can affect or be affected by other cards, or by the player board (e.g. you can pay with steel when playing a building tag)."));
         }
-        else if (key.startsWith("tracker_city") || key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
+        else if (key.startsWith("tracker_forest") || key.startsWith("tracker_land")) {
             txt += this.generateTooltipSection(_("Tiles on Mars"), _("Number of corresponding tiles played on Mars."));
         }
         else if (key.startsWith("tracker_pdelta")) {
@@ -4664,10 +4689,11 @@ var GameXBody = /** @class */ (function (_super) {
             this_2.updateVisualsFromOp(opInfo, opId);
             if (singleOrFirst || !ordered)
                 this_2.activateSlots(opInfo, opId, singleOrFirst);
+            var buttonId = "button_".concat(opId);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
-                    this_2.addActionButton("button_" + opId, name_3, function () {
+                    this_2.addActionButton(buttonId, name_3, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
@@ -4676,29 +4702,30 @@ var GameXBody = /** @class */ (function (_super) {
                             // onToken
                             _this.onSelectTarget(opId, id, true);
                         });
-                    }, null, null, color);
+                    });
                 }
                 else {
-                    this_2.addActionButton("button_" + opId, name_3, function () {
+                    this_2.addActionButton(buttonId, name_3, function () {
                         _this.sendActionResolve(opId);
-                    }, null, null, color);
+                    });
                 }
-                if (color != "blue" && color != "red") {
-                    $("button_" + opId).classList.remove("bgabutton_blue");
-                    $("button_" + opId).classList.add("bgabutton_" + color);
-                }
-                if (contains_gfx) {
-                    $("button_" + opId).classList.add("gfx");
-                    $("button_" + opId).setAttribute("title", this_2.getButtonNameForOperation(opInfo));
-                }
+                var buttonDiv = $(buttonId);
+                if (opInfo.owner && opInfo.owner != this_2.player_color)
+                    buttonDiv.classList.add("otherplayer", "plcolor_" + opInfo.owner);
+                buttonDiv.classList.remove("bgabutton_blue");
+                buttonDiv.classList.add("bgabutton_" + color);
+                // if (contains_gfx) {
+                //   $(buttonId).classList.add("gfx");
+                //   $(buttonId).setAttribute("title", this.getButtonNameForOperation(opInfo));
+                // }
                 if (opargs.void) {
-                    dojo.addClass("button_" + opId, "disabled");
+                    buttonDiv.classList.add("disabled");
                 }
             }
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0) {
-                    var name_4 = (single && paramargs.length <= 1) ? _("Reject") : _("Done");
+                    var name_4 = single && paramargs.length <= 1 ? _("Reject") : _("Done");
                     this_2.addActionButton("button_skip", name_4, function () {
                         _this.sendActionSkip();
                     });
@@ -4797,8 +4824,8 @@ var GameXBody = /** @class */ (function (_super) {
         $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
         $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
         if (!this.isLayoutFull()) {
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace('mcompact_colorfilter'));
-            localColorSetting.writeProp('selected', btncolor);
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("mcompact_colorfilter"));
+            localColorSetting.writeProp("selected", btncolor);
         }
         return true;
     };
@@ -4824,8 +4851,8 @@ var GameXBody = /** @class */ (function (_super) {
                 $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
             }
             //save as local setting (per table)
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + '_' + this.table_id));
-            localColorSetting.writeProp('digital_cardfilter', btncolor);
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + "_" + this.table_id));
+            localColorSetting.writeProp("digital_cardfilter", btncolor);
         }
         $("tableau_" + plcolor).dataset[tblitem] = value;
         node.dataset.selected = value;
@@ -4854,7 +4881,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.getSetting = function (key) {
         //doesn't work.
         // return this.localSettings.readProp(key);
-        return $('ebd-body').dataset['localsetting_' + key];
+        return $("ebd-body").dataset["localsetting_" + key];
     };
     //Prevent moving parts when animations are set to none
     GameXBody.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
