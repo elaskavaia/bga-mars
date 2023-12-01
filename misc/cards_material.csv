@@ -129,7 +129,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 119|Dust Seals|1||||2|w<=3||1|Basic|||||
 120|Urbanized Area|1|npe,2pm,city(adj_city_2)|||10||Building City|0|Basic|Decrease your energy production 1 step and increase your MC production 2 steps. Place a city tile ADJACENT TO AT LEAST 2 OTHER CITY TILES.||||
 121|Sabotage|3|3nu_Any/4ns_Any/7nm_Any/nop|||1||Event|0|Corporate|Remove up to 3 titanium from any player, or 4 steel, or 7 MC.||||
-122|Moss|1|pp,1np|||4|w>=3|Plant|0|Basic|Requires 3 ocean tiles and that you lose 1 plant. Increase your plant production 1 step.||||
+122|Moss|1|1np,pp|||4|w>=3|Plant|0|Basic|Requires 3 ocean tiles and that you lose 1 plant. Increase your plant production 1 step.||||
 123|Industrial Center|2|tile(adj_city)|7nm:ps||4||Building|0|Corporate|Place [the Industrial Center] tile ADJACENT TO A CITY TILE|Action: Spend 7 MC to increase your steel production 1 step.|||
 124|Hired Raiders|3|(2steal_s)/(3steal_m)|||1||Event|0|Corporate|Steal up to 2 steel, or 3MC from any player.||||
 125|Hackers|1|npe,2npm_Any,2pm|||3|||-1|Corporate|Decrease your energy production 1 step and any MC production 2 steps. Increase your MC production 2 steps.||||

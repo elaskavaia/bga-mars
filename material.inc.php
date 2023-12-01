@@ -1739,7 +1739,7 @@ $this->token_types = [
   'num' => 122,
   'name' => clienttranslate("Moss"),
   't' => 1,
-  'r' => 'pp,1np',
+  'r' => '1np,pp',
   'cost' => 4,
   'pre' => 'w>=3',
   'tags' => 'Plant',
