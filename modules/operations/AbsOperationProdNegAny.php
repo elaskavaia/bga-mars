@@ -44,6 +44,7 @@ class AbsOperationProdNegAny extends AbsOperation {
         }
 
         $owner = $this->getCheckedArg('target');
+        $this->game->checkColor($owner);
         $this->game->effect_incProduction($owner, $type, -$inc);
         return $inc;
     }

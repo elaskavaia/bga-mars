@@ -1293,6 +1293,19 @@ abstract class PGameXBody extends PGameMachine {
         $this->dbResourceInc($token_id, $inc, $message, [], $this->getPlayerIdByColor($color), $options);
     }
 
+    /**
+     * sanitize the color if passed via REST calls
+     */
+    function checkColor(&$owner) {
+        if (is_numeric($owner)) $owner = (string) $owner;
+        $this->systemAssertTrue("invalid owner", is_string($owner));
+        if ($this->getPlayerIdByColor($owner) == 0) {
+            if ($owner == 'ffffff') return true;
+            $this->systemAssertTrue("invalid owner $owner");
+        }
+        return true;
+    }
+
     function effect_incProduction(string $color, $type, $inc = 1, $options = []) {
         $token_id = $this->getTrackerId($color, $type);
         $min = $this->getRulesFor($token_id, 'min', 0);
@@ -1616,9 +1629,9 @@ abstract class PGameXBody extends PGameMachine {
 
         foreach ($map as $hex => $info) {
             $inspace = $this->getRulesFor($hex, 'inspace');
-            if ($inspace==1) continue; // not ON MARS
+            if ($inspace == 1) continue; // not ON MARS
             $hexowner = $info['owner'] ?? '';
-            if  (!$hexowner) continue;
+            if (!$hexowner) continue;
             if ($owner && $hexowner !== $owner)
                 continue;
 

@@ -124,8 +124,10 @@ abstract class AbsOperation {
         $possible_targets = $this->getStateArg($key);
         if ($args && array_key_exists($key, $args)) {
             $target = $args[$key];
-            $this->game->systemAssertTrue("Unauthorized argument $key", $target === $possible_targets || array_search($target, $possible_targets) !== false);
-            return $target;
+            if ($target === $possible_targets) return $possible_targets;
+            $index = array_search($target, $possible_targets);
+            $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
+            return $possible_targets[$index];
         } else if ($this->isOneChoice()) {
             if (is_array($possible_targets)) return array_shift($possible_targets);
             return $possible_targets;
@@ -172,7 +174,7 @@ abstract class AbsOperation {
         $data = $this->op_info['data'] ?? '';
         if (!$data) return $data;
         $split = explode(':', $data);
-        return array_get($split,$index,''); // context of effect
+        return array_get($split, $index, ''); // context of effect
     }
 
     protected function getMinCount(): int {

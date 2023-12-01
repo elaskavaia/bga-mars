@@ -23,6 +23,7 @@ class Operation_acard66 extends  AbsOperationTile {
 
     function effect(string $owner, int $inc): int {
         $object = $this->getCheckedArg('target');
+        $this->game->checkColor($owner);
         $player_id = $this->game->getPlayerIdByColor($owner);
         $marker = $this->game->createPlayerMarker($owner);
         $this->game->dbSetTokenLocation($marker, $object, 0, '', [], $player_id);

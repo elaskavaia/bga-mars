@@ -49,7 +49,7 @@ class AbsOperationIncSteal extends AbsOperation {
             return $inc;
         }
         $other = $this->getCheckedArg('target');
-
+        $this->game->checkColor($other);
         $value = $this->game->getTrackerValue($other, $opres);
         $value = min($inc, $value); // up to
 

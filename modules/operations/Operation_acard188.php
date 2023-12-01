@@ -49,6 +49,7 @@ class Operation_acard188 extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $owner = $this->getCheckedArg('target');
         if ($owner == 'none') return $inc; // skipped, this is ok for resources
+        $this->game->checkColor($owner);
         $type = $this->getType();
         $this->game->effect_incCount($owner, $type, -4, ['ifpossible' => true]);
         return 1;
