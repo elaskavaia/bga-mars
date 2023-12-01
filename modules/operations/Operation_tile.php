@@ -6,6 +6,14 @@ require_once "AbsOperationTile.php";
 
 class Operation_tile extends AbsOperationTile {
     function checkPlacement($color, $ohex, $info, $map) {
+        $tt = $this->getTileType();
+
+        if ($tt == MA_TILE_CITY) { 
+            // there is at least one tile which is city
+            return $this->checkCityPlacement($color, $ohex, $info, $map);
+        }
+
+
         $reservename = $this->getReservedArea();
         if ($reservename == 'ocean') {
             if (!isset($info['ocean'])) return MA_ERR_NOTRESERVED;

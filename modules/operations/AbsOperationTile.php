@@ -83,7 +83,38 @@ abstract class AbsOperationTile extends AbsOperation {
     }
 
     function checkPlacement($color, $location, $info, $map) {
+        $tile = $this->getStateArg('object');
+        $tt = $this->game->getRulesFor($tile,'tt');
+
+        if ($tt == MA_TILE_CITY) { 
+            // have to do it here because city operation is not only one who can do city
+            return $this->checkCityPlacement($color, $location, $info, $map);
+        }
+
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        return 0;
+    }
+
+    function checkCityPlacement($color, $ohex, $info, $map) {
+        if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        $reservename = $this->getReservedArea();
+        if (!$reservename) {
+            if (isset($info['reserved'])) return MA_ERR_RESERVED;
+            $others = count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));;
+            if ($others > 0) return MA_ERR_CITYPLACEMENT;
+        } else {
+            $reshexes = $this->findReservedAreas($reservename);
+            if (count($reshexes) == 0) {
+                if (isset($info['reserved'])) return MA_ERR_RESERVED;
+                if ($this->checkAdjRulesPasses($ohex, $color, $reservename)) {
+                    return MA_OK;
+                }
+                return MA_ERR_CITYPLACEMENT;
+            }
+            if (array_search($ohex, $reshexes) === false) {
+                return MA_ERR_NOTRESERVED;
+            }
+        }
         return 0;
     }
 
