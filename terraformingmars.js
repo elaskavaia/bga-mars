@@ -3160,7 +3160,7 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             });
             //update prereq on cards
-            this.updateHandPrereqs();
+            this.updateHandPrereqs(this.gamedatas['card_info']);
             // card reference
             this.setupHelpSheets();
             this.connect($("zoom-out"), "onclick", function () {
@@ -4039,122 +4039,37 @@ var GameXBody = /** @class */ (function (_super) {
         //   tokenDisplayInfo.imageTypes += " infonode";
         // }
     };
-    GameXBody.prototype.updateHandPrereqs = function () {
-        if (!this.player_id)
-            return;
-        var nodes = dojo.query("#hand_area .card");
-        for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
-            var node = nodes_1[_i];
-            // const card_id = node.id.replace('card_main_','');
-            var displayInfo = this.getTokenDisplayInfo(node.id);
-            if (!displayInfo)
-                continue;
-            if (!displayInfo.expr.pre)
-                continue;
-            var op = "";
-            var what = "";
-            var qty = 0;
-            if (typeof displayInfo.expr.pre === "string") {
-                op = ">=";
-                what = displayInfo.expr.pre;
-                qty = 1;
+    GameXBody.prototype.updateHandPrereqs = function (info) {
+        for (var cardId in info) {
+            var card_info = info[cardId];
+            var node = $(cardId);
+            var valid = parseInt(card_info.pre) == 0;
+            // update token display info
+            if (!this.gamedatas.token_types[cardId]) {
+                debugger;
             }
-            else {
-                if (displayInfo.expr.pre.length < 3) {
-                    continue;
-                }
-                else {
-                    op = displayInfo.expr.pre[0];
-                    what = displayInfo.expr.pre[1];
-                    qty = displayInfo.expr.pre[2];
-                }
+            var original_cost = parseInt(this.gamedatas.token_types[cardId].cost);
+            var discount_cost = 0;
+            var payop = card_info.payop;
+            if (payop) {
+                discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
             }
-            var tracker = "";
-            switch (what) {
-                case "o":
-                    tracker = "tracker_o";
-                    break;
-                case "t":
-                    tracker = "tracker_t";
-                    break;
-                case "tagScience":
-                    tracker = "tracker_tagScience_" + this.getPlayerColor(this.player_id);
-                    break;
-                case "tagEnergy":
-                    tracker = "tracker_tagEnergy_" + this.getPlayerColor(this.player_id);
-                    break;
-                case "tagJovian":
-                    tracker = "tracker_tagJovian_" + this.getPlayerColor(this.player_id);
-                    break;
-                case "forest":
-                    tracker = "tracker_tagForest_" + this.getPlayerColor(this.player_id);
-                    break;
-                case "w":
-                    tracker = "tracker_w";
-                    break;
-                case "ps":
-                    tracker = "tracker_ps_" + this.getPlayerColor(this.player_id);
-                    break;
-                case "all_city":
-                    tracker = "cities";
-                    break;
-            }
-            //special
-            if (node.id == "card_main_135") {
-                tracker = "card_main_135";
-            }
-            if (tracker == "") {
-                continue;
-            }
-            var valid = false;
-            var actual = 0;
-            // const actual = this.getTokenInfoState(tracker);
-            if (this.local_counters["game"][tracker] != undefined) {
-                actual = this.local_counters["game"][tracker];
-            }
-            else {
-                if (!$(tracker)) {
-                    continue;
-                }
-                if (!$(tracker).dataset.state) {
-                    continue;
-                }
-                actual = parseInt($(tracker).dataset.state);
-            }
-            if (op == "<=") {
-                if (actual <= qty)
-                    valid = true;
-            }
-            else if (op == "<") {
-                if (actual < qty)
-                    valid = true;
-            }
-            else if (op == ">") {
-                if (actual > qty)
-                    valid = true;
-            }
-            else if (op == ">=") {
-                if (actual >= qty)
-                    valid = true;
-            }
-            //Special cases
-            if (node.id == "card_main_135") {
-                if (parseInt($("tracker_tagAnimal_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
-                    parseInt($("tracker_tagMicrobe_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
-                    parseInt($("tracker_tagPlant_" + this.getPlayerColor(this.player_id)).dataset.state) > 0) {
-                    valid = true;
-                }
-            }
-            if (!valid) {
-                node.dataset.invalid_prereq = 1;
-            }
-            else {
-                node.dataset.invalid_prereq = 0;
-            }
+            card_info.discount_cost = discount_cost;
+            this.gamedatas.token_types[cardId].card_info = card_info;
+            // update node attrs
+            if (!node)
+                continue; // not visible?
+            node.dataset.invalid_prereq = valid ? "0" : "1";
+            // XXX use params below or remove
+            node.dataset.cannot_resolve = card_info.m;
+            node.dataset.cannot_pay = card_info.c;
+            node.dataset.discounted = String(discount_cost != original_cost);
+            node.dataset.discount_const = String(discount_cost);
             //update TT too
             this.updateTooltip(node.id);
         }
     };
+    // XXX this function can be remove discount cost is set via dataset above, can use css after to show value
     GameXBody.prototype.updateVisualsFromOp = function (opInfo, opId) {
         var _a, _b, _c;
         var opargs = opInfo.args;
@@ -4687,8 +4602,11 @@ var GameXBody = /** @class */ (function (_super) {
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
-            if (singleOrFirst || !ordered)
+            if (singleOrFirst || !ordered) {
                 this_2.activateSlots(opInfo, opId, singleOrFirst);
+                if (opInfo.type === "card")
+                    this_2.updateHandPrereqs(opInfo.args.info);
+            }
             var buttonId = "button_".concat(opId);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
@@ -4739,8 +4657,6 @@ var GameXBody = /** @class */ (function (_super) {
         for (var opIdS in operations) {
             _loop_2(opIdS);
         }
-        //refresh prereqs rendering on hand cards
-        this.updateHandPrereqs();
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;

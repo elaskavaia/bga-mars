@@ -26,10 +26,8 @@ class Operation_fund extends AbsOperation {
         $this->argresult['cost'] = $cost;
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {
             if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
-            
+            if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
             if (!$this->game->canAfford($color, $tokenId, $cost)) return MA_ERR_COST;
-            $info = $map[$tokenId];
-            if ($info['state'] > 0) return MA_ERR_OCCUPIED;
             return MA_OK;
         });
     }

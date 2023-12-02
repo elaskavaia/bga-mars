@@ -193,12 +193,14 @@ abstract class PGameXBody extends PGameMachine {
 
     protected function getAllDatas() {
         $result = parent::getAllDatas();
-        $current = $this->getCurrentPlayerId();
-        if ($this->isRealPlayer($current))
-            $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
-        else
-            $result['server_prefs'] = [];
         $result['CON'] = $this->getPhpConstants("MA_");
+        $current = $this->getCurrentPlayerId();
+        if ($this->isRealPlayer($current)) {
+            $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
+            $result['card_info'] = $this->getCardInfoInHand($current);
+        } else
+            $result['server_prefs'] = [];
+      
         return $result;
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -393,6 +395,14 @@ abstract class PGameXBody extends PGameMachine {
         return $key;
     }
 
+    function getCardInfoInHand($player_id = null) {
+        if (!$player_id)
+            $player_id  = $this->getCurrentPlayerId();
+        $color = $this->getPlayerColorById($player_id);
+        $keys = array_keys($this->tokens->getTokensInLocation("hand_${color}"));
+        return $this->filterPlayable($color, $keys);
+    }
+
     function isSolo() {
         return $this->getPlayersNumber() == 1;
     }
@@ -479,13 +489,21 @@ abstract class PGameXBody extends PGameMachine {
         return $this->token_types;
     }
 
-    function canAfford($color, $tokenid, $cost = null) {
+    /**
+     * Checks if can afford payment, if 4th arg is passed sets field $info['payop'] to payment operation  
+     */
+    function canAfford($color, $tokenid, $cost = null, &$info = null) {
+        if ($info == null) $info = [];
         if ($cost !== null) {
             $payment_op = "${cost}nm";
         } else
             $payment_op = $this->getPayment($color, $tokenid);
-        if ($this->isVoidSingle($payment_op, $color, 1, $tokenid))
+
+        $info['payop'] = $payment_op;
+        if ($this->isVoidSingle($payment_op, $color, 1, $tokenid)) {
             return false;
+        }
+
         return true;
     }
 
@@ -520,34 +538,55 @@ abstract class PGameXBody extends PGameMachine {
         return MA_OK;
     }
 
-    function playability($owner, $tokenid) {
-        if (!$owner) {
-            $owner == $this->getActivePlayerColor();
-        }
-        if (!$this->canAfford($owner, $tokenid)) {
-            return MA_ERR_COST;
-        }
-        // check precondition
-        $cond = $this->getRulesFor($tokenid, "pre");
-        if ($cond) {
-            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid);
-            if (!$valid) return MA_ERR_PREREQ; // fail prereq check
-        }
-
-        // check immediate effect affordability
-        $r = $this->getRulesFor($tokenid, "r");
-        if ($r) {
-            if ($this->isVoidSingle($r, $owner, 1, $tokenid)) {
-                return MA_ERR_MANDATORYEFFECT;
-            }
-        }
+    function postcondition($owner, $tokenid) {
         // special project sell XXX
         if (startsWith($tokenid, "card_stanproj_1")) {
             if ($this->isVoidSingle("sell", $owner)) {
                 return MA_ERR_MANDATORYEFFECT;
             }
         }
-        return 0;
+        // check immediate effect affordability
+        // note: we cannot check beyond first rule because afters its executed word changes and we cannot adjust for that
+        $r = $this->getRulesFor($tokenid, "r");
+        if ($r) {
+            if ($this->isVoidSingle($r, $owner, 1, $tokenid)) {
+                return MA_ERR_MANDATORYEFFECT;
+            }
+        }
+        return MA_OK;
+    }
+
+    function playability($owner, $tokenid, &$info = null) {
+        if ($info == null) $info = [];
+
+        if (!$owner) {
+            $owner == $this->getActivePlayerColor();
+        }
+
+
+        // check precondition
+        $info['pre'] = $this->precondition($owner, $tokenid);
+
+        // check immediate effect affordability
+        $info['m'] = $this->postcondition($owner, $tokenid);
+
+        // check cost
+        $info['c'] = $this->canAfford($owner, $tokenid, null, $info) ? MA_OK : MA_ERR_COST;
+
+
+        if ($info['pre']) {
+            return $info['pre'];
+        }
+
+        if ($info['m']) {
+            return  $info['m'];
+        }
+
+        if ($info['c']) {
+            return $info['c'];
+        }
+
+        return MA_OK;
     }
 
     function evaluateExpression($cond, $owner = 0, $context = null, $mods = null): int {
@@ -1759,10 +1798,9 @@ abstract class PGameXBody extends PGameMachine {
 
     function filterPlayable($color, $keys) {
         return $this->createArgInfo($color, $keys, function ($color, $tokenid) {
-            return [
-                'payop' => $this->getPayment($color, $tokenid),
-                'q' => $this->playability($color, $tokenid)
-            ];
+            $info = [];
+            $info['q'] = $this->playability($color, $tokenid, $info); // as side effect this set extra info there
+            return $info;
         });
     }
 

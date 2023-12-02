@@ -19,14 +19,11 @@ class Operation_claim extends AbsOperation {
         $keys = array_keys($map);
         $claimed = $this->game->tokens->countTokensInLocation("milestone_%", null);
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $claimed) {
-            if ($claimed>=3) return MA_ERR_MAXREACHED;// 3 already claimed
-        
-            if (!$this->game->canAfford($color,$tokenId)) return MA_ERR_COST;
-            $info = $map[$tokenId];
-            if ($info['state'] > 0) return MA_ERR_OCCUPIED;
-            $r = $this->game->getRulesFor($tokenId, 'pre');
-            if (!$this->game->evaluateExpression($r, $color)) return MA_ERR_PREREQ;
-            return 0;
+            if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
+            if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
+            if ($this->game->precondition($color, $tokenId)) return MA_ERR_PREREQ;
+            if (!$this->game->canAfford($color, $tokenId)) return MA_ERR_COST;
+            return MA_OK;
         });
     }
 }

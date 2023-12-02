@@ -109,7 +109,7 @@ class GameXBody extends GameTokens {
       });
 
       //update prereq on cards
-      this.updateHandPrereqs();
+      this.updateHandPrereqs(this.gamedatas['card_info']);
 
       // card reference
       this.setupHelpSheets();
@@ -1202,117 +1202,41 @@ awarded.`);
     // }
   }
 
-  updateHandPrereqs(): void {
-    if (!this.player_id) return;
-    const nodes = dojo.query("#hand_area .card");
-    for (let node of nodes) {
-      // const card_id = node.id.replace('card_main_','');
-      const displayInfo = this.getTokenDisplayInfo(node.id);
-      if (!displayInfo) continue;
-      if (!displayInfo.expr.pre) continue;
+  updateHandPrereqs(info): void {
+    for (const cardId in info) {
+      const card_info = info[cardId];
+      const node = $(cardId) as HTMLElement;
 
-      let op = "";
-      let what = "";
-      let qty = 0;
+      const valid = parseInt(card_info.pre) == 0;
 
-      if (typeof displayInfo.expr.pre === "string") {
-        op = ">=";
-        what = displayInfo.expr.pre;
-        qty = 1;
-      } else {
-        if (displayInfo.expr.pre.length < 3) {
-          continue;
-        } else {
-          op = displayInfo.expr.pre[0];
-          what = displayInfo.expr.pre[1];
-          qty = displayInfo.expr.pre[2];
-        }
+      // update token display info
+      if (!this.gamedatas.token_types[cardId]) {
+        debugger;
       }
-      let tracker = "";
-      switch (what) {
-        case "o":
-          tracker = "tracker_o";
-          break;
-        case "t":
-          tracker = "tracker_t";
-          break;
-        case "tagScience":
-          tracker = "tracker_tagScience_" + this.getPlayerColor(this.player_id);
-          break;
-        case "tagEnergy":
-          tracker = "tracker_tagEnergy_" + this.getPlayerColor(this.player_id);
-          break;
-        case "tagJovian":
-          tracker = "tracker_tagJovian_" + this.getPlayerColor(this.player_id);
-          break;
-        case "forest":
-          tracker = "tracker_tagForest_" + this.getPlayerColor(this.player_id);
-          break;
-        case "w":
-          tracker = "tracker_w";
-          break;
-        case "ps":
-          tracker = "tracker_ps_" + this.getPlayerColor(this.player_id);
-          break;
-        case "all_city":
-          tracker = "cities";
-          break;
+      const original_cost = parseInt(this.gamedatas.token_types[cardId].cost);
+      let discount_cost = 0;
+      const payop = card_info.payop;
+      if (payop) {
+          discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
       }
-      //special
-      if (node.id == "card_main_135") {
-        tracker = "card_main_135";
-      }
+      card_info.discount_cost = discount_cost;
+      this.gamedatas.token_types[cardId].card_info = card_info;
 
-      if (tracker == "") {
-        continue;
-      }
-
-      let valid = false;
-      let actual = 0;
-      // const actual = this.getTokenInfoState(tracker);
-      if (this.local_counters["game"][tracker] != undefined) {
-        actual = this.local_counters["game"][tracker];
-      } else {
-        if (!$(tracker)) {
-          continue;
-        }
-        if (!$(tracker).dataset.state) {
-          continue;
-        }
-        actual = parseInt($(tracker).dataset.state);
-      }
-
-      if (op == "<=") {
-        if (actual <= qty) valid = true;
-      } else if (op == "<") {
-        if (actual < qty) valid = true;
-      } else if (op == ">") {
-        if (actual > qty) valid = true;
-      } else if (op == ">=") {
-        if (actual >= qty) valid = true;
-      }
-
-      //Special cases
-      if (node.id == "card_main_135") {
-        if (
-          parseInt($("tracker_tagAnimal_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
-          parseInt($("tracker_tagMicrobe_" + this.getPlayerColor(this.player_id)).dataset.state) > 0 &&
-          parseInt($("tracker_tagPlant_" + this.getPlayerColor(this.player_id)).dataset.state) > 0
-        ) {
-          valid = true;
-        }
-      }
-
-      if (!valid) {
-        node.dataset.invalid_prereq = 1;
-      } else {
-        node.dataset.invalid_prereq = 0;
-      }
+      // update node attrs
+      if (!node) continue; // not visible?
+      node.dataset.invalid_prereq = valid ? "0" : "1";
+      // XXX use params below or remove
+      node.dataset.cannot_resolve = card_info.m;
+      node.dataset.cannot_pay = card_info.c;
+      node.dataset.discounted =  String(discount_cost != original_cost);
+      node.dataset.discount_const = String(discount_cost);
       //update TT too
       this.updateTooltip(node.id);
     }
   }
 
+
+  // XXX this function can be remove discount cost is set via dataset above, can use css after to show value
   updateVisualsFromOp(opInfo: any, opId: number) {
     const opargs = opInfo.args;
     const paramargs = opargs.target ?? [];
@@ -1875,7 +1799,10 @@ awarded.`);
       const singleOrFirst = single || (ordered && i == 0);
 
       this.updateVisualsFromOp(opInfo, opId);
-      if (singleOrFirst || !ordered) this.activateSlots(opInfo, opId, singleOrFirst);
+      if (singleOrFirst || !ordered) {
+        this.activateSlots(opInfo, opId, singleOrFirst);
+        if (opInfo.type  === "card") this.updateHandPrereqs(opInfo.args.info);
+      }
 
       const buttonId = `button_${opId}`;
       if (!single && !ordered) {
@@ -1930,9 +1857,6 @@ awarded.`);
       }
       i = i + 1;
     }
-
-    //refresh prereqs rendering on hand cards
-    this.updateHandPrereqs();
   }
 
   addUndoButton() {
