@@ -300,6 +300,7 @@
       /* visibility: visible;*/
       display: flex;
 
+
     }
     .card[data-card-type="2"] {
       opacity: 1;
@@ -375,6 +376,13 @@
 
 
 .mcompact {
+  .cards_3vp, .cards_3 {
+    .card_badges {
+      filter:grayscale(1);
+    }
+  }
+
+
   .player_counters {
 
     .tr_playerboard{
@@ -544,7 +552,9 @@
   }
   .cards_3 {
     grid-area: 1 / 2 / 3 / 3;
+
   }
+
 
   .cards_bin{
     display: flex;

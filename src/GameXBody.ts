@@ -953,25 +953,13 @@ awarded.`);
     if ($(card_id).dataset.cannot_resolve!=undefined && $(card_id).dataset.cannot_resolve!="0") {
       if (msg!="") msg=msg+"<br/>";
       if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-        msg=msg+ _('The card cannot be played because a mandatory cost cannot be paid.');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_OCCUPIED) {
-        msg=msg+  _('The card cannot be played because all potential placements are already occupied.');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_RESERVED) {
-        msg=msg+  _('?');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_NOTRESERVED) {
-        msg=msg+  _('?');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_CITYPLACEMENT) {
-        msg=msg+  _('The card cannot be played because a city cannot be placed.');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_FORESTPLACEMENT) {
-        msg=msg+  _('The card cannot be played because a forest cannot be placed.');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MAXREACHED) {
-        msg=msg+  _('?');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_NOTAPPLICABLE) {
-        msg=msg+  _('?');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_ALREADYUSED) {
-        msg=msg+  _('?');
-      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_PLACEMENT) {
-        msg=msg+  _('?');
+        msg=msg+ _('The card cannot be played because a mandatory effect cannot be resolved.');
+      }
+    }
+    if ($(card_id).dataset.potential_errror!=undefined && (parseInt($(card_id).dataset.potential_errror)>3)){
+      if (msg!="") msg=msg+"<br/>";
+      if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
+        msg=msg+ _('Something prevents this card to be played.');
       }
     }
     return msg;
@@ -1261,7 +1249,6 @@ awarded.`);
       const card_info = info[cardId];
       const node = $(cardId) as HTMLElement;
 
-
       const valid = parseInt(card_info.pre) == 0;
 
       // update token display info
@@ -1282,6 +1269,7 @@ awarded.`);
       node.dataset.invalid_prereq = valid ? "0" : "1";
       // XXX use params below or remove
       node.dataset.cannot_resolve = card_info.m;
+      node.dataset.potential_error= card_info.q ?? "0";
       node.dataset.cannot_pay = card_info.c;
       node.dataset.discounted =  String(discount_cost != original_cost);
       node.dataset.discount_const = String(discount_cost);
