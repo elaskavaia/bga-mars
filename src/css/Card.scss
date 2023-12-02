@@ -69,10 +69,20 @@
    */
 
 }
-.card_cost.discounted{
-  color: #bef983;
-  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+
+.hand,.draw,.draft,.tooltip-body {
+  .card_cost.discounted{
+    color: #bef983;
+    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+    .number_inside{
+      display: none;
+    }
+  }
+  .card_cost.discounted:after{
+    content:attr(data-discounted_cost);
+  }
 }
+
 
 #display_main  .token_cost {
   border-radius: calc(var(--card-width) * 0.08);

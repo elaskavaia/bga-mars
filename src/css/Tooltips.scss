@@ -59,10 +59,10 @@
 
 
 }
-.tooltipimage.tracker.pdelta {
+.tooltipimage.tracker_pdelta {
   background-image: url("img/p_delta.jpg");
   background-size: contain;
-  width: calc(var(--resourcesize)*2);
+  width: calc(var(--resourcesize)*4);
   height: var(--resourcesize);
 }
 
@@ -160,11 +160,34 @@
   }
 
 
+
   .compact_card_tt.invalid_prereq {
     .tt_section.tt_prereq {
       .card_tt_effect {
         color: red;
       }
+    }
+  }
+  .compact_card_tt.discounted {
+    .tt_section.tt_cost {
+      .card_tt_effect {
+        text-decoration: line-through;
+        font-weight: bold;
+        color: #327935;
+      }
+      .card_tt_effect:after {
+        content: var(--discount-val);
+        text-decoration: revert;
+        display: inline-block;
+        margin-left: 2%;
+      }
+    }
+  }
+
+  .tt_section.tt_error {
+    .card_tt_effect {
+      color: red;
+      font-style: italic;
     }
   }
 

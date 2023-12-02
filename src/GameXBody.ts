@@ -109,7 +109,7 @@ class GameXBody extends GameTokens {
       });
 
       //update prereq on cards
-      this.updateHandPrereqs(this.gamedatas['card_info']);
+      this.updateHandInformation(this.gamedatas['card_info']);
 
       // card reference
       this.setupHelpSheets();
@@ -626,13 +626,14 @@ class GameXBody extends GameTokens {
     const type = displayInfo.t;
 
     let htm =
-      '<div class="compact_card_tt %adcl"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' +
+      '<div class="compact_card_tt %adcl" style="%adstyle"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' +
       type +
       '">%t</div></div>';
 
-    let fullitemhtm = "";
-    let fulltxt = "";
-    let adClass = "";
+    let fullitemhtm:string = "";
+    let fulltxt:string = "";
+    let adClass:string = "";
+    let adStyle:string="";
 
     let elemId = displayInfo.key;
     // XXX this function not suppose to look for js element in the DOM because it may not be there
@@ -648,8 +649,19 @@ class GameXBody extends GameTokens {
         const div = this.cloneAndFixIds(elemId, "_tt", true);
         fullitemhtm = div.outerHTML;
         if (div.getAttribute("data-invalid_prereq") == "1") {
-          adClass += "invalid_prereq";
+          adClass += " invalid_prereq";
         }
+        if (div.getAttribute("data-discounted") == "true") {
+          adClass += " discounted";
+          adStyle+=`--discount-val:'${div.getAttribute("data-discount_const")}';`;
+        }
+        ["cannot_resolve","cannot_pay"].forEach((item:string)=>{
+          if (div.getAttribute("data-"+item) !=null && div.getAttribute("data-"+item) !="0" ) {
+            adClass += " "+item;
+          }
+        });
+
+
       } else if (type == this.CON.MA_CARD_TYPE_CORP) {
         fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
       } else if (type == this.CON.MA_CARD_TYPE_MILESTONE || type == this.CON.MA_CARD_TYPE_AWARD) {
@@ -672,7 +684,7 @@ class GameXBody extends GameTokens {
       fulltxt = this.generateItemTooltip(displayInfo);
     }
 
-    return htm.replace("%adcl", adClass).replace("%c", fullitemhtm).replace("%t", fulltxt);
+    return htm.replace("%adcl", adClass).replace("%adstyle", adStyle).replace("%c", fullitemhtm).replace("%t", fulltxt);
   }
 
   generateItemTooltip(displayInfo: TokenDisplayInfo): string {
@@ -874,8 +886,10 @@ class GameXBody extends GameTokens {
     let vp = displayInfo.text_vp;
     if (!vp) vp = displayInfo.vp;
 
+
+
     res += this.generateTooltipSection(type_name, card_id);
-    if (type != this.CON.MA_CARD_TYPE_CORP) res += this.generateTooltipSection(_("Cost"), displayInfo.cost);
+    if (type != this.CON.MA_CARD_TYPE_CORP) res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true,"tt_cost");
     res += this.generateTooltipSection(_("Tags"), tags);
     let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
     if (prereqText != "")
@@ -913,14 +927,54 @@ If more than one player gets 1st place bonus, no 2nd place is
 awarded.`);
       res += this.generateTooltipSection(_("Info"), text);
     } else {
+
+      const errors=this.getPotentialErrors(displayInfo.key);
+
       res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
       res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
       res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
       res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
       res += this.generateTooltipSection(_("Victory Points"), vp);
+      res += this.generateTooltipSection(_("Playability"), errors,true,"tt_error");
+
+
     }
 
     return res;
+  }
+
+  getPotentialErrors(card_id:string):string {
+
+    if (!$(card_id)) return "";
+    let msg="";
+    if ($(card_id).dataset.cannot_pay=="1") {
+      msg=_("You don't have enough MC to pay this card.");
+    }
+    if ($(card_id).dataset.cannot_resolve!=undefined && $(card_id).dataset.cannot_resolve!="0") {
+      if (msg!="") msg=msg+"<br/>";
+      if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
+        msg=msg+ _('The card cannot be played because a mandatory cost cannot be paid.');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_OCCUPIED) {
+        msg=msg+  _('The card cannot be played because all potential placements are already occupied.');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_RESERVED) {
+        msg=msg+  _('?');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_NOTRESERVED) {
+        msg=msg+  _('?');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_CITYPLACEMENT) {
+        msg=msg+  _('The card cannot be played because a city cannot be placed.');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_FORESTPLACEMENT) {
+        msg=msg+  _('The card cannot be played because a forest cannot be placed.');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MAXREACHED) {
+        msg=msg+  _('?');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_NOTAPPLICABLE) {
+        msg=msg+  _('?');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_ALREADYUSED) {
+        msg=msg+  _('?');
+      } else if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_PLACEMENT) {
+        msg=msg+  _('?');
+      }
+    }
+    return msg;
   }
 
   createHtmlForToken(tokenNode: HTMLElement, displayInfo: TokenDisplayInfo) {
@@ -1202,10 +1256,11 @@ awarded.`);
     // }
   }
 
-  updateHandPrereqs(info): void {
+  updateHandInformation(info): void {
     for (const cardId in info) {
       const card_info = info[cardId];
       const node = $(cardId) as HTMLElement;
+
 
       const valid = parseInt(card_info.pre) == 0;
 
@@ -1230,6 +1285,20 @@ awarded.`);
       node.dataset.cannot_pay = card_info.c;
       node.dataset.discounted =  String(discount_cost != original_cost);
       node.dataset.discount_const = String(discount_cost);
+      node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1":"0";
+
+      if ($("cost_" + cardId)) {
+        if (discount_cost != original_cost) {
+          $("cost_" + cardId).dataset.discounted_cost= discount_cost.toString();
+          $("cost_" + cardId).classList.add("discounted");
+        } else {
+          //cleanup after discoutn vanishes
+          //    $("cost_" + card_id).innerHTML = original_cost.toString();
+          $("cost_" + cardId).dataset.discounted_cost="";
+          if ($("cost_" + cardId).classList.contains("discounted")) $("cost_" + cardId).classList.remove("discounted");
+        }
+      }
+
       //update TT too
       this.updateTooltip(node.id);
     }
@@ -1246,6 +1315,7 @@ awarded.`);
     const count = opInfo.count;
 
     if (type == "card") {
+      /*
       const card_info = opInfo.args.info;
       for (let card_id in card_info) {
         //handle card discounts
@@ -1253,13 +1323,22 @@ awarded.`);
         const original_cost = parseInt(displayInfo.cost);
         const payop = card_info[card_id].payop;
         const discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
-
-        if (discount_cost != original_cost && $("cost_" + card_id)) {
-          $("cost_" + card_id).innerHTML = discount_cost.toString();
+      if ($("cost_" + card_id)) {
+        if (discount_cost != original_cost) {
+          $("cost_" + card_id).dataset.discounted_cost= discount_cost.toString();
           $("cost_" + card_id).classList.add("discounted");
+        } else {
+          //cleanup after discoutn vanishes
+          //    $("cost_" + card_id).innerHTML = original_cost.toString();
+          $("cost_" + card_id).dataset.discounted_cost="";
+          if ($("cost_" + card_id).classList.contains("discounted")) $("cost_" + card_id).classList.remove("discounted");
         }
       }
-    }
+
+    */
+      }
+
+
   }
   updatePlayerLocalCounters(plColor: string): void {
     for (let key of Object.keys(this.local_counters[plColor])) {
@@ -1801,7 +1880,7 @@ awarded.`);
       this.updateVisualsFromOp(opInfo, opId);
       if (singleOrFirst || !ordered) {
         this.activateSlots(opInfo, opId, singleOrFirst);
-        if (opInfo.type  === "card") this.updateHandPrereqs(opInfo.args.info);
+        if (opInfo.type  === "card" || opInfo.type=="buycard" || opInfo.type=="draft") this.updateHandInformation(opInfo.args.info);
       }
 
       const buttonId = `button_${opId}`;
