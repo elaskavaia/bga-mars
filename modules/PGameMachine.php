@@ -202,12 +202,9 @@ abstract class PGameMachine extends PGameTokens {
 
     function arg_multiplayerChoice($player_id) {
         $res = [];
-        $players = $this->loadPlayersBasicInfos();
-        foreach ($players as $player_id => $player_info) {
-            $color = $player_info['player_color'];
-            $operations = $this->getTopOperationsMulti($color);
-            $res['player_operations'][$player_id] = $this->arg_operations($operations);
-        }
+        $color = $this->getPlayerColorById($player_id);
+        $operations = $this->getTopOperationsMulti($color);
+        $res['player_operations'][$player_id] = $this->arg_operations($operations);
         return $res;
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -277,7 +274,7 @@ abstract class PGameMachine extends PGameTokens {
     function machineMultiplayerDistpatch() {
         $operations = $this->getTopOperationsMulti();
         //$this->debugLog("-MULTI: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
-        if (count($operations)==0) {
+        if (count($operations) == 0) {
             $this->gamestate->nextState("next");
             return;
         }
