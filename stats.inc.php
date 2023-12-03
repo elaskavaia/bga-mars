@@ -116,23 +116,42 @@ $stats_type = array(
             "type" => "int"
         ],
 
-        "game_actions" => array(
+        "game_actions" => [
             "id" => 30,
             "name" => totranslate("Number of actions"),
             "type" => "int"
+        ],
+        "game_corp" => [
+            "id" => 31,
+            "name" => totranslate("Corporation"),
+            "type" => "int"
+        ],
+        "game_theme" => [
+            "id" => 50,
+            "name" => totranslate("User Interface Theme"),
+            "type" => "int"
+        ]
+    ),
+    "value_labels" => array(
+        31 => array(
+            1=>totranslate('Begginer Corp'),
+            2=>totranslate('CrediCor'),
+            3=>totranslate('Ecoline'),
+            4=>totranslate('Helion'),
+            5=>totranslate('Interplanetary Cinematics'),
+            6=>totranslate('Inventrix'),
+            7=>totranslate('Mining Guild'),
+            8=>totranslate('Saturn Systems'),
+            9=>totranslate('PhoboLog'),
+            10=>totranslate('Teractor'),
+            11=>totranslate('Tharsis Republic'),
+            12=>totranslate('ThorGate')
         ),
-
-        /*
-        Examples:    
-        
-        
-
-                                
-        "player_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("player test stat 2"), 
-                                "type" => "float" )
-
-*/
+        50 => [
+                0 => totranslate("None"),
+                1 => totranslate("Digital"),
+                2 => totranslate("Cardboard")
+        ]
     )
 
 );
