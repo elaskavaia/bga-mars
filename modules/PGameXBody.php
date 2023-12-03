@@ -238,18 +238,6 @@ abstract class PGameXBody extends PGameMachine {
         // $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
         //     'target' => 'tile_3_1', // target of score animation
         // ]);
-        $players = $this->loadPlayersBasicInfos();
-        foreach ($players as $player_id => $player) {
-            $score = $this->dbGetScore($player_id);
-            $this->setStat($score, 'game_vp_total', $player_id);
-            $color = $player["player_color"];
-            $corp = $this->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
-            $corp_id = (int) getPart($corp['key'],2);
-            $this->setStat($corp_id, 'game_corp', $player_id);
-
-            $theme = $this->dbUserPrefs->getPrefValue($player_id, 100);
-            $this->setStat($theme, 'game_theme', $player_id);
-        }
     }
 
     function debug_drawCard($num) {
