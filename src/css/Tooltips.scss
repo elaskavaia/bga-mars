@@ -184,12 +184,6 @@
     }
   }
 
-  .tt_section.tt_error {
-    .card_tt_effect {
-      color: red;
-      font-style: italic;
-    }
-  }
 
   .midSizeDialog {
     max-width: none;
@@ -252,6 +246,14 @@
     }
   }
 }
+
+.tooltipcontainer .tt_section.tt_error {
+  .card_tt_effect {
+    color: red;
+    font-style: italic;
+  }
+}
+
 
 .mfull {
   #ebd-body {
