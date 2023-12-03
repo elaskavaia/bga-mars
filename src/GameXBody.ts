@@ -1252,9 +1252,6 @@ awarded.`);
       const valid = parseInt(card_info.pre) == 0;
 
       // update token display info
-      if (!this.gamedatas.token_types[cardId]) {
-        debugger;
-      }
       const original_cost = parseInt(this.gamedatas.token_types[cardId].cost);
       let discount_cost = 0;
       const payop = card_info.payop;
