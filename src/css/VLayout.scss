@@ -876,4 +876,14 @@
     border-radius: 25%;
     background-size: 2250%;
   }
+
+  // temp indicator that card is used
+  .card[data-state="3"]::before {
+    content: "";
+    position: absolute;
+    left: calc(50% - 4px);
+    width: 8px;
+    height: 8px;
+    background-color: var(--plcolor);
+  }
 }
