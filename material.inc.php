@@ -849,6 +849,7 @@ $this->token_types = [
   'r' => '2pm,3pp,2p',
   'cost' => 17,
   'pre' => 'w>=6',
+  'tags' => 'Plant',
   'vp' => 1,
   'deck' => 'Basic',
   'text' => clienttranslate("Increase your MC production 2 steps and your plant production 3 steps. Gain 2 plants."),
