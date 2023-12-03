@@ -161,28 +161,6 @@
 
 
 
-  .compact_card_tt.invalid_prereq {
-    .tt_section.tt_prereq {
-      .card_tt_effect {
-        color: red;
-      }
-    }
-  }
-  .compact_card_tt.discounted {
-    .tt_section.tt_cost {
-      .card_tt_effect {
-        text-decoration: line-through;
-        font-weight: bold;
-        color: #327935;
-      }
-      .card_tt_effect:after {
-        content: var(--discount-val);
-        text-decoration: revert;
-        display: inline-block;
-        margin-left: 2%;
-      }
-    }
-  }
 
 
   .midSizeDialog {
@@ -247,13 +225,42 @@
   }
 }
 
-.tooltipcontainer .tt_section.tt_error {
-  .card_tt_effect {
-    color: red;
-    font-style: italic;
-  }
-}
+.tooltipcontainer {
 
+  .tt_section.tt_error {
+    .card_tt_effect {
+      color: red;
+      font-style: italic;
+    }
+  }
+
+  .invalid_prereq {
+    .tt_section.tt_prereq {
+      .card_tt_effect {
+        color: red;
+      }
+    }
+  }
+
+  .discounted {
+    .tt_section.tt_cost {
+      .card_tt_effect {
+        text-decoration: line-through;
+        color: gray; // the line though is not visible enought especially on number 4
+      }
+
+      .card_tt_effect:after {
+        content: var(--discount-val);
+        text-decoration: revert;
+        display: inline-block;
+        margin-left: 2%;
+        color: #327935;
+        font-weight: bold;
+      }
+    }
+  }
+
+}
 
 .mfull {
   #ebd-body {
@@ -308,6 +315,13 @@
     border-radius: unset;
     padding: unset;
     margin: 0;
+  }
+
+
+  .tooltipcontainer .discounted .tt_section.tt_cost {
+      .card_tt_effect:after {
+        color: black;
+      }
   }
 }
 

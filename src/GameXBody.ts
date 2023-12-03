@@ -653,7 +653,7 @@ class GameXBody extends GameTokens {
         }
         if (div.getAttribute("data-discounted") == "true") {
           adClass += " discounted";
-          adStyle+=`--discount-val:'${div.getAttribute("data-discount_const")}';`;
+          adStyle+=`--discount-val:'${div.getAttribute("data-discount_cost")}';`;
         }
         ["cannot_resolve","cannot_pay"].forEach((item:string)=>{
           if (div.getAttribute("data-"+item) !=null && div.getAttribute("data-"+item) !="0" ) {
@@ -852,14 +852,31 @@ class GameXBody extends GameTokens {
     return txt;
   }
 
-  generateTokenTooltip(displayInfo: TokenDisplayInfo): string {
+  generateTokenTooltip_Full(displayInfo: TokenDisplayInfo): string {
     if (!displayInfo) return "?";
 
     if (displayInfo.t === undefined) {
       return this.generateItemTooltip(displayInfo);
     }
 
-    return this.generateCardTooltip(displayInfo);
+    const tt = this.generateCardTooltip(displayInfo);
+    let classes = '';
+    const discount_cost = displayInfo.card_info?.discount_cost ?? displayInfo.cost;
+    if (displayInfo.card_info) {
+      if (displayInfo.cost != discount_cost) classes += " discounted";
+      if (displayInfo.card_info?.pre ?? 0 > 0) {
+        classes += " invalid_prereq";
+      }
+      if (displayInfo.card_info.m ?? 0 > 0) {
+        classes += " cannot_resolve";
+      }
+      if (displayInfo.card_info.c ?? 0 > 0) {
+        classes += " cannot_pay";
+      }
+    }
+
+    const res = `<div class="full_card_tt ${classes}" style="--discount-val:'${discount_cost}'">${tt}</div>`;
+    return res;
   }
 
   generateCardTooltip(displayInfo: TokenDisplayInfo): string {
@@ -1234,7 +1251,7 @@ awarded.`);
     // override to generate dynamic tooltips and such
 
     if (this.isLayoutFull()) {
-      tokenDisplayInfo.tooltip = this.generateTokenTooltip(tokenDisplayInfo);
+      tokenDisplayInfo.tooltip = this.generateTokenTooltip_Full(tokenDisplayInfo);
     } else {
       tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
     }
@@ -1269,7 +1286,7 @@ awarded.`);
       node.dataset.potential_error= card_info.q ?? "0";
       node.dataset.cannot_pay = card_info.c;
       node.dataset.discounted =  String(discount_cost != original_cost);
-      node.dataset.discount_const = String(discount_cost);
+      node.dataset.discount_cost = String(discount_cost);
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1":"0";
 
       if ($("cost_" + cardId)) {
