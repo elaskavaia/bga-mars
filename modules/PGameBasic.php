@@ -374,7 +374,7 @@ abstract class PGameBasic extends Table {
         foreach ($players as $player_id => $player_info) {
             if ($player_info["player_no"] == $no) return $player_info["player_color"];
         }
-        if ($no==count($players)) {
+        if ($no==(count($players)+1) || $no == 0) {
             // neutural player for solo game, white
             return 'ffffff';
         }

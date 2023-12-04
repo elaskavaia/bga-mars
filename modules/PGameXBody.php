@@ -121,7 +121,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         shuffle($nonreserved);
         $type = MA_TILE_CITY;
-        $num = $this->getPlayersNumber();
+        $num = $this->getPlayersNumber() + 1;
         $botcolor = 'ffffff';
         for ($i = 1; $i <= 2; $i++) {
             $hex = array_shift($nonreserved);
