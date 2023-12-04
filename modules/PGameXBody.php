@@ -299,6 +299,10 @@ abstract class PGameXBody extends PGameMachine {
 
     // HEX MATH
     function getAdjecentHexes($coords, $valid_coords = null) {
+        if (!$coords) {
+            $this->error("empty coords in getAdjecentHexes");
+            return [];
+        }
         if ($valid_coords == null)
             $valid_coords = $this->getPlanetMap(false);
         $axis = explode("_", $coords);
