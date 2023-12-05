@@ -3871,7 +3871,7 @@ $this->token_types = [
  'op_o' => [  //
   'undo' => 'true',
   'type' => 'o',
-  'name' => clienttranslate("Increase Oxigen Level"),
+  'name' => clienttranslate("Increase Oxygen Level"),
 ],
  'op_t' => [  //
   'undo' => 'true',
@@ -4128,7 +4128,7 @@ $this->token_types = [
   'type' => 'param',
   'create' => 1,
   'location' => 'params',
-  'name' => clienttranslate("Oxigen Level"),
+  'name' => clienttranslate("Oxygen Level"),
   'state' => 0,
   'max'=>14,
 ],

@@ -107,7 +107,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(0, $m->evaluateExpression("(t>0)*3", PCOLOR));
         $this->assertEquals(9, $m->evaluateExpression("all_u", PCOLOR));
         $m->tokens->setTokenState('tracker_m_' . PCOLOR, 40);
-        // oxigens
+        // oxygens
         $m->tokens->setTokenState('tracker_o', 10);
         $this->assertEquals(1, $m->evaluateExpression("o>=10", PCOLOR, null));
         $this->assertEquals(0, $m->evaluateExpression("o<10", PCOLOR, null));
