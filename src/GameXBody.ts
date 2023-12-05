@@ -368,8 +368,8 @@ class GameXBody extends GameTokens {
     }
     const ccmain = cc["main"];
     const cccorp = cc["corp"];
-    $(`allcards_main_title`).innerHTML = _(`All Project Cards (${ccmain})`);
-    $(`allcards_corp_title`).innerHTML = _(`All Corporate Cards (${cccorp})`);
+    $(`allcards_main_title`).innerHTML = _('All Project Cards') + ` (${ccmain})`;
+    $(`allcards_corp_title`).innerHTML = _('All Corporate Cards') + ` (${cccorp})`;
 
     // clicks
     dojo.query(".expandablecontent_cards > *").connect("onclick", this, (event) => {

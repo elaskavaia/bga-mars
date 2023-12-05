@@ -3372,8 +3372,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         var ccmain = cc["main"];
         var cccorp = cc["corp"];
-        $("allcards_main_title").innerHTML = _("All Project Cards (".concat(ccmain, ")"));
-        $("allcards_corp_title").innerHTML = _("All Corporate Cards (".concat(cccorp, ")"));
+        $("allcards_main_title").innerHTML = _('All Project Cards') + " (".concat(ccmain, ")");
+        $("allcards_corp_title").innerHTML = _('All Corporate Cards') + " (".concat(cccorp, ")");
         // clicks
         dojo.query(".expandablecontent_cards > *").connect("onclick", this, function (event) {
             var id = event.currentTarget.id;
