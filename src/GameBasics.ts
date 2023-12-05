@@ -796,11 +796,11 @@ class GameBasics extends GameGui {
   }
 
   getPlayerColor(playerId: number) {
-    return this.gamedatas.players[playerId].color ?? "000000";
+    return this.gamedatas.players[playerId]?.color ?? "ffffff";
   }
 
   getPlayerName(playerId: number) {
-    return this.gamedatas.players[playerId].name ?? _("Not a Player");
+    return this.gamedatas.players[playerId]?.name ?? _("Not a Player");
   }
 
   getPlayerIdByColor(color: string): number | undefined {
@@ -1334,9 +1334,9 @@ class GameBasics extends GameGui {
     const inc = args.player_score - prev;
     this.scoreCtrl[args.player_id].toValue(args.player_score);
     if (args.target) {
-      const duration = notif.args.duration ? notif.args.duration : 1000;
+      const duration = notif.args.duration ?? 1000;
       this.notifqueue.setSynchronousDuration(duration);
-      const color = args.color ?? this.getPlayerIdByColor(args.player_id);
+      const color = args.color ?? this.getPlayerColor(args.player_id);
       this.displayScoring(args.target, color, inc, args.duration);
     } else {
       this.notifqueue.setSynchronousDuration(50);  
