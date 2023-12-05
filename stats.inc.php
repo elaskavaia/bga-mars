@@ -57,6 +57,11 @@ $stats_type = array(
             "name" => totranslate("Number of turns"),
             "type" => "int"
         ),
+        "game_gen" => array(
+            "id" => 11,
+            "name" => totranslate("Number of generations"),
+            "type" => "int"
+        ),
 
         /*
         Examples:

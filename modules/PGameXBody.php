@@ -1488,7 +1488,11 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_finalScoring(): int {
-        $this->debugConsole("-- final scoring --");
+        //$this->debugConsole("-- final scoring --");
+        $gen = $this->tokens->getTokenState("tracker_gen");
+        $this->setStat($gen, 'game_gen');
+        $this->notifyAllPlayers('message',clienttranslate('It is the end of the generation ${gen} and Mars is terraformed!'),['gen'=>$gen]);
+
         $players = $this->loadPlayersBasicInfos();
         $this->scoreAll();
         foreach ($players as $player_id => $player) {
@@ -1549,6 +1553,16 @@ abstract class PGameXBody extends PGameMachine {
 
                 $this->scoreTableVp($table, $player_id,  'awards');
                 $this->scoreTableVp($table, $player_id,  'milestones');
+            }
+        } else {
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $this->dbSetScore($player_id, 0); // reset to 0
+                $this->dbIncScoreValueAndNotify($player_id,0,''); // just to notify reset
+                $curr = $this->tokens->getTokenState("tracker_tr_${color}");
+                $this->dbIncScoreValueAndNotify($player_id,$curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rank'), "", [
+                    'target' => "tracker_tr_${color}"
+                ]);
             }
         }
 
