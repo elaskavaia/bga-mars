@@ -62,7 +62,7 @@ define("BCOLOR", "0000ff");
 final class GameTest extends TestCase {
     public function testGameProgression() {
         $m = $this->game();
-        $this->assertNotFalse($m);
+        $this->assertNotNull($m);
         $this->assertEquals(0, $m->getGameProgression());
         $m->tokens->setTokenState('tracker_o', 5);
         $this->assertTrue($m->getGameProgression() > 0);
@@ -134,9 +134,9 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $m->incTrackerValue(PCOLOR, 'pp', 0);
 
-        $m->effect_playCard(PCOLOR, $m->mtFind('name','Algae'));
-        $m->effect_playCard(PCOLOR, $m->mtFind('name','Mangrove'));
-        $m->effect_playCard(PCOLOR, $m->mtFind('name','Trees'));
+        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Algae'));
+        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Mangrove'));
+        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Trees'));
 
         $m->machine->insertRule("counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp", 1, 1, 1, PCOLOR);
         $ops = $m->machine->getTopOperations();
@@ -152,7 +152,7 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $m->incTrackerValue(PCOLOR, 'pp', 0);
 
-        $m->effect_playCard(PCOLOR, $m->mtFind('name','Algae'));
+        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Algae'));
 
 
         $m->machine->insertRule("counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp", 1, 1, 1, PCOLOR);
@@ -194,6 +194,30 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $value);
     }
 
+    public function testResolveOcean() {
+        $m = $this->game();
+        $m->putInEffectPool(PCOLOR, "w,w");
+
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $tops = $m->machine->getTopOperations(PCOLOR);
+        $op =  reset($tops);
+        $args = ['target' => 'hex_5_5', 'op_info' => $op];
+
+        $count = $m->saction_resolve($op, $args);
+        $m->saction_stack($count, $op, $tops);
+        $this->assertEquals(1, $count);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+
+        $tops = $m->machine->getTopOperations();
+        $this->assertEquals(2, count($tops));
+        $w = array_shift($tops);
+        $pp = array_shift($tops);
+        $this->assertEquals("w", $w['type']);
+        $this->assertEquals("2p", $pp['type']);
+    }
+
     public function testEffectMatch() {
         $m = $this->game();
         $res = [];
@@ -206,11 +230,11 @@ final class GameTest extends TestCase {
 
     public function testInstanciate() {
         $m = $this->game();
-        $m->getOperationInstanceFromType("1m", PCOLOR);
-        $this->assertNotNull($m);
+        $op = $m->getOperationInstanceFromType("1m", PCOLOR);
+        $this->assertNotNull($op);
 
-        $m->getOperationInstanceFromType("9nmu", PCOLOR);
-        $this->assertNotNull($m);
+        $op = $m->getOperationInstanceFromType("9nmu", PCOLOR);
+        $this->assertNotNull($op);
     }
 
     public function testListeners() {
@@ -317,5 +341,20 @@ final class GameTest extends TestCase {
             if ($subrules) $count += 1;
         }
         $this->assertEquals(48, $count);
+    }
+
+    public function testInstanciateAll() {
+        $m = $this->game();
+        foreach ($m->token_types as $key => $info) {
+            if (array_get($info, 't', 0) == 0) continue;
+            if (!startsWith($key, 'card_')) continue;
+            $r = array_get($info, 'r', '');
+            if (!$r) continue;
+            echo("testing $key <$r>\n");
+            /** @var AbsOperation */
+            $op = $m->getOperationInstanceFromType($r, PCOLOR);
+            $this->assertNotNull($op);
+            $this->assertTrue($op->checkIntegrity());
+        }
     }
 }

@@ -697,12 +697,12 @@ var GameBasics = /** @class */ (function (_super) {
         return this.last_server_state.name;
     };
     GameBasics.prototype.getPlayerColor = function (playerId) {
-        var _a;
-        return (_a = this.gamedatas.players[playerId].color) !== null && _a !== void 0 ? _a : "000000";
+        var _a, _b;
+        return (_b = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : "ffffff";
     };
     GameBasics.prototype.getPlayerName = function (playerId) {
-        var _a;
-        return (_a = this.gamedatas.players[playerId].name) !== null && _a !== void 0 ? _a : _("Not a Player");
+        var _a, _b;
+        return (_b = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : _("Not a Player");
     };
     GameBasics.prototype.getPlayerIdByColor = function (color) {
         for (var playerId in this.gamedatas.players) {
@@ -1211,7 +1211,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
     };
     GameBasics.prototype.notif_score = function (notif) {
-        var _a;
+        var _a, _b;
         this.onNotif(notif);
         var args = notif.args;
         console.log(notif);
@@ -1219,9 +1219,9 @@ var GameBasics = /** @class */ (function (_super) {
         var inc = args.player_score - prev;
         this.scoreCtrl[args.player_id].toValue(args.player_score);
         if (args.target) {
-            var duration = notif.args.duration ? notif.args.duration : 1000;
+            var duration = (_a = notif.args.duration) !== null && _a !== void 0 ? _a : 1000;
             this.notifqueue.setSynchronousDuration(duration);
-            var color = (_a = args.color) !== null && _a !== void 0 ? _a : this.getPlayerIdByColor(args.player_id);
+            var color = (_b = args.color) !== null && _b !== void 0 ? _b : this.getPlayerColor(args.player_id);
             this.displayScoring(args.target, color, inc, args.duration);
         }
         else {

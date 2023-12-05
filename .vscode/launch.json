@@ -29,13 +29,25 @@
       "name": "PHP: _debug",
       "type": "php",
       "request": "launch",
-      "program": "${workspaceFolder}/modules/_debug.php",
+      "program": "${workspaceFolder}/modules/_testpredeploy.php",
       "cwd": "${workspaceFolder}/modules/",
       "port": 0,
       "runtimeArgs": ["-dxdebug.start_with_request=yes"],
       "env": {
         "XDEBUG_MODE": "debug,develop",
         "XDEBUG_CONFIG": "client_port=${port} idekey=VSCODE",
+
+        "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/"
+      },
+    },
+    {
+      "name": "PHP: predeploy",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/modules/_testpredeploy.php",
+      "cwd": "${workspaceFolder}/modules/",
+      "port": 0,
+      "env": {
 
         "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/"
       },

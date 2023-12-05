@@ -111,6 +111,13 @@ class ComplexOperation extends AbsOperation {
         return $subvalue;
     }
 
+    function checkIntegrity() {
+        foreach ($this->delegates as $i => $sub) {
+            $sub->checkIntegrity();
+        }
+        return true;
+    }
+
     function isFullyAutomated() {
         foreach ($this->delegates as $i => $sub) {
             $subvalue = $sub->isFullyAutomated();

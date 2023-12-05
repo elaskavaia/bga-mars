@@ -33,8 +33,16 @@ class Operation_w extends AbsOperationTile {
         return MA_TILE_OCEAN;
     }
 
+    public function checkIntegrity() {
+        $c = $this->getUserCount();
+        if ($c===null) $c = $this->getCount();
+        if ($c != 1) 
+            throw new feException("Cannot use counter $c for this operation ".$this->mnemonic);
+        return true;
+    }
+
     function effect(string $owner, int $inc): int {
-        //if ($inc != 1) throw new feException("Cannot use counter $inc for this operation");
+        //if ($inc != 1) throw new feException("Cannot use counter $inc for this operation ".$this->mnemonic);
         $oceans = $this->game->getTrackerValue('', 'w');
         if ($oceans >= 9) {
             $this->game->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max, skipping increase'), 'tracker_w');

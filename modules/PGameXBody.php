@@ -240,7 +240,7 @@ abstract class PGameXBody extends PGameMachine {
         // ]);
     }
 
-    function debug_drawCard($num) {
+    function debug_drawCard($num, $loc = null) {
         if (is_numeric($num)) {
             $token = "card_main_$num";
             if (!array_get($this->token_types, $token)) {
@@ -252,7 +252,8 @@ abstract class PGameXBody extends PGameMachine {
                 return "card not found $num";
         }
         $color = $this->getCurrentPlayerColor();
-        $this->dbSetTokenLocation($token, "hand_$color");
+        if (!$loc) $loc = "hand_$color";
+        $this->dbSetTokenLocation($token, $loc);
     }
 
     function debug_op($type) {
@@ -921,8 +922,8 @@ abstract class PGameXBody extends PGameMachine {
     function mtFind(string $field, ?string $value, bool $ignorecase = true) {
         foreach ($this->token_types as $key => $rules) {
             $cur = array_get($rules, $field, null);
-            if ($cur == $value) return $key;
-            if ($ignorecase && strcasecmp($cur, $value) == 0) return $key;
+            if ($cur === $value) return $key;
+            if ($ignorecase && is_string($cur) && strcasecmp($cur, $value) == 0) return $key;
         }
         return null;
     }

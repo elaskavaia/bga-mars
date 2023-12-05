@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 abstract class AbsOperation {
-    public string $mnemonic;
+    protected string $mnemonic;
     public PGameXBody $game;
     public string $params;
     // dynamic
@@ -97,6 +97,10 @@ abstract class AbsOperation {
     protected function getOpName() {
         $rules = $this->rules();
         if ($rules) return $rules['name'];
+        return $this->mnemonic;
+    }
+
+    public function getMnemonic() {
         return $this->mnemonic;
     }
 
@@ -214,6 +218,11 @@ abstract class AbsOperation {
 
         $this->checkVoid();
         return $this->effect($owner, $this->getUserCount(), $args);
+    }
+
+    public function checkIntegrity() {
+        // self check of action integrity, some actions may not be costructed freely
+        return true;
     }
 
     protected function checkVoid() {

@@ -60,7 +60,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 50|Virus|3|2nores(Animal)/5np_Any/nop|||1||Microbe Event|0|Corporate|Remove up to 2 animals or 5 plants from any player.||||
 51|Miranda Resort|1|counter(tagEarth),pm|||12||Space Jovian|1|Corporate|Increase your MC production 1 step for each Earth tag you have.||||
 52|Fish|2|npp_Any|res||9|t>=2|Animal|resCard|Basic|Decrease any plant production 1 step. 1 VP for each animal on this card.|Add 1 animal to this card.|||'holds' => 'Animal'
-53|Lake Marineris|1|2w|||18|t>=0||2|Basic|Place 2 ocean tiles.||||
+53|Lake Marineris|1|w,w|||18|t>=0||2|Basic|Place 2 ocean tiles.||||
 54|Small Animals|2|npp_Any|res||6|o>=6|Animal|resCard/2|Basic|Decrease any plant production 1 step.|Add 1 animal to this card.||1 VP per 2 animals on this card.|'holds' => 'Animal'
 55|Kelp Farming|1|2pm,3pp,2p|||17|w>=6|Plant|1|Basic|Increase your MC production 2 steps and your plant production 3 steps. Gain 2 plants.||||
 56|Mine|1|ps|||4||Building|0|Corporate|Increase your steel production 1 step.||||
@@ -85,9 +85,9 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 75|Towing a Comet|3|2p,o,w|||23||Space Event|0|Basic|Gain 2 plants. Raise oxygen level 1 step and place an ocean tile.||||
 76|Space Mirrors|2||7nm:pe||3||Space Energy|0|Basic||Spend 7MC to increase your energy production 1 step.|||
 77|Solar Wind Power|1|pe,2u|||11||Science Space Energy|0|Basic|Increase your energy production 1 step and gain 2 titanium.||||
-78|Ice Asteroid|3|2w|||23||Space Event|0|Basic|Place 2 ocean tiles.||||
+78|Ice Asteroid|3|w,w|||23||Space Event|0|Basic|Place 2 ocean tiles.||||
 79|Quantum Extractor|2|4pe||onPay_cardSpace:2m|13|tagScience>=4|Science Energy|0|Corporate|||When you play a space card, you pay 2 MC less for it||
-80|Giant Ice Asteroid|3|6np_Any,2t,2w|||36||Space Event|0|Basic|Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any player.||||
+80|Giant Ice Asteroid|3|6np_Any,2t,w,w|||36||Space Event|0|Basic|Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any player.||||
 81|Ganymede Colony|1|city('Ganymede Colony')|||20||Space City Jovian|tagJovian|Basic|Place a city tile ON THE RESERVED AREA [for Ganymede Colony].|||1 VP per Jovian tag you have.|
 82|Callisto Penal Mines|1|3pm|||24||Space Jovian|2|Corporate|Increase your MC production 3 steps.||||
 83|Giant Space Mirror|1|3pe|||17||Space Energy|0|Basic|Increase your energy production 3 steps.||||

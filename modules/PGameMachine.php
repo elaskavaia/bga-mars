@@ -153,7 +153,7 @@ abstract class PGameMachine extends PGameTokens {
             // $this->debugConsole("",           $this->machine->gettablearr());
         }
         $this->machine->normalize();
-        //$this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
+        // $this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
         if ($this->isInMultiplayerMasterState()) {
             $this->machineMultiplayerDistpatchPrivate($currentPlayer);
         } else {

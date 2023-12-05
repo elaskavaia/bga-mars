@@ -38,4 +38,8 @@ class DelegatedOperation extends AbsOperation {
     function canResolveAutomatically() {
         return $this->delegate->canResolveAutomatically();
     }
+
+    function checkIntegrity()    {
+        return $this->delegate->checkIntegrity();
+    }
 }
