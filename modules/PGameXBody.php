@@ -1079,7 +1079,7 @@ abstract class PGameXBody extends PGameMachine {
                 $message = clienttranslate('${player_name} changed "Theme" to value ${pref_value}');
             }
         }
-        $this->notifyWithName('ack', $message, ['pref_id' => $pref, 'pref_value' => $value]);
+        $this->notifyWithName('ack', $message, ['pref_id' => $pref, 'pref_value' => $value], $current_player_id);
     }
 
     //////////////////////////////////////////////////////////////////////////////
