@@ -132,6 +132,7 @@ abstract class PGameXBody extends PGameMachine {
             $marker = $this->createPlayerMarker($botcolor);
             $this->tokens->moveToken($marker, $tile['key'], 0);
             $this->incTrackerValue($botcolor, 'city');
+            $this->incTrackerValue($botcolor, 'cityonmars');
             $this->incTrackerValue($botcolor, 'land');
 
             $adj = $this->getAdjecentHexes($hex);
@@ -200,7 +201,7 @@ abstract class PGameXBody extends PGameMachine {
             $result['card_info'] = $this->getCardInfoInHand($current);
         } else
             $result['server_prefs'] = [];
-      
+
         return $result;
     }
     //////////////////////////////////////////////////////////////////////////////
@@ -1492,7 +1493,11 @@ abstract class PGameXBody extends PGameMachine {
         //$this->debugConsole("-- final scoring --");
         $gen = $this->tokens->getTokenState("tracker_gen");
         $this->setStat($gen, 'game_gen');
-        $this->notifyAllPlayers('message',clienttranslate('It is the end of the generation ${gen} and Mars is terraformed!'),['gen'=>$gen]);
+        if ($this->getTerraformingProgression() >= 100) {
+            $this->notifyAllPlayers('message', clienttranslate('It is the end of the generation ${gen} and Mars is terraformed!'), ['gen' => $gen]);
+        } else {
+            $this->notifyAllPlayers('message', clienttranslate('It is the end of the generation ${gen} and Mars is sadly not terraformed'), ['gen' => $gen]);
+        }
 
         $players = $this->loadPlayersBasicInfos();
         $this->scoreAll();
@@ -1501,7 +1506,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->setStat($score, 'game_vp_total', $player_id);
             $color = $player["player_color"];
             $corp = $this->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
-            $corp_id = (int) getPart($corp['key'],2);
+            $corp_id = (int) getPart($corp['key'], 2);
             $this->setStat($corp_id, 'game_corp', $player_id);
 
             $theme = $this->dbUserPrefs->getPrefValue($player_id, 100);
@@ -1559,9 +1564,9 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->dbSetScore($player_id, 0); // reset to 0
-                $this->dbIncScoreValueAndNotify($player_id,0,''); // just to notify reset
+                $this->dbIncScoreValueAndNotify($player_id, 0, ''); // just to notify reset
                 $curr = $this->tokens->getTokenState("tracker_tr_${color}");
-                $this->dbIncScoreValueAndNotify($player_id,$curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rank'), "", [
+                $this->dbIncScoreValueAndNotify($player_id, $curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rank'), "", [
                     'target' => "tracker_tr_${color}"
                 ]);
             }
