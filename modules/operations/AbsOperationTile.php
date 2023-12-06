@@ -11,11 +11,8 @@ abstract class AbsOperationTile extends AbsOperation {
         $keys = array_keys($map);
         return $this->game->createArgInfo($color, $keys, function ($color, $hex) use ($map) {
             $info = $map[$hex];
-            if (array_key_exists('tile', $info)) return MA_ERR_OCCUPIED;
-            $claimer = array_get($info, 'claimed');
-            if ($claimer && $claimer !== $color) {
-                return MA_ERR_RESERVED;
-            }
+            $rc = $this->checkOccupied($info);
+            if ($rc) return $rc;
             return $this->checkPlacement($color, $hex, $info, $map);
         });
     }
@@ -23,6 +20,16 @@ abstract class AbsOperationTile extends AbsOperation {
         $result = parent::arg();
         $result['object'] = $this->getTileId();
         return $result;
+    }
+
+    function checkOccupied($info) {
+        $color = $this->color;
+        if (array_key_exists('tile', $info)) return MA_ERR_OCCUPIED;
+        $claimer = array_get($info, 'claimed');
+        if ($claimer && $claimer !== $color) {
+            return MA_ERR_RESERVED;
+        }
+        return MA_OK;  
     }
 
     protected function getPlanetMap() {
@@ -82,13 +89,13 @@ abstract class AbsOperationTile extends AbsOperation {
         return $res;
     }
 
-    function checkPlacement($color, $location, $info, $map) {
+    function checkPlacement($color, $location, $info, $planetmap) {
         $tile = $this->getStateArg('object');
         $tt = $this->game->getRulesFor($tile,'tt');
 
         if ($tt == MA_TILE_CITY) { 
             // have to do it here because city operation is not only one who can do city
-            return $this->checkCityPlacement($color, $location, $info, $map);
+            return $this->checkCityPlacement($color, $location, $info, $planetmap);
         }
 
         if (isset($info['ocean'])) return MA_ERR_RESERVED;

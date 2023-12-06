@@ -7,22 +7,31 @@ require_once "AbsOperationTile.php";
 class Operation_forest extends AbsOperationTile {
     private $ownerAdjMap = null;
 
-    function checkPlacement($color, $location, $info, $map) {
+    function checkPlacement($color, $location, $info, $planetmap) {
+        $rc = $this->checkPlacementNonAdj($info);
+        if ($rc) return $rc;
+
+        if ($this->getReservedArea() == 'ocean') {
+            return MA_OK; // no other adj rules in this case 
+        }
+        $adj = $this->calculateOwnerAdjMap($planetmap);
+        if (count($adj) == 0 || array_key_exists($location, $adj)) {
+            // no adjecent places or in the map 
+            return MA_OK;
+        }
+        return MA_ERR_FORESTPLACEMENT;
+    }
+
+    function checkPlacementNonAdj($info) {
         $reservename = $this->getReservedArea();
         if ($reservename == 'ocean') {
             if (!isset($info['ocean'])) return MA_ERR_NOTRESERVED;
-            return 0;
+            return MA_OK;
         }
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
         if (isset($info['reserved'])) return MA_ERR_RESERVED;
-        $adj = $this->calculateOwnerAdjMap($map);
-        if (count($adj) == 0 || array_key_exists($location, $adj)) {
-            // no adjecent places or in the map
-            return 0;
-        }
 
-
-        return MA_ERR_FORESTPLACEMENT;
+        return MA_OK;
     }
 
     protected function getPrompt() {
@@ -39,14 +48,17 @@ class Operation_forest extends AbsOperationTile {
         $this->ownerAdjMap = [];
 
         foreach ($map as $ohex => $xinfo) {
-            $adj = $this->game->getAdjecentHexes($ohex, $map);
-            foreach ($adj as $hex) {
-                if (array_get($map[$hex], 'owner') == $color) {
-                    $this->ownerAdjMap[$ohex] = 1;
-                    break;
+            if (array_get($xinfo, 'owner') == $color) {
+                $adj = $this->game->getAdjecentHexes($ohex, $map);
+                foreach ($adj as $hex) {
+                    $info = $map[$hex];
+                    if ($this->checkPlacementNonAdj($info) == MA_OK && $this->checkOccupied($info) == MA_OK) {
+                        $this->ownerAdjMap[$hex] = 1;
+                    }
                 }
             }
         }
+
         return  $this->ownerAdjMap;
     }
 
@@ -57,11 +69,11 @@ class Operation_forest extends AbsOperationTile {
     function effect(string $owner, int $inc): int {
         $tile = $this->effect_placeTile();
         $this->game->incTrackerValue($owner, 'forest');
-        
+
         if ($this->game->getGameStateValue('gamestage') < MA_STAGE_LASTFOREST) {
             $this->game->effect_increaseParam($owner, "o", $inc);
         }
-    
+
         $this->game->notifyEffect($owner, 'place_forest', $tile);
         return 1;
     }
