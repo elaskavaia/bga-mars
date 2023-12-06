@@ -318,7 +318,7 @@
         parse = Object.assign({}, this.parses[item.replace('play_', '')]);
       } else if (this.parses[item.replace('place_', '')]) {
         parse = Object.assign({}, this.parses[item.replace('place_', '')]);
-        parse.redborder = 'hex';
+        if (!item.includes("forest"))  parse.redborder = 'hex';
       } else if (this.parses[item.replace('(*)', '')]) {
         parse = Object.assign({}, this.parses[item.replace('(*)', '')]);
         parse.after = '*';
@@ -373,12 +373,15 @@
         after='<div class="resource_exponent"><div class="' + item.exp + '"></div></div>';
       }
 
-      let resicon=  before+'<div class="cnt_media ' + item.classes + ' depth_'+item.depth+'">'+content+'</div>'+after;
+      let resicon=  '<div class="cnt_media ' + item.classes + ' depth_'+item.depth+'">'+content+'</div>';
       if (item.redborder) {
         const redborderclass=item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') || item.classes.includes('tracker_w')  ? 'hex' : 'resource';
-        resicon = '<div class="outer_redborder redborder_'+redborderclass+'">'+resicon+'</div>';
+        after = '<div class="after">'+after+'</div>'
+        resicon = before+'<div class="outer_redborder redborder_'+redborderclass+'">'+resicon+after+'</div>';
+      } else {
+        resicon=before+resicon+after;
       }
-      if (item.production === true) {
+      if (item.production ===  true) {
         resicon = '<div class="outer_production">'+resicon+'</div>';
       }
       ret =ret+resicon;
