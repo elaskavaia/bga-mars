@@ -165,6 +165,8 @@ class GameXBody extends GameTokens {
       //So I attached it to the hand area block.
       this.addSortButtonsToHandy($('hand_area'));
 
+      //not yet
+      //this.enableManualReorder('hand_'+this.player_color);
       this.connectClass("hs_button", "onclick", (evt:Event)=>{
         let btn = (evt.currentTarget as HTMLElement);
         dojo.stopEvent(evt);
@@ -1366,10 +1368,15 @@ awarded.`);
       if ( node.dataset.invalid_prereq=="1") sort_playable=sort_playable+100;
       if ( node.dataset.cannot_resolve=="1") sort_playable=sort_playable+100;
 
+
       node.style.setProperty("--sort_playable", String(sort_playable));
 
       //update TT too
       this.updateTooltip(node.id);
+
+      //make draggable
+      //Not yet
+   //   this.enableDragOnCard(node);
     }
   }
 
@@ -2172,6 +2179,114 @@ awarded.`);
     this.addTooltip(`hs_button_${id}_vp`,_("Card Sort"),msg.replace('%s',_('VP')));
   }
 
+  /* Manual reordering of cards via drag'n'drop */
+  enableManualReorder(idContainer:string) {
+   $(idContainer).style.border = "red 1px dashed";
+    $(idContainer).addEventListener("drop", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    $(idContainer).addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
+    $(idContainer).addEventListener("dragenter", (event)  => {
+      event.preventDefault();
+    });
+  }
+   enableDragOnCard(node:HTMLElement) {
+     node.draggable = true;
+     node.addEventListener("dragstart", (event) => this.onDragStart(event));
+     node.addEventListener("dragend", (event) => this.onDragEnd(event));
+
+     /*
+     const draghelperHtm:string=`
+        <div id="dragleft_${node.id}" class="dragzone dragleft"></div>
+        <div id="dragright_${node.id}" class="dragzone dragright"></div>
+     `;
+     if (!$('dragleft_'+node.id)) {
+       const dragLeftNode= this.createDivNode('dragleft_'+node.id, "dragzone dragleft", node.id);
+       const dragRightNode= this.createDivNode('dragright_'+node.id, "dragzone dragright", node.id);
+     }
+    */
+     /*
+     node.addEventListener("dragover", (event) => {
+      const _htm = `
+      <div class="custom_paiement_inner">
+        ${txt}
+        ${items_htm}
+        <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
+      </div>
+    `;
+       const node = this.createDivNode("custom_paiement", "", "generalactions");
+       node.innerHTML = paiement_htm;
+
+     });*/
+
+  }
+
+  private onDragStart(event: DragEvent) {
+    const selectedItem = (event.target as HTMLElement);
+    if (!selectedItem.parentElement.classList.contains("handy")) return;
+
+    selectedItem.parentElement.classList.add("spaced")
+    selectedItem.classList.add("drag-active");
+    event.dataTransfer.setData("text/plain", "card"); // not sure if needed
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.dropEffect = "move";
+
+    dojo.query('#'+selectedItem.parentElement.id+' .dragzone').forEach(dojo.destroy);
+    dojo.query('#'+selectedItem.parentElement.id+' .card').forEach((card)=>{
+      const lefthtm:string = `<div id="dragleft_${card.id}" class="dragzone"></div>`;
+      card.insertAdjacentHTML("beforebegin",lefthtm);
+      $('dragleft_'+card.id).addEventListener("dragover", (event) => {
+        $('dragleft_'+card.id).classList.add("over");
+        event.preventDefault();
+      });
+      $('dragleft_'+card.id).addEventListener("dragleave", (event) => {
+        $('dragleft_'+card.id).classList.remove("over");
+        event.preventDefault();
+      });
+      const righthtm:string = `<div id="dragright_${card.id}" class="dragzone"></div>`;
+      card.insertAdjacentHTML("afterend",righthtm);
+      $('dragright_'+card.id).addEventListener("dragover", (event) => {
+        $('dragright_'+card.id).classList.add("over");
+        event.preventDefault();
+      });
+      $('dragright_'+card.id).addEventListener("dragleave", (event) => {
+        $('dragright_'+card.id).classList.remove("over");
+        event.preventDefault();
+      });
+    });
+
+  }
+
+  private onDragEnd(event: DragEvent) {
+    const selectedItem = (event.target as HTMLElement);
+    selectedItem.classList.remove("drag-active");
+    let x = event.clientX;
+    let y = event.clientY;
+
+    const containerNode = selectedItem.parentNode;
+    const pointsTo = document.elementFromPoint(x, y);
+
+
+    if (pointsTo === selectedItem || pointsTo === null) {
+      // do nothing
+    } else if (containerNode === pointsTo) {
+      //dropped in empty space on container
+      containerNode.append(selectedItem);
+    } else if (pointsTo.parentElement!=undefined && pointsTo.parentElement==selectedItem.parentElement && (pointsTo.classList.contains("card") || pointsTo.classList.contains("dragzone"))) {
+      console.log('points',pointsTo.id);
+      containerNode.insertBefore(selectedItem,pointsTo);
+    } else if (containerNode === pointsTo.parentNode) {
+      containerNode.insertBefore(pointsTo, selectedItem);
+    } else {
+      console.error('Cannot determine target for drop',pointsTo.id);
+    }
+
+    dojo.query('#'+selectedItem.parentElement.id+' .dragzone').forEach(dojo.destroy);
+  }
+
   // notifications
   setupNotifications(): void {
     super.setupNotifications();
@@ -2198,6 +2313,8 @@ awarded.`);
       return super.phantomMove(mobileId, newparentId, duration, mobileStyle, onEnd);
     }
   }
+
+
 }
 
 class Operation {

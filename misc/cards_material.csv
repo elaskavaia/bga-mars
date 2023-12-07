@@ -230,7 +230,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set count=10
 #set location=limbo
 #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
-1|Begginer Corp|4|42m|||0|||0|Basic|You start with 42 MC. You keep 10 starting cards||||
+1|Beginner Corp|4|42m|||0|||0|Basic|You start with 42 MC. You keep 10 starting cards||||
 #set count=10
 #set create=single
 #set location=deck_corp
