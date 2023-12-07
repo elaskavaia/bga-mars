@@ -59,9 +59,8 @@ class TokensInMem extends DbTokens {
         $result = [];
         if (endsWith($location,'%')) $location=substr($location,0,strlen($location)-1);
         foreach ($this->keyindex as $key => $rec) {
-
             if ($type && !startsWith($key, $type)) continue;
-            if ($location && !startsWith($rec['location'], $location)) continue;
+            if ($location && isset($rec['location']) && !startsWith($rec['location'], $location)) continue;
             if ($state !== null && $rec['state'] != $state) continue;
             $result[$key] = $rec;
         }

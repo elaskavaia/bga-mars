@@ -103,18 +103,28 @@ final class GameTest extends TestCase {
         $m->tokens->setTokenState('tracker_u_' . PCOLOR, 7);
         $this->assertEquals(3, $m->evaluateExpression("u/2", PCOLOR));
         $this->assertEquals(3, $m->evaluateExpression("(u>0)*3", PCOLOR));
-        $m->tokens->setTokenState('tracker_t_' . PCOLOR, 0);
+        $m->incTrackerValue('', 't', 0);
         $this->assertEquals(0, $m->evaluateExpression("(t>0)*3", PCOLOR));
         $this->assertEquals(9, $m->evaluateExpression("all_u", PCOLOR));
         $m->tokens->setTokenState('tracker_m_' . PCOLOR, 40);
         // oxygens
-        $m->tokens->setTokenState('tracker_o', 10);
-        $this->assertEquals(1, $m->evaluateExpression("o>=10", PCOLOR, null));
-        $this->assertEquals(0, $m->evaluateExpression("o<10", PCOLOR, null));
+        $m->tokens->setTokenState('tracker_o', 9);
+        $this->assertEquals(1, $m->evaluateExpression("o>=9", PCOLOR, null));
+        $this->assertEquals(0, $m->evaluateExpression("o<9", PCOLOR, null));
         $this->assertEquals(1, $m->evaluateExpression("o>0", PCOLOR, null));
-        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, 'card_main_24'));
-        $m->tokens->setTokenState('tracker_pdelta_' . PCOLOR, 2);
-        $this->assertEquals(MA_OK, $m->playability(PCOLOR, 'card_main_24'));
+        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
+        $color = PCOLOR;
+        //$m->tokens->setTokenState("tracker_pdelta_${color}" . PCOLOR, 2);
+        $m->effect_playCard(PCOLOR, $m->mtFindByName('Adaptation Technology'));
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $this->assertEquals(2,$m->tokens->getTokenState("tracker_pdelta_${color}"));
+        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
+        $m->tokens->setTokenState('tracker_o', 8);
+        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
+        $m->tokens->setTokenState('tracker_t', -8);
+        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
+        
     }
 
 

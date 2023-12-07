@@ -632,6 +632,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($type == 'param') {
             $value = $this->tokens->getTokenState("tracker_${x}");
             if (!$mods) return $value;
+            if ($x=='t') $mods = $mods *2;
             return $value + $mods;
         }
 
@@ -927,6 +928,9 @@ abstract class PGameXBody extends PGameMachine {
             if ($ignorecase && is_string($cur) && strcasecmp($cur, $value) == 0) return $key;
         }
         return null;
+    }
+    function mtFindByName(string $value, bool $ignorecase = true) {
+        return $this->mtFind('name',$value,$ignorecase);
     }
 
     /**
