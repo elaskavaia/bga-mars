@@ -16,14 +16,14 @@ class Operation_nores extends AbsOperation {
         foreach ($listeners as $lisinfo) {
             $protected[$lisinfo['owner']] = 1;
         }
-        return $this->game->createArgInfo($color, $keys, function ($_color, $tokenId) use ($par, $protected) {
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($par, $protected) {
             if ($tokenId === 'card_main_172') return MA_ERR_RESERVED; // Pets protected - hardcoded
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par) return MA_ERR_NOTAPPLICABLE;
 
             $cardowner = getPart($this->game->tokens->getTokenLocation($tokenId), 1);
-            if (array_get($protected, $cardowner)) return MA_ERR_RESERVED;
+            if ($cardowner != $color && array_get($protected, $cardowner)) return MA_ERR_RESERVED;
 
             return 0;
         });

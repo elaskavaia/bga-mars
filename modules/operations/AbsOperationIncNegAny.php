@@ -16,7 +16,7 @@ class AbsOperationIncNegAny extends AbsOperation {
             }
         }
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($protected) {
-            if (array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
+            if ($other_player_color != $color && array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
             return 0;
         });
     }
