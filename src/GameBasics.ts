@@ -13,6 +13,7 @@ class GameBasics extends GameGui {
   laststate: string | undefined;
   pendingUpdate: boolean;
   currentPlayerWasActive: boolean;
+  isLoadingLogsComplete: boolean;
 
   classActiveSlot: string = "active_slot";
 
@@ -443,14 +444,13 @@ class GameBasics extends GameGui {
     var newparent = $(newparentId);
     if (!newparent) throw new Error(`Does not exists ${newparentId}`);
     if (!duration) duration = this.defaultAnimationDuration;
-    if (!duration || duration<0) duration=0;
+    if (!duration || duration < 0) duration = 0;
     const noanimation = duration <= 0 || !mobileNode.parentNode;
     var clone = null;
     if (!noanimation) {
       clone = this.projectOnto(mobileNode, "_temp");
       mobileNode.style.opacity = "0"; // hide original
     }
-
 
     const rel = mobileStyle?.relation;
     if (rel) {
@@ -1339,8 +1339,26 @@ class GameBasics extends GameGui {
       const color = args.color ?? this.getPlayerColor(args.player_id);
       this.displayScoring(args.target, color, inc, args.duration);
     } else {
-      this.notifqueue.setSynchronousDuration(50);  
+      this.notifqueue.setSynchronousDuration(50);
     }
+  }
+
+  /*
+  			* [Undocumented] Override BGA framework functions to call onLoadingLogsComplete when loading is done
+                        @Override
+   			*/
+  setLoader(image_progress: number, logs_progress: number) {
+    this.inherited(arguments); // required, this is "super()" call, do not remove
+    //console.log("loader", image_progress, logs_progress)
+    if (!this.isLoadingLogsComplete && logs_progress >= 100) {
+      this.isLoadingLogsComplete = true; // this is to prevent from calling this more then once
+      this.onLoadingLogsComplete();
+    }
+  }
+
+  onLoadingLogsComplete() {
+    console.log("Loading logs complete");
+    // do something here
   }
 }
 

@@ -1228,6 +1228,22 @@ var GameBasics = /** @class */ (function (_super) {
             this.notifqueue.setSynchronousDuration(50);
         }
     };
+    /*
+              * [Undocumented] Override BGA framework functions to call onLoadingLogsComplete when loading is done
+                          @Override
+              */
+    GameBasics.prototype.setLoader = function (image_progress, logs_progress) {
+        this.inherited(arguments); // required, this is "super()" call, do not remove
+        //console.log("loader", image_progress, logs_progress)
+        if (!this.isLoadingLogsComplete && logs_progress >= 100) {
+            this.isLoadingLogsComplete = true; // this is to prevent from calling this more then once
+            this.onLoadingLogsComplete();
+        }
+    };
+    GameBasics.prototype.onLoadingLogsComplete = function () {
+        console.log("Loading logs complete");
+        // do something here
+    };
     return GameBasics;
 }(GameGui));
 function joinId(first, second) {
@@ -1946,7 +1962,8 @@ var CustomRenders = /** @class */ (function () {
         }
         else if (this.parses[item.replace('place_', '')]) {
             parse = Object.assign({}, this.parses[item.replace('place_', '')]);
-            parse.redborder = 'hex';
+            if (!item.includes("forest"))
+                parse.redborder = 'hex';
         }
         else if (this.parses[item.replace('(*)', '')]) {
             parse = Object.assign({}, this.parses[item.replace('(*)', '')]);
@@ -2003,10 +2020,14 @@ var CustomRenders = /** @class */ (function () {
         if (item.exp) {
             after = '<div class="resource_exponent"><div class="' + item.exp + '"></div></div>';
         }
-        var resicon = before + '<div class="cnt_media ' + item.classes + ' depth_' + item.depth + '">' + content + '</div>' + after;
+        var resicon = '<div class="cnt_media ' + item.classes + ' depth_' + item.depth + '">' + content + '</div>';
         if (item.redborder) {
             var redborderclass = item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') || item.classes.includes('tracker_w') ? 'hex' : 'resource';
-            resicon = '<div class="outer_redborder redborder_' + redborderclass + '">' + resicon + '</div>';
+            after = '<div class="after">' + after + '</div>';
+            resicon = before + '<div class="outer_redborder redborder_' + redborderclass + '">' + resicon + after + '</div>';
+        }
+        else {
+            resicon = before + resicon + after;
         }
         if (item.production === true) {
             resicon = '<div class="outer_production">' + resicon + '</div>';
@@ -3200,6 +3221,30 @@ var GameXBody = /** @class */ (function (_super) {
             cards_3: 0
         };
         this.vlayout.setupPlayer(playerInfo);
+        //attach sort buttons
+        if (playerInfo.id == this.player_id) {
+            //generate buttons
+            //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
+            //So I attached it to the hand area block.
+            this.addSortButtonsToHandy($('hand_area'));
+            this.connectClass("hs_button", "onclick", function (evt) {
+                var btn = evt.currentTarget;
+                dojo.stopEvent(evt);
+                var actual_dir = btn.dataset.direction;
+                var new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
+                var hand_block = btn.dataset.target;
+                //deactivate sorting on other buttons
+                dojo.query('#' + hand_block + ' .hs_button').forEach(function (item) {
+                    $(item).dataset.direction = "";
+                });
+                $(hand_block).dataset.sort_type = btn.dataset.type;
+                $(hand_block).dataset.sort_direction = new_dir;
+                btn.dataset.direction = new_dir;
+                var localColorSetting = new LocalSettings(_this.getLocalSettingNamespace("card_sort"));
+                localColorSetting.writeProp("sort_direction", new_dir);
+                localColorSetting.writeProp("sort_type", btn.dataset.type);
+            });
+        }
         //move own player board in main zone
         if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
             var board = $("player_area_".concat(playerInfo.color));
@@ -3345,6 +3390,17 @@ var GameXBody = /** @class */ (function (_super) {
             });
         }
         return pc;
+    };
+    GameXBody.prototype.onLoadingLogsComplete = function () {
+        var _this = this;
+        // hook toolips on cards in the log for now
+        var i = 1;
+        document.querySelectorAll(".card_hl_tt").forEach(function (node) {
+            var card_id = node.getAttribute('data-clicktt');
+            node.id = card_id + "_log_" + i; // tooltip API needs id
+            i++;
+            _this.updateTooltip(card_id, node);
+        });
     };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;
@@ -3848,7 +3904,7 @@ var GameXBody = /** @class */ (function (_super) {
                 msg = msg + _('The card cannot be played because a mandatory effect cannot be resolved.');
             }
         }
-        if ($(card_id).dataset.potential_errror != undefined && (parseInt($(card_id).dataset.potential_errror) > 3)) {
+        if ($(card_id).dataset.potential_error != undefined && (parseInt($(card_id).dataset.potential_error) > 3)) {
             if (msg != "")
                 msg = msg + "<br/>";
             if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
@@ -3862,12 +3918,6 @@ var GameXBody = /** @class */ (function (_super) {
         // use this to generate some fake parts of card, remove this when use images
         if (displayInfo.mainType == "card") {
             var tagshtm = "";
-            //removed custom tt
-            /*    const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-        
-                ttdiv.innerHTML = `<div class='token_title'>${displayInfo.name}</div>`;
-                ttdiv.innerHTML+=this.generateCardTooltip(displayInfo);
-                */
             if (tokenNode.id.startsWith("card_corp_")) {
                 //Corp formatting
                 var decor = this.createDivNode(null, "card_decor", tokenNode.id);
@@ -3914,14 +3964,17 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 var decor = this.createDivNode(null, "card_decor", tokenNode.id);
                 var vp = "";
+                var sort_vp = "0";
                 if (displayInfo.vp) {
                     if (CustomRenders["customcard_vp_" + displayInfo.num]) {
                         vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
+                        sort_vp = "1";
                     }
                     else {
                         vp = parseInt(displayInfo.vp)
                             ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
                             : '<div class="card_vp"><div class="number_inside">*</div></div>';
+                        sort_vp = parseInt(displayInfo.vp) ? displayInfo.vp : "1";
                     }
                 }
                 else {
@@ -3990,6 +4043,8 @@ var GameXBody = /** @class */ (function (_super) {
                     tokenNode.id.replace("card_main_", "") +
                     '" class="resource_counter"  data-resource_counter="0"></div></div>';
                 decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
+                tokenNode.style.setProperty('--sort_cost', displayInfo.cost);
+                tokenNode.style.setProperty('--sort_vp', sort_vp);
             }
             var div = this.createDivNode(null, "card_info_box", tokenNode.id);
             div.innerHTML = "\n          <div class='token_title'>".concat(displayInfo.name, "</div>\n          <div class='token_cost'>").concat(displayInfo.cost, "</div> \n          <div class='token_rules'>").concat(displayInfo.r, "</div>\n          <div class='token_descr'>").concat(displayInfo.text, "</div>\n          ");
@@ -4118,19 +4173,31 @@ var GameXBody = /** @class */ (function (_super) {
             node.dataset.discounted = String(discount_cost != original_cost);
             node.dataset.discount_cost = String(discount_cost);
             node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
+            var sort_playable = 0;
             if ($("cost_" + cardId)) {
                 if (discount_cost != original_cost) {
                     $("cost_" + cardId).dataset.discounted_cost = discount_cost.toString();
                     $("cost_" + cardId).classList.add("discounted");
+                    node.style.setProperty("--sort_cost", String(discount_cost));
+                    sort_playable = discount_cost;
                 }
                 else {
-                    //cleanup after discoutn vanishes
+                    //cleanup after discount vanishes
                     //    $("cost_" + card_id).innerHTML = original_cost.toString();
                     $("cost_" + cardId).dataset.discounted_cost = "";
                     if ($("cost_" + cardId).classList.contains("discounted"))
                         $("cost_" + cardId).classList.remove("discounted");
+                    node.style.setProperty("--sort_cost", String(original_cost));
+                    sort_playable = original_cost;
                 }
             }
+            if (node.dataset.cannot_pay == "1")
+                sort_playable = sort_playable + 100;
+            if (node.dataset.invalid_prereq == "1")
+                sort_playable = sort_playable + 100;
+            if (node.dataset.cannot_resolve == "1")
+                sort_playable = sort_playable + 100;
+            node.style.setProperty("--sort_playable", String(sort_playable));
             //update TT too
             this.updateTooltip(node.id);
         }
@@ -4345,6 +4412,11 @@ var GameXBody = /** @class */ (function (_super) {
             return undefined; // process by parent
         }
         if (isstr) {
+            if (tokenKey.startsWith("card_main_")) {
+                /* const htm = this.cloneAndFixIds(tokenKey,'_log',true);
+                 return '<div class="card_hl_preview"  data-clicktt="'+tokenKey+'">'+htm.outerHTML+'</div>';*/
+                return '<div class="card_hl_tt"  data-clicktt="' + tokenKey + '">' + this.getTokenName(tokenKey) + '</div>';
+            }
             return this.getTokenName(tokenKey); // just a name for now
         }
         return undefined; // process by parent
@@ -4863,6 +4935,23 @@ var GameXBody = /** @class */ (function (_super) {
                 this.removeTooltip(parentId);
             }
         }
+    };
+    GameXBody.prototype.addSortButtonsToHandy = function (attachNode) {
+        var id = attachNode.id;
+        var htm = "\n        <div id=\"hs_button_".concat(id, "_cost\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"cost\" data-direction=\"\"><div class=\"hs_picto hs_cost\"><i class=\"fa fa-eur\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_playable\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"playable\" data-direction=\"\"><div class=\"hs_picto hs_playable\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_vp\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"vp\" data-direction=\"\"><div class=\"hs_picto hs_vp\">VP</div><div class=\"hs_direction\"></div></div>\n       ");
+        var node = this.createDivNode("", "hand_sorter", attachNode.id);
+        node.innerHTML = htm;
+        var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+        var sort_dir = localColorSetting.readProp("sort_direction", "");
+        var sort_type = localColorSetting.readProp("sort_type", "");
+        if (sort_type != "") {
+            var node_1 = dojo.query(".hs_button[data-type='" + sort_type + "']")[0];
+            node_1.dataset.direction = sort_dir;
+        }
+        var msg = _('Sort cards by %s');
+        this.addTooltip("hs_button_".concat(id, "_cost"), _("Card Sort"), msg.replace('%s', _('cost')));
+        this.addTooltip("hs_button_".concat(id, "_playable"), _("Card Sort"), msg.replace('%s', _('playability')));
+        this.addTooltip("hs_button_".concat(id, "_vp"), _("Card Sort"), msg.replace('%s', _('VP')));
     };
     // notifications
     GameXBody.prototype.setupNotifications = function () {

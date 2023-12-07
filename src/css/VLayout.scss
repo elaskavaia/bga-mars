@@ -886,4 +886,8 @@
     height: 8px;
     background-color: var(--plcolor);
   }
+
+  .hand_sorter {
+    display: none; // hide for now - does not work for my layout
+  }
 }

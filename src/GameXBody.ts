@@ -380,6 +380,17 @@ class GameXBody extends GameTokens {
     return pc;
   }
 
+  onLoadingLogsComplete() {
+    // hook toolips on cards in the log for now
+    let i = 1;
+    document.querySelectorAll(".card_hl_tt").forEach(node=>{
+      const card_id = node.getAttribute('data-clicktt');
+      node.id = card_id + "_log_" + i; // tooltip API needs id
+      i++;
+      this.updateTooltip(card_id, node);
+    });
+  }
+
   setupHelpSheets() {
     const cc = { main: 0, corp: 0 };
     for (const key in this.gamedatas.token_types) {
