@@ -24,17 +24,6 @@
     margin-bottom: 1vh;
   }
   .player_area_name {
-/*    padding: 0.3vh;
-    position: absolute;
-    z-index: 1;
-    color: var(--plcolor);
-    font-family: "Prototype";
-    left: 0;
-    width: calc(var(--card-width) * 1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 25%;*/
     position: absolute;
     z-index: 1;
     color: var(--plcolor);
@@ -49,6 +38,7 @@
     border-radius: 13px;
     background: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%);
     box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5);
+    user-select: none;
   }
 
   .playerboard {
@@ -537,9 +527,18 @@
     grid-area: 1 / 1 / 3 / 2;
   }
   .cards_2 {
-    grid-area: 1 / 2 / 3 / 3;
+    /*
+    unstack this zone
+    grid-area: 1 / 2 / 3 / 3;*/
+    grid-area: 2/1/3/3;
   }
-
+  .cards_2.cards_bin.stacked {
+    flex-direction: row;
+    flex-wrap: wrap;
+    .card~.card{
+      margin-top: 0;
+    }
+  }
   .cards_1vp {
     grid-area:  1 / 1 / 3 / 2;
   }

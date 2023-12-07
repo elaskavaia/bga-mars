@@ -59,6 +59,7 @@ class GameXBody extends GameTokens {
       //player controls
       this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
+
       //Give tooltips to alt trackers in player boards
 
       const togglehtml = this.getTooptipHtml(
@@ -128,8 +129,12 @@ class GameXBody extends GameTokens {
       });
 
       this.setupResourceFiltering();
+
+
       this.vlayout.setupDone();
       this.setupOneTimePrompt();
+
+
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
@@ -152,6 +157,38 @@ class GameXBody extends GameTokens {
       cards_3: 0
     };
     this.vlayout.setupPlayer(playerInfo);
+
+    //attach sort buttons
+    if (playerInfo.id==this.player_id) {
+      //generate buttons
+      //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
+      //So I attached it to the hand area block.
+      this.addSortButtonsToHandy($('hand_area'));
+
+      this.connectClass("hs_button", "onclick", (evt:Event)=>{
+        let btn = (evt.currentTarget as HTMLElement);
+        dojo.stopEvent(evt);
+        const actual_dir:string= btn.dataset.direction;
+        const new_dir:string = actual_dir=="" ? "increase" : actual_dir=="increase" ? "decrease" : "";
+        const hand_block:string = btn.dataset.target;
+
+        //deactivate sorting on other buttons
+        dojo.query('#'+hand_block+' .hs_button').forEach((item)=>{
+          $(item).dataset.direction="";
+        });
+
+        $(hand_block).dataset.sort_type= btn.dataset.type;
+        $(hand_block).dataset.sort_direction= new_dir;
+        btn.dataset.direction=new_dir;
+
+        const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+        localColorSetting.writeProp("sort_direction", new_dir);
+        localColorSetting.writeProp("sort_type", btn.dataset.type);
+      });
+
+
+    }
+
     //move own player board in main zone
     if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
       const board = $(`player_area_${playerInfo.color}`);
@@ -973,7 +1010,7 @@ awarded.`);
         msg=msg+ _('The card cannot be played because a mandatory effect cannot be resolved.');
       }
     }
-    if ($(card_id).dataset.potential_errror!=undefined && (parseInt($(card_id).dataset.potential_errror)>3)){
+    if ($(card_id).dataset.potential_error!=undefined && (parseInt($(card_id).dataset.potential_error)>3)){
       if (msg!="") msg=msg+"<br/>";
       if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
         msg=msg+ _('Something prevents this card to be played.');
@@ -987,12 +1024,6 @@ awarded.`);
     if (displayInfo.mainType == "card") {
       let tagshtm = "";
 
-      //removed custom tt
-      /*    const ttdiv = this.createDivNode(null, "card_hovertt", tokenNode.id);
-  
-          ttdiv.innerHTML = `<div class='token_title'>${displayInfo.name}</div>`;
-          ttdiv.innerHTML+=this.generateCardTooltip(displayInfo);
-          */
 
       if (tokenNode.id.startsWith("card_corp_")) {
         //Corp formatting
@@ -1023,7 +1054,6 @@ awarded.`);
             `;
       } else {
         //tags
-
         let firsttag = "";
         if (displayInfo.tags && displayInfo.tags != "") {
           for (let tag of displayInfo.tags.split(" ")) {
@@ -1048,13 +1078,18 @@ awarded.`);
         const decor = this.createDivNode(null, "card_decor", tokenNode.id);
         let vp = "";
 
+        let sort_vp:string="0";
         if (displayInfo.vp) {
           if (CustomRenders["customcard_vp_" + displayInfo.num]) {
             vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
+            sort_vp="1";
           } else {
+
             vp = parseInt(displayInfo.vp)
               ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
               : '<div class="card_vp"><div class="number_inside">*</div></div>';
+
+            sort_vp=  parseInt(displayInfo.vp) ? displayInfo.vp :"1";
           }
         } else {
           vp = "";
@@ -1143,6 +1178,10 @@ awarded.`);
                   }" data-resource_counter="0">${htm_holds}</div>
                   ${vp}
             `;
+
+        tokenNode.style.setProperty('--sort_cost',displayInfo.cost);
+        tokenNode.style.setProperty('--sort_vp',sort_vp);
+
       }
 
       const div = this.createDivNode(null, "card_info_box", tokenNode.id);
@@ -1154,10 +1193,13 @@ awarded.`);
           <div class='token_descr'>${displayInfo.text}</div>
           `;
       tokenNode.appendChild(div);
+
+
       //card tooltip
       //tokenNode.appendChild(ttdiv);
 
       tokenNode.setAttribute("data-card-type", displayInfo.t);
+
     }
 
     if (displayInfo.mainType == "award" || displayInfo.mainType == "milestone") {
@@ -1289,17 +1331,31 @@ awarded.`);
       node.dataset.discount_cost = String(discount_cost);
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1":"0";
 
+      let sort_playable:number=0;
+
       if ($("cost_" + cardId)) {
         if (discount_cost != original_cost) {
           $("cost_" + cardId).dataset.discounted_cost= discount_cost.toString();
           $("cost_" + cardId).classList.add("discounted");
+          node.style.setProperty("--sort_cost", String(discount_cost));
+          sort_playable = discount_cost;
         } else {
-          //cleanup after discoutn vanishes
+          //cleanup after discount vanishes
           //    $("cost_" + card_id).innerHTML = original_cost.toString();
           $("cost_" + cardId).dataset.discounted_cost="";
           if ($("cost_" + cardId).classList.contains("discounted")) $("cost_" + cardId).classList.remove("discounted");
+          node.style.setProperty("--sort_cost", String(original_cost));
+          sort_playable = original_cost;
+
         }
       }
+
+
+      if ( node.dataset.cannot_pay=="1") sort_playable=sort_playable+100;
+      if ( node.dataset.invalid_prereq=="1") sort_playable=sort_playable+100;
+      if ( node.dataset.cannot_resolve=="1") sort_playable=sort_playable+100;
+
+      node.style.setProperty("--sort_playable", String(sort_playable));
 
       //update TT too
       this.updateTooltip(node.id);
@@ -1510,6 +1566,12 @@ awarded.`);
       return undefined; // process by parent
     }
     if (isstr) {
+      if (tokenKey.startsWith("card_main_")) {
+       /* const htm = this.cloneAndFixIds(tokenKey,'_log',true);
+        return '<div class="card_hl_preview"  data-clicktt="'+tokenKey+'">'+htm.outerHTML+'</div>';*/
+        return '<div class="card_hl_tt"  data-clicktt="'+tokenKey+'">'+this.getTokenName(tokenKey)+'</div>';
+      }
+
       return this.getTokenName(tokenKey); // just a name for now
     }
     return undefined; // process by parent
@@ -1815,6 +1877,7 @@ awarded.`);
       for (let res of Object.keys(this.custom_pay.selected)) {
         if (this.custom_pay.selected[res] > 0) pays[res] = parseInt(this.custom_pay.selected[res]);
       }
+
       this.sendActionResolveWithTargetAndPayment(opId, "payment", pays);
     });
   }
@@ -2071,6 +2134,31 @@ awarded.`);
         this.removeTooltip(parentId);
       }
     }
+  }
+
+  addSortButtonsToHandy(attachNode: Element) :void {
+     const id=attachNode.id;
+     const htm=`
+        <div id="hs_button_${id}_cost" class="hs_button" data-target="${id}" data-type="cost" data-direction=""><div class="hs_picto hs_cost"><i class="fa fa-eur" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
+        <div id="hs_button_${id}_playable" class="hs_button" data-target="${id}" data-type="playable" data-direction=""><div class="hs_picto hs_playable"><i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
+        <div id="hs_button_${id}_vp" class="hs_button" data-target="${id}" data-type="vp" data-direction=""><div class="hs_picto hs_vp">VP</div><div class="hs_direction"></div></div>
+       `;
+    const node = this.createDivNode("", "hand_sorter", attachNode.id);
+    node.innerHTML = htm;
+
+    const localColorSetting:LocalSettings = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+    const sort_dir:string= localColorSetting.readProp("sort_direction", "");
+    const sort_type:string = localColorSetting.readProp("sort_type","");
+
+    if (sort_type!="") {
+      let node= dojo.query(".hs_button[data-type='"+sort_type+"']")[0];
+      node.dataset.direction = sort_dir;
+    }
+
+    const msg=_('Sort cards by %s');
+    this.addTooltip(`hs_button_${id}_cost`,_("Card Sort"),msg.replace('%s',_('cost')));
+    this.addTooltip(`hs_button_${id}_playable`,_("Card Sort"),msg.replace('%s',_('playability')));
+    this.addTooltip(`hs_button_${id}_vp`,_("Card Sort"),msg.replace('%s',_('VP')));
   }
 
   // notifications

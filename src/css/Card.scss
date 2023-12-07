@@ -412,6 +412,9 @@ display: none;
       width: calc(var(--card-width) * 0.15);
       height: calc(var(--card-width) * 0.15);
     }
+    .tracker {
+      position: relative;
+    }
   }
 
   .breaker {
@@ -1317,6 +1320,11 @@ display: none;
 
   .before {
     visibility: hidden;
+  }
+  .after {
+    position: absolute;
+    right: calc(var(--card-width) * 0.05);
+    top: calc(var(--card-width) * 0.08);
   }
 }
 

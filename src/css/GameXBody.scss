@@ -367,11 +367,13 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  position: relative;
 }
 
 .hand.location:empty {
   display: none;
 }
+
 
 .bgabutton.overpay {
   background: red;
@@ -408,6 +410,11 @@
     transform: translateY(80%);
     transition: transform .8s;
     z-index: 1000;
+
+    .hand_sorter{
+      left:revert;
+      right:0.5%;
+    }
   }
 
   #hand_area_buttons{
@@ -715,9 +722,30 @@
   top: unset;
 }
 
+.card_hl_preview{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  --card-width: 220px;
+  --card-height: calc(var(--card-width)*1.40658174);
+  align-items: flex-start;
+  height: 50px;
+  margin-bottom: 0px;
+  overflow: hidden;
+  transition: 200ms ease-in-out;
+}
 
+.card_hl_preview:hover {
+  height: calc(var(--card-width)*1.40658174);
+}
 
-/** Card refrence */
+.card_hl_tt{
+  text-decoration: underline;
+  font-weight: bold;
+  display: inline;
+}
+
+/** Card reference */
 
 .allcards {
   width: 100%;
@@ -736,3 +764,114 @@
 
 }
 
+
+/*Sort*/
+.hand_sorter{
+  position: absolute;
+  top: -19%;
+  left: 0.5%;
+  display: flex;
+  flex-direction: row;
+  background-color: rgba(151, 145, 145, 0.6);
+  border-radius: 1vh;
+  padding: 0.3vh;
+  z-index: 1;
+  width: calc(var(--card-width) * 0.6);
+  height: calc(var(--card-width) * 0.2);
+  justify-content: space-evenly;
+  align-items: center;
+
+  .hs_button {
+    border: 1px solid black;
+    font-size: calc(var(--card-width) * 0.11);
+    width: calc(var(--card-width) * 0.15);
+    height: calc(var(--card-width) * 0.18);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    border-radius: 5px;
+  }
+
+  .hs_picto{
+    position: absolute;
+    top: 5%;
+    width: 100%;
+    text-align: center;
+  }
+
+  .hs_direction{
+    width: 100%;
+    text-align: center;
+    bottom: -20%;
+    position: absolute;
+  }
+
+  .hs_button[data-direction="none"] {
+    .hs_direction::before {
+      content:"";
+    }
+  }
+  .hs_button[data-direction="increase"] {
+    background-color: #eed17ad9;
+    .hs_direction::before {
+      content:"⮕";
+    }
+  }
+  .hs_button[data-direction="decrease"] {
+    background-color: #eed17ad9;
+    .hs_direction::before {
+      content:"⬅";
+    }
+  }
+}
+
+.hand_area[data-sort_type="cost"][data-sort_direction="increase"] {
+  .handy {
+    .card {
+      order: var(--sort_cost);
+    }
+  }
+}
+.hand_area[data-sort_type="cost"][data-sort_direction="decrease"] {
+
+    .card {
+      order: calc(var(--sort_cost) * -1);
+    }
+
+}
+.hand_area[data-sort_type="vp"][data-sort_direction="increase"] {
+  .card{
+    order:var(--sort_vp) ;
+  }
+}
+.hand_area[data-sort_type="vp"][data-sort_direction="decrease"] {
+
+    .card {
+      order: calc(var(--sort_vp) * -1);
+    }
+
+}
+.hand_area[data-sort_type="playable"][data-sort_direction="increase"] {
+
+  .card{
+    order:var(--sort_playable) ;
+  }
+}
+.hand_area[data-sort_type="playable"][data-sort_direction="decrease"] {
+
+    .card {
+      order: calc(var(--sort_playbable) * -1);
+    }
+
+
+}
+.hand_area[data-sort_direction="increase"] {
+  .card.corp {
+    order:-100000
+  }
+}
+.hand_area[data-sort_direction="decrease"] {
+  .card.corp {
+      order:100000
+  }
+}
