@@ -16,7 +16,7 @@ class AbsOperationIncSteal extends AbsOperation {
         }
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count, $type, $protected) {
             if ($color === $other_player_color) return MA_ERR_RESERVED;
-            if (array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
+            if ($other_player_color != $color && array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
             $value = $this->game->getTrackerValue($other_player_color, $type);
             if ($value < $count) return MA_ERR_PREREQ;
             return 0;
