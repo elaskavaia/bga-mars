@@ -729,6 +729,13 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyCounterDirect($token_id, $value, '');
     }
 
+    function setTrackerValue(string $color, $type, $value) {
+        $token_id = $this->getTrackerId($color, $type);
+        $this->tokens->setTokenState($token_id, $value);
+        $this->notifyCounterDirect($token_id, $value, '');
+        return $value;
+    }
+
     function getTrackerId(string $color, string $type) {
         if ($color === '') {
             $token_id = "tracker_${type}";

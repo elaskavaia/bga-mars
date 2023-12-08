@@ -102,17 +102,18 @@ class VLayout {
       let lp = 0;
       state = state % 100;
       let off = state % 25;
+
       let mul = 100 / 25;
-      if (state <= 25) {
+      if (state < 25) {
         lp = 0;
         bp = mul * off;
       } else if (state < 50) {
         lp = mul * off;
         bp = 100;
-      } else if (state <= 75) {
+      } else if (state < 75) {
         lp = 100;
         bp = 100 - mul * off;
-      } else if (state < 50) {
+      } else {
         lp = 100 - mul * off;
         bp = 0;
       }

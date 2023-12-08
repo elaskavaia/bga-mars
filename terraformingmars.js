@@ -3227,6 +3227,8 @@ var GameXBody = /** @class */ (function (_super) {
             //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
             //So I attached it to the hand area block.
             this.addSortButtonsToHandy($('hand_area'));
+            //not yet
+            //this.enableManualReorder('hand_'+this.player_color);
             this.connectClass("hs_button", "onclick", function (evt) {
                 var btn = evt.currentTarget;
                 dojo.stopEvent(evt);
@@ -4200,6 +4202,9 @@ var GameXBody = /** @class */ (function (_super) {
             node.style.setProperty("--sort_playable", String(sort_playable));
             //update TT too
             this.updateTooltip(node.id);
+            //make draggable
+            //Not yet
+            //   this.enableDragOnCard(node);
         }
     };
     // XXX this function can be remove discount cost is set via dataset above, can use css after to show value
@@ -4953,6 +4958,108 @@ var GameXBody = /** @class */ (function (_super) {
         this.addTooltip("hs_button_".concat(id, "_playable"), _("Card Sort"), msg.replace('%s', _('playability')));
         this.addTooltip("hs_button_".concat(id, "_vp"), _("Card Sort"), msg.replace('%s', _('VP')));
     };
+    /* Manual reordering of cards via drag'n'drop */
+    GameXBody.prototype.enableManualReorder = function (idContainer) {
+        $(idContainer).style.border = "red 1px dashed";
+        $(idContainer).addEventListener("drop", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        $(idContainer).addEventListener("dragover", function (event) {
+            event.preventDefault();
+        });
+        $(idContainer).addEventListener("dragenter", function (event) {
+            event.preventDefault();
+        });
+    };
+    GameXBody.prototype.enableDragOnCard = function (node) {
+        var _this = this;
+        node.draggable = true;
+        node.addEventListener("dragstart", function (event) { return _this.onDragStart(event); });
+        node.addEventListener("dragend", function (event) { return _this.onDragEnd(event); });
+        /*
+        const draghelperHtm:string=`
+           <div id="dragleft_${node.id}" class="dragzone dragleft"></div>
+           <div id="dragright_${node.id}" class="dragzone dragright"></div>
+        `;
+        if (!$('dragleft_'+node.id)) {
+          const dragLeftNode= this.createDivNode('dragleft_'+node.id, "dragzone dragleft", node.id);
+          const dragRightNode= this.createDivNode('dragright_'+node.id, "dragzone dragright", node.id);
+        }
+       */
+        /*
+        node.addEventListener("dragover", (event) => {
+         const _htm = `
+         <div class="custom_paiement_inner">
+           ${txt}
+           ${items_htm}
+           <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
+         </div>
+       `;
+          const node = this.createDivNode("custom_paiement", "", "generalactions");
+          node.innerHTML = paiement_htm;
+   
+        });*/
+    };
+    GameXBody.prototype.onDragStart = function (event) {
+        var selectedItem = event.target;
+        if (!selectedItem.parentElement.classList.contains("handy"))
+            return;
+        selectedItem.parentElement.classList.add("spaced");
+        selectedItem.classList.add("drag-active");
+        event.dataTransfer.setData("text/plain", "card"); // not sure if needed
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.dropEffect = "move";
+        dojo.query('#' + selectedItem.parentElement.id + ' .dragzone').forEach(dojo.destroy);
+        dojo.query('#' + selectedItem.parentElement.id + ' .card').forEach(function (card) {
+            var lefthtm = "<div id=\"dragleft_".concat(card.id, "\" class=\"dragzone\"></div>");
+            card.insertAdjacentHTML("beforebegin", lefthtm);
+            $('dragleft_' + card.id).addEventListener("dragover", function (event) {
+                $('dragleft_' + card.id).classList.add("over");
+                event.preventDefault();
+            });
+            $('dragleft_' + card.id).addEventListener("dragleave", function (event) {
+                $('dragleft_' + card.id).classList.remove("over");
+                event.preventDefault();
+            });
+            var righthtm = "<div id=\"dragright_".concat(card.id, "\" class=\"dragzone\"></div>");
+            card.insertAdjacentHTML("afterend", righthtm);
+            $('dragright_' + card.id).addEventListener("dragover", function (event) {
+                $('dragright_' + card.id).classList.add("over");
+                event.preventDefault();
+            });
+            $('dragright_' + card.id).addEventListener("dragleave", function (event) {
+                $('dragright_' + card.id).classList.remove("over");
+                event.preventDefault();
+            });
+        });
+    };
+    GameXBody.prototype.onDragEnd = function (event) {
+        var selectedItem = event.target;
+        selectedItem.classList.remove("drag-active");
+        var x = event.clientX;
+        var y = event.clientY;
+        var containerNode = selectedItem.parentNode;
+        var pointsTo = document.elementFromPoint(x, y);
+        if (pointsTo === selectedItem || pointsTo === null) {
+            // do nothing
+        }
+        else if (containerNode === pointsTo) {
+            //dropped in empty space on container
+            containerNode.append(selectedItem);
+        }
+        else if (pointsTo.parentElement != undefined && pointsTo.parentElement == selectedItem.parentElement && (pointsTo.classList.contains("card") || pointsTo.classList.contains("dragzone"))) {
+            console.log('points', pointsTo.id);
+            containerNode.insertBefore(selectedItem, pointsTo);
+        }
+        else if (containerNode === pointsTo.parentNode) {
+            containerNode.insertBefore(pointsTo, selectedItem);
+        }
+        else {
+            console.error('Cannot determine target for drop', pointsTo.id);
+        }
+        dojo.query('#' + selectedItem.parentElement.id + ' .dragzone').forEach(dojo.destroy);
+    };
     // notifications
     GameXBody.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
@@ -5381,7 +5488,7 @@ var VLayout = /** @class */ (function () {
             state = state % 100;
             var off = state % 25;
             var mul = 100 / 25;
-            if (state <= 25) {
+            if (state < 25) {
                 lp = 0;
                 bp = mul * off;
             }
@@ -5389,11 +5496,11 @@ var VLayout = /** @class */ (function () {
                 lp = mul * off;
                 bp = 100;
             }
-            else if (state <= 75) {
+            else if (state < 75) {
                 lp = 100;
                 bp = 100 - mul * off;
             }
-            else if (state < 50) {
+            else {
                 lp = 100 - mul * off;
                 bp = 0;
             }
