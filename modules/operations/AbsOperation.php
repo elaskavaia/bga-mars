@@ -136,7 +136,7 @@ abstract class AbsOperation {
             if (is_array($possible_targets)) return array_shift($possible_targets);
             return $possible_targets;
         } else {
-            $this->game->systemAssertTrue("Missing user args for $type");
+            $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args for $type ".toJson($args));
             return null;
         }
     }
