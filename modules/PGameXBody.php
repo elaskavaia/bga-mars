@@ -1060,6 +1060,24 @@ abstract class PGameXBody extends PGameMachine {
         return false;
     }
 
+    function switchActivePlayerIfNeeded($player_color) {
+        if (!$player_color) return;
+        $player_id = $this->getPlayerIdByColor($player_color);
+        if (!$player_id) return;
+
+        if ($this->isInMultiplayerMasterState()) {
+            if (!$this->gamestate->isPlayerActive($player_id))
+                $this->gamestate->setPlayersMultiactive([$player_id], "notpossible", false);
+            return;
+        }
+
+        // in this game we never switch active player during the single active state turns
+        // if ($this->getActivePlayerId() != $player_id) {
+        //     $this->setNextActivePlayerCustom($player_id);
+        //     $this->undoSavepoint();
+        // }
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Player actions
     ////////////
