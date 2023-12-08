@@ -375,14 +375,16 @@ abstract class PGameMachine extends PGameTokens {
         $this->systemAssertTrue("Missing", count($operations) > 0);
         $op = reset($operations);
         $owner = $op["owner"];
-        $this->switchActivePlayerIfNeeded($owner);
+
         if ($this->isInMultiplayerMasterState()) {
+            $this->switchActivePlayerIfNeeded($owner);
             $player_id = $this->getPlayerIdByColor($owner);
             $this->gamestate->initializePrivateState($player_id);
             return ABORT_DISPATCH;
         }
         $userState = $this->getStateForOperations($operations);
         if (!$userState)  return CONTINUE_DISPATCH;
+        $this->switchActivePlayerIfNeeded($owner);
         $this->gamestate->jumpToState($userState);
         return ABORT_DISPATCH;
     }
