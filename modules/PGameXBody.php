@@ -305,9 +305,14 @@ abstract class PGameXBody extends PGameMachine {
             $this->error("empty coords in getAdjecentHexes");
             return [];
         }
+        $axis = explode("_", $coords);
+        if (count($axis)<3) {
+            $this->error("bad $coords coords in getAdjecentHexes");
+            return [];
+        }
         if ($valid_coords == null)
             $valid_coords = $this->getPlanetMap(false);
-        $axis = explode("_", $coords);
+    
         $neighbours = array();
         $x = $axis[1];
         $y = $axis[2];
