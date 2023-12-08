@@ -12,8 +12,9 @@ class Operation_turn extends AbsOperation {
         }
         if ($skipsec) {
             $actions[] = 'skipsec';
+        } else {
+            $actions[] = 'pass';
         }
-        $actions[] = 'pass';
         return $actions;
     }
 
@@ -50,12 +51,12 @@ class Operation_turn extends AbsOperation {
 
         if ($solo || $secondaction) {
             if ($this->game->dbUserPrefs->getPrefValue($player_id, MA_PREF_CONFIRM_TURN))
-                $this->game->queue($owner, "confturn"); // XXX add pref to not ask
+                $this->game->queue($owner, "confturn");
         } else {
             $this->game->queue($owner, "turn2");
         }
-    
-        $this->game->gamestate->changeActivePlayer($player_id);// XXX?
+
+        $this->game->gamestate->changeActivePlayer($player_id); // XXX?
         if (!$secondaction) $this->game->undoSavepoint();
         return 1;
     }
