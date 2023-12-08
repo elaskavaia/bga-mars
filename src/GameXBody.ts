@@ -1967,7 +1967,7 @@ awarded.`);
       name = this.getButtonNameForOperation(opInfo);
       //  }
 
-      const color = this.getButtonColorForOperation(opInfo);
+  
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
@@ -1997,7 +1997,12 @@ awarded.`);
           });
         } else {
           this.addActionButton(buttonId, name, () => {
-            this.sendActionResolve(opId);
+            if (opInfo.type == "pass" && !single) {
+              // add confirmation
+              this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), () => {
+                this.sendActionResolve(opId);
+              });
+            } else this.sendActionResolve(opId);
           });
         }
         const buttonDiv= $(buttonId);
@@ -2005,8 +2010,11 @@ awarded.`);
             buttonDiv.classList.add("otherplayer", "plcolor_" + opInfo.owner);
 
 
+        const butcolor = this.getButtonColorForOperation(opInfo);
         buttonDiv.classList.remove("bgabutton_blue");
-        buttonDiv.classList.add("bgabutton_" + color);
+        buttonDiv.classList.add("bgabutton_" + butcolor);
+
+
         
         // if (contains_gfx) {
         //   $(buttonId).classList.add("gfx");

@@ -4759,7 +4759,6 @@ var GameXBody = /** @class */ (function (_super) {
             // } else {
             name_3 = this_2.getButtonNameForOperation(opInfo);
             //  }
-            var color = this_2.getButtonColorForOperation(opInfo);
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
@@ -4785,14 +4784,22 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 else {
                     this_2.addActionButton(buttonId, name_3, function () {
-                        _this.sendActionResolve(opId);
+                        if (opInfo.type == "pass" && !single) {
+                            // add confirmation
+                            _this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), function () {
+                                _this.sendActionResolve(opId);
+                            });
+                        }
+                        else
+                            _this.sendActionResolve(opId);
                     });
                 }
                 var buttonDiv = $(buttonId);
                 if (opInfo.owner && opInfo.owner != this_2.player_color)
                     buttonDiv.classList.add("otherplayer", "plcolor_" + opInfo.owner);
+                var butcolor = this_2.getButtonColorForOperation(opInfo);
                 buttonDiv.classList.remove("bgabutton_blue");
-                buttonDiv.classList.add("bgabutton_" + color);
+                buttonDiv.classList.add("bgabutton_" + butcolor);
                 // if (contains_gfx) {
                 //   $(buttonId).classList.add("gfx");
                 //   $(buttonId).setAttribute("title", this.getButtonNameForOperation(opInfo));
