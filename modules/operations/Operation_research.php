@@ -12,6 +12,10 @@ class Operation_research extends AbsOperation {
         $this->game->dbResourceInc("tracker_gen", 1, clienttranslate('New generation ${counter_value}'));
         $players = $this->game->loadPlayersBasicInfos();
 
+        if ($this->game->isSolo() && $this->game->isEndOfGameAchived()) {
+            $this->game->notifyWithName('message_warning',clienttranslate('This is a last generation'));
+        }
+
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             // unpass
