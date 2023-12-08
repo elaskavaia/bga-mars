@@ -306,13 +306,13 @@ abstract class PGameXBody extends PGameMachine {
             return [];
         }
         $axis = explode("_", $coords);
-        if (count($axis)<3) {
+        if (count($axis) < 3) {
             $this->error("bad $coords coords in getAdjecentHexes");
             return [];
         }
         if ($valid_coords == null)
             $valid_coords = $this->getPlanetMap(false);
-    
+
         $neighbours = array();
         $x = $axis[1];
         $y = $axis[2];
@@ -637,7 +637,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($type == 'param') {
             $value = $this->tokens->getTokenState("tracker_${x}");
             if (!$mods) return $value;
-            if ($x=='t') $mods = $mods *2;
+            if ($x == 't') $mods = $mods * 2;
             return $value + $mods;
         }
 
@@ -942,7 +942,7 @@ abstract class PGameXBody extends PGameMachine {
         return null;
     }
     function mtFindByName(string $value, bool $ignorecase = true) {
-        return $this->mtFind('name',$value,$ignorecase);
+        return $this->mtFind('name', $value, $ignorecase);
     }
 
     /**
@@ -1072,10 +1072,13 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         // in this game we never switch active player during the single active state turns
-        // if ($this->getActivePlayerId() != $player_id) {
-        //     $this->setNextActivePlayerCustom($player_id);
-        //     $this->undoSavepoint();
-        // }
+        // except for lastforest
+        if ($this->getGameStateValue('gamestage') == MA_STAGE_LASTFOREST) {
+            if ($this->getActivePlayerId() != $player_id) {
+                $this->setNextActivePlayerCustom($player_id);
+                $this->undoSavepoint();
+            }
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////
