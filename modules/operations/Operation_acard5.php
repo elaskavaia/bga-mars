@@ -25,6 +25,7 @@ class Operation_acard5 extends AbsOperation {
             $this->game->notifyMessage(clienttranslate('it does not have a Microbe tag'));
         }
         $this->game->effect_moveCard($color, $card_id, "discard_main", 0);
+        $this->game->undoSavepoint();
         return 1;
     }
 }
