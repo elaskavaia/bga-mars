@@ -123,7 +123,7 @@ $machinestates = [
         "type" => "multipleactiveplayer",
         "action" => "st_gameDispatchMultiplayer",
         "description" => clienttranslate(
-            'Other players makes their choices'
+            'Other players make their choices'
         ),
         "descriptionmyturn" => clienttranslate(
             '${you} must choose'
