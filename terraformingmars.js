@@ -3393,16 +3393,25 @@ var GameXBody = /** @class */ (function (_super) {
         }
         return pc;
     };
-    GameXBody.prototype.onLoadingLogsComplete = function () {
+    GameXBody.prototype.addMoveToLog = function (log_id, move_id) {
         var _this = this;
-        // hook toolips on cards in the log for now
+        this.inherited(arguments);
+        var node = $('log_' + log_id);
         var i = 1;
-        document.querySelectorAll(".card_hl_tt").forEach(function (node) {
+        node.querySelectorAll(".card_hl_tt").forEach(function (node) {
             var card_id = node.getAttribute('data-clicktt');
-            node.id = card_id + "_log_" + i; // tooltip API needs id
-            i++;
+            node.id = card_id + "_log_" + log_id + "_" + (i++); // tooltip API needs id
             _this.updateTooltip(card_id, node);
         });
+        // add move #
+        var prevmove = document.querySelector('[data-move-id="' + move_id + '"]');
+        if (!prevmove) {
+            var tsnode = document.createElement('div');
+            tsnode.classList.add('movestamp');
+            tsnode.innerHTML = _('Move #') + move_id;
+            node.appendChild(tsnode);
+            tsnode.setAttribute('data-move-id', move_id);
+        }
     };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;

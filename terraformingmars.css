@@ -3009,6 +3009,13 @@
   width: 70%;
 }
 
+.card_main_64 .card_effect.rows {
+  flex-direction: row;
+}
+.card_main_64 .card_effect.rows .card_icono {
+  width: 25%;
+}
+
 .card_main_66 .card_icono.icono_gains.cnt_gains {
   display: none;
 }
@@ -7699,7 +7706,8 @@
   transition-delay: 500ms;
 }
 .mfull .active_slot.card {
-  box-shadow: 2px 2px 3px 3px #000000, 2px -2px 0px 5px #ff9800 !important;
+  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #ff9800 !important;
+  transform: translateZ(10px);
 }
 .mfull .active_slot.card:hover {
   outline: unset;
@@ -8555,7 +8563,7 @@
 }
 #ebd-body[data-localsetting_handplace=floating] #hand_area .hand_sorter {
   left: revert;
-  right: 0.5%;
+  left: 5%;
 }
 #ebd-body[data-localsetting_handplace=floating] #hand_area_buttons {
   display: flex;
@@ -8911,7 +8919,7 @@
 /*Sort*/
 .hand_sorter {
   position: absolute;
-  top: -19%;
+  top: calc(var(--card-width) * -0.3);
   left: 0.5%;
   display: flex;
   flex-direction: row;
@@ -8993,3 +9001,48 @@
 .hand_area[data-sort_direction=decrease] .card.corp {
   order: 100000;
 }
+
+.dragzone {
+  display: block;
+  height: var(--card-height);
+  width: calc(var(--card-width) * 0.01);
+  transition: all 100ms ease-out;
+}
+
+.dragzone.over {
+  width: calc(var(--card-width) * 0.3);
+}
+
+/*
+.handy.spaced {
+  .card{
+    margin-left:15%;
+    margin-right: 15%;
+    .dragleft{
+      display: block;
+      left: -15%;
+      position: absolute;
+      outline: 2px solid black;
+      width: 15%;
+      height: 100%;
+    }
+    .dragright{
+      display: block;
+      right: -15%;
+      position: absolute;
+      outline: 2px solid black;
+      width: 15%;
+      height: 100%;
+    }
+    .drag-active {
+      margin-left:0;
+      margin-right:0;
+      .dragright{
+        display: none;
+      }
+      .dragleft{
+        display: none;
+      }
+    }
+
+}*/
