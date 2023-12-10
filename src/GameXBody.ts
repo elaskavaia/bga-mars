@@ -61,7 +61,6 @@ class GameXBody extends GameTokens {
 
 
       //Give tooltips to alt trackers in player boards
-
       const togglehtml = this.getTooptipHtml(
         _("Card visibility toggle"),
         _("Shows number of cards of corresponding color on tableau"),
@@ -131,6 +130,11 @@ class GameXBody extends GameTokens {
       this.setupResourceFiltering();
 
 
+      if (!this.isSpectator && this.player_id!=null) {
+        this.loadLocalManualOrder($('hand_'+this.getPlayerColor(this.player_id)));
+        this.loadLocalManualOrder($('draw_'+this.getPlayerColor(this.player_id)));
+      }
+
       this.vlayout.setupDone();
       this.setupOneTimePrompt();
 
@@ -165,13 +169,12 @@ class GameXBody extends GameTokens {
       //So I attached it to the hand area block.
       this.addSortButtonsToHandy($('hand_area'));
 
-      //not yet
-      //this.enableManualReorder('hand_'+this.player_color);
+      this.enableManualReorder('hand_'+this.player_color);
       this.connectClass("hs_button", "onclick", (evt:Event)=>{
         let btn = (evt.currentTarget as HTMLElement);
         dojo.stopEvent(evt);
         const actual_dir:string= btn.dataset.direction;
-        const new_dir:string = actual_dir=="" ? "increase" : actual_dir=="increase" ? "decrease" : "";
+        const new_dir:string = actual_dir=="" ? "increase" : actual_dir=="increase" && btn.dataset.type!="manual" ? "decrease" : "";
         const hand_block:string = btn.dataset.target;
 
         //deactivate sorting on other buttons
@@ -186,6 +189,22 @@ class GameXBody extends GameTokens {
         const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
         localColorSetting.writeProp("sort_direction", new_dir);
         localColorSetting.writeProp("sort_type", btn.dataset.type);
+
+        if (btn.dataset.type=="manual" && new_dir=="increase") {
+          ['hand','draw'].forEach((loc) =>{
+            this.loadLocalManualOrder($(loc+'_'+this.player_color));
+            $(loc+'_'+this.player_color).querySelectorAll(".card").forEach((card: any) => {
+              this.enableDragOnCard(card);
+            });
+          });
+
+        } else {
+          ['hand','draw'].forEach((loc) =>{
+            $(loc+'_'+this.player_color).querySelectorAll(".card").forEach((card: any) => {
+              this.disableDragOnCard(card);
+            });
+          });
+        }
       });
 
 
@@ -1386,8 +1405,9 @@ awarded.`);
       this.updateTooltip(node.id);
 
       //make draggable
-      //Not yet
-   //   this.enableDragOnCard(node);
+      if ($("hand_area").dataset.sort_type=="manual")  this.enableDragOnCard(node);
+      else this.disableDragOnCard(node);
+
     }
   }
 
@@ -2179,28 +2199,37 @@ awarded.`);
         <div id="hs_button_${id}_cost" class="hs_button" data-target="${id}" data-type="cost" data-direction=""><div class="hs_picto hs_cost"><i class="fa fa-eur" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
         <div id="hs_button_${id}_playable" class="hs_button" data-target="${id}" data-type="playable" data-direction=""><div class="hs_picto hs_playable"><i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
         <div id="hs_button_${id}_vp" class="hs_button" data-target="${id}" data-type="vp" data-direction=""><div class="hs_picto hs_vp">VP</div><div class="hs_direction"></div></div>
+        <div id="hs_button_${id}_manual" class="hs_button" data-target="${id}" data-type="manual" data-direction=""><div class="hs_picto hs_manual"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div></div>
        `;
     const node = this.createDivNode("", "hand_sorter", attachNode.id);
     node.innerHTML = htm;
 
     const localColorSetting:LocalSettings = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-    const sort_dir:string= localColorSetting.readProp("sort_direction", "");
-    const sort_type:string = localColorSetting.readProp("sort_type","");
+    let sort_dir:string= localColorSetting.readProp("sort_direction", "");
+    let sort_type:string = localColorSetting.readProp("sort_type","");
 
-    if (sort_type!="") {
-      let node= dojo.query(".hs_button[data-type='"+sort_type+"']")[0];
-      node.dataset.direction = sort_dir;
+    if (sort_type=="") {
+      sort_type="manual";
+      sort_dir="increase";
     }
+    if (sort_type!="") {
+      let bnode= dojo.query(".hs_button[data-type='"+sort_type+"']")[0];
+      bnode.dataset.direction = sort_dir;
+      $(id).dataset.sort_direction=sort_dir;
+      $(id).dataset.sort_type=sort_type;
+    }
+
 
     const msg=_('Sort cards by %s');
     this.addTooltip(`hs_button_${id}_cost`,_("Card Sort"),msg.replace('%s',_('cost')));
     this.addTooltip(`hs_button_${id}_playable`,_("Card Sort"),msg.replace('%s',_('playability')));
     this.addTooltip(`hs_button_${id}_vp`,_("Card Sort"),msg.replace('%s',_('VP')));
+    this.addTooltip(`hs_button_${id}_manual`,_("Card Sort"),_('Manual sorting (drag n drop)'));
   }
 
   /* Manual reordering of cards via drag'n'drop */
   enableManualReorder(idContainer:string) {
-   $(idContainer).style.border = "red 1px dashed";
+   //$(idContainer).style.border = "red 1px dashed";
     $(idContainer).addEventListener("drop", (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -2213,79 +2242,87 @@ awarded.`);
     });
   }
    enableDragOnCard(node:HTMLElement) {
+     if (node.draggable) return;
+     //disable on mobile for now
+     if ($('ebd-body').classList.contains("mobile_version")) return;
      node.draggable = true;
      node.addEventListener("dragstart", (event) => this.onDragStart(event));
      node.addEventListener("dragend", (event) => this.onDragEnd(event));
-
-     /*
-     const draghelperHtm:string=`
-        <div id="dragleft_${node.id}" class="dragzone dragleft"></div>
-        <div id="dragright_${node.id}" class="dragzone dragright"></div>
-     `;
-     if (!$('dragleft_'+node.id)) {
-       const dragLeftNode= this.createDivNode('dragleft_'+node.id, "dragzone dragleft", node.id);
-       const dragRightNode= this.createDivNode('dragright_'+node.id, "dragzone dragright", node.id);
-     }
-    */
-     /*
-     node.addEventListener("dragover", (event) => {
-      const _htm = `
-      <div class="custom_paiement_inner">
-        ${txt}
-        ${items_htm}
-        <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
-      </div>
-    `;
-       const node = this.createDivNode("custom_paiement", "", "generalactions");
-       node.innerHTML = paiement_htm;
-
-     });*/
-
+  }
+  disableDragOnCard(node:HTMLElement) {
+    if (!node.draggable) return;
+    node.draggable = false;
+    node.removeEventListener("dragstart",(event) => this.onDragStart(event));
+    node.removeEventListener("dragend", (event) => this.onDragEnd(event));
   }
 
   private onDragStart(event: DragEvent) {
     const selectedItem = (event.target as HTMLElement);
     if (!selectedItem.parentElement.classList.contains("handy")) return;
+    if ($('hand_area').dataset.sort_type!="manual") {
+      return;
+    }
 
-    selectedItem.parentElement.classList.add("spaced")
+    $("ebd-body").classList.add("drag_inpg");
     selectedItem.classList.add("drag-active");
+
+    //prevent container from changing size
+    const rect = selectedItem.parentElement.getBoundingClientRect();
+    selectedItem.parentElement.style.setProperty("width",String(rect.width)+"px");
+    selectedItem.parentElement.style.setProperty("height",String(rect.height)+"px");
+
+    /*
     event.dataTransfer.setData("text/plain", "card"); // not sure if needed
     event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = "move";*/
+
+    selectedItem.classList.add('hide');
 
     dojo.query('#'+selectedItem.parentElement.id+' .dragzone').forEach(dojo.destroy);
+
     dojo.query('#'+selectedItem.parentElement.id+' .card').forEach((card)=>{
-      const lefthtm:string = `<div id="dragleft_${card.id}" class="dragzone"></div>`;
-      card.insertAdjacentHTML("beforebegin",lefthtm);
-      $('dragleft_'+card.id).addEventListener("dragover", (event) => {
-        $('dragleft_'+card.id).classList.add("over");
-        event.preventDefault();
-      });
-      $('dragleft_'+card.id).addEventListener("dragleave", (event) => {
-        $('dragleft_'+card.id).classList.remove("over");
-        event.preventDefault();
-      });
-      const righthtm:string = `<div id="dragright_${card.id}" class="dragzone"></div>`;
-      card.insertAdjacentHTML("afterend",righthtm);
-      $('dragright_'+card.id).addEventListener("dragover", (event) => {
-        $('dragright_'+card.id).classList.add("over");
-        event.preventDefault();
-      });
-      $('dragright_'+card.id).addEventListener("dragleave", (event) => {
-        $('dragright_'+card.id).classList.remove("over");
-        event.preventDefault();
-      });
+      //prevent
+      if (card.id==selectedItem.id) return;
+
+      if (card.nextElementSibling==null) {
+        const righthtm:string = `<div class="dragzone outsideright"><div id="dragright_${card.id}" class="dragzone_inside dragright"></div></div>`;
+        card.insertAdjacentHTML("afterend",righthtm);
+        $('dragright_'+card.id).addEventListener("dragover", (event) => {
+          event.preventDefault();
+          $('dragright_'+card.id).parentElement.classList.add("over");
+        });
+        $('dragright_'+card.id).addEventListener("dragleave", (event) => {
+          event.preventDefault();
+          $('dragright_'+card.id).parentElement.classList.remove("over");
+        });
+      }
+      if ((card.previousElementSibling!=null && card.previousElementSibling.id!=selectedItem.id) || card.previousElementSibling==null) {
+        const lefthtm:string = `<div class="dragzone"><div id="dragleft_${card.id}" class="dragzone_inside dragleft"></div></div>`;
+        card.insertAdjacentHTML("beforebegin",lefthtm);
+        $('dragleft_'+card.id).addEventListener("dragover", (event) => {
+          event.preventDefault();
+          $('dragleft_'+card.id).parentElement.classList.add("over");
+        });
+        $('dragleft_'+card.id).addEventListener("dragleave", (event) => {
+          event.preventDefault();
+          $('dragleft_'+card.id).parentElement.classList.remove("over");
+
+        });
+      }
+
     });
 
   }
 
   private onDragEnd(event: DragEvent) {
     const selectedItem = (event.target as HTMLElement);
-    selectedItem.classList.remove("drag-active");
+
+
     let x = event.clientX;
     let y = event.clientY;
 
-    const containerNode = selectedItem.parentNode;
+
+    const containerNode:HTMLElement = selectedItem.parentElement;
     const pointsTo = document.elementFromPoint(x, y);
 
 
@@ -2294,16 +2331,47 @@ awarded.`);
     } else if (containerNode === pointsTo) {
       //dropped in empty space on container
       containerNode.append(selectedItem);
-    } else if (pointsTo.parentElement!=undefined && pointsTo.parentElement==selectedItem.parentElement && (pointsTo.classList.contains("card") || pointsTo.classList.contains("dragzone"))) {
-      console.log('points',pointsTo.id);
-      containerNode.insertBefore(selectedItem,pointsTo);
+    } else if (pointsTo.parentElement!=undefined && pointsTo.parentElement.parentElement!=undefined && pointsTo.parentElement.parentElement==selectedItem.parentElement && (pointsTo.classList.contains("dragzone_inside"))) {
+      containerNode.insertBefore(selectedItem,pointsTo.parentElement);
     } else if (containerNode === pointsTo.parentNode) {
       containerNode.insertBefore(pointsTo, selectedItem);
     } else {
       console.error('Cannot determine target for drop',pointsTo.id);
     }
 
+    selectedItem.classList.remove("drag-active");
+    $("ebd-body").classList.remove("drag_inpg");
+    containerNode.style.setProperty("width","");
+    containerNode.style.setProperty("height","");
+
     dojo.query('#'+selectedItem.parentElement.id+' .dragzone').forEach(dojo.destroy);
+    this.saveLocalManualOrder(containerNode);
+  }
+
+  saveLocalManualOrder(containerNode:HTMLElement) {
+    let svOrder:string="";
+    //query should return in the same order as the DOM
+    dojo.query('#'+containerNode.id+' .card').forEach((card)=>{
+      svOrder+=card.id+",";
+    });
+    svOrder= svOrder.substring(0,svOrder.length-1);
+    const localOrderSetting:LocalSettings = new LocalSettings(this.getLocalSettingNamespace(this.table_id+"_"+containerNode.id));
+    localOrderSetting.writeProp("custo_order", svOrder);
+    console.log("custo_order",svOrder);
+  }
+
+  loadLocalManualOrder(containerNode:HTMLElement) {
+    const localOrderSetting:LocalSettings = new LocalSettings(this.getLocalSettingNamespace(this.table_id+"_"+containerNode.id));
+    const svOrder=localOrderSetting.readProp("custo_order", "");
+    if (svOrder=="") return;
+
+    const cards:string[]= svOrder.split(',');
+    cards.reverse().forEach((card_id)=>{
+      if ($(card_id).parentElement==containerNode) {
+        containerNode.insertAdjacentElement("afterbegin",$(card_id));
+      }
+    });
+
   }
 
   // notifications

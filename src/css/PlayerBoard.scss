@@ -590,20 +590,24 @@
     }
   }
 
+  /*
    .active_slot .playerboard_group_underbutton {
      display: flex;
      animation: nudge 2000ms infinite ease-in-out;
    }
+*/
 
   .thisplayer_zone .playerboard_group_img .token_img{
     z-index: 1;
   }
-
-
-
-
-
+  
+  #ebd-body[data-localsetting_animationamount="3"] .active_slot .playerboard_group_underbutton {
+    display: flex;
+    animation: nudge 2000ms infinite ease-in-out;
+  }
 }
+
+
 
 @keyframes nudge {
   0% {
