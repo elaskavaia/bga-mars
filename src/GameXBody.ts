@@ -1504,9 +1504,12 @@ awarded.`);
         result.location = tokenInfo.location + "_cards_2a";
       }
 
-      const plcolor = tokenInfo.location.replace("tableau_", "");
-      this.local_counters[plcolor]["cards_" + t]++;
-      this.updatePlayerLocalCounters(plcolor);
+      if ($(tokenInfo.location).querySelector('#'+tokenInfo.key)==null) {
+        const plcolor = tokenInfo.location.replace("tableau_", "");
+        this.local_counters[plcolor]["cards_" + t]++;
+        this.updatePlayerLocalCounters(plcolor);
+      }
+
 
       if (!this.isLayoutFull()) {
         if (t == 1 || t == 3) {

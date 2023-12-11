@@ -301,7 +301,7 @@ class CustomAnimation {
 
   moveResources(tracker:string,qty:number):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
-    if (qty==0) return this.getImmediatePromise();
+    if (qty==undefined || qty==0) return this.getImmediatePromise();
 
     const trk_item = tracker.replace('tracker_','').split('_')[0];
 
