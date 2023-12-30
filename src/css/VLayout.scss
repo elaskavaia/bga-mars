@@ -316,6 +316,9 @@
     height: calc(var(--stan-width) * 0.54);
   }
 
+  #outer_scoretracker {
+    display: none;
+  }
 
 
   // .hex {

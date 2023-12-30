@@ -139,7 +139,7 @@ $stats_type = array(
     ),
     "value_labels" => array(
         31 => array(
-            1=>totranslate('Begginer Corp'),
+            1=>totranslate('Beginner Corp'),
             2=>totranslate('CrediCor'),
             3=>totranslate('Ecoline'),
             4=>totranslate('Helion'),

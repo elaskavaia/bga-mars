@@ -827,6 +827,10 @@
   }
 }
 
+#ebd-body.mobile_version.touch-device #hs_button_hand_area_manual {
+ display: none;
+}
+
 .hand_area[data-sort_type="cost"][data-sort_direction="increase"] {
   .handy {
     .card {

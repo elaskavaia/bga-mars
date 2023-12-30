@@ -54,6 +54,12 @@
                 <div id="generation_text">Gen</div>
               </div>
             </div>
+            <div class="outer_scoretracker" id="outer_scoretracker">
+              <i class="fa fa-table" aria-hidden="true"></i>
+              <div class="generation_bottom">
+                <div id="scoretracker_text">Score</div>
+              </div>
+            </div>
           </div>
           <div id="map_left">
             <div id="decks_area">

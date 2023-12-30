@@ -92,7 +92,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 82|Callisto Penal Mines|1|3pm|||24||Space Jovian|2|Corporate|Increase your MC production 3 steps.||||
 83|Giant Space Mirror|1|3pe|||17||Space Energy|0|Basic|Increase your energy production 3 steps.||||
 84|Trans-Neptune Probe|1||||6||Science Space|1|Corporate|||||
-85|Commercial District|1|npe,4pm,tile|||16||Building|adj_city|Corporate|Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile. 1 VP PER ADJACENT CITY TILE.||||
+85|Commercial District|1|npe,4pm,tile|||16||Building|adj_city|Corporate|Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile.|||1 VP per adjacent city tile.|
 86|Robotic Workforce|1|copybu|||9||Science|0|Corporate|Duplicate only the production box of one of your building cards.||||
 87|Grass|1|pp,3p|||11|t>=-16|Plant|0|Basic|Increase your plant production 1 step. Gain 3 plants.||||
 88|Heather|1|pp,p|||6|t>=-14|Plant|0|Basic|Increase your plant production 1 step. Gain 1 plant.||||
