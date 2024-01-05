@@ -364,6 +364,9 @@
   .corp_logo[data-corp="card_corp_12"]{background-position: -400% -100%;}
   .corp_logo[data-corp="card_corp_13"]{background-position: -500% -100%;}
 
+  .corp_effect .card.corp.card_corp_1 .card_title {
+    display: none !important;
+  }
 
 .mcompact {
   .cards_3vp, .cards_3 {

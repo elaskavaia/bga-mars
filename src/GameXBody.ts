@@ -108,6 +108,12 @@ class GameXBody extends GameTokens {
         }
       });
 
+      //translate some text set in .tpl
+      $('generation_text').innerHTML=_("Gen");
+      $('scoretracker_text').innerHTML=_("Score");
+      $('milestones_title').innerHTML=_('Milestones');
+      $('awards_title').innerHTML=_('Awards');
+
       //update prereq on cards
       this.updateHandInformation(this.gamedatas['card_info']);
 
@@ -134,6 +140,10 @@ class GameXBody extends GameTokens {
         this.loadLocalManualOrder($('hand_'+this.getPlayerColor(this.player_id)));
         this.loadLocalManualOrder($('draw_'+this.getPlayerColor(this.player_id)));
       }
+
+      $(`outer_scoretracker`).addEventListener("click", () => {
+        this.onShowScoringTable(0);
+      });
 
       this.vlayout.setupDone();
       this.setupOneTimePrompt();
@@ -571,6 +581,10 @@ class GameXBody extends GameTokens {
           dojo.removeClass("ebd-body", "mobile_portrait");
         }
       }
+    }
+    //disable hand sort on mobile
+    if (dojo.hasClass("ebd-body", "mobile_version") && dojo.hasClass("ebd-body", "touch-device")) {
+
     }
   }
 
@@ -1045,7 +1059,7 @@ awarded.`);
     if (!$(card_id)) return "";
     let msg="";
     if ($(card_id).dataset.cannot_pay=="1") {
-      msg=_("You don't have enough MC to pay this card.");
+      msg=_("You don't have enough MC to pay for this card.");
     }
     if ($(card_id).dataset.cannot_resolve!=undefined && $(card_id).dataset.cannot_resolve!="0") {
       if (msg!="") msg=msg+"<br/>";
@@ -2051,7 +2065,17 @@ awarded.`);
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0) {
-          const name = single && paramargs.length <= 1 ? _("Reject") : _("Done");
+         // const name = single && paramargs.length <= 1 ? _("Reject") : _("Done");
+
+          let name = _("Done");
+          if (paramargs.length <= 1 )  {
+            switch (opInfo.type) {
+              case "buycard": name=_("Discard card"); break;
+              case "sell": name=_("Done"); break;
+              default: name = _("Reject");
+            }
+          }
+
           this.addActionButton("button_skip", name, () => {
             this.sendActionSkip();
           });
@@ -2262,7 +2286,7 @@ awarded.`);
   private onDragStart(event: DragEvent) {
     const selectedItem = (event.target as HTMLElement);
     if (!selectedItem.parentElement.classList.contains("handy")) return;
-    if ($('hand_area').dataset.sort_type!="manual") {
+    if ($('hand_area').dataset.sort_type!="manual" || ($('ebd-body').classList.contains("touch-device") && $('ebd-body').classList.contains("mobile_version") )) {
       return;
     }
 
@@ -2282,7 +2306,6 @@ awarded.`);
     selectedItem.classList.add('hide');
 
     dojo.query('#'+selectedItem.parentElement.id+' .dragzone').forEach(dojo.destroy);
-
     dojo.query('#'+selectedItem.parentElement.id+' .card').forEach((card)=>{
       //prevent
       if (card.id==selectedItem.id) return;

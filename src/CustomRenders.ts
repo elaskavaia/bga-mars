@@ -801,7 +801,7 @@
 
 
    private static customcard_effect_173() {
-     return '<div class="groupline">'+_('OPPONENTS MAT NOT REMOVE YOUR')+'</div>'
+     return '<div class="groupline">'+_('OPPONENTS MAY NOT REMOVE YOUR')+'</div>'
      +'<div class="groupline">'+this.parseSingleItemToHTML(this.getParse('p',0),1)+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1)+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'</div>';
 
    }

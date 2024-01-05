@@ -995,7 +995,7 @@
 
 .outer_generation {
   top: -55%;
-  right: 8%;
+  right: 12%; /*8%*/
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
@@ -1030,6 +1030,43 @@
     }
   }
 
+}
+
+.outer_scoretracker {
+  top: -55%;
+  right: 4%;
+  position: absolute;
+  width: calc(var(--map-width) * 0.1);
+  height: calc(var(--map-width) * 0.1);
+  color: white;
+  font-size: calc(var(--map-width) * 0.05);
+  display: flex;
+  cursor: help;
+
+  .fa {
+    position: absolute;
+    top: 15%;
+    width: 75%;
+    height: 75%;
+    display: flex;
+    justify-content: center;
+    border-radius: 50%;
+    left: 12.5%;
+  }
+
+  .generation_bottom {
+    width: 100%;
+    height: 25%;
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
+
+    #scoretracker_text {
+      font-size: calc(var(--map-width) * 0.03);
+    }
+  }
 }
 
 #discard_title {

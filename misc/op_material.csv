@@ -9,8 +9,8 @@ stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
 fund|Fund an award|${you} must select an Award to fund
 w|Place Ocean Tile|${you} must select a location to place an ocean tile
-forest|Place Greenery Tile|${you} must select a location to place a Greenery tile, adjecent if possible
-city|Place City Tile|${you} must select a location to place a city, cannot place adjecent to other city
+forest|Place Greenery Tile|${you} must select a location to place a Greenery tile, adjacent if possible
+city|Place City Tile|${you} must select a location to place a city, cannot place adjacent to another city
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
 sell|Discard Card from Hand to gain M€|${you} must select a card to discard to gain 1 M€|
@@ -18,7 +18,7 @@ activate|Activate Card|${you} must select a card to activate
 ores|Add resource to another card|${you} must select a card to add resource/s to
 nores|Remove resource from another card|${you} must select a card to remove resource/s
 keep|Keep Card|${you} must select a card to add keep
-buycard|Buy Card|${you} must select a card to buy for 3 M€
+buycard|Buy Card|${you} may select a card to buy for 3 M€
 keepcorp|Keep Corp|${you} must select one corporation card to keep
 draft|Draft Card|${you} must select one card to draft (buy or discard later)
 

@@ -1254,7 +1254,8 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 'adj_city',
   'deck' => 'Corporate',
-  'text' => clienttranslate("Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile. 1 VP PER ADJACENT CITY TILE."),
+  'text' => clienttranslate("Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile."),
+  'text_vp'=>clienttranslate("1 VP per adjacent city tile"),
 ],
  'card_main_86' => [  //
   'location' => 'deck_main',
@@ -3425,14 +3426,14 @@ $this->token_types = [
 ],
  'op_forest' => [  //
   'undo' => 'true',
-  'prompt' => '${you} must select a location to place a Greenery tile, adjecent if possible',
+  'prompt' => '${you} must select a location to place a Greenery tile, adjacent if possible',
   'params' => 'target',
   'type' => 'forest',
   'name' => clienttranslate("Place Greenery Tile"),
 ],
  'op_city' => [  //
   'undo' => 'true',
-  'prompt' => '${you} must select a location to place a city, cannot place adjecent to other city',
+  'prompt' => '${you} must select a location to place a city, cannot place adjacent to another city',
   'params' => 'target',
   'type' => 'city',
   'name' => clienttranslate("Place City Tile"),
@@ -3488,7 +3489,7 @@ $this->token_types = [
 ],
  'op_buycard' => [  //
   'undo' => 'true',
-  'prompt' => '${you} must select a card to buy for 3 M€',
+  'prompt' => '${you} may select a card to buy for 3 M€',
   'params' => 'target',
   'type' => 'buycard',
   'name' => clienttranslate("Buy Card"),
