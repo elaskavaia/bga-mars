@@ -26,7 +26,7 @@ class DbUserPrefs extends APP_GameClass {
         $this->table = $table;
     }
 
-    public function setup($players, $game_preferences) {
+    public function setup($players, $prefs) {
         // Load user preferences
         include dirname(__FILE__) . '/../gameoptions.inc.php';
 
