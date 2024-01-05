@@ -109,7 +109,7 @@ class GameXBody extends GameTokens {
       });
 
       //translate some text set in .tpl
-      $('generation_text').innerHTML=_("Gen");
+      if ($('generation_text')) $('generation_text').innerHTML=_("Gen");
       $('scoretracker_text').innerHTML=_("Score");
       $('milestones_title').innerHTML=_('Milestones');
       $('awards_title').innerHTML=_('Awards');
@@ -146,7 +146,7 @@ class GameXBody extends GameTokens {
       });
 
       this.vlayout.setupDone();
-      this.setupOneTimePrompt();
+      //this.setupOneTimePrompt();
 
 
     } catch (e) {
@@ -2138,7 +2138,7 @@ awarded.`);
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
       //   this.showHiddenContent("discard_main", _("Discard pile contents"));
     } else if (tid.startsWith("card_")) {
-      if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help"))
+      if (!tid.endsWith("help"))
         this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
     } else {
       this.showMoveUnauthorized();

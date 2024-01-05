@@ -1516,7 +1516,7 @@ var CustomAnimation = /** @class */ (function () {
         var _this = this;
         if (!this.areAnimationsPlayed())
             return this.getImmediatePromise();
-        if (qty == 0)
+        if (qty == undefined || qty == 0)
             return this.getImmediatePromise();
         var trk_item = tracker.replace('tracker_', '').split('_')[0];
         var delay = 0;
@@ -2399,7 +2399,7 @@ var CustomRenders = /** @class */ (function () {
         return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
     };
     CustomRenders.customcard_effect_173 = function () {
-        return '<div class="groupline">' + _('OPPONENTS MAT NOT REMOVE YOUR') + '</div>'
+        return '<div class="groupline">' + _('OPPONENTS MAY NOT REMOVE YOUR') + '</div>'
             + '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>';
     };
     CustomRenders.customcard_vp_184 = function () {
@@ -3180,6 +3180,12 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.updateTooltip(id.substring(4), node);
                 }
             });
+            //translate some text set in .tpl
+            if ($('generation_text'))
+                $('generation_text').innerHTML = _("Gen");
+            $('scoretracker_text').innerHTML = _("Score");
+            $('milestones_title').innerHTML = _('Milestones');
+            $('awards_title').innerHTML = _('Awards');
             //update prereq on cards
             this.updateHandInformation(this.gamedatas['card_info']);
             // card reference
@@ -3197,8 +3203,15 @@ var GameXBody = /** @class */ (function (_super) {
                 _this.localSettings.doAction(cs, "plus");
             });
             this.setupResourceFiltering();
+            if (!this.isSpectator && this.player_id != null) {
+                this.loadLocalManualOrder($('hand_' + this.getPlayerColor(this.player_id)));
+                this.loadLocalManualOrder($('draw_' + this.getPlayerColor(this.player_id)));
+            }
+            $("outer_scoretracker").addEventListener("click", function () {
+                _this.onShowScoringTable(0);
+            });
             this.vlayout.setupDone();
-            this.setupOneTimePrompt();
+            //this.setupOneTimePrompt();
         }
         catch (e) {
             console.error(e);
@@ -3227,13 +3240,12 @@ var GameXBody = /** @class */ (function (_super) {
             //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
             //So I attached it to the hand area block.
             this.addSortButtonsToHandy($('hand_area'));
-            //not yet
-            //this.enableManualReorder('hand_'+this.player_color);
+            this.enableManualReorder('hand_' + this.player_color);
             this.connectClass("hs_button", "onclick", function (evt) {
                 var btn = evt.currentTarget;
                 dojo.stopEvent(evt);
                 var actual_dir = btn.dataset.direction;
-                var new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
+                var new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "";
                 var hand_block = btn.dataset.target;
                 //deactivate sorting on other buttons
                 dojo.query('#' + hand_block + ' .hs_button').forEach(function (item) {
@@ -3245,6 +3257,21 @@ var GameXBody = /** @class */ (function (_super) {
                 var localColorSetting = new LocalSettings(_this.getLocalSettingNamespace("card_sort"));
                 localColorSetting.writeProp("sort_direction", new_dir);
                 localColorSetting.writeProp("sort_type", btn.dataset.type);
+                if (btn.dataset.type == "manual" && new_dir == "increase") {
+                    ['hand', 'draw'].forEach(function (loc) {
+                        _this.loadLocalManualOrder($(loc + '_' + _this.player_color));
+                        $(loc + '_' + _this.player_color).querySelectorAll(".card").forEach(function (card) {
+                            _this.enableDragOnCard(card);
+                        });
+                    });
+                }
+                else {
+                    ['hand', 'draw'].forEach(function (loc) {
+                        $(loc + '_' + _this.player_color).querySelectorAll(".card").forEach(function (card) {
+                            _this.disableDragOnCard(card);
+                        });
+                    });
+                }
             });
         }
         //move own player board in main zone
@@ -3554,6 +3581,9 @@ var GameXBody = /** @class */ (function (_super) {
                     dojo.removeClass("ebd-body", "mobile_portrait");
                 }
             }
+        }
+        //disable hand sort on mobile
+        if (dojo.hasClass("ebd-body", "mobile_version") && dojo.hasClass("ebd-body", "touch-device")) {
         }
     };
     GameXBody.prototype.onToggleAllCards = function (event) {
@@ -3906,7 +3936,7 @@ var GameXBody = /** @class */ (function (_super) {
             return "";
         var msg = "";
         if ($(card_id).dataset.cannot_pay == "1") {
-            msg = _("You don't have enough MC to pay this card.");
+            msg = _("You don't have enough MC to pay for this card.");
         }
         if ($(card_id).dataset.cannot_resolve != undefined && $(card_id).dataset.cannot_resolve != "0") {
             if (msg != "")
@@ -4212,8 +4242,10 @@ var GameXBody = /** @class */ (function (_super) {
             //update TT too
             this.updateTooltip(node.id);
             //make draggable
-            //Not yet
-            //   this.enableDragOnCard(node);
+            if ($("hand_area").dataset.sort_type == "manual")
+                this.enableDragOnCard(node);
+            else
+                this.disableDragOnCard(node);
         }
     };
     // XXX this function can be remove discount cost is set via dataset above, can use css after to show value
@@ -4314,9 +4346,11 @@ var GameXBody = /** @class */ (function (_super) {
             if (this.getRulesFor(tokenInfo.key, "a")) {
                 result.location = tokenInfo.location + "_cards_2a";
             }
-            var plcolor = tokenInfo.location.replace("tableau_", "");
-            this.local_counters[plcolor]["cards_" + t]++;
-            this.updatePlayerLocalCounters(plcolor);
+            if ($(tokenInfo.location).querySelector('#' + tokenInfo.key) == null) {
+                var plcolor = tokenInfo.location.replace("tableau_", "");
+                this.local_counters[plcolor]["cards_" + t]++;
+                this.updatePlayerLocalCounters(plcolor);
+            }
             if (!this.isLayoutFull()) {
                 if (t == 1 || t == 3) {
                     if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
@@ -4811,7 +4845,19 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0) {
-                    var name_4 = single && paramargs.length <= 1 ? _("Reject") : _("Done");
+                    // const name = single && paramargs.length <= 1 ? _("Reject") : _("Done");
+                    var name_4 = _("Done");
+                    if (paramargs.length <= 1) {
+                        switch (opInfo.type) {
+                            case "buycard":
+                                name_4 = _("Discard card");
+                                break;
+                            case "sell":
+                                name_4 = _("Done");
+                                break;
+                            default: name_4 = _("Reject");
+                        }
+                    }
                     this_2.addActionButton("button_skip", name_4, function () {
                         _this.sendActionSkip();
                     });
@@ -4884,7 +4930,7 @@ var GameXBody = /** @class */ (function (_super) {
             //   this.showHiddenContent("discard_main", _("Discard pile contents"));
         }
         else if (tid.startsWith("card_")) {
-            if ($(tid).parentElement.childElementCount >= 2 && !tid.endsWith("help"))
+            if (!tid.endsWith("help"))
                 this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
         }
         else {
@@ -4959,24 +5005,31 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.addSortButtonsToHandy = function (attachNode) {
         var id = attachNode.id;
-        var htm = "\n        <div id=\"hs_button_".concat(id, "_cost\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"cost\" data-direction=\"\"><div class=\"hs_picto hs_cost\"><i class=\"fa fa-eur\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_playable\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"playable\" data-direction=\"\"><div class=\"hs_picto hs_playable\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_vp\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"vp\" data-direction=\"\"><div class=\"hs_picto hs_vp\">VP</div><div class=\"hs_direction\"></div></div>\n       ");
+        var htm = "\n        <div id=\"hs_button_".concat(id, "_cost\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"cost\" data-direction=\"\"><div class=\"hs_picto hs_cost\"><i class=\"fa fa-eur\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_playable\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"playable\" data-direction=\"\"><div class=\"hs_picto hs_playable\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_vp\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"vp\" data-direction=\"\"><div class=\"hs_picto hs_vp\">VP</div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_manual\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"manual\" data-direction=\"\"><div class=\"hs_picto hs_manual\"><i class=\"fa fa-hand-paper-o\" aria-hidden=\"true\"></i></div></div>\n       ");
         var node = this.createDivNode("", "hand_sorter", attachNode.id);
         node.innerHTML = htm;
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
         var sort_dir = localColorSetting.readProp("sort_direction", "");
         var sort_type = localColorSetting.readProp("sort_type", "");
+        if (sort_type == "") {
+            sort_type = "manual";
+            sort_dir = "increase";
+        }
         if (sort_type != "") {
-            var node_1 = dojo.query(".hs_button[data-type='" + sort_type + "']")[0];
-            node_1.dataset.direction = sort_dir;
+            var bnode = dojo.query(".hs_button[data-type='" + sort_type + "']")[0];
+            bnode.dataset.direction = sort_dir;
+            $(id).dataset.sort_direction = sort_dir;
+            $(id).dataset.sort_type = sort_type;
         }
         var msg = _('Sort cards by %s');
         this.addTooltip("hs_button_".concat(id, "_cost"), _("Card Sort"), msg.replace('%s', _('cost')));
         this.addTooltip("hs_button_".concat(id, "_playable"), _("Card Sort"), msg.replace('%s', _('playability')));
         this.addTooltip("hs_button_".concat(id, "_vp"), _("Card Sort"), msg.replace('%s', _('VP')));
+        this.addTooltip("hs_button_".concat(id, "_manual"), _("Card Sort"), _('Manual sorting (drag n drop)'));
     };
     /* Manual reordering of cards via drag'n'drop */
     GameXBody.prototype.enableManualReorder = function (idContainer) {
-        $(idContainer).style.border = "red 1px dashed";
+        //$(idContainer).style.border = "red 1px dashed";
         $(idContainer).addEventListener("drop", function (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -4990,72 +5043,77 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.enableDragOnCard = function (node) {
         var _this = this;
+        if (node.draggable)
+            return;
+        //disable on mobile for now
+        if ($('ebd-body').classList.contains("mobile_version"))
+            return;
         node.draggable = true;
         node.addEventListener("dragstart", function (event) { return _this.onDragStart(event); });
         node.addEventListener("dragend", function (event) { return _this.onDragEnd(event); });
-        /*
-        const draghelperHtm:string=`
-           <div id="dragleft_${node.id}" class="dragzone dragleft"></div>
-           <div id="dragright_${node.id}" class="dragzone dragright"></div>
-        `;
-        if (!$('dragleft_'+node.id)) {
-          const dragLeftNode= this.createDivNode('dragleft_'+node.id, "dragzone dragleft", node.id);
-          const dragRightNode= this.createDivNode('dragright_'+node.id, "dragzone dragright", node.id);
-        }
-       */
-        /*
-        node.addEventListener("dragover", (event) => {
-         const _htm = `
-         <div class="custom_paiement_inner">
-           ${txt}
-           ${items_htm}
-           <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
-         </div>
-       `;
-          const node = this.createDivNode("custom_paiement", "", "generalactions");
-          node.innerHTML = paiement_htm;
-   
-        });*/
+    };
+    GameXBody.prototype.disableDragOnCard = function (node) {
+        var _this = this;
+        if (!node.draggable)
+            return;
+        node.draggable = false;
+        node.removeEventListener("dragstart", function (event) { return _this.onDragStart(event); });
+        node.removeEventListener("dragend", function (event) { return _this.onDragEnd(event); });
     };
     GameXBody.prototype.onDragStart = function (event) {
         var selectedItem = event.target;
         if (!selectedItem.parentElement.classList.contains("handy"))
             return;
-        selectedItem.parentElement.classList.add("spaced");
+        if ($('hand_area').dataset.sort_type != "manual" || ($('ebd-body').classList.contains("touch-device") && $('ebd-body').classList.contains("mobile_version"))) {
+            return;
+        }
+        $("ebd-body").classList.add("drag_inpg");
         selectedItem.classList.add("drag-active");
+        //prevent container from changing size
+        var rect = selectedItem.parentElement.getBoundingClientRect();
+        selectedItem.parentElement.style.setProperty("width", String(rect.width) + "px");
+        selectedItem.parentElement.style.setProperty("height", String(rect.height) + "px");
+        /*
         event.dataTransfer.setData("text/plain", "card"); // not sure if needed
         event.dataTransfer.effectAllowed = "move";
-        event.dataTransfer.dropEffect = "move";
+        event.dataTransfer.dropEffect = "move";*/
+        selectedItem.classList.add('hide');
         dojo.query('#' + selectedItem.parentElement.id + ' .dragzone').forEach(dojo.destroy);
         dojo.query('#' + selectedItem.parentElement.id + ' .card').forEach(function (card) {
-            var lefthtm = "<div id=\"dragleft_".concat(card.id, "\" class=\"dragzone\"></div>");
-            card.insertAdjacentHTML("beforebegin", lefthtm);
-            $('dragleft_' + card.id).addEventListener("dragover", function (event) {
-                $('dragleft_' + card.id).classList.add("over");
-                event.preventDefault();
-            });
-            $('dragleft_' + card.id).addEventListener("dragleave", function (event) {
-                $('dragleft_' + card.id).classList.remove("over");
-                event.preventDefault();
-            });
-            var righthtm = "<div id=\"dragright_".concat(card.id, "\" class=\"dragzone\"></div>");
-            card.insertAdjacentHTML("afterend", righthtm);
-            $('dragright_' + card.id).addEventListener("dragover", function (event) {
-                $('dragright_' + card.id).classList.add("over");
-                event.preventDefault();
-            });
-            $('dragright_' + card.id).addEventListener("dragleave", function (event) {
-                $('dragright_' + card.id).classList.remove("over");
-                event.preventDefault();
-            });
+            //prevent
+            if (card.id == selectedItem.id)
+                return;
+            if (card.nextElementSibling == null) {
+                var righthtm = "<div class=\"dragzone outsideright\"><div id=\"dragright_".concat(card.id, "\" class=\"dragzone_inside dragright\"></div></div>");
+                card.insertAdjacentHTML("afterend", righthtm);
+                $('dragright_' + card.id).addEventListener("dragover", function (event) {
+                    event.preventDefault();
+                    $('dragright_' + card.id).parentElement.classList.add("over");
+                });
+                $('dragright_' + card.id).addEventListener("dragleave", function (event) {
+                    event.preventDefault();
+                    $('dragright_' + card.id).parentElement.classList.remove("over");
+                });
+            }
+            if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
+                var lefthtm = "<div class=\"dragzone\"><div id=\"dragleft_".concat(card.id, "\" class=\"dragzone_inside dragleft\"></div></div>");
+                card.insertAdjacentHTML("beforebegin", lefthtm);
+                $('dragleft_' + card.id).addEventListener("dragover", function (event) {
+                    event.preventDefault();
+                    $('dragleft_' + card.id).parentElement.classList.add("over");
+                });
+                $('dragleft_' + card.id).addEventListener("dragleave", function (event) {
+                    event.preventDefault();
+                    $('dragleft_' + card.id).parentElement.classList.remove("over");
+                });
+            }
         });
     };
     GameXBody.prototype.onDragEnd = function (event) {
         var selectedItem = event.target;
-        selectedItem.classList.remove("drag-active");
         var x = event.clientX;
         var y = event.clientY;
-        var containerNode = selectedItem.parentNode;
+        var containerNode = selectedItem.parentElement;
         var pointsTo = document.elementFromPoint(x, y);
         if (pointsTo === selectedItem || pointsTo === null) {
             // do nothing
@@ -5064,9 +5122,8 @@ var GameXBody = /** @class */ (function (_super) {
             //dropped in empty space on container
             containerNode.append(selectedItem);
         }
-        else if (pointsTo.parentElement != undefined && pointsTo.parentElement == selectedItem.parentElement && (pointsTo.classList.contains("card") || pointsTo.classList.contains("dragzone"))) {
-            console.log('points', pointsTo.id);
-            containerNode.insertBefore(selectedItem, pointsTo);
+        else if (pointsTo.parentElement != undefined && pointsTo.parentElement.parentElement != undefined && pointsTo.parentElement.parentElement == selectedItem.parentElement && (pointsTo.classList.contains("dragzone_inside"))) {
+            containerNode.insertBefore(selectedItem, pointsTo.parentElement);
         }
         else if (containerNode === pointsTo.parentNode) {
             containerNode.insertBefore(pointsTo, selectedItem);
@@ -5074,7 +5131,35 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             console.error('Cannot determine target for drop', pointsTo.id);
         }
+        selectedItem.classList.remove("drag-active");
+        $("ebd-body").classList.remove("drag_inpg");
+        containerNode.style.setProperty("width", "");
+        containerNode.style.setProperty("height", "");
         dojo.query('#' + selectedItem.parentElement.id + ' .dragzone').forEach(dojo.destroy);
+        this.saveLocalManualOrder(containerNode);
+    };
+    GameXBody.prototype.saveLocalManualOrder = function (containerNode) {
+        var svOrder = "";
+        //query should return in the same order as the DOM
+        dojo.query('#' + containerNode.id + ' .card').forEach(function (card) {
+            svOrder += card.id + ",";
+        });
+        svOrder = svOrder.substring(0, svOrder.length - 1);
+        var localOrderSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
+        localOrderSetting.writeProp("custo_order", svOrder);
+        console.log("custo_order", svOrder);
+    };
+    GameXBody.prototype.loadLocalManualOrder = function (containerNode) {
+        var localOrderSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
+        var svOrder = localOrderSetting.readProp("custo_order", "");
+        if (svOrder == "")
+            return;
+        var cards = svOrder.split(',');
+        cards.reverse().forEach(function (card_id) {
+            if ($(card_id).parentElement == containerNode) {
+                containerNode.insertAdjacentElement("afterbegin", $(card_id));
+            }
+        });
     };
     // notifications
     GameXBody.prototype.setupNotifications = function () {

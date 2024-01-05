@@ -2928,15 +2928,16 @@
   top: calc(var(--card-width) * 0.08);
 }
 
-.cards_3vp .card::after {
+.cards_3vp .card::after, .cards_3 .card::after {
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
   background-image: url(img/resources.png);
   background-size: 1000% 200%;
-  background-position: 0 -100%;
+  background-position: 0 100%;
   background-color: black;
+  border-radius: 5%;
 }
 
 @keyframes showme {
@@ -3223,6 +3224,10 @@
 }
 .card_main_173 .card_action_line.card_action_text {
   display: none;
+}
+
+.card_main_174 .card_tt {
+  font-size: calc(var(--card-width) * 0.04);
 }
 
 .card_main_184 .card_effect {
@@ -4535,7 +4540,7 @@
 
 .outer_generation {
   top: -55%;
-  right: 8%;
+  right: 12%; /*8%*/
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
@@ -4565,6 +4570,40 @@
   justify-content: center;
 }
 .outer_generation .generation_bottom #generation_text {
+  font-size: calc(var(--map-width) * 0.03);
+}
+
+.outer_scoretracker {
+  top: -55%;
+  right: 4%;
+  position: absolute;
+  width: calc(var(--map-width) * 0.1);
+  height: calc(var(--map-width) * 0.1);
+  color: white;
+  font-size: calc(var(--map-width) * 0.05);
+  display: flex;
+  cursor: help;
+}
+.outer_scoretracker .fa {
+  position: absolute;
+  top: 15%;
+  width: 75%;
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  border-radius: 50%;
+  left: 12.5%;
+}
+.outer_scoretracker .generation_bottom {
+  width: 100%;
+  height: 25%;
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+}
+.outer_scoretracker .generation_bottom #scoretracker_text {
   font-size: calc(var(--map-width) * 0.03);
 }
 
@@ -5306,8 +5345,18 @@
   background-position: -500% -100%;
 }
 
+.corp_effect .card.corp.card_corp_1 .card_title {
+  display: none !important;
+}
+
 .mcompact {
   /* effects face down */
+  /*
+     .active_slot .playerboard_group_underbutton {
+       display: flex;
+       animation: nudge 2000ms infinite ease-in-out;
+     }
+  */
 }
 .mcompact .cards_3vp .card_badges, .mcompact .cards_3 .card_badges {
   filter: grayscale(1);
@@ -5500,12 +5549,12 @@
   width: calc(var(--resourcesize) * 0.6);
   height: calc(var(--resourcesize) * 0.6);
 }
-.mcompact .active_slot .playerboard_group_underbutton {
-  display: flex;
-  animation: nudge 2000ms infinite ease-in-out;
-}
 .mcompact .thisplayer_zone .playerboard_group_img .token_img {
   z-index: 1;
+}
+.mcompact #ebd-body[data-localsetting_animationamount="3"] .active_slot .playerboard_group_underbutton {
+  display: flex;
+  animation: nudge 2000ms infinite ease-in-out;
 }
 
 @keyframes nudge {
@@ -7571,6 +7620,9 @@
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
 }
+.mfull #outer_scoretracker {
+  display: none;
+}
 .mfull #ebd-body #main_board {
   order: 2;
 }
@@ -8195,6 +8247,12 @@
 }
 .mcompact #ebd-body.mobile_portrait #main_awards .map_milesawardscontent, .mcompact #ebd-body.mobile_portrait #main_milestones .map_milesawardscontent {
   justify-content: center;
+}
+.mcompact #ebd-body.mobile_portrait #scoretable {
+  font-size: smaller;
+}
+.mcompact #ebd-body.mobile_portrait #scoretable .scorecell {
+  padding: 0.2em;
 }
 
 /* latin */
@@ -8905,6 +8963,7 @@
   font-weight: bold;
   display: inline;
   text-transform: uppercase;
+  cursor: help;
 }
 
 /** Card reference */
@@ -8938,7 +8997,7 @@
   border-radius: 1vh;
   padding: 0.3vh;
   z-index: 1;
-  width: calc(var(--card-width) * 0.6);
+  width: calc(var(--card-width) * 0.8);
   height: calc(var(--card-width) * 0.2);
   justify-content: space-evenly;
   align-items: center;
@@ -8981,6 +9040,10 @@
   content: "⬅";
 }
 
+#ebd-body.mobile_version.touch-device #hs_button_hand_area_manual {
+  display: none;
+}
+
 .hand_area[data-sort_type=cost][data-sort_direction=increase] .handy .card {
   order: var(--sort_cost);
 }
@@ -9014,14 +9077,68 @@
 }
 
 .dragzone {
+  position: relative;
   display: block;
   height: var(--card-height);
-  width: calc(var(--card-width) * 0.01);
+  width: calc(var(--card-width) * 0.0001);
   transition: all 100ms ease-out;
+  transition-delay: 150ms;
+}
+
+.dragzone_inside {
+  top: 0;
+  height: 100%;
+  position: absolute;
+  z-index: 5;
+  /*background-color: rgba(139, 69, 45, 0.37);*/
+  width: calc(var(--card-width) * 1);
+}
+
+.dragzone_inside.dragleft {
+  left: calc(var(--card-width) * -0.5);
+}
+
+.dragzone_inside.dragright {
+  right: calc(var(--card-width) * -0.1);
+  width: calc(var(--card-width) * 0.5);
 }
 
 .dragzone.over {
-  width: calc(var(--card-width) * 0.3);
+  width: calc(var(--card-width) * 0.8);
+  outline: 2px dashed green;
+}
+.dragzone.over .dragzone_inside {
+  left: 0;
+  right: 0;
+}
+.dragzone.over .dragleft {
+  left: calc(var(--card-width) * -0.35);
+  width: calc(var(--card-width) * 1.75);
+}
+.dragzone.over .dragright {
+  right: calc(var(--card-width) * -0.5);
+  width: calc(var(--card-width) * 1);
+}
+
+.dragzone.outsideright.over {
+  width: calc(var(--card-width) * 0.5);
+}
+
+.drag-active {
+  transition: 0.01s;
+  transform: translateX(-9999px);
+  width: 0.1px;
+}
+
+.drag_inpg .dijitTooltip {
+  display: none;
+}
+.drag_inpg .handy {
+  box-sizing: border-box;
+  /* flex-wrap: nowrap;*/
+}
+.drag_inpg #hand_area {
+  /* flex-wrap: nowrap;*/
 }
 
 /*

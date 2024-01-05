@@ -1328,15 +1328,16 @@ display: none;
   }
 }
 
-.cards_3vp .card::after{
+.cards_3vp .card::after, .cards_3 .card::after{
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
   background-image: url(img/resources.png);
   background-size: 1000% 200%;
-  background-position: 0 -100%;
+  background-position: 0 100%;
   background-color: black;
+  border-radius: 5%;
 }
 
 @keyframes showme {
