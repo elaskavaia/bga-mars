@@ -147,7 +147,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 137|Cartel|1|counter(tagEarth) pm|||8||Earth|0|Corporate|Increase your MC production 1 step for each Earth tag you have, including this.||||
 138|Strip Mine|1|2npe,2ps,pu,2o|||25||Building|0|Basic|Decrease your energy production 2 steps. Increase your steel production 2 steps and your titanium production 1 step. Raise oxygen 2 steps.||||
 139|Wave Power|1|pe|||8|w>=3|Energy|1|Basic|Increase your energy production 1 step.||||
-140|Lava Flows|3|2t,tile('Ascraeus Mons,Pavonis Mons,Arsia Mons,Tharsis Tholus')|||18||Event|0|Basic|Raise the temperature 2 steps and place this [the Lava Flow] tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS.||||
+140|Lava Flows|3|tile('Ascraeus Mons,Pavonis Mons,Arsia Mons,Tharsis Tholus'),2t|||18||Event|0|Basic|Raise the temperature 2 steps and place this [the Lava Flow] tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS.||||
 141|Power Plant|1|pe|||4||Building Energy|0|Basic|Increase your energy production 1 step.||||
 142|Mohole Area|1|4ph,tile(ocean)|||20||Building|0|Basic|Increase your heat production 4 steps. Place [the Mohole Area] tile ON AN AREA RESERVED FOR OCEAN.||||
 143|Large Convoy|3|w,2draw,(5p/4ores(Animal))|||36||Space Earth Event|2|Basic|Place an ocean tile and draw 2 cards. Gain 5 plants, or add 4 animals to ANOTHER card.||||
@@ -246,7 +246,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 10|Teractor|4|||onPay_tagEarth:3m|-60||Earth|0|Corporate|You start with 60 MC.||When playing an Earth card, you pay 3 MC less for it.||
 11|Tharsis Republic|4|||place_cityonmars:pm:this:any;place_city:3m|-40||Building|0|Basic|You start with 40 MC. As your first action in the game, place a city tile.||When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.||'a1'=>'city'
 12|ThorGate|4|pe|||-48||Energy|0|Basic|You start with 1 energy production and 48 MC.||When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.||
-#13|United Nations Mars Initiative|4|40m|||0||Earth|0|Basic|You start with 40 MC.|If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|||
+#13|United Nations Mars Initiative|4||||-40||Earth|0|Basic|You start with 40 MC.|If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|||
 #14|Aphrodite|4|pp,47m|||0||Plant Venus|0|Venus|You start with 47 MC and 1 plant production.||Whenever Venus is terraformed 1 step, you gain 2 MC.||
 #15|Celestic|4|42m|||0||Venus|Ref|Venus|You start with 42 MC. As your first action, reveal cards from the deck until you have revealed 2 cards with a floater icon on it. Take those 2 cards into hand, and discard the rest.||Add a floater to ANY card.|1 VP per 3 floaters on this card.|'holds' => 'Floaters'
 #16|Manutech|4|ps,35m|||0||Building|0|Venus|You start with 1 steel production and 35 MC.||For each step you increase the production of a resource, including this, you also gain that resource.||

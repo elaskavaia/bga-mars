@@ -1255,7 +1255,7 @@ $this->token_types = [
   'vp' => 'adj_city',
   'deck' => 'Corporate',
   'text' => clienttranslate("Decrease your energy production 1 step and increase your MC production 4 steps. Place [the commercial district] tile."),
-  'text_vp'=>clienttranslate("1 VP per adjacent city tile"),
+  'text_vp' => clienttranslate("1 VP per adjacent city tile."),
 ],
  'card_main_86' => [  //
   'location' => 'deck_main',
@@ -1989,7 +1989,7 @@ $this->token_types = [
   'num' => 140,
   'name' => clienttranslate("Lava Flows"),
   't' => 3,
-  'r' => "2t,tile('Ascraeus Mons,Pavonis Mons,Arsia Mons,Tharsis Tholus')",
+  'r' => "tile('Ascraeus Mons,Pavonis Mons,Arsia Mons,Tharsis Tholus'),2t",
   'cost' => 18,
   'tags' => 'Event',
   'vp' => 0,
