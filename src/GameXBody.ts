@@ -2065,16 +2065,22 @@ awarded.`);
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0) {
-         // const name = single && paramargs.length <= 1 ? _("Reject") : _("Done");
-
           let name = _("Done");
-          if (paramargs.length <= 1 )  {
-            switch (opInfo.type) {
-              case "buycard": name=_("Discard card"); break;
-              case "sell": name=_("Done"); break;
-              default: name = _("Reject");
-            }
+
+          switch (opInfo.type) {
+            case "buycard":
+              if (single) {
+                if (paramargs.length <= 1) {
+                  name = _("Discard Card");
+                } else {
+                  name = _("Discard Remaining");
+                }
+              }
+              break;
+            default:
+              break;
           }
+          
 
           this.addActionButton("button_skip", name, () => {
             this.sendActionSkip();

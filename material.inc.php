@@ -66,6 +66,8 @@ if (!defined("MA_GAME")) {
   define("MA_CARD_STATE_ACTION_UNUSED", 2);
   define("MA_CARD_STATE_ACTION_USED", 3);
   define("MA_CARD_STATE_ACTION_SINGLEUSE", 4);
+  define("MA_CARD_STATE_ACTION_UNUSED_PRE", 5);
+
 
   // prefs
   define("MA_PREF_CONFIRM_TURN", 101);
@@ -3114,6 +3116,23 @@ $this->token_types = [
   'deck' => 'Basic',
   'text' => clienttranslate("You start with 1 energy production and 48 MC."),
   'text_effect' => clienttranslate("When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it."),
+],
+ 'card_corp_13' => [  //
+  'location' => 'deck_corp',
+  'create' => 'single',
+  'type' => 'card corp',
+  'count' => 10,
+  'num' => 13,
+  'name' => clienttranslate("United Nations Mars Initiative"),
+  't' => 4,
+  'a' => '3m:tr',
+  'cost' => -40,
+  'tags' => 'Earth',
+  'vp' => 0,
+  'deck' => 'Basic',
+  'text' => clienttranslate("You start with 40 MC."),
+  'text_action' => clienttranslate("If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more."),
+  'apre'=>'unmi',
 ],
 /* --- gen php end cards_material --- */
 /* --- gen php begin proj_material --- */

@@ -1173,6 +1173,7 @@ abstract class PGameXBody extends PGameMachine {
             return;
         }
         $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [], $player_id);
+        $this->effect_untap($card_id);
         $this->eventListners = null; // clear cache since corp came into play
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $tagsarr = explode(' ', $tags);
@@ -1468,6 +1469,14 @@ abstract class PGameXBody extends PGameMachine {
         $this->dbIncScoreValueAndNotify($this->getPlayerIdByColor($owner), $inc, '', "game_vp_tr", [
             'target' => $this->getTrackerId($owner, $op)
         ]);
+        // special case corp United, hardcoded rule - when you increase tr this gen - you can play this action
+        $card_id = 'card_corp_13';
+        if ($this->playerHasCard($owner, $card_id)) {
+            $current_state = $this->tokens->getTokenState($card_id);
+            if ($current_state != MA_CARD_STATE_ACTION_USED) {
+                $this->dbSetTokenState($card_id, MA_CARD_STATE_ACTION_UNUSED);
+            }
+        }
     }
 
     function effect_draw($color, $deck, $to, $inc) {
@@ -1486,6 +1495,17 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->undoSavepoint();
         return $tokens;
+    }
+
+    function effect_untap($cardid) {
+        $rules = $this->getRulesFor($cardid, '*');
+        if (isset($rules['apre'])) {
+            $state = MA_CARD_STATE_ACTION_UNUSED_PRE; // activatable cards with precondition
+            $this->dbSetTokenState($cardid, $state, '');
+        } else if (isset($rules['a'])) {
+            $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cards
+            $this->dbSetTokenState($cardid, $state, '');
+        }
     }
 
     function effect_production() {

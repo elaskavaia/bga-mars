@@ -554,7 +554,7 @@
     background-image: url(img/full/cardsC.jpg);
   }
 
-  @for $num from 2 through 12 {
+  @for $num from 2 through 13 {
     $i: $num - 2;
     $col: $i % 6;
     $row: calc(($i - $col) / 6);

@@ -7826,6 +7826,10 @@
   background-position: 80% 50%;
   background-image: url(img/full/cardsC.jpg);
 }
+.mfull .card_corp_13 {
+  background-position: 100% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
 .mfull .card_corp_9 {
   background-position: 0% 50%;
 }

@@ -23,11 +23,7 @@ class Operation_research extends AbsOperation {
             // untap
             $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card", "tableau_${color}"));
             foreach ($keys as $cardid) {
-                $rules = $this->game->getRulesFor($cardid, '*');
-                if (isset($rules['a'])) {
-                    $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cards
-                    $this->game->dbSetTokenState($cardid, $state, '');
-                }
+                $this->game->effect_untap($cardid);
             }
         }
         $this->game->effect_queueMultiDraw(4);

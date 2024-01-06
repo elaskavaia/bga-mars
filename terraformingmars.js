@@ -4845,18 +4845,20 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0) {
-                    // const name = single && paramargs.length <= 1 ? _("Reject") : _("Done");
                     var name_4 = _("Done");
-                    if (paramargs.length <= 1) {
-                        switch (opInfo.type) {
-                            case "buycard":
-                                name_4 = _("Discard card");
-                                break;
-                            case "sell":
-                                name_4 = _("Done");
-                                break;
-                            default: name_4 = _("Reject");
-                        }
+                    switch (opInfo.type) {
+                        case "buycard":
+                            if (single) {
+                                if (paramargs.length <= 1) {
+                                    name_4 = _("Discard Card");
+                                }
+                                else {
+                                    name_4 = _("Discard Remaining");
+                                }
+                            }
+                            break;
+                        default:
+                            break;
                     }
                     this_2.addActionButton("button_skip", name_4, function () {
                         _this.sendActionSkip();

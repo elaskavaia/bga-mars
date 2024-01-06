@@ -20,7 +20,8 @@ class Operation_activate extends AbsOperation {
             $r = $this->game->getRulesFor($tokenId, 'a');
             if (!$r) return MA_ERR_NOTAPPLICABLE;
             $info = $map[$tokenId];
-            if ($info['state'] == 3) return MA_ERR_ALREADYUSED;
+            if ($info['state'] == MA_CARD_STATE_ACTION_USED) return MA_ERR_ALREADYUSED;
+            if ($info['state'] == MA_CARD_STATE_ACTION_UNUSED_PRE) return MA_ERR_NOTAPPLICABLE;
             if ($this->game->isVoidSingle($r, $color, 1, "$tokenId:a")) return MA_ERR_MANDATORYEFFECT;
             return 0;
         });
