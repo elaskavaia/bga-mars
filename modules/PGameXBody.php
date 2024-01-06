@@ -254,6 +254,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
+        if ($loc=='draw') $loc = "draw_$color";
         $this->dbSetTokenLocation($token, $loc);
     }
 
@@ -1184,6 +1185,13 @@ abstract class PGameXBody extends PGameMachine {
         $this->executeImmediately($color, $rules, 1, $card_id);
         $events = $this->getPlayCardEvents($card_id, 'play_');
         $this->notifyEffect($color, $events, $card_id);
+
+        // special case for Tharsis Republic it gains income for 2 placed cities in solo game
+        if ($this->isSolo()) {
+            if ($card_id == 'card_corp_11') {
+                $this->effect_incProduction($color, 'pm', 2);
+            }
+        }
     }
 
     function effect_placeTile($color, $object, $target) {
