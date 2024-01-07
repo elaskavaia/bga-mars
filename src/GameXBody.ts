@@ -1087,7 +1087,7 @@ awarded.`);
         const decor = this.createDivNode(null, "card_decor", tokenNode.id);
         // const texts = displayInfo.text.split(';');
         const card_initial = displayInfo.text || "";
-        const card_effect = displayInfo.text_effect || "";
+        const card_effect = displayInfo.text_effect || displayInfo.text_action || "";
         const card_title = displayInfo.name || "";
         //   if (texts.length>0) card_initial = texts[0];
         //  if (texts.length>1) card_effect= texts[1];

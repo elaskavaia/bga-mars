@@ -2637,6 +2637,18 @@
   left: 6%;
 }
 
+.card_corp_13 .card_effect {
+  top: 54%;
+  width: 47%;
+  height: 16%;
+  left: 46%;
+}
+.card_corp_13 .card_initial {
+  top: 26%;
+  width: 44.5%;
+  left: 44%;
+}
+
 /* compact corp */
 .corp_effect .infobox {
   bottom: revert;
@@ -2711,6 +2723,11 @@
 .corp_effect #card_corp_12 .card_bg {
   background-position: -393% -65%;
   width: 200%;
+  height: 269%;
+}
+.corp_effect #card_corp_13 .card_bg {
+  background-position: -376% -68%;
+  width: 204%;
   height: 269%;
 }
 
@@ -2933,11 +2950,10 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: url(img/resources.png);
-  background-size: 1000% 200%;
-  background-position: 0 100%;
+  background-image: url(img/cardback.jpg);
   background-color: black;
   border-radius: 5%;
+  background-size: contain;
 }
 
 @keyframes showme {
