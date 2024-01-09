@@ -845,7 +845,11 @@ abstract class PGameXBody extends PGameMachine {
 
     function getNextDraftPlayerColor($color) {
         $player_id = $this->getPlayerIdByColor($color);
-        $other_id = $this->getPlayerAfter($player_id);
+        $gen = $this->tokens->getTokenState("tracker_gen");
+        if ($gen % 2 == 0)
+            $other_id = $this->getPlayerAfter($player_id);
+        else
+            $other_id = $this->getPlayerBefore($player_id);
         return $this->getPlayerColorById($other_id);
     }
 

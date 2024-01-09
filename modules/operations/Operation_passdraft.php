@@ -20,7 +20,6 @@ class Operation_passdraft extends AbsOperation {
             }
             $rest = $this->game->tokens->getTokensInLocation("draft_$color");
             $save[$color] = $rest;
-            $othercolor = $this->game->getNextDraftPlayerColor($color);
             foreach ($rest as $card_id => $card) {
                 // since its private notif have to do it for both people
                 $this->game->effect_moveCard($color, $card_id, "discard_main", 0, '', ["_private" => true]);
