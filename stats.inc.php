@@ -131,8 +131,13 @@ $stats_type = array(
             "name" => totranslate("Corporation"),
             "type" => "int"
         ],
-        "game_theme" => [
+        "bad" => [
             "id" => 50,
+            "name" => totranslate("User Interface Theme (Obsolete)"),
+            "type" => "int"
+        ],
+        "game_theme" => [
+            "id" => 51,
             "name" => totranslate("User Interface Theme"),
             "type" => "int"
         ]
@@ -152,7 +157,7 @@ $stats_type = array(
             11=>totranslate('Tharsis Republic'),
             12=>totranslate('ThorGate')
         ),
-        50 => [
+        51 => [
                 0 => totranslate("None"),
                 1 => totranslate("Digital"),
                 2 => totranslate("Cardboard")
