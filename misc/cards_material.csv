@@ -246,7 +246,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 10|Teractor|4|||onPay_tagEarth:3m|-60||Earth|0|Corporate|You start with 60 MC.||When playing an Earth card, you pay 3 MC less for it.||
 11|Tharsis Republic|4|||place_cityonmars:pm:this:any;place_city:3m|-40||Building|0|Basic|You start with 40 MC. As your first action in the game, place a city tile.||When any city tile is placed ON MARS, increase your MC production 1 step. When you place a city tile, gain 3 MC.||'a1'=>'city'
 12|ThorGate|4|pe|||-48||Energy|0|Basic|You start with 1 energy production and 48 MC.||When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 MC less for it.||
-13|United Nations Mars Initiative|4||3m:tr||-40||Earth|0|Basic|You start with 40 MC.|If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|||'apre'=>'unmi'
+13|United Nations Mars Initiative|4||3nm:tr||-40||Earth|0|Basic|You start with 40 MC.|If your Terraform Rating was raised this generation, you may pay 3 MC to raise it 1 step more.|||'apre'=>'unmi'
 #14|Aphrodite|4|pp,47m|||0||Plant Venus|0|Venus|You start with 47 MC and 1 plant production.||Whenever Venus is terraformed 1 step, you gain 2 MC.||
 #15|Celestic|4|42m|||0||Venus|Ref|Venus|You start with 42 MC. As your first action, reveal cards from the deck until you have revealed 2 cards with a floater icon on it. Take those 2 cards into hand, and discard the rest.||Add a floater to ANY card.|1 VP per 3 floaters on this card.|'holds' => 'Floaters'
 #16|Manutech|4|ps,35m|||0||Building|0|Venus|You start with 1 steel production and 35 MC.||For each step you increase the production of a resource, including this, you also gain that resource.||

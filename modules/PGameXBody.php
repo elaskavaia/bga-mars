@@ -86,6 +86,10 @@ abstract class PGameXBody extends PGameMachine {
                 $tr_traker = $this->getTrackerId($color, 'tr');
                 $this->tokens->setTokenState($tr_traker, $tr_value);
                 $this->dbSetScore($player_id, $tr_value, '');
+
+                // theme stat
+                $theme = $this->dbUserPrefs->getPrefValue($player_id, 100);
+                $this->setStat($theme, 'game_theme', $player_id);
             }
 
             if ($this->getGameStateValue('var_begginers_corp') != 1) {
@@ -248,9 +252,12 @@ abstract class PGameXBody extends PGameMachine {
                 return "card not found $token";
             }
         } else if (is_string($num)) {
-            $token = $this->mtFind('name', $num);
-            if (!$token)
-                return "card not found $num";
+            $token = $num;
+            if (!array_get($this->token_types, $token)) {
+                $token = $this->mtFind('name', $num);
+                if (!$token)
+                    return "card not found $num";
+            }
         }
         $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
