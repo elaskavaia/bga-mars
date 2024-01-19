@@ -3936,13 +3936,13 @@ var GameXBody = /** @class */ (function (_super) {
             return "";
         var msg = "";
         if ($(card_id).dataset.cannot_pay == "1") {
-            msg = _("You don't have enough MC to pay for this card.");
+            msg = _("You don't have enough resources to pay for this card.");
         }
         if ($(card_id).dataset.cannot_resolve != undefined && $(card_id).dataset.cannot_resolve != "0") {
             if (msg != "")
                 msg = msg + "<br/>";
             if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-                msg = msg + _('The card cannot be played because a mandatory effect cannot be resolved.');
+                msg = msg + _('The card cannot be played because an immediate effect cannot be resolved fully.');
             }
         }
         if ($(card_id).dataset.potential_error != undefined && (parseInt($(card_id).dataset.potential_error) > 3)) {
@@ -3955,7 +3955,7 @@ var GameXBody = /** @class */ (function (_super) {
         return msg;
     };
     GameXBody.prototype.createHtmlForToken = function (tokenNode, displayInfo) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         // use this to generate some fake parts of card, remove this when use images
         if (displayInfo.mainType == "card") {
             var tagshtm = "";
@@ -3983,8 +3983,8 @@ var GameXBody = /** @class */ (function (_super) {
                 //tags
                 var firsttag = "";
                 if (displayInfo.tags && displayInfo.tags != "") {
-                    for (var _i = 0, _e = displayInfo.tags.split(" "); _i < _e.length; _i++) {
-                        var tag = _e[_i];
+                    for (var _i = 0, _d = displayInfo.tags.split(" "); _i < _d.length; _i++) {
+                        var tag = _d[_i];
                         tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         if (firsttag == "")
                             firsttag = tag;
@@ -4073,18 +4073,17 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 //special for "res"
                 card_a = card_a.replaceAll("%res%", displayInfo.holds);
-                var card_main_text = "";
-                var card_action_text = (_a = displayInfo.text_action) !== null && _a !== void 0 ? _a : displayInfo.text_effect;
-                if (card_main_text) {
-                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(card_main_text, "</div>");
+                var card_action_text = "";
+                if (displayInfo.text_action || displayInfo.text_effect) {
+                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
                 }
-                var holds = (_b = displayInfo.holds) !== null && _b !== void 0 ? _b : "Generic";
+                var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
                 var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +
                     holds +
                     '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' +
                     tokenNode.id.replace("card_main_", "") +
                     '" class="resource_counter"  data-resource_counter="0"></div></div>';
-                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_c = displayInfo.num) !== null && _c !== void 0 ? _c : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_d = displayInfo.holds) !== null && _d !== void 0 ? _d : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
+                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
                 tokenNode.style.setProperty('--sort_cost', displayInfo.cost);
                 tokenNode.style.setProperty('--sort_vp', sort_vp);
             }

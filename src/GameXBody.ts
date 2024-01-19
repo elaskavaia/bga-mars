@@ -1059,12 +1059,12 @@ awarded.`);
     if (!$(card_id)) return "";
     let msg="";
     if ($(card_id).dataset.cannot_pay=="1") {
-      msg=_("You don't have enough MC to pay for this card.");
+      msg=_("You don't have enough resources to pay for this card.");
     }
     if ($(card_id).dataset.cannot_resolve!=undefined && $(card_id).dataset.cannot_resolve!="0") {
       if (msg!="") msg=msg+"<br/>";
       if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-        msg=msg+ _('The card cannot be played because a mandatory effect cannot be resolved.');
+        msg=msg+ _('The card cannot be played because an immediate effect cannot be resolved fully.');
       }
     }
     if ($(card_id).dataset.potential_error!=undefined && (parseInt($(card_id).dataset.potential_error)>3)){
