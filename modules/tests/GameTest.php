@@ -367,4 +367,23 @@ final class GameTest extends TestCase {
             $this->assertTrue($op->checkIntegrity());
         }
     }
+
+    public function testIsVoid() {
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("3m", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertFalse($op->isVoid());
+        $this->assertTrue($op->hasNoSideEffects());
+    }
+
+
+    public function testIsVoidComplex() {
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("3m,2pm", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertFalse($op->isVoid());
+        $op = $m->getOperationInstanceFromType("3m,1e,3np", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->isVoid());
+    }
 }

@@ -8,4 +8,8 @@ class AbsOperationProd extends AbsOperation {
         $this->game->effect_incProduction($owner, $this->mnemonic, $inc);
         return $inc;
     }
+
+    function hasNoSideEffects(): bool {
+        return true;
+    }
 }

@@ -8,4 +8,9 @@ class Operation_nop extends AbsOperation {
         $this->game->notifyMessage('');
         return 1;
     }
+
+
+    function hasNoSideEffects(): bool {
+        return true;
+    }
 }

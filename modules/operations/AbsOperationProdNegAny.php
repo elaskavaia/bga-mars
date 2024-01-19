@@ -35,6 +35,10 @@ class AbsOperationProdNegAny extends AbsOperation {
         return parent::isVoid();
     }
 
+    function hasNoSideEffects(): bool {
+        return true;
+    }
+
     function effect(string $owner, int $inc): int {
         $type = $this->getType();
         if ($this->game->isSolo()) {

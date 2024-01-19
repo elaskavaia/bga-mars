@@ -840,6 +840,10 @@
 }
 
 .blocks_2 .card_tt {
+  font-size: calc(var(--card-width) * 0.04);
+}
+
+.blocks_3 .card_tt {
   display: none;
 }
 

@@ -16,4 +16,8 @@ class AbsOperationIncNeg extends AbsOperation {
         $value = $this->game->getTrackerValue($this->color, $this->getType());
         return $value - $this->getMinCount() < 0;
     }
+
+    function hasNoSideEffects(): bool {
+        return true;
+    }
 }

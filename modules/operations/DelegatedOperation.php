@@ -35,6 +35,11 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->isFullyAutomated();
     }
 
+
+    function hasNoSideEffects(): bool {
+        return $this->delegate->hasNoSideEffects();
+    }
+
     function canResolveAutomatically() {
         return $this->delegate->canResolveAutomatically();
     }

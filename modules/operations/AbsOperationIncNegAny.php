@@ -21,6 +21,10 @@ class AbsOperationIncNegAny extends AbsOperation {
         });
     }
 
+    function hasNoSideEffects(): bool {
+        return true;
+    }
+
     public function getPrimaryArgType() {
         return 'player';
     }

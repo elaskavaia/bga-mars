@@ -9,6 +9,10 @@ class AbsOperationProdNeg extends AbsOperation {
         return $inc;
     }
 
+    function hasNoSideEffects(): bool {
+        return true;
+    }
+
     protected function getType() {
         return substr($this->mnemonic, 1, 2);
     }

@@ -142,6 +142,7 @@ class ComplexOperation extends AbsOperation {
                 case ',':
                 case ';':
                 case '+':
+                    if ($subvoid == false && $sub->hasNoSideEffects()) continue 2;
                     return $subvoid; // we only can check first operation because the other may depend on it
                 case '!':
                     break;

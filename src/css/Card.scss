@@ -491,6 +491,10 @@ display: none;
 
 }
 .blocks_2 .card_tt {
+  // have to fit urbanized area text
+  font-size: calc(var(--card-width) * 0.04);
+}
+.blocks_3 .card_tt {
   display: none;
 }
 .rows.hasvp .card_tt {

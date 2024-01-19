@@ -196,6 +196,13 @@ abstract class AbsOperation {
         return false;
     }
 
+    /**
+     * Operation has no side affect is it only affect one counter, and cannot have cascading side effects
+     */
+    function hasNoSideEffects(): bool {
+        return false;
+    }
+
     function noValidTargets(): bool {
         $arg = $this->arg();
         return count($arg['info']) > 0 && count($arg['target']) == 0;
