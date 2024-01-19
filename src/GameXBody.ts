@@ -145,6 +145,11 @@ class GameXBody extends GameTokens {
         this.onShowScoringTable(0);
       });
 
+      //2p specific
+      if (Object.keys( gamedatas.players).length==2) {
+        $('ebd-body').classList.add('twoplayers');
+      }
+
       this.vlayout.setupDone();
       //this.setupOneTimePrompt();
 
@@ -610,9 +615,26 @@ class GameXBody extends GameTokens {
     }
   }
 
+  gameStatusCleanup() {
+    //general cleanup of temp stuff put in the header gamestatus bar
+    if ($('draft_info'))  $('draft_info').remove();
+    if ($('custom_paiement')) $('custom_paiement').remove();
+  }
+
+  //Expands for cleanup
+  ajaxuseraction(action: string, args?: any, handler?: (err: any) => void) {
+    this.gameStatusCleanup();
+    super.ajaxuseraction(action,args,handler);
+  }
+
+
   onNotif(notif: Notif) {
     super.onNotif(notif);
     this.darhflog("playing notif " + notif.type + " with args ", notif.args);
+
+    //header cleanup
+    this.gameStatusCleanup();
+
 
     //Displays message in header while the notif is playing
     //deactivated if animations aren't played
@@ -1000,7 +1022,7 @@ class GameXBody extends GameTokens {
 
 
     res += this.generateTooltipSection(type_name, card_id);
-    if (type != this.CON.MA_CARD_TYPE_CORP) res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true,"tt_cost");
+    if (type != this.CON.MA_CARD_TYPE_CORP && type !=this.CON.MA_CARD_TYPE_AWARD) res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true,"tt_cost");
     res += this.generateTooltipSection(_("Tags"), tags);
     let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
     if (prereqText != "")
@@ -1023,11 +1045,12 @@ end of the game.`);
       res += this.generateTooltipSection(_("Victory Points"), vp);
       res += this.generateTooltipSection(_("Info"), text);
     } else if (type == this.CON.MA_CARD_TYPE_AWARD) {
-      res += this.generateTooltipSection(_("Condition"), displayInfo.text);
-      const text = _(`The first player to fund an award pays 8 M€ and
+      res += this.generateTooltipSection(_("Cost"), `The first player to fund an award pays 8 M€ and
 places a player marker on it. The next player to fund an
-award pays 14 M€, the last pays 20 M€. Only three awards
-may be funded. Each award can only be funded once. <p>
+award pays 14 M€, the last pays 20 M€.`, true,"tt_cost");
+      res += this.generateTooltipSection(_("Condition"), displayInfo.text);
+      const text = _(` Only three awards
+may be funded. Each award can only be funded once.<p>
 In the final scoring, each award is checked, and 5
 VPs are awarded to the player who wins that category - it
 does not matter who funded the award! The second place
@@ -1434,6 +1457,18 @@ awarded.`);
     const type = opInfo.type ?? "none";
     const from = opInfo.mcount;
     const count = opInfo.count;
+
+
+
+    if (type=="draft") {
+      const next_color= opargs.args.next_color ?? "";
+      const next_name = next_color!="" ? this.getPlayerName(this.getPlayerIdByColor(next_color)) : "";
+      if (next_color!="" && !$('draft_info')) {
+        const txt= _('Drafting towards ⤇ %s').replace('%s',`<span class="draft_info" style="color:#${next_color};">${next_name}</span>`);
+        $('gameaction_status').insertAdjacentHTML("afterend",`<span id="draft_info">${txt}</span>`);
+      }
+
+    }
 
     if (type == "card") {
       /*
@@ -1892,7 +1927,7 @@ awarded.`);
         <div id="btn_custompay_send" class="action-button bgabutton bgabutton_blue">${button_whole}</div>
       </div>
     `;
-    const node = this.createDivNode("custom_paiement", "", "generalactions");
+    const node = this.createDivNode("custom_paiement", "", "gameaction_status_wrap"); //was general_actions
     node.innerHTML = paiement_htm;
 
     //adds actions to button payments
@@ -1983,6 +2018,7 @@ awarded.`);
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();
+
     const xop = args.op;
 
     const single = Object.keys(operations).length == 1;
@@ -2389,7 +2425,6 @@ awarded.`);
     svOrder= svOrder.substring(0,svOrder.length-1);
     const localOrderSetting:LocalSettings = new LocalSettings(this.getLocalSettingNamespace(this.table_id+"_"+containerNode.id));
     localOrderSetting.writeProp("custo_order", svOrder);
-    console.log("custo_order",svOrder);
   }
 
   loadLocalManualOrder(containerNode:HTMLElement) {
@@ -2399,7 +2434,7 @@ awarded.`);
 
     const cards:string[]= svOrder.split(',');
     cards.reverse().forEach((card_id)=>{
-      if ($(card_id).parentElement==containerNode) {
+      if ($(card_id) && $(card_id).parentElement==containerNode) {
         containerNode.insertAdjacentElement("afterbegin",$(card_id));
       }
     });

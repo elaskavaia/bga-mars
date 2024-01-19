@@ -795,6 +795,13 @@
        +'<div class="groupline">OR&nbsp;3&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',1),1)+this.parseSingleItemToHTML(this.getParse(':',0),1)+this.parseSingleItemToHTML(this.getParse('tr',0),1)+'</div>'
    }
 
+   private static customcard_rules_163() {
+     return '<div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="groupline">'+this.parseSingleItemToHTML(this.getParse('tr',0),1)+'&nbsp;&nbsp;'+this.parseSingleItemToHTML(this.getParse('p',0),4)+'</div>'
+       +'<div class="groupline">3&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'&nbsp;&nbsp;'+'2&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1)+'</div></div></div>';
+
+   }
+
+
    private static customcard_vp_172() {
      return '<div class="vp_qty">1/2</div>'+this.parseSingleItemToHTML(this.getParse('res_Animal',0),1);
    }

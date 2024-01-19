@@ -29,6 +29,16 @@ class Operation_draft extends AbsOperation {
         });
     }
 
+    protected function getVisargs() {
+        $color = $this->color;
+        $next_color= $this->game->getNextDraftPlayerColor($color);
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'next_color' => $next_color,
+        ];
+    }
+
     function canResolveAutomatically() {
         $arg = $this->arg();
         if (count($arg['target']) == 1) return true;

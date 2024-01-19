@@ -1179,6 +1179,7 @@ $this->token_types = [
   'tags' => 'Science Energy',
   'vp' => 0,
   'deck' => 'Corporate',
+  'text' => clienttranslate("Increase your energy production 4 steps"),
   'text_effect' => clienttranslate("When you play a space card, you pay 2 MC less for it"),
 ],
  'card_main_80' => [  //
