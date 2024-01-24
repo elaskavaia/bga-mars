@@ -1439,6 +1439,7 @@ abstract class PGameXBody extends PGameMachine {
         $current = $this->tokens->getTokenState($token_id);
         if ($current + $inc > $max) {
             $inc = $max - $current;
+            $steps = $inc / $perstep;
             if ($inc <= 0) {
                 $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max, can no longer increase'), $token_id);
                 return false;

@@ -386,4 +386,17 @@ final class GameTest extends TestCase {
         $this->assertNotNull($op);
         $this->assertTrue($op->isVoid());
     }
+
+
+
+    public function testLavaFlows() {
+        $m = $this->game();
+        $m->tokens->setTokenState('tracker_t', +6);
+        $card_id = $m->mtFindByName('Lava Flows');
+        $m->putInEffectPool(PCOLOR, '2t', $card_id);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $this->assertEquals(8,$m->tokens->getTokenState("tracker_t"));
+        $this->assertEquals(21,$m->tokens->getTokenState("tracker_tr_ff0000"));
+    }
 }
