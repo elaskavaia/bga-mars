@@ -17,21 +17,39 @@
   //debugger;
   let table = [
     {
-      title: "Event tags",
+      title: "Event tags => notabug",
       text: "Not a bug. Event tags do not count after event has been played",
       resolution: "notabug",
       acton: "change_bug_status"
     },
     {
-      title: "Missing screenshot",
-      text: "Insufficient information. Please provide table number, move number and screenshot",
+      title: "Missing info => infoneeded",
+      text: "Insufficient information. In addition to table number we need the move number and/or log details, also screenshot would be nice",
       resolution: "infoneeded",
       acton: "change_bug_status"
     },
     {
-      title: "Missing move",
-      text: "Insufficient information. In addition to table number we need move number and/or log details, also screenshot would be nice",
-      resolution: "infoneeded",
+      title: "Planning to fix => confirmed",
+      text: "Confirmed. Will be fixed in next release",
+      resolution: "confirmed",
+      acton: "change_bug_status"
+    },
+    {
+      title: "See above => notabug",
+      text: "Not a bug. See previous comment for the explanation",
+      resolution: "confirmed",
+      acton: "change_bug_status"
+    },
+    {
+      title: "Suggestion, see above => notabug",
+      text: "Not a bug. See previous comment for the explanation. You can send a suggestion to improve the user interface",
+      resolution: "confirmed",
+      acton: "change_bug_status"
+    },
+    {
+      title: "Probably fixed => worksforme",
+      text: "This is probably fixed, there are no reports in a while",
+      resolution: "worksforme",
       acton: "change_bug_status"
     }
   ];

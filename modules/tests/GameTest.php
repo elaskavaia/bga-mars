@@ -399,4 +399,20 @@ final class GameTest extends TestCase {
         $this->assertEquals(8,$m->tokens->getTokenState("tracker_t"));
         $this->assertEquals(21,$m->tokens->getTokenState("tracker_tr_ff0000"));
     }
+
+    public function testExtraOcean() {
+        $m = $this->game();
+        $m->tokens->setTokenState('tracker_t', -2);
+        $m->tokens->setTokenState('tracker_w', 9); // max oceans
+        $card_id = $m->mtFindByName('Lava Flows');
+        $m->putInEffectPool(PCOLOR, '2t', $card_id);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $this->assertEquals(2,$m->tokens->getTokenState("tracker_t"));
+        $this->assertEquals(22,$m->tokens->getTokenState("tracker_tr_ff0000"));
+        $this->assertEquals(9,$m->tokens->getTokenState("tracker_w"));
+        $top1 = $m->machine->getTopOperations();
+  
+        $this->assertEquals(2, count($top1));
+    }
 }

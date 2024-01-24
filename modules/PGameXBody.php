@@ -82,10 +82,11 @@ abstract class PGameXBody extends PGameMachine {
                     }
                 }
 
-                // set proper TR and matching score
+                // set proper TR and matching score and matching stat
                 $tr_traker = $this->getTrackerId($color, 'tr');
                 $this->tokens->setTokenState($tr_traker, $tr_value);
                 $this->dbSetScore($player_id, $tr_value, '');
+                $this->setStat($tr_value, 'game_vp_tr', $player_id);
 
                 // theme stat
                 $theme = $this->dbUserPrefs->getPrefValue($player_id, 100);
@@ -1643,7 +1644,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->dbSetScore($player_id, 0); // reset to 0
                 $this->dbIncScoreValueAndNotify($player_id, 0, ''); // just to notify reset
                 $curr = $this->tokens->getTokenState("tracker_tr_${color}");
-                $this->dbIncScoreValueAndNotify($player_id, $curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rank'), "", [
+                $this->dbIncScoreValueAndNotify($player_id, $curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rating'), "", [
                     'target' => "tracker_tr_${color}"
                 ]);
             }

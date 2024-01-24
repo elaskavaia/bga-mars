@@ -102,7 +102,7 @@ $stats_type = array(
         ],
         "game_vp_tr" => [
             "id" => 14,
-            "name" => totranslate("VP from Terraforming Rank"),
+            "name" => totranslate("VP from Terraforming Rating"),
             "type" => "int"
         ],
         "game_vp_ms" => [
