@@ -37,19 +37,19 @@
     {
       title: "See above => notabug",
       text: "Not a bug. See previous comment for the explanation",
-      resolution: "confirmed",
-      acton: "change_bug_status"
-    },
-    {
-      title: "Suggestion, see above => notabug",
-      text: "Not a bug. See previous comment for the explanation. You can send a suggestion to improve the user interface",
-      resolution: "confirmed",
+      resolution: "notabug",
       acton: "change_bug_status"
     },
     {
       title: "Probably fixed => worksforme",
       text: "This is probably fixed, there are no reports in a while",
       resolution: "worksforme",
+      acton: "change_bug_status"
+    },
+    {
+      title: "Fixed",
+      text: "Fixed",
+      resolution: "fixed",
       acton: "change_bug_status"
     }
   ];
@@ -68,7 +68,7 @@
     const text = table[i].text;
 
     a.addEventListener("click", (event) => {
-      report_log.innerHTML = text;
+      report_log.innerHTML += " " + text;
     });
   }
 })();

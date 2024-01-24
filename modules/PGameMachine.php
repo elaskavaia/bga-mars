@@ -134,7 +134,15 @@ abstract class PGameMachine extends PGameTokens {
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
-            $info = $this->machine->info($operation_id);
+            $info = null; //$this->machine->info($operation_id);
+            foreach ($tops  as $topop) {
+                if ($topop['id'] == $operation_id) {
+                    $info = $topop;
+                    break;
+                }
+            }
+
+            $this->systemAssertTrue("Illegal operation. Try again?", $info);
             //$this->debugLog("- resolve op " . $info['type'], $args);
 
 
