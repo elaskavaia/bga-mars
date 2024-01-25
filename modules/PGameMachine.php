@@ -134,13 +134,13 @@ abstract class PGameMachine extends PGameTokens {
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
-            $info = null; //$this->machine->info($operation_id);
-            foreach ($tops  as $topop) {
-                if ($topop['id'] == $operation_id) {
-                    $info = $topop;
-                    break;
-                }
-            }
+            $info = $this->machine->info($operation_id);
+            // foreach ($tops  as $topop) {
+            //     if ($topop['id'] == $operation_id) {
+            //         $info = $topop;
+            //         break;
+            //     }
+            // }
 
             $this->systemAssertTrue("Illegal operation. Try again?", $info);
             //$this->debugLog("- resolve op " . $info['type'], $args);
@@ -175,7 +175,7 @@ abstract class PGameMachine extends PGameTokens {
     }
 
 
-    function saction_stack(int $count, array $info, array $tops) {
+    function saction_stack(int $count, array $info,  ?array $tops = null) {
         $this->machine->resolve($info, $count, $tops);
         return;
     }
@@ -221,6 +221,14 @@ abstract class PGameMachine extends PGameTokens {
 
     protected function isInMultiplayerMasterState() {
         return $this->gamestate->isMutiactiveState();
+    }
+
+    function getTopOperationsState($owner) {
+        if ($this->isInMultiplayerMasterState()) {
+            return  $this->getTopOperationsMulti($owner);
+        } else {
+            return  $this->getTopOperations();
+        }
     }
 
     function getTopOperations($owner = null) {
