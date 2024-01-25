@@ -1661,6 +1661,7 @@ awarded.`);
     const ttype = opargs.ttype ?? "none";
     const from = opInfo.mcount;
     const count = opInfo.count;
+    const paramInfo = opargs.info;
 
     if (single) {
       this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
@@ -1719,36 +1720,22 @@ awarded.`);
         }
       });
     } else if (ttype == "player") {
-      paramargs.forEach((tid: string) => {
-        // XXX need to be pretty
-
-        const playerId = this.getPlayerIdByColor(tid);
-        // here divId can be like player name on miniboard
-        const divId = `player_name_${playerId}`;
-        if (single) {
-          const buttonId = "button_" + tid;
-          const name = this.gamedatas.players[playerId]?.name;
-          this.addActionButton(
-            buttonId,
-            name ?? tid,
-            () => {
-              this.onSelectTarget(opId, tid);
-            },
-            undefined,
-            false,
-            "gray"
-          );
-          if (name) $(buttonId).style.color = "#" + tid;
+      if (paramInfo) {
+        for (let tid in paramInfo) {
+          this.activatePlayerSlot(tid, opId, single, paramInfo[tid]);
         }
+      } else
+        paramargs.forEach((tid: string) => {
+          this.activatePlayerSlot(tid, opId, single, paramInfo?.[tid]);
+        });
 
-        this.setReverseIdMap(divId, opId, tid);
-      });
     } else if (ttype == "enum") {
       const args = this.gamedatas.gamestate.args ?? this.gamedatas.gamestate.private_state.args;
       const operations = args.operations ?? args.player_operations[this.player_id].operations;
 
       paramargs.forEach((tid: string, i: number) => {
         if (single) {
+          debugger;
           const detailsInfo = operations[opId].args?.info?.[tid];
           const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
           //console.log("enum details "+tid,detailsInfo);
@@ -1803,6 +1790,57 @@ awarded.`);
       })
 
     }*/
+  }
+
+  /**
+   * Activate player for the operation
+   * @param color - player color or word 'none'
+   * @param opId - operation id to map
+   * @param single - if signle is true add button also
+   * @param info - extra data about the player (i.e. why its not applicable)
+   */
+  activatePlayerSlot(color: string, opId: number, single: boolean, info?: any) {
+    // color is player color or none
+    const playerId = this.getPlayerIdByColor(color);
+    // here divId can be like player name on miniboard
+    const divId = `player_name_${playerId}`;
+
+    const valid = info ? info.q == 0 : true; // if info passed its only valid when q is 0
+    if (valid) this.setReverseIdMap(divId, opId, color);
+
+    if (!single) return;
+    const buttonId = "button_" + color;
+    const name = this.gamedatas.players[playerId]?.name;
+    this.addActionButton(
+      buttonId,
+      name ?? _(color),
+      () => {
+        this.onSelectTarget(opId, color);
+      },
+      undefined,
+      false,
+      "gray"
+    );
+
+    if (!valid) {
+      $(buttonId).classList.add("disabled");
+    }
+    if (name) {
+      // count of resources 
+      if (info?.max !== undefined) {
+        $(buttonId).innerHTML = this.format_string_recursive("${player_name} (max. ${res_count})", {
+          res_count: info.max,
+          player_name: name
+        }); 
+      }
+      // player is protected from attack
+      if (info?.q == this.gamedatas.CON.MA_ERR_RESERVED) {
+        $(buttonId).innerHTML = this.format_string_recursive("${player_name} (protected)", {
+          player_name: name
+        });
+      }
+      $(buttonId).classList.add("otherplayer", "plcolor_" + color);
+    }
   }
 
   /** When server wants to activate some element, ui may adjust it */

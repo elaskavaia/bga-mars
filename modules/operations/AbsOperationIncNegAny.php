@@ -4,6 +4,20 @@ declare(strict_types=1);
 
 class AbsOperationIncNegAny extends AbsOperation {
 
+    protected function getPrompt() {
+        return  clienttranslate('${you} must select a player who will lose ${res_name} (up to ${count}) or none');
+    }
+    protected function getVisargs() {
+        $type = $this->getType();
+        $ttoken = $this->game->getTrackerId('', $type);
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'res_name' => $this->game->getTokenName($ttoken),
+            'res_type' => $type,
+        ];
+    }
+
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
         $keys[] = 'none';
@@ -15,9 +29,12 @@ class AbsOperationIncNegAny extends AbsOperation {
                 $protected[$lisinfo['owner']] = 1;
             }
         }
-        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($protected) {
+        return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($protected, $type) {
+            if ($other_player_color=='none') return 0;
             if ($other_player_color != $color && array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
-            return 0;
+            $value = $this->game->getTrackerValue($other_player_color, $type);
+            if ($value==0) return [ 'q' => MA_ERR_NOTAPPLICABLE, 'max' => $value ];
+            return [ 'q' => MA_OK, 'max' => $value ];
         });
     }
 

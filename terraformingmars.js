@@ -4514,6 +4514,7 @@ var GameXBody = /** @class */ (function (_super) {
         var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
         var from = opInfo.mcount;
         var count = opInfo.count;
+        var paramInfo = opargs.info;
         if (single) {
             this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
             if (paramargs.length == 0) {
@@ -4572,23 +4573,15 @@ var GameXBody = /** @class */ (function (_super) {
             });
         }
         else if (ttype == "player") {
-            paramargs.forEach(function (tid) {
-                // XXX need to be pretty
-                var _a;
-                var playerId = _this.getPlayerIdByColor(tid);
-                // here divId can be like player name on miniboard
-                var divId = "player_name_".concat(playerId);
-                if (single) {
-                    var buttonId = "button_" + tid;
-                    var name_2 = (_a = _this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
-                    _this.addActionButton(buttonId, name_2 !== null && name_2 !== void 0 ? name_2 : tid, function () {
-                        _this.onSelectTarget(opId, tid);
-                    }, undefined, false, "gray");
-                    if (name_2)
-                        $(buttonId).style.color = "#" + tid;
+            if (paramInfo) {
+                for (var tid in paramInfo) {
+                    this.activatePlayerSlot(tid, opId, single, paramInfo[tid]);
                 }
-                _this.setReverseIdMap(divId, opId, tid);
-            });
+            }
+            else
+                paramargs.forEach(function (tid) {
+                    _this.activatePlayerSlot(tid, opId, single, paramInfo === null || paramInfo === void 0 ? void 0 : paramInfo[tid]);
+                });
         }
         else if (ttype == "enum") {
             var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
@@ -4596,6 +4589,7 @@ var GameXBody = /** @class */ (function (_super) {
             paramargs.forEach(function (tid, i) {
                 var _a, _b, _c;
                 if (single) {
+                    debugger;
                     var detailsInfo = (_b = (_a = operations_1[opId].args) === null || _a === void 0 ? void 0 : _a.info) === null || _b === void 0 ? void 0 : _b[tid];
                     var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
                     //console.log("enum details "+tid,detailsInfo);
@@ -4644,6 +4638,50 @@ var GameXBody = /** @class */ (function (_super) {
           })
     
         }*/
+    };
+    /**
+     * Activate player for the operation
+     * @param color - player color or word 'none'
+     * @param opId - operation id to map
+     * @param single - if signle is true add button also
+     * @param info - extra data about the player (i.e. why its not applicable)
+     */
+    GameXBody.prototype.activatePlayerSlot = function (color, opId, single, info) {
+        var _this = this;
+        var _a;
+        // color is player color or none
+        var playerId = this.getPlayerIdByColor(color);
+        // here divId can be like player name on miniboard
+        var divId = "player_name_".concat(playerId);
+        var valid = info ? info.q == 0 : true; // if info passed its only valid when q is 0
+        if (valid)
+            this.setReverseIdMap(divId, opId, color);
+        if (!single)
+            return;
+        var buttonId = "button_" + color;
+        var name = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
+        this.addActionButton(buttonId, name !== null && name !== void 0 ? name : _(color), function () {
+            _this.onSelectTarget(opId, color);
+        }, undefined, false, "gray");
+        if (!valid) {
+            $(buttonId).classList.add("disabled");
+        }
+        if (name) {
+            // count of resources 
+            if ((info === null || info === void 0 ? void 0 : info.max) !== undefined) {
+                $(buttonId).innerHTML = this.format_string_recursive("${player_name} (max. ${res_count})", {
+                    res_count: info.max,
+                    player_name: name
+                });
+            }
+            // player is protected from attack
+            if ((info === null || info === void 0 ? void 0 : info.q) == this.gamedatas.CON.MA_ERR_RESERVED) {
+                $(buttonId).innerHTML = this.format_string_recursive("${player_name} (protected)", {
+                    player_name: name
+                });
+            }
+            $(buttonId).classList.add("otherplayer", "plcolor_" + color);
+        }
     };
     /** When server wants to activate some element, ui may adjust it */
     GameXBody.prototype.getActiveSlotRedirect = function (_node) {
@@ -4796,13 +4834,13 @@ var GameXBody = /** @class */ (function (_super) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opargs = opInfo.args;
-            var name_3 = "";
+            var name_2 = "";
             var contains_gfx = false;
             //if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
             //  name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
             //  contains_gfx=true;
             // } else {
-            name_3 = this_2.getButtonNameForOperation(opInfo);
+            name_2 = this_2.getButtonNameForOperation(opInfo);
             //  }
             var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
@@ -4816,7 +4854,7 @@ var GameXBody = /** @class */ (function (_super) {
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
                 if (paramargs.length > 0) {
-                    this_2.addActionButton(buttonId, name_3, function () {
+                    this_2.addActionButton(buttonId, name_2, function () {
                         _this.setClientStateUpdOn("client_collect", function (args) {
                             // on update action buttons
                             _this.clearReverseIdMap();
@@ -4828,7 +4866,7 @@ var GameXBody = /** @class */ (function (_super) {
                     });
                 }
                 else {
-                    this_2.addActionButton(buttonId, name_3, function () {
+                    this_2.addActionButton(buttonId, name_2, function () {
                         if (opInfo.type == "pass" && !single) {
                             // add confirmation
                             _this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), function () {
@@ -4856,22 +4894,22 @@ var GameXBody = /** @class */ (function (_super) {
             // add done (skip) when optional
             if (singleOrFirst) {
                 if (opInfo.mcount <= 0) {
-                    var name_4 = _("Done");
+                    var name_3 = _("Done");
                     switch (opInfo.type) {
                         case "buycard":
                             if (single) {
                                 if (paramargs.length <= 1) {
-                                    name_4 = _("Discard Card");
+                                    name_3 = _("Discard Card");
                                 }
                                 else {
-                                    name_4 = _("Discard Remaining");
+                                    name_3 = _("Discard Remaining");
                                 }
                             }
                             break;
                         default:
                             break;
                     }
-                    this_2.addActionButton("button_skip", name_4, function () {
+                    this_2.addActionButton("button_skip", name_3, function () {
                         _this.sendActionSkip();
                     });
                     $("button_skip").classList.remove("bgabutton_blue");
