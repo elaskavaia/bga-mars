@@ -2113,9 +2113,14 @@ awarded.`);
 
   addUndoButton() {
     if (!$("button_undo")) {
-      this.addActionButton("button_undo", _("Undo"), () => this.ajaxcallwrapper_unchecked("undo"), undefined, undefined, "red");
+      this.addActionButton("button_undo", _("Undo"), () => {
+        this.gameStatusCleanup();
+        this.ajaxcallwrapper_unchecked("undo");
+      }, undefined, undefined
+      , "red");
     }
   }
+
 
   onUpdateActionButtons_multiplayerChoice(args) {
     let operations = args.player_operations[this.player_id] ?? undefined;
