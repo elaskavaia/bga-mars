@@ -130,17 +130,17 @@ abstract class PGameMachine extends PGameTokens {
         $currentPlayer = $this->getCurrentPlayerId();
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
-        $tops = $this->machine->getTopOperations($curowner);
+        $tops = $this->getTopOperationsState($curowner);
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
-            $info = $this->machine->info($operation_id);
-            // foreach ($tops  as $topop) {
-            //     if ($topop['id'] == $operation_id) {
-            //         $info = $topop;
-            //         break;
-            //     }
-            // }
+            $info = null; //$this->machine->info($operation_id);
+            foreach ($tops  as $topop) {
+                if ($topop['id'] == $operation_id) {
+                    $info = $topop;
+                    break;
+                }
+            }
 
             $this->systemAssertTrue("Illegal operation. Try again?", $info);
             //$this->debugLog("- resolve op " . $info['type'], $args);
@@ -152,7 +152,6 @@ abstract class PGameMachine extends PGameTokens {
                 $info["owner"] = $color;
             }
             // now we will call method for specific user action
-
             //$this->debug_dumpMachine();
             $count = $this->saction_resolve($info, $args);
             // stack operations

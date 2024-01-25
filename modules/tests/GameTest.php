@@ -118,13 +118,12 @@ final class GameTest extends TestCase {
         $m->effect_playCard(PCOLOR, $m->mtFindByName('Adaptation Technology'));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $this->assertEquals(2,$m->tokens->getTokenState("tracker_pdelta_${color}"));
+        $this->assertEquals(2, $m->tokens->getTokenState("tracker_pdelta_${color}"));
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
         $m->tokens->setTokenState('tracker_o', 8);
         $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
         $m->tokens->setTokenState('tracker_t', -8);
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
-        
     }
 
 
@@ -326,6 +325,7 @@ final class GameTest extends TestCase {
         $this->assertEquals("gameDispatch", $m->gamestate->state()['name']);
     }
 
+
     public function testCopyBu() {
         $m = $this->game();
         /** @var Operation_copybu */
@@ -360,7 +360,7 @@ final class GameTest extends TestCase {
             if (!startsWith($key, 'card_')) continue;
             $r = array_get($info, 'r', '');
             if (!$r) continue;
-            echo("testing $key <$r>\n");
+            echo ("testing $key <$r>\n");
             /** @var AbsOperation */
             $op = $m->getOperationInstanceFromType($r, PCOLOR);
             $this->assertNotNull($op);
@@ -396,8 +396,8 @@ final class GameTest extends TestCase {
         $m->putInEffectPool(PCOLOR, '2t', $card_id);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $this->assertEquals(8,$m->tokens->getTokenState("tracker_t"));
-        $this->assertEquals(21,$m->tokens->getTokenState("tracker_tr_ff0000"));
+        $this->assertEquals(8, $m->tokens->getTokenState("tracker_t"));
+        $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_ff0000"));
     }
 
     public function testExtraOcean() {
@@ -408,11 +408,44 @@ final class GameTest extends TestCase {
         $m->putInEffectPool(PCOLOR, '2t', $card_id);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $this->assertEquals(2,$m->tokens->getTokenState("tracker_t"));
-        $this->assertEquals(22,$m->tokens->getTokenState("tracker_tr_ff0000"));
-        $this->assertEquals(9,$m->tokens->getTokenState("tracker_w"));
+        $this->assertEquals(2, $m->tokens->getTokenState("tracker_t"));
+        $this->assertEquals(22, $m->tokens->getTokenState("tracker_tr_ff0000"));
+        $this->assertEquals(9, $m->tokens->getTokenState("tracker_w"));
         $top1 = $m->machine->getTopOperations();
-  
+
         $this->assertEquals(2, count($top1));
+    }
+
+    public function testRoverConstruction() {
+        $m = $this->game();
+        // setup one player has Rover Construction in play
+        $rover = $m->mtFindByName('Rover Construction');
+        $m->effect_playCard(BCOLOR, $rover);
+        // another player plays city on tile with resources, simulate this
+        $m->putInEffectPool(PCOLOR, "p");
+        $m->notifyEffect(PCOLOR, 'place_city', 'tile_2_10');
+        // dispatch
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        // player state with 2 ops - one for each player
+        $top = $m->machine->getTopOperations();
+        $this->assertEquals(2, count($top));
+        $op = array_shift($top);
+        $this->assertEquals("p", $op['type']);
+        $op = array_shift($top);
+        $this->assertEquals("2m", $op['type']);
+        // make sure active player can pick op of another player to resolve first
+        $m->action_resolve(['ops' => [['op' => $op['id']]]]);
+        $top = $m->machine->getTopOperations();
+        $this->assertEquals(1, count($top));
+        $op = array_shift($top);
+        $this->assertEquals("p", $op['type']);
+        // dispatch
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $top = $m->machine->getTopOperations();
+        $this->assertEquals(1, count($top));
+        $op = array_shift($top);
+        $this->assertEquals("pass", $op['type']);
     }
 }
