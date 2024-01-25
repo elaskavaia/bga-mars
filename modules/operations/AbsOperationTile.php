@@ -136,7 +136,7 @@ abstract class AbsOperationTile extends AbsOperation {
         $tt = $this->game->getRulesFor($tile,'tt');
 
         if ($tt == MA_TILE_CITY) { 
-            // the effect triggered here because its not only "city" action that can place cities
+            // the effect triggered here because its not only "city" operation that can place cities
             $this->game->incTrackerValue($owner, 'city');
             $this->game->notifyEffect($owner, 'place_city', $tile);
         
