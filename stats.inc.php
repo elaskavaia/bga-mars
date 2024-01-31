@@ -155,7 +155,8 @@ $stats_type = array(
             9=>totranslate('PhoboLog'),
             10=>totranslate('Teractor'),
             11=>totranslate('Tharsis Republic'),
-            12=>totranslate('ThorGate')
+            12=>totranslate('ThorGate'),
+            13=>totranslate('United Nations Mars Initiative')
         ),
         51 => [
                 0 => totranslate("None"),
