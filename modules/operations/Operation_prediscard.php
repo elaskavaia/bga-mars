@@ -19,6 +19,11 @@ class Operation_prediscard extends AbsOperation {
             $type = getPart($card_id, 1);
             $this->game->effect_moveCard($color, $card_id, "discard_$type", 0, '');
         }
+        $rest = $this->game->tokens->getTokensInLocation("draft_$color"); // should not happen
+        foreach ($rest as $card_id => $card) {
+            $type = getPart($card_id, 1);
+            $this->game->effect_moveCard($color, $card_id, "discard_$type", 0, '');
+        }
         return 1;
     }
 }

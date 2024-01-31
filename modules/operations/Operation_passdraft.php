@@ -15,6 +15,7 @@ class Operation_passdraft extends AbsOperation {
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             $selected = $this->game->tokens->getTokensInLocation("draw_$color", MA_CARD_STATE_SELECTED);
+            // confirm draw
             foreach ($selected as $card_id => $card) {
                 $this->game->effect_moveCard($color, $card_id, "draw_$color", 0, '', ["_private" => true]);
             }
@@ -26,8 +27,10 @@ class Operation_passdraft extends AbsOperation {
             }
         }
         foreach ($players as $player_id => $player) {
+
+            if ($this->game->isZombiePlayer($player_id)) continue;
             $color = $player["player_color"];
-            $rest =    $save[$color];
+            $rest =  $save[$color];
             $othercolor = $this->game->getNextDraftPlayerColor($color);
             foreach ($rest as $card_id => $card) {
                 // have to move in two steps since otherwise draft will have mixed cards

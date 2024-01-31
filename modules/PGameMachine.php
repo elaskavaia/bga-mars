@@ -335,7 +335,7 @@ abstract class PGameMachine extends PGameTokens {
             }
 
             if ($machine->isSharedCounter($op) && $this->isVoid($op)) {
-                $type = $op["type"];
+                //$type = $op["type"];
                 //$this->debugLog("-removed $type as void");
                 $machine->hide($op);
                 return CONTINUE_DISPATCH;
@@ -390,6 +390,10 @@ abstract class PGameMachine extends PGameTokens {
         $this->systemAssertTrue("Missing", count($operations) > 0);
         $op = reset($operations);
         $owner = $op["owner"];
+        if ($this->isZombiePlayer($owner)) {
+            $this->machine->hide($operations);
+            return CONTINUE_DISPATCH;
+        }
 
         if ($this->isInMultiplayerMasterState()) {
             $this->switchActivePlayerIfNeeded($owner);
@@ -416,14 +420,16 @@ abstract class PGameMachine extends PGameTokens {
         if (!$player_color) return;
         $player_id = $this->getPlayerIdByColor($player_color);
         if (!$player_id) return;
+        if ($this->isZombiePlayer($player_id)) return;
 
         if ($this->isInMultiplayerMasterState()) {
             if (!$this->gamestate->isPlayerActive($player_id))
                 $this->gamestate->setPlayersMultiactive([$player_id], "notpossible", false);
             return;
         }
+        $active_player = $this->getActivePlayerId();
 
-        if ($this->getActivePlayerId() != $player_id) {
+        if ($active_player != $player_id || $this->isZombiePlayer($active_player)) {
             $this->setNextActivePlayerCustom($player_id);
             $this->undoSavepoint();
         }

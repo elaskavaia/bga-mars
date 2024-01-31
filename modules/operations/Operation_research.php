@@ -25,6 +25,10 @@ class Operation_research extends AbsOperation {
             foreach ($keys as $cardid) {
                 $this->game->effect_untap($cardid);
             }
+            if ($this->game->isZombiePlayer($player_id)) {
+                // zombie auto-pass
+                $this->game->dbSetTokenState("tracker_passed_${color}", 1, '');
+            }
         }
         $this->game->effect_queueMultiDraw(4);
         $c = $this->getOwner();

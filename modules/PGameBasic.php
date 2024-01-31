@@ -187,7 +187,7 @@ abstract class PGameBasic extends Table {
             }
         } catch (Throwable $e) {
             $this->error($e);
-            $this->debugConsole("ERROR: exception is thrown for $message",['e'=>$e]);
+            $this->debugConsole("ERROR: exception is thrown for $message", ['e' => $e]);
             return parent::say(":" . $message);
         }
         return parent::say($message);
@@ -217,7 +217,7 @@ abstract class PGameBasic extends Table {
         if (count($res) == 3) {
             $method = $res[1];
             $args = explode(",", $res[2]);
-            if ($res[2]==="") {
+            if ($res[2] === "") {
                 $args = [];
             }
             foreach ($args as &$value) {
@@ -225,7 +225,7 @@ abstract class PGameBasic extends Table {
                     $value = null;
                 } elseif ($value === "[]") {
                     $value = [];
-                } 
+                }
             }
             if (method_exists($object, $method)) {
                 self::notifyAllPlayers("simplenotif", "DEBUG: calling $message", []);
@@ -326,7 +326,7 @@ abstract class PGameBasic extends Table {
         }
         $private = false;
         if (array_key_exists("_private", $args)) {
-            $private=$args["_private"];
+            $private = $args["_private"];
             unset($args["_private"]);
         }
         if ($private) {
@@ -374,7 +374,7 @@ abstract class PGameBasic extends Table {
         foreach ($players as $player_id => $player_info) {
             if ($player_info["player_no"] == $no) return $player_info["player_color"];
         }
-        if ($no==(count($players)+1) || $no == 0) {
+        if ($no == (count($players) + 1) || $no == 0) {
             // neutural player for solo game, white
             return 'ffffff';
         }
@@ -411,6 +411,47 @@ abstract class PGameBasic extends Table {
         }
         return false;
     }
+
+    function isPlayerAlive($player_id) {
+        return $this->isRealPlayer($player_id) && !$this->isPlayerEliminated($player_id) && !$this->isZombiePlayer($player_id);
+    }
+
+    function countAlivePlayers() {
+        $players = $this->loadPlayersBasicInfos();
+        $count = 0;
+        foreach ($players as $player_id => $info) {
+            if ($info['player_zombie'] == 1) {
+                continue;
+            }
+            if ($info['player_eliminated'] == 1) {
+                continue;
+            }
+            $count++;
+        }
+
+        return $count;
+    }
+
+    function debug_makeZombie($player_id, $z = 1) {
+        // if ($this->getActivePlayerId()==$player_id) throw new feException("Cannot call this function on active player");
+        $this->o_tableinfos->setZombie($player_id, $z);
+        $this->reloadPlayersBasicInfos();
+        //$this->onPlayerHasBeenZombified( $player_id );
+        $this->sendNotifications();
+        if (!$z) return;
+        $active_player_list = $this->gamestate->getActivePlayerList();
+        //$players = self::loadPlayersBasicInfos();
+        $state = $this->gamestate->state(true, false, true);
+        if ($state['type'] == 'activeplayer' || $state['type'] == 'multipleactiveplayer') {
+            // Check active player is not a zombie
+            foreach ($active_player_list as $active_player) {
+                if ($active_player == $player_id) {
+                    $this->zombieTurn($state, $player_id);
+                }
+            }
+        }
+    }
+
 
     /**
      *
@@ -603,18 +644,24 @@ abstract class PGameBasic extends Table {
      */
     function dbSetPlayerMultiactive($player_id = -1, $value = 1) {
         if (!$value) {
-            $value = 0;
+            if ($this->bIndependantMultiactiveTable)
+                $sql = "UPDATE playermultiactive SET ma_is_multiactive='0' WHERE 1";
+            else
+                $sql = "UPDATE player SET player_is_multiactive = '0' WHERE 1";
         } else {
-            $value = 1;
+            if ($this->bIndependantMultiactiveTable)
+                $sql = "UPDATE playermultiactive SET ma_is_multiactive='1' WHERE ma_is_multiactive!='1'";
+            else
+                $sql = "UPDATE player SET player_is_multiactive = '1' WHERE player_zombie = 0 AND player_eliminated = 0";
         }
-        $sql = "UPDATE player SET player_is_multiactive = '$value' WHERE player_zombie = 0 and player_eliminated = 0";
+
         if ($player_id > 0) {
             $sql .= " AND player_id = $player_id";
         }
         self::DbQuery($sql);
     }
 
-     /*
+    /*
      * @Override
      * - have to override to track second copy of var flag as original one is private
      */
@@ -634,11 +681,11 @@ abstract class PGameBasic extends Table {
      * - fixed resetting the save flag when its done
      */
     function doUndoSavePoint() {
-        if ( !$this->undoSaveOnMoveEndDup)
+        if (!$this->undoSaveOnMoveEndDup)
             return;
         //$this->debug("*** doUndoSavePoint ***");
         $state = $this->gamestate->state();
-        if ($state ['type'] == 'multipleactiveplayer') {
+        if ($state['type'] == 'multipleactiveplayer') {
             // $name = $state ['name'];
             //$this->warn("using undo savepoint in multiactive state $name");
             return;
@@ -647,7 +694,7 @@ abstract class PGameBasic extends Table {
         $this->undoSaveOnMoveEndDup = false;
     }
 
-      /*
+    /*
      * @Override
      * fixed bug where it does not save state if there is no notifications
      */
@@ -659,9 +706,9 @@ abstract class PGameBasic extends Table {
 
     function getPhpConstants($prefix = null) {
         $res = [];
-        $cc = get_defined_constants(true) ['user'];
-        foreach ( $cc as $key => $value ) {
-            if (!$prefix  || startsWith($key, $prefix)) $res [$key] = $value; 
+        $cc = get_defined_constants(true)['user'];
+        foreach ($cc as $key => $value) {
+            if (!$prefix  || startsWith($key, $prefix)) $res[$key] = $value;
         }
         return $res;
     }

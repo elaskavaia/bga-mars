@@ -262,7 +262,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
-        if ($loc=='draw') $loc = "draw_$color";
+        if ($loc == 'draw') $loc = "draw_$color";
         $this->dbSetTokenLocation($token, $loc);
     }
 
@@ -853,12 +853,41 @@ abstract class PGameXBody extends PGameMachine {
 
     function getNextDraftPlayerColor($color) {
         $player_id = $this->getPlayerIdByColor($color);
+        $this->systemAssertTrue("invalid player id", $this->isRealPlayer($player_id));
+
+
         $gen = $this->tokens->getTokenState("tracker_gen");
-        if ($gen % 2 == 0)
-            $other_id = $this->getPlayerAfter($player_id);
-        else
-            $other_id = $this->getPlayerBefore($player_id);
-        return $this->getPlayerColorById($other_id);
+        $num = $this->getPlayersNumber();
+
+        while ($num-- >= 0) {
+            if ($gen % 2 == 0)
+                $other_id = $this->getPlayerAfter($player_id);
+            else
+                $other_id = $this->getPlayerBefore($player_id);
+
+            if ($this->isPlayerAlive($other_id))
+                return $this->getPlayerColorById($other_id);
+            $player_id = $other_id;
+        }
+        // run out of attempts
+        return $color;
+    }
+
+    function getNextReadyPlayer($player_id, $previous = false) {
+        if (!$player_id) $player_id = $this->getCurrentStartingPlayer(); // fallback if we lost player id due to zombie
+        $this->systemAssertTrue("invalid player id", $this->isRealPlayer($player_id));
+
+        $num = $this->getPlayersNumber();
+        while ($num-- >= 0) {
+            if ($previous)
+                $player_id = $this->getPlayerBefore($player_id);
+            else
+                $player_id = $this->getPlayerAfter($player_id);
+            if ($this->isPlayerAlive($player_id) && !$this->isPassed($this->getPlayerColorById($player_id)))
+                return $player_id;
+        }
+        // run out of attempts
+        return 0;
     }
 
 
@@ -1077,6 +1106,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$player_color) return;
         $player_id = $this->getPlayerIdByColor($player_color);
         if (!$player_id) return;
+        if ($this->isZombiePlayer($player_id)) return;
 
         if ($this->isInMultiplayerMasterState()) {
             if (!$this->gamestate->isPlayerActive($player_id))
@@ -1084,10 +1114,12 @@ abstract class PGameXBody extends PGameMachine {
             return;
         }
 
+        $active_player = $this->getActivePlayerId();
+
         // in this game we never switch active player during the single active state turns
         // except for lastforest
-        if ($this->getGameStateValue('gamestage') == MA_STAGE_LASTFOREST) {
-            if ($this->getActivePlayerId() != $player_id) {
+        if ($this->getGameStateValue('gamestage') == MA_STAGE_LASTFOREST || $this->isZombiePlayer($active_player)) {
+            if ($active_player != $player_id) {
                 $this->setNextActivePlayerCustom($player_id);
                 $this->undoSavepoint();
             }
@@ -1985,16 +2017,8 @@ abstract class PGameXBody extends PGameMachine {
         }
         // check end of game
         $player_id = $this->getActivePlayerId(); // xxx turn owner?
-        $n = $this->getPlayersNumber();
-        $passed = 0;
-        while ($passed < $n) {
-            $player_id = $this->getPlayerAfter($player_id);
-            if (!$this->isPassed($this->getPlayerColorById($player_id))) {
-                break;
-            }
-            $passed++;
-        }
-        if ($passed == $n) {
+        $player_id = $this->getNextReadyPlayer($player_id);
+        if (!$player_id) {
             // end of turn
             return $this->effect_endOfTurn();
         }
@@ -2033,5 +2057,17 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         return $table;
+    }
+
+    function zombieTurn($state, $active_player) {
+        $owner = $this->getPlayerColorById($active_player);
+        $tops = $this->machine->getOperations($owner);
+        
+        if ($tops && count($tops) > 0) {
+            $this->notifyWithName('message', clienttranslate('${player_name} is zombie, action is skipped'), [], $active_player);
+            $this->machine->hide($tops);
+        }
+
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 }

@@ -24,6 +24,7 @@ class Operation_turn extends AbsOperation {
         if ($actnumber == 1) {
             // first action of the game, some corp has some rules
             $corp = $this->game->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$owner");
+            if (!$corp) return; // XXX
             $corp_id = $corp['key'];
             $a1 = $this->game->getRulesFor($corp_id, 'a1', '');
             if ($a1) {
