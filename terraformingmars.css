@@ -8181,6 +8181,7 @@
   top: 58%;
   left: 69%;
 }
+.mfull .res,
 .mfull .res_n1 {
   width: 20px;
   height: 20px;
@@ -8191,6 +8192,22 @@
   background-position: 84.3% 99%;
   border-radius: 25%;
   background-size: 2250%;
+}
+.mfull .res_n5 {
+  width: 25px;
+  height: 25px;
+  background-position: 90.3% 99%;
+}
+.mfull .res_n10 {
+  width: 30px;
+  height: 30px;
+  background-position: 98% 99%;
+}
+.mfull .tooltipimage.production {
+  outline: 4px solid #b7915e;
+  background-color: #b7915e;
+  margin-left: 3px;
+  margin-right: 3px;
 }
 .mfull .card[data-state="3"]::before {
   content: "";

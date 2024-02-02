@@ -11,32 +11,31 @@ class VLayout {
 
     dojo.destroy(`tableau_${color}_cards_3vp`);
     dojo.destroy(`tableau_${color}_cards_1vp`);
-    dojo.place(`pboard_${color}`,`tableau_${color}_cards_4`);
+    dojo.place(`pboard_${color}`, `tableau_${color}_cards_4`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
-    dojo.place(`player_controls_${color}`, `player_board_header_${color}`, 'first');
+    dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
 
-    $(`local_counter_${color}_cards_0`).innerHTML = '';
+    $(`local_counter_${color}_cards_0`).innerHTML = "";
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
 
-    const headerNode = this.game.createDivNode(`playerboard_side_${color}`,"playerboard_side");
+    const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
     //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-    dojo.place(headerNode,  `player_area_${color}`, "first");
+    dojo.place(headerNode, `player_area_${color}`, "first");
     const settingNode = $(`player_board_header_${color}`);
-    dojo.place(settingNode, `player_area_${color}`,"first");    
-    settingNode.style.display = 'none';
-    const gear = this.game.createDivNode(`playerboard_side_gear_${color}`,"playerboard_side_gear", headerNode);
-    gear.addEventListener('click',()=>{
-      if (  settingNode.style.display == 'none') {
-        settingNode.style.display = 'flex';
+    dojo.place(settingNode, `player_area_${color}`, "first");
+    settingNode.style.display = "none";
+    const gear = this.game.createDivNode(`playerboard_side_gear_${color}`, "playerboard_side_gear", headerNode);
+    gear.addEventListener("click", () => {
+      if (settingNode.style.display == "none") {
+        settingNode.style.display = "flex";
       } else {
-        settingNode.style.display = 'none';
+        settingNode.style.display = "none";
       }
     });
 
-    const namediv = this.game.createDivNode(`playerboard_side_name_${color}`,"playerboard_side_name", headerNode);
+    const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", headerNode);
     namediv.setAttribute("data-player-name", name);
-
 
     // relocate tile trackers from tags
     const places = ["tracker_city", "tracker_forest", "tracker_land"];
@@ -62,12 +61,10 @@ class VLayout {
     const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
     for (let i = 0; i <= 4; i++) {
       const settingKey = "visibility_" + i;
-      const value = perColorSettings.readProp(settingKey,"1");
+      const value = perColorSettings.readProp(settingKey, "1");
       $("tableau_" + color).dataset[settingKey] = value;
       $("player_viewcards_" + i + "_" + color).dataset.selected = value;
     }
-
-
 
     // var parent = document.querySelector(".debug_section"); // studio only
     // if (!parent)
@@ -127,36 +124,74 @@ class VLayout {
     if (tokenNode.id.startsWith("tracker_")) {
       const type = getPart(tokenNode.id, 1);
       if (ptrackers.includes(type)) {
-        const color = getPart(tokenNode.id, 2);
-        const marker = "marker_" + tokenNode.id;
-        let markerNode = $(marker);
-
-        if (!markerNode) {
-          markerNode = this.game.createDivNode(marker, `marker marker_${type} marker_${color}`, `pboard_${color}`);
-          this.convertInto3DCube(markerNode, color);
-        }
-
+        // production tracker
+        const markerNode = this.getMarkerCube(tokenNode.id);
         const state = parseInt(tokenNode.getAttribute("data-state"));
-        const rem = state % 10;
-        let x = rem;
-        let y = 0;
-        if (rem > 5) {
-          x = rem - 5;
-          y = 1;
-        } else if (state < 0) {
-          x = state + 6;
-          y = -1;
+        let coords = this.productionCoords(state);
+        markerNode.style.marginLeft = `${coords.x * 3.7}%`;
+        markerNode.style.marginTop = `${coords.y * 4}%`;
+        // update tooltip
+        this.updateCountTooltip(tokenNode.id, markerNode.id);
+        for (let i = 10; i < 100; i += 10) {
+          if (state < i) {
+            let markerNode10 = this.getMarkerCube(tokenNode.id, i, false);
+            if (markerNode10) dojo.destroy(markerNode10);
+          }
         }
-        let xp = x * 3.7;
-        let yp = y * 4;
-        markerNode.style.marginLeft = `${xp}%`;
-        markerNode.style.marginTop = `${yp}%`;
+
+        for (let i = 10; i < state; i += 10) {
+          let markerNode10 = this.getMarkerCube(tokenNode.id, i);
+          let coords = { x: 5 + i / 10 / 2.0 - 0.5, y: 1 };
+          markerNode10.style.marginLeft = `${coords.x * 3.7}%`;
+          markerNode10.style.marginTop = `${coords.y * 4}%`;
+          this.updateCountTooltip(tokenNode.id, markerNode10.id);
+        }
       } else if (rtrackers.includes(type)) {
         const color = getPart(tokenNode.id, 2);
         const state = parseInt(tokenNode.getAttribute("data-state"));
-        new ScatteredResourceZone(this.game, `resarea_${type}_${color}`).setValue(state);
+        const areaId = `resarea_${type}_${color}`;
+        new ScatteredResourceZone(this.game, areaId).setValue(state);
+        // update tooltip
+        this.updateCountTooltip(tokenNode.id, areaId);
       }
     }
+  }
+
+  getMarkerCube(tokenNodeId: string, num: number = 0, create: boolean = true) {
+    // production tracker
+    const color = getPart(tokenNodeId, 2);
+    const marker = "marker_" + tokenNodeId + "_" + num;
+    const type = getPart(tokenNodeId, 1);
+    let markerNode = $(marker);
+
+    if (!markerNode && create) {
+      markerNode = this.game.createDivNode(marker, `marker marker_${type} marker_${color}`, `pboard_${color}`);
+      this.convertInto3DCube(markerNode, color);
+    }
+    return markerNode;
+  }
+
+  productionCoords(state: number) {
+    const rem = state % 10;
+    let x = rem;
+    let y = 0;
+    if (rem > 5) {
+      x = rem - 5;
+      y = 1;
+    } else if (state < 0) {
+      x = state + 6;
+      y = -1;
+    }
+    return { x, y };
+  }
+
+  updateCountTooltip(tokenNodeId: string, attachTo: string) {
+    var tokenDisplayInfo = this.game.getTokenDisplayInfo(tokenNodeId);
+    const state = $(tokenNodeId).getAttribute("data-state");
+    tokenDisplayInfo.tooltip = this.game.generateItemTooltip(tokenDisplayInfo);
+    tokenDisplayInfo.tooltip += this.game.generateTooltipSection(_("Count"), state + "");
+    const tt = this.game.getTooptipHtmlForTokenInfo(tokenDisplayInfo);
+    this.game.addTooltipHtml(attachTo, tt);
   }
 
   convertInto3DCube(tokenNode: HTMLElement, color?: string) {

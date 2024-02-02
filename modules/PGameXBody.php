@@ -276,6 +276,12 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $this->effect_incCount($color, 'm', $x);
     }
+
+    function debug_inc($res = 'm',$count = 1) {
+        $color = $this->getCurrentPlayerColor();
+        $this->effect_incCount($color, $res, $count);
+    }
+
     function debug_res($m = 0, $s = 0, $u = 0, $p = 0, $e = 0, $h = 0, $color = 0) {
         if (!$color) $color = $this->getCurrentPlayerColor();
         $res = ['m' => $m, 's' => $s, 'u' => $u, 'p' => $p, 'e' => $e, 'h' => $h];

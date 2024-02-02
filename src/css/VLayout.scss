@@ -10,10 +10,9 @@
 
   .mfull .card_main_#{$num},
   .cardhelp.card_main_#{$num} {
-    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
-    );
-  background-image: url(img/full/cards1.jpg);
-}
+    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row );
+    background-image: url(img/full/cards1.jpg);
+  }
 }
 
 @for $num from 81 through 160 {
@@ -23,10 +22,9 @@
 
   .mfull .card_main_#{$num},
   .cardhelp.card_main_#{$num} {
-    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row
-    );
-  background-image: url(img/full/cards2.jpg);
-}
+    background-position: calc(100% / 9 * $col) calc(100% / 7 * $row );
+    background-image: url(img/full/cards2.jpg);
+  }
 }
 
 @for $num from 161 through 208 {
@@ -753,7 +751,7 @@
       width: unset;
       padding: 2px;
     }
-  
+
   }
 
 
@@ -821,6 +819,7 @@
   .viewcards_button[data-cardtype="0"] .buttoncard {
     background-color: #8b452d;
   }
+
   .viewcards_button[data-cardtype="4"] .buttoncard {
     background-color: white; // corporation selector
   }
@@ -869,6 +868,7 @@
     left: 69%;
   }
 
+  .res,
   .res_n1 {
     width: 20px;
     height: 20px;
@@ -880,6 +880,27 @@
     border-radius: 25%;
     background-size: 2250%;
   }
+
+  .res_n5 {
+    width: 25px;
+    height: 25px;
+    background-position: 90.3% 99%;
+  }
+
+  .res_n10 {
+    width: 30px;
+    height: 30px;
+    background-position: 98% 99%;
+  }
+
+
+ .tooltipimage.production  {
+    outline: 4px solid #b7915e;
+    background-color: #b7915e;
+    margin-left: 3px;
+    margin-right: 3px;
+  }
+
 
   // temp indicator that card is used
   .card[data-state="3"]::before {

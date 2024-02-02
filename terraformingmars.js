@@ -3803,9 +3803,11 @@ var GameXBody = /** @class */ (function (_super) {
         var tokenId = displayInfo.tokenId;
         switch (key) {
             case "tracker_tr":
-                return this.generateTooltipSection(_("Terraform Rating"), _("Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."));
+                return this.generateTooltipSection(_(displayInfo.name), _("Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."));
             case "tracker_m":
-                return this.generateTooltipSection(_("MegaCredit"), _("The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."));
+                return this.generateTooltipSection(_(displayInfo.name), _("The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."));
+            case "tracker_pm":
+                return this.generateTooltipSection(_(displayInfo.name), _("Resource icons inside brown boxes refer to production of that resource. Your M€ income is the sum of your M€ production and your TR (Terraform Rating). M€ production is the only production that can be negative, but it may never be lowered below -5"));
             case "tracker_s":
                 return this.generateTooltipSection(_(displayInfo.name), _("Steel represents building material on Mars. Usually this means some kind of magnesium alloy. Steel is used to pay for building cards, being worth 2 M€ per steel."));
             case "tracker_u":
@@ -4926,7 +4928,10 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
         if (!$("button_undo")) {
-            this.addActionButton("button_undo", _("Undo"), function () { return _this.ajaxcallwrapper_unchecked("undo"); }, undefined, undefined, "red");
+            this.addActionButton("button_undo", _("Undo"), function () {
+                _this.gameStatusCleanup();
+                _this.ajaxcallwrapper_unchecked("undo");
+            }, undefined, undefined, "red");
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
@@ -5476,9 +5481,16 @@ var LocalSettings = /** @class */ (function () {
 var ScatteredResourceZone = /** @class */ (function () {
     function ScatteredResourceZone(game, zoneId, resclass) {
         if (resclass === void 0) { resclass = "res"; }
+        this.nominations = [10, 5, 1];
+        this.nominationSize = {
+            10: 30,
+            5: 25,
+            1: 10
+        };
         this.game = game;
         this.resclass = resclass;
         this.zoneId = zoneId;
+        this.supplyId = "main_board";
     }
     ScatteredResourceZone.prototype.setValue = function (value, redraw) {
         if (redraw === void 0) { redraw = true; }
@@ -5487,67 +5499,107 @@ var ScatteredResourceZone = /** @class */ (function () {
             this.redraw();
     };
     ScatteredResourceZone.prototype.redraw = function () {
-        if (!$(this.zoneId))
+        var divZone = $(this.zoneId);
+        if (!divZone)
             return;
-        var nom = 1;
-        var divs = $(this.zoneId).querySelectorAll(".".concat(this.resclass, "_n").concat(nom));
-        var curvalue = divs.length;
-        while (curvalue < this.value) {
-            this.addResource(nom);
-            curvalue++;
+        var prevValue = divZone.getAttribute("data-state") || 0;
+        var newValue = this.value;
+        var diff = newValue - prevValue;
+        divZone.setAttribute("data-state", String(this.value));
+        add: while (diff > 0) {
+            for (var _i = 0, _a = this.nominations; _i < _a.length; _i++) {
+                var nom = _a[_i];
+                if (diff >= nom) {
+                    this.addResource(nom);
+                    diff -= nom;
+                    continue add;
+                }
+            }
         }
-        while (curvalue > this.value) {
-            this.removeResource(nom);
-            curvalue--;
+        rem: while (diff < 0) {
+            for (var _b = 0, _c = this.nominations; _b < _c.length; _b++) {
+                var nom = _c[_b];
+                if (-diff >= nom) {
+                    if (this.removeResource(nom)) {
+                        diff += nom;
+                        continue rem;
+                    }
+                }
+            }
+            // need to split
+            for (var _d = 0, _e = this.nominations; _d < _e.length; _d++) {
+                var nom = _e[_d];
+                if (-diff < nom) {
+                    if (this.split(nom)) {
+                        continue rem;
+                    }
+                }
+            }
         }
     };
-    ScatteredResourceZone.prototype.addResource = function (nom) {
-        if (nom === void 0) { nom = 1; }
+    ScatteredResourceZone.prototype.split = function (nomination) {
+        if (nomination == 1)
+            return false;
+        if (this.removeResource(nomination)) {
+            this.addResourceN(nomination, 1);
+            return true;
+        }
+        return false;
+    };
+    ScatteredResourceZone.prototype.addResourceN = function (count, nomination) {
+        if (nomination === void 0) { nomination = 1; }
+        while (count--) {
+            this.addResource(nomination);
+        }
+    };
+    ScatteredResourceZone.prototype.addResource = function (nomination) {
+        if (nomination === void 0) { nomination = 1; }
         //debugger;
-        var supply = 'main_board';
-        var avail = $(supply).querySelector(".".concat(this.resclass, "_n").concat(nom));
+        var supply = this.supplyId;
+        var avail = $(supply).querySelector(".".concat(this.resclass, "_n").concat(nomination));
         if (avail) {
             var id = avail.id;
         }
         else {
-            var all = document.querySelectorAll(".".concat(this.resclass, "_n").concat(nom));
+            var all = document.querySelectorAll(".".concat(this.resclass, "_n").concat(nomination));
             var num = all.length + 1;
-            var id = "".concat(this.resclass, "_n").concat(nom, "_").concat(num);
+            var id = "".concat(this.resclass, "_n").concat(nomination, "_").concat(num);
         }
         var parent = $(this.zoneId);
-        var size = 20; // XXX
+        var size = this.nominationSize[nomination] || 20;
         var w = parent.offsetWidth;
         if (!w)
             w = 100; // XXX why its not working?
         var h = parent.offsetHeight;
         if (!h)
             h = 100;
-        var x = Math.floor((Math.random() * (w - size))) + size / 2;
-        var y = Math.floor((Math.random() * (h - size))) + size / 2;
+        var x = Math.floor(Math.random() * (w - size)) + size / 2;
+        var y = Math.floor(Math.random() * (h - size)) + size / 2;
         var pi = {
             location: this.zoneId,
             key: id,
-            state: nom,
+            state: nomination,
             x: x,
             y: y,
-            position: 'absolute',
-            from: 'main_board'
+            position: "absolute",
+            from: this.supplyId
         };
         //console.log("adding res "+id+" on "+this.zoneId);
-        this.game.placeTokenLocal(id, this.zoneId, nom, { placeInfo: pi });
+        this.game.placeTokenLocal(id, this.zoneId, nomination, { placeInfo: pi });
         $(id).classList.add(this.resclass);
-        $(id).classList.add("".concat(this.resclass, "_n").concat(nom));
+        $(id).classList.add("".concat(this.resclass, "_n").concat(nomination));
     };
-    ScatteredResourceZone.prototype.removeResource = function (nom) {
-        if (nom === void 0) { nom = 1; }
+    ScatteredResourceZone.prototype.removeResource = function (nomination) {
+        if (nomination === void 0) { nomination = 1; }
         var parent = $(this.zoneId);
-        var cube = parent.querySelector(".".concat(this.resclass, "_n").concat(nom));
+        var cube = parent.querySelector(".".concat(this.resclass, "_n").concat(nomination));
         if (!cube)
-            return;
+            return false;
         var id = cube.id;
         //console.log("removing res "+id+" on "+this.zoneId);
         this.game.stripPosition(id);
-        this.game.placeTokenLocal(id, 'main_board');
+        this.game.placeTokenLocal(id, this.supplyId);
+        return true;
     };
     return ScatteredResourceZone;
 }());
@@ -5567,8 +5619,8 @@ var VLayout = /** @class */ (function () {
         dojo.destroy("tableau_".concat(color, "_cards_1vp"));
         dojo.place("pboard_".concat(color), "tableau_".concat(color, "_cards_4"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
-        dojo.place("player_controls_".concat(color), "player_board_header_".concat(color), 'first');
-        $("local_counter_".concat(color, "_cards_0")).innerHTML = '';
+        dojo.place("player_controls_".concat(color), "player_board_header_".concat(color), "first");
+        $("local_counter_".concat(color, "_cards_0")).innerHTML = "";
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
         //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
         var headerNode = this.game.createDivNode("playerboard_side_".concat(color), "playerboard_side");
@@ -5576,14 +5628,14 @@ var VLayout = /** @class */ (function () {
         dojo.place(headerNode, "player_area_".concat(color), "first");
         var settingNode = $("player_board_header_".concat(color));
         dojo.place(settingNode, "player_area_".concat(color), "first");
-        settingNode.style.display = 'none';
+        settingNode.style.display = "none";
         var gear = this.game.createDivNode("playerboard_side_gear_".concat(color), "playerboard_side_gear", headerNode);
-        gear.addEventListener('click', function () {
-            if (settingNode.style.display == 'none') {
-                settingNode.style.display = 'flex';
+        gear.addEventListener("click", function () {
+            if (settingNode.style.display == "none") {
+                settingNode.style.display = "flex";
             }
             else {
-                settingNode.style.display = 'none';
+                settingNode.style.display = "none";
             }
         });
         var namediv = this.game.createDivNode("playerboard_side_name_".concat(color), "playerboard_side_name", headerNode);
@@ -5669,36 +5721,74 @@ var VLayout = /** @class */ (function () {
         if (tokenNode.id.startsWith("tracker_")) {
             var type = getPart(tokenNode.id, 1);
             if (ptrackers.includes(type)) {
-                var color = getPart(tokenNode.id, 2);
-                var marker = "marker_" + tokenNode.id;
-                var markerNode = $(marker);
-                if (!markerNode) {
-                    markerNode = this.game.createDivNode(marker, "marker marker_".concat(type, " marker_").concat(color), "pboard_".concat(color));
-                    this.convertInto3DCube(markerNode, color);
-                }
+                // production tracker
+                var markerNode = this.getMarkerCube(tokenNode.id);
                 var state = parseInt(tokenNode.getAttribute("data-state"));
-                var rem = state % 10;
-                var x = rem;
-                var y = 0;
-                if (rem > 5) {
-                    x = rem - 5;
-                    y = 1;
+                var coords = this.productionCoords(state);
+                markerNode.style.marginLeft = "".concat(coords.x * 3.7, "%");
+                markerNode.style.marginTop = "".concat(coords.y * 4, "%");
+                // update tooltip
+                this.updateCountTooltip(tokenNode.id, markerNode.id);
+                for (var i = 10; i < 100; i += 10) {
+                    if (state < i) {
+                        var markerNode10 = this.getMarkerCube(tokenNode.id, i, false);
+                        if (markerNode10)
+                            dojo.destroy(markerNode10);
+                    }
                 }
-                else if (state < 0) {
-                    x = state + 6;
-                    y = -1;
+                for (var i = 10; i < state; i += 10) {
+                    var markerNode10 = this.getMarkerCube(tokenNode.id, i);
+                    var coords_1 = { x: 5 + i / 10 / 2.0 - 0.5, y: 1 };
+                    markerNode10.style.marginLeft = "".concat(coords_1.x * 3.7, "%");
+                    markerNode10.style.marginTop = "".concat(coords_1.y * 4, "%");
+                    this.updateCountTooltip(tokenNode.id, markerNode10.id);
                 }
-                var xp = x * 3.7;
-                var yp = y * 4;
-                markerNode.style.marginLeft = "".concat(xp, "%");
-                markerNode.style.marginTop = "".concat(yp, "%");
             }
             else if (rtrackers.includes(type)) {
                 var color = getPart(tokenNode.id, 2);
                 var state = parseInt(tokenNode.getAttribute("data-state"));
-                new ScatteredResourceZone(this.game, "resarea_".concat(type, "_").concat(color)).setValue(state);
+                var areaId = "resarea_".concat(type, "_").concat(color);
+                new ScatteredResourceZone(this.game, areaId).setValue(state);
+                // update tooltip
+                this.updateCountTooltip(tokenNode.id, areaId);
             }
         }
+    };
+    VLayout.prototype.getMarkerCube = function (tokenNodeId, num, create) {
+        if (num === void 0) { num = 0; }
+        if (create === void 0) { create = true; }
+        // production tracker
+        var color = getPart(tokenNodeId, 2);
+        var marker = "marker_" + tokenNodeId + "_" + num;
+        var type = getPart(tokenNodeId, 1);
+        var markerNode = $(marker);
+        if (!markerNode && create) {
+            markerNode = this.game.createDivNode(marker, "marker marker_".concat(type, " marker_").concat(color), "pboard_".concat(color));
+            this.convertInto3DCube(markerNode, color);
+        }
+        return markerNode;
+    };
+    VLayout.prototype.productionCoords = function (state) {
+        var rem = state % 10;
+        var x = rem;
+        var y = 0;
+        if (rem > 5) {
+            x = rem - 5;
+            y = 1;
+        }
+        else if (state < 0) {
+            x = state + 6;
+            y = -1;
+        }
+        return { x: x, y: y };
+    };
+    VLayout.prototype.updateCountTooltip = function (tokenNodeId, attachTo) {
+        var tokenDisplayInfo = this.game.getTokenDisplayInfo(tokenNodeId);
+        var state = $(tokenNodeId).getAttribute("data-state");
+        tokenDisplayInfo.tooltip = this.game.generateItemTooltip(tokenDisplayInfo);
+        tokenDisplayInfo.tooltip += this.game.generateTooltipSection(_("Count"), state + "");
+        var tt = this.game.getTooptipHtmlForTokenInfo(tokenDisplayInfo);
+        this.game.addTooltipHtml(attachTo, tt);
     };
     VLayout.prototype.convertInto3DCube = function (tokenNode, color) {
         dojo.addClass(tokenNode, "mcube");

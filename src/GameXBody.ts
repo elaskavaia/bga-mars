@@ -803,16 +803,24 @@ class GameXBody extends GameTokens {
     switch (key) {
       case "tracker_tr":
         return this.generateTooltipSection(
-          _("Terraform Rating"),
+          _(displayInfo.name),
           _(
             "Terraform Rating (TR) is the measure of how much you have contributed to the terraforming process. Each time you raise the oxygen level, the temperature, or place an ocean tile, your TR increases as well. Each step of TR is worth 1 VP at the end of the game, and the Terraforming Committee awards you income according to your TR. You start at 20."
           )
         );
       case "tracker_m":
         return this.generateTooltipSection(
-          _("MegaCredit"),
+          _(displayInfo.name),
           _(
             "The MegaCredit (M€) is the general currency used for buying and playing cards and using standard projects, milestones, and awards."
+          )
+        );
+
+      case "tracker_pm":
+        return this.generateTooltipSection(
+          _(displayInfo.name),
+          _(
+            "Resource icons inside brown boxes refer to production of that resource. Your M€ income is the sum of your M€ production and your TR (Terraform Rating). M€ production is the only production that can be negative, but it may never be lowered below -5"
           )
         );
       case "tracker_s":
