@@ -18,7 +18,7 @@ class AbsOperationIncSteal extends AbsOperation {
             if ($color === $other_player_color) return MA_ERR_RESERVED;
             if ($other_player_color != $color && array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
             $value = $this->game->getTrackerValue($other_player_color, $type);
-            if ($value < $count) return MA_ERR_PREREQ;
+            if ($value == 0) return MA_ERR_PREREQ;
             return 0;
         });
     }
