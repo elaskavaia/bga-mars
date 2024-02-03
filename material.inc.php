@@ -51,6 +51,7 @@ if (!defined("MA_GAME")) {
   define("MA_ERR_NOTAPPLICABLE", 11);
   define("MA_ERR_ALREADYUSED", 12);
   define("MA_ERR_PLACEMENT", 13);
+  define("MA_ERR_PROTECTED", 14);
 
   // tile types
   define("MA_TILE_FOREST", 1);
@@ -5004,5 +5005,9 @@ $this->token_types = [
   'err_13' => [  //
     'code' => 13, 'type' => 'err',
     'name' => clienttranslate("Placement restrictions"),
+  ],
+  'err_14' => [  //
+    'code' => 14, 'type' => 'err',
+    'name' => clienttranslate("Protected"),
   ],
 ];
