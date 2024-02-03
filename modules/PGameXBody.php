@@ -477,6 +477,12 @@ abstract class PGameXBody extends PGameMachine {
                     }
                 }
             }
+            if ($id == 'card_stanproj_7') { // Buffer Gas
+                if (!$this->isSolo()) continue;
+                if ($this->getGameStateValue('var_solo_flavour') != 1) {      // !=TR63
+                    continue;
+                }
+            }
             $this->createTokenFromInfo($id, $info);
         }
     }

@@ -3207,6 +3207,17 @@ $this->token_types = [
   'cost' => 25,
   'text' => 'For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.',
 ],
+ 'card_stanproj_7' => [  //
+  'location' => 'display_main',
+  'count' => 1,
+  'create' => 1,
+  'num' => 7,
+  'name' => clienttranslate("Buffer Gas"),
+  't' => 0,
+  'r' => 'tr',
+  'cost' => 16,
+  'text' => 'For 16 M€ you get to increase your TR 1 step',
+],
 // #Milestones
  'milestone_1' => [  //
   'location' => 'display_milestones',

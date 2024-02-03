@@ -12,6 +12,7 @@ num|name|t|r|cost|pre|text|php
 4|Aquifer|0|w|18||For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)
 5|Greenery|0|forest|23||For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile
 6|City|0|city;pm|25||For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.
+7|Buffer Gas|0|tr|16||For 16 M€ you get to increase your TR 1 step
 
 #Milestones
 #set id=milestone_{num}
