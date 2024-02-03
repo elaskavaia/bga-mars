@@ -15,6 +15,9 @@ require_once "TokensInMem.php";
 class GameStateInMem extends GameState {
 }
 
+define("PCOLOR", "ff0000");
+define("BCOLOR", "0000ff");
+
 class GameUT extends terraformingmars {
     var $multimachine;
     var $xtable;
@@ -54,11 +57,21 @@ class GameUT extends terraformingmars {
         return $this->getPlayerColorById($this->curid);
     }
 
+    function loadPlayersBasicInfos() {
+        $default_colors = array(PCOLOR, BCOLOR);
+        $values = array();
+        $id = 1;
+        foreach ($default_colors as $color) {
+            $values[$id] = array('player_id' => $id, 'player_color' => $color, 'player_name' => "player$id", 'player_zombie' => 0, 'player_no' => $id, 'player_eliminated' => 0);
+            $id++;
+        }
+        return $values;
+    }
+
     // override/stub methods here that access db and stuff
 }
 
-define("PCOLOR", "ff0000");
-define("BCOLOR", "0000ff");
+
 final class GameTest extends TestCase {
     public function testGameProgression() {
         $m = $this->game();
@@ -287,7 +300,7 @@ final class GameTest extends TestCase {
         $m->effect_playCard(BCOLOR, $hab);
         $args = $op->argPrimaryDetails();
         $this->assertNotNull(array_get($args, $fish));
-        $this->assertEquals(MA_ERR_RESERVED, $args[$fish]['q']); // second its protected
+        $this->assertEquals(MA_ERR_PROTECTED, $args[$fish]['q']); // second its protected
     }
 
     public function testMultiplayer() {
@@ -402,10 +415,13 @@ final class GameTest extends TestCase {
 
     public function testExtraOcean() {
         $m = $this->game();
+        $m->gamestate->changeActivePlayer(PCOLOR);
         $m->tokens->setTokenState('tracker_t', -2);
         $m->tokens->setTokenState('tracker_w', 9); // max oceans
         $card_id = $m->mtFindByName('Lava Flows');
         $m->putInEffectPool(PCOLOR, '2t', $card_id);
+        $top1 = $m->machine->getTopOperations();
+        $this->assertEquals(1, count($top1));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(2, $m->tokens->getTokenState("tracker_t"));
@@ -424,6 +440,7 @@ final class GameTest extends TestCase {
         // another player plays city on tile with resources, simulate this
         $m->putInEffectPool(PCOLOR, "p");
         $m->notifyEffect(PCOLOR, 'place_city', 'tile_2_10');
+        $m->gamestate->changeActivePlayer(PCOLOR);
         // dispatch
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
