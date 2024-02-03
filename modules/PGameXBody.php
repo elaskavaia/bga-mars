@@ -980,6 +980,20 @@ abstract class PGameXBody extends PGameMachine {
         return $res;
     }
 
+    function protectedOwners($color, $defense) {
+        $protected = [];
+        if ($defense == 'p') $defense = 'Plant';
+        if ($defense) {
+            $listeners = $this->collectListeners(null, ["defense$defense"]);
+            foreach ($listeners as $lisinfo) {
+                $other_player_color = $lisinfo['owner'];
+                if ($other_player_color !== $color)
+                    $protected[$lisinfo['owner']] = 1;
+            }
+        }
+        return $protected;
+    }
+
     /** Find stuff in material file */
     function mtFind(string $field, ?string $value, bool $ignorecase = true) {
         foreach ($this->token_types as $key => $rules) {

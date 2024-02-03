@@ -7,29 +7,29 @@ declare(strict_types=1);
  */
 class Operation_nores extends AbsOperation {
     function argPrimaryDetails() {
-        $color = $this->color;
         $par = $this->params;
         $cards = $this->game->getCardsWithResource($par);
         $keys = array_keys($cards);
-        $listeners = $this->game->collectListeners(null, ["defense$par"]);
-        $protected = [];
-        foreach ($listeners as $lisinfo) {
-            $protected[$lisinfo['owner']] = 1;
-        }
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($par, $protected) {
-            if ($tokenId === 'card_main_172') return MA_ERR_RESERVED; // Pets protected - hardcoded
+
+        $protected = $this->game->protectedOwners($this->color, $par);
+        return $this->game->createArgInfo($this->color, $keys, function ($color, $tokenId) use ($par, $protected) {
+            if ($tokenId === 'card_main_172') return ['q' => MA_ERR_PROTECTED, 'protected' => 1]; // Pets protected - hardcoded
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par) return MA_ERR_NOTAPPLICABLE;
 
             $cardowner = getPart($this->game->tokens->getTokenLocation($tokenId), 1);
-            if ($cardowner != $color && array_get($protected, $cardowner)) return MA_ERR_RESERVED;
-
-            return 0;
+            if (array_get($protected, $cardowner))  return ['q' => MA_ERR_PROTECTED, 'protected' => 1];
+            return MA_OK;
         });
     }
 
     function effect(string $owner, int $inc): int {
+        if ($this->game->isSolo()) {
+            $this->game->notifyMessage(clienttranslate('${player_name} removes resource from neutral opponent'), [], $this->game->getPlayerIdByColor($owner));
+            return $inc;
+        }
+
         $card = $this->getCheckedArg('target');
 
         $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
@@ -44,7 +44,13 @@ class Operation_nores extends AbsOperation {
     }
 
     function canResolveAutomatically() {
+        if ($this->game->isSolo()) return true;
         return false;
+    }
+
+    function isVoid(): bool {
+        if ($this->game->isSolo()) return false;
+        return parent::isVoid();
     }
 
     protected function getVisargs() {

@@ -22,19 +22,13 @@ class AbsOperationIncNegAny extends AbsOperation {
         $keys = $this->game->getPlayerColors();
         $keys[] = 'none';
         $type = $this->getType();
-        $protected = [];
-        if ($type == 'p') {
-            $listeners = $this->game->collectListeners($this->color, ["defensePlant"]);
-            foreach ($listeners as $lisinfo) {
-                $protected[$lisinfo['owner']] = 1;
-            }
-        }
+        $protected = $this->game->protectedOwners($this->color, $type);
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($protected, $type) {
-            if ($other_player_color=='none') return 0;
-            if ($other_player_color != $color && array_get($protected, $other_player_color)) return MA_ERR_RESERVED;
+            if ($other_player_color == 'none') return 0;
+            if (array_get($protected, $other_player_color))  return ['q' => MA_ERR_PROTECTED, 'protected' => 1];
             $value = $this->game->getTrackerValue($other_player_color, $type);
-            if ($value==0) return [ 'q' => MA_ERR_NOTAPPLICABLE, 'max' => $value ];
-            return [ 'q' => MA_OK, 'max' => $value ];
+            if ($value == 0) return ['q' => MA_ERR_NOTAPPLICABLE, 'max' => $value];
+            return ['q' => MA_OK, 'max' => $value];
         });
     }
 
