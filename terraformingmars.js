@@ -5573,8 +5573,8 @@ var ScatteredResourceZone = /** @class */ (function () {
         var h = parent.offsetHeight;
         if (!h)
             h = 100;
-        var x = Math.floor(Math.random() * (w - size)) + size / 2;
-        var y = Math.floor(Math.random() * (h - size)) + size / 2;
+        var x = Math.floor(Math.random() * (w - size));
+        var y = Math.floor(Math.random() * (h - size));
         var pi = {
             location: this.zoneId,
             key: id,

@@ -100,8 +100,8 @@ class ScatteredResourceZone {
     if (!w) w = 100; // XXX why its not working?
     let h = parent.offsetHeight;
     if (!h) h = 100;
-    let x = Math.floor(Math.random() * (w - size)) + size / 2;
-    let y = Math.floor(Math.random() * (h - size)) + size / 2;
+    let x = Math.floor(Math.random() * (w - size));
+    let y = Math.floor(Math.random() * (h - size));
     let pi: TokenMoveInfo = {
       location: this.zoneId,
       key: id,

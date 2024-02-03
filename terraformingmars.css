@@ -429,11 +429,6 @@
   background-color: orange;
 }
 
-/* effects face down */
-.tableau .card[data-state="0"] {
-  filter: grayscale(1);
-}
-
 .card_cost {
   font-family: var(--mars-font);
   position: absolute;
