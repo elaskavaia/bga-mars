@@ -44,7 +44,7 @@ class Operation_turn extends AbsOperation {
         // first action of the game, some corp has some rules
         $a1 = $this->getSpecialAction($owner);
         if ($a1) {
-            $this->game->queue($owner, $a1);
+            $this->game->queue($owner, implode("/",[$a1,'pass']));
         } else {
             $this->game->queue($owner, implode("/", $this->getStandardActions($solo, $secondaction)));
         }

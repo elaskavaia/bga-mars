@@ -23,6 +23,8 @@ class Operation_pass extends AbsOperation {
         $this->game->machine->clear();
         $this->game->dbSetTokenState("tracker_passed_${color}", 1, '');
         $this->game->notifyMessage(clienttranslate('${player_name} passes'));
+        // pass is not an action so decreasig the stat, it was increased before
+        $this->game->incStat(-1, 'game_actions',  $this->getPlayerId());
         return 1;
     }
 }

@@ -4006,7 +4006,12 @@ var GameXBody = /** @class */ (function (_super) {
                 var decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
                 var parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
                 //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-                decor.innerHTML = "\n               <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n            ");
+                if (tokenNode.id == "card_stanproj_7") {
+                    decor.innerHTML = "\n               <div class=\"bg_gray\"></div>  \n               <div class='stanp_cost token_img tracker_m'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class=\"action_arrow\"></div>\n               <div class=\"token_img tracker_tr\"></div>\n               <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n            ");
+                }
+                else {
+                    decor.innerHTML = "\n               <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n            ");
+                }
             }
             else {
                 //tags
@@ -4135,6 +4140,9 @@ var GameXBody = /** @class */ (function (_super) {
                 `;
                 tokenNode.appendChild(ttdiv);
                 */
+        }
+        if (displayInfo.mainType == "marker" && tokenNode.id && !this.isLayoutFull()) {
+            this.vlayout.convertInto3DCube(tokenNode, displayInfo.color);
         }
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
@@ -4352,6 +4360,7 @@ var GameXBody = /** @class */ (function (_super) {
             result.location = tokenInfo.location + "_corp_effect";
             //also set property to corp logo div
             $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
+            $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
         }
         else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
             var t = this.getRulesFor(tokenInfo.key, "t");
@@ -4662,6 +4671,8 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         var buttonId = "button_" + color;
         var name = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
+        var corp_id = $("miniboard_corp_logo_".concat(color)) ? $("miniboard_corp_logo_".concat(color)).dataset.corp : "0";
+        var faction_name = corp_id != '0' ? this.gamedatas.token_types[corp_id].name : "";
         this.addActionButton(buttonId, name !== null && name !== void 0 ? name : _(color), function () {
             _this.onSelectTarget(opId, color);
         }, undefined, false, "gray");
@@ -4671,15 +4682,17 @@ var GameXBody = /** @class */ (function (_super) {
         if (name) {
             // count of resources 
             if ((info === null || info === void 0 ? void 0 : info.max) !== undefined) {
-                $(buttonId).innerHTML = this.format_string_recursive("${player_name} (max. ${res_count})", {
+                $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
                     res_count: info.max,
-                    player_name: name
+                    player_name: name,
+                    faction_name: faction_name
                 });
             }
             // player is protected from attack
             if ((info === null || info === void 0 ? void 0 : info.q) == this.gamedatas.CON.MA_ERR_RESERVED) {
-                $(buttonId).innerHTML = this.format_string_recursive("${player_name} (protected)", {
-                    player_name: name
+                $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
+                    player_name: name,
+                    faction_name: faction_name
                 });
             }
             $(buttonId).classList.add("otherplayer", "plcolor_" + color);

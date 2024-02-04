@@ -2999,6 +2999,10 @@
   justify-content: center;
 }
 
+.card_main_22 .card_tt {
+  font-size: calc(var(--card-width) * 0.035);
+}
+
 .card_main_30 .card_effect .card_icono.icono_prod {
   width: 41%;
 }
@@ -3024,6 +3028,9 @@
 .card_main_37 .outer_production {
   padding-left: calc(var(--card-width) * 0.03);
   padding-right: calc(var(--card-width) * 0.03);
+}
+.card_main_37 .card_tt {
+  font-size: calc(var(--card-width) * 0.035);
 }
 
 .card_main_43 .card_tt, .card_main_45 .card_tt {
@@ -3254,6 +3261,10 @@
   width: 72%;
 }
 .card_main_184 .card_tt {
+  font-size: calc(var(--card-width) * 0.04);
+}
+
+.card_main_188 .card_tt {
   font-size: calc(var(--card-width) * 0.04);
 }
 
@@ -4478,10 +4489,42 @@
 
 #card_stanproj_7 {
   top: 99%;
-  background-color: lightgray !important;
+}
+#card_stanproj_7 .bg_gray {
+  width: 86%;
+  background: linear-gradient(105deg, rgb(197, 197, 198) 0%, rgb(197, 197, 198) 55%, rgb(57, 58, 58) 100%);
+  position: absolute;
+  height: 100%;
+  left: 0.5%;
+}
+#card_stanproj_7 .tracker_m {
+  font-weight: normal;
+  left: 3.5%;
+}
+#card_stanproj_7 .tracker_tr {
+  position: absolute;
+  left: 35%;
+  top: 5%;
+}
+#card_stanproj_7 .action_arrow {
+  position: absolute;
+  top: 2%;
+  left: 21.5%;
+  width: 13%;
 }
 #card_stanproj_7 .standard_projects_title {
-  width: 29%;
+  right: -1%;
+  overflow: hidden;
+  white-space: nowrap;
+  width: fit-content;
+  background-color: #f3a929;
+  border-radius: 7.5em;
+  padding: 0.2% 2% 0.2% 2%;
+  border: 1px solid #aaa;
+}
+
+#standard_projects_area .active_slot.card {
+  box-shadow: 0px 0px 0px 3px #ff9800 !important;
 }
 
 #counter_display_main {
@@ -4667,6 +4710,11 @@
 
 .twoplayers #milestone_award_gain_2 {
   display: none;
+}
+
+.solo_game #standard_projects_area {
+  bottom: 5%;
+  left: 2%;
 }
 
 .miniboard {
@@ -4969,6 +5017,17 @@
   position: relative;
 }
 
+.mcompact .miniboard_entry {
+  width: 70%;
+}
+.mcompact .miniboard_corp_logo {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  opacity: 1;
+  --card-width: 70px;
+}
+
 #ebd-body {
   --pb_cellsize:6vh;
 }
@@ -5097,28 +5156,59 @@
 
 .playerboard_header .player_tags .badge, .playerboard_header .player_tags .tracker {
   position: relative;
+  width: calc(var(--pb_cellsize) * 0.6);
+  height: calc(var(--pb_cellsize) * 0.6);
+  /*
+  position: relative;
   width: calc(var(--pb_cellsize) * 0.5);
   height: calc(var(--pb_cellsize) * 0.5);
+
   display: inline-grid;
   grid-template-columns: calc(var(--pb_cellsize) * 0.5) calc(var(--pb_cellsize) * 0.3);
   grid-column-start: 1;
   font-size: calc(var(--pb_cellsize) * 0.3);
   margin-right: calc(var(--pb_cellsize) * 0.3);
+
+   */
 }
 .playerboard_header .player_tags .tracker.tracker_pdelta {
   width: calc(var(--pb_cellsize) * 2);
   height: calc(var(--pb_cellsize) * 0.5);
-  margin-right: calc(var(--pb_cellsize) * 0.6);
-  grid-template-columns: calc(var(--pb_cellsize) * 2) calc(var(--pb_cellsize) * 0.3);
+  /*  grid-template-columns: calc(var(--pb_cellsize) * 2) calc(var(--pb_cellsize) * 0.3);*/
+  justify-content: revert;
+  align-items: revert;
+  text-align: revert;
+}
+.playerboard_header .player_tags .tracker.tracker_pdelta::after {
+  display: block;
+  position: absolute;
+  left: calc(var(--pb_cellsize) * 0.49);
+  justify-content: revert;
+  align-items: revert;
+  text-align: revert;
 }
 
 .player_area .player_tags .tracker::after {
+  /*
   content: attr(data-state);
   grid-column-start: 2;
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: var(--mars-font);
+
+   */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: calc(var(--pb_cellsize) * 0.3);
+  font-family: "SpaceFont";
 }
 .player_area .player_tags .tracker[data-state="0"] {
   display: none;
@@ -6002,6 +6092,10 @@
 
 .tt_card_text {
   font-family: sans-serif;
+}
+
+.compact_card_tt .token .marker {
+  display: none;
 }
 
 .localsettings_window {
