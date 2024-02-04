@@ -213,6 +213,8 @@
   left: unset;
 }
 
+
+
 .miniboard_tags {
   margin-top: 20px;
 }
@@ -324,5 +326,18 @@
       height: var(--resourcesize);
       position: relative;
     }
+  }
+}
+
+.mcompact {
+  .miniboard_entry{
+    width: 70%;
+  }
+  .miniboard_corp_logo {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    opacity: 1;
+    --card-width: 70px;
   }
 }

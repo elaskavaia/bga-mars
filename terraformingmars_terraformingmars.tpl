@@ -436,6 +436,7 @@
         </div>
       </div>
       <div id="miniboard_{PLAYER_COLOR}" class="style_2">
+        <div id="miniboard_corp_logo_{PLAYER_COLOR}" class="miniboard_corp_logo corp_logo" data-corp=""></div>
         <div id="miniboardentry_{PLAYER_COLOR}" class="miniboard_entry">
           <div id="tracker_tr_{PLAYER_COLOR}" class="token_img tracker_tr mini_counter"></div>
           <div id="counter_hand_{PLAYER_COLOR}" class="token_img cardback card_icon"></div>

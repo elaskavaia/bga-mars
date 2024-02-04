@@ -350,3 +350,11 @@
 .tt_card_text {
   font-family: sans-serif;
 }
+
+.compact_card_tt {
+  .token {
+    .marker {
+      display: none;
+    }
+  }
+}

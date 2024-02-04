@@ -1126,10 +1126,21 @@ awarded.`);
         const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
         //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
 
-        decor.innerHTML = `
+        if (tokenNode.id=="card_stanproj_7") {
+          decor.innerHTML = `
+               <div class="bg_gray"></div>  
+               <div class='stanp_cost token_img tracker_m'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
+               <div class="action_arrow"></div>
+               <div class="token_img tracker_tr"></div>
+               <div class='standard_projects_title'>${displayInfo.name}</div>  
+            `;
+        } else {
+          decor.innerHTML = `
                <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
                <div class='standard_projects_title'>${displayInfo.name}</div>  
             `;
+        }
+
       } else {
         //tags
         let firsttag = "";
@@ -1290,6 +1301,10 @@ awarded.`);
           tokenNode.appendChild(ttdiv);
           */
     }
+
+    if (displayInfo.mainType=="marker" && tokenNode.id && !this.isLayoutFull()) {
+      this.vlayout.convertInto3DCube(tokenNode,displayInfo.color);
+    }
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
@@ -1343,6 +1358,7 @@ awarded.`);
     }
 
     this.vlayout.renderSpecificToken(node);
+
 
     //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
@@ -1504,6 +1520,8 @@ awarded.`);
 
       //also set property to corp logo div
       $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
+      $(tokenInfo.location.replace("tableau_","miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
+
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
@@ -1819,9 +1837,12 @@ awarded.`);
     if (!single) return;
     const buttonId = "button_" + color;
     const name = this.gamedatas.players[playerId]?.name;
+    const corp_id=$(`miniboard_corp_logo_${color}`) ? $(`miniboard_corp_logo_${color}`).dataset.corp : "0";
+    const faction_name = corp_id!='0' ? this.gamedatas.token_types[corp_id].name : "";
+
     this.addActionButton(
       buttonId,
-      name ?? _(color),
+      name  ?? _(color),
       () => {
         this.onSelectTarget(opId, color);
       },
@@ -1836,15 +1857,17 @@ awarded.`);
     if (name) {
       // count of resources 
       if (info?.max !== undefined) {
-        $(buttonId).innerHTML = this.format_string_recursive("${player_name} (max. ${res_count})", {
+        $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
           res_count: info.max,
-          player_name: name
+          player_name: name,
+          faction_name:faction_name
         }); 
       }
       // player is protected from attack
       if (info?.q == this.gamedatas.CON.MA_ERR_RESERVED) {
-        $(buttonId).innerHTML = this.format_string_recursive("${player_name} (protected)", {
-          player_name: name
+        $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
+          player_name: name,
+          faction_name:faction_name
         });
       }
       $(buttonId).classList.add("otherplayer", "plcolor_" + color);

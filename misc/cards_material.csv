@@ -21,7 +21,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 11|Big Asteroid|3|4u,4np_Any,2t|||27||Space Event|0|Basic|Raise temperature 2 steps and gain 4 titanium. Remove up to 4 plants from any player.||||
 12|Water Import From Europa|2||12nmu:w||25||Space Jovian|tagJovian|Basic||Pay 12 MC to place an ocean tile. TITANIUM MAY BE USED as if playing a space card.||1 VP for each Jovian tag you have|
 13|Space Elevator|2|pu|ns:5m||27||Building Space|2|Corporate|Increase your titanium production 1 step.|Spend 1 steel to gain 5 MC|||
-14|Development Center|2||ne:draw||11||Science Building|0|Corporate|Action: Spend 1 energy to draw a card.||||
+14|Development Center|2||ne:draw||11||Science Building|0|Corporate||Spend 1 energy to draw a card.|||
 15|Equatorial Magnetizer|2||npe:tr||11||Building|0|Basic||Decrease your energy production 1 step to increase your terraforming rating 1 step.|||
 16|Domed Crater|1|npe,3pm,city,3p|||24|o<=7|Building City|1|Basic|Gain 3 plants and place a city tile. Decrease your energy production 1 step and increase MC production 3 steps.||||
 17|Noctis City|1|npe,3pm,city('Noctis City')|||18||Building City|0|Basic|Decrease your energy production 1 step and increase your MC production 3 steps. Place a tile ON THE RESERVED AREA, disregarding normal placement restrictions.||||

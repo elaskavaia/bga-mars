@@ -24,6 +24,13 @@
   }
 }
 
+.card_main_22{
+  .card_tt
+  {
+    font-size: calc(var(--card-width) * 0.035);
+  }
+}
+
 .card_main_30 {
   .card_effect {
     .card_icono.icono_prod {
@@ -58,6 +65,9 @@
   .outer_production {
     padding-left: calc(var(--card-width) * 0.03);
     padding-right: calc(var(--card-width) * 0.03);
+  }
+  .card_tt {
+    font-size: calc(var(--card-width) * 0.035)
   }
 }
 
@@ -384,6 +394,11 @@
 }
 
 
+.card_main_188{
+  .card_tt {
+    font-size: calc(var(--card-width) * 0.04);
+  }
+}
 
 .card_main_192 {
   .card_effect {
@@ -430,3 +445,9 @@
     }
   }
 }
+
+#card_stanproj_7 {
+
+
+}
+

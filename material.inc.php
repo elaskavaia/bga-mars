@@ -288,7 +288,7 @@ $this->token_types = [
   'tags' => 'Science Building',
   'vp' => 0,
   'deck' => 'Corporate',
-  'text' => clienttranslate("Action: Spend 1 energy to draw a card."),
+  'text_action' => clienttranslate("Spend 1 energy to draw a card."),
 ],
  'card_main_15' => [  //
   'location' => 'deck_main',

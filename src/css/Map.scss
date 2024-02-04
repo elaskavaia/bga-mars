@@ -903,15 +903,49 @@
 }
 #card_stanproj_7 {
   top: 99%;
-  
 
-      background-color: lightgray !important; // temp
-  
-  .standard_projects_title {
-    width: 29%;
+  .bg_gray{
+    width: 86%;
+    background: linear-gradient(105deg, rgb(197, 197, 198) 0%, rgb(197, 197, 198) 55%, rgb(57, 58, 58) 100%);
+    position: absolute;
+    height: 100%;
+    left: 0.5%;
   }
-}
+  .tracker_m {
+    font-weight: normal;
+    left: 3.5%;
+  }
 
+  .tracker_tr{
+    position: absolute;
+    left:35%;
+    top:5%;
+  }
+
+  .action_arrow{
+    position: absolute;
+    top: 2%;
+    left: 21.5%;
+    width: 13%;
+  }
+
+  .standard_projects_title{
+    right: -1%;
+    overflow: hidden;
+    white-space: nowrap;
+    width: fit-content;
+
+    background-color: #f3a929;
+    border-radius: 7.5em;
+    padding: 0.2% 2% 0.2% 2%;
+    border: 1px solid #aaa;
+  }
+  
+
+}
+#standard_projects_area .active_slot.card{
+  box-shadow: 0px 0px 0px 3px #ff9800 !important;
+}
 
 #counter_display_main {
   display: none;
@@ -920,6 +954,7 @@
 #display_main .card_info_box {
   display: none;
 }
+
 
 .stanp_decor {
   /*
@@ -1113,4 +1148,11 @@
 
 .twoplayers #milestone_award_gain_2 {
   display: none;
+}
+
+.solo_game {
+   #standard_projects_area {
+    bottom: 5%;
+    left: 2%;
+  }
 }
