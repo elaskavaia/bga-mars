@@ -1761,7 +1761,6 @@ awarded.`);
 
       paramargs.forEach((tid: string, i: number) => {
         if (single) {
-          debugger;
           const detailsInfo = operations[opId].args?.info?.[tid];
           const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
           //console.log("enum details "+tid,detailsInfo);
@@ -1837,8 +1836,6 @@ awarded.`);
     if (!single) return;
     const buttonId = "button_" + color;
     const name = this.gamedatas.players[playerId]?.name;
-    const corp_id=$(`miniboard_corp_logo_${color}`) ? $(`miniboard_corp_logo_${color}`).dataset.corp : "0";
-    const faction_name = corp_id!='0' ? this.gamedatas.token_types[corp_id].name : "";
 
     this.addActionButton(
       buttonId,
@@ -1855,6 +1852,9 @@ awarded.`);
       $(buttonId).classList.add("disabled");
     }
     if (name) {
+      // if name is not set its not a ral player
+      const corp_id=$(`miniboard_corp_logo_${color}`).dataset.corp;
+      const faction_name = this.getTokenName(corp_id);
       // count of resources 
       if (info?.max !== undefined) {
         $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
@@ -1864,7 +1864,7 @@ awarded.`);
         }); 
       }
       // player is protected from attack
-      if (info?.q == this.gamedatas.CON.MA_ERR_RESERVED) {
+      if (info?.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
         $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
           player_name: name,
           faction_name:faction_name
@@ -2254,7 +2254,7 @@ awarded.`);
         $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
         $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
       }
-      //save as local setting (per table)
+      //save as local setting (per table) XXX should should not be stored per table, its user setting and who will just grow unbounded with every game?
       const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + "_" + this.table_id));
       localColorSetting.writeProp("digital_cardfilter", btncolor);
     }

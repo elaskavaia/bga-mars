@@ -2,6 +2,7 @@ num|name|t|r|cost|pre|text|php
 #
 #standard projects
 #
+#set _tr=text
 #set id=card_stanproj_{num}
 #set location=display_main
 #set count=1

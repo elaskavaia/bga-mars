@@ -769,15 +769,11 @@
     margin-left: 10px;
   }
 
-
-
-  .corp_logo {
-    width: calc(var(--card-width) * 0.5);
-    height: auto;
-  }
-
   .corp_holder {
     justify-content: flex-start;
+    .corp_logo {
+      display: none;
+    }
   }
 
   .viewcards_button {

@@ -4908,7 +4908,7 @@
 }
 
 .miniboard {
-  --pb_cellsize: 33px;
+  --pb_cellsize: 39px;
 }
 
 .miniboard_tags, .miniboard_entry {
@@ -4922,6 +4922,9 @@
 
 .miniboard_tags {
   margin-top: 20px;
+}
+.miniboard_tags .micon {
+  display: none;
 }
 
 .miniboard_entry {
@@ -5017,15 +5020,16 @@
   position: relative;
 }
 
-.mcompact .miniboard_entry {
-  width: 70%;
-}
-.mcompact .miniboard_corp_logo {
+.miniboard_corp_logo {
   position: absolute;
   top: 8px;
   right: 0;
   opacity: 1;
-  --card-width: 70px;
+  --card-width: 100px;
+}
+
+.miniboard_entry {
+  width: calc(100% - 100px);
 }
 
 #ebd-body {
@@ -8207,12 +8211,11 @@
   margin-right: 10px;
   margin-left: 10px;
 }
-.mfull .corp_logo {
-  width: calc(var(--card-width) * 0.5);
-  height: auto;
-}
 .mfull .corp_holder {
   justify-content: flex-start;
+}
+.mfull .corp_holder .corp_logo {
+  display: none;
 }
 .mfull .viewcards_button {
   display: flex;

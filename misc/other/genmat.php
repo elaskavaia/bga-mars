@@ -58,13 +58,31 @@
  #set sub=/ - use this character or string to replace default separator, i.e. a/b will be replaced to a|b
  #set noquotes=field - do not quotes for field when outputing
  */
-$g_field_names = null;
-$g_field_extra = [];
-$g_index = 1;
-$g_trans = ['name', 'tooltip', 'tooltip_action'];
-$g_separator = '|';
-$g_separator_sub = '';
-$g_noquotes = [];
+// $g_field_names = null;
+// $g_field_extra = [];
+// $g_index = 1;
+// $g_trans = ['name', 'tooltip', 'tooltip_action'];
+// $g_separator = '|';
+// $g_separator_sub = '';
+// $g_noquotes = [];
+
+function reset_globals() {
+    global $g_field_names;
+    global $g_field_extra;
+    global $g_index;
+    global $g_trans;
+    global $g_separator;
+    global $g_separator_sub;
+    global $g_noquotes;
+
+    $g_field_names = null;
+    $g_field_extra = [];
+    $g_index = 1;
+    $g_trans = ['name', 'tooltip', 'tooltip_action', 'text'];
+    $g_separator = '|';
+    $g_separator_sub = '';
+    $g_noquotes = [];
+}
 
 function handle_header($fields) {
     global $g_field_names;
@@ -275,13 +293,7 @@ $args = array_values($argv);
 array_shift($args);
 foreach ($args as $incsv) {
 
-    $g_field_names = null;
-    $g_field_extra = [];
-    $g_index = 1;
-    $g_separator = '|';
-    $g_separator_sub = '';
-    $g_noquotes = [];
-
+    reset_globals();
     $basename = basename($incsv, '.csv');
     if ($basename == 'material')
         $module = '';

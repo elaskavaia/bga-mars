@@ -417,7 +417,7 @@
           </div>
       </div>
 
-        <div id="tableau_{PLAYER_COLOR}" class="tableau"data-visibility_0="1" data-visibility_2="0" data-visibility_1="0" data-visibility_3="0">
+        <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_0="1" data-visibility_2="0" data-visibility_1="0" data-visibility_3="0" data-visibility_4="1">
           <div id="pboard_{PLAYER_COLOR}" class="pboard">
             <div id="resarea_m_{PLAYER_COLOR}" class="resarea resarea_m"></div>
             <div id="resarea_s_{PLAYER_COLOR}" class="resarea resarea_s"></div>

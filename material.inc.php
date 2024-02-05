@@ -3150,7 +3150,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'counter(chand,1),sell',
   'cost' => 0,
-  'text' => 'Discard X card to gain X MC',
+  'text' => clienttranslate("Discard X card to gain X MC"),
 ],
  'card_stanproj_2' => [  //
   'location' => 'display_main',
@@ -3161,7 +3161,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'pe',
   'cost' => 11,
-  'text' => 'For 11 M€ you get to increase your energy production 1 step',
+  'text' => clienttranslate("For 11 M€ you get to increase your energy production 1 step"),
 ],
  'card_stanproj_3' => [  //
   'location' => 'display_main',
@@ -3172,7 +3172,7 @@ $this->token_types = [
   't' => 0,
   'r' => 't',
   'cost' => 14,
-  'text' => 'For 14 M€ you get to increase temperature 1 step (and your TR)',
+  'text' => clienttranslate("For 14 M€ you get to increase temperature 1 step (and your TR)"),
 ],
  'card_stanproj_4' => [  //
   'location' => 'display_main',
@@ -3183,7 +3183,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'w',
   'cost' => 18,
-  'text' => 'For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)',
+  'text' => clienttranslate("For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)"),
 ],
  'card_stanproj_5' => [  //
   'location' => 'display_main',
@@ -3194,7 +3194,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'forest',
   'cost' => 23,
-  'text' => 'For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile',
+  'text' => clienttranslate("For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile"),
 ],
  'card_stanproj_6' => [  //
   'location' => 'display_main',
@@ -3205,7 +3205,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'city;pm',
   'cost' => 25,
-  'text' => 'For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.',
+  'text' => clienttranslate("For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step."),
 ],
  'card_stanproj_7' => [  //
   'location' => 'display_main',
@@ -3216,7 +3216,7 @@ $this->token_types = [
   't' => 0,
   'r' => 'tr',
   'cost' => 16,
-  'text' => 'For 16 M€ you get to increase your TR 1 step',
+  'text' => clienttranslate("For 16 M€ you get to increase your TR 1 step"),
 ],
 // #Milestones
  'milestone_1' => [  //
@@ -3229,7 +3229,7 @@ $this->token_types = [
   't' => 7,
   'cost' => 8,
   'pre' => '(tr>=35)',
-  'text' => 'Having a terraform rating of at least 35',
+  'text' => clienttranslate("Having a terraform rating of at least 35"),
 ],
  'milestone_2' => [  //
   'location' => 'display_milestones',
@@ -3241,7 +3241,7 @@ $this->token_types = [
   't' => 7,
   'cost' => 8,
   'pre' => '(city>=3)',
-  'text' => 'Owning at least 3 city tiles',
+  'text' => clienttranslate("Owning at least 3 city tiles"),
 ],
  'milestone_3' => [  //
   'location' => 'display_milestones',
@@ -3253,7 +3253,7 @@ $this->token_types = [
   't' => 7,
   'cost' => 8,
   'pre' => '(forest>=3)',
-  'text' => 'Owning at least 3 greenery tiles',
+  'text' => clienttranslate("Owning at least 3 greenery tiles"),
 ],
  'milestone_4' => [  //
   'location' => 'display_milestones',
@@ -3265,7 +3265,7 @@ $this->token_types = [
   't' => 7,
   'cost' => 8,
   'pre' => '(tagBuilding>=8)',
-  'text' => 'Having at least 8 building tags in play',
+  'text' => clienttranslate("Having at least 8 building tags in play"),
 ],
  'milestone_5' => [  //
   'location' => 'display_milestones',
@@ -3277,7 +3277,7 @@ $this->token_types = [
   't' => 7,
   'cost' => 8,
   'pre' => '(chand>=16)',
-  'text' => 'Having at least 16 cards in your hand when you claim this milestone',
+  'text' => clienttranslate("Having at least 16 cards in your hand when you claim this milestone"),
 ],
 // #Awards
  'award_1' => [  //
@@ -3289,7 +3289,7 @@ $this->token_types = [
   't' => 8,
   'r' => 'land',
   'cost' => 20,
-  'text' => 'Owning the most tiles in play.',
+  'text' => clienttranslate("Owning the most tiles in play."),
 ],
  'award_2' => [  //
   'location' => 'display_awards',
@@ -3300,7 +3300,7 @@ $this->token_types = [
   't' => 8,
   'r' => 'pm',
   'cost' => 20,
-  'text' => 'Having the highest M€ production.',
+  'text' => clienttranslate("Having the highest M€ production."),
 ],
  'award_3' => [  //
   'location' => 'display_awards',
@@ -3311,7 +3311,7 @@ $this->token_types = [
   't' => 8,
   'r' => 'tagScience',
   'cost' => 20,
-  'text' => 'Having the most science tags in play.',
+  'text' => clienttranslate("Having the most science tags in play."),
 ],
  'award_4' => [  //
   'location' => 'display_awards',
@@ -3322,7 +3322,7 @@ $this->token_types = [
   't' => 8,
   'r' => 'h',
   'cost' => 20,
-  'text' => 'Having the most heat resource cubes.',
+  'text' => clienttranslate("Having the most heat resource cubes."),
 ],
  'award_5' => [  //
   'location' => 'display_awards',
@@ -3333,7 +3333,7 @@ $this->token_types = [
   't' => 8,
   'r' => 's+u',
   'cost' => 20,
-  'text' => 'Having the most steel and titanium resource cubes.',
+  'text' => clienttranslate("Having the most steel and titanium resource cubes."),
 ],
 /* --- gen php end proj_material --- */
 /* --- gen php begin loc_material --- */

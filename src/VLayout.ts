@@ -37,11 +37,11 @@ class VLayout {
     const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", headerNode);
     namediv.setAttribute("data-player-name", name);
 
-    // relocate tile trackers from tags
-    const places = ["tracker_city", "tracker_forest", "tracker_land"];
-    for (const key of places) {
-      dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
-    }
+    // // relocate tile trackers from tags
+    // const places = ["tracker_city", "tracker_forest", "tracker_land"];
+    // for (const key of places) {
+    //   dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
+    // }
 
     dojo.place("alt_tracker_gen", "map_left");
     dojo.destroy("outer_generation");

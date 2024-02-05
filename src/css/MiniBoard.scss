@@ -201,7 +201,7 @@
 }
 
 .miniboard {
-  --pb_cellsize: 33px;
+  --pb_cellsize: 39px;
 }
 
 .miniboard_tags, .miniboard_entry{
@@ -217,6 +217,10 @@
 
 .miniboard_tags {
   margin-top: 20px;
+
+  .micon {
+    display: none; // hide trackers for forest and such, it best just to show progress on milestones instead
+  }
 }
 
 .miniboard_entry {
@@ -329,15 +333,14 @@
   }
 }
 
-.mcompact {
-  .miniboard_entry{
-    width: 70%;
-  }
-  .miniboard_corp_logo {
-    position: absolute;
-    top: 8px;
-    right: 0;
-    opacity: 1;
-    --card-width: 70px;
-  }
+.miniboard_corp_logo {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  opacity: 1;
+  --card-width: 100px;
+}
+
+.miniboard_entry {
+  width: calc(100% - 100px); // to fit corp logo
 }

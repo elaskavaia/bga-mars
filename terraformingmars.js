@@ -4600,7 +4600,6 @@ var GameXBody = /** @class */ (function (_super) {
             paramargs.forEach(function (tid, i) {
                 var _a, _b, _c;
                 if (single) {
-                    debugger;
                     var detailsInfo = (_b = (_a = operations_1[opId].args) === null || _a === void 0 ? void 0 : _a.info) === null || _b === void 0 ? void 0 : _b[tid];
                     var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
                     //console.log("enum details "+tid,detailsInfo);
@@ -4671,8 +4670,6 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         var buttonId = "button_" + color;
         var name = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
-        var corp_id = $("miniboard_corp_logo_".concat(color)) ? $("miniboard_corp_logo_".concat(color)).dataset.corp : "0";
-        var faction_name = corp_id != '0' ? this.gamedatas.token_types[corp_id].name : "";
         this.addActionButton(buttonId, name !== null && name !== void 0 ? name : _(color), function () {
             _this.onSelectTarget(opId, color);
         }, undefined, false, "gray");
@@ -4680,6 +4677,9 @@ var GameXBody = /** @class */ (function (_super) {
             $(buttonId).classList.add("disabled");
         }
         if (name) {
+            // if name is not set its not a ral player
+            var corp_id = $("miniboard_corp_logo_".concat(color)).dataset.corp;
+            var faction_name = this.getTokenName(corp_id);
             // count of resources 
             if ((info === null || info === void 0 ? void 0 : info.max) !== undefined) {
                 $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
@@ -4689,7 +4689,7 @@ var GameXBody = /** @class */ (function (_super) {
                 });
             }
             // player is protected from attack
-            if ((info === null || info === void 0 ? void 0 : info.q) == this.gamedatas.CON.MA_ERR_RESERVED) {
+            if ((info === null || info === void 0 ? void 0 : info.q) == this.gamedatas.CON.MA_ERR_PROTECTED) {
                 $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
                     player_name: name,
                     faction_name: faction_name
@@ -5049,7 +5049,7 @@ var GameXBody = /** @class */ (function (_super) {
                 $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
                 $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
             }
-            //save as local setting (per table)
+            //save as local setting (per table) XXX should should not be stored per table, its user setting and who will just grow unbounded with every game?
             var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + "_" + this.table_id));
             localColorSetting.writeProp("digital_cardfilter", btncolor);
         }
@@ -5653,12 +5653,11 @@ var VLayout = /** @class */ (function () {
         });
         var namediv = this.game.createDivNode("playerboard_side_name_".concat(color), "playerboard_side_name", headerNode);
         namediv.setAttribute("data-player-name", name);
-        // relocate tile trackers from tags
-        var places = ["tracker_city", "tracker_forest", "tracker_land"];
-        for (var _i = 0, places_1 = places; _i < places_1.length; _i++) {
-            var key = places_1[_i];
-            dojo.place($("alt_".concat(key, "_").concat(color)), "miniboardentry_".concat(color));
-        }
+        // // relocate tile trackers from tags
+        // const places = ["tracker_city", "tracker_forest", "tracker_land"];
+        // for (const key of places) {
+        //   dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
+        // }
         dojo.place("alt_tracker_gen", "map_left");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
