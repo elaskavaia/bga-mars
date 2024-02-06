@@ -4249,7 +4249,7 @@ var GameXBody = /** @class */ (function (_super) {
             var discount_cost = 0;
             var payop = card_info.payop;
             if (payop) {
-                discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
+                discount_cost = parseInt(payop.replace("nm", "").replace("nop", "0")) || 0;
             }
             else {
                 discount_cost = original_cost;

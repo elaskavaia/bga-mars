@@ -1416,7 +1416,7 @@ awarded.`);
       let discount_cost = 0;
       const payop = card_info.payop;
       if (payop) {
-        discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
+        discount_cost = parseInt(payop.replace("nm", "").replace("nop", "0")) || 0;
       } else {
         discount_cost = original_cost;
       }
