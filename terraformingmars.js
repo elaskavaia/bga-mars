@@ -3982,6 +3982,8 @@ var GameXBody = /** @class */ (function (_super) {
             return msg;
         if (ds.op_code == ds.cannot_resolve)
             return msg;
+        if (ds.op_code == "0")
+            return msg;
         msg = msg + this.getTokenName("err_".concat(ds.op_code)) + "<br/>";
         return msg;
     };

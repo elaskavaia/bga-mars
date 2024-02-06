@@ -1102,6 +1102,7 @@ awarded.`);
 
     if (ds.op_code == ds.cannot_pay) return msg;
     if (ds.op_code == ds.cannot_resolve) return msg;
+    if (ds.op_code == "0") return msg;
 
     msg = msg + this.getTokenName(`err_${ds.op_code}`) + "<br/>";
     return msg;
