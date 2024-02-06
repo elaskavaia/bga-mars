@@ -114,7 +114,13 @@ class GameXBody extends GameTokens {
       $("awards_title").innerHTML = _("Awards");
 
       //update prereq on cards
-      this.updateHandInformation(this.gamedatas["card_info"]);
+      this.updateHandInformation(this.gamedatas["card_info"], "card");
+
+      if ($("hand_area").dataset.sort_type == "manual") {
+        document.querySelectorAll(".handy .card").forEach((node: HTMLElement) => {
+          this.enableDragOnCard(node);
+        });
+      }
 
       // card reference
       this.setupHelpSheets();
@@ -134,9 +140,9 @@ class GameXBody extends GameTokens {
 
       this.setupResourceFiltering();
 
-      if (!this.isSpectator && this.player_id != null) {
-        this.loadLocalManualOrder($("hand_" + this.getPlayerColor(this.player_id)));
-        this.loadLocalManualOrder($("draw_" + this.getPlayerColor(this.player_id)));
+      if (!this.isSpectator && this.player_color) {
+        this.loadLocalManualOrder($(`hand_${this.player_color}`));
+        this.loadLocalManualOrder($(`draw_${this.player_color}`));
       }
 
       $(`outer_scoretracker`).addEventListener("click", () => {
@@ -185,7 +191,7 @@ class GameXBody extends GameTokens {
         let btn = evt.currentTarget as HTMLElement;
         dojo.stopEvent(evt);
         const actual_dir: string = btn.dataset.direction;
-        const new_dir: string = actual_dir == "" ? "increase" : actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "";
+        const new_dir: string = actual_dir == "" ? "increase" : (actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "");
         const hand_block: string = btn.dataset.target;
 
         //deactivate sorting on other buttons
@@ -202,21 +208,15 @@ class GameXBody extends GameTokens {
         localColorSetting.writeProp("sort_type", btn.dataset.type);
 
         if (btn.dataset.type == "manual" && new_dir == "increase") {
-          ["hand", "draw"].forEach((loc) => {
-            this.loadLocalManualOrder($(loc + "_" + this.player_color));
-            $(loc + "_" + this.player_color)
-              .querySelectorAll(".card")
-              .forEach((card: any) => {
-                this.enableDragOnCard(card);
-              });
+          this.loadLocalManualOrder($(`hand_${this.player_color}`));
+          this.loadLocalManualOrder($(`draw_${this.player_color}`));
+
+          document.querySelectorAll("#hand_area .card").forEach((card: any) => {
+            this.enableDragOnCard(card);
           });
         } else {
-          ["hand", "draw"].forEach((loc) => {
-            $(loc + "_" + this.player_color)
-              .querySelectorAll(".card")
-              .forEach((card: any) => {
-                this.disableDragOnCard(card);
-              });
+          document.querySelectorAll("#hand_area .card").forEach((card: any) => {
+            this.disableDragOnCard(card);
           });
         }
       });
@@ -544,19 +544,28 @@ class GameXBody extends GameTokens {
     }
   }
 
-  showHiddenContent(id: ElementOrId, title: string) {
+  showHiddenContent(id: ElementOrId, title: string, selectedId?: string) {
     let dlg = new ebg.popindialog();
     dlg.create("cards_dlg");
     dlg.setTitle(title);
     const cards_htm = this.cloneAndFixIds(id, "_tt", true).innerHTML;
-    const html = '<div id="card_dlg_content">' + cards_htm + "</div>";
+    const html = `<div id="card_pile_selector" class="card_pile_selector"></div>
+    <div id="card_dlg_content" class="card_dlg_content">${cards_htm}</div>`;
     dlg.setContent(html);
     $("card_dlg_content")
       .querySelectorAll(".token")
       .forEach((node) => {
-        this.updateTooltip(node.id, node);
+        node.addEventListener('click',(e)=>{
+          const selected_html = this.getTooptipHtmlForToken((e.currentTarget as any).id);
+          $('card_pile_selector').innerHTML = selected_html;
+        });
       });
+    if (selectedId) {
+      const selected_html = this.getTooptipHtmlForToken(selectedId);
+      $('card_pile_selector').innerHTML = selected_html;
+    }
     dlg.show();
+    return dlg;
   }
 
   onScreenWidthChange() {
@@ -1022,7 +1031,7 @@ class GameXBody extends GameTokens {
     if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD)
       res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
     res += this.generateTooltipSection(_("Tags"), tags);
-    
+
     let prereqText = "";
   
     if (displayInfo.key == "card_main_135") 
@@ -1086,7 +1095,7 @@ awarded.`);
   getPotentialErrors(card_id: string): string {
     if (!$(card_id)) return "";
     const ds = $(card_id).dataset;
-    if (!ds.potential_error) return;
+    if (!ds.op_code) return;
     let msg = "";
     if (ds.cannot_pay != "0") {
       msg = msg + this.getTokenName(`err_${ds.cannot_pay}`) + "<br/>";
@@ -1095,10 +1104,10 @@ awarded.`);
       msg = msg + this.getTokenName(`err_${ds.cannot_resolve}`) + "<br/>";
     }
 
-    if (ds.potential_error == ds.cannot_pay) return msg;
-    if (ds.potential_error == ds.cannot_resolve) return msg;
+    if (ds.op_code == ds.cannot_pay) return msg;
+    if (ds.op_code == ds.cannot_resolve) return msg;
 
-    msg = msg + this.getTokenName(`err_${ds.potential_error}`) + "<br/>";
+    msg = msg + this.getTokenName(`err_${ds.op_code}`) + "<br/>";
     return msg;
   }
 
@@ -1323,6 +1332,10 @@ awarded.`);
         this.vlayout.createHtmlForToken(tokenNode, displayInfo);
       }
     }
+    if (tokenNode.id?.startsWith("card_")) {
+      if ($("hand_area").dataset.sort_type == "manual") this.enableDragOnCard(tokenNode);
+      else this.disableDragOnCard(tokenNode);
+    }
   }
 
   setDomTokenState(tokenId: ElementOrId, newState: any) {
@@ -1395,64 +1408,75 @@ awarded.`);
     // }
   }
 
-  updateHandInformation(info): void {
+  updateHandInformation(info: any, opInfoType: string): void {
+    if (!info) return;
     for (const cardId in info) {
+      if (!this.gamedatas.token_types[cardId]) continue; // not a token
       const card_info = info[cardId];
-      const node = $(cardId) as HTMLElement;
-
-      const valid = parseInt(card_info.pre) == 0;
 
       // update token display info
+      if (cardId=='card_main_2') debugger;
       const original_cost = parseInt(this.gamedatas.token_types[cardId].cost);
       let discount_cost = 0;
       const payop = card_info.payop;
       if (payop) {
         discount_cost = parseInt(payop.replace("nm", "").replace("nop", 0)) || 0;
+      } else {
+        discount_cost = original_cost;
       }
       card_info.discount_cost = discount_cost;
       this.gamedatas.token_types[cardId].card_info = card_info;
 
       // update node attrs
+      const node = $(cardId) as HTMLElement;
       if (!node) continue; // not visible?
-      node.dataset.invalid_prereq = valid ? "0" : "1";
-      // XXX use params below or remove
-      node.dataset.cannot_resolve = card_info.m;
-      node.dataset.potential_error = card_info.q ?? "0";
-      node.dataset.cannot_pay = card_info.c;
-      node.dataset.discounted = String(discount_cost != original_cost);
-      node.dataset.discount_cost = String(discount_cost);
+
+      if (card_info.pre !== undefined) {
+        const prereqMet = (card_info.pre ?? "0") == 0;
+        node.dataset.invalid_prereq = prereqMet ? "0" : "1";
+
+        node.dataset.cannot_resolve = card_info.m ?? "0";
+        node.dataset.cannot_pay = card_info.c ?? "0";
+      }
+
+      node.dataset.op_code = card_info.q;
+
+      const discounted = discount_cost != original_cost;
+      if (discounted) {
+        node.dataset.discounted = String(discounted);
+        node.dataset.discount_cost = String(discount_cost);
+      }
+
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
 
-      let sort_playable: number = 0;
 
-      if ($("cost_" + cardId)) {
-        if (discount_cost != original_cost) {
-          $("cost_" + cardId).dataset.discounted_cost = discount_cost.toString();
-          $("cost_" + cardId).classList.add("discounted");
-          node.style.setProperty("--sort_cost", String(discount_cost));
-          sort_playable = discount_cost;
+      let costDiv = $("cost_" + cardId);
+
+      if (costDiv) {
+        if (discounted) {
+          costDiv.dataset.discounted_cost = node.dataset.discount_cost
+          costDiv.classList.add("discounted");
         } else {
-          //cleanup after discount vanishes
-          //    $("cost_" + card_id).innerHTML = original_cost.toString();
-          $("cost_" + cardId).dataset.discounted_cost = "";
-          if ($("cost_" + cardId).classList.contains("discounted")) $("cost_" + cardId).classList.remove("discounted");
-          node.style.setProperty("--sort_cost", String(original_cost));
-          sort_playable = original_cost;
+          costDiv.dataset.discounted_cost = "";
+          costDiv.classList.remove("discounted");
         }
       }
 
-      if (node.dataset.cannot_pay == "1") sort_playable = sort_playable + 100;
-      if (node.dataset.invalid_prereq == "1") sort_playable = sort_playable + 100;
-      if (node.dataset.cannot_resolve == "1") sort_playable = sort_playable + 100;
 
+      node.style.setProperty("--sort_cost", String(discount_cost));
+
+      let sort_playable: number = 0;
+      if (node.dataset.invalid_prereq != "0") sort_playable += 1;
+      sort_playable = sort_playable * 2;
+      if (node.dataset.cannot_resolve != "0") sort_playable += 1;
+      sort_playable = sort_playable * 2;
+      if (node.dataset.cannot_pay != "0") sort_playable += 1;
+      sort_playable = sort_playable * 100 + discount_cost;
+    
       node.style.setProperty("--sort_playable", String(sort_playable));
 
       //update TT too
       this.updateTooltip(node.id);
-
-      //make draggable
-      if ($("hand_area").dataset.sort_type == "manual") this.enableDragOnCard(node);
-      else this.disableDragOnCard(node);
     }
   }
 
@@ -2050,14 +2074,7 @@ awarded.`);
       const opInfo = operations[opId];
       const opargs = opInfo.args;
 
-      let name = "";
-      let contains_gfx = false;
-      //if (opInfo.typeexpr && opInfo.data && opInfo.data!="" && !this.isLayoutFull()) {
-      //  name= '<div class="innerbutton">'+CustomRenders.parseExprToHtml(opInfo.typeexpr)+'</div>';
-      //  contains_gfx=true;
-      // } else {
-      name = this.getButtonNameForOperation(opInfo);
-      //  }
+      let  name = this.getButtonNameForOperation(opInfo);
 
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
@@ -2065,7 +2082,7 @@ awarded.`);
       this.updateVisualsFromOp(opInfo, opId);
       if (singleOrFirst || !ordered) {
         this.activateSlots(opInfo, opId, singleOrFirst);
-        if (opInfo.type === "card" || opInfo.type == "buycard" || opInfo.type == "draft") this.updateHandInformation(opInfo.args.info);
+        this.updateHandInformation(opInfo.args.info, opInfo.type);
       }
 
       const buttonId = `button_${opId}`;
@@ -2202,9 +2219,11 @@ awarded.`);
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-      //   this.showHiddenContent("discard_main", _("Discard pile contents"));
+      this.showError(_('Cannot inspect deck or discard content - not allowed by the rules'));
     } else if (tid.startsWith("card_")) {
-      if (!tid.endsWith("help")) this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
+      if (tid.endsWith("help")) return;
+      this.showHiddenContent($(tid).parentElement.id, _("Pile contents"), tid);
+
     } else if (tid.startsWith("marker_")) {
       // propagate to parent
       this.onToken_playerTurnChoice(($(tid).parentNode as HTMLElement).id);
@@ -2340,111 +2359,17 @@ awarded.`);
     //disable on mobile for now
     if ($("ebd-body").classList.contains("mobile_version")) return;
     node.draggable = true;
-    node.addEventListener("dragstart", (event) => this.onDragStart(event));
-    node.addEventListener("dragend", (event) => this.onDragEnd(event));
+    node.addEventListener("dragstart", onDragStart);
+    node.addEventListener("dragend", onDragEnd);
   }
   disableDragOnCard(node: HTMLElement) {
     if (!node.draggable) return;
     node.draggable = false;
-    node.removeEventListener("dragstart", (event) => this.onDragStart(event));
-    node.removeEventListener("dragend", (event) => this.onDragEnd(event));
+    node.removeEventListener("dragstart", onDragStart);
+    node.removeEventListener("dragend", onDragEnd);
   }
 
-  private onDragStart(event: DragEvent) {
-    const selectedItem = event.target as HTMLElement;
-    if (!selectedItem.parentElement.classList.contains("handy")) return;
-    if (
-      $("hand_area").dataset.sort_type != "manual" ||
-      ($("ebd-body").classList.contains("touch-device") && $("ebd-body").classList.contains("mobile_version"))
-    ) {
-      return;
-    }
-
-    $("ebd-body").classList.add("drag_inpg");
-    selectedItem.classList.add("drag-active");
-
-    //prevent container from changing size
-    const rect = selectedItem.parentElement.getBoundingClientRect();
-    selectedItem.parentElement.style.setProperty("width", String(rect.width) + "px");
-    selectedItem.parentElement.style.setProperty("height", String(rect.height) + "px");
-
-    /*
-    event.dataTransfer.setData("text/plain", "card"); // not sure if needed
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.dropEffect = "move";*/
-
-    selectedItem.classList.add("hide");
-
-    dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
-    dojo.query("#" + selectedItem.parentElement.id + " .card").forEach((card) => {
-      //prevent
-      if (card.id == selectedItem.id) return;
-
-      if (card.nextElementSibling == null) {
-        const righthtm: string = `<div class="dragzone outsideright"><div id="dragright_${card.id}" class="dragzone_inside dragright"></div></div>`;
-        card.insertAdjacentHTML("afterend", righthtm);
-        $("dragright_" + card.id).addEventListener("dragover", (event) => {
-          event.preventDefault();
-          $("dragright_" + card.id).parentElement.classList.add("over");
-        });
-        $("dragright_" + card.id).addEventListener("dragleave", (event) => {
-          event.preventDefault();
-          $("dragright_" + card.id).parentElement.classList.remove("over");
-        });
-      }
-      if (
-        (card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
-        card.previousElementSibling == null
-      ) {
-        const lefthtm: string = `<div class="dragzone"><div id="dragleft_${card.id}" class="dragzone_inside dragleft"></div></div>`;
-        card.insertAdjacentHTML("beforebegin", lefthtm);
-        $("dragleft_" + card.id).addEventListener("dragover", (event) => {
-          event.preventDefault();
-          $("dragleft_" + card.id).parentElement.classList.add("over");
-        });
-        $("dragleft_" + card.id).addEventListener("dragleave", (event) => {
-          event.preventDefault();
-          $("dragleft_" + card.id).parentElement.classList.remove("over");
-        });
-      }
-    });
-  }
-
-  private onDragEnd(event: DragEvent) {
-    const selectedItem = event.target as HTMLElement;
-
-    let x = event.clientX;
-    let y = event.clientY;
-
-    const containerNode: HTMLElement = selectedItem.parentElement;
-    const pointsTo = document.elementFromPoint(x, y);
-
-    if (pointsTo === selectedItem || pointsTo === null) {
-      // do nothing
-    } else if (containerNode === pointsTo) {
-      //dropped in empty space on container
-      containerNode.append(selectedItem);
-    } else if (
-      pointsTo.parentElement != undefined &&
-      pointsTo.parentElement.parentElement != undefined &&
-      pointsTo.parentElement.parentElement == selectedItem.parentElement &&
-      pointsTo.classList.contains("dragzone_inside")
-    ) {
-      containerNode.insertBefore(selectedItem, pointsTo.parentElement);
-    } else if (containerNode === pointsTo.parentNode) {
-      containerNode.insertBefore(pointsTo, selectedItem);
-    } else {
-      console.error("Cannot determine target for drop", pointsTo.id);
-    }
-
-    selectedItem.classList.remove("drag-active");
-    $("ebd-body").classList.remove("drag_inpg");
-    containerNode.style.setProperty("width", "");
-    containerNode.style.setProperty("height", "");
-
-    dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
-    this.saveLocalManualOrder(containerNode);
-  }
+ 
 
   saveLocalManualOrder(containerNode: HTMLElement) {
     let svOrder: string = "";
@@ -2457,7 +2382,8 @@ awarded.`);
     localOrderSetting.writeProp("custo_order", svOrder);
   }
 
-  loadLocalManualOrder(containerNode: HTMLElement) {
+  loadLocalManualOrder(containerNode: HTMLElement | undefined) {
+    if (!containerNode) return;
     const localOrderSetting: LocalSettings = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
     const svOrder = localOrderSetting.readProp("custo_order", "");
     if (svOrder == "") return;
@@ -2500,4 +2426,100 @@ awarded.`);
 
 class Operation {
   type: string;
+}
+
+function onDragStart(event: DragEvent) {
+  const selectedItem = event.target as HTMLElement;
+  if (!selectedItem.parentElement.classList.contains("handy")) return;
+  if (
+    $("hand_area").dataset.sort_type != "manual" ||
+    ($("ebd-body").classList.contains("touch-device") && $("ebd-body").classList.contains("mobile_version"))
+  ) {
+    return;
+  }
+
+  $("ebd-body").classList.add("drag_inpg");
+  selectedItem.classList.add("drag-active");
+
+  //prevent container from changing size
+  const rect = selectedItem.parentElement.getBoundingClientRect();
+  selectedItem.parentElement.style.setProperty("width", String(rect.width) + "px");
+  selectedItem.parentElement.style.setProperty("height", String(rect.height) + "px");
+
+  /*
+  event.dataTransfer.setData("text/plain", "card"); // not sure if needed
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.dropEffect = "move";*/
+
+  selectedItem.classList.add("hide");
+
+  dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
+  dojo.query("#" + selectedItem.parentElement.id + " .card").forEach((card) => {
+    //prevent
+    if (card.id == selectedItem.id) return;
+
+    if (card.nextElementSibling == null) {
+      const righthtm: string = `<div class="dragzone outsideright"><div id="dragright_${card.id}" class="dragzone_inside dragright"></div></div>`;
+      card.insertAdjacentHTML("afterend", righthtm);
+      $("dragright_" + card.id).addEventListener("dragover", (event) => {
+        event.preventDefault();
+        $("dragright_" + card.id).parentElement.classList.add("over");
+      });
+      $("dragright_" + card.id).addEventListener("dragleave", (event) => {
+        event.preventDefault();
+        $("dragright_" + card.id).parentElement.classList.remove("over");
+      });
+    }
+    if (
+      (card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
+      card.previousElementSibling == null
+    ) {
+      const lefthtm: string = `<div class="dragzone"><div id="dragleft_${card.id}" class="dragzone_inside dragleft"></div></div>`;
+      card.insertAdjacentHTML("beforebegin", lefthtm);
+      $("dragleft_" + card.id).addEventListener("dragover", (event) => {
+        event.preventDefault();
+        $("dragleft_" + card.id).parentElement.classList.add("over");
+      });
+      $("dragleft_" + card.id).addEventListener("dragleave", (event) => {
+        event.preventDefault();
+        $("dragleft_" + card.id).parentElement.classList.remove("over");
+      });
+    }
+  });
+}
+
+function onDragEnd(event: DragEvent) {
+  const selectedItem = event.target as HTMLElement;
+
+  let x = event.clientX;
+  let y = event.clientY;
+
+  const containerNode: HTMLElement = selectedItem.parentElement;
+  const pointsTo = document.elementFromPoint(x, y);
+
+  if (pointsTo === selectedItem || pointsTo === null) {
+    // do nothing
+  } else if (containerNode === pointsTo) {
+    //dropped in empty space on container
+    containerNode.append(selectedItem);
+  } else if (
+    pointsTo.parentElement != undefined &&
+    pointsTo.parentElement.parentElement != undefined &&
+    pointsTo.parentElement.parentElement == selectedItem.parentElement &&
+    pointsTo.classList.contains("dragzone_inside")
+  ) {
+    containerNode.insertBefore(selectedItem, pointsTo.parentElement);
+  } else if (containerNode === pointsTo.parentNode) {
+    containerNode.insertBefore(pointsTo, selectedItem);
+  } else {
+    console.error("Cannot determine target for drop", pointsTo.id);
+  }
+
+  selectedItem.classList.remove("drag-active");
+  $("ebd-body").classList.remove("drag_inpg");
+  containerNode.style.setProperty("width", "");
+  containerNode.style.setProperty("height", "");
+
+  dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
+  (gameui as GameXBody).saveLocalManualOrder(containerNode);
 }

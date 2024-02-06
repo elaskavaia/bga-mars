@@ -39,6 +39,10 @@
   animation: pulse 500ms ease-in-out;
 }
 
+#page-title .bgabutton {
+    -webkit-user-drag: none; // prevent dragging buttons on title
+}
+
 
 @keyframes pulse {
   0% {

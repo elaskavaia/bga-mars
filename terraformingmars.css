@@ -55,6 +55,10 @@
   animation: pulse 500ms ease-in-out;
 }
 
+#page-title .bgabutton {
+  -webkit-user-drag: none;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1) !important;
@@ -5798,6 +5802,7 @@
   display: inline-block;
   vertical-align: top;
   padding: 10px;
+  max-width: none;
 }
 
 .tooltiptitle {
@@ -5942,17 +5947,6 @@
 .mcompact .card_stanproj_6_tooltipcontainer .infobox {
   display: none;
 }
-.mcompact .card_tooltipcontainer .tooltiptext,
-.mcompact .award_tooltipcontainer .tooltiptext,
-.mcompact .milestone_tooltipcontainer .tooltiptext,
-.mcompact .card_stanproj_1_tooltipcontainer .tooltiptext,
-.mcompact .card_stanproj_2_tooltipcontainer .tooltiptext,
-.mcompact .card_stanproj_3_tooltipcontainer .tooltiptext,
-.mcompact .card_stanproj_4_tooltipcontainer .tooltiptext,
-.mcompact .card_stanproj_5_tooltipcontainer .tooltiptext,
-.mcompact .card_stanproj_6_tooltipcontainer .tooltiptext {
-  max-width: none;
-}
 .mcompact .award_tooltipcontainer,
 .mcompact .milestone_tooltipcontainer,
 .mcompact .card_stanproj_1_tooltipcontainer,
@@ -6061,6 +6055,7 @@
 }
 .mfull .tooltiptext {
   margin-left: 10px;
+  max-width: 600px;
 }
 .mfull .tooltiptitle {
   padding: 6px;
