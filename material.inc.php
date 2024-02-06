@@ -4979,7 +4979,7 @@ $this->token_types = [
   ],
   'err_3' => [  //
     'code' => MA_ERR_MANDATORYEFFECT, 'type' => 'err',
-    'name' => clienttranslate("Mandator effect cannot be resolved"),
+    'name' => clienttranslate("Mandatory immediate effect cannot be resolved"),
   ],
   'err_5' => [  //
     'code' => 5, 'type' => 'err',

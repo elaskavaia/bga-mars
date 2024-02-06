@@ -3904,7 +3904,7 @@ var GameXBody = /** @class */ (function (_super) {
         return res;
     };
     GameXBody.prototype.generateCardTooltip = function (displayInfo) {
-        var _a;
+        var _a, _b;
         if (!displayInfo)
             return "?";
         if (displayInfo.t === undefined) {
@@ -3918,8 +3918,8 @@ var GameXBody = /** @class */ (function (_super) {
         var res = "";
         var tags = "";
         if (displayInfo.tags) {
-            for (var _i = 0, _b = displayInfo.tags.split(" "); _i < _b.length; _i++) {
-                var tag = _b[_i];
+            for (var _i = 0, _c = displayInfo.tags.split(" "); _i < _c.length; _i++) {
+                var tag = _c[_i];
                 tags += _(tag) + " ";
             }
         }
@@ -3930,12 +3930,13 @@ var GameXBody = /** @class */ (function (_super) {
         if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD)
             res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
         res += this.generateTooltipSection(_("Tags"), tags);
-        var prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+        var prereqText = "";
+        if (displayInfo.key == "card_main_135")
+            prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
+        else if ((_b = displayInfo.expr) === null || _b === void 0 ? void 0 : _b.pre)
+            prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
         if (prereqText != "")
             prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
-        //special case
-        if (card_id == " Basic #135")
-            prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag.");
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
         if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
             var text = _("If you meet the criteria of a milestone, you may\nclaim it by paying 8 M\u20AC and placing your player marker on\nit. A milestone may only be claimed by one player, and only\n3 of the 5 milestones may be claimed in total, so there is a\nrace for these! Each claimed milestone is worth 5 VPs at the\nend of the game.");
@@ -3963,24 +3964,21 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.getPotentialErrors = function (card_id) {
         if (!$(card_id))
             return "";
+        var ds = $(card_id).dataset;
+        if (!ds.potential_error)
+            return;
         var msg = "";
-        if ($(card_id).dataset.cannot_pay == "1") {
-            msg = _("You don't have enough resources to pay for this card.");
+        if (ds.cannot_pay != "0") {
+            msg = msg + this.getTokenName("err_".concat(ds.cannot_pay)) + "<br/>";
         }
-        if ($(card_id).dataset.cannot_resolve != undefined && $(card_id).dataset.cannot_resolve != "0") {
-            if (msg != "")
-                msg = msg + "<br/>";
-            if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-                msg = msg + _("The card cannot be played because an immediate effect cannot be resolved fully.");
-            }
+        if (ds.cannot_resolve !== "0") {
+            msg = msg + this.getTokenName("err_".concat(ds.cannot_resolve)) + "<br/>";
         }
-        if ($(card_id).dataset.potential_error != undefined && parseInt($(card_id).dataset.potential_error) > 3) {
-            if (msg != "")
-                msg = msg + "<br/>";
-            if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-                msg = msg + _("Something prevents this card to be played.");
-            }
-        }
+        if (ds.potential_error == ds.cannot_pay)
+            return msg;
+        if (ds.potential_error == ds.cannot_resolve)
+            return msg;
+        msg = msg + this.getTokenName("err_".concat(ds.potential_error)) + "<br/>";
         return msg;
     };
     GameXBody.prototype.createHtmlForToken = function (tokenNode, displayInfo) {
@@ -4680,7 +4678,7 @@ var GameXBody = /** @class */ (function (_super) {
             // if name is not set its not a ral player
             var corp_id = $("miniboard_corp_logo_".concat(color)).dataset.corp;
             var faction_name = this.getTokenName(corp_id);
-            // count of resources 
+            // count of resources
             if ((info === null || info === void 0 ? void 0 : info.max) !== undefined) {
                 $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
                     res_count: info.max,
@@ -4987,6 +4985,8 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
         var _a;
         //debugger;
+        if (!tid)
+            return;
         var info = this.reverseIdLookup.get(tid);
         if (info && info !== "0") {
             var opId = info.op;
@@ -5001,6 +5001,10 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tid.startsWith("card_")) {
             if (!tid.endsWith("help"))
                 this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
+        }
+        else if (tid.startsWith("marker_")) {
+            // propagate to parent
+            this.onToken_playerTurnChoice($(tid).parentNode.id);
         }
         else {
             this.showMoveUnauthorized();

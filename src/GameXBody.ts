@@ -1022,12 +1022,18 @@ class GameXBody extends GameTokens {
     if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD)
       res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
     res += this.generateTooltipSection(_("Tags"), tags);
-    let prereqText = displayInfo.pre && displayInfo.expr ? CustomRenders.parsePrereqToText(displayInfo.expr.pre, this) : "";
+    
+    let prereqText = "";
+  
+    if (displayInfo.key == "card_main_135") 
+      prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
+    else if (displayInfo.expr?.pre) 
+      prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
+
     if (prereqText != "")
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
 
-    //special case
-    if (card_id == " Basic #135") prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag.");
+
 
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
@@ -1079,22 +1085,20 @@ awarded.`);
 
   getPotentialErrors(card_id: string): string {
     if (!$(card_id)) return "";
+    const ds = $(card_id).dataset;
+    if (!ds.potential_error) return;
     let msg = "";
-    if ($(card_id).dataset.cannot_pay == "1") {
-      msg = _("You don't have enough resources to pay for this card.");
+    if (ds.cannot_pay != "0") {
+      msg = msg + this.getTokenName(`err_${ds.cannot_pay}`) + "<br/>";
     }
-    if ($(card_id).dataset.cannot_resolve != undefined && $(card_id).dataset.cannot_resolve != "0") {
-      if (msg != "") msg = msg + "<br/>";
-      if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-        msg = msg + _("The card cannot be played because an immediate effect cannot be resolved fully.");
-      }
+    if (ds.cannot_resolve !== "0") {
+      msg = msg + this.getTokenName(`err_${ds.cannot_resolve}`) + "<br/>";
     }
-    if ($(card_id).dataset.potential_error != undefined && parseInt($(card_id).dataset.potential_error) > 3) {
-      if (msg != "") msg = msg + "<br/>";
-      if ($(card_id).dataset.cannot_resolve == this.gamedatas.CON.MA_ERR_MANDATORYEFFECT) {
-        msg = msg + _("Something prevents this card to be played.");
-      }
-    }
+
+    if (ds.potential_error == ds.cannot_pay) return msg;
+    if (ds.potential_error == ds.cannot_resolve) return msg;
+
+    msg = msg + this.getTokenName(`err_${ds.potential_error}`) + "<br/>";
     return msg;
   }
 
@@ -1126,7 +1130,7 @@ awarded.`);
         const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
         //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
 
-        if (tokenNode.id=="card_stanproj_7") {
+        if (tokenNode.id == "card_stanproj_7") {
           decor.innerHTML = `
                <div class="bg_gray"></div>  
                <div class='stanp_cost token_img tracker_m'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
@@ -1140,7 +1144,6 @@ awarded.`);
                <div class='standard_projects_title'>${displayInfo.name}</div>  
             `;
         }
-
       } else {
         //tags
         let firsttag = "";
@@ -1302,8 +1305,8 @@ awarded.`);
           */
     }
 
-    if (displayInfo.mainType=="marker" && tokenNode.id && !this.isLayoutFull()) {
-      this.vlayout.convertInto3DCube(tokenNode,displayInfo.color);
+    if (displayInfo.mainType == "marker" && tokenNode.id && !this.isLayoutFull()) {
+      this.vlayout.convertInto3DCube(tokenNode, displayInfo.color);
     }
   }
 
@@ -1358,7 +1361,6 @@ awarded.`);
     }
 
     this.vlayout.renderSpecificToken(node);
-
 
     //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
@@ -1520,8 +1522,7 @@ awarded.`);
 
       //also set property to corp logo div
       $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
-      $(tokenInfo.location.replace("tableau_","miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
-
+      $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
@@ -1754,7 +1755,6 @@ awarded.`);
         paramargs.forEach((tid: string) => {
           this.activatePlayerSlot(tid, opId, single, paramInfo?.[tid]);
         });
-
     } else if (ttype == "enum") {
       const args = this.gamedatas.gamestate.args ?? this.gamedatas.gamestate.private_state.args;
       const operations = args.operations ?? args.player_operations[this.player_id].operations;
@@ -1839,7 +1839,7 @@ awarded.`);
 
     this.addActionButton(
       buttonId,
-      name  ?? _(color),
+      name ?? _(color),
       () => {
         this.onSelectTarget(opId, color);
       },
@@ -1853,21 +1853,21 @@ awarded.`);
     }
     if (name) {
       // if name is not set its not a ral player
-      const corp_id=$(`miniboard_corp_logo_${color}`).dataset.corp;
+      const corp_id = $(`miniboard_corp_logo_${color}`).dataset.corp;
       const faction_name = this.getTokenName(corp_id);
-      // count of resources 
+      // count of resources
       if (info?.max !== undefined) {
         $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
           res_count: info.max,
           player_name: name,
-          faction_name:faction_name
-        }); 
+          faction_name: faction_name
+        });
       }
       // player is protected from attack
       if (info?.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
         $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
           player_name: name,
-          faction_name:faction_name
+          faction_name: faction_name
         });
       }
       $(buttonId).classList.add("otherplayer", "plcolor_" + color);
@@ -2144,14 +2144,19 @@ awarded.`);
 
   addUndoButton() {
     if (!$("button_undo")) {
-      this.addActionButton("button_undo", _("Undo"), () => {
-        this.gameStatusCleanup();
-        this.ajaxcallwrapper_unchecked("undo");
-      }, undefined, undefined
-      , "red");
+      this.addActionButton(
+        "button_undo",
+        _("Undo"),
+        () => {
+          this.gameStatusCleanup();
+          this.ajaxcallwrapper_unchecked("undo");
+        },
+        undefined,
+        undefined,
+        "red"
+      );
     }
   }
-
 
   onUpdateActionButtons_multiplayerChoice(args) {
     let operations = args.player_operations[this.player_id] ?? undefined;
@@ -2190,6 +2195,7 @@ awarded.`);
   // on click hooks
   onToken_playerTurnChoice(tid: string) {
     //debugger;
+    if (!tid) return;
     const info = this.reverseIdLookup.get(tid);
     if (info && info !== "0") {
       const opId = info.op;
@@ -2199,6 +2205,9 @@ awarded.`);
       //   this.showHiddenContent("discard_main", _("Discard pile contents"));
     } else if (tid.startsWith("card_")) {
       if (!tid.endsWith("help")) this.showHiddenContent($(tid).parentElement.id, _("Pile contents"));
+    } else if (tid.startsWith("marker_")) {
+      // propagate to parent
+      this.onToken_playerTurnChoice(($(tid).parentNode as HTMLElement).id);
     } else {
       this.showMoveUnauthorized();
     }
