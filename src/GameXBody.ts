@@ -191,7 +191,7 @@ class GameXBody extends GameTokens {
         let btn = evt.currentTarget as HTMLElement;
         dojo.stopEvent(evt);
         const actual_dir: string = btn.dataset.direction;
-        const new_dir: string = actual_dir == "" ? "increase" : (actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "");
+        const new_dir: string = actual_dir == "" ? "increase" : actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "";
         const hand_block: string = btn.dataset.target;
 
         //deactivate sorting on other buttons
@@ -555,14 +555,14 @@ class GameXBody extends GameTokens {
     $("card_dlg_content")
       .querySelectorAll(".token")
       .forEach((node) => {
-        node.addEventListener('click',(e)=>{
+        node.addEventListener("click", (e) => {
           const selected_html = this.getTooptipHtmlForToken((e.currentTarget as any).id);
-          $('card_pile_selector').innerHTML = selected_html;
+          $("card_pile_selector").innerHTML = selected_html;
         });
       });
     if (selectedId) {
       const selected_html = this.getTooptipHtmlForToken(selectedId);
-      $('card_pile_selector').innerHTML = selected_html;
+      $("card_pile_selector").innerHTML = selected_html;
     }
     dlg.show();
     return dlg;
@@ -988,7 +988,7 @@ class GameXBody extends GameTokens {
     const discount_cost = displayInfo.card_info?.discount_cost ?? displayInfo.cost;
     if (displayInfo.card_info) {
       if (displayInfo.cost != discount_cost) classes += " discounted";
-      if (displayInfo.card_info?.pre ?? 0 > 0) {
+      if (displayInfo.card_info.pre ?? 0 > 0) {
         classes += " invalid_prereq";
       }
       if (displayInfo.card_info.m ?? 0 > 0) {
@@ -1033,16 +1033,12 @@ class GameXBody extends GameTokens {
     res += this.generateTooltipSection(_("Tags"), tags);
 
     let prereqText = "";
-  
-    if (displayInfo.key == "card_main_135") 
-      prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
-    else if (displayInfo.expr?.pre) 
-      prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
+
+    if (displayInfo.key == "card_main_135") prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
+    else if (displayInfo.expr?.pre) prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
 
     if (prereqText != "")
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
-
-
 
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
@@ -1095,7 +1091,7 @@ awarded.`);
   getPotentialErrors(card_id: string): string {
     if (!$(card_id)) return "";
     const ds = $(card_id).dataset;
-    if (!ds.op_code) return;
+
     let msg = "";
     if (ds.cannot_pay != "0") {
       msg = msg + this.getTokenName(`err_${ds.cannot_pay}`) + "<br/>";
@@ -1415,7 +1411,6 @@ awarded.`);
       const card_info = info[cardId];
 
       // update token display info
-      if (cardId=='card_main_2') debugger;
       const original_cost = parseInt(this.gamedatas.token_types[cardId].cost);
       let discount_cost = 0;
       const payop = card_info.payop;
@@ -1431,13 +1426,11 @@ awarded.`);
       const node = $(cardId) as HTMLElement;
       if (!node) continue; // not visible?
 
-      if (card_info.pre !== undefined) {
-        const prereqMet = (card_info.pre ?? "0") == 0;
-        node.dataset.invalid_prereq = prereqMet ? "0" : "1";
+      const prereqMet = (card_info.pre ?? "0") == 0;
+      node.dataset.invalid_prereq = prereqMet ? "0" : "1";
 
-        node.dataset.cannot_resolve = card_info.m ?? "0";
-        node.dataset.cannot_pay = card_info.c ?? "0";
-      }
+      node.dataset.cannot_resolve = card_info.m ?? "0";
+      node.dataset.cannot_pay = card_info.c ?? "0";
 
       node.dataset.op_code = card_info.q;
 
@@ -1449,12 +1442,11 @@ awarded.`);
 
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
 
-
       let costDiv = $("cost_" + cardId);
 
       if (costDiv) {
         if (discounted) {
-          costDiv.dataset.discounted_cost = node.dataset.discount_cost
+          costDiv.dataset.discounted_cost = node.dataset.discount_cost;
           costDiv.classList.add("discounted");
         } else {
           costDiv.dataset.discounted_cost = "";
@@ -1463,16 +1455,22 @@ awarded.`);
       }
 
 
-      node.style.setProperty("--sort_cost", String(discount_cost));
+      // card num is last sort disambiguator
+      const num = parseInt(this.gamedatas.token_types[cardId].num);
+
+      const sort_cost = discount_cost * 1000 + num;
+
+      node.style.setProperty("--sort_cost", String(sort_cost));
 
       let sort_playable: number = 0;
-      if (node.dataset.invalid_prereq != "0") sort_playable += 1;
+      if (node.dataset.invalid_prereq !== "0") sort_playable += 1;
       sort_playable = sort_playable * 2;
-      if (node.dataset.cannot_resolve != "0") sort_playable += 1;
+      if (node.dataset.cannot_resolve !== "0") sort_playable += 1;
       sort_playable = sort_playable * 2;
-      if (node.dataset.cannot_pay != "0") sort_playable += 1;
+      if (node.dataset.cannot_pay !== "0") sort_playable += 1;
       sort_playable = sort_playable * 100 + discount_cost;
-    
+      sort_playable = sort_playable * 1000 + num;
+
       node.style.setProperty("--sort_playable", String(sort_playable));
 
       //update TT too
@@ -2074,7 +2072,7 @@ awarded.`);
       const opInfo = operations[opId];
       const opargs = opInfo.args;
 
-      let  name = this.getButtonNameForOperation(opInfo);
+      let name = this.getButtonNameForOperation(opInfo);
 
       const paramargs = opargs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
@@ -2219,11 +2217,10 @@ awarded.`);
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-      this.showError(_('Cannot inspect deck or discard content - not allowed by the rules'));
+      this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
     } else if (tid.startsWith("card_")) {
       if (tid.endsWith("help")) return;
       this.showHiddenContent($(tid).parentElement.id, _("Pile contents"), tid);
-
     } else if (tid.startsWith("marker_")) {
       // propagate to parent
       this.onToken_playerTurnChoice(($(tid).parentNode as HTMLElement).id);
@@ -2369,8 +2366,6 @@ awarded.`);
     node.removeEventListener("dragend", onDragEnd);
   }
 
- 
-
   saveLocalManualOrder(containerNode: HTMLElement) {
     let svOrder: string = "";
     //query should return in the same order as the DOM
@@ -2470,10 +2465,7 @@ function onDragStart(event: DragEvent) {
         $("dragright_" + card.id).parentElement.classList.remove("over");
       });
     }
-    if (
-      (card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
-      card.previousElementSibling == null
-    ) {
+    if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
       const lefthtm: string = `<div class="dragzone"><div id="dragleft_${card.id}" class="dragzone_inside dragleft"></div></div>`;
       card.insertAdjacentHTML("beforebegin", lefthtm);
       $("dragleft_" + card.id).addEventListener("dragover", (event) => {

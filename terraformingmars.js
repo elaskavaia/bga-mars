@@ -3258,7 +3258,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var btn = evt.currentTarget;
                 dojo.stopEvent(evt);
                 var actual_dir = btn.dataset.direction;
-                var new_dir = actual_dir == "" ? "increase" : (actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "");
+                var new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "";
                 var hand_block = btn.dataset.target;
                 //deactivate sorting on other buttons
                 dojo.query("#" + hand_block + " .hs_button").forEach(function (item) {
@@ -3566,14 +3566,14 @@ var GameXBody = /** @class */ (function (_super) {
         $("card_dlg_content")
             .querySelectorAll(".token")
             .forEach(function (node) {
-            node.addEventListener('click', function (e) {
+            node.addEventListener("click", function (e) {
                 var selected_html = _this.getTooptipHtmlForToken(e.currentTarget.id);
-                $('card_pile_selector').innerHTML = selected_html;
+                $("card_pile_selector").innerHTML = selected_html;
             });
         });
         if (selectedId) {
             var selected_html = this.getTooptipHtmlForToken(selectedId);
-            $('card_pile_selector').innerHTML = selected_html;
+            $("card_pile_selector").innerHTML = selected_html;
         }
         dlg.show();
         return dlg;
@@ -3884,7 +3884,7 @@ var GameXBody = /** @class */ (function (_super) {
         return txt;
     };
     GameXBody.prototype.generateTokenTooltip_Full = function (displayInfo) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         if (!displayInfo)
             return "?";
         if (displayInfo.t === undefined) {
@@ -3896,13 +3896,13 @@ var GameXBody = /** @class */ (function (_super) {
         if (displayInfo.card_info) {
             if (displayInfo.cost != discount_cost)
                 classes += " discounted";
-            if ((_d = (_c = displayInfo.card_info) === null || _c === void 0 ? void 0 : _c.pre) !== null && _d !== void 0 ? _d : 0 > 0) {
+            if ((_c = displayInfo.card_info.pre) !== null && _c !== void 0 ? _c : 0 > 0) {
                 classes += " invalid_prereq";
             }
-            if ((_e = displayInfo.card_info.m) !== null && _e !== void 0 ? _e : 0 > 0) {
+            if ((_d = displayInfo.card_info.m) !== null && _d !== void 0 ? _d : 0 > 0) {
                 classes += " cannot_resolve";
             }
-            if ((_f = displayInfo.card_info.c) !== null && _f !== void 0 ? _f : 0 > 0) {
+            if ((_e = displayInfo.card_info.c) !== null && _e !== void 0 ? _e : 0 > 0) {
                 classes += " cannot_pay";
             }
         }
@@ -3971,8 +3971,6 @@ var GameXBody = /** @class */ (function (_super) {
         if (!$(card_id))
             return "";
         var ds = $(card_id).dataset;
-        if (!ds.op_code)
-            return;
         var msg = "";
         if (ds.cannot_pay != "0") {
             msg = msg + this.getTokenName("err_".concat(ds.cannot_pay)) + "<br/>";
@@ -4245,8 +4243,6 @@ var GameXBody = /** @class */ (function (_super) {
                 continue; // not a token
             var card_info = info[cardId];
             // update token display info
-            if (cardId == 'card_main_2')
-                debugger;
             var original_cost = parseInt(this.gamedatas.token_types[cardId].cost);
             var discount_cost = 0;
             var payop = card_info.payop;
@@ -4262,12 +4258,10 @@ var GameXBody = /** @class */ (function (_super) {
             var node = $(cardId);
             if (!node)
                 continue; // not visible?
-            if (card_info.pre !== undefined) {
-                var prereqMet = ((_a = card_info.pre) !== null && _a !== void 0 ? _a : "0") == 0;
-                node.dataset.invalid_prereq = prereqMet ? "0" : "1";
-                node.dataset.cannot_resolve = (_b = card_info.m) !== null && _b !== void 0 ? _b : "0";
-                node.dataset.cannot_pay = (_c = card_info.c) !== null && _c !== void 0 ? _c : "0";
-            }
+            var prereqMet = ((_a = card_info.pre) !== null && _a !== void 0 ? _a : "0") == 0;
+            node.dataset.invalid_prereq = prereqMet ? "0" : "1";
+            node.dataset.cannot_resolve = (_b = card_info.m) !== null && _b !== void 0 ? _b : "0";
+            node.dataset.cannot_pay = (_c = card_info.c) !== null && _c !== void 0 ? _c : "0";
             node.dataset.op_code = card_info.q;
             var discounted = discount_cost != original_cost;
             if (discounted) {
@@ -4286,17 +4280,21 @@ var GameXBody = /** @class */ (function (_super) {
                     costDiv.classList.remove("discounted");
                 }
             }
-            node.style.setProperty("--sort_cost", String(discount_cost));
+            // card num is last sort disambiguator
+            var num = parseInt(this.gamedatas.token_types[cardId].num);
+            var sort_cost = discount_cost * 1000 + num;
+            node.style.setProperty("--sort_cost", String(sort_cost));
             var sort_playable = 0;
-            if (node.dataset.invalid_prereq != "0")
+            if (node.dataset.invalid_prereq !== "0")
                 sort_playable += 1;
             sort_playable = sort_playable * 2;
-            if (node.dataset.cannot_resolve != "0")
+            if (node.dataset.cannot_resolve !== "0")
                 sort_playable += 1;
             sort_playable = sort_playable * 2;
-            if (node.dataset.cannot_pay != "0")
+            if (node.dataset.cannot_pay !== "0")
                 sort_playable += 1;
             sort_playable = sort_playable * 100 + discount_cost;
+            sort_playable = sort_playable * 1000 + num;
             node.style.setProperty("--sort_playable", String(sort_playable));
             //update TT too
             this.updateTooltip(node.id);
@@ -5007,7 +5005,7 @@ var GameXBody = /** @class */ (function (_super) {
                 this.showError("Not implemented");
         }
         else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-            this.showError(_('Cannot inspect deck or discard content - not allowed by the rules'));
+            this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
         }
         else if (tid.startsWith("card_")) {
             if (tid.endsWith("help"))
@@ -5229,8 +5227,7 @@ function onDragStart(event) {
                 $("dragright_" + card.id).parentElement.classList.remove("over");
             });
         }
-        if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
-            card.previousElementSibling == null) {
+        if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
             var lefthtm = "<div class=\"dragzone\"><div id=\"dragleft_".concat(card.id, "\" class=\"dragzone_inside dragleft\"></div></div>");
             card.insertAdjacentHTML("beforebegin", lefthtm);
             $("dragleft_" + card.id).addEventListener("dragover", function (event) {
