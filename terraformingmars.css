@@ -9221,7 +9221,7 @@
 }
 
 .hand_area[data-sort_type=playable][data-sort_direction=decrease] .card {
-  order: calc(var(--sort_playbable) * -1);
+  order: calc(var(--sort_playable) * -1);
 }
 
 .hand_area[data-sort_direction=increase] .card.corp {
