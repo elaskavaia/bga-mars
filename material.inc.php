@@ -41,6 +41,7 @@ if (!defined("MA_GAME")) {
   define("MA_ERR_COST", 1);
   define("MA_ERR_PREREQ", 2);
   define("MA_ERR_MANDATORYEFFECT", 3);
+  define("MA_ERR_ACTIONCOST", 4);
   define("MA_ERR_OCCUPIED", 7);
   define("MA_ERR_RESERVED", 6);
   define("MA_ERR_NOTRESERVED", 5);
@@ -4979,7 +4980,11 @@ $this->token_types = [
   ],
   'err_3' => [  //
     'code' => MA_ERR_MANDATORYEFFECT, 'type' => 'err',
-    'name' => clienttranslate("Mandatory immediate effect cannot be resolved"),
+    'name' => clienttranslate("Immediate effect cannot be resolved"),
+  ],
+  'err_4' => [  //
+    'code' => MA_ERR_ACTIONCOST, 'type' => 'err',
+    'name' => clienttranslate("Cannot pay action cost"),
   ],
   'err_5' => [  //
     'code' => 5, 'type' => 'err',

@@ -22,7 +22,7 @@ class Operation_activate extends AbsOperation {
             $info = $map[$tokenId];
             if ($info['state'] == MA_CARD_STATE_ACTION_USED) return MA_ERR_ALREADYUSED;
             if ($info['state'] == MA_CARD_STATE_ACTION_UNUSED_PRE) return MA_ERR_NOTAPPLICABLE;
-            if ($this->game->isVoidSingle($r, $color, 1, "$tokenId:a")) return MA_ERR_MANDATORYEFFECT;
+            if ($this->game->isVoidSingle($r, $color, 1, "$tokenId:a")) return MA_ERR_ACTIONCOST;
             return 0;
         });
     }
