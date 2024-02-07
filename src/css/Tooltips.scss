@@ -264,26 +264,32 @@
 
 .mfull {
   #ebd-body {
-    --tt-width: calc(var(--localsetting_cardsize) / 100 * 520px);
-    --tt-height: calc(var(--tt-width) * 0.688);
-
-    .midSizeDialog {
-      max-width: calc(var(--tt-width));
+      --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);
+      --tt-height: calc(var(--tt-width) * 0.688);
+  
+  
+      .midSizeDialog {
+        max-width: calc(var(--tt-width));
+      }
+  
+      .tooltipcontainer {
+        background-image: url(img/full/tooltipbg.jpg);
+        background-size: calc(var(--tt-width) * 1.2) auto;
+      }
+  
+      .card_tooltipcontainer {
+        --card-width: calc(var(--tt-width) * 0.4);
+        --card-height: calc(var(--card-width)*1.40658174);
+        min-width: var(--tt-width);
+        min-height: var(--tt-height);
+        font-size: calc(var(--localsetting_cardsize) * 1.2%);
+  
+        .tooltiptext {
+          max-width: calc(var(--tt-width) * 0.6 - 25px);
+          padding: 10px;
+        }
+      }
     }
-
-    .tooltipcontainer {
-      background-image: url(img/full/tooltipbg.jpg);
-      background-size: auto;
-    }
-
-    .card_tooltipcontainer {
-      --card-width: calc(var(--tt-width) * 0.4);
-      --card-height: calc(var(--card-width)*1.40658174);
-      min-width: var(--tt-width);
-      min-height: var(--tt-height);
-      font-size: calc(var(--localsetting_cardsize) * 1.2%);
-    }
-  }
 
 
   .tt_section>* {
@@ -297,11 +303,6 @@
   .tt_intertitle {
     text-transform: uppercase;
     font-weight: bold;
-  }
-
-  .tooltiptext {
-    margin-left: 10px;
-    max-width: 600px;
   }
 
   .tooltiptitle {

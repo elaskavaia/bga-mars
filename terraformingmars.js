@@ -39,6 +39,7 @@ var GameBasics = /** @class */ (function (_super) {
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
+        this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
         // add reload Css debug button
         var parent = document.querySelector(".debug_section");
@@ -170,10 +171,16 @@ var GameBasics = /** @class */ (function (_super) {
         this.updateCounters(safeCounters);
     };
     GameBasics.prototype.cancelLocalStateEffects = function () {
+        console.log(this.last_server_state);
         this.disconnectAllTemp();
         this.restoreServerData();
         this.updateCountersSafe(this.gamedatas.counters);
         this.restoreServerGameState();
+        if (this.gamedatas.gamestate.private_state != null && this.isCurrentPlayerActive()) {
+            var gamestate = this.gamedatas.gamestate.private_state;
+            this.updatePageTitle(gamestate);
+            this.onEnteringState(gamestate.name, gamestate);
+        }
     };
     // ANIMATIONS
     /**
@@ -2511,7 +2518,6 @@ var GameTokens = /** @class */ (function (_super) {
     GameTokens.prototype.setup = function (gamedatas) {
         _super.prototype.setup.call(this, gamedatas);
         this.restoreList = []; // list of object dirtied during client state visualization
-        this.gamedatas_server = dojo.clone(this.gamedatas);
         var first_player_id = Object.keys(gamedatas.players)[0];
         if (!this.isSpectator)
             this.player_color = gamedatas.players[this.player_id].color;
@@ -3972,17 +3978,17 @@ var GameXBody = /** @class */ (function (_super) {
             return "";
         var ds = $(card_id).dataset;
         var msg = "";
-        if (ds.cannot_pay != "0") {
+        if (ds.cannot_pay && ds.cannot_pay != "0") {
             msg = msg + this.getTokenName("err_".concat(ds.cannot_pay)) + "<br/>";
         }
-        if (ds.cannot_resolve !== "0") {
+        if (ds.cannot_resolve && ds.cannot_resolve !== "0") {
             msg = msg + this.getTokenName("err_".concat(ds.cannot_resolve)) + "<br/>";
         }
         if (ds.op_code == ds.cannot_pay)
             return msg;
         if (ds.op_code == ds.cannot_resolve)
             return msg;
-        if (ds.op_code == "0")
+        if (ds.op_code == "0" || ds.op_code === undefined)
             return msg;
         msg = msg + this.getTokenName("err_".concat(ds.op_code)) + "<br/>";
         return msg;

@@ -6026,7 +6026,7 @@
 }
 
 .mfull #ebd-body {
-  --tt-width: calc(var(--localsetting_cardsize) / 100 * 520px);
+  --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);
   --tt-height: calc(var(--tt-width) * 0.688);
 }
 .mfull #ebd-body .midSizeDialog {
@@ -6034,7 +6034,7 @@
 }
 .mfull #ebd-body .tooltipcontainer {
   background-image: url(img/full/tooltipbg.jpg);
-  background-size: auto;
+  background-size: calc(var(--tt-width) * 1.2) auto;
 }
 .mfull #ebd-body .card_tooltipcontainer {
   --card-width: calc(var(--tt-width) * 0.4);
@@ -6042,6 +6042,10 @@
   min-width: var(--tt-width);
   min-height: var(--tt-height);
   font-size: calc(var(--localsetting_cardsize) * 1.2%);
+}
+.mfull #ebd-body .card_tooltipcontainer .tooltiptext {
+  max-width: calc(var(--tt-width) * 0.6 - 25px);
+  padding: 10px;
 }
 .mfull .tt_section > * {
   display: block;
@@ -6052,10 +6056,6 @@
 .mfull .tt_intertitle {
   text-transform: uppercase;
   font-weight: bold;
-}
-.mfull .tooltiptext {
-  margin-left: 10px;
-  max-width: 600px;
 }
 .mfull .tooltiptitle {
   padding: 6px;
