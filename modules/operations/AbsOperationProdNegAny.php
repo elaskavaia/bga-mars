@@ -1,7 +1,9 @@
 <?php
 
 declare(strict_types=1);
-
+/**
+ * Decrease anybody production, i.e. nps_Any
+ */
 class AbsOperationProdNegAny extends AbsOperation {
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
@@ -10,10 +12,25 @@ class AbsOperationProdNegAny extends AbsOperation {
         $min = $this->game->getRulesFor($this->game->getTrackerId('', $type), 'min');
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count, $type, $min) {
             $value = $this->game->getTrackerValue($other_player_color, $type);
-            if ($value - $count < $min) return MA_ERR_PREREQ;
-            return 0;
+            if ($value - $count < $min) return ['q' => MA_ERR_PREREQ, 'max' => $value];
+            return ['q' => MA_OK, 'max' => $value];
         });
     }
+
+    protected function getPrompt() {
+        return  clienttranslate('${you} must select a player who will lose ${res_name} (${count})');
+    }
+    protected function getVisargs() {
+        $type = $this->getType();
+        $ttoken = $this->game->getTrackerId('', $type);
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getMinCount(),
+            'res_name' => $this->game->getTokenName($ttoken),
+            'res_type' => $type,
+        ];
+    }
+
 
     public function getPrimaryArgType() {
         return 'player';
