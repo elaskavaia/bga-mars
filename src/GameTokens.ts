@@ -42,7 +42,6 @@ class GameTokens extends GameBasics {
   setup(gamedatas: any): void {
     super.setup(gamedatas);
     this.restoreList = []; // list of object dirtied during client state visualization
-    this.gamedatas_server = dojo.clone(this.gamedatas);
 
     const first_player_id = Object.keys(gamedatas.players)[0];
     if (!this.isSpectator) this.player_color = gamedatas.players[this.player_id].color;

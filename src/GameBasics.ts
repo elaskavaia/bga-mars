@@ -33,6 +33,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
+    this.gamedatas_server = dojo.clone(this.gamedatas);
     this.setupInfoPanel();
     // add reload Css debug button
     var parent = document.querySelector(".debug_section");
@@ -181,10 +182,18 @@ class GameBasics extends GameGui {
   }
 
   cancelLocalStateEffects() {
+    console.log(this.last_server_state);
     this.disconnectAllTemp();
     this.restoreServerData();
     this.updateCountersSafe(this.gamedatas.counters);
+  
     this.restoreServerGameState();
+    
+    if (this.gamedatas.gamestate.private_state != null && this.isCurrentPlayerActive()) {
+      let gamestate=this.gamedatas.gamestate.private_state;
+      this.updatePageTitle(gamestate);
+      this.onEnteringState(gamestate.name, gamestate);
+    }
   }
 
   // ANIMATIONS
