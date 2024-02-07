@@ -1643,17 +1643,17 @@ awarded.`);
   }
 
   getButtonNameForOperation(op: any) {
-    const baseName = op.args.button
+    const baseActionName = op.args.button
       ? this.format_string_recursive(op.args.button, op.args.args)
       : this.getButtonNameForOperationExp(op.type);
 
     const opTargets = op.args?.target ?? [];
     if (opTargets.length == 1 && !op.type.startsWith("conv")) {
-      const argname = this.getTokenName(opTargets[0]);
-      return `${baseName} (${argname})`;
+      const onlyAvailableAction = this.getTokenName(opTargets[0]);
+      return `${baseActionName} ⤇ ${onlyAvailableAction}`;
     }
 
-    return baseName;
+    return baseActionName;
   }
 
   getDivForTracker(id: string, value: string | number = "") {
@@ -2129,10 +2129,10 @@ awarded.`);
                   this.clearReverseIdMap();
                   this.activateSlots(opInfo, opId, true);
                 },
-                (id: string) => {
+                (id: string) => 
                   // onToken
-                  this.onSelectTarget(opId, id, true);
-                }
+                  this.onSelectTarget(opId, id, true)
+                
               );
           };
         } else {
@@ -2152,8 +2152,8 @@ awarded.`);
 
       // add done (skip) when optional
       if (singleOrFirst) {
-        if (opInfo.skipname) {
-          this.addActionButtonColor("button_skip", _(opInfo.skipname), () => this.sendActionSkip(), "orange");
+        if (opArgs.skipname) {
+          this.addActionButtonColor("button_skip", _(opArgs.skipname), () => this.sendActionSkip(), "orange");
         }
       }
       i = i + 1;

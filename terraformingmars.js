@@ -4487,15 +4487,15 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
         var _a, _b;
-        var baseName = op.args.button
+        var baseActionName = op.args.button
             ? this.format_string_recursive(op.args.button, op.args.args)
             : this.getButtonNameForOperationExp(op.type);
         var opTargets = (_b = (_a = op.args) === null || _a === void 0 ? void 0 : _a.target) !== null && _b !== void 0 ? _b : [];
         if (opTargets.length == 1 && !op.type.startsWith("conv")) {
-            var argname = this.getTokenName(opTargets[0]);
-            return "".concat(baseName, " (").concat(argname, ")");
+            var onlyAvailableAction = this.getTokenName(opTargets[0]);
+            return "".concat(baseActionName, " \u2907 ").concat(onlyAvailableAction);
         }
-        return baseName;
+        return baseActionName;
     };
     GameXBody.prototype.getDivForTracker = function (id, value) {
         if (value === void 0) { value = ""; }
@@ -4928,7 +4928,7 @@ var GameXBody = /** @class */ (function (_super) {
                                 _this.activateSlots(opInfo, opId, true);
                             }, function (id) {
                                 // onToken
-                                _this.onSelectTarget(opId, id, true);
+                                return _this.onSelectTarget(opId, id, true);
                             });
                     };
                 }
@@ -4950,8 +4950,8 @@ var GameXBody = /** @class */ (function (_super) {
             }
             // add done (skip) when optional
             if (singleOrFirst) {
-                if (opInfo.skipname) {
-                    this_2.addActionButtonColor("button_skip", _(opInfo.skipname), function () { return _this.sendActionSkip(); }, "orange");
+                if (opArgs.skipname) {
+                    this_2.addActionButtonColor("button_skip", _(opArgs.skipname), function () { return _this.sendActionSkip(); }, "orange");
                 }
             }
             i = i + 1;
