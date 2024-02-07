@@ -1715,16 +1715,16 @@ awarded.`);
   }
 
   activateSlots(opInfo: any, opId: number, single: boolean) {
-    const opargs = opInfo.args;
-    const paramargs = opargs.target ?? [];
-    const ttype = opargs.ttype ?? "none";
+    const opArgs = opInfo.args;
+    const opTargets = opArgs.target ?? [];
+    const ttype = opArgs.ttype ?? "none";
     const from = opInfo.mcount;
     const count = opInfo.count;
-    const paramInfo = opargs.info;
+    const paramInfo = opArgs.info;
 
     if (single) {
-      this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-      if (paramargs.length == 0) {
+      this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
+      if (opTargets.length == 0) {
         if (count == from) {
           this.addActionButton("button_" + opId, _("Confirm"), () => {
             this.sendActionResolve(opId);
@@ -1757,7 +1757,9 @@ awarded.`);
     }
 
     if (ttype == "token") {
-      paramargs.forEach((tid: string) => {
+      // new magic number is 7 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
+      const showAsButtons = opTargets.length <= 7;
+      opTargets.forEach((tid: string) => {
         if (tid == "none") {
           if (single) {
             this.addActionButton("button_none", _("None"), () => {
@@ -1768,13 +1770,10 @@ awarded.`);
           const divId = this.getActiveSlotRedirect(tid);
           this.setActiveSlot(divId);
           this.setReverseIdMap(divId, opId, tid);
-          if (single) {
-            if (paramargs.length <= 6) {
-              // new magic number is 6 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
-              this.addActionButton("button_" + tid, this.getTokenName(tid), () => {
-                this.sendActionResolveWithTarget(opId, tid);
-              });
-            }
+          if (single && showAsButtons) {
+            this.addActionButton("button_" + tid, this.getTokenName(tid), () => {
+              this.sendActionResolveWithTarget(opId, tid);
+            });
           }
         }
       });
@@ -1784,24 +1783,15 @@ awarded.`);
           this.activatePlayerSlot(tid, opId, single, paramInfo[tid]);
         }
       } else
-        paramargs.forEach((tid: string) => {
-          this.activatePlayerSlot(tid, opId, single, paramInfo?.[tid]);
+        opTargets.forEach((tid: string) => {
+          this.activatePlayerSlot(tid, opId, single);
         });
     } else if (ttype == "enum") {
-      const args = this.gamedatas.gamestate.args ?? this.gamedatas.gamestate.private_state.args;
-      const operations = args.operations ?? args.player_operations[this.player_id].operations;
+      if (single) {
+        const args = this.gamedatas.gamestate.args ?? this.gamedatas.gamestate.private_state.args;
+        const operations = args.operations ?? args.player_operations[this.player_id].operations;
 
-      paramargs.forEach((tid: string, i: number) => {
-        if (single) {
-          const detailsInfo = operations[opId].args?.info?.[tid];
-          const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
-          //console.log("enum details "+tid,detailsInfo);
-          let buttonColor = undefined;
-          if (sign < 0) buttonColor = "gray";
-          if (sign > 0) buttonColor = "red";
-          const divId = "button_" + i;
-          let title = '<div class="custom_paiement_inner">' + this.resourcesToHtml(detailsInfo.resources) + "</div>";
-
+        opTargets.forEach((tid: string, i: number) => {
           if (tid == "payment") {
             //show only if options
             const opts = operations[opId].args.info?.[tid];
@@ -1815,38 +1805,27 @@ awarded.`);
               this.createCustomPayment(opId, opts);
             }
           } else {
+            const detailsInfo = operations[opId].args?.info?.[tid];
+            const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
+            //console.log("enum details "+tid,detailsInfo);
+            let buttonColor = undefined;
+            if (sign < 0) buttonColor = "gray";
+            if (sign > 0) buttonColor = "red";
+            const divId = "button_" + i;
             //  title = this.parseActionsToHTML(tid);
-            this.addActionButton(
+            let title = this.resourcesToHtml(detailsInfo.resources);
+            this.addActionButtonColor(
               divId,
               title,
               () => {
-                if (tid == "payment") {
-                  // stub
-                  /*
-                  const first = paramargs[0]; // send same data as 1st option as stub
-                  this.sendActionResolveWithTargetAndPayment(opId, tid, operations[opId].args.info?.[first]?.resources);
-
-                   */
-                } else this.onSelectTarget(opId, tid);
+                this.onSelectTarget(opId, tid);
               },
-              undefined,
-              false,
               buttonColor
             );
           }
-        }
-      });
+        });
+      }
     }
-    //custom
-    /*
-    if (opInfo.type=="convp") {
-      //convert plants
-      let btnid='playerboard_group_plants';
-      this.connect($(btnid),'onclick',()=>{
-        this.sendActionResolve(opId);
-      })
-
-    }*/
   }
 
   /**
@@ -1867,7 +1846,9 @@ awarded.`);
 
     if (!single) return;
     const buttonId = "button_" + color;
-    const name = this.gamedatas.players[playerId]?.name;
+    let name = undefined;
+    if (color === "none") name = _("None");
+    else if (playerId) name = this.gamedatas.players[playerId]?.name;
 
     this.addActionButtonColor(
       buttonId,
@@ -2068,9 +2049,9 @@ awarded.`);
   ) {
     this.addActionButton(buttonId, name, handler);
     const buttonDiv = $(buttonId);
-    if (playerColor && playerColor != this.player_color) buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
+    if (playerColor && playerColor !== this.player_color && playerColor != "none") buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
 
-    if (buttonColor && buttonColor != "blue") {
+    if (buttonColor) {
       buttonDiv.classList.remove("bgabutton_blue");
       buttonDiv.classList.add("bgabutton_" + buttonColor);
     }

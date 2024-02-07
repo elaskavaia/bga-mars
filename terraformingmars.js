@@ -4549,15 +4549,15 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.activateSlots = function (opInfo, opId, single) {
         var _this = this;
         var _a, _b, _c, _d;
-        var opargs = opInfo.args;
-        var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
-        var ttype = (_b = opargs.ttype) !== null && _b !== void 0 ? _b : "none";
+        var opArgs = opInfo.args;
+        var opTargets = (_a = opArgs.target) !== null && _a !== void 0 ? _a : [];
+        var ttype = (_b = opArgs.ttype) !== null && _b !== void 0 ? _b : "none";
         var from = opInfo.mcount;
         var count = opInfo.count;
-        var paramInfo = opargs.info;
+        var paramInfo = opArgs.info;
         if (single) {
-            this.setDescriptionOnMyTurn(opargs.prompt, opargs.args);
-            if (paramargs.length == 0) {
+            this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
+            if (opTargets.length == 0) {
                 if (count == from) {
                     this.addActionButton("button_" + opId, _("Confirm"), function () {
                         _this.sendActionResolve(opId);
@@ -4589,7 +4589,9 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         if (ttype == "token") {
-            paramargs.forEach(function (tid) {
+            // new magic number is 7 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
+            var showAsButtons_1 = opTargets.length <= 7;
+            opTargets.forEach(function (tid) {
                 if (tid == "none") {
                     if (single) {
                         _this.addActionButton("button_none", _("None"), function () {
@@ -4601,13 +4603,10 @@ var GameXBody = /** @class */ (function (_super) {
                     var divId = _this.getActiveSlotRedirect(tid);
                     _this.setActiveSlot(divId);
                     _this.setReverseIdMap(divId, opId, tid);
-                    if (single) {
-                        if (paramargs.length <= 6) {
-                            // new magic number is 6 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
-                            _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
-                                _this.sendActionResolveWithTarget(opId, tid);
-                            });
-                        }
+                    if (single && showAsButtons_1) {
+                        _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
+                            _this.sendActionResolveWithTarget(opId, tid);
+                        });
                     }
                 }
             });
@@ -4619,29 +4618,19 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             }
             else
-                paramargs.forEach(function (tid) {
-                    _this.activatePlayerSlot(tid, opId, single, paramInfo === null || paramInfo === void 0 ? void 0 : paramInfo[tid]);
+                opTargets.forEach(function (tid) {
+                    _this.activatePlayerSlot(tid, opId, single);
                 });
         }
         else if (ttype == "enum") {
-            var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
-            var operations_1 = (_d = args.operations) !== null && _d !== void 0 ? _d : args.player_operations[this.player_id].operations;
-            paramargs.forEach(function (tid, i) {
-                var _a, _b, _c;
-                if (single) {
-                    var detailsInfo = (_b = (_a = operations_1[opId].args) === null || _a === void 0 ? void 0 : _a.info) === null || _b === void 0 ? void 0 : _b[tid];
-                    var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
-                    //console.log("enum details "+tid,detailsInfo);
-                    var buttonColor = undefined;
-                    if (sign < 0)
-                        buttonColor = "gray";
-                    if (sign > 0)
-                        buttonColor = "red";
-                    var divId = "button_" + i;
-                    var title = '<div class="custom_paiement_inner">' + _this.resourcesToHtml(detailsInfo.resources) + "</div>";
+            if (single) {
+                var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
+                var operations_1 = (_d = args.operations) !== null && _d !== void 0 ? _d : args.player_operations[this.player_id].operations;
+                opTargets.forEach(function (tid, i) {
+                    var _a, _b, _c;
                     if (tid == "payment") {
                         //show only if options
-                        var opts = (_c = operations_1[opId].args.info) === null || _c === void 0 ? void 0 : _c[tid];
+                        var opts = (_a = operations_1[opId].args.info) === null || _a === void 0 ? void 0 : _a[tid];
                         if (Object.entries(opts.resources).reduce(function (sum, _a) {
                             var key = _a[0], val = _a[1];
                             return sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0);
@@ -4650,33 +4639,24 @@ var GameXBody = /** @class */ (function (_super) {
                         }
                     }
                     else {
+                        var detailsInfo = (_c = (_b = operations_1[opId].args) === null || _b === void 0 ? void 0 : _b.info) === null || _c === void 0 ? void 0 : _c[tid];
+                        var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
+                        //console.log("enum details "+tid,detailsInfo);
+                        var buttonColor = undefined;
+                        if (sign < 0)
+                            buttonColor = "gray";
+                        if (sign > 0)
+                            buttonColor = "red";
+                        var divId = "button_" + i;
                         //  title = this.parseActionsToHTML(tid);
-                        _this.addActionButton(divId, title, function () {
-                            if (tid == "payment") {
-                                // stub
-                                /*
-                                const first = paramargs[0]; // send same data as 1st option as stub
-                                this.sendActionResolveWithTargetAndPayment(opId, tid, operations[opId].args.info?.[first]?.resources);
-              
-                                 */
-                            }
-                            else
-                                _this.onSelectTarget(opId, tid);
-                        }, undefined, false, buttonColor);
+                        var title = _this.resourcesToHtml(detailsInfo.resources);
+                        _this.addActionButtonColor(divId, title, function () {
+                            _this.onSelectTarget(opId, tid);
+                        }, buttonColor);
                     }
-                }
-            });
+                });
+            }
         }
-        //custom
-        /*
-        if (opInfo.type=="convp") {
-          //convert plants
-          let btnid='playerboard_group_plants';
-          this.connect($(btnid),'onclick',()=>{
-            this.sendActionResolve(opId);
-          })
-    
-        }*/
     };
     /**
      * Activate player for the operation
@@ -4698,7 +4678,11 @@ var GameXBody = /** @class */ (function (_super) {
         if (!single)
             return;
         var buttonId = "button_" + color;
-        var name = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
+        var name = undefined;
+        if (color === "none")
+            name = _("None");
+        else if (playerId)
+            name = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
         this.addActionButtonColor(buttonId, name !== null && name !== void 0 ? name : _(color), function () {
             _this.onSelectTarget(opId, color);
         }, "gray", color, !valid);
@@ -4861,9 +4845,9 @@ var GameXBody = /** @class */ (function (_super) {
         if (disabled === void 0) { disabled = false; }
         this.addActionButton(buttonId, name, handler);
         var buttonDiv = $(buttonId);
-        if (playerColor && playerColor != this.player_color)
+        if (playerColor && playerColor !== this.player_color && playerColor != "none")
             buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
-        if (buttonColor && buttonColor != "blue") {
+        if (buttonColor) {
             buttonDiv.classList.remove("bgabutton_blue");
             buttonDiv.classList.add("bgabutton_" + buttonColor);
         }
