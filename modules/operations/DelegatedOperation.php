@@ -32,10 +32,18 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->isVoid();
     }
 
+    protected function getMinCount(): int {
+        return $this->delegate->getMinCount();
+    }
+
     function canSkipAutomatically(): bool {
         return $this->delegate->canSkipAutomatically();
     }
-    
+
+    function isOptional() {
+        return $this->delegate->isOptional();
+    }
+
     function isFullyAutomated() {
         return $this->delegate->isFullyAutomated();
     }

@@ -58,6 +58,11 @@ abstract class AbsOperation {
         return $this->isVoid();
     }
 
+    function isOptional() {
+        if ($this->getMinCount() == 0)  return true;
+        return false;
+    }
+
     function arg() {
         if ($this->argresult) {
             //if ($this->op_info['id'] != $op['id']) throw new Exception("op instances reused for anothger operaion");
@@ -72,7 +77,7 @@ abstract class AbsOperation {
         $result["prompt"] = $this->getPrompt();
         $result["button"] = $this->getButtonName();
         $result["args"] = $this->getVisargs();
-        if ($this->getMinCount()<=0) {
+        if ($this->isOptional()) {
             $result["skipname"] = $this->getSkipButtonName();
         }
         return $result;
@@ -90,8 +95,8 @@ abstract class AbsOperation {
         ];
     }
 
-    protected function getSkipButtonName(){
-        return "Done";
+    protected function getSkipButtonName() {
+        return clienttranslate("Done");
     }
 
 
@@ -145,7 +150,7 @@ abstract class AbsOperation {
             if (is_array($possible_targets)) return array_shift($possible_targets);
             return $possible_targets;
         } else {
-            $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args for $type ".toJson($args));
+            $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args for $type " . toJson($args));
             return null;
         }
     }
