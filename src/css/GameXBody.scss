@@ -943,6 +943,9 @@
   transition: 0.01s;
   transform: translateX(-9999px);
   width:0.1px;
+  * {
+    pointer-events: none;
+  }
 }
 .drag_inpg {
   .dijitTooltip{
@@ -956,6 +959,8 @@
    /* flex-wrap: nowrap;*/
 
   }
+  user-select: none; 
+  touch-action: none;
 }
 
 /*

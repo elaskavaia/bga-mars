@@ -1780,7 +1780,7 @@ awarded.`);
     } else if (ttype == "player") {
       if (paramInfo) {
         for (let tid in paramInfo) {
-          this.activatePlayerSlot(tid, opId, single, paramInfo[tid]);
+          this.activatePlayerSlot(tid, opId, single, { ... paramInfo[tid], op: opInfo });
         }
       } else
         opTargets.forEach((tid: string) => {
@@ -1846,40 +1846,38 @@ awarded.`);
 
     if (!single) return;
     const buttonId = "button_" + color;
-    let name = undefined;
-    if (color === "none") name = _("None");
-    else if (playerId) name = this.gamedatas.players[playerId]?.name;
-
-    this.addActionButtonColor(
+    const buttonDiv = this.addActionButtonPlayer(
       buttonId,
-      name ?? _(color),
+      color,
       () => {
         this.onSelectTarget(opId, color);
       },
-      "gray",
-      color,
       !valid
     );
-    // if name is not set its not a real player
-    if (!playerId || !name) return;
+    if (!buttonDiv) return;
 
-    const corp_id = $(`miniboard_corp_logo_${color}`).dataset.corp;
-    const faction_name = this.getTokenName(corp_id);
+    // if name is not set its not a real player
+    if (!playerId) return;
+    if (!info) return;
+
     // count of resources
-    if (info?.max !== undefined) {
-      $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
+
+    if (info.max !== undefined) {
+      buttonDiv.innerHTML += " " + this.format_string_recursive(_("(owns ${res_count})"), {
         res_count: info.max,
-        player_name: name,
-        faction_name: faction_name
+        count: info.op?.count // not used now
       });
     }
     // player is protected from attack
-    if (info?.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
-      $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
-        player_name: name,
-        faction_name: faction_name
-      });
+    if (info.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
+      buttonDiv.innerHTML += " " + _("(protected)");
     }
+
+    // tooltips are not working on disabled button
+    // if (info.q !== "0") {
+    //   this.addTooltip(buttonId, this.getTokenName(`err_${info.q}`),"");
+    // }
+
   }
 
   /** When server wants to activate some element, ui may adjust it */
@@ -2049,7 +2047,8 @@ awarded.`);
   ) {
     this.addActionButton(buttonId, name, handler);
     const buttonDiv = $(buttonId);
-    if (playerColor && playerColor !== this.player_color && playerColor != "none") buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
+    if (playerColor && playerColor !== this.player_color && playerColor != "none")
+      buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
 
     if (buttonColor) {
       buttonDiv.classList.remove("bgabutton_blue");
@@ -2059,6 +2058,25 @@ awarded.`);
     if (disabled) {
       buttonDiv.classList.add("disabled");
     }
+
+    return buttonDiv;
+  }
+
+  addActionButtonPlayer(buttonId: string, playerColor: string, handler: eventhandler, disabled: boolean = false) {
+    if (playerColor === "none") {
+      return this.addActionButtonColor(buttonId, _("None"), handler, "orange", undefined, disabled);
+    }
+
+
+    const playerId = this.getPlayerIdByColor(playerColor);
+    if (!playerId) return undefined; // invalid?
+    let name = this.divColoredPlayer(playerId);
+    const buttonDiv = this.addActionButtonColor(buttonId, name, handler, "gray", undefined, disabled);
+
+    buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
+    const logo = this.cloneAndFixIds(`miniboard_corp_logo_${playerColor}`,'bar', true);
+    logo.classList.remove('miniboard_corp_logo');
+    buttonDiv.innerHTML = logo.outerHTML + " " + name;
 
     return buttonDiv;
   }
@@ -2168,7 +2186,7 @@ awarded.`);
     if (chooseorder)
       this.addActionButtonColor(
         "button_whatever",
-        _('Whatever'),
+        _("Whatever"),
         () => {
           this.ajaxuseraction("whatever", {});
         },
@@ -2443,22 +2461,27 @@ class Operation {
 }
 
 function onDragStart(event: DragEvent) {
-  const selectedItem = event.target as HTMLElement;
-  if (!selectedItem.parentElement.classList.contains("handy")) return;
+  const selectedItem = event.currentTarget as HTMLElement;
+  //console.log("onDragStart",selectedItem?.id);
+  const cardParent =  selectedItem.parentElement
+  if (!cardParent.classList.contains("handy")) return;
+
   if (
     $("hand_area").dataset.sort_type != "manual" ||
     ($("ebd-body").classList.contains("touch-device") && $("ebd-body").classList.contains("mobile_version"))
   ) {
     return;
   }
+  event.stopPropagation();
 
   $("ebd-body").classList.add("drag_inpg");
   selectedItem.classList.add("drag-active");
+  //selectedItem.style.setProperty('user-select','none');
 
   //prevent container from changing size
-  const rect = selectedItem.parentElement.getBoundingClientRect();
-  selectedItem.parentElement.style.setProperty("width", String(rect.width) + "px");
-  selectedItem.parentElement.style.setProperty("height", String(rect.height) + "px");
+  const rect = cardParent.getBoundingClientRect();
+  cardParent.style.setProperty("width", String(rect.width) + "px");
+  cardParent.style.setProperty("height", String(rect.height) + "px");
 
   /*
   event.dataTransfer.setData("text/plain", "card"); // not sure if needed
@@ -2467,40 +2490,48 @@ function onDragStart(event: DragEvent) {
 
   selectedItem.classList.add("hide");
 
-  dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
-  dojo.query("#" + selectedItem.parentElement.id + " .card").forEach((card) => {
+  cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
+  cardParent.querySelectorAll(".card").forEach((card) => {
     //prevent
     if (card.id == selectedItem.id) return;
 
     if (card.nextElementSibling == null) {
-      const righthtm: string = `<div class="dragzone outsideright"><div id="dragright_${card.id}" class="dragzone_inside dragright"></div></div>`;
+      const dragNodeId = "dragright_" + card.id;
+      const righthtm: string = `<div class="dragzone outsideright"><div id="${dragNodeId}" class="dragzone_inside dragright"></div></div>`;
       card.insertAdjacentHTML("afterend", righthtm);
-      $("dragright_" + card.id).addEventListener("dragover", (event) => {
+      const dragNode = $(dragNodeId);
+      dragNode.addEventListener("dragover", (event) => {
         event.preventDefault();
-        $("dragright_" + card.id).parentElement.classList.add("over");
+        dragNode.parentElement.classList.add("over");
       });
-      $("dragright_" + card.id).addEventListener("dragleave", (event) => {
+      dragNode.addEventListener("dragleave", (event) => {
         event.preventDefault();
-        $("dragright_" + card.id).parentElement.classList.remove("over");
+        dragNode.parentElement.classList.remove("over");
       });
     }
     if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
-      const lefthtm: string = `<div class="dragzone"><div id="dragleft_${card.id}" class="dragzone_inside dragleft"></div></div>`;
+      const dragNodeId = "dragleft_" + card.id;
+      const lefthtm: string = `<div class="dragzone"><div id="${dragNodeId}" class="dragzone_inside dragleft"></div></div>`;
       card.insertAdjacentHTML("beforebegin", lefthtm);
-      $("dragleft_" + card.id).addEventListener("dragover", (event) => {
+      const dragNode = $(dragNodeId);
+      dragNode.addEventListener("dragover", (event) => {
         event.preventDefault();
-        $("dragleft_" + card.id).parentElement.classList.add("over");
+        dragNode.parentElement.classList.add("over");
       });
-      $("dragleft_" + card.id).addEventListener("dragleave", (event) => {
+      dragNode.addEventListener("dragleave", (event) => {
         event.preventDefault();
-        $("dragleft_" + card.id).parentElement.classList.remove("over");
+        dragNode.parentElement.classList.remove("over");
       });
     }
   });
+ // console.log("onDragStart commit");
 }
 
 function onDragEnd(event: DragEvent) {
+  event.stopPropagation();
+  
   const selectedItem = event.target as HTMLElement;
+ // console.log("onDragEnd",selectedItem?.id);
 
   let x = event.clientX;
   let y = event.clientY;
@@ -2514,8 +2545,8 @@ function onDragEnd(event: DragEvent) {
     //dropped in empty space on container
     containerNode.append(selectedItem);
   } else if (
-    pointsTo.parentElement != undefined &&
-    pointsTo.parentElement.parentElement != undefined &&
+    pointsTo.parentElement !== undefined &&
+    pointsTo.parentElement.parentElement !== undefined &&
     pointsTo.parentElement.parentElement == selectedItem.parentElement &&
     pointsTo.classList.contains("dragzone_inside")
   ) {
@@ -2528,9 +2559,11 @@ function onDragEnd(event: DragEvent) {
 
   selectedItem.classList.remove("drag-active");
   $("ebd-body").classList.remove("drag_inpg");
-  containerNode.style.setProperty("width", "");
-  containerNode.style.setProperty("height", "");
+  containerNode.style.removeProperty("width");
+  containerNode.style.removeProperty("height");
 
   dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
   (gameui as GameXBody).saveLocalManualOrder(containerNode);
+
+ // console.log("onDragEnd commit");
 }

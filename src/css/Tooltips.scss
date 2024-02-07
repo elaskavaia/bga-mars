@@ -262,6 +262,10 @@
 
 }
 
+// .bgabutton.disabled {
+//   pointer-events: unset; // to allow tooltips
+// }
+
 .mfull {
   #ebd-body {
       --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);

@@ -5423,6 +5423,12 @@
   background-size: 700% 200%;
 }
 
+#page-title .corp_logo {
+  --card-width: 100px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .corp_logo[data-corp=card_corp_1] {
   background-position: 0 0;
 }
@@ -9285,7 +9291,14 @@
   transform: translateX(-9999px);
   width: 0.1px;
 }
+.drag-active * {
+  pointer-events: none;
+}
 
+.drag_inpg {
+  user-select: none;
+  touch-action: none;
+}
 .drag_inpg .dijitTooltip {
   display: none;
 }

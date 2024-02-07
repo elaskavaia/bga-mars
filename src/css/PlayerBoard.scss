@@ -381,6 +381,12 @@
     background-size: 700% 200%;
   }
 
+  #page-title .corp_logo {
+    --card-width: 100px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
   .corp_logo[data-corp="card_corp_1"]{background-position: 0 0;}
   .corp_logo[data-corp="card_corp_2"]{background-position: -100% 0;}
   .corp_logo[data-corp="card_corp_3"]{background-position: -200% 0;}

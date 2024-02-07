@@ -186,11 +186,11 @@ class GameBasics extends GameGui {
     this.disconnectAllTemp();
     this.restoreServerData();
     this.updateCountersSafe(this.gamedatas.counters);
-  
+
     this.restoreServerGameState();
-    
+
     if (this.gamedatas.gamestate.private_state != null && this.isCurrentPlayerActive()) {
-      let gamestate=this.gamedatas.gamestate.private_state;
+      let gamestate = this.gamedatas.gamestate.private_state;
       this.updatePageTitle(gamestate);
       this.onEnteringState(gamestate.name, gamestate);
     }
@@ -638,6 +638,16 @@ class GameBasics extends GameGui {
     }
     var you = '<span style="font-weight:bold;color:#' + color + ";" + color_bg + '">' + __("lang_mainsite", "You") + "</span>";
     return you;
+  }
+
+  divColoredPlayer(player_id: number) {
+    var color = this.gamedatas.players[player_id].color || "black";
+    var color_bg = "";
+    if (this.gamedatas.players[player_id].color_back) {
+      color_bg = "background-color:#" + this.gamedatas.players[player_id].color_back + ";";
+    }
+    var div = '<span style="color:#' + color + ";" + color_bg + '">' + this.gamedatas.players[player_id].name + "</span>";
+    return div;
   }
 
   // INPUT CONNECTORS
