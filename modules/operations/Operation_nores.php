@@ -43,6 +43,11 @@ class Operation_nores extends AbsOperation {
         return $inc;
     }
 
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['target']) == 0;
+    }
+
     function canResolveAutomatically() {
         if ($this->game->isSolo()) return true;
         return false;
