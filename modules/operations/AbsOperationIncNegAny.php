@@ -47,6 +47,10 @@ class AbsOperationIncNegAny extends AbsOperation {
         return false;
     }
 
+    function canSkipAutomatically() {
+        return false;
+    }
+
     function isVoid(): bool {
         return false;
     }

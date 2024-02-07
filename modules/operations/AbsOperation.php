@@ -54,6 +54,10 @@ abstract class AbsOperation {
         return false;
     }
 
+    function canSkipAutomatically() {
+        return $this->isVoid();
+    }
+
     function arg() {
         if ($this->argresult) {
             //if ($this->op_info['id'] != $op['id']) throw new Exception("op instances reused for anothger operaion");

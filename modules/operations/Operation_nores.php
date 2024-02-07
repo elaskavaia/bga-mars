@@ -53,9 +53,26 @@ class Operation_nores extends AbsOperation {
         return false;
     }
 
+    function canSkipAutomatically() {
+        return false;
+    }
+
     function isVoid(): bool {
         if ($this->game->isSolo()) return false;
         return parent::isVoid();
+    }
+
+
+    protected function getOpName() {
+        $par = $this->params;
+        return ['log' => clienttranslate('Remove ${restype_name} (Any Card)'),  "args" => [
+            'restype_name' => $this->game->getTokenName("tag$par"),
+            'i18n' => ['restype_name']
+        ]];
+    }
+
+    public function getPrompt() {
+        return clienttranslate('${you} must select a card to remove ${count} ${restype_name} resource/s');
     }
 
     protected function getVisargs() {
@@ -66,17 +83,5 @@ class Operation_nores extends AbsOperation {
             'restype_name' => $this->game->getTokenName("tag$par"),
             'i18n' => ['restype_name']
         ];
-    }
-
-    protected function getOpName() {
-        $par = $this->params;
-        return ['log' => clienttranslate('Remove ${restype_name} from another card'),  "args" => [
-            'restype_name' => $this->game->getTokenName("tag$par"),
-            'i18n' => ['restype_name']
-        ]];
-    }
-
-    public function getPrompt() {
-        return clienttranslate('${you} must select a card to remove ${count} ${restype_name} resource/s');
     }
 }

@@ -1998,9 +1998,9 @@ abstract class PGameXBody extends PGameMachine {
         // do nothing here for now
     }
 
-    public function isVoid($op) {
+    public function canSkipAutomatically($op) {
         $opinst = $this->getOperationInstance($op);
-        return $opinst->isVoid();
+        return $opinst->canSkipAutomatically();
     }
 
     public function isVoidSingle(string $type, string $color, ?int $count = 1, string $data = '') {

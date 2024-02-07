@@ -342,7 +342,7 @@ abstract class PGameMachine extends PGameTokens {
                 return $this->executeOperationSingle($op);
             }
 
-            if ($machine->isSharedCounter($op) && $this->isVoid($op)) {
+            if ($machine->isSharedCounter($op) && $this->canSkipAutomatically($op)) {
                 //$type = $op["type"];
                 //$this->debugLog("-removed $type as void");
                 $machine->hide($op);
@@ -443,7 +443,8 @@ abstract class PGameMachine extends PGameTokens {
         }
     }
 
-    public function isVoid($op) {
+    /** Can operation be auto-skipped because its void */
+    public function canSkipAutomatically($op) {
         return false;
     }
 

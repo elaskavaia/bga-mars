@@ -31,6 +31,11 @@ class DelegatedOperation extends AbsOperation {
     function isVoid(): bool {
         return $this->delegate->isVoid();
     }
+
+    function canSkipAutomatically(): bool {
+        return $this->delegate->canSkipAutomatically();
+    }
+    
     function isFullyAutomated() {
         return $this->delegate->isFullyAutomated();
     }
@@ -44,7 +49,7 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->canResolveAutomatically();
     }
 
-    function checkIntegrity()    {
+    function checkIntegrity() {
         return $this->delegate->checkIntegrity();
     }
 }
