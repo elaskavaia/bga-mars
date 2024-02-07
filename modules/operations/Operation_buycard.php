@@ -45,4 +45,9 @@ class Operation_buycard extends AbsOperation {
     function canResolveAutomatically() {
         return false;
     }
+
+    protected function getSkipButtonName(){
+        return "Done";
+    }
+
 }

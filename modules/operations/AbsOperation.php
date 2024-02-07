@@ -72,6 +72,9 @@ abstract class AbsOperation {
         $result["prompt"] = $this->getPrompt();
         $result["button"] = $this->getButtonName();
         $result["args"] = $this->getVisargs();
+        if ($this->getMinCount()<=0) {
+            $result["skipname"] = $this->getSkipButtonName();
+        }
         return $result;
     }
 
@@ -81,13 +84,15 @@ abstract class AbsOperation {
     }
 
     protected function getVisargs() {
-
         return [
             "name" => $this->getOpName(),
             'count' => $this->getCount(),
         ];
     }
 
+    protected function getSkipButtonName(){
+        return "Done";
+    }
 
 
     protected function getPrimaryArgType() {
