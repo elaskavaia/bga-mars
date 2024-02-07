@@ -4678,7 +4678,6 @@ var GameXBody = /** @class */ (function (_super) {
      */
     GameXBody.prototype.activatePlayerSlot = function (color, opId, single, info) {
         var _this = this;
-        var _a;
         // color is player color or word 'none'
         var playerId = this.getPlayerIdByColor(color);
         // here divId can be like player name on miniboard
@@ -4700,11 +4699,14 @@ var GameXBody = /** @class */ (function (_super) {
         if (!info)
             return;
         // count of resources
+        //  action coutn info.op?.count // not used now
+        var you = this.player_id == playerId;
         if (info.max !== undefined) {
-            buttonDiv.innerHTML += " " + this.format_string_recursive(_("(owns ${res_count})"), {
-                res_count: info.max,
-                count: (_a = info.op) === null || _a === void 0 ? void 0 : _a.count // not used now
-            });
+            buttonDiv.innerHTML +=
+                " " +
+                    this.format_string_recursive(you ? _("(own ${res_count})") : _("(owns ${res_count})"), {
+                        res_count: info.max
+                    });
         }
         // player is protected from attack
         if (info.q == this.gamedatas.CON.MA_ERR_PROTECTED) {

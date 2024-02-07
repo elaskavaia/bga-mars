@@ -1859,12 +1859,14 @@ awarded.`);
     if (!info) return;
 
     // count of resources
-
+    //  action coutn info.op?.count // not used now
+    const you = this.player_id == playerId;
     if (info.max !== undefined) {
-      buttonDiv.innerHTML += " " + this.format_string_recursive(_("(owns ${res_count})"), {
-        res_count: info.max,
-        count: info.op?.count // not used now
-      });
+      buttonDiv.innerHTML +=
+        " " +
+        this.format_string_recursive(you ? _("(own ${res_count})"): _("(owns ${res_count})"), {
+          res_count: info.max
+        });
     }
     // player is protected from attack
     if (info.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
@@ -1875,7 +1877,6 @@ awarded.`);
     // if (info.q !== "0") {
     //   this.addTooltip(buttonId, this.getTokenName(`err_${info.q}`),"");
     // }
-
   }
 
   /** When server wants to activate some element, ui may adjust it */
