@@ -251,7 +251,7 @@ class GameXBody extends GameTokens {
     const showFunc = (htm: string) => {
       let dlg = new ebg.popindialog();
       dlg.create("score_dlg");
-      dlg.setTitle(_("Score summary"));
+      dlg.setTitle(_("Score Summary"));
       dlg.setContent(htm);
       dlg.show();
     };
@@ -260,19 +260,20 @@ class GameXBody extends GameTokens {
       showFunc(this.cachedScoreHtm);
     } else {
       let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
+
       this.ajaxcall(url, [], this, (result) => {
         const tablehtm: string = `
              <div id="scoretable">
                 <div class="scoreheader scorecol">
-                      <div class="scorecell header">Player</div>
-                      <div class="scorecell header corp">Corp</div>
-                      <div class="scorecell ">TR</div>
-                      <div class="scorecell ">Cities</div>
-                      <div class="scorecell ">Greeneries</div>
-                      <div class="scorecell ">Awards</div>
-                      <div class="scorecell ">Milestones</div>
-                      <div class="scorecell ">Cards</div>
-                      <div class="scorecell header total">Total</div>
+                      <div class="scorecell header">${_('Player Name')}</div>
+                      <div class="scorecell header corp">${_('Corporation')}</div>
+                      <div class="scorecell ">${_('Terraforming Rank')}</div>
+                      <div class="scorecell ">${_('VP from cities')}</div>
+                      <div class="scorecell ">${_('VP from greeneries')}</div>
+                      <div class="scorecell ">${_('VP from Awards')}</div>
+                      <div class="scorecell ">${_('VP from Milestones')}</div>
+                      <div class="scorecell ">${_('VP from cards')}</div>
+                      <div class="scorecell header total">${_('VP total')}</div>
                 </div>
                 %lines%
               </div>`;

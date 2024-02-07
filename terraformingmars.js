@@ -3315,7 +3315,7 @@ var GameXBody = /** @class */ (function (_super) {
         var showFunc = function (htm) {
             var dlg = new ebg.popindialog();
             dlg.create("score_dlg");
-            dlg.setTitle(_("Score summary"));
+            dlg.setTitle(_("Score Summary"));
             dlg.setContent(htm);
             dlg.show();
         };
@@ -3325,7 +3325,7 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
             this.ajaxcall(url, [], this, function (result) {
-                var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">Player</div>\n                      <div class=\"scorecell header corp\">Corp</div>\n                      <div class=\"scorecell \">TR</div>\n                      <div class=\"scorecell \">Cities</div>\n                      <div class=\"scorecell \">Greeneries</div>\n                      <div class=\"scorecell \">Awards</div>\n                      <div class=\"scorecell \">Milestones</div>\n                      <div class=\"scorecell \">Cards</div>\n                      <div class=\"scorecell header total\">Total</div>\n                </div>\n                %lines%\n              </div>";
+                var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_('Player Name'), "</div>\n                      <div class=\"scorecell header corp\">").concat(_('Corporation'), "</div>\n                      <div class=\"scorecell \">").concat(_('Terraforming Rank'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from cities'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from greeneries'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from Awards'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from Milestones'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from cards'), "</div>\n                      <div class=\"scorecell header total\">").concat(_('VP total'), "</div>\n                </div>\n                %lines%\n              </div>");
                 var lines = "";
                 for (var plid in result.data.contents) {
                     var entry = result.data.contents[plid];

@@ -97,7 +97,7 @@ $stats_type = array(
         ],
         "game_vp_forest" => [
             "id" => 13,
-            "name" => totranslate("VP from forest"),
+            "name" => totranslate("VP from greeneries"),
             "type" => "int"
         ],
         "game_vp_tr" => [
