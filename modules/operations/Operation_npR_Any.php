@@ -18,7 +18,7 @@ class Operation_npR_Any extends AbsOperation {
     }
 
     protected function getPrompt() {
-        return  clienttranslate('${you} must select a player who will lose ${res_name} (${count})');
+        return  clienttranslate('${you} must select a player who will lose ${res_name} x ${count} (mandatory)');
     }
     protected function getVisargs() {
         $type = $this->getType();

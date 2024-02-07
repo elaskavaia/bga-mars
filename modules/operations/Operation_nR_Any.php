@@ -8,7 +8,7 @@ declare(strict_types=1);
  */
 class Operation_nR_Any extends AbsOperation {
     protected function getPrompt() {
-        return  clienttranslate('${you} must select a player who will lose ${res_name} (up to ${count}) or none');
+        return  clienttranslate('${you} must select a player who will lose up to ${count} ${res_name} (optional)');
     }
     protected function getVisargs() {
         $type = $this->getType();
