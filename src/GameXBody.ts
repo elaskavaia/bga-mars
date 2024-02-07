@@ -265,15 +265,15 @@ class GameXBody extends GameTokens {
         const tablehtm: string = `
              <div id="scoretable">
                 <div class="scoreheader scorecol">
-                      <div class="scorecell header">${_('Player Name')}</div>
-                      <div class="scorecell header corp">${_('Corporation')}</div>
-                      <div class="scorecell ">${_('Terraforming Rank')}</div>
-                      <div class="scorecell ">${_('VP from cities')}</div>
-                      <div class="scorecell ">${_('VP from greeneries')}</div>
-                      <div class="scorecell ">${_('VP from Awards')}</div>
-                      <div class="scorecell ">${_('VP from Milestones')}</div>
-                      <div class="scorecell ">${_('VP from cards')}</div>
-                      <div class="scorecell header total">${_('VP total')}</div>
+                      <div class="scorecell header">${_("Player Name")}</div>
+                      <div class="scorecell header corp">${_("Corporation")}</div>
+                      <div class="scorecell ">${_("Terraforming Rank")}</div>
+                      <div class="scorecell ">${_("VP from cities")}</div>
+                      <div class="scorecell ">${_("VP from greeneries")}</div>
+                      <div class="scorecell ">${_("VP from Awards")}</div>
+                      <div class="scorecell ">${_("VP from Milestones")}</div>
+                      <div class="scorecell ">${_("VP from cards")}</div>
+                      <div class="scorecell header total">${_("VP total")}</div>
                 </div>
                 %lines%
               </div>`;
@@ -1456,7 +1456,6 @@ awarded.`);
         }
       }
 
-
       // card num is last sort disambiguator
       const num = parseInt(this.gamedatas.token_types[cardId].num);
 
@@ -1639,8 +1638,17 @@ awarded.`);
   }
 
   getButtonNameForOperation(op: any) {
-    if (op.args.button) return this.format_string_recursive(op.args.button, op.args.args);
-    else return this.getButtonNameForOperationExp(op.type);
+    const baseName = op.args.button
+      ? this.format_string_recursive(op.args.button, op.args.args)
+      : this.getButtonNameForOperationExp(op.type);
+
+    const opTargets = op.args?.target ?? [];
+    if (opTargets.length == 1 && !op.type.startsWith("conv")) {
+      const argname = this.getTokenName(opTargets[0]);
+      return `${baseName} (${argname})`;
+    }
+
+    return baseName;
   }
 
   getDivForTracker(id: string, value: string | number = "") {
@@ -1849,52 +1857,47 @@ awarded.`);
    * @param info - extra data about the player (i.e. why its not applicable)
    */
   activatePlayerSlot(color: string, opId: number, single: boolean, info?: any) {
-    // color is player color or none
+    // color is player color or word 'none'
     const playerId = this.getPlayerIdByColor(color);
     // here divId can be like player name on miniboard
     const divId = `player_name_${playerId}`;
 
     const valid = info ? info.q == 0 : true; // if info passed its only valid when q is 0
-    if (valid) this.setReverseIdMap(divId, opId, color);
+    if (valid && playerId) this.setReverseIdMap(divId, opId, color);
 
     if (!single) return;
     const buttonId = "button_" + color;
     const name = this.gamedatas.players[playerId]?.name;
 
-    this.addActionButton(
+    this.addActionButtonColor(
       buttonId,
       name ?? _(color),
       () => {
         this.onSelectTarget(opId, color);
       },
-      undefined,
-      false,
-      "gray"
+      "gray",
+      color,
+      !valid
     );
+    // if name is not set its not a real player
+    if (!playerId || !name) return;
 
-    if (!valid) {
-      $(buttonId).classList.add("disabled");
+    const corp_id = $(`miniboard_corp_logo_${color}`).dataset.corp;
+    const faction_name = this.getTokenName(corp_id);
+    // count of resources
+    if (info?.max !== undefined) {
+      $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
+        res_count: info.max,
+        player_name: name,
+        faction_name: faction_name
+      });
     }
-    if (name) {
-      // if name is not set its not a ral player
-      const corp_id = $(`miniboard_corp_logo_${color}`).dataset.corp;
-      const faction_name = this.getTokenName(corp_id);
-      // count of resources
-      if (info?.max !== undefined) {
-        $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
-          res_count: info.max,
-          player_name: name,
-          faction_name: faction_name
-        });
-      }
-      // player is protected from attack
-      if (info?.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
-        $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
-          player_name: name,
-          faction_name: faction_name
-        });
-      }
-      $(buttonId).classList.add("otherplayer", "plcolor_" + color);
+    // player is protected from attack
+    if (info?.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
+      $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
+        player_name: name,
+        faction_name: faction_name
+      });
     }
   }
 
@@ -2055,6 +2058,30 @@ awarded.`);
     });
   }
 
+  addActionButtonColor(
+    buttonId: string,
+    name: string,
+    handler: eventhandler,
+    buttonColor: string = "blue",
+    playerColor: string = undefined,
+    disabled: boolean = false
+  ) {
+    this.addActionButton(buttonId, name, handler);
+    const buttonDiv = $(buttonId);
+    if (playerColor && playerColor != this.player_color) buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
+
+    if (buttonColor && buttonColor != "blue") {
+      buttonDiv.classList.remove("bgabutton_blue");
+      buttonDiv.classList.add("bgabutton_" + buttonColor);
+    }
+
+    if (disabled) {
+      buttonDiv.classList.add("disabled");
+    }
+
+    return buttonDiv;
+  }
+
   onUpdateActionButtons_playerTurnChoice(args) {
     let operations = args.operations;
     if (!operations) return; // XXX
@@ -2066,17 +2093,18 @@ awarded.`);
 
     const single = Object.keys(operations).length == 1;
     const ordered = xop == "," && !single;
-    if (xop == "+" && !single) this.setDescriptionOnMyTurn("${you} must choose order of operations");
+    const chooseorder = xop == "+" && !single;
+    if (chooseorder) this.setDescriptionOnMyTurn("${you} must choose order of operations");
 
     let i = 0;
     for (const opIdS in operations) {
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
-      const opargs = opInfo.args;
+      const opArgs = opInfo.args;
 
       let name = this.getButtonNameForOperation(opInfo);
 
-      const paramargs = opargs.target ?? [];
+      const opTargets = opArgs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
       this.updateVisualsFromOp(opInfo, opId);
@@ -2088,47 +2116,42 @@ awarded.`);
       const buttonId = `button_${opId}`;
       if (!single && !ordered) {
         // xxx add something for remaining ops in ordered case?
-        if (paramargs.length > 0) {
-          this.addActionButton(buttonId, name, () => {
-            this.setClientStateUpdOn(
-              "client_collect",
-              (args) => {
-                // on update action buttons
-                this.clearReverseIdMap();
-                this.activateSlots(opInfo, opId, true);
-              },
-              (id: string) => {
-                // onToken
-                this.onSelectTarget(opId, id, true);
-              }
-            );
-          });
+        let handler = null;
+        if (opTargets.length > 0) {
+          // operations with targets
+          handler = () => {
+            if (opInfo.mcount > 0 && opTargets.length == 1) {
+              // mandatory and only one choice
+              this.sendActionResolveWithTarget(opId, opTargets[0]);
+            } else
+              this.setClientStateUpdOn(
+                "client_collect",
+                (args) => {
+                  // on update action buttons
+                  this.clearReverseIdMap();
+                  this.activateSlots(opInfo, opId, true);
+                },
+                (id: string) => {
+                  // onToken
+                  this.onSelectTarget(opId, id, true);
+                }
+              );
+          };
         } else {
-          this.addActionButton(buttonId, name, () => {
+          // operations without targets
+          handler = () => {
             if (opInfo.type == "pass" && !single) {
               // add confirmation
               this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), () => {
                 this.sendActionResolve(opId);
               });
             } else this.sendActionResolve(opId);
-          });
+          };
         }
-        const buttonDiv = $(buttonId);
-        if (opInfo.owner && opInfo.owner != this.player_color) buttonDiv.classList.add("otherplayer", "plcolor_" + opInfo.owner);
-
         const butcolor = this.getButtonColorForOperation(opInfo);
-        buttonDiv.classList.remove("bgabutton_blue");
-        buttonDiv.classList.add("bgabutton_" + butcolor);
-
-        // if (contains_gfx) {
-        //   $(buttonId).classList.add("gfx");
-        //   $(buttonId).setAttribute("title", this.getButtonNameForOperation(opInfo));
-        // }
-
-        if (opargs.void) {
-          buttonDiv.classList.add("disabled");
-        }
+        this.addActionButtonColor(buttonId, name, handler, butcolor, opInfo.owner, opArgs.void);
       }
+
       // add done (skip) when optional
       if (singleOrFirst) {
         if (opInfo.mcount <= 0) {
@@ -2137,7 +2160,7 @@ awarded.`);
           switch (opInfo.type) {
             case "buycard":
               if (single) {
-                if (paramargs.length <= 1) {
+                if (opTargets.length <= 1) {
                   name = _("Discard Card");
                 } else {
                   name = _("Discard Remaining");
@@ -2148,15 +2171,28 @@ awarded.`);
               break;
           }
 
-          this.addActionButton("button_skip", name, () => {
-            this.sendActionSkip();
-          });
-          $("button_skip").classList.remove("bgabutton_blue");
-          $("button_skip").classList.add("bgabutton_orange");
+          this.addActionButtonColor(
+            "button_skip",
+            name,
+            () => {
+              this.sendActionSkip();
+            },
+            "orange"
+          );
         }
       }
       i = i + 1;
     }
+
+    if (chooseorder)
+      this.addActionButtonColor(
+        "button_whatever",
+        _('Whatever'),
+        () => {
+          this.ajaxuseraction("whatever", {});
+        },
+        "orange"
+      );
   }
 
   addUndoButton() {

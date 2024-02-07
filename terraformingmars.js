@@ -3325,7 +3325,7 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
             this.ajaxcall(url, [], this, function (result) {
-                var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_('Player Name'), "</div>\n                      <div class=\"scorecell header corp\">").concat(_('Corporation'), "</div>\n                      <div class=\"scorecell \">").concat(_('Terraforming Rank'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from cities'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from greeneries'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from Awards'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from Milestones'), "</div>\n                      <div class=\"scorecell \">").concat(_('VP from cards'), "</div>\n                      <div class=\"scorecell header total\">").concat(_('VP total'), "</div>\n                </div>\n                %lines%\n              </div>");
+                var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraforming Rank"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cities"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from greeneries"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Awards"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Milestones"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cards"), "</div>\n                      <div class=\"scorecell header total\">").concat(_("VP total"), "</div>\n                </div>\n                %lines%\n              </div>");
                 var lines = "";
                 for (var plid in result.data.contents) {
                     var entry = result.data.contents[plid];
@@ -4473,10 +4473,16 @@ var GameXBody = /** @class */ (function (_super) {
         this.ajaxuseraction("skip", {});
     };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
-        if (op.args.button)
-            return this.format_string_recursive(op.args.button, op.args.args);
-        else
-            return this.getButtonNameForOperationExp(op.type);
+        var _a, _b;
+        var baseName = op.args.button
+            ? this.format_string_recursive(op.args.button, op.args.args)
+            : this.getButtonNameForOperationExp(op.type);
+        var opTargets = (_b = (_a = op.args) === null || _a === void 0 ? void 0 : _a.target) !== null && _b !== void 0 ? _b : [];
+        if (opTargets.length == 1 && !op.type.startsWith("conv")) {
+            var argname = this.getTokenName(opTargets[0]);
+            return "".concat(baseName, " (").concat(argname, ")");
+        }
+        return baseName;
     };
     GameXBody.prototype.getDivForTracker = function (id, value) {
         if (value === void 0) { value = ""; }
@@ -4682,43 +4688,39 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.activatePlayerSlot = function (color, opId, single, info) {
         var _this = this;
         var _a;
-        // color is player color or none
+        // color is player color or word 'none'
         var playerId = this.getPlayerIdByColor(color);
         // here divId can be like player name on miniboard
         var divId = "player_name_".concat(playerId);
         var valid = info ? info.q == 0 : true; // if info passed its only valid when q is 0
-        if (valid)
+        if (valid && playerId)
             this.setReverseIdMap(divId, opId, color);
         if (!single)
             return;
         var buttonId = "button_" + color;
         var name = (_a = this.gamedatas.players[playerId]) === null || _a === void 0 ? void 0 : _a.name;
-        this.addActionButton(buttonId, name !== null && name !== void 0 ? name : _(color), function () {
+        this.addActionButtonColor(buttonId, name !== null && name !== void 0 ? name : _(color), function () {
             _this.onSelectTarget(opId, color);
-        }, undefined, false, "gray");
-        if (!valid) {
-            $(buttonId).classList.add("disabled");
+        }, "gray", color, !valid);
+        // if name is not set its not a real player
+        if (!playerId || !name)
+            return;
+        var corp_id = $("miniboard_corp_logo_".concat(color)).dataset.corp;
+        var faction_name = this.getTokenName(corp_id);
+        // count of resources
+        if ((info === null || info === void 0 ? void 0 : info.max) !== undefined) {
+            $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
+                res_count: info.max,
+                player_name: name,
+                faction_name: faction_name
+            });
         }
-        if (name) {
-            // if name is not set its not a ral player
-            var corp_id = $("miniboard_corp_logo_".concat(color)).dataset.corp;
-            var faction_name = this.getTokenName(corp_id);
-            // count of resources
-            if ((info === null || info === void 0 ? void 0 : info.max) !== undefined) {
-                $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (max. ${res_count})", {
-                    res_count: info.max,
-                    player_name: name,
-                    faction_name: faction_name
-                });
-            }
-            // player is protected from attack
-            if ((info === null || info === void 0 ? void 0 : info.q) == this.gamedatas.CON.MA_ERR_PROTECTED) {
-                $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
-                    player_name: name,
-                    faction_name: faction_name
-                });
-            }
-            $(buttonId).classList.add("otherplayer", "plcolor_" + color);
+        // player is protected from attack
+        if ((info === null || info === void 0 ? void 0 : info.q) == this.gamedatas.CON.MA_ERR_PROTECTED) {
+            $(buttonId).innerHTML = this.format_string_recursive("${player_name} [${faction_name}] (protected)", {
+                player_name: name,
+                faction_name: faction_name
+            });
         }
     };
     /** When server wants to activate some element, ui may adjust it */
@@ -4853,6 +4855,23 @@ var GameXBody = /** @class */ (function (_super) {
             target: target !== null && target !== void 0 ? target : divId
         });
     };
+    GameXBody.prototype.addActionButtonColor = function (buttonId, name, handler, buttonColor, playerColor, disabled) {
+        if (buttonColor === void 0) { buttonColor = "blue"; }
+        if (playerColor === void 0) { playerColor = undefined; }
+        if (disabled === void 0) { disabled = false; }
+        this.addActionButton(buttonId, name, handler);
+        var buttonDiv = $(buttonId);
+        if (playerColor && playerColor != this.player_color)
+            buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
+        if (buttonColor && buttonColor != "blue") {
+            buttonDiv.classList.remove("bgabutton_blue");
+            buttonDiv.classList.add("bgabutton_" + buttonColor);
+        }
+        if (disabled) {
+            buttonDiv.classList.add("disabled");
+        }
+        return buttonDiv;
+    };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
         var _a;
@@ -4865,15 +4884,16 @@ var GameXBody = /** @class */ (function (_super) {
         var xop = args.op;
         var single = Object.keys(operations).length == 1;
         var ordered = xop == "," && !single;
-        if (xop == "+" && !single)
+        var chooseorder = xop == "+" && !single;
+        if (chooseorder)
             this.setDescriptionOnMyTurn("${you} must choose order of operations");
         var i = 0;
         var _loop_2 = function (opIdS) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
-            var opargs = opInfo.args;
+            var opArgs = opInfo.args;
             var name_2 = this_2.getButtonNameForOperation(opInfo);
-            var paramargs = (_a = opargs.target) !== null && _a !== void 0 ? _a : [];
+            var opTargets = (_a = opArgs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
             if (singleOrFirst || !ordered) {
@@ -4883,20 +4903,28 @@ var GameXBody = /** @class */ (function (_super) {
             var buttonId = "button_".concat(opId);
             if (!single && !ordered) {
                 // xxx add something for remaining ops in ordered case?
-                if (paramargs.length > 0) {
-                    this_2.addActionButton(buttonId, name_2, function () {
-                        _this.setClientStateUpdOn("client_collect", function (args) {
-                            // on update action buttons
-                            _this.clearReverseIdMap();
-                            _this.activateSlots(opInfo, opId, true);
-                        }, function (id) {
-                            // onToken
-                            _this.onSelectTarget(opId, id, true);
-                        });
-                    });
+                var handler = null;
+                if (opTargets.length > 0) {
+                    // operations with targets
+                    handler = function () {
+                        if (opInfo.mcount > 0 && opTargets.length == 1) {
+                            // mandatory and only one choice
+                            _this.sendActionResolveWithTarget(opId, opTargets[0]);
+                        }
+                        else
+                            _this.setClientStateUpdOn("client_collect", function (args) {
+                                // on update action buttons
+                                _this.clearReverseIdMap();
+                                _this.activateSlots(opInfo, opId, true);
+                            }, function (id) {
+                                // onToken
+                                _this.onSelectTarget(opId, id, true);
+                            });
+                    };
                 }
                 else {
-                    this_2.addActionButton(buttonId, name_2, function () {
+                    // operations without targets
+                    handler = function () {
                         if (opInfo.type == "pass" && !single) {
                             // add confirmation
                             _this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), function () {
@@ -4905,21 +4933,10 @@ var GameXBody = /** @class */ (function (_super) {
                         }
                         else
                             _this.sendActionResolve(opId);
-                    });
+                    };
                 }
-                var buttonDiv = $(buttonId);
-                if (opInfo.owner && opInfo.owner != this_2.player_color)
-                    buttonDiv.classList.add("otherplayer", "plcolor_" + opInfo.owner);
                 var butcolor = this_2.getButtonColorForOperation(opInfo);
-                buttonDiv.classList.remove("bgabutton_blue");
-                buttonDiv.classList.add("bgabutton_" + butcolor);
-                // if (contains_gfx) {
-                //   $(buttonId).classList.add("gfx");
-                //   $(buttonId).setAttribute("title", this.getButtonNameForOperation(opInfo));
-                // }
-                if (opargs.void) {
-                    buttonDiv.classList.add("disabled");
-                }
+                this_2.addActionButtonColor(buttonId, name_2, handler, butcolor, opInfo.owner, opArgs.void);
             }
             // add done (skip) when optional
             if (singleOrFirst) {
@@ -4928,7 +4945,7 @@ var GameXBody = /** @class */ (function (_super) {
                     switch (opInfo.type) {
                         case "buycard":
                             if (single) {
-                                if (paramargs.length <= 1) {
+                                if (opTargets.length <= 1) {
                                     name_3 = _("Discard Card");
                                 }
                                 else {
@@ -4939,11 +4956,9 @@ var GameXBody = /** @class */ (function (_super) {
                         default:
                             break;
                     }
-                    this_2.addActionButton("button_skip", name_3, function () {
+                    this_2.addActionButtonColor("button_skip", name_3, function () {
                         _this.sendActionSkip();
-                    });
-                    $("button_skip").classList.remove("bgabutton_blue");
-                    $("button_skip").classList.add("bgabutton_orange");
+                    }, "orange");
                 }
             }
             i = i + 1;
@@ -4952,6 +4967,10 @@ var GameXBody = /** @class */ (function (_super) {
         for (var opIdS in operations) {
             _loop_2(opIdS);
         }
+        if (chooseorder)
+            this.addActionButtonColor("button_whatever", _('Whatever'), function () {
+                _this.ajaxuseraction("whatever", {});
+            }, "orange");
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
