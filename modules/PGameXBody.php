@@ -264,6 +264,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$loc) $loc = "hand_$color";
         if ($loc == 'draw') $loc = "draw_$color";
         $this->dbSetTokenLocation($token, $loc);
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
     function debug_op($type) {
@@ -280,6 +281,11 @@ abstract class PGameXBody extends PGameMachine {
     function debug_inc($res = 'm',$count = 1) {
         $color = $this->getCurrentPlayerColor();
         $this->effect_incCount($color, $res, $count);
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+    }
+    function debug_incparam($res = 'o',$count = 1) {
+        $color = $this->getCurrentPlayerColor();
+        $this->effect_increaseParam($color, $res, $count, $res == 't'?2:1);
     }
 
     function debug_res($m = 0, $s = 0, $u = 0, $p = 0, $e = 0, $h = 0, $color = 0) {

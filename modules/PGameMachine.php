@@ -104,6 +104,14 @@ abstract class PGameMachine extends PGameTokens {
         $this->notifyMessage(clienttranslate('${player_name} skips rest of actions'));
         $this->gamestate->nextState("next");
     }
+
+    function action_whatever() {
+        $curowner = $this->getCurrentPlayerColor();
+        $this->systemAssertTrue("Acting user must be a player", $curowner);
+        $this->machine->reflag($this->machine->getTopOperations($curowner), MACHINE_FLAG_UNIQUE,MACHINE_FLAG_ORDERED);
+        $this->gamestate->nextState("next");
+    }
+
     function action_choose($args) {
         $operation_id = $args["op"];
         $info = $this->machine->info($operation_id);

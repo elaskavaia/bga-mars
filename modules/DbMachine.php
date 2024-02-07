@@ -459,6 +459,13 @@ class DbMachine extends APP_GameClass {
         self::DbQuery($sql);
     }
 
+    function reflag($list, $from, $to) {
+        $set = $this->getUpdateQuery();
+        $ids = $this->getIdsWhereExpr($list);
+        $sql = "$set flags = '$to' WHERE $ids AND flags = '$from'";
+        self::DbQuery($sql);
+    }
+
     function drop($list, $validate = true) {
         if ($validate && !$this->validateOptional($list)) {
             throw new BgaUserException(self::_("Cannot decline mandatory action"));

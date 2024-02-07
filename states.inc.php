@@ -111,7 +111,7 @@ $machinestates = [
         ),
         "type" => "activeplayer",
         "args" => "arg_playerTurnChoice",
-        "possibleactions" => ["choose", "resolve", "decline", "skip", "undo"],
+        "possibleactions" => ["choose", "resolve", "decline", "skip", "undo", "whatever"],
         "transitions" => [
             "next" => STATE_GAME_DISPATCH,
         ],
@@ -144,7 +144,7 @@ $machinestates = [
         "type" => "private",
         "args" => "arg_multiplayerChoice", //this method will be called with playerId as a parametar and is used to calculate arguments for this action for specific player
         "action" => "st_multiplayerChoice", // this method will be called with playerId as a parameter and can be used to make some changes when player enters this private state
-        "possibleactions" => ["choose", "resolve", "decline", "skip", "undo"],
+        "possibleactions" => ["choose", "resolve", "decline", "skip", "undo", "whatever"],
         "transitions" => [
             "next" => STATE_GAME_DISPATCH,
             "loopback" => STATE_MULTIPLAYER_CHOICE,
