@@ -1093,16 +1093,16 @@ awarded.`);
     const ds = $(card_id).dataset;
 
     let msg = "";
-    if (ds.cannot_pay != "0") {
+    if (ds.cannot_pay && ds.cannot_pay != "0") {
       msg = msg + this.getTokenName(`err_${ds.cannot_pay}`) + "<br/>";
     }
-    if (ds.cannot_resolve !== "0") {
+    if (ds.cannot_resolve && ds.cannot_resolve !== "0") {
       msg = msg + this.getTokenName(`err_${ds.cannot_resolve}`) + "<br/>";
     }
 
     if (ds.op_code == ds.cannot_pay) return msg;
     if (ds.op_code == ds.cannot_resolve) return msg;
-    if (ds.op_code == "0") return msg;
+    if (ds.op_code == "0" || ds.op_code === undefined) return msg;
 
     msg = msg + this.getTokenName(`err_${ds.op_code}`) + "<br/>";
     return msg;
