@@ -4481,6 +4481,10 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.sendActionSkip = function () {
         this.ajaxuseraction("skip", {});
     };
+    GameXBody.prototype.sendActionUndo = function () {
+        this.gameStatusCleanup();
+        this.ajaxcallwrapper_unchecked("undo");
+    };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
         var _a, _b;
         var baseName = op.args.button
@@ -4659,9 +4663,7 @@ var GameXBody = /** @class */ (function (_super) {
                         var divId = "button_" + i;
                         //  title = this.parseActionsToHTML(tid);
                         var title = _this.resourcesToHtml(detailsInfo.resources);
-                        _this.addActionButtonColor(divId, title, function () {
-                            _this.onSelectTarget(opId, tid);
-                        }, buttonColor);
+                        _this.addActionButtonColor(divId, title, function () { return _this.onSelectTarget(opId, tid); }, buttonColor);
                     }
                 });
             }
@@ -4870,7 +4872,7 @@ var GameXBody = /** @class */ (function (_super) {
         var playerId = this.getPlayerIdByColor(playerColor);
         if (!playerId)
             return undefined; // invalid?
-        var name = this.divColoredPlayer(playerId);
+        var name = (playerId == this.player_id) ? this.divYou() : this.divColoredPlayer(playerId);
         var buttonDiv = this.addActionButtonColor(buttonId, name, handler, "gray", undefined, disabled);
         buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
         var logo = this.cloneAndFixIds("miniboard_corp_logo_".concat(playerColor), 'bar', true);
@@ -4946,25 +4948,8 @@ var GameXBody = /** @class */ (function (_super) {
             }
             // add done (skip) when optional
             if (singleOrFirst) {
-                if (opInfo.mcount <= 0) {
-                    var name_3 = _("Done");
-                    switch (opInfo.type) {
-                        case "buycard":
-                            if (single) {
-                                if (opTargets.length <= 1) {
-                                    name_3 = _("Discard Card");
-                                }
-                                else {
-                                    name_3 = _("Discard Remaining");
-                                }
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    this_2.addActionButtonColor("button_skip", name_3, function () {
-                        _this.sendActionSkip();
-                    }, "orange");
+                if (opInfo.skipname) {
+                    this_2.addActionButtonColor("button_skip", _(opInfo.skipname), function () { return _this.sendActionSkip(); }, "orange");
                 }
             }
             i = i + 1;
@@ -4974,17 +4959,12 @@ var GameXBody = /** @class */ (function (_super) {
             _loop_2(opIdS);
         }
         if (chooseorder)
-            this.addActionButtonColor("button_whatever", _("Whatever"), function () {
-                _this.ajaxuseraction("whatever", {});
-            }, "orange");
+            this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.ajaxuseraction("whatever", {}); }, "orange");
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
         if (!$("button_undo")) {
-            this.addActionButton("button_undo", _("Undo"), function () {
-                _this.gameStatusCleanup();
-                _this.ajaxcallwrapper_unchecked("undo");
-            }, undefined, undefined, "red");
+            this.addActionButtonColor("button_undo", _("Undo"), function () { return _this.sendActionUndo(); }, "red");
         }
     };
     GameXBody.prototype.onUpdateActionButtons_multiplayerChoice = function (args) {
@@ -5883,97 +5863,3 @@ define([
 ], function (dojo, declare) {
     declare("bgagame.terraformingmars", ebg.core.gamegui, new GameXBody());
 });
-function onDragStart(event) {
-    var selectedItem = event.currentTarget;
-    //console.log("onDragStart",selectedItem?.id);
-    var cardParent = selectedItem.parentElement;
-    if (!cardParent.classList.contains("handy"))
-        return;
-    if ($("hand_area").dataset.sort_type != "manual" ||
-        ($("ebd-body").classList.contains("touch-device") && $("ebd-body").classList.contains("mobile_version"))) {
-        return;
-    }
-    event.stopPropagation();
-    $("ebd-body").classList.add("drag_inpg");
-    selectedItem.classList.add("drag-active");
-    //selectedItem.style.setProperty('user-select','none');
-    //prevent container from changing size
-    var rect = cardParent.getBoundingClientRect();
-    cardParent.style.setProperty("width", String(rect.width) + "px");
-    cardParent.style.setProperty("height", String(rect.height) + "px");
-    /*
-    event.dataTransfer.setData("text/plain", "card"); // not sure if needed
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.dropEffect = "move";*/
-    selectedItem.classList.add("hide");
-    cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
-    cardParent.querySelectorAll(".card").forEach(function (card) {
-        //prevent
-        if (card.id == selectedItem.id)
-            return;
-        if (card.nextElementSibling == null) {
-            var dragNodeId = "dragright_" + card.id;
-            var righthtm = "<div class=\"dragzone outsideright\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragright\"></div></div>");
-            card.insertAdjacentHTML("afterend", righthtm);
-            var dragNode_3 = $(dragNodeId);
-            dragNode_3.addEventListener("dragover", function (event) {
-                event.preventDefault();
-                dragNode_3.parentElement.classList.add("over");
-            });
-            dragNode_3.addEventListener("dragleave", function (event) {
-                event.preventDefault();
-                dragNode_3.parentElement.classList.remove("over");
-            });
-        }
-        if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
-            var dragNodeId = "dragleft_" + card.id;
-            var lefthtm = "<div class=\"dragzone\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragleft\"></div></div>");
-            card.insertAdjacentHTML("beforebegin", lefthtm);
-            var dragNode_4 = $(dragNodeId);
-            dragNode_4.addEventListener("dragover", function (event) {
-                event.preventDefault();
-                dragNode_4.parentElement.classList.add("over");
-            });
-            dragNode_4.addEventListener("dragleave", function (event) {
-                event.preventDefault();
-                dragNode_4.parentElement.classList.remove("over");
-            });
-        }
-    });
-    // console.log("onDragStart commit");
-}
-function onDragEnd(event) {
-    event.stopPropagation();
-    var selectedItem = event.target;
-    // console.log("onDragEnd",selectedItem?.id);
-    var x = event.clientX;
-    var y = event.clientY;
-    var containerNode = selectedItem.parentElement;
-    var pointsTo = document.elementFromPoint(x, y);
-    if (pointsTo === selectedItem || pointsTo === null) {
-        // do nothing
-    }
-    else if (containerNode === pointsTo) {
-        //dropped in empty space on container
-        containerNode.append(selectedItem);
-    }
-    else if (pointsTo.parentElement !== undefined &&
-        pointsTo.parentElement.parentElement !== undefined &&
-        pointsTo.parentElement.parentElement == selectedItem.parentElement &&
-        pointsTo.classList.contains("dragzone_inside")) {
-        containerNode.insertBefore(selectedItem, pointsTo.parentElement);
-    }
-    else if (containerNode === pointsTo.parentNode) {
-        containerNode.insertBefore(pointsTo, selectedItem);
-    }
-    else {
-        console.error("Cannot determine target for drop", pointsTo.id);
-    }
-    selectedItem.classList.remove("drag-active");
-    $("ebd-body").classList.remove("drag_inpg");
-    containerNode.style.removeProperty("width");
-    containerNode.style.removeProperty("height");
-    dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
-    gameui.saveLocalManualOrder(containerNode);
-    // console.log("onDragEnd commit");
-}

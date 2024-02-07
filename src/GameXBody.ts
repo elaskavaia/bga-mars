@@ -1637,6 +1637,11 @@ awarded.`);
     this.ajaxuseraction("skip", {});
   }
 
+  sendActionUndo() {
+    this.gameStatusCleanup();
+    this.ajaxcallwrapper_unchecked("undo");
+  }
+
   getButtonNameForOperation(op: any) {
     const baseName = op.args.button
       ? this.format_string_recursive(op.args.button, op.args.args)
@@ -1814,14 +1819,7 @@ awarded.`);
             const divId = "button_" + i;
             //  title = this.parseActionsToHTML(tid);
             let title = this.resourcesToHtml(detailsInfo.resources);
-            this.addActionButtonColor(
-              divId,
-              title,
-              () => {
-                this.onSelectTarget(opId, tid);
-              },
-              buttonColor
-            );
+            this.addActionButtonColor(divId, title, () => this.onSelectTarget(opId, tid), buttonColor);
           }
         });
       }
@@ -2070,7 +2068,7 @@ awarded.`);
 
     const playerId = this.getPlayerIdByColor(playerColor);
     if (!playerId) return undefined; // invalid?
-    let name = this.divColoredPlayer(playerId);
+    let name = (playerId == this.player_id) ? this.divYou() : this.divColoredPlayer(playerId);
     const buttonDiv = this.addActionButtonColor(buttonId, name, handler, "gray", undefined, disabled);
 
     buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
@@ -2153,60 +2151,19 @@ awarded.`);
 
       // add done (skip) when optional
       if (singleOrFirst) {
-        if (opInfo.mcount <= 0) {
-          let name = _("Done");
-
-          switch (opInfo.type) {
-            case "buycard":
-              if (single) {
-                if (opTargets.length <= 1) {
-                  name = _("Discard Card");
-                } else {
-                  name = _("Discard Remaining");
-                }
-              }
-              break;
-            default:
-              break;
-          }
-
-          this.addActionButtonColor(
-            "button_skip",
-            name,
-            () => {
-              this.sendActionSkip();
-            },
-            "orange"
-          );
+        if (opInfo.skipname) {
+          this.addActionButtonColor("button_skip", _(opInfo.skipname), () => this.sendActionSkip(), "orange");
         }
       }
       i = i + 1;
     }
 
-    if (chooseorder)
-      this.addActionButtonColor(
-        "button_whatever",
-        _("Whatever"),
-        () => {
-          this.ajaxuseraction("whatever", {});
-        },
-        "orange"
-      );
+    if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
   }
 
   addUndoButton() {
     if (!$("button_undo")) {
-      this.addActionButton(
-        "button_undo",
-        _("Undo"),
-        () => {
-          this.gameStatusCleanup();
-          this.ajaxcallwrapper_unchecked("undo");
-        },
-        undefined,
-        undefined,
-        "red"
-      );
+      this.addActionButtonColor("button_undo", _("Undo"), () => this.sendActionUndo(), "red");
     }
   }
 
