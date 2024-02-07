@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-class AbsOperationIncNegAny extends AbsOperation {
-
+/**
+ * Remove any player standard resource R one of m, s, p, etc
+ * This is up to and optional
+ */
+class Operation_nR_Any extends AbsOperation {
     protected function getPrompt() {
         return  clienttranslate('${you} must select a player who will lose ${res_name} (up to ${count}) or none');
     }

@@ -37,7 +37,7 @@ draw|Draw Card in Hand|${you} must confirm draw ${count} card/s, cannot be undon
 predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 
 #set undo=true
-#set class=AbsOperationIncNegAny
+#set class=Operation_nR_Any
 #set params=player
 nm_Any|Remove M€ (Any Player)|${you} must select a player who will lose the resources (or none)
 ns_Any|Remove Steel (Any Player)|${you} must select a player who will lose the resources (or none)
@@ -46,14 +46,14 @@ np_Any|Remove Plant (Any Player)|${you} must select a player who will lose the r
 ne_Any|Remove Energy (Any Player)|${you} must select a player who will lose the resources (or none)
 nh_Any|Remove Heat (Any Player)|${you} must select a player who will lose the resources (or none)
 
-#set class=AbsOperationIncSteal
+#set class=Operation_steal_R
 steal_p|Steal Plant|${you} must select a player who will lose the resources 
 steal_s|Steal Steel|${you} must select a player who will lose the resources 
 steal_m|Steal M€|${you} must select a player who will lose the resources 
 
 
 
-#set class=AbsOperationPayWithRes
+#set class=Operation_nmM
 #set params=target
 nmu|Pay|${you} must select a payment choice
 nms|Pay|${you} must select a payment choice
@@ -62,7 +62,7 @@ nm|Pay M€|${you} must select a payment choice
 #auto-resolve actions
 #set prompt=
 #set params=
-#set class=AbsOperationInc
+#set class=Operation_R
 m|Gain M€
 s|Gain Steel
 p|Gain Plant
@@ -70,7 +70,7 @@ e|Gain Energy
 h|Gain Heat
 u|Gain Titanium
 pdelta|Increase Global Parameter Requirements Delta
-#set class=AbsOperationIncNeg
+#set class=Operation_nR
 ns|Pay Steel
 nu|Pay Titanium
 np|Pay Plant
@@ -78,21 +78,21 @@ ne|Pay Energy
 nh|Pay Heat
 
 #set opp=1
-#set class=AbsOperationProd
+#set class=Operation_pR
 pm|Increase M€ Production
 pu|Increase Titanium Production
 ps|Increase Steel Production
 pp|Increase Plant Production
 pe|Increase Energy Production
 ph|Increase Heat Production
-#set class=AbsOperationProdNeg
+#set class=Operation_npR
 npm|Decrease M€ Production
 npp|Decrease Plant Production
 npe|Decrease Energy Production
 nph|Decrease Heat Production
 nps|Decrease Steel Production
 npu|Decrease Titanium Production
-#set class=AbsOperationProdNegAny
+#set class=Operation_npR_Any
 npm_Any|Lose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will lose the production
 nps_Any|Lose Steel Production (Any Player - Mandatory)|${you} must select a player who will lose the production
 npu_Any|Lose Titanium Production (Any Player - Mandatory)|${you} must select a player who will lose the production
@@ -101,7 +101,7 @@ npe_Any|Lose Energy Production (Any Player - Mandatory)|${you} must select a pla
 nph_Any|Lose Heat Production (Any Player - Mandatory)|${you} must select a player who will lose the production
 #set opp=
 
-#set class=AbsOperationInc
+#set class=Operation_R
 eru|Increase Titanium Exchange Rate
 ers|Increase Steel Exchange Rate
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 // ops like nmu and nms - pay with titanium/ pay with steal
-class AbsOperationPayWithRes extends AbsOperation {
+class Operation_nmM extends AbsOperation {
 
     protected function getPrimaryArgType() {
         return 'enum';

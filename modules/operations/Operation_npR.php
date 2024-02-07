@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class AbsOperationProdNeg extends AbsOperation {
+class Operation_npR extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $type = $this->getType();
         $this->game->effect_incProduction($owner, $type, -$inc);

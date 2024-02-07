@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-class AbsOperationInc extends AbsOperation {
+class Operation_R extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $this->game->effect_incCount($owner, $this->mnemonic, $inc);
         return $inc;

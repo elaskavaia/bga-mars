@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class AbsOperationIncSteal extends AbsOperation {
+class Operation_steal_R extends AbsOperation {
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
         $type = $this->getType();

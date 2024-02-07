@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Decrease anybody production, i.e. nps_Any
  */
-class AbsOperationProdNegAny extends AbsOperation {
+class Operation_npR_Any extends AbsOperation {
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
         $count = $this->getMinCount();
