@@ -15,6 +15,7 @@ class Operation_lastforest extends AbsOperation {
         $players = $this->game->getPlayersInOrder($this->game->getCurrentStartingPlayer());
         $this->game->machine->interrupt();
         foreach ($players as $player_id => $player) {
+            if (!$this->game->isPlayerAlive($player_id)) continue;
             $optype = 'convp';
             $color = $player['player_color'];
             $forestop = $this->game->getOperationInstanceFromType($optype, $color);
