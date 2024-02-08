@@ -1663,6 +1663,8 @@ awarded.`);
   }
 
   getButtonColorForOperation(op: any) {
+    const bcolor = op.args?.args?.bcolor;
+    if (bcolor) return bcolor;
     if (op.type == "pass") return "red";
     if (op.type == "skipsec") return "orange";
     return "blue";
