@@ -14,7 +14,8 @@ class Operation_skipsec extends AbsOperation {
     function effect(string $color, int $inc): int {
         $this->game->notifyMessage(clienttranslate('${player_name} skips second action'));
         $this->game->queueremove($color, 'confturn');
-        // this is not an action so decreasig the stat, it was increased before
+        $this->game->queueremove($color, 'passauto');
+        // this is not an action so decreasing the stat, it was increased before
         $this->game->incStat(-1, 'game_actions',  $this->getPlayerId());
         return 1;
     }

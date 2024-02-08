@@ -751,7 +751,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function isPassed($color) {
         $playerId = $this->getPlayerIdByColor($color);
-        return $this->isZombiePlayer($playerId) || $this->getTrackerValue($color, 'passed') > 0;
+        return $this->isZombiePlayer($playerId) || $this->getTrackerValue($color, 'passed') == 1;
     }
 
     function incTrackerValue(string $color, $type, $inc = 1) {
@@ -809,13 +809,18 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function queueremove($color, $type, $pool = null) {
+        $op = $this->findop($color, $type, $pool);
+        if ($op) $this->machine->hide($op);
+        return $op;
+    }
+    function findop($color, $type, $pool = null) {
         $ops = $this->machine->getOperations($color, $pool);
         foreach ($ops as $op_key => $op) {
             if ($op['type'] == $type) {
-                $this->machine->hide($op);
-                break;
+                return $op;
             }
         }
+        return null;
     }
 
     function multiplayerqueue($color, $type, $data = '') {

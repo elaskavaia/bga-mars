@@ -12,6 +12,7 @@ class Operation_turn extends AbsOperation {
         }
         if ($skipsec) {
             $actions[] = 'skipsec';
+           // $actions[] = 'passauto'; // not working yet
         } else {
             $actions[] = 'pass';
         }
@@ -37,7 +38,14 @@ class Operation_turn extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $player_id = $this->game->getPlayerIdByColor($owner);
         $this->game->incStat(1, 'game_actions',  $player_id);
-
+        if ($this->game->getTrackerValue($owner, 'passed') == 2) {
+            $this->game->gamestate->changeActivePlayer($player_id); 
+            $pass = $this->game->getOperationInstanceFromType('pass',$owner);
+            $count = 1;
+            $this->game->systemAssertTrue("pass failed",$pass->auto($owner, $count, true));
+            $this->game->undoSavepoint();
+            return 1;
+        }
         $solo = $this->game->isSolo();
         $secondaction = $this->mnemonic == 'turn2';
 
@@ -51,8 +59,9 @@ class Operation_turn extends AbsOperation {
 
 
         if ($solo || $secondaction) {
-            if ($this->game->dbUserPrefs->getPrefValue($player_id, MA_PREF_CONFIRM_TURN))
+            if ($this->game->dbUserPrefs->getPrefValue($player_id, MA_PREF_CONFIRM_TURN)) {
                 $this->game->queue($owner, "confturn");
+            }
         } else {
             $this->game->queue($owner, "turn2");
         }
