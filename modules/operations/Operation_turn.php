@@ -37,12 +37,13 @@ class Operation_turn extends AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $player_id = $this->game->getPlayerIdByColor($owner);
+        $this->game->gamestate->changeActivePlayer($player_id); // XXX?
         $this->game->incStat(1, 'game_actions',  $player_id);
         if ($this->game->getTrackerValue($owner, 'passed') == 2) {
             $this->game->gamestate->changeActivePlayer($player_id); 
+            $this->game->queue($owner, 'pass');
             $pass = $this->game->getOperationInstanceFromType('pass',$owner);
-            $count = 1;
-            $this->game->systemAssertTrue("pass failed",$pass->auto($owner, $count, true));
+            $pass->action_resolve([]);
             $this->game->undoSavepoint();
             return 1;
         }
@@ -66,7 +67,7 @@ class Operation_turn extends AbsOperation {
             $this->game->queue($owner, "turn2");
         }
 
-        $this->game->gamestate->changeActivePlayer($player_id); // XXX?
+
         if (!$secondaction) $this->game->undoSavepoint();
         return 1;
     }

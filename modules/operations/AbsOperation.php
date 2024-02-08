@@ -54,6 +54,9 @@ abstract class AbsOperation {
         return false;
     }
 
+    /**
+     * When OR choice and action cannot be done it can be skipped, sometime its questionable so operation can opt-out from this
+     */
     function canSkipAutomatically() {
         return $this->isVoid();
     }
@@ -88,6 +91,10 @@ abstract class AbsOperation {
         return count($result['target']) == 1;
     }
 
+
+    /**
+     * Arguments for visual formatting. These are used to format string "prompt" an "button" on client side
+     */
     protected function getVisargs() {
         return [
             "name" => $this->getOpName(),
