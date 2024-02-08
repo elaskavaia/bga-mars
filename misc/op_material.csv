@@ -1,6 +1,6 @@
 type|name|prompt|php
 #set id=op_{type}
-#set undo=true
+#set undo=
 #set class=
 #set prompt=Hmm
 #set params=target
@@ -13,7 +13,7 @@ forest|Place Greenery Tile|${you} must select a location to place a Greenery til
 city|Place City Tile|${you} must select a location to place a city, cannot place adjacent to another city
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
-sell|Discard Card from Hand to gain M€|${you} must select a card to discard to gain 1 M€|
+sell|Discard Card from Hand to gain M€|${you} must select a card to discard to gain 1 M€
 activate|Activate Card|${you} must select a card to activate
 ores|Add resource to another card|${you} must select a card to add resource/s to
 nores|Remove resource from another card|${you} must select a card to remove resource/s
@@ -31,12 +31,19 @@ nop|Do nothing
 
 #set undo=false
 #set params=
-pass|Pass|${you} must confirm Pass for this generation
-skipsec|Skip Second Action|${you} must confirm skipping second action
+pass|Pass|${you} must confirm Pass for this generation, cannot be undone
+passauto|Advanced Pass|${you} must confirm skipping second action and Pass for this generation on your next turn, your turn will end now
+skipsec|Skip Second Action|${you} must confirm skipping second action, turn cannot be undone after this
 draw|Draw Card in Hand|${you} must confirm draw ${count} card/s, cannot be undone
 predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 
-#set undo=true
+#set class=Operation_confirm
+#set params=
+confirm|Confirm|${you} must confirm or undo
+confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
+
+
+#set undo=
 #set class=Operation_nR_Any
 #set params=player
 nm_Any|Remove M€ (Any Player)|${you} must select a player who will lose the resources (or none)
@@ -121,8 +128,5 @@ flip|Flip
 #set class=Operation_turn
 turn|Take a turn
 turn2|Take a second action
-#set class=Operation_confirm
-confirm|Confirm|${you} must confirm or undo
-confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
 
 
