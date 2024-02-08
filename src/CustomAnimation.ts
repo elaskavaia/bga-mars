@@ -281,8 +281,10 @@ class CustomAnimation {
 
   }
 
-  animateMapItemAwareness(item_id:string):Promise<any> {
+  async animateMapItemAwareness(item_id:string):Promise<any> {
+    if (!$(item_id)) return;
     if (!this.areAnimationsPlayed() ||  this.getAnimationAmount()==2) return this.getImmediatePromise();
+
 
     const anim_1= this.playCssAnimation(item_id, 'pop', ()=>{
       dojo.style(item_id,'z-index','10000');
@@ -392,9 +394,7 @@ class CustomAnimation {
 
   //"fake" promise, made to use as functional empty default
   getImmediatePromise(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      resolve("");
-    });
+    return Promise.resolve('');
   }
 
   //return a timed promise
@@ -407,7 +407,7 @@ class CustomAnimation {
   //Adds css class on element, plays it, executes onEnd and removes css class
   //a promise is returned for easy chaining
   playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any): Promise<any> {
-
+    if (!$(targetId)) return;
     const animation = this.animations[animationname];
 
     return new Promise((resolve, reject) => {
