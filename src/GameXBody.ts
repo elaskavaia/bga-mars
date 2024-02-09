@@ -1662,14 +1662,6 @@ awarded.`);
     return icon;
   }
 
-  getButtonColorForOperation(op: any) {
-    const bcolor = op.args?.args?.bcolor;
-    if (bcolor) return bcolor;
-    if (op.type == "pass") return "red";
-    if (op.type == "skipsec") return "orange";
-    return "blue";
-  }
-
   getTokenPresentaton(type: string, tokenKey: string | { log: string; args: any }): string {
     const isstr = typeof tokenKey == "string";
     if (isstr && tokenKey.startsWith("tracker")) return this.getDivForTracker(tokenKey);
@@ -2148,8 +2140,8 @@ awarded.`);
             } else this.sendActionResolve(opId);
           };
         }
-        const butcolor = this.getButtonColorForOperation(opInfo);
-        this.addActionButtonColor(buttonId, name, handler, butcolor, opInfo.owner, opArgs.void);
+      
+        this.addActionButtonColor(buttonId, name, handler, opInfo.args?.args?.bcolor, opInfo.owner, opArgs.void);
       }
 
       // add done (skip) when optional

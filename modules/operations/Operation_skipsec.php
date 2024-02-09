@@ -19,4 +19,10 @@ class Operation_skipsec extends AbsOperation {
         $this->game->incStat(-1, 'game_actions',  $this->getPlayerId());
         return 1;
     }
+
+    protected function getVisargs() {
+        return array_merge(parent::getVisargs(),[
+            'bcolor' => 'orange' // button color
+        ]);
+    }
 }
