@@ -229,9 +229,9 @@ abstract class PGameXBody extends PGameMachine {
 
     function debug_q() {
         $player_id = $this->getCurrentPlayerId();
-        //$this->machine->push("a",1,$player_id);
-        //$this->machine->interrupt();
-        //$this->machine->normalize();
+        $this->machine->interrupt();
+        $this->machine->push("draw/nop",1,1, $this->getCurrentPlayerColor());
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
         //return $this->debug_oparg("counter(all_city),m", $card);
         //$this->gamestate->nextState("next");

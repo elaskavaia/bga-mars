@@ -84,6 +84,9 @@ abstract class AbsOperation {
         if ($this->isOptional()) {
             $result["skipname"] = $this->getSkipButtonName();
         }
+        if (!$this->isFullyAutomated()) {
+            $result["ack"] = 1; // prompt required
+        }
         return $result;
     }
 

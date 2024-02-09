@@ -567,9 +567,9 @@ var GameBasics = /** @class */ (function (_super) {
         }
         $(node).classList.add(this.classActiveSlot);
     };
-    GameBasics.prototype.setActiveSlots = function (params) {
-        for (var index = 0; index < params.length; index++) {
-            var element = params[index];
+    GameBasics.prototype.setActiveSlots = function (slots) {
+        for (var index = 0; index < slots.length; index++) {
+            var element = slots[index];
             this.setActiveSlot(element);
         }
     };
@@ -4546,17 +4546,6 @@ var GameXBody = /** @class */ (function (_super) {
         var icon = "<div class=\"token_img tracker_".concat(res, "\">").concat(value, "</div>");
         return icon;
     };
-    GameXBody.prototype.getButtonColorForOperation = function (op) {
-        var _a, _b;
-        var bcolor = (_b = (_a = op.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor;
-        if (bcolor)
-            return bcolor;
-        if (op.type == "pass")
-            return "red";
-        if (op.type == "skipsec")
-            return "orange";
-        return "blue";
-    };
     GameXBody.prototype.getTokenPresentaton = function (type, tokenKey) {
         var isstr = typeof tokenKey == "string";
         if (isstr && tokenKey.startsWith("tracker"))
@@ -4606,9 +4595,11 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.sendActionResolveWithTargetAndPayment = function (opId, target, payment) {
         this.sendActionResolve(opId, { target: target, payment: payment });
     };
-    GameXBody.prototype.activateSlots = function (opInfo, opId, single) {
+    GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
         var _a, _b, _c, _d;
+        if (single === void 0) { single = true; }
+        var opId = opInfo.id;
         var opArgs = opInfo.args;
         var opTargets = (_a = opArgs.target) !== null && _a !== void 0 ? _a : [];
         var ttype = (_b = opArgs.ttype) !== null && _b !== void 0 ? _b : "none";
@@ -4735,9 +4726,8 @@ var GameXBody = /** @class */ (function (_super) {
         if (!single)
             return;
         var buttonId = "button_" + color;
-        var buttonDiv = this.addActionButtonPlayer(buttonId, color, function () {
-            _this.onSelectTarget(opId, color);
-        }, !valid);
+        var buttonDisable = !valid;
+        var buttonDiv = this.addActionButtonPlayer(buttonId, color, function () { return _this.onSelectTarget(opId, color); }, buttonDisable);
         if (!buttonDiv)
             return;
         // if name is not set its not a real player
@@ -4761,7 +4751,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         // tooltips are not working on disabled button
         // if (info.q !== "0") {
-        //   this.addTooltip(buttonId, this.getTokenName(`err_${info.q}`),"");
+        //   this.addTooltip(buttonDiv.id, this.getTokenName(`err_${info.q}`),"");
         // }
     };
     /** When server wants to activate some element, ui may adjust it */
@@ -4902,7 +4892,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (disabled === void 0) { disabled = false; }
         this.addActionButton(buttonId, name, handler);
         var buttonDiv = $(buttonId);
-        if (playerColor && playerColor !== this.player_color && playerColor != "none")
+        if (playerColor && playerColor != this.player_color && playerColor != "none")
             buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
         if (buttonColor) {
             buttonDiv.classList.remove("bgabutton_blue");
@@ -4931,7 +4921,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
-        var _a;
+        var _a, _b;
         var operations = args.operations;
         if (!operations)
             return; // XXX
@@ -4949,51 +4939,22 @@ var GameXBody = /** @class */ (function (_super) {
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             var opArgs = opInfo.args;
+            opInfo.id = opId; // should be already there but just in case
             var name_2 = this_2.getButtonNameForOperation(opInfo);
-            var opTargets = (_a = opArgs.target) !== null && _a !== void 0 ? _a : [];
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
+            // update screen with activate slots for:
+            // - single action
+            // - first if ordered
+            // - all if choice of one (!ordered)
             if (singleOrFirst || !ordered) {
-                this_2.activateSlots(opInfo, opId, singleOrFirst);
+                this_2.activateSlots(opInfo, singleOrFirst);
                 this_2.updateHandInformation(opInfo.args.info, opInfo.type);
             }
-            var buttonId = "button_".concat(opId);
+            // if more than one action and they are no ordered add buttons for each
+            // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
-                // xxx add something for remaining ops in ordered case?
-                var handler = null;
-                if (opTargets.length > 0) {
-                    // operations with targets
-                    handler = function () {
-                        if (opInfo.mcount > 0 && opTargets.length == 1) {
-                            // mandatory and only one choice
-                            _this.sendActionResolveWithTarget(opId, opTargets[0]);
-                        }
-                        else
-                            _this.setClientStateUpdOn("client_collect", function (args) {
-                                // on update action buttons
-                                _this.clearReverseIdMap();
-                                _this.activateSlots(opInfo, opId, true);
-                            }, function (id) {
-                                // onToken
-                                return _this.onSelectTarget(opId, id, true);
-                            });
-                    };
-                }
-                else {
-                    // operations without targets
-                    handler = function () {
-                        if (opInfo.type == "pass" && !single) {
-                            // add confirmation
-                            _this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), function () {
-                                _this.sendActionResolve(opId);
-                            });
-                        }
-                        else
-                            _this.sendActionResolve(opId);
-                    };
-                }
-                var butcolor = this_2.getButtonColorForOperation(opInfo);
-                this_2.addActionButtonColor(buttonId, name_2, handler, butcolor, opInfo.owner, opArgs.void);
+                this_2.addActionButtonColor("button_".concat(opId), name_2, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
             }
             // add done (skip) when optional
             if (singleOrFirst) {
@@ -5009,6 +4970,30 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if (chooseorder)
             this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.ajaxuseraction("whatever", {}); }, "orange");
+    };
+    GameXBody.prototype.onOperationButton = function (opInfo) {
+        var _this = this;
+        var _a, _b;
+        var opTargets = (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.target) !== null && _b !== void 0 ? _b : [];
+        var opId = opInfo.id;
+        var ack = opInfo.args.ack == 1;
+        if (!ack && opInfo.mcount > 0 && opTargets.length == 1) {
+            // mandatory and only one choice
+            this.sendActionResolveWithTarget(opId, opTargets[0]);
+        }
+        else if (!ack && opTargets.length == 0) {
+            this.sendActionResolve(opId); // operations without targets
+        }
+        else {
+            this.setClientStateUpdOn("client_collect", function (args) {
+                // on update action buttons
+                _this.clearReverseIdMap();
+                _this.activateSlots(opInfo);
+            }, function (tokenId) {
+                // onToken
+                return _this.onSelectTarget(opId, tokenId, true);
+            });
+        }
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;

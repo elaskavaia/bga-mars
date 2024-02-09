@@ -1713,7 +1713,8 @@ awarded.`);
     this.sendActionResolve(opId, { target, payment });
   }
 
-  activateSlots(opInfo: any, opId: number, single: boolean) {
+  activateSlots(opInfo: any, single: boolean = true) {
+    const opId = opInfo.id as number;
     const opArgs = opInfo.args;
     const opTargets = opArgs.target ?? [];
     const ttype = opArgs.ttype ?? "none";
@@ -1838,14 +1839,8 @@ awarded.`);
 
     if (!single) return;
     const buttonId = "button_" + color;
-    const buttonDiv = this.addActionButtonPlayer(
-      buttonId,
-      color,
-      () => {
-        this.onSelectTarget(opId, color);
-      },
-      !valid
-    );
+    const buttonDisable = !valid;
+    const buttonDiv = this.addActionButtonPlayer(buttonId, color, () => this.onSelectTarget(opId, color), buttonDisable);
     if (!buttonDiv) return;
 
     // if name is not set its not a real player
@@ -1869,7 +1864,7 @@ awarded.`);
 
     // tooltips are not working on disabled button
     // if (info.q !== "0") {
-    //   this.addTooltip(buttonId, this.getTokenName(`err_${info.q}`),"");
+    //   this.addTooltip(buttonDiv.id, this.getTokenName(`err_${info.q}`),"");
     // }
   }
 
@@ -2040,7 +2035,7 @@ awarded.`);
   ) {
     this.addActionButton(buttonId, name, handler);
     const buttonDiv = $(buttonId);
-    if (playerColor && playerColor !== this.player_color && playerColor != "none")
+    if (playerColor && playerColor != this.player_color && playerColor != "none")
       buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
 
     if (buttonColor) {
@@ -2093,55 +2088,26 @@ awarded.`);
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
       const opArgs = opInfo.args;
+      opInfo.id = opId; // should be already there but just in case
 
       let name = this.getButtonNameForOperation(opInfo);
-
-      const opTargets = opArgs.target ?? [];
       const singleOrFirst = single || (ordered && i == 0);
 
       this.updateVisualsFromOp(opInfo, opId);
+      // update screen with activate slots for:
+      // - single action
+      // - first if ordered
+      // - all if choice of one (!ordered)
       if (singleOrFirst || !ordered) {
-        this.activateSlots(opInfo, opId, singleOrFirst);
+        this.activateSlots(opInfo, singleOrFirst);
         this.updateHandInformation(opInfo.args.info, opInfo.type);
       }
 
-      const buttonId = `button_${opId}`;
+      // if more than one action and they are no ordered add buttons for each
+      // xxx add something for remaining ops in ordered case?
+
       if (!single && !ordered) {
-        // xxx add something for remaining ops in ordered case?
-        let handler = null;
-        if (opTargets.length > 0) {
-          // operations with targets
-          handler = () => {
-            if (opInfo.mcount > 0 && opTargets.length == 1) {
-              // mandatory and only one choice
-              this.sendActionResolveWithTarget(opId, opTargets[0]);
-            } else
-              this.setClientStateUpdOn(
-                "client_collect",
-                (args) => {
-                  // on update action buttons
-                  this.clearReverseIdMap();
-                  this.activateSlots(opInfo, opId, true);
-                },
-                (id: string) => 
-                  // onToken
-                  this.onSelectTarget(opId, id, true)
-                
-              );
-          };
-        } else {
-          // operations without targets
-          handler = () => {
-            if (opInfo.type == "pass" && !single) {
-              // add confirmation
-              this.confirmationDialog(_("Are you sure you want to Pass for this Generation?"), () => {
-                this.sendActionResolve(opId);
-              });
-            } else this.sendActionResolve(opId);
-          };
-        }
-      
-        this.addActionButtonColor(buttonId, name, handler, opInfo.args?.args?.bcolor, opInfo.owner, opArgs.void);
+        this.addActionButtonColor( `button_${opId}`, name, ()=>this.onOperationButton(opInfo), opInfo.args?.args?.bcolor, opInfo.owner, opArgs.void);
       }
 
       // add done (skip) when optional
@@ -2154,6 +2120,30 @@ awarded.`);
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
+  }
+
+  onOperationButton(opInfo: any){
+    const opTargets = opInfo.args?.target ?? [];
+    const opId = opInfo.id as number;
+    const ack = opInfo.args.ack == 1;
+    if (!ack && opInfo.mcount > 0 && opTargets.length == 1) {
+      // mandatory and only one choice
+      this.sendActionResolveWithTarget(opId, opTargets[0]);
+    } else if (!ack && opTargets.length == 0) {
+      this.sendActionResolve(opId); // operations without targets
+    } else {
+      this.setClientStateUpdOn(
+        "client_collect",
+        (args) => {
+          // on update action buttons
+          this.clearReverseIdMap();
+          this.activateSlots(opInfo);
+        },
+        (tokenId: string) =>
+          // onToken
+          this.onSelectTarget(opId, tokenId, true)
+      );
+    }
   }
 
   addUndoButton() {
