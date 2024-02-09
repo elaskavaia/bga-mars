@@ -12,7 +12,7 @@ class Operation_turn extends AbsOperation {
         }
         if ($skipsec) {
             $actions[] = 'skipsec';
-           // $actions[] = 'passauto'; // not working yet
+            $actions[] = 'passauto'; // not working yet
         } else {
             $actions[] = 'pass';
         }
@@ -43,7 +43,7 @@ class Operation_turn extends AbsOperation {
             $this->game->gamestate->changeActivePlayer($player_id); 
             $this->game->queue($owner, 'pass');
             $pass = $this->game->getOperationInstanceFromType('pass',$owner);
-            $pass->action_resolve([]);
+            $pass->action_resolve(['count'=>1]);
             $this->game->undoSavepoint();
             return 1;
         }

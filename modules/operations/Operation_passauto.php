@@ -24,15 +24,14 @@ class Operation_passauto extends AbsOperation {
         }
         
         $this->game->dbSetTokenState("tracker_passed_${color}", 2, '');
-        //$this->game->notifyPlayer($this->getPlayerId(),'message_warning',clienttranslate('Auto passing on next turn'),[]);
+        $this->game->notifyPlayer($this->getPlayerId(),'message_warning',clienttranslate('Auto passing on next turn'),[]);
 
   
         $sec = $this->game->queueremove($color, 'skipsec');
         if ($sec) {
             $this->game->notifyMessage(clienttranslate('${player_name} skips second action'));
-            $this->game->queueremove($color, 'confturn');
         }
-
+        //$this->game->queueremove($color, 'confturn');
         // pass is not an action so decreasig the stat, it was increased before
         $this->game->incStat(-1, 'game_actions',  $this->getPlayerId());
         return 1;
