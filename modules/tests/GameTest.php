@@ -366,20 +366,6 @@ final class GameTest extends TestCase {
         $this->assertEquals(48, $count);
     }
 
-    public function testInstanciateAll() {
-        $m = $this->game();
-        foreach ($m->token_types as $key => $info) {
-            if (array_get($info, 't', 0) == 0) continue;
-            if (!startsWith($key, 'card_')) continue;
-            $r = array_get($info, 'r', '');
-            if (!$r) continue;
-            echo ("testing $key <$r>\n");
-            /** @var AbsOperation */
-            $op = $m->getOperationInstanceFromType($r, PCOLOR);
-            $this->assertNotNull($op);
-            $this->assertTrue($op->checkIntegrity());
-        }
-    }
 
     public function testIsVoid() {
         $m = $this->game();
@@ -464,5 +450,46 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, count($top));
         $op = array_shift($top);
         $this->assertEquals("pass", $op['type']);
+    }
+
+
+    public function testInstanciateAllCard() {
+        $m = $this->game();
+        foreach ($m->token_types as $key => $info) {
+            if (array_get($info, 't', 0) == 0) continue;
+            if (!startsWith($key, 'card_')) continue;
+            $r = array_get($info, 'r', '');
+            if (!$r) continue;
+            echo ("testing $key <$r>\n");
+            /** @var AbsOperation */
+            $op = $m->getOperationInstanceFromType($r, PCOLOR);
+            $this->assertNotNull($op);
+            $this->assertTrue($op->checkIntegrity());
+        }
+    }
+
+    public function testInstanciateAllOperations() {
+        $m = $this->game();
+        foreach ($m->token_types as $key => $info) {
+            if (!startsWith($key, 'op_')) continue;
+            $type = array_get($info, 'type', '');
+            $this->assertNotNull($type);
+            //echo ("testing $key\n");
+            /** @var AbsOperation */
+            $op = $m->getOperationInstanceFromType($type, PCOLOR);
+            $this->assertNotNull($op);
+            $this->assertTrue($op->checkIntegrity());
+            $ack = array_get($info, 'ack', '');
+            $ttype = $op->arg()['ttype'];
+
+            if ($ack == 1) {
+                assert($ttype, "  err: $type ttype=$ttype ack=$ack\n");
+            } else if (!$ack) {
+                assertEquals($ttype, 'token');
+            } else {
+                assert(0, "  err: $type ttype=$ttype ack=$ack\n");
+            }
+
+        }
     }
 }

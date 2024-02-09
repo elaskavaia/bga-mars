@@ -2,8 +2,7 @@ type|name|prompt|php
 #set id=op_{type}
 #set undo=
 #set class=
-#set prompt=Hmm
-#set params=target
+#set ack=1
 card|Play Card|${you} must select a card to play
 stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
@@ -22,7 +21,7 @@ buycard|Buy Card|${you} may select a card to buy for 3 M€
 keepcorp|Keep Corp|${you} must select one corporation card to keep
 draft|Draft Card|${you} must select one card to draft (buy or discard later)
 
-#set params=
+#set ack=
 res|Add resource to this card
 nres|Remove resource from this card
 prediscard|Discard
@@ -30,7 +29,7 @@ nop|Do nothing
 
 
 #set undo=false
-#set params=
+#set ack=1
 pass|Pass|${you} must confirm Pass for this generation, cannot be undone
 passauto|Advanced Pass|${you} must confirm skipping second action and Pass for this generation on your next turn, your turn will end now
 skipsec|Skip Second Action|${you} must confirm skipping second action, turn cannot be undone after this
@@ -38,14 +37,14 @@ draw|Draw Card in Hand|${you} must confirm draw ${count} card/s, cannot be undon
 predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 
 #set class=Operation_confirm
-#set params=
+#set ack=
 confirm|Confirm|${you} must confirm or undo
 confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
 
 
 #set undo=
 #set class=Operation_nR_Any
-#set params=player
+#set ack=1
 nm_Any|Remove M€ (Any Player)|${you} must select a player who will lose the resources (or none)
 ns_Any|Remove Steel (Any Player)|${you} must select a player who will lose the resources (or none)
 nu_Any|Remove Titanium (Any Player)|${you} must select a player who will lose the resources (or none)
@@ -61,14 +60,13 @@ steal_m|Steal M€|${you} must select a player who will lose the resources
 
 
 #set class=Operation_nmM
-#set params=target
+#set ack=1
 nmu|Pay|${you} must select a payment choice
 nms|Pay|${you} must select a payment choice
 nm|Pay M€|${you} must select a payment choice
 
 #auto-resolve actions
-#set prompt=
-#set params=
+#set ack=
 #set class=Operation_R
 m|Gain M€
 s|Gain Steel
@@ -100,6 +98,7 @@ nph|Decrease Heat Production
 nps|Decrease Steel Production
 npu|Decrease Titanium Production
 #set class=Operation_npR_Any
+#set ack=1
 npm_Any|Lose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will lose the production
 nps_Any|Lose Steel Production (Any Player - Mandatory)|${you} must select a player who will lose the production
 npu_Any|Lose Titanium Production (Any Player - Mandatory)|${you} must select a player who will lose the production
@@ -108,11 +107,11 @@ npe_Any|Lose Energy Production (Any Player - Mandatory)|${you} must select a pla
 nph_Any|Lose Heat Production (Any Player - Mandatory)|${you} must select a player who will lose the production
 #set opp=
 
+#set ack=
 #set class=Operation_R
 eru|Increase Titanium Exchange Rate
 ers|Increase Steel Exchange Rate
 
-#set prompt=
 #set class=
 o|Increase Oxygen Level
 t|Increase Temperature

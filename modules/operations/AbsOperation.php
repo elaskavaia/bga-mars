@@ -41,7 +41,8 @@ abstract class AbsOperation {
 
     function isFullyAutomated() {
         $rules = $this->rules();
-        if (isset($rules['params'])) return false;
+        if (isset($rules['ack'])) 
+           return false;
 
         return true;
     }
@@ -110,6 +111,7 @@ abstract class AbsOperation {
     protected function getPrimaryArgType() {
         return 'token';
     }
+    
     protected function getButtonName() {
         if ($this->getCount() == 1) return '${name}';
         return clienttranslate('${name} x ${count}');
