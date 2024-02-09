@@ -660,9 +660,9 @@ class GameBasics extends GameGui {
     $(node).classList.add(this.classActiveSlot);
   }
 
-  setActiveSlots(params: any[]) {
-    for (let index = 0; index < params.length; index++) {
-      const element = params[index];
+  setActiveSlots(slots: any[]) {
+    for (let index = 0; index < slots.length; index++) {
+      const element = slots[index];
       this.setActiveSlot(element);
     }
   }
