@@ -360,6 +360,7 @@ class CustomAnimation {
   }
 
   addAnimationsToDocument(animations: any): void {
+    if ($('css_animations')) return;
     const head = document.getElementsByTagName('head')[0];
     let s = document.createElement('style');
     s.setAttribute('type', 'text/css');
