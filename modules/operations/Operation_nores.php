@@ -53,7 +53,7 @@ class Operation_nores extends AbsOperation {
         return false;
     }
 
-    function canSkipAutomatically() {
+    function canSkipChoice() {
         return false;
     }
 

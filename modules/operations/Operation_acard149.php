@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-require_once "Operation_res.php";
-
+/**
+ * CEO's Favourite Project|3|acard149|||1||Event|0|Corporate|Add 1 resource to a card with at least 1 resource on it.
+ */
 class Operation_acard149 extends  AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
-        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
+        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color"); // XXX to wide query
         $res =  $this->game->createArgInfo($color, array_keys($tokens), function ($color, $tokenId) {
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;

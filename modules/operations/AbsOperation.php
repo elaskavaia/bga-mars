@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 abstract class AbsOperation {
-    protected string $mnemonic;
-    public PGameXBody $game;
-    public string $params;
+    protected string $mnemonic; // main operation mnemonic (i.e np_Any)
+    public PGameXBody $game; // game ref
+    public string $params; // extra operation params, static, i.e when res(card_22) in this case card_22 is param (static only)
     // dynamic
-    protected ?array $argresult; // hold the result when arg is called
-    protected string $color;
-    protected array $op_info;
-    protected ?array $user_args;
+    protected ?array $argresult; // hold the result when arg is called (cache)
+    protected string $color; // owner of the operation (the target player)
+    protected array $op_info; // database structure for operation
+    protected ?array $user_args; // data sent by user during action
 
     public function __construct(string $type, array $opinfo, PGameXBody $game) {
         $this->mnemonic =  stripslashes($type);
@@ -23,12 +23,63 @@ abstract class AbsOperation {
         $this->params =  '';
     }
 
+    /**
+     * Copy of translation function for conviniene, this can only be user for error message in exceptions
+     */
     function _($str) {
         return $this->game->_($str);
     }
 
+    // --------------------- GETTERS AND SETTERS
+
+
     function rules() {
         return $this->game->getOperationRules($this->mnemonic);
+    }
+
+
+
+
+    public function getMnemonic() {
+        return $this->mnemonic;
+    }
+
+    protected function getOwner() {
+        return  $this->color;
+    }
+
+    protected function getPlayerNo() {
+        $owner = $this->getOwner();
+        $playerId = $this->game->getPlayerIdByColor($owner);
+        $no = $this->game->getPlayerNoById($playerId);
+        return $no;
+    }
+
+    protected function getPlayerId() {
+        $owner = $this->getOwner();
+        $playerId = $this->game->getPlayerIdByColor($owner);
+        return $playerId;
+    }
+
+    protected function getContext($index = 0) {
+        $data = $this->op_info['data'] ?? '';
+        if (!$data) return $data;
+        $split = explode(':', $data);
+        return array_get($split, $index, ''); // context of effect
+    }
+
+    protected function getMinCount(): int {
+        return (int) ($this->op_info['mcount'] ?? $this->getCount());
+    }
+
+    protected function getCount(): int {
+        $count =  (int) ($this->op_info['count'] ?? 1);
+        return $count;
+    }
+
+    function isOptional() {
+        if ($this->getMinCount() == 0)  return true;
+        return false;
     }
 
     /** extra operation parameters passed statically, i.e. some(arg1) */
@@ -39,38 +90,103 @@ abstract class AbsOperation {
         $this->params = $params;
     }
 
+
+    // ---------------------- BEHAVIOR MODIFIERS
+
     function isFullyAutomated() {
         $rules = $this->rules();
-        if (isset($rules['ack'])) 
-           return false;
+        if (isset($rules['ack']))
+            return false;
 
         return true;
-    }
-
-    function canResolveAutomatically() {
-        if ($this->getMinCount() == 0) return false;
-        if ($this->getMinCount() != $this->getCount()) return false;
-        if ($this->isFullyAutomated()) return true;
-        if ($this->isOneChoice()) return true; // can be perf for prompt
-        return false;
     }
 
     /**
      * When OR choice and action cannot be done it can be skipped, sometime its questionable so operation can opt-out from this
      */
-    function canSkipAutomatically() {
+    function canSkipChoice() {
         return $this->isVoid();
     }
 
-    function isOptional() {
-        if ($this->getMinCount() == 0)  return true;
+    /**
+     * Operation has no side affect is it only affect one counter, and cannot have cascading side effects
+     */
+    function hasNoSideEffects(): bool {
         return false;
     }
 
+
+    function canResolveAutomatically() {
+        if ($this->isFullyAutomated()) return true;
+        if ($this->getMinCount() == 0) return false;
+        if ($this->getMinCount() != $this->getCount()) return false;
+        if ($this->isOneChoice()) return true; // can be perf for prompt
+        return false;
+    }
+
+
+    /** Operation is void is it has no valid target, however optional operation is never void because it can be skipped */
+    function isVoid(): bool {
+        if ($this->isOptional()) return false;
+        if ($this->noValidTargets()) return true;
+        return false;
+    }
+
+
+    function noValidTargets(): bool {
+        $arg = $this->arg();
+        return count($arg['info']) > 0 && count($arg['target']) == 0;
+    }
+
+
+    protected function isOneChoice(): bool {
+        $result  = $this->arg();
+        return count($result['target']) == 1;
+    }
+
+    // --------------------- CLIENT VISUALIZATON
+
+    /**
+     * Arguments for visual formatting. These are used to format string "prompt" an "button" on client side
+     */
+    protected function getVisargs() {
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+        ];
+    }
+
+    protected function getPrimaryArgType() {
+        return 'token';
+    }
+
+    protected function getButtonName() {
+        if ($this->getCount() == 1) return '${name}';
+        return clienttranslate('${name} x ${count}');
+    }
+
+    protected function getSkipButtonName() {
+        return clienttranslate("Done");
+    }
+
+    protected function getOpName() {
+        $rules = $this->rules();
+        if ($rules) return $rules['name'];
+        return $this->mnemonic;
+    }
+
+
+    protected function getPrompt() {
+        $rules = $this->rules();
+        return  $rules['prompt'] ?? clienttranslate('${you} must confirm');
+    }
+
+    // --------------------- PLAYER INPUT
+
+
     function arg() {
         if ($this->argresult) {
-            //if ($this->op_info['id'] != $op['id']) throw new Exception("op instances reused for anothger operaion");
-            return $this->argresult;
+            return $this->argresult; // cached
         }
         $result = [];
         $this->argresult = &$result;
@@ -88,51 +204,6 @@ abstract class AbsOperation {
             $result["ack"] = 1; // prompt required
         }
         return $result;
-    }
-
-    protected function isOneChoice(): bool {
-        $result  = $this->arg();
-        return count($result['target']) == 1;
-    }
-
-
-    /**
-     * Arguments for visual formatting. These are used to format string "prompt" an "button" on client side
-     */
-    protected function getVisargs() {
-        return [
-            "name" => $this->getOpName(),
-            'count' => $this->getCount(),
-        ];
-    }
-
-    protected function getSkipButtonName() {
-        return clienttranslate("Done");
-    }
-
-
-    protected function getPrimaryArgType() {
-        return 'token';
-    }
-    
-    protected function getButtonName() {
-        if ($this->getCount() == 1) return '${name}';
-        return clienttranslate('${name} x ${count}');
-    }
-
-    protected function getOpName() {
-        $rules = $this->rules();
-        if ($rules) return $rules['name'];
-        return $this->mnemonic;
-    }
-
-    public function getMnemonic() {
-        return $this->mnemonic;
-    }
-
-    protected function getPrompt() {
-        $rules = $this->rules();
-        return  $rules['prompt'] ?? clienttranslate('${you} must confirm');
     }
 
     protected function argPrimaryDetails() {
@@ -179,61 +250,16 @@ abstract class AbsOperation {
     }
 
     protected function getAllStateArgs() {
-        return $this->arg($this->op_info);
+        return $this->arg();
     }
 
-    protected function getOwner() {
-        return  $this->color;
-    }
-
-    protected function getPlayerNo() {
-        $owner = $this->getOwner();
-        $playerId = $this->game->getPlayerIdByColor($owner);
-        $no = $this->game->getPlayerNoById($playerId);
-        return $no;
-    }
-
-    protected function getPlayerId() {
-        $owner = $this->getOwner();
-        $playerId = $this->game->getPlayerIdByColor($owner);
-        return $playerId;
+    function getUserCount(): ?int {
+        if (!$this->user_args) return null;
+        return  (int) ($this->user_args["count"] ??  $this->op_info["count"] ?? 1);
     }
 
 
-    protected function getContext($index = 0) {
-        $data = $this->op_info['data'] ?? '';
-        if (!$data) return $data;
-        $split = explode(':', $data);
-        return array_get($split, $index, ''); // context of effect
-    }
-
-    protected function getMinCount(): int {
-        return (int) ($this->op_info['mcount'] ?? $this->getCount());
-    }
-
-    protected function getCount(): int {
-        $count =  (int) ($this->op_info['count'] ?? 1);
-        return $count;
-    }
-
-    function isVoid(): bool {
-        if ($this->getMinCount() == 0) return false;
-        if ($this->noValidTargets()) return true;
-        return false;
-    }
-
-    /**
-     * Operation has no side affect is it only affect one counter, and cannot have cascading side effects
-     */
-    function hasNoSideEffects(): bool {
-        return false;
-    }
-
-    function noValidTargets(): bool {
-        $arg = $this->arg();
-        return count($arg['info']) > 0 && count($arg['target']) == 0;
-    }
-
+    // --------------------- RESOLVING
     /**
      * This is user call, validate all parameters
      */
@@ -270,10 +296,6 @@ abstract class AbsOperation {
         }
     }
 
-    function getUserCount(): ?int {
-        if (!$this->user_args) return null;
-        return  (int) ($this->user_args["count"] ??  $this->op_info["count"] ?? 1);
-    }
 
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;

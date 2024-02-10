@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-require_once "Operation_res.php";
 
 class Operation_ores extends  AbsOperation {
     function argPrimaryDetails() {

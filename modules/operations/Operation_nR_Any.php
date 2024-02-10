@@ -50,7 +50,7 @@ class Operation_nR_Any extends AbsOperation {
         return false;
     }
 
-    function canSkipAutomatically() {
+    function canSkipChoice() {
         return false;
     }
 

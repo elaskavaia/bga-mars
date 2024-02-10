@@ -2004,9 +2004,9 @@ abstract class PGameXBody extends PGameMachine {
         // do nothing here for now
     }
 
-    public function canSkipAutomatically($op) {
+    public function canSkipChoice($op) {
         $opinst = $this->getOperationInstance($op);
-        return $opinst->canSkipAutomatically();
+        return $opinst->canSkipChoice();
     }
 
     public function isVoidSingle(string $type, string $color, ?int $count = 1, string $data = '') {

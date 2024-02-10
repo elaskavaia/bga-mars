@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 
+/**
+ * Delegate operation is only need to resolve operations with count, like 2m
+ * In this case mnemonic of this one is "2m" and count is 1, and delegate is "m" with count of "2"
+ */
 class DelegatedOperation extends AbsOperation {
     public AbsOperation $delegate;
     public function __construct(array $opinfo, PGameXBody $game) {
@@ -32,16 +36,20 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->isVoid();
     }
 
+    function noValidTargets(): bool {
+        return $this->delegate->noValidTargets();
+    }
+
     protected function getMinCount(): int {
         return $this->delegate->getMinCount();
     }
 
-    function canSkipAutomatically(): bool {
-        return $this->delegate->canSkipAutomatically();
-    }
-
     function isOptional() {
         return $this->delegate->isOptional();
+    }
+
+    function canSkipChoice(): bool {
+        return $this->delegate->canSkipChoice();
     }
 
     function isFullyAutomated() {
