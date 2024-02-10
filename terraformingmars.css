@@ -304,6 +304,19 @@
   transform: rotateX(40deg) rotateY(0deg) rotateZ(40deg) translateZ(var(--half-mcubesize));
 }
 
+#main_board .mcube ~ .mcube {
+  translate: 50%;
+}
+#main_board .mcube ~ .mcube ~ .mcube {
+  translate: 0% 50%;
+}
+#main_board .mcube ~ .mcube ~ .mcube ~ .mcube {
+  translate: 50% 50%;
+}
+#main_board .mcube ~ .mcube ~ .mcube ~ .mcube ~ .mcube {
+  translate: 100% 25%;
+}
+
 .board {
   position: relative;
 }
