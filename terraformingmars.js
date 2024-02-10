@@ -3772,6 +3772,12 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
     };
+    GameXBody.prototype.notif_tokensUpdate = function (notif) {
+        for (var opIdS in notif.args.operations) {
+            var opInfo = notif.args.operations[opIdS];
+            this.updateHandInformation(opInfo.args.info, opInfo.type);
+        }
+    };
     GameXBody.prototype.getCardTypeById = function (type) {
         switch (type) {
             case 0:
@@ -5215,6 +5221,8 @@ var GameXBody = /** @class */ (function (_super) {
     // notifications
     GameXBody.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
+        dojo.subscribe("tokensUpdate", this, "notif_tokensUpdate");
+        //this.notifqueue.setSynchronous("notif_tokensUpdate", 5000); // reset in notif handler
     };
     //get settings
     GameXBody.prototype.getSetting = function (key) {

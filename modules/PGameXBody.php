@@ -8,6 +8,7 @@ require_once "DbUserPrefs.php";
 require_once "operations/AbsOperation.php";
 require_once "operations/ComplexOperation.php";
 require_once "operations/DelegatedOperation.php";
+require_once "operations/Operation_turn.php";
 
 define("MA_STAGE_SETUP", 1);
 define("MA_STAGE_GAME", 3);
@@ -230,7 +231,7 @@ abstract class PGameXBody extends PGameMachine {
     function debug_q() {
         $player_id = $this->getCurrentPlayerId();
         $this->machine->interrupt();
-        $this->machine->push("draw/nop",1,1, $this->getCurrentPlayerColor());
+        $this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
         //return $this->debug_oparg("counter(all_city),m", $card);
@@ -278,14 +279,14 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_incCount($color, 'm', $x);
     }
 
-    function debug_inc($res = 'm',$count = 1) {
+    function debug_inc($res = 'm', $count = 1) {
         $color = $this->getCurrentPlayerColor();
         $this->effect_incCount($color, $res, $count);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
-    function debug_incparam($res = 'o',$count = 1) {
+    function debug_incparam($res = 'o', $count = 1) {
         $color = $this->getCurrentPlayerColor();
-        $this->effect_increaseParam($color, $res, $count, $res == 't'?2:1);
+        $this->effect_increaseParam($color, $res, $count, $res == 't' ? 2 : 1);
     }
 
     function debug_res($m = 0, $s = 0, $u = 0, $p = 0, $e = 0, $h = 0, $color = 0) {
@@ -2054,6 +2055,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         // check end of game
         $player_id = $this->getActivePlayerId(); // xxx turn owner?
+        $this->effect_endOfActions($player_id);
         $player_id = $this->getNextReadyPlayer($player_id);
         if (!$player_id) {
             // end of turn
@@ -2067,6 +2069,17 @@ abstract class PGameXBody extends PGameMachine {
             return STATE_PLAYER_CONFIRM;
         }
         return null;
+    }
+
+    function effect_endOfActions($player_id) {
+        $ops = Operation_turn::getStandardActions($this->isSolo());
+        $operations = [];
+        foreach ($ops as $optype) {
+            $oparr = $this->machine->createOperationSimple($optype, $this->getPlayerColorById($player_id));
+            $oparr['flags'] = MACHINE_OP_RESOLVE_DEFAULT;
+            $operations [] = $oparr;
+        }
+        $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
@@ -2099,7 +2112,7 @@ abstract class PGameXBody extends PGameMachine {
     function zombieTurn($state, $active_player) {
         $owner = $this->getPlayerColorById($active_player);
         $tops = $this->machine->getOperations($owner);
-        
+
         if ($tops && count($tops) > 0) {
             $this->notifyWithName('message', clienttranslate('${player_name} is zombie, action is skipped'), [], $active_player);
             $this->machine->hide($tops);

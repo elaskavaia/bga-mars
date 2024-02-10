@@ -713,6 +713,13 @@ class GameXBody extends GameTokens {
     }
   }
 
+  notif_tokensUpdate(notif: Notif){
+    for (const opIdS in notif.args.operations) {
+      const opInfo = notif.args.operations[opIdS];
+      this.updateHandInformation(opInfo.args.info, opInfo.type);
+    }
+  }
+
   getCardTypeById(type: number) {
     switch (type) {
       case 0:
@@ -2373,6 +2380,9 @@ awarded.`);
   // notifications
   setupNotifications(): void {
     super.setupNotifications();
+
+    dojo.subscribe("tokensUpdate", this, "notif_tokensUpdate");
+    //this.notifqueue.setSynchronous("notif_tokensUpdate", 5000); // reset in notif handler
   }
 
   //get settings
