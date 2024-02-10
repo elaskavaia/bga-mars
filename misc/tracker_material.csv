@@ -117,3 +117,8 @@ resource|Resource
 
 #set type=marker
 marker|Marker
+marker_ff0000|Red Marker
+marker_0000ff|Blue Marker
+marker_008000|Green Marker
+marker_773300|Black Marker
+marker_ffa500|Yellow Marker
