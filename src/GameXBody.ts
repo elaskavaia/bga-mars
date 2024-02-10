@@ -1764,26 +1764,36 @@ awarded.`);
     }
 
     if (ttype == "token") {
-      // new magic number is 7 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
-      const showAsButtons = opTargets.length <= 7;
       opTargets.forEach((tid: string) => {
-        if (tid == "none") {
-          if (single) {
-            this.addActionButton("button_none", _("None"), () => {
-              this.sendActionResolveWithTarget(opId, "none");
-            });
-          }
-        } else {
           const divId = this.getActiveSlotRedirect(tid);
           this.setActiveSlot(divId);
           this.setReverseIdMap(divId, opId, tid);
-          if (single && showAsButtons) {
-            this.addActionButton("button_" + tid, this.getTokenName(tid), () => {
-              this.sendActionResolveWithTarget(opId, tid);
-            });
-          }
-        }
       });
+      if (single) {
+        const MAGIC_BUTTONS_NUMBER = 6;
+        const showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER;
+        if (showAsButtons) {
+          this.addTargetButtons(opId, opTargets);
+        } else {
+          // people confused when buttons are not shown, add button with explanations
+          const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+          this.addActionButtonColor(
+            "button_x",
+            name,
+            () => {
+              this.removeTooltip("button_x");
+              dojo.destroy("button_x");
+              this.addTargetButtons(opId, opTargets);
+            },
+            "orange"
+          );
+          this.addTooltip(
+            "button_x",
+            _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
+            _("Click to add buttons")
+          );
+        }
+      }
     } else if (ttype == "player") {
       if (paramInfo) {
         for (let tid in paramInfo) {
@@ -1826,6 +1836,14 @@ awarded.`);
         });
       }
     }
+  }
+
+  addTargetButtons(opId: number, opTargets: string[]) {
+    opTargets.forEach((tid: string) => {
+      this.addActionButtonColor("button_" + tid, this.getTokenName(tid), () => {
+        this.sendActionResolveWithTarget(opId, tid);
+      }, tid == 'none' ? 'orange' : 'targetcolor');
+    })
   }
 
   /**

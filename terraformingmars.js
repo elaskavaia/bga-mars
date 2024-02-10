@@ -1184,7 +1184,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.onNotif = function (notif) {
         this.restoreMainBar();
-        console.log("notif", notif);
+        //console.log("notif", notif);
         // if (!this.instantaneousMode && notif.log) {
         //   this.setDescriptionOnMyTurn(notif.log, notif.args);
         // }
@@ -1220,7 +1220,7 @@ var GameBasics = /** @class */ (function (_super) {
             else if ($(name_1)) {
                 this.setDomTokenState(name_1, value);
             }
-            console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+            //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
         }
         catch (ex) {
             console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
@@ -4646,27 +4646,28 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         if (ttype == "token") {
-            // new magic number is 7 - which is also number of standard project, which is for some reason one of top voted bugs that people want buttons
-            var showAsButtons_1 = opTargets.length <= 7;
             opTargets.forEach(function (tid) {
-                if (tid == "none") {
-                    if (single) {
-                        _this.addActionButton("button_none", _("None"), function () {
-                            _this.sendActionResolveWithTarget(opId, "none");
-                        });
-                    }
+                var divId = _this.getActiveSlotRedirect(tid);
+                _this.setActiveSlot(divId);
+                _this.setReverseIdMap(divId, opId, tid);
+            });
+            if (single) {
+                var MAGIC_BUTTONS_NUMBER = 6;
+                var showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER;
+                if (showAsButtons) {
+                    this.addTargetButtons(opId, opTargets);
                 }
                 else {
-                    var divId = _this.getActiveSlotRedirect(tid);
-                    _this.setActiveSlot(divId);
-                    _this.setReverseIdMap(divId, opId, tid);
-                    if (single && showAsButtons_1) {
-                        _this.addActionButton("button_" + tid, _this.getTokenName(tid), function () {
-                            _this.sendActionResolveWithTarget(opId, tid);
-                        });
-                    }
+                    // people confused when buttons are not shown, add button with explanations
+                    var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+                    this.addActionButtonColor("button_x", name_2, function () {
+                        _this.removeTooltip("button_x");
+                        dojo.destroy("button_x");
+                        _this.addTargetButtons(opId, opTargets);
+                    }, "orange");
+                    this.addTooltip("button_x", _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"), _("Click to add buttons"));
                 }
-            });
+            }
         }
         else if (ttype == "player") {
             if (paramInfo) {
@@ -4712,6 +4713,14 @@ var GameXBody = /** @class */ (function (_super) {
                 });
             }
         }
+    };
+    GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
+        var _this = this;
+        opTargets.forEach(function (tid) {
+            _this.addActionButtonColor("button_" + tid, _this.getTokenName(tid), function () {
+                _this.sendActionResolveWithTarget(opId, tid);
+            }, tid == 'none' ? 'orange' : 'targetcolor');
+        });
     };
     /**
      * Activate player for the operation
@@ -4946,7 +4955,7 @@ var GameXBody = /** @class */ (function (_super) {
             var opInfo = operations[opId];
             var opArgs = opInfo.args;
             opInfo.id = opId; // should be already there but just in case
-            var name_2 = this_2.getButtonNameForOperation(opInfo);
+            var name_3 = this_2.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
@@ -4960,7 +4969,7 @@ var GameXBody = /** @class */ (function (_super) {
             // if more than one action and they are no ordered add buttons for each
             // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
-                this_2.addActionButtonColor("button_".concat(opId), name_2, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_2.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
             }
             // add done (skip) when optional
             if (singleOrFirst) {

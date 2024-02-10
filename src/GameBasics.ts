@@ -1303,7 +1303,7 @@ class GameBasics extends GameGui {
 
   onNotif(notif: Notif) {
     this.restoreMainBar();
-    console.log("notif", notif);
+    //console.log("notif", notif);
     // if (!this.instantaneousMode && notif.log) {
     //   this.setDescriptionOnMyTurn(notif.log, notif.args);
     // }
@@ -1339,7 +1339,7 @@ class GameBasics extends GameGui {
       } else if ($(name)) {
         this.setDomTokenState(name, value);
       }
-      console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+      //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
     } catch (ex) {
       console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
     }

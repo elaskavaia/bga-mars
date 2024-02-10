@@ -8855,6 +8855,10 @@
   background-color: #b17300;
 }
 
+.bgabutton_targetcolor {
+  background-color: rgba(33, 150, 243, 0.7803921569);
+}
+
 .innerbutton {
   display: flex;
   justify-content: center;
