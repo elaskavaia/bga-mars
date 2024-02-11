@@ -57,21 +57,23 @@ class GameTokens extends GameBasics {
     this.clientStateArgs = {}; // collector of client state arguments
 
     this.instantaneousMode = true;
+    try {
+      this.gamedatas.tokens["limbo"] = {
+        key: "limbo",
+        state: 0,
+        location: "thething"
+      };
+      this.limbo = this.placeToken("limbo");
 
-    this.gamedatas.tokens["limbo"] = {
-      key: "limbo",
-      state: 0,
-      location: "thething",
-    };
-    this.limbo = this.placeToken("limbo");
-
-    // Setting up player boards
-    for (var player_id in gamedatas.players) {
-      var playerInfo = gamedatas.players[player_id];
-      this.setupPlayer(playerInfo);
+      // Setting up player boards
+      for (var player_id in gamedatas.players) {
+        var playerInfo = gamedatas.players[player_id];
+        this.setupPlayer(playerInfo);
+      }
+      this.setupTokens();
+    } finally {
+      this.instantaneousMode = false;
     }
-    this.setupTokens();
-    this.instantaneousMode = false;
   }
 
   onEnteringState_before(stateName: string, args: any) {
@@ -143,9 +145,10 @@ class GameTokens extends GameBasics {
       var tokenInfo = this.gamedatas.tokens[token];
       var location = tokenInfo.location;
       if (!this.gamedatas.tokens[location] && !$(location)) {
-        this.placeToken(location);
-      }
-      this.placeToken(token);
+        const tok = this.placeToken(location);
+        if (tok instanceof Promise) tok.then(() => this.placeToken(token));
+        else this.placeToken(token);
+      } else this.placeToken(token);
     }
 
     for (var loc of this.getAllLocations()) {
@@ -156,14 +159,18 @@ class GameTokens extends GameBasics {
     }
   }
 
-  setTokenInfo(token_id: string, place_id?: string, new_state?: number, serverdata?: boolean): Token {
+  setTokenInfo(token_id: string, place_id?: string, new_state?: number, serverdata?: boolean, args?: any): Token {
     var token = token_id;
     if (!this.gamedatas.tokens[token]) {
       this.gamedatas.tokens[token] = {
         key: token,
         state: 0,
-        location: this.limbo.id,
+        location: this.limbo.id
       };
+    }
+
+    if (args) {
+      args["_prev"] = dojo.clone(this.gamedatas.tokens[token]);
     }
     if (place_id !== undefined) {
       this.gamedatas.tokens[token].location = place_id;
@@ -184,15 +191,16 @@ class GameTokens extends GameBasics {
 
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     var location = tokenInfo.location;
+
     var result: TokenMoveInfo = {
       location: location,
       key: tokenInfo.key,
-      state: tokenInfo.state,
+      state: tokenInfo.state
     };
 
-    if (location.startsWith("discard")) {
+    if (location?.startsWith("discard")) {
       result.onEnd = (node) => this.hideCard(node);
-    } else if (location.startsWith("deck")) {
+    } else if (location?.startsWith("deck")) {
       result.onEnd = (node) => this.hideCard(node);
     }
     return result;
@@ -248,24 +256,25 @@ class GameTokens extends GameBasics {
     }
   }
 
-  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token) {
+   onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token): Promise<any> | Element {
     if (dojo.hasClass(tokenNode, "infonode")) {
       this.placeInfoBox(tokenNode);
     }
+    return tokenNode;
   }
 
-  placeTokenLocal(tokenId: string, location: string, state?: number, args?: any) {
-    const tokenInfo = this.setTokenInfo(tokenId, location, state, false);
+  async placeTokenLocal(tokenId: string, location: string, state?: number, args?: any) {
+    const tokenInfo = this.setTokenInfo(tokenId, location, state, false, args);
     //this.on_client_state = true;
-    this.placeTokenWithTips(tokenId, tokenInfo, args);
+    return this.placeTokenWithTips(tokenId, tokenInfo, args);
   }
 
-  placeTokenServer(tokenId: string, location: string, state?: number, args?: any) {
-    const tokenInfo = this.setTokenInfo(tokenId, location, state, true);
-    this.placeTokenWithTips(tokenId, tokenInfo, args);
+  async placeTokenServer(tokenId: string, location: string, state?: number, args?: any) {
+    const tokenInfo = this.setTokenInfo(tokenId, location, state, true, args);
+    return this.placeTokenWithTips(tokenId, tokenInfo, args);
   }
 
-  placeToken(token: string, tokenInfo?: Token, args?: any) {
+  placeToken(token: string, tokenInfo?: Token, args?: any): Promise<any> | Element {
     try {
       if (args === undefined) {
         args = {};
@@ -275,7 +284,7 @@ class GameTokens extends GameBasics {
         noAnnimation = true;
       }
 
-      var tokenInfoBefore = dojo.clone(this.gamedatas.tokens[token]);
+      let tokenInfoBefore = args?._prev;
 
       if (!tokenInfo) {
         tokenInfo = this.gamedatas.tokens[token];
@@ -291,6 +300,9 @@ class GameTokens extends GameBasics {
           tokenInfo = this.setTokenInfo(token, this.getDomTokenLocation(tokenNode), this.getDomTokenState(tokenNode), false);
         }
         noAnnimation = true;
+      }
+      if (!tokenInfo.location) {
+        console.log(token + ": " + " -place-> undefined " + tokenInfo.state);
       }
 
       const placeInfo = args.placeInfo ?? this.getPlaceRedirect(tokenInfo);
@@ -308,10 +320,9 @@ class GameTokens extends GameBasics {
       this.syncTokenDisplayInfo(tokenNode);
       this.setDomTokenState(tokenNode, tokenInfo.state);
 
-     if (placeInfo.nop) {
+      if (placeInfo.nop) {
         // no movement
-        this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
-        return;
+        return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
       }
       if (!$(location)) {
         if (location) console.error("Unknown place '" + location + "' for '" + tokenInfo.key + "' " + token);
@@ -335,12 +346,12 @@ class GameTokens extends GameBasics {
         mobileStyle = {
           position: placeInfo.position || "absolute",
           left: placeInfo.x + "px",
-          top: placeInfo.y + "px",
+          top: placeInfo.y + "px"
         };
       }
 
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
-      this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+      return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
     } catch (e) {
       console.error("Exception thrown", e, e.stack);
       // this.showMessage(token + " -> FAILED -> " + place + "\n" + e, "error");
@@ -348,13 +359,15 @@ class GameTokens extends GameBasics {
     return tokenNode;
   }
 
-  placeTokenWithTips(token: string, tokenInfo?: Token, args?: any) {
+  async placeTokenWithTips(token: string, tokenInfo?: Token, args?: any) {
     if (!tokenInfo) {
       tokenInfo = this.gamedatas.tokens[token];
     }
-    this.placeToken(token, tokenInfo, args);
+    const node = await this.placeToken(token, tokenInfo, args);
     this.updateTooltip(token);
     if (tokenInfo) this.updateTooltip(tokenInfo.location);
+    if (!(node instanceof Promise)) return Promise.resolve(node);
+    return node;
   }
 
   placeInfoBoxClass(clazz: string) {
@@ -420,7 +433,7 @@ class GameTokens extends GameBasics {
               event.stopPropagation();
               return !this.showHelp(box.id, true);
             },
-            true,
+            true
           );
         }
       } else {
@@ -433,12 +446,10 @@ class GameTokens extends GameBasics {
     }
   }
 
-  handleStackedTooltips(attachNode: Element){
-
-  }
+  handleStackedTooltips(attachNode: Element) {}
 
   removeTooltip(nodeId: string): void {
-    // if (this.tooltips[nodeId]) 
+    // if (this.tooltips[nodeId])
     //     console.log('removing tooltip for ',nodeId);
     this.inherited(arguments);
     this.tooltips[nodeId] = null;
@@ -514,7 +525,7 @@ class GameTokens extends GameBasics {
         key: tokenId,
         _chain: tokenId,
         name: tokenId,
-        showtooltip: false,
+        showtooltip: false
       };
     } else {
       tokenInfo = dojo.clone(tokenInfo);
@@ -536,13 +547,12 @@ class GameTokens extends GameBasics {
       tokenInfo.key = tokenId;
     }
 
-    tokenInfo.tokenId = tokenId; 
+    tokenInfo.tokenId = tokenId;
 
     this.updateTokenDisplayInfo(tokenInfo);
 
     return tokenInfo;
   }
-
 
   getTokenPresentaton(type: string, tokenKey: string): string {
     return this.getTokenName(tokenKey); // just a name for now
@@ -578,8 +588,8 @@ class GameTokens extends GameBasics {
             var res = "";
             for (let l = 0; l < list.length; l++) {
               const value = list[l];
-              if (l>0)  res += ', ';
-              res += this.getTokenPresentaton(key, value);      
+              if (l > 0) res += ", ";
+              res += this.getTokenPresentaton(key, value);
             }
             res = res.trim();
             if (res) args[key] = res;
@@ -630,7 +640,11 @@ class GameTokens extends GameBasics {
 
   setupNotifications(): void {
     super.setupNotifications();
-
+    //  dojo.subscribe("counter", this, "notif_counter");
+    // this.notifqueue.setSynchronous("counter", 500);
+    // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+    this.subscribeNotification("counter");
+    this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
     this.subscribeNotification("tokenMoved");
     this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
     /*
@@ -641,11 +655,12 @@ class GameTokens extends GameBasics {
      */
   }
 
-  notif_tokenMoved(notif: Notif) {
+  async notif_tokenMoved(notif: Notif) {
     this.onNotif(notif);
     //	console.log('notif_tokenMoved', notif);
     if (notif.args.list !== undefined) {
       // move bunch of tokens
+      let last;
       for (var i = 0; i < notif.args.list.length; i++) {
         var one = notif.args.list[i];
         var new_state = notif.args.new_state;
@@ -654,10 +669,43 @@ class GameTokens extends GameBasics {
             new_state = notif.args.new_states[i];
           }
         }
-        this.placeTokenServer(one, notif.args.place_id, new_state, notif.args);
+        last = this.placeTokenServer(one, notif.args.place_id, new_state, notif.args);
       }
+      return last;
     } else {
-      this.placeTokenServer(notif.args.token_id, notif.args.place_id, notif.args.new_state, notif.args);
+      return this.placeTokenServer(notif.args.token_id, notif.args.place_id, notif.args.new_state, notif.args);
+    }
+  }
+
+  async notif_counter(notif: Notif) {
+    try {
+      this.onNotif(notif);
+      const name = notif.args.counter_name;
+      let value: number;
+      if (notif.args.counter_value !== undefined) {
+        value = notif.args.counter_value;
+      } else {
+        const counter_inc = notif.args.counter_inc;
+        value = notif.args.counter_value = this.gamedatas.counters[name].counter_value + counter_inc;
+      }
+
+      if (this.gamedatas.counters[name]) {
+        const counters = {};
+        counters[name] = {
+          counter_name: name,
+          counter_value: value
+        };
+        if (this.gamedatas_server && this.gamedatas_server.counters[name]) this.gamedatas_server.counters[name].counter_value = value;
+        this.updateCountersSafe(counters);
+      } else if ($(name) && this.gamedatas.tokens[name]) {
+        notif.args.nop = true; // no move animation
+        return this.placeTokenServer(name, this.gamedatas.tokens[name].location, value, notif.args);
+      } else if ($(name)) {
+        this.setDomTokenState(name, value);
+      }
+      //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+    } catch (ex) {
+      console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
     }
   }
 }

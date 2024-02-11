@@ -1145,11 +1145,6 @@ class GameBasics extends GameGui {
 
   setupNotifications(): void {
     console.log("notifications subscriptions setup");
-    //  dojo.subscribe("counter", this, "notif_counter");
-    // this.notifqueue.setSynchronous("counter", 500);
-    // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
-    this.subscribeNotification("counter");
-    this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
 
     dojo.subscribe("score", this, "notif_score");
     this.notifqueue.setSynchronous("score", 5000); // reset in notif handler
@@ -1214,12 +1209,12 @@ class GameBasics extends GameGui {
     if (!this[notiffunc]) {
       this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
     } else {
-      const startTime = Date.now();
+      //const startTime = Date.now();
       //  this.onNotif(notif);//should be moved here
       let p = this[notiffunc](notif);
       if (setDelay == 1) {
         //nothing to do here
-      } else if (p == undefined) {
+      } else if (!(p instanceof Promise)) {
         //no promise returned: no animation played
         // console.log(notifname+' : no return, sync set to 1');
         this.notifqueue.setSynchronousDuration(1);
@@ -1315,35 +1310,6 @@ class GameBasics extends GameGui {
     const duration = notif.args.duration ? notif.args.duration : 1000;
     this.notifqueue.setSynchronous("speechBubble", duration);
     this.showBubble(notif.args.target, html, notif.args.delay, duration);
-  }
-
-  notif_counter(notif: Notif) {
-    try {
-      this.onNotif(notif);
-      const name = notif.args.counter_name;
-      let value: number;
-      if (notif.args.counter_value !== undefined) {
-        value = notif.args.counter_value;
-      } else {
-        const counter_inc = notif.args.counter_inc;
-        value = notif.args.counter_value = this.gamedatas.counters[name].counter_value + counter_inc;
-      }
-
-      if (this.gamedatas.counters[name]) {
-        const counters = {};
-        counters[name] = {
-          counter_name: name,
-          counter_value: value
-        };
-        if (this.gamedatas_server && this.gamedatas_server.counters[name]) this.gamedatas_server.counters[name].counter_value = value;
-        this.updateCountersSafe(counters);
-      } else if ($(name)) {
-        this.setDomTokenState(name, value);
-      }
-      //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
-    } catch (ex) {
-      console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
-    }
   }
 
   notif_score(notif: Notif) {

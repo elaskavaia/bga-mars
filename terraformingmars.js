@@ -1027,11 +1027,6 @@ var GameBasics = /** @class */ (function (_super) {
     // NOTIFICATIONS
     GameBasics.prototype.setupNotifications = function () {
         console.log("notifications subscriptions setup");
-        //  dojo.subscribe("counter", this, "notif_counter");
-        // this.notifqueue.setSynchronous("counter", 500);
-        // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
-        this.subscribeNotification("counter");
-        this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
         dojo.subscribe("score", this, "notif_score");
         this.notifqueue.setSynchronous("score", 5000); // reset in notif handler
         dojo.subscribe("scoreAsync", this, "notif_score"); // same as score but no delay
@@ -1097,13 +1092,14 @@ var GameBasics = /** @class */ (function (_super) {
             this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
         }
         else {
-            var startTime = Date.now();
+            //const startTime = Date.now();
             //  this.onNotif(notif);//should be moved here
             var p = this[notiffunc](notif);
+            debugger;
             if (setDelay == 1) {
                 //nothing to do here
             }
-            else if (p == undefined) {
+            else if (p === undefined || !(p instanceof Promise)) {
                 //no promise returned: no animation played
                 // console.log(notifname+' : no return, sync set to 1');
                 this.notifqueue.setSynchronousDuration(1);
@@ -1194,37 +1190,6 @@ var GameBasics = /** @class */ (function (_super) {
         var duration = notif.args.duration ? notif.args.duration : 1000;
         this.notifqueue.setSynchronous("speechBubble", duration);
         this.showBubble(notif.args.target, html, notif.args.delay, duration);
-    };
-    GameBasics.prototype.notif_counter = function (notif) {
-        try {
-            this.onNotif(notif);
-            var name_1 = notif.args.counter_name;
-            var value = void 0;
-            if (notif.args.counter_value !== undefined) {
-                value = notif.args.counter_value;
-            }
-            else {
-                var counter_inc = notif.args.counter_inc;
-                value = notif.args.counter_value = this.gamedatas.counters[name_1].counter_value + counter_inc;
-            }
-            if (this.gamedatas.counters[name_1]) {
-                var counters = {};
-                counters[name_1] = {
-                    counter_name: name_1,
-                    counter_value: value
-                };
-                if (this.gamedatas_server && this.gamedatas_server.counters[name_1])
-                    this.gamedatas_server.counters[name_1].counter_value = value;
-                this.updateCountersSafe(counters);
-            }
-            else if ($(name_1)) {
-                this.setDomTokenState(name_1, value);
-            }
-            //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
-        }
-        catch (ex) {
-            console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
-        }
     };
     GameBasics.prototype.notif_score = function (notif) {
         var _a, _b;
@@ -1482,10 +1447,10 @@ var CustomAnimation = /** @class */ (function () {
             });
         }
     };
-    CustomAnimation.prototype.animateRemoveResourceFromCard = function (resource_id) {
+    CustomAnimation.prototype.animateRemoveResourceFromCard = function (resource_id, card_id) {
         if (!this.areAnimationsPlayed())
             return this.getImmediatePromise();
-        var animate_token = $(resource_id).parentElement.id;
+        var animate_token = card_id !== null && card_id !== void 0 ? card_id : $(resource_id).parentElement.id;
         if (animate_token.includes("tableau")) {
             //too late, resource is not on card anymore
             return this.getImmediatePromise();
@@ -2587,19 +2552,23 @@ var GameTokens = /** @class */ (function (_super) {
         }
         this.clientStateArgs = {}; // collector of client state arguments
         this.instantaneousMode = true;
-        this.gamedatas.tokens["limbo"] = {
-            key: "limbo",
-            state: 0,
-            location: "thething",
-        };
-        this.limbo = this.placeToken("limbo");
-        // Setting up player boards
-        for (var player_id in gamedatas.players) {
-            var playerInfo = gamedatas.players[player_id];
-            this.setupPlayer(playerInfo);
+        try {
+            this.gamedatas.tokens["limbo"] = {
+                key: "limbo",
+                state: 0,
+                location: "thething"
+            };
+            this.limbo = this.placeToken("limbo");
+            // Setting up player boards
+            for (var player_id in gamedatas.players) {
+                var playerInfo = gamedatas.players[player_id];
+                this.setupPlayer(playerInfo);
+            }
+            this.setupTokens();
         }
-        this.setupTokens();
-        this.instantaneousMode = false;
+        finally {
+            this.instantaneousMode = false;
+        }
     };
     GameTokens.prototype.onEnteringState_before = function (stateName, args) {
         if (!this.on_client_state) {
@@ -2651,6 +2620,7 @@ var GameTokens = /** @class */ (function (_super) {
         return split.indexOf(type) >= 0;
     };
     GameTokens.prototype.setupTokens = function () {
+        var _this = this;
         console.log("Setup tokens");
         for (var counter in this.gamedatas.counters) {
             this.placeTokenWithTips(counter);
@@ -2664,9 +2634,14 @@ var GameTokens = /** @class */ (function (_super) {
             var tokenInfo = this.gamedatas.tokens[token];
             var location = tokenInfo.location;
             if (!this.gamedatas.tokens[location] && !$(location)) {
-                this.placeToken(location);
+                var tok = this.placeToken(location);
+                if (tok instanceof Promise)
+                    tok.then(function () { return _this.placeToken(token); });
+                else
+                    this.placeToken(token);
             }
-            this.placeToken(token);
+            else
+                this.placeToken(token);
         }
         for (var _b = 0, _c = this.getAllLocations(); _b < _c.length; _b++) {
             var loc = _c[_b];
@@ -2676,14 +2651,17 @@ var GameTokens = /** @class */ (function (_super) {
             this.updateTooltip(token);
         }
     };
-    GameTokens.prototype.setTokenInfo = function (token_id, place_id, new_state, serverdata) {
+    GameTokens.prototype.setTokenInfo = function (token_id, place_id, new_state, serverdata, args) {
         var token = token_id;
         if (!this.gamedatas.tokens[token]) {
             this.gamedatas.tokens[token] = {
                 key: token,
                 state: 0,
-                location: this.limbo.id,
+                location: this.limbo.id
             };
+        }
+        if (args) {
+            args["_prev"] = dojo.clone(this.gamedatas.tokens[token]);
         }
         if (place_id !== undefined) {
             this.gamedatas.tokens[token].location = place_id;
@@ -2706,12 +2684,12 @@ var GameTokens = /** @class */ (function (_super) {
         var result = {
             location: location,
             key: tokenInfo.key,
-            state: tokenInfo.state,
+            state: tokenInfo.state
         };
-        if (location.startsWith("discard")) {
+        if (location === null || location === void 0 ? void 0 : location.startsWith("discard")) {
             result.onEnd = function (node) { return _this.hideCard(node); };
         }
-        else if (location.startsWith("deck")) {
+        else if (location === null || location === void 0 ? void 0 : location.startsWith("deck")) {
             result.onEnd = function (node) { return _this.hideCard(node); };
         }
         return result;
@@ -2766,15 +2744,26 @@ var GameTokens = /** @class */ (function (_super) {
         if (dojo.hasClass(tokenNode, "infonode")) {
             this.placeInfoBox(tokenNode);
         }
+        return tokenNode;
     };
     GameTokens.prototype.placeTokenLocal = function (tokenId, location, state, args) {
-        var tokenInfo = this.setTokenInfo(tokenId, location, state, false);
-        //this.on_client_state = true;
-        this.placeTokenWithTips(tokenId, tokenInfo, args);
+        return __awaiter(this, void 0, void 0, function () {
+            var tokenInfo;
+            return __generator(this, function (_a) {
+                tokenInfo = this.setTokenInfo(tokenId, location, state, false, args);
+                //this.on_client_state = true;
+                return [2 /*return*/, this.placeTokenWithTips(tokenId, tokenInfo, args)];
+            });
+        });
     };
     GameTokens.prototype.placeTokenServer = function (tokenId, location, state, args) {
-        var tokenInfo = this.setTokenInfo(tokenId, location, state, true);
-        this.placeTokenWithTips(tokenId, tokenInfo, args);
+        return __awaiter(this, void 0, void 0, function () {
+            var tokenInfo;
+            return __generator(this, function (_a) {
+                tokenInfo = this.setTokenInfo(tokenId, location, state, true, args);
+                return [2 /*return*/, this.placeTokenWithTips(tokenId, tokenInfo, args)];
+            });
+        });
     };
     GameTokens.prototype.placeToken = function (token, tokenInfo, args) {
         var _a, _b;
@@ -2786,7 +2775,7 @@ var GameTokens = /** @class */ (function (_super) {
             if (args.noa) {
                 noAnnimation = true;
             }
-            var tokenInfoBefore = dojo.clone(this.gamedatas.tokens[token]);
+            var tokenInfoBefore = args === null || args === void 0 ? void 0 : args._prev;
             if (!tokenInfo) {
                 tokenInfo = this.gamedatas.tokens[token];
             }
@@ -2802,6 +2791,9 @@ var GameTokens = /** @class */ (function (_super) {
                 }
                 noAnnimation = true;
             }
+            if (!tokenInfo.location) {
+                console.log(token + ": " + " -place-> undefined " + tokenInfo.state);
+            }
             var placeInfo = (_a = args.placeInfo) !== null && _a !== void 0 ? _a : this.getPlaceRedirect(tokenInfo);
             var location_1 = placeInfo.location;
             // console.log(token + ": " + " -place-> " + place + " " + tokenInfo.state);
@@ -2816,8 +2808,7 @@ var GameTokens = /** @class */ (function (_super) {
             this.setDomTokenState(tokenNode, tokenInfo.state);
             if (placeInfo.nop) {
                 // no movement
-                this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
-                return;
+                return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
             }
             if (!$(location_1)) {
                 if (location_1)
@@ -2842,11 +2833,11 @@ var GameTokens = /** @class */ (function (_super) {
                 mobileStyle = {
                     position: placeInfo.position || "absolute",
                     left: placeInfo.x + "px",
-                    top: placeInfo.y + "px",
+                    top: placeInfo.y + "px"
                 };
             }
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
-            this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+            return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
         }
         catch (e) {
             console.error("Exception thrown", e, e.stack);
@@ -2855,13 +2846,26 @@ var GameTokens = /** @class */ (function (_super) {
         return tokenNode;
     };
     GameTokens.prototype.placeTokenWithTips = function (token, tokenInfo, args) {
-        if (!tokenInfo) {
-            tokenInfo = this.gamedatas.tokens[token];
-        }
-        this.placeToken(token, tokenInfo, args);
-        this.updateTooltip(token);
-        if (tokenInfo)
-            this.updateTooltip(tokenInfo.location);
+        return __awaiter(this, void 0, void 0, function () {
+            var node;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!tokenInfo) {
+                            tokenInfo = this.gamedatas.tokens[token];
+                        }
+                        return [4 /*yield*/, this.placeToken(token, tokenInfo, args)];
+                    case 1:
+                        node = _a.sent();
+                        this.updateTooltip(token);
+                        if (tokenInfo)
+                            this.updateTooltip(tokenInfo.location);
+                        if (!(node instanceof Promise))
+                            return [2 /*return*/, Promise.resolve(node)];
+                        return [2 /*return*/, node];
+                }
+            });
+        });
     };
     GameTokens.prototype.placeInfoBoxClass = function (clazz) {
         var _this = this;
@@ -2931,10 +2935,9 @@ var GameTokens = /** @class */ (function (_super) {
             attachNode.classList.remove("withtooltip");
         }
     };
-    GameTokens.prototype.handleStackedTooltips = function (attachNode) {
-    };
+    GameTokens.prototype.handleStackedTooltips = function (attachNode) { };
     GameTokens.prototype.removeTooltip = function (nodeId) {
-        // if (this.tooltips[nodeId]) 
+        // if (this.tooltips[nodeId])
         //     console.log('removing tooltip for ',nodeId);
         this.inherited(arguments);
         this.tooltips[nodeId] = null;
@@ -3007,7 +3010,7 @@ var GameTokens = /** @class */ (function (_super) {
                 key: tokenId,
                 _chain: tokenId,
                 name: tokenId,
-                showtooltip: false,
+                showtooltip: false
             };
         }
         else {
@@ -3061,7 +3064,7 @@ var GameTokens = /** @class */ (function (_super) {
                         for (var l = 0; l < list.length; l++) {
                             var value = list[l];
                             if (l > 0)
-                                res += ', ';
+                                res += ", ";
                             res += this.getTokenPresentaton(key, value);
                         }
                         res = res.trim();
@@ -3117,6 +3120,11 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
+        //  dojo.subscribe("counter", this, "notif_counter");
+        // this.notifqueue.setSynchronous("counter", 500);
+        // dojo.subscribe("counterAsync", this, "notif_counter"); // same as conter but no delay
+        this.subscribeNotification("counter");
+        this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
         this.subscribeNotification("tokenMoved");
         this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
         /*
@@ -3127,24 +3135,72 @@ var GameTokens = /** @class */ (function (_super) {
          */
     };
     GameTokens.prototype.notif_tokenMoved = function (notif) {
-        this.onNotif(notif);
-        //	console.log('notif_tokenMoved', notif);
-        if (notif.args.list !== undefined) {
-            // move bunch of tokens
-            for (var i = 0; i < notif.args.list.length; i++) {
-                var one = notif.args.list[i];
-                var new_state = notif.args.new_state;
-                if (new_state === undefined) {
-                    if (notif.args.new_states !== undefined && notif.args.new_states.length > i) {
-                        new_state = notif.args.new_states[i];
+        return __awaiter(this, void 0, void 0, function () {
+            var last, i, one, new_state;
+            return __generator(this, function (_a) {
+                this.onNotif(notif);
+                //	console.log('notif_tokenMoved', notif);
+                if (notif.args.list !== undefined) {
+                    last = void 0;
+                    for (i = 0; i < notif.args.list.length; i++) {
+                        one = notif.args.list[i];
+                        new_state = notif.args.new_state;
+                        if (new_state === undefined) {
+                            if (notif.args.new_states !== undefined && notif.args.new_states.length > i) {
+                                new_state = notif.args.new_states[i];
+                            }
+                        }
+                        last = this.placeTokenServer(one, notif.args.place_id, new_state, notif.args);
                     }
+                    return [2 /*return*/, last];
                 }
-                this.placeTokenServer(one, notif.args.place_id, new_state, notif.args);
-            }
-        }
-        else {
-            this.placeTokenServer(notif.args.token_id, notif.args.place_id, notif.args.new_state, notif.args);
-        }
+                else {
+                    return [2 /*return*/, this.placeTokenServer(notif.args.token_id, notif.args.place_id, notif.args.new_state, notif.args)];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    GameTokens.prototype.notif_counter = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var name_1, value, counter_inc, counters;
+            return __generator(this, function (_a) {
+                try {
+                    this.onNotif(notif);
+                    name_1 = notif.args.counter_name;
+                    value = void 0;
+                    if (notif.args.counter_value !== undefined) {
+                        value = notif.args.counter_value;
+                    }
+                    else {
+                        counter_inc = notif.args.counter_inc;
+                        value = notif.args.counter_value = this.gamedatas.counters[name_1].counter_value + counter_inc;
+                    }
+                    if (this.gamedatas.counters[name_1]) {
+                        counters = {};
+                        counters[name_1] = {
+                            counter_name: name_1,
+                            counter_value: value
+                        };
+                        if (this.gamedatas_server && this.gamedatas_server.counters[name_1])
+                            this.gamedatas_server.counters[name_1].counter_value = value;
+                        this.updateCountersSafe(counters);
+                    }
+                    else if ($(name_1) && this.gamedatas.tokens[name_1]) {
+                        notif.args.nop = true; // no move animation
+                        return [2 /*return*/, this.placeTokenServer(name_1, this.gamedatas.tokens[name_1].location, value, notif.args)];
+                    }
+                    else if ($(name_1)) {
+                        this.setDomTokenState(name_1, value);
+                    }
+                    //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+                }
+                catch (ex) {
+                    console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
+                }
+                return [2 /*return*/];
+            });
+        });
     };
     return GameTokens;
 }(GameBasics));
@@ -3710,63 +3766,6 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
     };
-    //make custom animations depending on situation
-    GameXBody.prototype.notif_tokenMoved = function (notif) {
-        _super.prototype.notif_tokenMoved.call(this, notif);
-        //pop animation on Tiles
-        if (notif.args.token_id && notif.args.token_id.startsWith("tile_")) {
-            return this.customAnimation.animateTilePop(notif.args.token_id);
-        }
-        else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("card_main_")) {
-            return this.customAnimation.animatePlaceResourceOnCard(notif.args.token_id, notif.args.place_id);
-        }
-        else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("tableau_")) {
-            return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
-        }
-        else if (notif.args.token_id &&
-            notif.args.token_id.startsWith("marker_") &&
-            (notif.args.place_id.startsWith("tile_") || notif.args.place_id.startsWith("award_") || notif.args.place_id.startsWith("milestone_"))) {
-            return this.customAnimation.animatePlaceMarker(notif.args.token_id, notif.args.place_id);
-        }
-    };
-    GameXBody.prototype.notif_counter = function (notif) {
-        _super.prototype.notif_counter.call(this, notif);
-        //move animation on main player board counters
-        var counter_move = ["m", "s", "u", "p", "e", "h", "tr"].map(function (item) {
-            return "tracker_" + item + "_";
-        });
-        //temperature & oxygen - compact only as full doesn't have individual rendered elements
-        if (!this.isLayoutFull()) {
-            if (notif.args.counter_name == "tracker_t") {
-                this.customAnimation.animateMapItemAwareness("temperature_map");
-            }
-            else if (notif.args.counter_name == "tracker_o") {
-                this.customAnimation.animateMapItemAwareness("oxygen_map");
-            }
-        }
-        //ocean's pile
-        if (notif.args.counter_name == "tracker_w") {
-            this.customAnimation.animateMapItemAwareness("oceans_pile");
-        }
-        else if (notif.args.counter_name == "tracker_gen") {
-            this.customAnimation.animateMapItemAwareness("outer_generation");
-        }
-        if (notif.args.inc && counter_move.some(function (trk) { return notif.args.counter_name.startsWith(trk); })) {
-            if (!this.isLayoutFull()) {
-                // cardboard layout animating cubes on playerboard instead
-                this.customAnimation.animatetingle(notif.args.counter_name);
-                return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
-            }
-        }
-        else {
-            if ($(notif.args.counter_name)) {
-                return this.customAnimation.animatetingle(notif.args.counter_name);
-            }
-            else {
-                return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
-            }
-        }
-    };
     GameXBody.prototype.notif_tokensUpdate = function (notif) {
         for (var opIdS in notif.args.operations) {
             var opInfo = notif.args.operations[opIdS];
@@ -4227,26 +4226,35 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore) {
         var _a;
         _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore);
-        if (tokenInfo.key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
+        var key = tokenInfo.key;
+        var location = tokenInfo.location; // db location
+        var place_id = (_a = tokenNode.parentElement) === null || _a === void 0 ? void 0 : _a.id; // where is object in dom
+        var prevLocation = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.location;
+        var prevState = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.state;
+        var inc = tokenInfo.state - prevState;
+        if (key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
             if ($("hand_area").dataset.sort_type == "manual")
                 this.enableDragOnCard(tokenNode);
             else
                 this.disableDragOnCard(tokenNode);
         }
         // update resource holder counters
-        if (tokenInfo.key.startsWith("resource_")) {
+        if (key.startsWith("resource_")) {
+            //debugger;
             var targetCard = 0;
-            if (tokenInfo.location.startsWith("card_")) {
+            var removed = false;
+            if (location.startsWith("card_")) {
                 //resource added to card
-                targetCard = getIntPart(tokenInfo.location, 2);
+                targetCard = getIntPart(location, 2);
             }
-            else if ((_a = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.location) === null || _a === void 0 ? void 0 : _a.startsWith("card_")) {
+            else if (prevLocation === null || prevLocation === void 0 ? void 0 : prevLocation.startsWith("card_")) {
                 //resource removed from a card
-                targetCard = getIntPart(tokenInfoBefore.location, 2);
+                removed = true;
+                targetCard = getIntPart(prevLocation, 2);
             }
             if (targetCard) {
                 if (this.isLayoutFull()) {
-                    var dest_holder = tokenNode.parentNode.id;
+                    var dest_holder = place_id;
                     var count = String($(dest_holder).querySelectorAll(".resource").length);
                     $(dest_holder).dataset.resource_counter = count;
                 }
@@ -4257,54 +4265,101 @@ var GameXBody = /** @class */ (function (_super) {
                     $(dest_holder).dataset.resource_counter = count;
                     $(dest_counter).dataset.resource_counter = count;
                 }
+                if (!removed) {
+                    return this.customAnimation.animatePlaceResourceOnCard(key, location);
+                }
+                else {
+                    return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+                }
             }
         }
-        if (tokenInfo.key.startsWith("marker_")) {
-            if (tokenInfo.location.startsWith("award")) {
+        //pop animation on Tiles
+        if (key.startsWith("tile_")) {
+            return this.customAnimation.animateTilePop(key);
+        }
+        //temperature & oxygen - compact only as full doesn't have individual rendered elements
+        if (!this.isLayoutFull()) {
+            if (key == "tracker_t") {
+                return this.customAnimation.animateMapItemAwareness("temperature_map");
+            }
+            else if (key == "tracker_o") {
+                return this.customAnimation.animateMapItemAwareness("oxygen_map");
+            }
+        }
+        //ocean's pile
+        if (key == "tracker_w") {
+            return this.customAnimation.animateMapItemAwareness("oceans_pile");
+        }
+        else if (key == "tracker_gen") {
+            return this.customAnimation.animateMapItemAwareness("outer_generation");
+        }
+        if (key.startsWith("marker_")) {
+            if (location.startsWith("award")) {
                 this.strikeNextAwardMilestoneCost("award");
+                return this.customAnimation.animatePlaceMarker(key, place_id);
             }
-            else if (tokenInfo.location.startsWith("milestone")) {
+            else if (location.startsWith("milestone")) {
                 this.strikeNextAwardMilestoneCost("milestone");
+                return this.customAnimation.animatePlaceMarker(key, place_id);
+            }
+            else if (location.startsWith("tile_")) {
+                return this.customAnimation.animatePlaceMarker(key, place_id);
             }
         }
-        if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-            $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
-            $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
+        if (key.startsWith("card_corp") && location.startsWith("tableau")) {
+            $(location + "_corp_logo").dataset.corp = key;
+            $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
         }
-        if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
-            var t = this.getRulesFor(tokenInfo.key, "t");
-            var plcolor = getPart(tokenInfo.location, 1);
-            var count = $(tokenInfo.location).querySelectorAll("[data-card-type=\"".concat(t, "\"]")).length;
+        if (key.startsWith("card_main") && location.startsWith("tableau")) {
+            var t = this.getRulesFor(key, "t");
+            var plcolor = getPart(location, 1);
+            var count = $(location).querySelectorAll("[data-card-type=\"".concat(t, "\"]")).length;
             this.local_counters[plcolor]["cards_" + t] = count;
             this.updatePlayerLocalCounters(plcolor);
             if (!this.isLayoutFull()) {
                 //auto switch tabs here
                 // this.darhflog("isdoingsetup", this.isDoingSetup);
                 if (!this.isDoingSetup) {
-                    if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
+                    if ($(location).dataset["visibility_" + t] == "0") {
                         var original = 0;
                         for (var i = 0; i <= 3; i++) {
-                            if ($(tokenInfo.location).dataset["visibility_" + i] == "1")
+                            if ($(location).dataset["visibility_" + i] == "1")
                                 original = i;
                         }
                         if (original != 0) {
                             for (var i = 1; i <= 3; i++) {
-                                var btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+                                var btn = "player_viewcards_" + i + "_" + location.replace("tableau_", "");
                                 if (i == t) {
-                                    $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                                    $(location).dataset["visibility_" + i] = "1";
                                     $(btn).dataset.selected = "1";
                                 }
                                 else {
                                     $(btn).dataset.selected = "0";
-                                    $(tokenInfo.location).dataset["visibility_" + i] = "0";
+                                    $(location).dataset["visibility_" + i] = "0";
                                 }
                             }
-                            this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
+                            this.customAnimation.setOriginalFilter(location, original, t);
                         }
                     }
                 }
             }
         }
+        //move animation on main player board counters
+        if (key.startsWith("tracker_")) {
+            if (!this.isLayoutFull() && inc) {
+                var type = getPart(key, 1);
+                if (this.resourceTrackers.includes(type) || type == "tr") {
+                    // cardboard layout animating cubes on playerboard instead
+                    this.customAnimation.animatetingle(key);
+                    return this.customAnimation.moveResources(key, inc);
+                }
+                if ($(key)) {
+                    return this.customAnimation.animatetingle(key);
+                }
+            }
+            return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
+        }
+        return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
     };
     GameXBody.prototype.setDomTokenState = function (tokenId, newState) {
         _super.prototype.setDomTokenState.call(this, tokenId, newState);

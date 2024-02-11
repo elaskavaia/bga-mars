@@ -655,62 +655,6 @@ class GameXBody extends GameTokens {
     }
   }
 
-  //make custom animations depending on situation
-  notif_tokenMoved(notif: Notif): any {
-    super.notif_tokenMoved(notif);
-    //pop animation on Tiles
-    if (notif.args.token_id && notif.args.token_id.startsWith("tile_")) {
-      return this.customAnimation.animateTilePop(notif.args.token_id);
-    } else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("card_main_")) {
-      return this.customAnimation.animatePlaceResourceOnCard(notif.args.token_id, notif.args.place_id);
-    } else if (notif.args.token_id && notif.args.token_id.startsWith("resource_") && notif.args.place_id.startsWith("tableau_")) {
-      return this.customAnimation.animateRemoveResourceFromCard(notif.args.token_id);
-    } else if (
-      notif.args.token_id &&
-      notif.args.token_id.startsWith("marker_") &&
-      (notif.args.place_id.startsWith("tile_") || notif.args.place_id.startsWith("award_") || notif.args.place_id.startsWith("milestone_"))
-    ) {
-      return this.customAnimation.animatePlaceMarker(notif.args.token_id, notif.args.place_id);
-    }
-  }
-
-  notif_counter(notif: Notif): any {
-    super.notif_counter(notif);
-    //move animation on main player board counters
-    const counter_move = ["m", "s", "u", "p", "e", "h", "tr"].map((item) => {
-      return "tracker_" + item + "_";
-    });
-
-    //temperature & oxygen - compact only as full doesn't have individual rendered elements
-    if (!this.isLayoutFull()) {
-      if (notif.args.counter_name == "tracker_t") {
-        this.customAnimation.animateMapItemAwareness("temperature_map");
-      } else if (notif.args.counter_name == "tracker_o") {
-        this.customAnimation.animateMapItemAwareness("oxygen_map");
-      }
-    }
-    //ocean's pile
-    if (notif.args.counter_name == "tracker_w") {
-      this.customAnimation.animateMapItemAwareness("oceans_pile");
-    } else if (notif.args.counter_name == "tracker_gen") {
-      this.customAnimation.animateMapItemAwareness("outer_generation");
-    }
-
-    if (notif.args.inc && counter_move.some((trk) => notif.args.counter_name.startsWith(trk))) {
-      if (!this.isLayoutFull()) {
-        // cardboard layout animating cubes on playerboard instead
-        this.customAnimation.animatetingle(notif.args.counter_name);
-        return this.customAnimation.moveResources(notif.args.counter_name, notif.args.inc);
-      }
-    } else {
-      if ($(notif.args.counter_name)) {
-        return this.customAnimation.animatetingle(notif.args.counter_name);
-      } else {
-        return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
-      }
-    }
-  }
-
   notif_tokensUpdate(notif: Notif) {
     for (const opIdS in notif.args.operations) {
       const opInfo = notif.args.operations[opIdS];
@@ -1335,30 +1279,39 @@ awarded.`);
         this.vlayout.createHtmlForToken(tokenNode, displayInfo);
       }
     }
-
   }
 
-  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined) {
+  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined): Promise<any> | Element {
     super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
 
-    if (tokenInfo.key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
+    const key = tokenInfo.key;
+    const location = tokenInfo.location; // db location
+    const place_id = tokenNode.parentElement?.id; // where is object in dom
+    const prevLocation = tokenInfoBefore?.location;
+    const prevState = tokenInfoBefore?.state;
+    const inc = tokenInfo.state - prevState;
+
+    if (key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
       if ($("hand_area").dataset.sort_type == "manual") this.enableDragOnCard(tokenNode);
       else this.disableDragOnCard(tokenNode);
     }
 
     // update resource holder counters
-    if (tokenInfo.key.startsWith("resource_")) {
+    if (key.startsWith("resource_")) {
+      //debugger;
       let targetCard = 0;
-      if (tokenInfo.location.startsWith("card_")) {
+      let removed = false;
+      if (location.startsWith("card_")) {
         //resource added to card
-        targetCard = getIntPart(tokenInfo.location, 2);
-      } else if (tokenInfoBefore?.location?.startsWith("card_")) {
+        targetCard = getIntPart(location, 2);
+      } else if (prevLocation?.startsWith("card_")) {
         //resource removed from a card
-        targetCard = getIntPart(tokenInfoBefore.location, 2);
+        removed = true;
+        targetCard = getIntPart(prevLocation, 2);
       }
       if (targetCard) {
         if (this.isLayoutFull()) {
-          const dest_holder: string = (tokenNode.parentNode as HTMLElement).id;
+          const dest_holder: string = place_id;
           const count = String($(dest_holder).querySelectorAll(".resource").length);
           $(dest_holder).dataset.resource_counter = count;
         } else {
@@ -1368,26 +1321,54 @@ awarded.`);
           $(dest_holder).dataset.resource_counter = count;
           $(dest_counter).dataset.resource_counter = count;
         }
+        if (!removed) {
+          return this.customAnimation.animatePlaceResourceOnCard(key, location);
+        } else {
+          return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+        }
       }
     }
+    //pop animation on Tiles
+    if (key.startsWith("tile_")) {
+      return this.customAnimation.animateTilePop(key);
+    }
 
-    if (tokenInfo.key.startsWith("marker_")) {
-      if (tokenInfo.location.startsWith("award")) {
+    //temperature & oxygen - compact only as full doesn't have individual rendered elements
+    if (!this.isLayoutFull()) {
+      if (key == "tracker_t") {
+        return this.customAnimation.animateMapItemAwareness("temperature_map");
+      } else if (key == "tracker_o") {
+        return this.customAnimation.animateMapItemAwareness("oxygen_map");
+      }
+    }
+    //ocean's pile
+    if (key == "tracker_w") {
+      return this.customAnimation.animateMapItemAwareness("oceans_pile");
+    } else if (key == "tracker_gen") {
+      return this.customAnimation.animateMapItemAwareness("outer_generation");
+    }
+
+    if (key.startsWith("marker_")) {
+      if (location.startsWith("award")) {
         this.strikeNextAwardMilestoneCost("award");
-      } else if (tokenInfo.location.startsWith("milestone")) {
+        return this.customAnimation.animatePlaceMarker(key, place_id);
+      } else if (location.startsWith("milestone")) {
         this.strikeNextAwardMilestoneCost("milestone");
+        return this.customAnimation.animatePlaceMarker(key, place_id);
+      } else if (location.startsWith("tile_")) {
+        return this.customAnimation.animatePlaceMarker(key, place_id);
       }
     }
 
-    if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
-      $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
-      $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
+    if (key.startsWith("card_corp") && location.startsWith("tableau")) {
+      $(location + "_corp_logo").dataset.corp = key;
+      $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
     }
 
-    if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
-      const t = this.getRulesFor(tokenInfo.key, "t");
-      const plcolor = getPart(tokenInfo.location, 1);
-      const count = $(tokenInfo.location).querySelectorAll(`[data-card-type="${t}"]`).length;
+    if (key.startsWith("card_main") && location.startsWith("tableau")) {
+      const t = this.getRulesFor(key, "t");
+      const plcolor = getPart(location, 1);
+      const count = $(location).querySelectorAll(`[data-card-type="${t}"]`).length;
       this.local_counters[plcolor]["cards_" + t] = count;
       this.updatePlayerLocalCounters(plcolor);
 
@@ -1395,28 +1376,46 @@ awarded.`);
         //auto switch tabs here
         // this.darhflog("isdoingsetup", this.isDoingSetup);
         if (!this.isDoingSetup) {
-          if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
+          if ($(location).dataset["visibility_" + t] == "0") {
             let original = 0;
             for (let i = 0; i <= 3; i++) {
-              if ($(tokenInfo.location).dataset["visibility_" + i] == "1") original = i;
+              if ($(location).dataset["visibility_" + i] == "1") original = i;
             }
             if (original != 0) {
               for (let i = 1; i <= 3; i++) {
-                let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+                let btn = "player_viewcards_" + i + "_" + location.replace("tableau_", "");
                 if (i == t) {
-                  $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                  $(location).dataset["visibility_" + i] = "1";
                   $(btn).dataset.selected = "1";
                 } else {
                   $(btn).dataset.selected = "0";
-                  $(tokenInfo.location).dataset["visibility_" + i] = "0";
+                  $(location).dataset["visibility_" + i] = "0";
                 }
               }
-              this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
+              this.customAnimation.setOriginalFilter(location, original, t);
             }
           }
         }
       }
     }
+
+    //move animation on main player board counters
+    if (key.startsWith("tracker_") ) {
+      if (!this.isLayoutFull() && inc) {
+        const type = getPart(key, 1);
+        if (this.resourceTrackers.includes(type) || type == "tr") {
+          // cardboard layout animating cubes on playerboard instead
+          this.customAnimation.animatetingle(key);
+          return this.customAnimation.moveResources(key, inc);
+        }
+        if ($(key)) {
+          return this.customAnimation.animatetingle(key);   
+        }
+      }
+      return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
+    }
+
+    return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
   }
 
   setDomTokenState(tokenId: ElementOrId, newState: any) {
