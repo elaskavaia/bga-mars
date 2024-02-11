@@ -7,15 +7,15 @@ card|Play Card|${you} must select a card to play
 stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
 fund|Fund an award|${you} must select an Award to fund
-w|Place Ocean Tile|${you} must select a location to place an ocean tile
+w|Place Ocean Tile
 forest|Place Greenery Tile|${you} must select a location to place a Greenery tile, adjacent if possible
 city|Place City Tile|${you} must select a location to place a city, cannot place adjacent to another city
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
 sell|Discard Card from Hand to gain M€|${you} must select a card to discard to gain 1 M€
 activate|Activate Card|${you} must select a card to activate
-ores|Add resource to another card|${you} must select a card to add resource/s to
-nores|Remove resource from another card|${you} must select a card to remove resource/s
+ores|Add resource to another card|${you} must select a card to add ${count} ${restype_name} resource/s
+nores|Remove resource from another card|${you} must select a card to remove ${count} ${restype_name} resource/s
 keep|Keep Card|${you} must select a card to add keep
 buycard|Buy Card|${you} may select a card to buy for 3 M€
 keepcorp|Keep Corp|${you} must select one corporation card to keep
@@ -45,12 +45,12 @@ confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actio
 #set undo=
 #set class=Operation_nR_Any
 #set ack=1
-nm_Any|Remove M€ (Any Player)|${you} must select a player who will lose the resources (or none)
-ns_Any|Remove Steel (Any Player)|${you} must select a player who will lose the resources (or none)
-nu_Any|Remove Titanium (Any Player)|${you} must select a player who will lose the resources (or none)
-np_Any|Remove Plant (Any Player)|${you} must select a player who will lose the resources (or none)
-ne_Any|Remove Energy (Any Player)|${you} must select a player who will lose the resources (or none)
-nh_Any|Remove Heat (Any Player)|${you} must select a player who will lose the resources (or none)
+nm_Any|Remove M€ (Any Player)
+ns_Any|Remove Steel (Any Player)
+nu_Any|Remove Titanium (Any Player)
+np_Any|Remove Plant (Any Player)
+ne_Any|Remove Energy (Any Player)
+nh_Any|Remove Heat (Any Player)
 
 #set class=Operation_steal_R
 steal_p|Steal Plant|${you} must select a player who will lose the resources 
@@ -61,9 +61,9 @@ steal_m|Steal M€|${you} must select a player who will lose the resources
 
 #set class=Operation_nmM
 #set ack=1
-nmu|Pay|${you} must select a payment choice
-nms|Pay|${you} must select a payment choice
-nm|Pay M€|${you} must select a payment choice
+nmu|Pay
+nms|Pay
+nm|Pay M€
 
 #auto-resolve actions
 #set ack=
@@ -99,12 +99,12 @@ nps|Decrease Steel Production
 npu|Decrease Titanium Production
 #set class=Operation_npR_Any
 #set ack=1
-npm_Any|Lose Megacredit Production (Any Player - Mandatory)|${you} must select a player who will lose the production
-nps_Any|Lose Steel Production (Any Player - Mandatory)|${you} must select a player who will lose the production
-npu_Any|Lose Titanium Production (Any Player - Mandatory)|${you} must select a player who will lose the production
-npp_Any|Lose Plant Production (Any Player - Mandatory)|${you} must select a player who will lose the production
-npe_Any|Lose Energy Production (Any Player - Mandatory)|${you} must select a player who will lose the production
-nph_Any|Lose Heat Production (Any Player - Mandatory)|${you} must select a player who will lose the production
+npm_Any|Lose Megacredit Production (Any Player - Mandatory)
+nps_Any|Lose Steel Production (Any Player - Mandatory)
+npu_Any|Lose Titanium Production (Any Player - Mandatory)
+npp_Any|Lose Plant Production (Any Player - Mandatory)
+npe_Any|Lose Energy Production (Any Player - Mandatory)
+nph_Any|Lose Heat Production (Any Player - Mandatory)
 #set opp=
 
 #set ack=

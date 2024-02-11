@@ -9,4 +9,7 @@ class Operation_cardx extends AbsOperation {
         $this->game->effect_playCard($color, $this->getContext());
         return 1;
     }
+    function getPrimaryArgType() {
+        return '';
+    }
 }

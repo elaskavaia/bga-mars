@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/**
+ * Flooding damage
+ */
 class Operation_acard188 extends AbsOperation {
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
@@ -30,27 +33,27 @@ class Operation_acard188 extends AbsOperation {
         return 'player';
     }
 
-    function canResolveAutomatically() {
-        return false;
+    function requireConfirmation() {
+        return true;
     }
 
-    protected function getType() {
+    protected function getResType() {
         return 'm';
     }
 
     protected function getOpName() {
-        return clienttranslate('Flooding Damage'); 
+        return clienttranslate('Flooding Damage');
     }
 
     protected function getPrompt() {
-        return clienttranslate('Select a player to receive Flooding damage (lose 4 MC)'); 
+        return clienttranslate('Select a player to receive Flooding damage (lose 4 M€)');
     }
 
     function effect(string $owner, int $inc): int {
         $owner = $this->getCheckedArg('target');
         if ($owner == 'none') return $inc; // skipped, this is ok for resources
         $this->game->checkColor($owner);
-        $type = $this->getType();
+        $type = $this->getResType();
         $this->game->effect_incCount($owner, $type, -4, ['ifpossible' => true]);
         return 1;
     }

@@ -20,4 +20,8 @@ class Operation_nR extends AbsOperation {
     function hasNoSideEffects(): bool {
         return true;
     }
+
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

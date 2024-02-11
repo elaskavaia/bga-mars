@@ -55,6 +55,10 @@ class DelegatedOperation extends AbsOperation {
     function isFullyAutomated() {
         return $this->delegate->isFullyAutomated();
     }
+    
+    function requireConfirmation() {
+        return $this->delegate->requireConfirmation();
+    }
 
 
     function hasNoSideEffects(): bool {

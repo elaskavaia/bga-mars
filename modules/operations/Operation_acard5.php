@@ -28,4 +28,7 @@ class Operation_acard5 extends AbsOperation {
         $this->game->undoSavepoint();
         return 1;
     }
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

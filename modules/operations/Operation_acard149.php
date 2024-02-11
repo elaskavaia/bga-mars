@@ -16,13 +16,13 @@ class Operation_acard149 extends  AbsOperation {
             if ($countres == 0)  return MA_ERR_NOTAPPLICABLE;
             return MA_OK;
         });
- 
+
         return $res;
     }
 
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
- 
+
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
             $this->game->effect_moveCard($owner, $res, $card, 0);
@@ -31,8 +31,8 @@ class Operation_acard149 extends  AbsOperation {
         return $inc;
     }
 
-    function canResolveAutomatically() {
-        return false;
+    function requireConfirmation() {
+        return true;
     }
 
     public function getPrompt() {

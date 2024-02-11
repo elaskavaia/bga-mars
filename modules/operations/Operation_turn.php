@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 class Operation_turn extends AbsOperation {
 
+    protected function getPrimaryArgType() {
+        return '';
+    }
+
     static function getStandardActions($solo, $skipsec = false) {
         $actions = ['card', 'stan', 'activate', 'convh', 'convp'];
         if (!$solo) {

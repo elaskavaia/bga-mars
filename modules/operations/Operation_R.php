@@ -12,4 +12,8 @@ class Operation_R extends AbsOperation {
     function hasNoSideEffects(): bool {
         return true;
     }
+
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

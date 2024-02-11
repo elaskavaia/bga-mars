@@ -51,4 +51,8 @@ class Operation_nres extends AbsOperation {
         if ($num > 0) throw new BgaUserException("Insufficient number of resources");
         return $inc;
     }
+
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

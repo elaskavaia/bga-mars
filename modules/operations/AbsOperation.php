@@ -34,7 +34,7 @@ abstract class AbsOperation {
 
 
     function rules() {
-        return $this->game->getOperationRules($this->mnemonic);
+        return $this->game->getOperationRules($this->mnemonic,'*',[]);
     }
 
 
@@ -94,11 +94,7 @@ abstract class AbsOperation {
     // ---------------------- BEHAVIOR MODIFIERS
 
     function isFullyAutomated() {
-        $rules = $this->rules();
-        if (isset($rules['ack']))
-            return false;
-
-        return true;
+        return !$this->getPrimaryArgType();
     }
 
     /**
@@ -106,6 +102,14 @@ abstract class AbsOperation {
      */
     function canSkipChoice() {
         return $this->isVoid();
+    }
+
+    function requireConfirmation() {
+        $rules = $this->rules();
+        if (isset($rules['ack']))
+            return true;
+
+        return false;
     }
 
     /**
@@ -117,9 +121,11 @@ abstract class AbsOperation {
 
 
     function canResolveAutomatically() {
-        if ($this->isFullyAutomated()) return true;
+        if ($this->requireConfirmation()) return false;
+
         if ($this->getMinCount() == 0) return false;
         if ($this->getMinCount() != $this->getCount()) return false;
+        if ($this->isFullyAutomated()) return true;
         if ($this->isOneChoice()) return true; // can be perf for prompt
         return false;
     }
@@ -156,6 +162,9 @@ abstract class AbsOperation {
         ];
     }
 
+    /**
+     * Argument of player state operation: '' - no arg, token - game token, player - other player, enum - other
+     */
     protected function getPrimaryArgType() {
         return 'token';
     }
@@ -178,7 +187,7 @@ abstract class AbsOperation {
 
     protected function getPrompt() {
         $rules = $this->rules();
-        return  $rules['prompt'] ?? clienttranslate('${you} must confirm');
+        return  array_get($rules,'prompt') ?? clienttranslate('${you} must confirm');
     }
 
     // --------------------- PLAYER INPUT
@@ -200,7 +209,7 @@ abstract class AbsOperation {
         if ($this->isOptional()) {
             $result["skipname"] = $this->getSkipButtonName();
         }
-        if (!$this->isFullyAutomated()) {
+        if ($this->requireConfirmation()) {
             $result["ack"] = 1; // prompt required
         }
         return $result;

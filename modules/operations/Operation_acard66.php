@@ -16,11 +16,6 @@ class Operation_acard66 extends  AbsOperationTile {
         return 0;
     }
 
-    function isFullyAutomated() {
-        return false;
-    }
-
-
     function effect(string $owner, int $inc): int {
         $object = $this->getCheckedArg('target');
         $this->game->checkColor($owner);

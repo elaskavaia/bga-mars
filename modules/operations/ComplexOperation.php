@@ -50,7 +50,9 @@ class ComplexOperation extends AbsOperation {
 
     protected function getOpName() {
         $rules = $this->rules();
-        if ($rules) return $rules['name'];
+        $name = array_get($rules,'name');
+        if ($name) return $name;
+        
         $op = $this->operation;
 
         switch ($op) {

@@ -36,4 +36,8 @@ class Operation_research extends AbsOperation {
         $this->game->systemAssertTrue("bom p=$player_id c=$c", $this->game->isRealPlayer($player_id));
         $this->game->queuePlayersTurn($player_id);
     }
+
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

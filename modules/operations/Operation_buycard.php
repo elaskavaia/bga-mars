@@ -6,9 +6,9 @@ declare(strict_types=1);
 class Operation_buycard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $money = $this->game->getTrackerValue($color,'m');
+        $money = $this->game->getTrackerValue($color, 'm');
         $cost = 3;
-        if ($money>=$cost) {
+        if ($money >= $cost) {
             // use money if can
             //$this->game->executeImmediately($color,"nm",$cost);
             $this->game->effect_incCount($color, "m", -$cost); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
@@ -16,39 +16,41 @@ class Operation_buycard extends AbsOperation {
             $this->game->multiplayerpush($color, "${cost}nm", "$card_id:a");
         }
         $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} buys a card ${token_name}'), [
-            "_private"=>true
+            "_private" => true
         ]);
         $this->game->notifyCounterChanged("hand_$color", ["nod" => true]);
         return 1;
     }
 
     function isVoid(): bool {
-        if ($this->getMinCount() == 0) return false;
+        if ($this->isOptional()) return false;
         if ($this->noValidTargets()) return true;
         return $this->game->isVoidSingle("3nm", $this->color);
     }
 
+    function canSkipChoice() {
+        return false;
+    }
+
+    function requireConfirmation() {
+        return true;
+    }
+
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main","draw_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_${color}"));
         $hasmoney = !$this->game->isVoidSingle("3nm", $color);
         $q = MA_ERR_COST;
         if ($hasmoney) $q = MA_OK;
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($q)  {
-            $info = ['q' => $q ]; // cannot buy if have no money
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($q) {
+            $info = ['q' => $q]; // cannot buy if have no money
             $this->game->playability($color, $tokenId, $info);
             return $info;
         });
     }
 
-
-    function canResolveAutomatically() {
-        return false;
-    }
-
-    protected function getSkipButtonName(){
-        if ($this->getCount()==1) return clienttranslate("Discard Card");
+    protected function getSkipButtonName() {
+        if ($this->getCount() == 1) return clienttranslate("Discard Card");
         return clienttranslate("Discard Remaining");
     }
-
 }

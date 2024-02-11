@@ -26,4 +26,7 @@ class Operation_prediscard extends AbsOperation {
         }
         return 1;
     }
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

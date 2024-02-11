@@ -36,6 +36,8 @@ class GameUT extends terraformingmars {
 
     function init() {
         $this->createTokens();
+        $this->gamestate->changeActivePlayer(PCOLOR);
+        $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
     }
 
     function setListerts(array $l) {
@@ -66,6 +68,13 @@ class GameUT extends terraformingmars {
             $id++;
         }
         return $values;
+    }
+
+    function fakeUserAction($op, $target = null){
+        $args = ['op_info' => $op];
+        if ($target!==null) $args['target']=$target;
+        $count = $this->saction_resolve($op, $args);
+        return $this->saction_stack($count, $op);
     }
 
     // override/stub methods here that access db and stuff
@@ -225,7 +234,7 @@ final class GameTest extends TestCase {
         $tops = $m->machine->getTopOperations(PCOLOR);
         $op =  reset($tops);
         $args = ['target' => 'hex_5_5', 'op_info' => $op];
-
+        $this->assertEquals("w", $op['type']);
         $count = $m->saction_resolve($op, $args);
         $m->saction_stack($count, $op, $tops);
         $this->assertEquals(1, $count);
@@ -395,6 +404,8 @@ final class GameTest extends TestCase {
         $m->putInEffectPool(PCOLOR, '2t', $card_id);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
+        $tops = $m->machine->getTopOperations();
+        $this->assertEquals(2, count($tops));
         $this->assertEquals(8, $m->tokens->getTokenState("tracker_t"));
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_ff0000"));
     }
@@ -410,12 +421,17 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, count($top1));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
+        $top1 = $m->machine->getTopOperations();
+        $this->assertEquals(1, count($top1));
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
         $this->assertEquals(2, $m->tokens->getTokenState("tracker_t"));
         $this->assertEquals(22, $m->tokens->getTokenState("tracker_tr_ff0000"));
         $this->assertEquals(9, $m->tokens->getTokenState("tracker_w"));
         $top1 = $m->machine->getTopOperations();
-
-        $this->assertEquals(2, count($top1));
+        $this->assertEquals(1, count($top1));
+        $op = array_shift($top1);
+        $this->assertEquals("w", $op['type']); // unfonfirmed ocean
     }
 
     public function testRoverConstruction() {
@@ -472,24 +488,83 @@ final class GameTest extends TestCase {
         $m = $this->game();
         foreach ($m->token_types as $key => $info) {
             if (!startsWith($key, 'op_')) continue;
-            $type = array_get($info, 'type', '');
-            $this->assertNotNull($type);
-            //echo ("testing $key\n");
-            /** @var AbsOperation */
-            $op = $m->getOperationInstanceFromType($type, PCOLOR);
-            $this->assertNotNull($op);
-            $this->assertTrue($op->checkIntegrity());
-            $ack = array_get($info, 'ack', '');
-            $ttype = $op->arg()['ttype'];
-
-            if ($ack == 1) {
-                assert($ttype, "  err: $type ttype=$ttype ack=$ack\n");
-            } else if (!$ack) {
-                assertEquals($ttype, 'token');
-            } else {
-                assert(0, "  err: $type ttype=$ttype ack=$ack\n");
-            }
-
+            echo ("testing op $key\n");
+            $this->subTestOp($m, $key, $info);
         }
+        $this->subTestOp($m, 'op_acard188', ['type' => 'acard188']);
+    }
+
+    public function testPass() {
+        $m = $this->game();
+        $op = $this->subTestOp($m, "op_pass");
+        $args = $op->arg();
+        $this->assertTrue($op->requireConfirmation());
+        $this->assertFalse($op->noValidTargets());
+        $this->assertFalse($op->isVoid());
+        $this->assertFalse($op->canResolveAutomatically());
+        $this->assertFalse($op->canSkipChoice());
+        $this->assertEquals('pass', $op->getMnemonic());
+ 
+        $ttype = $args['ttype'];
+        $this->assertEquals('', $ttype);
+    }
+
+    public function testDraft() {
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("2draft", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->checkIntegrity());
+        $args = $op->arg();
+        $this->assertTrue($op->requireConfirmation());
+        $this->assertTrue($op->noValidTargets());
+        $this->assertFalse($op->isVoid());
+        $this->assertTrue($op->canResolveAutomatically());
+        $this->assertFalse($op->canSkipChoice());
+        $this->assertEquals('2draft', $op->getMnemonic());
+ 
+        $ttype = $args['ttype'];
+        $this->assertEquals('token', $ttype);
+        $count = 2;
+        $this->assertTrue($op->auto(PCOLOR, $count));
+    }
+
+    function subTestOp($m, $key, $info = []) {
+        $type = array_get($info, 'type', substr($key,3));
+        $this->assertTrue(!!$type);
+  
+        /** @var AbsOperation */
+        $op = $m->getOperationInstanceFromType($type, PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->checkIntegrity());
+
+        $args = $op->arg();
+        $ttype = $args['ttype'];
+        $ack = array_get($args, 'ack', false);
+
+        if (!$op->isFullyAutomated()) {
+            $this->assertTrue(!!$ttype, "  err: $type ttype=$ttype ack=$ack\n");
+        } else if (!$ack) {
+            $this->assertEquals("$ttype", "", "  err: $type ttype=$ttype ack=$ack\n");
+        }
+
+        $conf = $op->requireConfirmation();
+
+        if ($ttype == 'player') {
+            $this->assertTrue( $conf);
+        } else  if ($ttype == 'token') {
+            $this->assertTrue( $conf, "$ttype conf $type");
+        } else  if ($ttype == 'enum') {
+            $this->assertTrue( $conf);
+        } else {
+            // $this->assertFalse( $conf);
+        }
+
+        if (isset($info['prompt'])) {
+            $this->assertEquals($info['prompt'], $args['prompt'], $type);
+        } else {
+            $this->assertTrue(!!$args['prompt'], "$type");
+        }
+
+        return $op;
     }
 }

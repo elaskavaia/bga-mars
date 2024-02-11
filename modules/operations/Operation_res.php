@@ -15,6 +15,11 @@ class Operation_res extends AbsOperation {
         return $inc;
     }
 
+    protected function getPrimaryArgType() {
+        return '';
+    }
+
+
     function isVoid(): bool {
         $card = $this->getContext();
         if (!$card) return true;

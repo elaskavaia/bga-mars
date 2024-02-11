@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 
 class Operation_passdraft extends AbsOperation {
-    function isFullyAutomated(): bool {
-        return true;
+    function getPrimaryArgType() {
+        return '';
     }
+
     function effect(string $color, int $inc): int {
         $players = $this->game->loadPlayersBasicInfos();
         $save = [];

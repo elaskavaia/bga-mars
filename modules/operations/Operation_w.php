@@ -16,13 +16,15 @@ class Operation_w extends AbsOperationTile {
         return 0;
     }
 
+
+
     function argPrimaryDetails() {
         $oceans = $this->game->getTrackerValue('', 'w');
-        if ($oceans >= 9) {
+        if ($oceans >= $this->getMax()) {
             $keys = ['none'];
             return $this->game->createArgInfo($this->color, $keys, function ($color, $key) {
                 return [
-                    'q'=>MA_OK
+                    'q' => MA_OK
                 ];
             });
         }
@@ -35,16 +37,34 @@ class Operation_w extends AbsOperationTile {
 
     public function checkIntegrity() {
         $c = $this->getUserCount();
-        if ($c===null) $c = $this->getCount();
-        if ($c != 1) 
-            throw new feException("Cannot use counter $c for this operation ".$this->mnemonic);
+        if ($c === null) $c = $this->getCount();
+        if ($c != 1)
+            throw new feException("Cannot use counter $c for this operation " . $this->mnemonic);
         return true;
+    }
+
+    function getMax() {
+        $max = $this->game->getRulesFor($this->game->getTrackerId('', $this->getMnemonic()), 'max', 0);
+        return $max;
+    }
+
+    function requireConfirmation() {
+        return true;
+    }
+
+    function getPrompt() {
+        $oceans = $this->game->getTrackerValue('', $this->getMnemonic());
+        if ($oceans >= $this->getMax()) {
+            return clienttranslate('${you} must confirm, operation ${name} will not have effect as parameter is at max');
+        }
+
+        return clienttranslate('${you} must select a location to place an ocean tile');
     }
 
     function effect(string $owner, int $inc): int {
         //if ($inc != 1) throw new feException("Cannot use counter $inc for this operation ".$this->mnemonic);
         $oceans = $this->game->getTrackerValue('', 'w');
-        if ($oceans >= 9) {
+        if ($oceans >= $this->getMax()) {
             $this->game->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} is at max, skipping increase'), 'tracker_w');
             $target = $this->getCheckedArg('target');
             if ($target == 'none') return 1; // skipped, this is ok  when no oceans left
@@ -56,7 +76,7 @@ class Operation_w extends AbsOperationTile {
         $tile = $this->effect_placeTile();
         $this->game->notifyEffect($owner, 'place_ocean', $tile);
 
-        //special handling card_main_188
+        //special handling card_main_188 Flooding
         if ($this->getContext() == 'card_main_188') {
             $target = $this->getCheckedArg('target');
             $this->game->putInEffectPool($owner, 'acard188', $target);
@@ -64,5 +84,4 @@ class Operation_w extends AbsOperationTile {
 
         return 1;
     }
-
 }

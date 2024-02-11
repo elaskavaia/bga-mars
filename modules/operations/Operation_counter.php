@@ -29,4 +29,8 @@ class Operation_counter extends AbsOperation {
         $this->game->machine->setCount($tops, $count, $mincount);
         return 1;
     }
+
+    function getPrimaryArgType() {
+        return '';
+    }
 }

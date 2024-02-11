@@ -230,8 +230,11 @@ abstract class PGameXBody extends PGameMachine {
 
     function debug_q() {
         $player_id = $this->getCurrentPlayerId();
-        $this->machine->interrupt();
-        $this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
+        //$this->machine->interrupt();
+        //$this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
+        $cards = $this->tokens->pickTokensForLocation(170, 'deck_main', 'temp');
+        $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');
+        //$this->dbSetTokensLocation($cards, 'temp');
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
         //return $this->debug_oparg("counter(all_city),m", $card);
@@ -277,6 +280,7 @@ abstract class PGameXBody extends PGameMachine {
     function debug_money($x = 40) {
         $color = $this->getCurrentPlayerColor();
         $this->effect_incCount($color, 'm', $x);
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
     function debug_inc($res = 'm', $count = 1) {
@@ -1333,16 +1337,28 @@ abstract class PGameXBody extends PGameMachine {
         return $object;
     }
 
+    function effect_alteratingDraw($numcards, $location) {
+        $players = $this->loadPlayersBasicInfos();
+        $count = $this->tokens->countTokensInLocation("deck_main") + $this->tokens->countTokensInLocation("discard_main");
+        if ($count < count($players) * $numcards) {
+            $numcards = (int) ($count / count($players));
+            if ($numcards) $this->notifyAllPlayers('message_warning', clienttranslate('Not enought cards to draw, splitting equally'), []);
+            else $this->notifyAllPlayers('message_warning', clienttranslate('No cards left'), []);
+        }
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->effect_draw($color, "deck_main", "${location}_$color", $numcards);
+        }
+        return $numcards;
+    }
+
     function effect_queueMultiDraw($numcards = 4, $corps = 0) {
         $players = $this->loadPlayersBasicInfos();
         $setup = $corps > 0;
         if ($this->isDraftVariant() && !$setup) {
-            $this->notifyAllPlayers('message', clienttranslate('research draft'), []);
-            foreach ($players as $player_id => $player) {
-                $color = $player["player_color"];
-                $this->effect_draw($color, "deck_main", "draft_${color}", $numcards);
-                $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-            }
+            $this->notifyAllPlayers('message', clienttranslate('Research draft'), []);
+            $numcards = $this->effect_alteratingDraw($numcards, "draft");
             for ($i = 0; $i < $numcards; $i++) {
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
@@ -1351,9 +1367,11 @@ abstract class PGameXBody extends PGameMachine {
                 $this->queue(0, "passdraft");
             }
         } else {
+            $numcards = $this->effect_alteratingDraw($numcards, "draw");
+        }
+        if ($setup) {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
-                $this->effect_draw($color, "deck_main", "draw_${color}", $numcards);
                 $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
             }
         }
@@ -1361,7 +1379,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             if ($corps) $this->multiplayerqueue($color, "keepcorp");
-            $this->multiplayerqueue($color, "${numcards}?buycard");
+            if ($numcards) $this->multiplayerqueue($color, "${numcards}?buycard");
         }
         if (!$setup) { // only do this when not setup, setup has special command
             foreach ($players as $player_id => $player) {
@@ -2077,7 +2095,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($ops as $optype) {
             $oparr = $this->machine->createOperationSimple($optype, $this->getPlayerColorById($player_id));
             $oparr['flags'] = MACHINE_OP_RESOLVE_DEFAULT;
-            $operations [] = $oparr;
+            $operations[] = $oparr;
         }
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
     }

@@ -8,7 +8,7 @@ class Operation_nmM extends AbsOperation {
         return 'enum';
     }
     protected function getPrompt() {
-        return  clienttranslate('${you} must pay ${count} MC (can use ${res_name}) for ${card_name}');
+        return  clienttranslate('${you} must pay ${count} M€ (can use ${res_name}) for ${card_name}');
     }
     protected function getVisargs() {
         $types = $this->getTypes();

@@ -7,7 +7,7 @@ num|name|t|r|cost|pre|text|php
 #set location=display_main
 #set count=1
 #set create=1
-1|Sell patents|0|counter(chand,1),sell|0||Discard X card to gain X MC
+1|Sell patents|0|counter(chand,1),sell|0||Discard X card to gain X M€
 2|Power plant|0|pe|11||For 11 M€ you get to increase your energy production 1 step
 3|Asteroid|0|t|14||For 14 M€ you get to increase temperature 1 step (and your TR)
 4|Aquifer|0|w|18||For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)

@@ -218,6 +218,9 @@ class DbTokens extends APP_GameClass {
         self::DbQuery($sql);
         if (isset($this->autoreshuffle_custom [$from_location]) && count($tokens) < $nbr && $this->autoreshuffle && !$no_deck_reform) {
             // No more cards in deck & reshuffle is active => form another deck
+            if ($this->countTokensInLocation($this->autoreshuffle_custom [$from_location])==0) {
+                return $tokens;
+            }
             $nbr_token_missing = $nbr - count($tokens);
             self::reformDeckFromDiscard($from_location);
             $newcards = self::pickTokensForLocation($nbr_token_missing, $from_location, $to_location, $state, true); // Note: block anothr deck reform

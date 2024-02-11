@@ -11,6 +11,10 @@ class Operation_confirm extends AbsOperation {
         return false;
     }
 
+    protected function getPrimaryArgType() {
+        return '';
+    }
+
     function effect(string $color, int $inc, ?array $args = null): int {
         $this->game->notifyMessage('');
         return 1;

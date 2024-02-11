@@ -17,8 +17,9 @@ class TestCase {
     function assertTrue($exp, $string = null) {
         if (!$exp) $this->fail($string);
     }
-    function assertEquals($expected, $exp, $string = null) {
-        if ($expected != $exp)  $this->fail($string);
+    
+    function assertEquals($expected, $actual, string $message = ''): void {
+        if ($expected != $actual)  $this->fail($message);
     }
     function assertFalse($exp, $string = null) {
         if ($exp) $this->fail($string);

@@ -25,4 +25,8 @@ class Operation_npR extends AbsOperation {
         if ($value - $count < $min) return true;
         return false;
     }
+
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }
