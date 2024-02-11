@@ -1400,7 +1400,7 @@ awarded.`);
     }
 
     //move animation on main player board counters
-    if (key.startsWith("tracker_") ) {
+    if (key.startsWith("tracker_")) {
       if (!this.isLayoutFull() && inc) {
         const type = getPart(key, 1);
         if (this.resourceTrackers.includes(type) || type == "tr") {
@@ -1409,7 +1409,7 @@ awarded.`);
           return this.customAnimation.moveResources(key, inc);
         }
         if ($(key)) {
-          return this.customAnimation.animatetingle(key);   
+          return this.customAnimation.animatetingle(key);
         }
       }
       return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
@@ -1591,8 +1591,7 @@ awarded.`);
     } else if (tokenInfo.key == "starting_player") {
       result.location = tokenInfo.location.replace("tableau_", "fpholder_");
     } else if (tokenInfo.key.startsWith("resource_")) {
-      if (this.isLayoutFull()) {
-      } else {
+      if (!this.isLayoutFull()) {
         if (tokenInfo.location.startsWith("card_main_")) {
           //resource added to card
           result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
@@ -1740,6 +1739,16 @@ awarded.`);
     return this.sendActionResolve(opId, { target, payment });
   }
 
+  activateSlotForOp(tid: string, opId: number) {
+    if (tid == "none") return undefined;
+    const divId = this.getActiveSlotRedirect(tid);
+    if (divId) {
+      this.setActiveSlot(divId);
+      this.setReverseIdMap(divId, opId, tid);
+    }
+    return divId;
+  }
+
   activateSlots(opInfo: any, single: boolean = true) {
     const opId = opInfo.id as number;
     const opArgs = opInfo.args;
@@ -1786,13 +1795,8 @@ awarded.`);
     if (ttype == "token") {
       let firstTarget = undefined;
       for (const tid of opTargets) {
-        if (tid == "none") continue;
-        const divId = this.getActiveSlotRedirect(tid);
-        if (divId) {
-          this.setActiveSlot(divId);
-          this.setReverseIdMap(divId, opId, tid);
-          if (!firstTarget) firstTarget = divId;
-        }
+        const divId = this.activateSlotForOp(tid, opId);
+        if (!firstTarget && divId) firstTarget = divId;
       }
 
       if (single) {
@@ -1866,6 +1870,8 @@ awarded.`);
           }
         });
       }
+    } else if (ttype) {
+      console.error("Unknonwn type "+ttype, opInfo);
     }
   }
 
@@ -1938,12 +1944,14 @@ awarded.`);
     }
     const id = node.id;
     if (!id) return undefined;
-    let target: ElementOrId = id;
-    if (id.startsWith("tracker_p_")) {
-      target = id.replace("tracker_p_", "playergroup_plants_");
-    }
-    if (id.startsWith("tracker_h_")) {
-      target = id.replace("tracker_h_", "playergroup_heat_");
+    let target: string = id;
+    if (!this.isLayoutFull()) {
+      if (id.startsWith("tracker_p_")) {
+        target = id.replace("tracker_p_", "playergroup_plants_");
+      }
+      if (id.startsWith("tracker_h_")) {
+        target = id.replace("tracker_h_", "playergroup_heat_");
+      }
     }
     return target;
   }
@@ -2162,6 +2170,7 @@ awarded.`);
       // - single action
       // - first if ordered
       // - all if choice of one (!ordered)
+
       if (singleOrFirst || !ordered) {
         this.activateSlots(opInfo, singleOrFirst);
         this.updateHandInformation(opInfo.args.info, opInfo.type);

@@ -1095,11 +1095,10 @@ var GameBasics = /** @class */ (function (_super) {
             //const startTime = Date.now();
             //  this.onNotif(notif);//should be moved here
             var p = this[notiffunc](notif);
-            debugger;
             if (setDelay == 1) {
                 //nothing to do here
             }
-            else if (p === undefined || !(p instanceof Promise)) {
+            else if (!(p instanceof Promise)) {
                 //no promise returned: no animation played
                 // console.log(notifname+' : no return, sync set to 1');
                 this.notifqueue.setSynchronousDuration(1);
@@ -4527,9 +4526,7 @@ var GameXBody = /** @class */ (function (_super) {
             result.location = tokenInfo.location.replace("tableau_", "fpholder_");
         }
         else if (tokenInfo.key.startsWith("resource_")) {
-            if (this.isLayoutFull()) {
-            }
-            else {
+            if (!this.isLayoutFull()) {
                 if (tokenInfo.location.startsWith("card_main_")) {
                     //resource added to card
                     result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
@@ -4671,6 +4668,16 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.sendActionResolveWithTargetAndPayment = function (opId, target, payment) {
         return this.sendActionResolve(opId, { target: target, payment: payment });
     };
+    GameXBody.prototype.activateSlotForOp = function (tid, opId) {
+        if (tid == "none")
+            return undefined;
+        var divId = this.getActiveSlotRedirect(tid);
+        if (divId) {
+            this.setActiveSlot(divId);
+            this.setReverseIdMap(divId, opId, tid);
+        }
+        return divId;
+    };
     GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
         var _a, _b, _c, _d, _e;
@@ -4719,15 +4726,9 @@ var GameXBody = /** @class */ (function (_super) {
             var firstTarget = undefined;
             for (var _i = 0, opTargets_1 = opTargets; _i < opTargets_1.length; _i++) {
                 var tid = opTargets_1[_i];
-                if (tid == "none")
-                    continue;
-                var divId = this.getActiveSlotRedirect(tid);
-                if (divId) {
-                    this.setActiveSlot(divId);
-                    this.setReverseIdMap(divId, opId, tid);
-                    if (!firstTarget)
-                        firstTarget = divId;
-                }
+                var divId = this.activateSlotForOp(tid, opId);
+                if (!firstTarget && divId)
+                    firstTarget = divId;
             }
             if (single) {
                 if (!firstTarget)
@@ -4792,6 +4793,9 @@ var GameXBody = /** @class */ (function (_super) {
                     }
                 });
             }
+        }
+        else if (ttype) {
+            console.error("Unknonwn type " + ttype, opInfo);
         }
     };
     GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
@@ -4860,11 +4864,13 @@ var GameXBody = /** @class */ (function (_super) {
         if (!id)
             return undefined;
         var target = id;
-        if (id.startsWith("tracker_p_")) {
-            target = id.replace("tracker_p_", "playergroup_plants_");
-        }
-        if (id.startsWith("tracker_h_")) {
-            target = id.replace("tracker_h_", "playergroup_heat_");
+        if (!this.isLayoutFull()) {
+            if (id.startsWith("tracker_p_")) {
+                target = id.replace("tracker_p_", "playergroup_plants_");
+            }
+            if (id.startsWith("tracker_h_")) {
+                target = id.replace("tracker_h_", "playergroup_heat_");
+            }
         }
         return target;
     };
