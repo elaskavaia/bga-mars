@@ -4223,7 +4223,6 @@ var GameXBody = /** @class */ (function (_super) {
                 this.vlayout.createHtmlForToken(tokenNode, displayInfo);
             }
         }
-        this.vlayout.renderSpecificToken(tokenNode);
     };
     GameXBody.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore) {
         var _a;
@@ -4314,6 +4313,7 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         if (!node.id)
             return;
+        this.vlayout.renderSpecificToken(node);
         // to show + signs in some cases
         if (node.id.startsWith("tracker_")) {
             if (newState > 0) {

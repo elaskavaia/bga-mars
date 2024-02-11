@@ -1335,7 +1335,7 @@ awarded.`);
         this.vlayout.createHtmlForToken(tokenNode, displayInfo);
       }
     }
-    this.vlayout.renderSpecificToken(tokenNode);
+
   }
 
   onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined) {
@@ -1424,6 +1424,8 @@ awarded.`);
     var node = $(tokenId);
     if (!node) return;
     if (!node.id) return;
+
+    this.vlayout.renderSpecificToken(node);
 
     // to show + signs in some cases
     if (node.id.startsWith("tracker_")) {
