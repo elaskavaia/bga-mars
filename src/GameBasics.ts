@@ -33,6 +33,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
+    dojo.destroy('debug_output'); // its too slow and useless
     this.gamedatas_server = dojo.clone(this.gamedatas);
     this.setupInfoPanel();
     // add reload Css debug button
@@ -759,14 +760,13 @@ class GameBasics extends GameGui {
    */
   onClickSanity(event: Event, checkActiveSlot?: boolean, checkActivePlayer?: boolean) {
     let id = (event.currentTarget as HTMLElement).id;
-    // Stop this event propagation
-    dojo.stopEvent(event); // XXX
+    let target = event.target as HTMLElement;
     if (id == "thething") {
-      let node = this.findActiveParent(event.target as HTMLElement);
+      let node = this.findActiveParent(target);
       id = node?.id;
     }
 
-    console.log("on slot " + id);
+    console.log("on slot " + id,target?.id || target);
     if (!id) return null;
     if (this.showHelp(id)) return null;
 
@@ -800,6 +800,7 @@ class GameBasics extends GameGui {
   }
   checkActiveSlot(id: ElementOrId) {
     if (!this.isActiveSlot(id)) {
+      console.error(new Error("unauth"),id);
       this.showMoveUnauthorized();
       return false;
     }
@@ -1187,16 +1188,16 @@ class GameBasics extends GameGui {
   }
 
   playnotif(notifname: string, notif: Notif, setDelay: number): void {
-    console.log("playing notif " + notifname + " with args ", notif.args);
+    //console.log("playing notif " + notifname + " with args ", notif.args);
 
     //setSynchronous has to set for non active player in ignored notif
-    if (setDelay == -1) {
-      if (notif.args.player_id == this.player_id) {
-        //     this.notifqueue.setSynchronous(notifname, 1);
-      } else {
-        //   this.notifqueue.setSynchronous(notifname);
-      }
-    }
+    // if (setDelay == -1) {
+    //   if (notif.args.player_id == this.player_id) {
+    //     //     this.notifqueue.setSynchronous(notifname, 1);
+    //   } else {
+    //     //   this.notifqueue.setSynchronous(notifname);
+    //   }
+    // }
 
     /*
     Client-side duplicat notification check
@@ -1229,7 +1230,7 @@ class GameBasics extends GameGui {
           return this.wait(50);
         }).then(() => {
           this.notifqueue.setSynchronousDuration(10);
-          const executionTime = Date.now() - startTime;
+          //const executionTime = Date.now() - startTime;
           //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
           //    this.animated=false;
         });

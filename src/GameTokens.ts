@@ -215,9 +215,7 @@ class GameTokens extends GameBasics {
     var node = $(tokenId);
     // console.log(token + "|=>" + newState);
     if (!node) return;
-    this.saveRestore(node);
     node.setAttribute("data-state", newState);
-
   }
 
   getDomTokenLocation(tokenId: ElementOrId) {
@@ -235,7 +233,7 @@ class GameTokens extends GameBasics {
     const tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
 
     if (placeInfo.onClick) {
-      this.connect(info.key, "onclick", placeInfo.onClick);
+      this.connect(tokenDiv, "onclick", placeInfo.onClick);
     }
     return tokenDiv;
   }
@@ -250,19 +248,16 @@ class GameTokens extends GameBasics {
     }
   }
 
-  updateLocalCounters(tokenInfo: Token) {
-    // not implemented, override
+  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token) {
+    if (dojo.hasClass(tokenNode, "infonode")) {
+      this.placeInfoBox(tokenNode);
+    }
   }
 
   placeTokenLocal(tokenId: string, location: string, state?: number, args?: any) {
     const tokenInfo = this.setTokenInfo(tokenId, location, state, false);
     //this.on_client_state = true;
     this.placeTokenWithTips(tokenId, tokenInfo, args);
-    if (this.instantaneousMode) {
-      // skip counters update
-    } else {
-      this.updateLocalCounters(tokenInfo);
-    }
   }
 
   placeTokenServer(tokenId: string, location: string, state?: number, args?: any) {
@@ -272,18 +267,21 @@ class GameTokens extends GameBasics {
 
   placeToken(token: string, tokenInfo?: Token, args?: any) {
     try {
-      var tokenNode = $(token);
       if (args === undefined) {
         args = {};
       }
-      if (!tokenInfo) {
-        tokenInfo = this.gamedatas.tokens[token];
-      }
-      var noAnnimation = false;
+      let noAnnimation = false;
       if (args.noa) {
         noAnnimation = true;
       }
 
+      var tokenInfoBefore = dojo.clone(this.gamedatas.tokens[token]);
+
+      if (!tokenInfo) {
+        tokenInfo = this.gamedatas.tokens[token];
+      }
+
+      var tokenNode = $(token);
       if (!tokenInfo) {
         const rules = this.getAllRules(token);
         if (rules) tokenInfo = this.setTokenInfo(token, rules.location, rules.state, false);
@@ -308,17 +306,11 @@ class GameTokens extends GameBasics {
         tokenNode = this.createToken(placeInfo);
       }
       this.syncTokenDisplayInfo(tokenNode);
-
-      var state = 0;
-      if (tokenInfo) state = tokenInfo.state;
-      this.setDomTokenState(tokenNode, state);
-
-      if (dojo.hasClass(tokenNode, "infonode")) {
-        this.placeInfoBox(tokenNode);
-      }
+      this.setDomTokenState(tokenNode, tokenInfo.state);
 
      if (placeInfo.nop) {
-        // no placement
+        // no movement
+        this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
         return;
       }
       if (!$(location)) {
@@ -348,6 +340,7 @@ class GameTokens extends GameBasics {
       }
 
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
+      this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
     } catch (e) {
       console.error("Exception thrown", e, e.stack);
       // this.showMessage(token + " -> FAILED -> " + place + "\n" + e, "error");
@@ -628,9 +621,10 @@ class GameTokens extends GameBasics {
     let id = this.onClickSanity(event);
     if (!id) return true;
     if (!fromMethod) fromMethod = "onToken";
-
+    dojo.stopEvent(event);
     var methodName = fromMethod + "_" + this.getStateName();
-    if (this.callfn(methodName, id) === undefined) return false;
+    let ret = this.callfn(methodName, id);
+    if (ret === undefined) return false;
     return true;
   }
 

@@ -39,6 +39,7 @@ var GameBasics = /** @class */ (function (_super) {
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
+        dojo.destroy('debug_output'); // its too slow and useless
         this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
         // add reload Css debug button
@@ -662,13 +663,12 @@ var GameBasics = /** @class */ (function (_super) {
      */
     GameBasics.prototype.onClickSanity = function (event, checkActiveSlot, checkActivePlayer) {
         var id = event.currentTarget.id;
-        // Stop this event propagation
-        dojo.stopEvent(event); // XXX
+        var target = event.target;
         if (id == "thething") {
-            var node = this.findActiveParent(event.target);
+            var node = this.findActiveParent(target);
             id = node === null || node === void 0 ? void 0 : node.id;
         }
-        console.log("on slot " + id);
+        console.log("on slot " + id, (target === null || target === void 0 ? void 0 : target.id) || target);
         if (!id)
             return null;
         if (this.showHelp(id))
@@ -701,6 +701,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.checkActiveSlot = function (id) {
         if (!this.isActiveSlot(id)) {
+            console.error(new Error("unauth"), id);
             this.showMoveUnauthorized();
             return false;
         }
@@ -1072,17 +1073,16 @@ var GameBasics = /** @class */ (function (_super) {
         }
     };
     GameBasics.prototype.playnotif = function (notifname, notif, setDelay) {
+        //console.log("playing notif " + notifname + " with args ", notif.args);
         var _this = this;
-        console.log("playing notif " + notifname + " with args ", notif.args);
         //setSynchronous has to set for non active player in ignored notif
-        if (setDelay == -1) {
-            if (notif.args.player_id == this.player_id) {
-                //     this.notifqueue.setSynchronous(notifname, 1);
-            }
-            else {
-                //   this.notifqueue.setSynchronous(notifname);
-            }
-        }
+        // if (setDelay == -1) {
+        //   if (notif.args.player_id == this.player_id) {
+        //     //     this.notifqueue.setSynchronous(notifname, 1);
+        //   } else {
+        //     //   this.notifqueue.setSynchronous(notifname);
+        //   }
+        // }
         /*
         Client-side duplicat notification check
         Disabled for now
@@ -1097,7 +1097,7 @@ var GameBasics = /** @class */ (function (_super) {
             this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
         }
         else {
-            var startTime_1 = Date.now();
+            var startTime = Date.now();
             //  this.onNotif(notif);//should be moved here
             var p = this[notiffunc](notif);
             if (setDelay == 1) {
@@ -1115,7 +1115,7 @@ var GameBasics = /** @class */ (function (_super) {
                     return _this.wait(50);
                 }).then(function () {
                     _this.notifqueue.setSynchronousDuration(10);
-                    var executionTime = Date.now() - startTime_1;
+                    //const executionTime = Date.now() - startTime;
                     //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
                     //    this.animated=false;
                 });
@@ -1633,6 +1633,8 @@ var CustomAnimation = /** @class */ (function () {
         return this.wait(delay + this.getWaitDuration(500));
     };
     CustomAnimation.prototype.addAnimationsToDocument = function (animations) {
+        if ($('css_animations'))
+            return;
         var head = document.getElementsByTagName('head')[0];
         var s = document.createElement('style');
         s.setAttribute('type', 'text/css');
@@ -2731,7 +2733,6 @@ var GameTokens = /** @class */ (function (_super) {
         // console.log(token + "|=>" + newState);
         if (!node)
             return;
-        this.saveRestore(node);
         node.setAttribute("data-state", newState);
     };
     GameTokens.prototype.getDomTokenLocation = function (tokenId) {
@@ -2747,7 +2748,7 @@ var GameTokens = /** @class */ (function (_super) {
         var place = (_b = (_a = placeInfo.from) !== null && _a !== void 0 ? _a : placeInfo.location) !== null && _b !== void 0 ? _b : this.getRulesFor(tokenId, "location");
         var tokenDiv = this.createDivNode(info.key, info.imageTypes, place);
         if (placeInfo.onClick) {
-            this.connect(info.key, "onclick", placeInfo.onClick);
+            this.connect(tokenDiv, "onclick", placeInfo.onClick);
         }
         return tokenDiv;
     };
@@ -2761,19 +2762,15 @@ var GameTokens = /** @class */ (function (_super) {
             tokenNode.setAttribute("data-info", "1");
         }
     };
-    GameTokens.prototype.updateLocalCounters = function (tokenInfo) {
-        // not implemented, override
+    GameTokens.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore) {
+        if (dojo.hasClass(tokenNode, "infonode")) {
+            this.placeInfoBox(tokenNode);
+        }
     };
     GameTokens.prototype.placeTokenLocal = function (tokenId, location, state, args) {
         var tokenInfo = this.setTokenInfo(tokenId, location, state, false);
         //this.on_client_state = true;
         this.placeTokenWithTips(tokenId, tokenInfo, args);
-        if (this.instantaneousMode) {
-            // skip counters update
-        }
-        else {
-            this.updateLocalCounters(tokenInfo);
-        }
     };
     GameTokens.prototype.placeTokenServer = function (tokenId, location, state, args) {
         var tokenInfo = this.setTokenInfo(tokenId, location, state, true);
@@ -2782,17 +2779,18 @@ var GameTokens = /** @class */ (function (_super) {
     GameTokens.prototype.placeToken = function (token, tokenInfo, args) {
         var _a, _b;
         try {
-            var tokenNode = $(token);
             if (args === undefined) {
                 args = {};
-            }
-            if (!tokenInfo) {
-                tokenInfo = this.gamedatas.tokens[token];
             }
             var noAnnimation = false;
             if (args.noa) {
                 noAnnimation = true;
             }
+            var tokenInfoBefore = dojo.clone(this.gamedatas.tokens[token]);
+            if (!tokenInfo) {
+                tokenInfo = this.gamedatas.tokens[token];
+            }
+            var tokenNode = $(token);
             if (!tokenInfo) {
                 var rules = this.getAllRules(token);
                 if (rules)
@@ -2815,15 +2813,10 @@ var GameTokens = /** @class */ (function (_super) {
                 tokenNode = this.createToken(placeInfo);
             }
             this.syncTokenDisplayInfo(tokenNode);
-            var state = 0;
-            if (tokenInfo)
-                state = tokenInfo.state;
-            this.setDomTokenState(tokenNode, state);
-            if (dojo.hasClass(tokenNode, "infonode")) {
-                this.placeInfoBox(tokenNode);
-            }
+            this.setDomTokenState(tokenNode, tokenInfo.state);
             if (placeInfo.nop) {
-                // no placement
+                // no movement
+                this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
                 return;
             }
             if (!$(location_1)) {
@@ -2853,6 +2846,7 @@ var GameTokens = /** @class */ (function (_super) {
                 };
             }
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
+            this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
         }
         catch (e) {
             console.error("Exception thrown", e, e.stack);
@@ -3114,8 +3108,10 @@ var GameTokens = /** @class */ (function (_super) {
             return true;
         if (!fromMethod)
             fromMethod = "onToken";
+        dojo.stopEvent(event);
         var methodName = fromMethod + "_" + this.getStateName();
-        if (this.callfn(methodName, id) === undefined)
+        var ret = this.callfn(methodName, id);
+        if (ret === undefined)
             return false;
         return true;
     };
@@ -3196,7 +3192,6 @@ var GameXBody = /** @class */ (function (_super) {
             this.previousLayout = "desktop";
             this.zoneWidth = 0;
             this.zoneHeight = 0;
-            this.local_counters["game"] = { cities: 0 };
             this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
             // hex tooltips
@@ -3350,7 +3345,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         //read last saved value for filter in digital view
         if (!this.isLayoutFull()) {
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color + "_" + this.table_id));
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color));
             var selected = localColorSetting.readProp("digital_cardfilter", "0");
             for (var i = 0; i <= 3; i++) {
                 $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
@@ -4215,7 +4210,6 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.syncTokenDisplayInfo = function (tokenNode) {
         var _a;
-        var _b;
         if (!tokenNode.getAttribute("data-info")) {
             var displayInfo = this.getTokenDisplayInfo(tokenNode.id);
             var classes = displayInfo.imageTypes.split(/  */);
@@ -4229,11 +4223,88 @@ var GameXBody = /** @class */ (function (_super) {
                 this.vlayout.createHtmlForToken(tokenNode, displayInfo);
             }
         }
-        if ((_b = tokenNode.id) === null || _b === void 0 ? void 0 : _b.startsWith("card_")) {
+        this.vlayout.renderSpecificToken(tokenNode);
+    };
+    GameXBody.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore) {
+        var _a;
+        _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore);
+        if (tokenInfo.key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
             if ($("hand_area").dataset.sort_type == "manual")
                 this.enableDragOnCard(tokenNode);
             else
                 this.disableDragOnCard(tokenNode);
+        }
+        // update resource holder counters
+        if (tokenInfo.key.startsWith("resource_")) {
+            var targetCard = 0;
+            if (tokenInfo.location.startsWith("card_")) {
+                //resource added to card
+                targetCard = getIntPart(tokenInfo.location, 2);
+            }
+            else if ((_a = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.location) === null || _a === void 0 ? void 0 : _a.startsWith("card_")) {
+                //resource removed from a card
+                targetCard = getIntPart(tokenInfoBefore.location, 2);
+            }
+            if (targetCard) {
+                if (this.isLayoutFull()) {
+                    var dest_holder = tokenNode.parentNode.id;
+                    var count = String($(dest_holder).querySelectorAll(".resource").length);
+                    $(dest_holder).dataset.resource_counter = count;
+                }
+                else {
+                    var dest_holder = "resource_holder_".concat(targetCard);
+                    var dest_counter = "resource_holder_counter_".concat(targetCard);
+                    var count = String($(dest_holder).querySelectorAll(".resource").length);
+                    $(dest_holder).dataset.resource_counter = count;
+                    $(dest_counter).dataset.resource_counter = count;
+                }
+            }
+        }
+        if (tokenInfo.key.startsWith("marker_")) {
+            if (tokenInfo.location.startsWith("award")) {
+                this.strikeNextAwardMilestoneCost("award");
+            }
+            else if (tokenInfo.location.startsWith("milestone")) {
+                this.strikeNextAwardMilestoneCost("milestone");
+            }
+        }
+        if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+            $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
+            $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
+        }
+        if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+            var t = this.getRulesFor(tokenInfo.key, "t");
+            var plcolor = getPart(tokenInfo.location, 1);
+            var count = $(tokenInfo.location).querySelectorAll("[data-card-type=\"".concat(t, "\"]")).length;
+            this.local_counters[plcolor]["cards_" + t] = count;
+            this.updatePlayerLocalCounters(plcolor);
+            if (!this.isLayoutFull()) {
+                //auto switch tabs here
+                // this.darhflog("isdoingsetup", this.isDoingSetup);
+                if (!this.isDoingSetup) {
+                    if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
+                        var original = 0;
+                        for (var i = 0; i <= 3; i++) {
+                            if ($(tokenInfo.location).dataset["visibility_" + i] == "1")
+                                original = i;
+                        }
+                        if (original != 0) {
+                            for (var i = 1; i <= 3; i++) {
+                                var btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+                                if (i == t) {
+                                    $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                                    $(btn).dataset.selected = "1";
+                                }
+                                else {
+                                    $(btn).dataset.selected = "0";
+                                    $(tokenInfo.location).dataset["visibility_" + i] = "0";
+                                }
+                            }
+                            this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
+                        }
+                    }
+                }
+            }
         }
     };
     GameXBody.prototype.setDomTokenState = function (tokenId, newState) {
@@ -4263,15 +4334,6 @@ var GameXBody = /** @class */ (function (_super) {
                 this.enablePlayerPanel(plId);
             }
         }
-        //local : number of cities on mars
-        if (node.id.startsWith("tracker_city_")) {
-            this.local_counters["game"].cities = 0;
-            for (var plid in this.gamedatas.players) {
-                this.local_counters["game"].cities =
-                    this.local_counters["game"].cities + parseInt($("tracker_city_" + this.gamedatas.players[plid].color).dataset.state);
-            }
-        }
-        this.vlayout.renderSpecificToken(node);
         //handle copies of trackers
         var trackerCopy = "alt_" + node.id;
         var nodeCopy = $(trackerCopy);
@@ -4389,6 +4451,12 @@ var GameXBody = /** @class */ (function (_super) {
             $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
         }
     };
+    /**
+     * This function can convert the database info into dom placement info.
+     * This SHOULD NOT MODIFY dom state. For that use @see onUpdateTokenInDom
+     * @param tokenInfo
+     * @returns
+     */
     GameXBody.prototype.getPlaceRedirect = function (tokenInfo) {
         var result = _super.prototype.getPlaceRedirect.call(this, tokenInfo);
         if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
@@ -4410,38 +4478,11 @@ var GameXBody = /** @class */ (function (_super) {
                 if (tokenInfo.location.startsWith("card_main_")) {
                     //resource added to card
                     result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
-                    var dest_holder = tokenInfo.location.replace("card_main_", "resource_holder_");
-                    var dest_counter = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
-                    $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
-                    $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
                 }
-                else if (tokenInfo.location.startsWith("tableau_")) {
-                    //resource moved from card
-                    //which card ?
-                    var dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
-                    if (dest_holder.includes("holder_")) {
-                        var dest_counter = dest_holder.replace("holder_", "holder_counter_");
-                        if (dojo.byId(dest_holder)) {
-                            $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
-                            $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
-                        }
-                    }
-                }
-            }
-        }
-        else if (tokenInfo.key.startsWith("marker_")) {
-            if (tokenInfo.location.startsWith("award")) {
-                this.strikeNextAwardMilestoneCost("award");
-            }
-            else if (tokenInfo.location.startsWith("milestone")) {
-                this.strikeNextAwardMilestoneCost("milestone");
             }
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
             result.location = tokenInfo.location + "_corp_effect";
-            //also set property to corp logo div
-            $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
-            $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
         }
         else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
             var t = this.getRulesFor(tokenInfo.key, "t");
@@ -4449,40 +4490,14 @@ var GameXBody = /** @class */ (function (_super) {
             if (this.getRulesFor(tokenInfo.key, "a")) {
                 result.location = tokenInfo.location + "_cards_2a";
             }
-            if ($(tokenInfo.location).querySelector("#" + tokenInfo.key) == null) {
-                var plcolor = tokenInfo.location.replace("tableau_", "");
-                this.local_counters[plcolor]["cards_" + t]++;
-                this.updatePlayerLocalCounters(plcolor);
+            else if (t == 2 && this.getRulesFor(tokenInfo.key, "holds", "")) {
+                // card can hold stuff
+                result.location = tokenInfo.location + "_cards_2a";
             }
             if (!this.isLayoutFull()) {
                 if (t == 1 || t == 3) {
                     if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
                         result.location = tokenInfo.location + "_cards_" + t + "vp";
-                    }
-                }
-                //auto switch tabs here
-                // this.darhflog("isdoingsetup", this.isDoingSetup);
-                if (!this.isDoingSetup) {
-                    if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
-                        var original = 0;
-                        for (var i = 0; i <= 3; i++) {
-                            if ($(tokenInfo.location).dataset["visibility_" + i] == "1")
-                                original = i;
-                        }
-                        if (original != 0) {
-                            for (var i = 1; i <= 3; i++) {
-                                var btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
-                                if (i == t) {
-                                    $(tokenInfo.location).dataset["visibility_" + i] = "1";
-                                    $(btn).dataset.selected = "1";
-                                }
-                                else {
-                                    $(btn).dataset.selected = "0";
-                                    $(tokenInfo.location).dataset["visibility_" + i] = "0";
-                                }
-                            }
-                            this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
-                        }
                     }
                 }
             }
@@ -4521,6 +4536,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.ajaxuseraction("resolve", {
             ops: [__assign({ op: op }, args)]
         });
+        return true;
     };
     GameXBody.prototype.sendActionDecline = function (op) {
         this.ajaxuseraction("decline", {
@@ -4593,17 +4609,16 @@ var GameXBody = /** @class */ (function (_super) {
         });
     };
     GameXBody.prototype.sendActionResolveWithTarget = function (opId, target) {
-        this.sendActionResolve(opId, {
+        return this.sendActionResolve(opId, {
             target: target
         });
-        return;
     };
     GameXBody.prototype.sendActionResolveWithTargetAndPayment = function (opId, target, payment) {
-        this.sendActionResolve(opId, { target: target, payment: payment });
+        return this.sendActionResolve(opId, { target: target, payment: payment });
     };
     GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         if (single === void 0) { single = true; }
         var opId = opInfo.id;
         var opArgs = opInfo.args;
@@ -4646,26 +4661,39 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         if (ttype == "token") {
-            opTargets.forEach(function (tid) {
-                var divId = _this.getActiveSlotRedirect(tid);
-                _this.setActiveSlot(divId);
-                _this.setReverseIdMap(divId, opId, tid);
-            });
+            var firstTarget = undefined;
+            for (var _i = 0, opTargets_1 = opTargets; _i < opTargets_1.length; _i++) {
+                var tid = opTargets_1[_i];
+                if (tid == "none")
+                    continue;
+                var divId = this.getActiveSlotRedirect(tid);
+                if (divId) {
+                    this.setActiveSlot(divId);
+                    this.setReverseIdMap(divId, opId, tid);
+                    if (!firstTarget)
+                        firstTarget = divId;
+                }
+            }
             if (single) {
+                if (!firstTarget)
+                    firstTarget = "generalactions";
                 var MAGIC_BUTTONS_NUMBER = 6;
                 var showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER;
+                (_c = $(firstTarget)) === null || _c === void 0 ? void 0 : _c.scrollIntoView({ behavior: "smooth", block: "center" });
                 if (showAsButtons) {
                     this.addTargetButtons(opId, opTargets);
                 }
                 else {
-                    // people confused when buttons are not shown, add button with explanations
-                    var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-                    this.addActionButtonColor("button_x", name_2, function () {
-                        _this.removeTooltip("button_x");
-                        dojo.destroy("button_x");
-                        _this.addTargetButtons(opId, opTargets);
-                    }, "orange");
-                    this.addTooltip("button_x", _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"), _("Click to add buttons"));
+                    if (!firstTarget.startsWith("hex")) {
+                        // people confused when buttons are not shown, add button with explanations
+                        var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+                        this.addActionButtonColor("button_x", name_2, function () {
+                            _this.removeTooltip("button_x");
+                            dojo.destroy("button_x");
+                            _this.addTargetButtons(opId, opTargets);
+                        }, "orange");
+                        this.addTooltip("button_x", _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"), _("Click to add buttons"));
+                    }
                 }
             }
         }
@@ -4682,8 +4710,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "enum") {
             if (single) {
-                var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
-                var operations_1 = (_d = args.operations) !== null && _d !== void 0 ? _d : args.player_operations[this.player_id].operations;
+                var args = (_d = this.gamedatas.gamestate.args) !== null && _d !== void 0 ? _d : this.gamedatas.gamestate.private_state.args;
+                var operations_1 = (_e = args.operations) !== null && _e !== void 0 ? _e : args.player_operations[this.player_id].operations;
                 opTargets.forEach(function (tid, i) {
                     var _a, _b, _c;
                     if (tid == "payment") {
@@ -4719,7 +4747,7 @@ var GameXBody = /** @class */ (function (_super) {
         opTargets.forEach(function (tid) {
             _this.addActionButtonColor("button_" + tid, _this.getTokenName(tid), function () {
                 _this.sendActionResolveWithTarget(opId, tid);
-            }, tid == 'none' ? 'orange' : 'targetcolor');
+            }, tid == "none" ? "orange" : "targetcolor");
         });
     };
     /**
@@ -4773,12 +4801,12 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.getActiveSlotRedirect = function (_node) {
         var node = $(_node);
         if (!node) {
-            this.showError("Not found " + _node);
-            return _node;
+            console.error("Not found for active slot " + _node);
+            return undefined;
         }
         var id = node.id;
         if (!id)
-            return _node;
+            return undefined;
         var target = id;
         if (id.startsWith("tracker_p_")) {
             target = id.replace("tracker_p_", "playergroup_plants_");
@@ -4825,45 +4853,49 @@ var GameXBody = /** @class */ (function (_super) {
         var node = this.createDivNode("custom_paiement", "", "gameaction_status_wrap"); //was general_actions
         node.innerHTML = paiement_htm;
         //adds actions to button payments
-        this.connectClass("btn_payment_item", "onclick", function (event) {
-            var id = event.currentTarget.id;
-            var direction = $(id).dataset.direction;
-            var res = $(id).dataset.resource;
-            dojo.stopEvent(event);
-            if (direction == "minus") {
-                if (_this.custom_pay.selected[res] > 0) {
-                    _this.custom_pay.selected[res]--;
+        document.querySelectorAll(".btn_payment_item").forEach(function (node) {
+            node.addEventListener("click", function (event) {
+                var id = event.currentTarget.id;
+                var direction = $(id).dataset.direction;
+                var res = $(id).dataset.resource;
+                dojo.stopEvent(event);
+                if (direction == "minus") {
+                    if (_this.custom_pay.selected[res] > 0) {
+                        _this.custom_pay.selected[res]--;
+                    }
                 }
-            }
-            if (direction == "plus") {
-                if (_this.custom_pay.selected[res] < _this.custom_pay.available[res]) {
-                    _this.custom_pay.selected[res]++;
+                if (direction == "plus") {
+                    if (_this.custom_pay.selected[res] < _this.custom_pay.available[res]) {
+                        _this.custom_pay.selected[res]++;
+                    }
                 }
-            }
-            $("payment_item_" + res).innerHTML = _this.custom_pay.selected[res];
-            var total_res = 0;
-            // let values_htm='';
-            for (var res_1 in _this.custom_pay.rate) {
-                if (res_1 != "m") {
-                    total_res = total_res + _this.custom_pay.rate[res_1] * _this.custom_pay.selected[res_1];
-                    //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
+                $("payment_item_" + res).innerHTML = _this.custom_pay.selected[res];
+                var total_res = 0;
+                // let values_htm='';
+                for (var res_1 in _this.custom_pay.rate) {
+                    if (res_1 != "m") {
+                        total_res = total_res + _this.custom_pay.rate[res_1] * _this.custom_pay.selected[res_1];
+                        //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
+                    }
                 }
-            }
-            var mc = _this.custom_pay.needed - total_res;
-            if (mc < 0) {
-                mc = 0;
-                $("btn_custompay_send").classList.add("overpay");
-            }
-            else {
-                $("btn_custompay_send").classList.remove("overpay");
-            }
-            _this.custom_pay.selected["m"] = mc;
-            //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
-            var values_htm = _this.resourcesToHtml(_this.custom_pay.selected, true);
-            $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
+                var mc = _this.custom_pay.needed - total_res;
+                if (mc < 0) {
+                    mc = 0;
+                    $("btn_custompay_send").classList.add("overpay");
+                }
+                else {
+                    $("btn_custompay_send").classList.remove("overpay");
+                }
+                _this.custom_pay.selected["m"] = mc;
+                //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
+                var values_htm = _this.resourcesToHtml(_this.custom_pay.selected, true);
+                $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
+            });
         });
+        // connectClass is not suitable for temp objects, it leaves refernce in memory
+        //this.connectClass("btn_payment_item", "onclick", (event) => {   });
         //adds action to final payment button
-        this.connect($("btn_custompay_send"), "onclick", function () {
+        $("btn_custompay_send").addEventListener("click", function () {
             var pays = {};
             //backend doesn't accept 0 as paiment
             for (var _i = 0, _a = Object.keys(_this.custom_pay.selected); _i < _a.length; _i++) {
@@ -4926,11 +4958,11 @@ var GameXBody = /** @class */ (function (_super) {
         var playerId = this.getPlayerIdByColor(playerColor);
         if (!playerId)
             return undefined; // invalid?
-        var name = (playerId == this.player_id) ? this.divYou() : this.divColoredPlayer(playerId);
+        var name = playerId == this.player_id ? this.divYou() : this.divColoredPlayer(playerId);
         var buttonDiv = this.addActionButtonColor(buttonId, name, handler, "gray", undefined, disabled);
         buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
-        var logo = this.cloneAndFixIds("miniboard_corp_logo_".concat(playerColor), 'bar', true);
-        logo.classList.remove('miniboard_corp_logo');
+        var logo = this.cloneAndFixIds("miniboard_corp_logo_".concat(playerColor), "bar", true);
+        logo.classList.remove("miniboard_corp_logo");
         buttonDiv.innerHTML = logo.outerHTML + " " + name;
         return buttonDiv;
     };
@@ -5046,10 +5078,13 @@ var GameXBody = /** @class */ (function (_super) {
             this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
     };
     GameXBody.prototype.onSelectTarget = function (opId, target, checkActive) {
+        var _a;
         if (checkActive === void 0) { checkActive = false; }
         // can add prompt
         if ($(target) && checkActive && !this.checkActiveSlot(target))
             return;
+        if (this.isCurrentPlayerActive())
+            (_a = $("generalactions")) === null || _a === void 0 ? void 0 : _a.scrollIntoView({ behavior: "smooth", block: "center" });
         return this.sendActionResolveWithTarget(opId, target);
     };
     // on click hooks
@@ -5079,8 +5114,9 @@ var GameXBody = /** @class */ (function (_super) {
             this.onToken_playerTurnChoice($(tid).parentNode.id);
         }
         else {
-            this.showMoveUnauthorized();
+            return false;
         }
+        return true;
     };
     GameXBody.prototype.onToken_multiplayerChoice = function (tid) {
         this.onToken_playerTurnChoice(tid);
@@ -5125,8 +5161,7 @@ var GameXBody = /** @class */ (function (_super) {
                 $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
                 $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
             }
-            //save as local setting (per table) XXX should should not be stored per table, its user setting and who will just grow unbounded with every game?
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + "_" + this.table_id));
+            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor));
             localColorSetting.writeProp("digital_cardfilter", btncolor);
         }
         $("tableau_" + plcolor).dataset[tblitem] = value;
@@ -5192,6 +5227,7 @@ var GameXBody = /** @class */ (function (_super) {
         //disable on mobile for now
         if ($("ebd-body").classList.contains("mobile_version"))
             return;
+        console.log("enabled drag on ", node.id);
         node.draggable = true;
         node.addEventListener("dragstart", onDragStart);
         node.addEventListener("dragend", onDragEnd);
@@ -5199,6 +5235,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.disableDragOnCard = function (node) {
         if (!node.draggable)
             return;
+        console.log("disbale drag on ", node.id);
         node.draggable = false;
         node.removeEventListener("dragstart", onDragStart);
         node.removeEventListener("dragend", onDragEnd);
@@ -5231,7 +5268,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
         dojo.subscribe("tokensUpdate", this, "notif_tokensUpdate");
-        //this.notifqueue.setSynchronous("notif_tokensUpdate", 5000); // reset in notif handler
+        this.notifqueue.setSynchronous("tokensUpdate", 50);
     };
     //get settings
     GameXBody.prototype.getSetting = function (key) {
@@ -5257,14 +5294,11 @@ var Operation = /** @class */ (function () {
 }());
 function onDragStart(event) {
     var selectedItem = event.currentTarget;
-    //console.log("onDragStart",selectedItem?.id);
+    console.log("onDragStart", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
     var cardParent = selectedItem.parentElement;
     if (!cardParent.classList.contains("handy"))
         return;
-    if ($("hand_area").dataset.sort_type != "manual" ||
-        ($("ebd-body").classList.contains("touch-device") && $("ebd-body").classList.contains("mobile_version"))) {
-        return;
-    }
+    // no checks, handler should not be installed if on mobile and such
     event.stopPropagation();
     $("ebd-body").classList.add("drag_inpg");
     selectedItem.classList.add("drag-active");
@@ -5312,12 +5346,12 @@ function onDragStart(event) {
             });
         }
     });
-    // console.log("onDragStart commit");
+    console.log("onDragStart commit");
 }
 function onDragEnd(event) {
     event.stopPropagation();
     var selectedItem = event.target;
-    // console.log("onDragEnd",selectedItem?.id);
+    console.log("onDragEnd", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
     var x = event.clientX;
     var y = event.clientY;
     var containerNode = selectedItem.parentElement;
@@ -5347,7 +5381,7 @@ function onDragEnd(event) {
     containerNode.style.removeProperty("height");
     dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
     gameui.saveLocalManualOrder(containerNode);
-    // console.log("onDragEnd commit");
+    console.log("onDragEnd commit");
 }
 var LocalSettings = /** @class */ (function () {
     function LocalSettings(gameName, props) {

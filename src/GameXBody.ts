@@ -43,8 +43,6 @@ class GameXBody extends GameTokens {
       this.zoneWidth = 0;
       this.zoneHeight = 0;
 
-      this.local_counters["game"] = { cities: 0 };
-
       this.setupLocalSettings();
 
       super.setup(gamedatas);
@@ -231,7 +229,7 @@ class GameXBody extends GameTokens {
 
     //read last saved value for filter in digital view
     if (!this.isLayoutFull()) {
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color + "_" + this.table_id));
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color));
       const selected = localColorSetting.readProp("digital_cardfilter", "0");
 
       for (let i = 0; i <= 3; i++) {
@@ -713,7 +711,7 @@ class GameXBody extends GameTokens {
     }
   }
 
-  notif_tokensUpdate(notif: Notif){
+  notif_tokensUpdate(notif: Notif) {
     for (const opIdS in notif.args.operations) {
       const opInfo = notif.args.operations[opIdS];
       this.updateHandInformation(opInfo.args.info, opInfo.type);
@@ -1337,9 +1335,87 @@ awarded.`);
         this.vlayout.createHtmlForToken(tokenNode, displayInfo);
       }
     }
-    if (tokenNode.id?.startsWith("card_")) {
+    this.vlayout.renderSpecificToken(tokenNode);
+  }
+
+  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined) {
+    super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+
+    if (tokenInfo.key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
       if ($("hand_area").dataset.sort_type == "manual") this.enableDragOnCard(tokenNode);
       else this.disableDragOnCard(tokenNode);
+    }
+
+    // update resource holder counters
+    if (tokenInfo.key.startsWith("resource_")) {
+      let targetCard = 0;
+      if (tokenInfo.location.startsWith("card_")) {
+        //resource added to card
+        targetCard = getIntPart(tokenInfo.location, 2);
+      } else if (tokenInfoBefore?.location?.startsWith("card_")) {
+        //resource removed from a card
+        targetCard = getIntPart(tokenInfoBefore.location, 2);
+      }
+      if (targetCard) {
+        if (this.isLayoutFull()) {
+          const dest_holder: string = (tokenNode.parentNode as HTMLElement).id;
+          const count = String($(dest_holder).querySelectorAll(".resource").length);
+          $(dest_holder).dataset.resource_counter = count;
+        } else {
+          const dest_holder: string = `resource_holder_${targetCard}`;
+          const dest_counter: string = `resource_holder_counter_${targetCard}`;
+          const count = String($(dest_holder).querySelectorAll(".resource").length);
+          $(dest_holder).dataset.resource_counter = count;
+          $(dest_counter).dataset.resource_counter = count;
+        }
+      }
+    }
+
+    if (tokenInfo.key.startsWith("marker_")) {
+      if (tokenInfo.location.startsWith("award")) {
+        this.strikeNextAwardMilestoneCost("award");
+      } else if (tokenInfo.location.startsWith("milestone")) {
+        this.strikeNextAwardMilestoneCost("milestone");
+      }
+    }
+
+    if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
+      $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
+      $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
+    }
+
+    if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
+      const t = this.getRulesFor(tokenInfo.key, "t");
+      const plcolor = getPart(tokenInfo.location, 1);
+      const count = $(tokenInfo.location).querySelectorAll(`[data-card-type="${t}"]`).length;
+      this.local_counters[plcolor]["cards_" + t] = count;
+      this.updatePlayerLocalCounters(plcolor);
+
+      if (!this.isLayoutFull()) {
+        //auto switch tabs here
+        // this.darhflog("isdoingsetup", this.isDoingSetup);
+        if (!this.isDoingSetup) {
+          if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
+            let original = 0;
+            for (let i = 0; i <= 3; i++) {
+              if ($(tokenInfo.location).dataset["visibility_" + i] == "1") original = i;
+            }
+            if (original != 0) {
+              for (let i = 1; i <= 3; i++) {
+                let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
+                if (i == t) {
+                  $(tokenInfo.location).dataset["visibility_" + i] = "1";
+                  $(btn).dataset.selected = "1";
+                } else {
+                  $(btn).dataset.selected = "0";
+                  $(tokenInfo.location).dataset["visibility_" + i] = "0";
+                }
+              }
+              this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -1368,17 +1444,6 @@ awarded.`);
         this.enablePlayerPanel(plId);
       }
     }
-
-    //local : number of cities on mars
-    if (node.id.startsWith("tracker_city_")) {
-      this.local_counters["game"].cities = 0;
-      for (let plid in this.gamedatas.players) {
-        this.local_counters["game"].cities =
-          this.local_counters["game"].cities + parseInt($("tracker_city_" + this.gamedatas.players[plid].color).dataset.state);
-      }
-    }
-
-    this.vlayout.renderSpecificToken(node);
 
     //handle copies of trackers
     const trackerCopy = "alt_" + node.id;
@@ -1508,6 +1573,12 @@ awarded.`);
       $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
     }
   }
+  /**
+   * This function can convert the database info into dom placement info.
+   * This SHOULD NOT MODIFY dom state. For that use @see onUpdateTokenInDom
+   * @param tokenInfo
+   * @returns
+   */
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
     let result = super.getPlaceRedirect(tokenInfo);
     if (tokenInfo.key.startsWith("tracker") && $(tokenInfo.key)) {
@@ -1524,77 +1595,25 @@ awarded.`);
         if (tokenInfo.location.startsWith("card_main_")) {
           //resource added to card
           result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
-          const dest_holder: string = tokenInfo.location.replace("card_main_", "resource_holder_");
-          const dest_counter: string = tokenInfo.location.replace("card_main_", "resource_holder_counter_");
-          $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) + 1).toString();
-          $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) + 1).toString();
-        } else if (tokenInfo.location.startsWith("tableau_")) {
-          //resource moved from card
-          //which card ?
-          const dest_holder = $(tokenInfo.key) ? $(tokenInfo.key).parentElement.id : "";
-          if (dest_holder.includes("holder_")) {
-            const dest_counter = dest_holder.replace("holder_", "holder_counter_");
-            if (dojo.byId(dest_holder)) {
-              $(dest_holder).dataset.resource_counter = (parseInt($(dest_holder).dataset.resource_counter) - 1).toString();
-              $(dest_counter).dataset.resource_counter = (parseInt($(dest_counter).dataset.resource_counter) - 1).toString();
-            }
-          }
         }
-      }
-    } else if (tokenInfo.key.startsWith("marker_")) {
-      if (tokenInfo.location.startsWith("award")) {
-        this.strikeNextAwardMilestoneCost("award");
-      } else if (tokenInfo.location.startsWith("milestone")) {
-        this.strikeNextAwardMilestoneCost("milestone");
       }
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       result.location = tokenInfo.location + "_corp_effect";
-
-      //also set property to corp logo div
-      $(tokenInfo.location + "_corp_logo").dataset.corp = tokenInfo.key;
-      $(tokenInfo.location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = tokenInfo.key;
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
 
       if (this.getRulesFor(tokenInfo.key, "a")) {
         result.location = tokenInfo.location + "_cards_2a";
-      }
-
-      if ($(tokenInfo.location).querySelector("#" + tokenInfo.key) == null) {
-        const plcolor = tokenInfo.location.replace("tableau_", "");
-        this.local_counters[plcolor]["cards_" + t]++;
-        this.updatePlayerLocalCounters(plcolor);
+      } else if (t == 2 && this.getRulesFor(tokenInfo.key, "holds", "")) {
+        // card can hold stuff
+        result.location = tokenInfo.location + "_cards_2a";
       }
 
       if (!this.isLayoutFull()) {
         if (t == 1 || t == 3) {
           if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
             result.location = tokenInfo.location + "_cards_" + t + "vp";
-          }
-        }
-
-        //auto switch tabs here
-        // this.darhflog("isdoingsetup", this.isDoingSetup);
-        if (!this.isDoingSetup) {
-          if ($(tokenInfo.location).dataset["visibility_" + t] == "0") {
-            let original = 0;
-            for (let i = 0; i <= 3; i++) {
-              if ($(tokenInfo.location).dataset["visibility_" + i] == "1") original = i;
-            }
-            if (original != 0) {
-              for (let i = 1; i <= 3; i++) {
-                let btn = "player_viewcards_" + i + "_" + tokenInfo.location.replace("tableau_", "");
-                if (i == t) {
-                  $(tokenInfo.location).dataset["visibility_" + i] = "1";
-                  $(btn).dataset.selected = "1";
-                } else {
-                  $(btn).dataset.selected = "0";
-                  $(tokenInfo.location).dataset["visibility_" + i] = "0";
-                }
-              }
-              this.customAnimation.setOriginalFilter(tokenInfo.location, original, t);
-            }
           }
         }
       }
@@ -1633,6 +1652,7 @@ awarded.`);
     this.ajaxuseraction("resolve", {
       ops: [{ op: op, ...args }]
     });
+    return true;
   }
 
   sendActionDecline(op: number) {
@@ -1710,14 +1730,13 @@ awarded.`);
   }
 
   sendActionResolveWithTarget(opId: number, target: string) {
-    this.sendActionResolve(opId, {
+    return this.sendActionResolve(opId, {
       target: target
     });
-    return;
   }
 
   sendActionResolveWithTargetAndPayment(opId: number, target: string, payment: any) {
-    this.sendActionResolve(opId, { target, payment });
+    return this.sendActionResolve(opId, { target, payment });
   }
 
   activateSlots(opInfo: any, single: boolean = true) {
@@ -1764,40 +1783,52 @@ awarded.`);
     }
 
     if (ttype == "token") {
-      opTargets.forEach((tid: string) => {
-          const divId = this.getActiveSlotRedirect(tid);
+      let firstTarget = undefined;
+      for (const tid of opTargets) {
+        if (tid == "none") continue;
+        const divId = this.getActiveSlotRedirect(tid);
+        if (divId) {
           this.setActiveSlot(divId);
           this.setReverseIdMap(divId, opId, tid);
-      });
+          if (!firstTarget) firstTarget = divId;
+        }
+      }
+
       if (single) {
+        if (!firstTarget) firstTarget = "generalactions";
         const MAGIC_BUTTONS_NUMBER = 6;
         const showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER;
+
+        $(firstTarget)?.scrollIntoView({ behavior: "smooth", block: "center" });
+
         if (showAsButtons) {
           this.addTargetButtons(opId, opTargets);
         } else {
-          // people confused when buttons are not shown, add button with explanations
-          const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-          this.addActionButtonColor(
-            "button_x",
-            name,
-            () => {
-              this.removeTooltip("button_x");
-              dojo.destroy("button_x");
-              this.addTargetButtons(opId, opTargets);
-            },
-            "orange"
-          );
-          this.addTooltip(
-            "button_x",
-            _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
-            _("Click to add buttons")
-          );
+          if (!firstTarget.startsWith("hex")) {
+            // people confused when buttons are not shown, add button with explanations
+            const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+            this.addActionButtonColor(
+              "button_x",
+              name,
+              () => {
+                this.removeTooltip("button_x");
+                dojo.destroy("button_x");
+                this.addTargetButtons(opId, opTargets);
+              },
+              "orange"
+            );
+            this.addTooltip(
+              "button_x",
+              _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
+              _("Click to add buttons")
+            );
+          }
         }
       }
     } else if (ttype == "player") {
       if (paramInfo) {
         for (let tid in paramInfo) {
-          this.activatePlayerSlot(tid, opId, single, { ... paramInfo[tid], op: opInfo });
+          this.activatePlayerSlot(tid, opId, single, { ...paramInfo[tid], op: opInfo });
         }
       } else
         opTargets.forEach((tid: string) => {
@@ -1840,10 +1871,15 @@ awarded.`);
 
   addTargetButtons(opId: number, opTargets: string[]) {
     opTargets.forEach((tid: string) => {
-      this.addActionButtonColor("button_" + tid, this.getTokenName(tid), () => {
-        this.sendActionResolveWithTarget(opId, tid);
-      }, tid == 'none' ? 'orange' : 'targetcolor');
-    })
+      this.addActionButtonColor(
+        "button_" + tid,
+        this.getTokenName(tid),
+        () => {
+          this.sendActionResolveWithTarget(opId, tid);
+        },
+        tid == "none" ? "orange" : "targetcolor"
+      );
+    });
   }
 
   /**
@@ -1878,7 +1914,7 @@ awarded.`);
     if (info.max !== undefined) {
       buttonDiv.innerHTML +=
         " " +
-        this.format_string_recursive(you ? _("(own ${res_count})"): _("(owns ${res_count})"), {
+        this.format_string_recursive(you ? _("(own ${res_count})") : _("(owns ${res_count})"), {
           res_count: info.max
         });
     }
@@ -1897,11 +1933,11 @@ awarded.`);
   getActiveSlotRedirect(_node: string): string {
     let node = $(_node);
     if (!node) {
-      this.showError("Not found " + _node);
-      return _node;
+      console.error("Not found for active slot " + _node);
+      return undefined;
     }
     const id = node.id;
-    if (!id) return _node;
+    if (!id) return undefined;
     let target: ElementOrId = id;
     if (id.startsWith("tracker_p_")) {
       target = id.replace("tracker_p_", "playergroup_plants_");
@@ -1969,48 +2005,52 @@ awarded.`);
     node.innerHTML = paiement_htm;
 
     //adds actions to button payments
-    this.connectClass("btn_payment_item", "onclick", (event) => {
-      const id = (event.currentTarget as HTMLElement).id;
-      const direction = $(id).dataset.direction;
-      const res = $(id).dataset.resource;
-      dojo.stopEvent(event);
+    document.querySelectorAll(".btn_payment_item").forEach((node) => {
+      node.addEventListener("click", (event) => {
+        const id = (event.currentTarget as HTMLElement).id;
+        const direction = $(id).dataset.direction;
+        const res = $(id).dataset.resource;
+        dojo.stopEvent(event);
 
-      if (direction == "minus") {
-        if (this.custom_pay.selected[res] > 0) {
-          this.custom_pay.selected[res]--;
+        if (direction == "minus") {
+          if (this.custom_pay.selected[res] > 0) {
+            this.custom_pay.selected[res]--;
+          }
         }
-      }
-      if (direction == "plus") {
-        if (this.custom_pay.selected[res] < this.custom_pay.available[res]) {
-          this.custom_pay.selected[res]++;
+        if (direction == "plus") {
+          if (this.custom_pay.selected[res] < this.custom_pay.available[res]) {
+            this.custom_pay.selected[res]++;
+          }
         }
-      }
-      $("payment_item_" + res).innerHTML = this.custom_pay.selected[res];
+        $("payment_item_" + res).innerHTML = this.custom_pay.selected[res];
 
-      let total_res = 0;
-      // let values_htm='';
-      for (let res in this.custom_pay.rate) {
-        if (res != "m") {
-          total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
-          //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
+        let total_res = 0;
+        // let values_htm='';
+        for (let res in this.custom_pay.rate) {
+          if (res != "m") {
+            total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
+            //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
+          }
         }
-      }
-      let mc = this.custom_pay.needed - total_res;
-      if (mc < 0) {
-        mc = 0;
-        $("btn_custompay_send").classList.add("overpay");
-      } else {
-        $("btn_custompay_send").classList.remove("overpay");
-      }
-      this.custom_pay.selected["m"] = mc;
-      //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
-      const values_htm = this.resourcesToHtml(this.custom_pay.selected, true);
+        let mc = this.custom_pay.needed - total_res;
+        if (mc < 0) {
+          mc = 0;
+          $("btn_custompay_send").classList.add("overpay");
+        } else {
+          $("btn_custompay_send").classList.remove("overpay");
+        }
+        this.custom_pay.selected["m"] = mc;
+        //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
+        const values_htm = this.resourcesToHtml(this.custom_pay.selected, true);
 
-      $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
+        $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
+      });
     });
+    // connectClass is not suitable for temp objects, it leaves refernce in memory
+    //this.connectClass("btn_payment_item", "onclick", (event) => {   });
 
     //adds action to final payment button
-    this.connect($("btn_custompay_send"), "onclick", () => {
+    $("btn_custompay_send").addEventListener("click", () => {
       let pays = {};
       //backend doesn't accept 0 as paiment
       for (let res of Object.keys(this.custom_pay.selected)) {
@@ -2080,15 +2120,14 @@ awarded.`);
       return this.addActionButtonColor(buttonId, _("None"), handler, "orange", undefined, disabled);
     }
 
-
     const playerId = this.getPlayerIdByColor(playerColor);
     if (!playerId) return undefined; // invalid?
-    let name = (playerId == this.player_id) ? this.divYou() : this.divColoredPlayer(playerId);
+    let name = playerId == this.player_id ? this.divYou() : this.divColoredPlayer(playerId);
     const buttonDiv = this.addActionButtonColor(buttonId, name, handler, "gray", undefined, disabled);
 
     buttonDiv.classList.add("otherplayer", "plcolor_" + playerColor);
-    const logo = this.cloneAndFixIds(`miniboard_corp_logo_${playerColor}`,'bar', true);
-    logo.classList.remove('miniboard_corp_logo');
+    const logo = this.cloneAndFixIds(`miniboard_corp_logo_${playerColor}`, "bar", true);
+    logo.classList.remove("miniboard_corp_logo");
     buttonDiv.innerHTML = logo.outerHTML + " " + name;
 
     return buttonDiv;
@@ -2132,7 +2171,14 @@ awarded.`);
       // xxx add something for remaining ops in ordered case?
 
       if (!single && !ordered) {
-        this.addActionButtonColor( `button_${opId}`, name, ()=>this.onOperationButton(opInfo), opInfo.args?.args?.bcolor, opInfo.owner, opArgs.void);
+        this.addActionButtonColor(
+          `button_${opId}`,
+          name,
+          () => this.onOperationButton(opInfo),
+          opInfo.args?.args?.bcolor,
+          opInfo.owner,
+          opArgs.void
+        );
       }
 
       // add done (skip) when optional
@@ -2147,7 +2193,7 @@ awarded.`);
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
   }
 
-  onOperationButton(opInfo: any){
+  onOperationButton(opInfo: any) {
     const opTargets = opInfo.args?.target ?? [];
     const opId = opInfo.id as number;
     const ack = opInfo.args.ack == 1;
@@ -2208,6 +2254,7 @@ awarded.`);
   onSelectTarget(opId: number, target: string, checkActive: boolean = false) {
     // can add prompt
     if ($(target) && checkActive && !this.checkActiveSlot(target)) return;
+    if (this.isCurrentPlayerActive()) $("generalactions")?.scrollIntoView({ behavior: "smooth", block: "center" });
     return this.sendActionResolveWithTarget(opId, target);
   }
 
@@ -2229,8 +2276,9 @@ awarded.`);
       // propagate to parent
       this.onToken_playerTurnChoice(($(tid).parentNode as HTMLElement).id);
     } else {
-      this.showMoveUnauthorized();
+      return false;
     }
+    return true;
   }
 
   onToken_multiplayerChoice(tid: string) {
@@ -2283,8 +2331,7 @@ awarded.`);
         $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
         $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
       }
-      //save as local setting (per table) XXX should should not be stored per table, its user setting and who will just grow unbounded with every game?
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor + "_" + this.table_id));
+      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor));
       localColorSetting.writeProp("digital_cardfilter", btncolor);
     }
     $("tableau_" + plcolor).dataset[tblitem] = value;
@@ -2359,12 +2406,14 @@ awarded.`);
     if (node.draggable) return;
     //disable on mobile for now
     if ($("ebd-body").classList.contains("mobile_version")) return;
+    console.log("enabled drag on ", node.id);
     node.draggable = true;
     node.addEventListener("dragstart", onDragStart);
     node.addEventListener("dragend", onDragEnd);
   }
   disableDragOnCard(node: HTMLElement) {
     if (!node.draggable) return;
+    console.log("disbale drag on ", node.id);
     node.draggable = false;
     node.removeEventListener("dragstart", onDragStart);
     node.removeEventListener("dragend", onDragEnd);
@@ -2400,7 +2449,7 @@ awarded.`);
     super.setupNotifications();
 
     dojo.subscribe("tokensUpdate", this, "notif_tokensUpdate");
-    //this.notifqueue.setSynchronous("notif_tokensUpdate", 5000); // reset in notif handler
+    this.notifqueue.setSynchronous("tokensUpdate", 50);
   }
 
   //get settings
@@ -2432,16 +2481,11 @@ class Operation {
 
 function onDragStart(event: DragEvent) {
   const selectedItem = event.currentTarget as HTMLElement;
-  //console.log("onDragStart",selectedItem?.id);
-  const cardParent =  selectedItem.parentElement
+  console.log("onDragStart", selectedItem?.id);
+  const cardParent = selectedItem.parentElement;
   if (!cardParent.classList.contains("handy")) return;
 
-  if (
-    $("hand_area").dataset.sort_type != "manual" ||
-    ($("ebd-body").classList.contains("touch-device") && $("ebd-body").classList.contains("mobile_version"))
-  ) {
-    return;
-  }
+  // no checks, handler should not be installed if on mobile and such
   event.stopPropagation();
 
   $("ebd-body").classList.add("drag_inpg");
@@ -2494,14 +2538,14 @@ function onDragStart(event: DragEvent) {
       });
     }
   });
- // console.log("onDragStart commit");
+  console.log("onDragStart commit");
 }
 
 function onDragEnd(event: DragEvent) {
   event.stopPropagation();
-  
+
   const selectedItem = event.target as HTMLElement;
- // console.log("onDragEnd",selectedItem?.id);
+  console.log("onDragEnd", selectedItem?.id);
 
   let x = event.clientX;
   let y = event.clientY;
@@ -2535,5 +2579,5 @@ function onDragEnd(event: DragEvent) {
   dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
   (gameui as GameXBody).saveLocalManualOrder(containerNode);
 
- // console.log("onDragEnd commit");
+  console.log("onDragEnd commit");
 }

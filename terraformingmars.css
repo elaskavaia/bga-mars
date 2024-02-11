@@ -59,6 +59,10 @@
   -webkit-user-drag: none;
 }
 
+#page-title {
+  min-height: 76px;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1) !important;
@@ -967,6 +971,10 @@
   top: 0;
   right: 0;
   flex-direction: row-reverse;
+}
+
+.card > * {
+  pointer-events: none;
 }
 
 .card .prereq_content > * {
