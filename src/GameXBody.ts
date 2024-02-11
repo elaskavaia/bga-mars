@@ -1840,27 +1840,26 @@ awarded.`);
         const operations = args.operations ?? args.player_operations[this.player_id].operations;
 
         opTargets.forEach((tid: string, i: number) => {
+          const detailsInfo = paramInfo[tid];
           if (tid == "payment") {
             //show only if options
-            const opts = operations[opId].args.info?.[tid];
+
             if (
-              Object.entries(opts.resources).reduce(
+              Object.entries(detailsInfo.resources).reduce(
                 (sum: number, [key, val]: [string, unknown]) =>
                   sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0),
                 0
               ) > 0
             ) {
-              this.createCustomPayment(opId, opts);
+              this.createCustomPayment(opId, detailsInfo);
             }
           } else {
-            const detailsInfo = operations[opId].args?.info?.[tid];
             const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
             //console.log("enum details "+tid,detailsInfo);
             let buttonColor = undefined;
             if (sign < 0) buttonColor = "gray";
             if (sign > 0) buttonColor = "red";
             const divId = "button_" + i;
-            //  title = this.parseActionsToHTML(tid);
             let title = this.resourcesToHtml(detailsInfo.resources);
             this.addActionButtonColor(divId, title, () => this.onSelectTarget(opId, tid), buttonColor);
           }

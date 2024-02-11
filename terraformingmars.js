@@ -4711,21 +4711,19 @@ var GameXBody = /** @class */ (function (_super) {
         else if (ttype == "enum") {
             if (single) {
                 var args = (_d = this.gamedatas.gamestate.args) !== null && _d !== void 0 ? _d : this.gamedatas.gamestate.private_state.args;
-                var operations_1 = (_e = args.operations) !== null && _e !== void 0 ? _e : args.player_operations[this.player_id].operations;
+                var operations = (_e = args.operations) !== null && _e !== void 0 ? _e : args.player_operations[this.player_id].operations;
                 opTargets.forEach(function (tid, i) {
-                    var _a, _b, _c;
+                    var detailsInfo = paramInfo[tid];
                     if (tid == "payment") {
                         //show only if options
-                        var opts = (_a = operations_1[opId].args.info) === null || _a === void 0 ? void 0 : _a[tid];
-                        if (Object.entries(opts.resources).reduce(function (sum, _a) {
+                        if (Object.entries(detailsInfo.resources).reduce(function (sum, _a) {
                             var key = _a[0], val = _a[1];
                             return sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0);
                         }, 0) > 0) {
-                            _this.createCustomPayment(opId, opts);
+                            _this.createCustomPayment(opId, detailsInfo);
                         }
                     }
                     else {
-                        var detailsInfo = (_c = (_b = operations_1[opId].args) === null || _b === void 0 ? void 0 : _b.info) === null || _c === void 0 ? void 0 : _c[tid];
                         var sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
                         //console.log("enum details "+tid,detailsInfo);
                         var buttonColor = undefined;
@@ -4734,7 +4732,6 @@ var GameXBody = /** @class */ (function (_super) {
                         if (sign > 0)
                             buttonColor = "red";
                         var divId = "button_" + i;
-                        //  title = this.parseActionsToHTML(tid);
                         var title = _this.resourcesToHtml(detailsInfo.resources);
                         _this.addActionButtonColor(divId, title, function () { return _this.onSelectTarget(opId, tid); }, buttonColor);
                     }
