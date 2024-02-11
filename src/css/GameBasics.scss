@@ -43,6 +43,10 @@
     -webkit-user-drag: none; // prevent dragging buttons on title
 }
 
+#page-title {
+  min-height: 76px; // prevent jumping and resizing of header
+}
+
 
 @keyframes pulse {
   0% {
