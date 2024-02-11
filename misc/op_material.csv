@@ -13,7 +13,7 @@ city|Place City Tile|${you} must select a location to place a city, cannot place
 tile|Place Tile|${you} must select a location to place a special tile
 discard|Discard Card from Hand|${you} must select a card to discard
 sell|Discard Card from Hand to gain M€|${you} must select a card to discard to gain 1 M€
-activate|Activate Card|${you} must select a card to activate
+
 ores|Add resource to another card|${you} must select a card to add ${count} ${restype_name} resource/s
 nores|Remove resource from another card|${you} must select a card to remove ${count} ${restype_name} resource/s
 keep|Keep Card|${you} must select a card to add keep
@@ -22,6 +22,7 @@ keepcorp|Keep Corp|${you} must select one corporation card to keep
 draft|Draft Card|${you} must select one card to draft (buy or discard later)
 
 #set ack=
+activate|Activate Card|${you} must select a card to activate
 res|Add resource to this card
 nres|Remove resource from this card
 prediscard|Discard

@@ -3481,12 +3481,6 @@ $this->token_types = [
   'name' => clienttranslate("Discard Card from Hand to gain M€"),
   'prompt' => '${you} must select a card to discard to gain 1 M€',
 ],
- 'op_activate' => [  //
-  'ack' => 1,
-  'type' => 'activate',
-  'name' => clienttranslate("Activate Card"),
-  'prompt' => '${you} must select a card to activate',
-],
  'op_ores' => [  //
   'ack' => 1,
   'type' => 'ores',
@@ -3522,6 +3516,11 @@ $this->token_types = [
   'type' => 'draft',
   'name' => clienttranslate("Draft Card"),
   'prompt' => '${you} must select one card to draft (buy or discard later)',
+],
+ 'op_activate' => [  //
+  'type' => 'activate',
+  'name' => clienttranslate("Activate Card"),
+  'prompt' => '${you} must select a card to activate',
 ],
  'op_res' => [  //
   'type' => 'res',
