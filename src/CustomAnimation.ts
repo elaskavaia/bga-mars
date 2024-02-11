@@ -217,9 +217,9 @@ class CustomAnimation {
 
   }
 
-  animateRemoveResourceFromCard(resource_id:string):Promise<any> {
+  animateRemoveResourceFromCard(resource_id:string, card_id?: string):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
-    const animate_token  =  $(resource_id).parentElement.id;
+    const animate_token  = card_id ?? $(resource_id).parentElement.id;
     if (animate_token.includes("tableau")) {
       //too late, resource is not on card anymore
       return  this.getImmediatePromise();
