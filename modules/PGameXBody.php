@@ -293,14 +293,12 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_increaseParam($color, $res, $count, $res == 't' ? 2 : 1);
     }
 
-    function debug_res($m = 0, $s = 0, $u = 0, $p = 0, $e = 0, $h = 0, $color = 0) {
-        if (!$color) $color = $this->getCurrentPlayerColor();
-        $res = ['m' => $m, 's' => $s, 'u' => $u, 'p' => $p, 'e' => $e, 'h' => $h];
-        foreach ($res as $type => $count) {
-            $id = $this->getTrackerId($color, $type);
-            $this->dbSetTokenState($id, $count, '', [], $this->getPlayerIdByColor($color));
-        }
+    function debug_res($card) {
+        $color = $this->getCurrentPlayerColor();
+        $this->putInEffectPool($color, "res", $card);
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
+
 
     function debug_opcard($card_id) {
         $color = $this->getCurrentPlayerColor();
