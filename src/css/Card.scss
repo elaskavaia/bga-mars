@@ -603,6 +603,10 @@ display: none;
   flex-direction: row-reverse;
 }
 
+.card > * {
+  pointer-events: none;
+}
+
 
 .card .prereq_content > * {
   /*display: inline-block;
