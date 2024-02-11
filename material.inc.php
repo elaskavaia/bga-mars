@@ -4448,6 +4448,13 @@ $this->token_types = [
   'count' => 0,
   'name' => clienttranslate("Yellow Marker"),
 ],
+ 'none' => [  //
+  'type' => 'marker',
+  'create' => 0,
+  'location' => 'limbo',
+  'count' => 0,
+  'name' => clienttranslate("None"),
+],
 /* --- gen php end tracker_material --- */
 /* --- gen php begin map_material --- */
 // #tharsis - can do variants later

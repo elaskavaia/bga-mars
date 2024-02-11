@@ -122,3 +122,6 @@ marker_0000ff|Blue Marker
 marker_008000|Green Marker
 marker_773300|Black Marker
 marker_ffa500|Yellow Marker
+
+#set create=0
+none|None
