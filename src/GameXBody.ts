@@ -1802,14 +1802,15 @@ awarded.`);
       if (single) {
         if (!firstTarget) firstTarget = "generalactions";
         const MAGIC_BUTTONS_NUMBER = 6;
-        const showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER;
-
-        $(firstTarget)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        const hex = firstTarget.startsWith("hex");
+        const showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER && !hex;
 
         if (showAsButtons) {
           this.addTargetButtons(opId, opTargets);
         } else {
-          if (!firstTarget.startsWith("hex")) {
+          if (hex) {
+            $(firstTarget).scrollIntoView({ behavior: "smooth", block: "center" });
+          } else {
             // people confused when buttons are not shown, add button with explanations
             const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
             this.addActionButtonColor(
@@ -1827,7 +1828,7 @@ awarded.`);
               _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
               _("Click to add buttons")
             );
-          }
+          } 
         }
       }
     } else if (ttype == "player") {

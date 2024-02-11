@@ -4680,7 +4680,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         if (single === void 0) { single = true; }
         var opId = opInfo.id;
         var opArgs = opInfo.args;
@@ -4734,13 +4734,16 @@ var GameXBody = /** @class */ (function (_super) {
                 if (!firstTarget)
                     firstTarget = "generalactions";
                 var MAGIC_BUTTONS_NUMBER = 6;
-                var showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER;
-                (_c = $(firstTarget)) === null || _c === void 0 ? void 0 : _c.scrollIntoView({ behavior: "smooth", block: "center" });
+                var hex = firstTarget.startsWith("hex");
+                var showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER && !hex;
                 if (showAsButtons) {
                     this.addTargetButtons(opId, opTargets);
                 }
                 else {
-                    if (!firstTarget.startsWith("hex")) {
+                    if (hex) {
+                        $(firstTarget).scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                    else {
                         // people confused when buttons are not shown, add button with explanations
                         var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
                         this.addActionButtonColor("button_x", name_2, function () {
@@ -4766,8 +4769,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "enum") {
             if (single) {
-                var args = (_d = this.gamedatas.gamestate.args) !== null && _d !== void 0 ? _d : this.gamedatas.gamestate.private_state.args;
-                var operations = (_e = args.operations) !== null && _e !== void 0 ? _e : args.player_operations[this.player_id].operations;
+                var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
+                var operations = (_d = args.operations) !== null && _d !== void 0 ? _d : args.player_operations[this.player_id].operations;
                 opTargets.forEach(function (tid, i) {
                     var detailsInfo = paramInfo[tid];
                     if (tid == "payment") {
