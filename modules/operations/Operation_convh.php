@@ -24,6 +24,6 @@ class Operation_convh extends AbsOperation {
         return false;
     }
     protected function getPrimaryArgType() {
-        return '';
+        return 'token';
     }
 }

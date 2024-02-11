@@ -27,6 +27,6 @@ class Operation_convp extends AbsOperation {
         return $this->game->isVoidSingle("${cost}np", $color) || $this->game->isVoidSingle("forest", $color);
     }
     protected function getPrimaryArgType() {
-        return '';
+        return 'token';
     }
 }
