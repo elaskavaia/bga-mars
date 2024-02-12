@@ -100,8 +100,17 @@ class GameXBody extends GameTokens {
       //Give tooltips to alt trackers in player boards
       document.querySelectorAll(".tracker").forEach((node) => {
         const id = node.id;
+        let tnode=node;
+        if (node.parentElement && node.parentElement.classList.contains('playerboard_produce') || node.parentElement.classList.contains('playerboard_own')) {
+          //wont have a tt without an id
+          if (!node.parentElement.id) node.parentElement.id='gen_id_'+Math.random()*10000000;
+          tnode=node.parentElement;
+        }
         if (id.startsWith("alt_")) {
           this.updateTooltip(id.substring(4), node);
+          this.updateTooltip(id.substring(4), tnode);
+        } else {
+          this.updateTooltip(id, tnode);
         }
       });
 
@@ -336,6 +345,11 @@ class GameXBody extends GameTokens {
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
     this.localSettings.renderContents("settings-controls-container");
+
+    //cleanup old table settings
+    //using a simpler namespace context for easier filtering
+   // const purgeSettings = new LocalSettings(this.getLocalSettingNamespace());
+   // purgeSettings.manageObsoleteData(this.table_id);
   }
 
   /**
@@ -1261,9 +1275,10 @@ awarded.`);
           */
     }
 
+    /*
     if (displayInfo.mainType == "marker" && tokenNode.id && !this.isLayoutFull()) {
       this.vlayout.convertInto3DCube(tokenNode, displayInfo.color);
-    }
+    }*/
   }
 
   syncTokenDisplayInfo(tokenNode: HTMLElement) {
