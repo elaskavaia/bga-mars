@@ -1718,9 +1718,9 @@ awarded.`);
     if (rules && rules.name) return this.getTr(rules.name);
     return op;
   }
-  getOperationRules(opInfo: string | Operation) {
-    if (typeof opInfo == "string") return this.getRulesFor("op_" + opInfo, "*");
-    return this.getRulesFor("op_" + opInfo.type, "*");
+  getOperationRules(opInfo: string | Operation, key: string = "*") {
+    if (typeof opInfo == "string") return this.getRulesFor("op_" + opInfo, key);
+    return this.getRulesFor("op_" + opInfo.type, key);
   }
 
   onUpdateActionButtons_playerConfirm(args) {
@@ -1828,7 +1828,7 @@ awarded.`);
               _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
               _("Click to add buttons")
             );
-          } 
+          }
         }
       }
     } else if (ttype == "player") {
@@ -1872,7 +1872,7 @@ awarded.`);
         });
       }
     } else if (ttype) {
-      console.error("Unknonwn type "+ttype, opInfo);
+      console.error("Unknonwn type " + ttype, opInfo);
     }
   }
 
@@ -2142,6 +2142,54 @@ awarded.`);
     return buttonDiv;
   }
 
+  completeOpInfo(opId: number, opInfo: any, xop: string) {
+    try {
+      // server may skip sending some data, this will feel all omitted fields
+      opInfo.id = opId; // should be already there but just in case
+      opInfo.xop = xop; // parent op
+      opInfo.count = parseInt(opInfo.count);
+      if (opInfo.mcount === undefined) opInfo.mcount = opInfo.count;
+
+      const opArgs = opInfo.args;
+      if (opArgs.void === undefined) opArgs.void = false;
+      if (opArgs.ack === undefined) opArgs.ack = false;
+      else opArgs.ack = true;
+      if (!opArgs.info) opArgs.info = {};
+      if (!opArgs.target) opArgs.target = [];
+      opArgs.o = parseInt(opArgs.o) || 0;
+      const infokeys = Object.keys(opArgs.info);
+      if (infokeys.length == 0 && opArgs.target.length > 0) {
+        opArgs.target.forEach((element) => {
+          opArgs.info[element] = { q: 0 };
+        });
+      } else if (infokeys.length > 0 && opArgs.target.length == 0) {
+        infokeys.forEach((element) => {
+          if (opArgs.info[element].q == 0) opArgs.target.push(element);
+        });
+      }
+      if (!opArgs.prompt) opArgs.prompt = this.getOperationRules(opInfo, "prompt") ?? _("${you} must choose");
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  sortOrderOps(args: any): string[] {
+    const xop = args.op;
+    let operations = args.operations;
+    let sortedOps = Object.keys(operations);
+    if (xop != "+") return sortedOps;
+    sortedOps.sort(function (x1, y1) {
+      const x = operations[x1].args.o;
+      const y = operations[y1].args.o;
+      if (x < y) {
+        return -1;
+      }
+      if (x > y) {
+        return 1;
+      }
+      return 0;
+    });
+    return sortedOps;
+  }
   onUpdateActionButtons_playerTurnChoice(args) {
     let operations = args.operations;
     if (!operations) return; // XXX
@@ -2151,17 +2199,22 @@ awarded.`);
 
     const xop = args.op;
 
-    const single = Object.keys(operations).length == 1;
+    let sortedOps = Object.keys(operations);
+    const single = sortedOps.length == 1;
     const ordered = xop == "," && !single;
     const chooseorder = xop == "+" && !single;
-    if (chooseorder) this.setDescriptionOnMyTurn("${you} must choose order of operations");
+    if (chooseorder) {
+      this.setDescriptionOnMyTurn("${you} must choose order of operations");
+      sortedOps = this.sortOrderOps(args);
+    }
 
-    let i = 0;
-    for (const opIdS in operations) {
+    for (let i = 0; i < sortedOps.length; i++) {
+      let opIdS = sortedOps[i];
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
+      this.completeOpInfo(opId, opInfo, xop);
+
       const opArgs = opInfo.args;
-      opInfo.id = opId; // should be already there but just in case
 
       let name = this.getButtonNameForOperation(opInfo);
       const singleOrFirst = single || (ordered && i == 0);
@@ -2197,7 +2250,6 @@ awarded.`);
           this.addActionButtonColor("button_skip", _(opArgs.skipname), () => this.sendActionSkip(), "orange");
         }
       }
-      i = i + 1;
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");

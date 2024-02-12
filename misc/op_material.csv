@@ -3,7 +3,7 @@ type|name|prompt|php
 #set undo=
 #set class=
 #set ack=1
-card|Play Card|${you} must select a card to play
+
 stan|Standard Project|${you} must select a basic project to play
 claim|Claim a milestone|${you} must select a Milestone to claim
 fund|Fund an award|${you} must select an Award to fund
@@ -23,16 +23,16 @@ draft|Draft Card|${you} must select one card to draft (buy or discard later)
 
 #set ack=
 activate|Activate Card|${you} must select a card to activate
+card|Play Card|${you} must select a card to play
 res|Add resource to this card
 nres|Remove resource from this card
 prediscard|Discard
 nop|Do nothing
 
-
-#set undo=false
 #set ack=1
-pass|Pass|${you} must confirm Pass for this generation, cannot be undone
 passauto|Advanced Pass|${you} must confirm skipping second action and Pass for this generation on your next turn, your turn will end now
+#set undo=1
+pass|Pass|${you} must confirm Pass for this generation, cannot be undone
 skipsec|Skip Second Action|${you} must confirm skipping second action, turn cannot be undone after this
 draw|Draw Card in Hand|${you} must confirm draw ${count} card/s, cannot be undone
 predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone

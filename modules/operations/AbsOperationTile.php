@@ -148,4 +148,8 @@ abstract class AbsOperationTile extends AbsOperation {
 
         return $object;
     }
+
+    function canFail(){
+        return true;
+    }
 }

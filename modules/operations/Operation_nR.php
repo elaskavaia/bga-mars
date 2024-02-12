@@ -24,4 +24,8 @@ class Operation_nR extends AbsOperation {
     protected function getPrimaryArgType() {
         return '';
     }
+
+    function canFail(){
+        return true;
+    }
 }

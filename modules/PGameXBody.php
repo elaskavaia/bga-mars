@@ -1998,9 +1998,52 @@ abstract class PGameXBody extends PGameMachine {
         });
     }
 
+    function arg_operations($operations = null) {
+        $args = parent::arg_operations($operations);
+        if (count($args['operations']) > 1 && $args['op'] == '+') {
+            // mark some op for postpone
+            $canfail = false;
+            foreach ($args['operations'] as $opid => $opinfo) {
+                if ($opinfo['args']['o'] < MA_ORDER_FAIL) {
+                    $canfail = true;
+                    break;
+                }
+            }
+            foreach ($args['operations'] as $opid => &$opinfo) {
+                if ($opinfo['args']['o']  >= MA_ORDER_NOUNDO && $canfail) {
+                    $opinfo['args']['postpone'] = true;
+                    $opinfo['args']['args']['bcolor'] = 'purple';
+                }
+            }
+        }
+        return $args;
+    }
+
     function arg_operation($op) {
         $opinst = $this->getOperationInstance($op);
         return $opinst->arg();
+    }
+
+    function arg_operationMassage($id, $op) {
+        $result = $op;
+        $result["args"] = $this->arg_operation($op);
+
+        $result["typeexpr"] = null;
+        try {
+            $result["typeexpr"] = OpExpression::arr($op["type"]);
+        } catch (Throwable $e) {
+            $this->error($e);
+        }
+
+        unset($result['rank']);
+        unset($result['flags']);
+        unset($result['parent']);
+        if ($result['pool'] == 'main') unset($result['pool']);
+        if ($result['mcount'] == $result['count']) unset($result['mcount']);
+        if (!$result['data']) unset($result['data']);
+
+
+        return $result;
     }
 
 
@@ -2029,6 +2072,18 @@ abstract class PGameXBody extends PGameMachine {
         if ($data === null) $data = '';
         $opinst = $this->getOperationInstanceFromType($type, $color, $count, $data);
         return $opinst->isVoid();
+    }
+
+    function action_whatever() {
+        $curowner = $this->getCurrentPlayerColor();
+        $this->systemAssertTrue("Acting user must be a player", $curowner);
+        $ops = $this->machine->getTopOperations($curowner);
+        foreach($ops as $op) {
+            $opinst = $this->getOperationInstance($op);
+            $opinst->checkVoid();
+        }
+        $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE,MACHINE_FLAG_ORDERED);
+        $this->gamestate->nextState("next");
     }
 
     function saction_resolve($opinfo, $args): int {

@@ -60,6 +60,10 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->requireConfirmation();
     }
 
+    function canFail(){
+        return $this->delegate->canFail();
+    }
+
 
     function hasNoSideEffects(): bool {
         return $this->delegate->hasNoSideEffects();

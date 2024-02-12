@@ -58,6 +58,10 @@ class Operation_nR_Any extends AbsOperation {
         return false;
     }
 
+    function isOptional() {
+        return true;
+    }
+
     protected function getType() {
         return substr($this->mnemonic, 1, 1); // XXX
     }

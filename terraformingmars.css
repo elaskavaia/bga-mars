@@ -8867,6 +8867,10 @@
   background-color: rgba(33, 150, 243, 0.7803921569);
 }
 
+.bgabutton_purple {
+  background-color: rgb(43, 15, 76);
+}
+
 .innerbutton {
   display: flex;
   justify-content: center;

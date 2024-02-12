@@ -145,6 +145,10 @@ class Operation_nmM extends AbsOperation {
         return false;
     }
 
+    function canFail(){
+        return true;
+    }
+
     function effect(string $owner, int $inc): int {
         if ($inc <= 0 || $this->getCost() <= 0) return $inc;
         $value = $this->getUncheckedArg('target');

@@ -69,4 +69,8 @@ class Operation_npR_Any extends AbsOperation {
         $this->game->effect_incProduction($owner, $type, -$inc);
         return $inc;
     }
+
+    function canFail(){
+        return true;
+    }
 }

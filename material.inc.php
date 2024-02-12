@@ -73,7 +73,12 @@ if (!defined("MA_GAME")) {
 
   // prefs
   define("MA_PREF_CONFIRM_TURN", 101);
-  
+
+  // op order
+
+  define("MA_ORDER_AUTO", 1 << 4);
+  define("MA_ORDER_FAIL", 1 << 5);
+  define("MA_ORDER_NOUNDO", 1 << 6);
 }
 
 $this->token_types = [
@@ -3422,12 +3427,6 @@ $this->token_types = [
 /* --- gen php end loc_material --- */
 
 /* --- gen php begin op_material --- */
- 'op_card' => [  //
-  'ack' => 1,
-  'type' => 'card',
-  'name' => clienttranslate("Play Card"),
-  'prompt' => '${you} must select a card to play',
-],
  'op_stan' => [  //
   'ack' => 1,
   'type' => 'stan',
@@ -3522,6 +3521,11 @@ $this->token_types = [
   'name' => clienttranslate("Activate Card"),
   'prompt' => '${you} must select a card to activate',
 ],
+ 'op_card' => [  //
+  'type' => 'card',
+  'name' => clienttranslate("Play Card"),
+  'prompt' => '${you} must select a card to play',
+],
  'op_res' => [  //
   'type' => 'res',
   'name' => clienttranslate("Add resource to this card"),
@@ -3538,50 +3542,49 @@ $this->token_types = [
   'type' => 'nop',
   'name' => clienttranslate("Do nothing"),
 ],
- 'op_pass' => [  //
-  'undo' => 'false',
-  'ack' => 1,
-  'type' => 'pass',
-  'name' => clienttranslate("Pass"),
-  'prompt' => '${you} must confirm Pass for this generation, cannot be undone',
-],
  'op_passauto' => [  //
-  'undo' => 'false',
   'ack' => 1,
   'type' => 'passauto',
   'name' => clienttranslate("Advanced Pass"),
   'prompt' => '${you} must confirm skipping second action and Pass for this generation on your next turn, your turn will end now',
 ],
+ 'op_pass' => [  //
+  'undo' => 1,
+  'ack' => 1,
+  'type' => 'pass',
+  'name' => clienttranslate("Pass"),
+  'prompt' => '${you} must confirm Pass for this generation, cannot be undone',
+],
  'op_skipsec' => [  //
-  'undo' => 'false',
+  'undo' => 1,
   'ack' => 1,
   'type' => 'skipsec',
   'name' => clienttranslate("Skip Second Action"),
   'prompt' => '${you} must confirm skipping second action, turn cannot be undone after this',
 ],
  'op_draw' => [  //
-  'undo' => 'false',
+  'undo' => 1,
   'ack' => 1,
   'type' => 'draw',
   'name' => clienttranslate("Draw Card in Hand"),
   'prompt' => '${you} must confirm draw ${count} card/s, cannot be undone',
 ],
  'op_predraw' => [  //
-  'undo' => 'false',
+  'undo' => 1,
   'ack' => 1,
   'type' => 'predraw',
   'name' => clienttranslate("Draw Card"),
   'prompt' => '${you} must confirm draw ${count} card/s, cannot be undone',
 ],
  'op_confirm' => [  //
-  'undo' => 'false',
+  'undo' => 1,
   'class' => 'Operation_confirm',
   'type' => 'confirm',
   'name' => clienttranslate("Confirm"),
   'prompt' => '${you} must confirm or undo',
 ],
  'op_confturn' => [  //
-  'undo' => 'false',
+  'undo' => 1,
   'class' => 'Operation_confirm',
   'type' => 'confturn',
   'name' => clienttranslate("Confirm"),

@@ -37,7 +37,6 @@ class GameTokens extends GameBasics {
   player_color: string;
   clientStateArgs: any;
   original_click_id: any;
-  limbo: HTMLElement;
 
   setup(gamedatas: any): void {
     super.setup(gamedatas);
@@ -63,7 +62,7 @@ class GameTokens extends GameBasics {
         state: 0,
         location: "thething"
       };
-      this.limbo = this.placeToken("limbo");
+      this.placeToken("limbo");
 
       // Setting up player boards
       for (var player_id in gamedatas.players) {
@@ -165,7 +164,7 @@ class GameTokens extends GameBasics {
       this.gamedatas.tokens[token] = {
         key: token,
         state: 0,
-        location: this.limbo.id
+        location: 'limbo'
       };
     }
 
@@ -186,7 +185,7 @@ class GameTokens extends GameBasics {
   }
 
   hideCard(tokenId: ElementOrId) {
-    this.limbo.appendChild($(tokenId));
+    $('limbo')?.appendChild($(tokenId));
   }
 
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {

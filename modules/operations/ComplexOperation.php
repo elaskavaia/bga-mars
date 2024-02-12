@@ -93,6 +93,10 @@ class ComplexOperation extends AbsOperation {
         return true;
     }
 
+    function canFail(){
+        return true;
+    }
+
 
     protected function effect(string $owner, int $userCount): int {
         if ($this->game->expandOperation($this->op_info, $userCount)) {

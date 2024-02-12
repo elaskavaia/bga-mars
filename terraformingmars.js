@@ -2557,7 +2557,7 @@ var GameTokens = /** @class */ (function (_super) {
                 state: 0,
                 location: "thething"
             };
-            this.limbo = this.placeToken("limbo");
+            this.placeToken("limbo");
             // Setting up player boards
             for (var player_id in gamedatas.players) {
                 var playerInfo = gamedatas.players[player_id];
@@ -2656,7 +2656,7 @@ var GameTokens = /** @class */ (function (_super) {
             this.gamedatas.tokens[token] = {
                 key: token,
                 state: 0,
-                location: this.limbo.id
+                location: 'limbo'
             };
         }
         if (args) {
@@ -2675,7 +2675,8 @@ var GameTokens = /** @class */ (function (_super) {
         return this.gamedatas.tokens[token];
     };
     GameTokens.prototype.hideCard = function (tokenId) {
-        this.limbo.appendChild($(tokenId));
+        var _a;
+        (_a = $('limbo')) === null || _a === void 0 ? void 0 : _a.appendChild($(tokenId));
     };
     GameTokens.prototype.getPlaceRedirect = function (tokenInfo) {
         var _this = this;
@@ -4649,10 +4650,11 @@ var GameXBody = /** @class */ (function (_super) {
             return this.getTr(rules.name);
         return op;
     };
-    GameXBody.prototype.getOperationRules = function (opInfo) {
+    GameXBody.prototype.getOperationRules = function (opInfo, key) {
+        if (key === void 0) { key = "*"; }
         if (typeof opInfo == "string")
-            return this.getRulesFor("op_" + opInfo, "*");
-        return this.getRulesFor("op_" + opInfo.type, "*");
+            return this.getRulesFor("op_" + opInfo, key);
+        return this.getRulesFor("op_" + opInfo.type, key);
     };
     GameXBody.prototype.onUpdateActionButtons_playerConfirm = function (args) {
         var _this = this;
@@ -5027,6 +5029,65 @@ var GameXBody = /** @class */ (function (_super) {
         buttonDiv.innerHTML = logo.outerHTML + " " + name;
         return buttonDiv;
     };
+    GameXBody.prototype.completeOpInfo = function (opId, opInfo, xop) {
+        var _a;
+        try {
+            // server may skip sending some data, this will feel all omitted fields
+            opInfo.id = opId; // should be already there but just in case
+            opInfo.xop = xop; // parent op
+            opInfo.count = parseInt(opInfo.count);
+            if (opInfo.mcount === undefined)
+                opInfo.mcount = opInfo.count;
+            var opArgs_1 = opInfo.args;
+            if (opArgs_1.void === undefined)
+                opArgs_1.void = false;
+            if (opArgs_1.ack === undefined)
+                opArgs_1.ack = false;
+            else
+                opArgs_1.ack = true;
+            if (!opArgs_1.info)
+                opArgs_1.info = {};
+            if (!opArgs_1.target)
+                opArgs_1.target = [];
+            opArgs_1.o = parseInt(opArgs_1.o) || 0;
+            var infokeys = Object.keys(opArgs_1.info);
+            if (infokeys.length == 0 && opArgs_1.target.length > 0) {
+                opArgs_1.target.forEach(function (element) {
+                    opArgs_1.info[element] = { q: 0 };
+                });
+            }
+            else if (infokeys.length > 0 && opArgs_1.target.length == 0) {
+                infokeys.forEach(function (element) {
+                    if (opArgs_1.info[element].q == 0)
+                        opArgs_1.target.push(element);
+                });
+            }
+            if (!opArgs_1.prompt)
+                opArgs_1.prompt = (_a = this.getOperationRules(opInfo, "prompt")) !== null && _a !== void 0 ? _a : _("${you} must choose");
+        }
+        catch (e) {
+            console.error(e);
+        }
+    };
+    GameXBody.prototype.sortOrderOps = function (args) {
+        var xop = args.op;
+        var operations = args.operations;
+        var sortedOps = Object.keys(operations);
+        if (xop != "+")
+            return sortedOps;
+        sortedOps.sort(function (x1, y1) {
+            var x = operations[x1].args.o;
+            var y = operations[y1].args.o;
+            if (x < y) {
+                return -1;
+            }
+            if (x > y) {
+                return 1;
+            }
+            return 0;
+        });
+        return sortedOps;
+    };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
         var _a, _b;
@@ -5037,17 +5098,20 @@ var GameXBody = /** @class */ (function (_super) {
         this.clientStateArgs.ops = [];
         this.clearReverseIdMap();
         var xop = args.op;
-        var single = Object.keys(operations).length == 1;
+        var sortedOps = Object.keys(operations);
+        var single = sortedOps.length == 1;
         var ordered = xop == "," && !single;
         var chooseorder = xop == "+" && !single;
-        if (chooseorder)
+        if (chooseorder) {
             this.setDescriptionOnMyTurn("${you} must choose order of operations");
-        var i = 0;
-        var _loop_2 = function (opIdS) {
+            sortedOps = this.sortOrderOps(args);
+        }
+        var _loop_2 = function (i) {
+            var opIdS = sortedOps[i];
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
+            this_2.completeOpInfo(opId, opInfo, xop);
             var opArgs = opInfo.args;
-            opInfo.id = opId; // should be already there but just in case
             var name_3 = this_2.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
             this_2.updateVisualsFromOp(opInfo, opId);
@@ -5070,11 +5134,10 @@ var GameXBody = /** @class */ (function (_super) {
                     this_2.addActionButtonColor("button_skip", _(opArgs.skipname), function () { return _this.sendActionSkip(); }, "orange");
                 }
             }
-            i = i + 1;
         };
         var this_2 = this;
-        for (var opIdS in operations) {
-            _loop_2(opIdS);
+        for (var i = 0; i < sortedOps.length; i++) {
+            _loop_2(i);
         }
         if (chooseorder)
             this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.ajaxuseraction("whatever", {}); }, "orange");

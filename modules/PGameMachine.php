@@ -108,7 +108,8 @@ abstract class PGameMachine extends PGameTokens {
     function action_whatever() {
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
-        $this->machine->reflag($this->machine->getTopOperations($curowner), MACHINE_FLAG_UNIQUE,MACHINE_FLAG_ORDERED);
+        $ops = $this->machine->getTopOperations($curowner);
+        $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE,MACHINE_FLAG_ORDERED);
         $this->gamestate->nextState("next");
     }
 
@@ -139,6 +140,7 @@ abstract class PGameMachine extends PGameTokens {
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
         $tops = $this->getTopOperationsState($curowner);
+        $client_args = $this->arg_operations($tops);
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
@@ -161,6 +163,10 @@ abstract class PGameMachine extends PGameTokens {
             }
             // now we will call method for specific user action
             //$this->debug_dumpMachine();
+            $client_op_args = $client_args['operations'][$operation_id];
+            if (array_get($client_op_args, 'args.postpone', false)) {
+                $this->userAssertTrue(_('Cannot choose this operation before one that can fail'));
+            }
             $count = $this->saction_resolve($info, $args);
             // stack operations
             $this->saction_stack($count, $info, $tops);
@@ -201,15 +207,14 @@ abstract class PGameMachine extends PGameTokens {
 
         $result["op"] = $xop;
         foreach ($operations as $id => $op) {
-            $result["operations"][$id] = $op;
-            $result["operations"][$id]["args"] = $this->arg_operation($op);
-            $result["operations"][$id]["typeexpr"] = null;
-            try {
-                $result["operations"][$id]["typeexpr"] = OpExpression::arr($op["type"]);
-            } catch (Throwable $e) {
-                $this->error($e);
-            }
+            $result["operations"][$id] = $this->arg_operationMassage($id, $op);
         }
+        return $result;
+    }
+
+    function arg_operationMassage($id, $op){
+        $result = $op;
+        $result["args"] = $this->arg_operation($op);
         return $result;
     }
 

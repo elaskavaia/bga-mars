@@ -112,6 +112,59 @@ abstract class AbsOperation {
         return false;
     }
 
+    /*
+Order of play by player choice (just to record somewhere)
+    1. All plain card draw must happen first. (Special cases: Olympus Conference, Mars University)
+Reason: provides information on future choices
+
+xspuipuke 2. When resolving global parameters, you always want Oxygen > Temperature > Ocean in this order.
+Reason: Oxygen can raise Temp, Temp can place an Ocean, the Ocean can draw cards (information)
+
+xspuipuke 3. Mars University and Olympus Conference after all plain card draw. If both in play (same player), let player choose the order. If tile placements are in the queue, let the player choose (because they might draw cards).
+Reason: maximum efficiency and information for future choices; order of MU and OC may matter for the player
+
+xspuipuke 4. When changing production, always first increase, then decrease.
+Reason: e.g., Immigrant City at -4 MC prod
+
+5. Opponents’ payouts before any attacks.
+Reason: to be effective (e.g., Arctic Algae)
+
+6. Attacks before rebates.
+Reason: will be relevant for Mons Insurance (promo corporation)
+
+7. Rebates before tile placement.
+Reason: will be relevant for Hellas (southpole)
+
+8. Resource gains after tile placement.
+Reason: tile placement may draw cards (information)
+
+    */
+
+    /** 
+     * Resolve order 
+     */
+
+    public function order(){
+        $rules = $this->rules();
+        $undo = isset($rules['undo']); // no undo actually
+        $res = 1;
+        if ($undo) $res+=MA_ORDER_NOUNDO;
+        else if (!$this->canFail()) {
+            if (!$this->isFullyAutomated()) $res+=MA_ORDER_AUTO;
+            $res+=MA_ORDER_FAIL;
+        }
+        else return $res;
+
+    
+
+        return $res;
+    }
+
+
+    function canFail(){
+        return false;
+    }
+
     /**
      * Operation has no side affect is it only affect one counter, and cannot have cascading side effects
      */
@@ -202,7 +255,10 @@ abstract class AbsOperation {
         $result["ttype"] = $this->getPrimaryArgType(); // type of parameter to collect, default is token, can be player or someting else i.e. number
         $result["info"] = $this->argPrimaryDetails(); // detals map of primary param with explanation why it cannot be done, and extra stuff
         $result['target'] = $this->argPrimary(); // primary list of parameter to choose from in case of emum param (such as token)
-        $result["void"] = $this->isVoid(); // if action requires params but cannot be perform operation is void, depends on engine it either deail breaker or skip
+        $isvoid = $this->isVoid();
+        if ($isvoid) {
+            $result["void"] = $isvoid ; // if action requires params but cannot be perform operation is void, depends on engine it either deail breaker or skip
+        }
         $result["prompt"] = $this->getPrompt();
         $result["button"] = $this->getButtonName();
         $result["args"] = $this->getVisargs();
@@ -212,6 +268,8 @@ abstract class AbsOperation {
         if ($this->requireConfirmation()) {
             $result["ack"] = 1; // prompt required
         }
+        
+        $result["o"] = $this->order(); // prompt required
         return $result;
     }
 
@@ -293,7 +351,7 @@ abstract class AbsOperation {
         return true;
     }
 
-    protected function checkVoid() {
+   function checkVoid() {
         if ($this->isVoid()) {
             $op = $this->mnemonic;
             $usertarget = $args['target'] ?? '';

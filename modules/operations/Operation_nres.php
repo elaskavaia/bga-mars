@@ -55,4 +55,8 @@ class Operation_nres extends AbsOperation {
     protected function getPrimaryArgType() {
         return '';
     }
+
+    function canFail(){
+        return true;
+    }
 }
