@@ -24,7 +24,16 @@
     margin-bottom: 1vh;
   }
   .player_area_name {
-    position: absolute;
+   /* position: absolute;
+       top: 12%;
+   */
+    top:-6%;
+    position: relative;
+    font-size: smaller;
+    text-overflow: clip;
+    overflow: hidden;
+
+
     z-index: 1;
     color: var(--plcolor);
     font-family: var(--mars-font);
@@ -33,7 +42,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 12%;
+
     border: 0.3vh solid gray;
     border-radius: 13px;
     background: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%);
@@ -351,8 +360,11 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    width: calc(var(--resourcesize) * 15.5);
+    min-width: calc(var(--resourcesize) * 17.5);
+    width: 100%;
     --resourcesize:4vh;
+    margin-left: 1%;
+    margin-top: 0.5%;
   }
 
   .corp_effect .card {

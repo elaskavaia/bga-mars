@@ -49,6 +49,10 @@
       flex-wrap: wrap;
     }
 
+    .player_controls{
+      justify-content: flex-start;
+      top: 6%;
+    }
 
     .hand, .draw, .draft {
       padding: 6px 6px 6px  calc(var(--card-width)*0.2);

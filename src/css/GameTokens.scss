@@ -101,28 +101,31 @@
 }
 
 .marker {
-  width: 10px;
-  height: 10px;
+  background-image: url('img/cubes.png');
+  background-size: 600% 100%;
   position: absolute;
+  width: calc(var(--map-width) * 0.045);
+  height: calc(var(--map-width) * 0.05);
   top: 50%;
   left: 50%;
-  box-shadow: #0b0b0bad 2px 2px 3px 1px;
 }
+.marker_0000ff {background-position-x:-100%; }
+.marker_ff0000 {background-position-x:0; }
+.marker_008000 {background-position-x:-200%; }
+.marker_ffa500 {background-position-x:-300%; }
+.marker_773300 {background-position-x:-400%; }
+.marker_ffffff {background-position-x:-500%; }
 
 $colors-list: (
-  _0000ff: #0000ff,
-  _ff0000: #ff0000,
-  _008000: #008000,
-  _ffa500: #ffa500,
-  _773300: #773300,
-  _ffffff: #ffffff
+        _0000ff: #0000ff,
+        _ff0000: #ff0000,
+        _008000: #008000,
+        _ffa500: #ffa500,
+        _773300: #773300,
+        _ffffff: #ffffff
 );
 
 @each $key, $val in $colors-list {
-  .marker#{$key}:not(.mcube) {
-    background-color: #{$val};
-  }
-
   .color#{$key} {
     color: #{$val};
   }
@@ -131,3 +134,4 @@ $colors-list: (
     --plcolor: #{$val};
   }
 }
+

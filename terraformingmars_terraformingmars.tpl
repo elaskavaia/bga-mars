@@ -239,8 +239,10 @@
       <div id="player_area_{PLAYER_COLOR}" class="player_area plcolor_{PLAYER_COLOR}">
         <div id="player_board_header_{PLAYER_COLOR}" class="playerboard_header">
           <div id="tableau_{PLAYER_COLOR}_corp" class="corp_holder">
+            <div id="player_area_name_{PLAYER_COLOR}" class="player_area_name">{PLAYER_NAME}</div>
             <div id="tableau_{PLAYER_COLOR}_corp_logo" class="corp_logo"></div>
             <div id="tableau_{PLAYER_COLOR}_corp_effect" class="corp_effect"></div>
+
           </div>
           <div class="counters_holder">
             <div id="player_counters_{PLAYER_COLOR}" class="player_counters">
@@ -350,72 +352,70 @@
               <div id="tracker_forest_{PLAYER_COLOR}" class="tracker tracker_forest"></div>
               <div id="tracker_land_{PLAYER_COLOR}" class="tracker tracker_land"></div>
             </div>
+            <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
+              <div
+                      id="player_viewcards_2_{PLAYER_COLOR}"
+                      class="viewcards_button"
+                      data-cardtype="2"
+                      data-selected="0"
+                      data-player="{PLAYER_COLOR}"
+              >
+                <div class="buttoncard card_icon">
+                  <div id="local_counter_{PLAYER_COLOR}_cards_2" class="viewcardbutton_counter">0</div>
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div
+                      id="player_viewcards_1_{PLAYER_COLOR}"
+                      class="viewcards_button"
+                      data-cardtype="1"
+                      data-selected="0"
+                      data-player="{PLAYER_COLOR}"
+              >
+                <div class="buttoncard card_icon">
+                  <div id="local_counter_{PLAYER_COLOR}_cards_1" class="viewcardbutton_counter">0</div>
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div
+                      id="player_viewcards_3_{PLAYER_COLOR}"
+                      class="viewcards_button"
+                      data-cardtype="3"
+                      data-selected="0"
+                      data-player="{PLAYER_COLOR}"
+              >
+                <div class="buttoncard card_icon">
+                  <div id="local_counter_{PLAYER_COLOR}_cards_3" class="viewcardbutton_counter">0</div>
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div id="player_viewcards_0_{PLAYER_COLOR}"
+                   class="viewcards_button"
+                   data-cardtype="0"
+                   data-selected="1"
+                   data-player="{PLAYER_COLOR}"
+              >
+                <div class="buttoncard card_icon">
+                  <div id="local_counter_{PLAYER_COLOR}_cards_0" class="viewcardbutton_counter">*</div>
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div id="player_viewcards_4_{PLAYER_COLOR}"
+                   class="viewcards_button"
+                   data-cardtype="4"
+                   data-selected="0"
+                   data-player="{PLAYER_COLOR}"
+              >
+                <div class="buttoncard card_icon">
+                  <div id="local_counter_{PLAYER_COLOR}_cards_4" class="viewcardbutton_counter"></div>
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
-          <div id="player_area_name_{PLAYER_COLOR}" class="player_area_name">{PLAYER_NAME}</div>
 
-
-          <div
-            id="player_viewcards_2_{PLAYER_COLOR}"
-            class="viewcards_button"
-            data-cardtype="2"
-            data-selected="0"
-            data-player="{PLAYER_COLOR}"
-          >
-            <div class="buttoncard card_icon">
-              <div id="local_counter_{PLAYER_COLOR}_cards_2" class="viewcardbutton_counter">0</div>
-              <i class="fa fa-eye" aria-hidden="true"></i>
-            </div>
-          </div>
-          <div
-            id="player_viewcards_1_{PLAYER_COLOR}"
-            class="viewcards_button"
-            data-cardtype="1"
-            data-selected="0"
-            data-player="{PLAYER_COLOR}"
-          >
-            <div class="buttoncard card_icon">
-              <div id="local_counter_{PLAYER_COLOR}_cards_1" class="viewcardbutton_counter">0</div>
-              <i class="fa fa-eye" aria-hidden="true"></i>
-            </div>
-          </div>
-          <div
-            id="player_viewcards_3_{PLAYER_COLOR}"
-            class="viewcards_button"
-            data-cardtype="3"
-            data-selected="0"
-            data-player="{PLAYER_COLOR}"
-          >
-            <div class="buttoncard card_icon">
-              <div id="local_counter_{PLAYER_COLOR}_cards_3" class="viewcardbutton_counter">0</div>
-              <i class="fa fa-eye" aria-hidden="true"></i>
-            </div>
-          </div>
-          <div id="player_viewcards_0_{PLAYER_COLOR}"
-                  class="viewcards_button"
-                  data-cardtype="0"
-                  data-selected="1"
-                  data-player="{PLAYER_COLOR}"
-            >
-            <div class="buttoncard card_icon">
-              <div id="local_counter_{PLAYER_COLOR}_cards_0" class="viewcardbutton_counter">*</div>
-              <i class="fa fa-eye" aria-hidden="true"></i>
-            </div>
-          </div>
-          <div id="player_viewcards_4_{PLAYER_COLOR}"
-            class="viewcards_button"
-            data-cardtype="4"
-            data-selected="0"
-            data-player="{PLAYER_COLOR}"
-            >
-            <div class="buttoncard card_icon">
-              <div id="local_counter_{PLAYER_COLOR}_cards_4" class="viewcardbutton_counter"></div>
-              <i class="fa fa-eye" aria-hidden="true"></i>
-            </div>
-          </div>
-      </div>
 
         <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_0="1" data-visibility_2="0" data-visibility_1="0" data-visibility_3="0" data-visibility_4="1">
           <div id="pboard_{PLAYER_COLOR}" class="pboard">
