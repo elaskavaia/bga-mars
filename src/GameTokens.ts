@@ -390,6 +390,9 @@ class GameTokens extends GameBasics {
 
     if (!attachNode) return;
 
+    // attach node has to have id
+    if (!attachNode.id) attachNode.id = "gen_id_" + Math.random() * 10000000;
+
     // console.log("tooltips for "+token);
     if (typeof token != "string") {
       console.error("cannot calc tooltip" + token);
