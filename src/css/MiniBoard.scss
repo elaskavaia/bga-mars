@@ -345,3 +345,28 @@
 .miniboard_entry {
   width: calc(100% - 100px); // to fit corp logo
 }
+
+.hand_symbol {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    position: absolute;
+    width: 32px;
+    top: 0;
+  }
+
+
+  .counter_hand{
+    position: relative;
+    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+    color: white;
+    font-size: calc(var(--pb_cellsize) * 0.4);
+    font-family: "SpaceFont";
+  }
+}
+

@@ -390,6 +390,22 @@
     }
   }
 
+  .milesawardsprogress{
+  
+    position: absolute;
+    width: calc(var(--map-width) * 0.04);
+    height: calc(var(--map-width) * 0.04);
+    background: orange;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: calc(var(--map-width) * 0.03);
+    right: 0;
+    cursor: help;
+    border: calc(var(--map-width) * 0.001) solid black;
+
+  }
 }
 
 

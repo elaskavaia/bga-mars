@@ -111,6 +111,11 @@
   position: absolute;
 }
 
+.hex > .marker {
+  left: 28%;
+  top: 24%;
+}
+
 .player_area .marker {
   position: absolute;
   width: calc(var(--card-width) * 0.045 * 3.5 );

@@ -408,7 +408,7 @@ class CustomAnimation {
   //Adds css class on element, plays it, executes onEnd and removes css class
   //a promise is returned for easy chaining
   playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any): Promise<any> {
-    if (!$(targetId)) return;
+    if (!$(targetId)) return this.getImmediatePromise();
     const animation = this.animations[animationname];
 
     return new Promise((resolve, reject) => {

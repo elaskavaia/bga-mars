@@ -157,6 +157,16 @@ class GameXBody extends GameTokens {
         this.onShowScoringTable(0);
       });
 
+      $(`milestones_progress`).addEventListener("click", () => {
+        this.onShowMilestonesProgress();
+      });
+
+      $(`awards_progress`).addEventListener("click", () => {
+        this.onShowAwardsProgress();
+      });
+
+
+
       //2p specific
       if (Object.keys(gamedatas.players).length == 2) {
         $("ebd-body").classList.add("twoplayers");
@@ -313,6 +323,108 @@ class GameXBody extends GameTokens {
       });
     }
   }
+
+  onShowMilestonesProgress() {
+    let finalhtm: string = "";
+
+    const tablehtm: string = `
+             <div id="scoretable">
+                <div class="scoreheader scorecol">
+                      <div class="scorecell header">${_("Player Name")}</div>
+                      <div class="scorecell header corp">${_("Corporation")}</div>
+                      <div class="scorecell ">${_("Terraformer")}</div>
+                      <div class="scorecell ">${_("Mayor")}</div>
+                      <div class="scorecell ">${_("Gardener")}</div>
+                      <div class="scorecell ">${_("Builder")}</div>
+                      <div class="scorecell ">${_("Planner")}</div>
+                </div>
+                %lines%
+              </div>`;
+    let lines: string = "";
+    for (let plid in this.gamedatas.players) {
+      const plcolor: any = this.getPlayerColor(parseInt(plid));
+      const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+
+      const pg: object = {
+        terraformer: parseInt($("tracker_tr_" + plcolor).dataset.state),
+        mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
+        gardener: parseInt($("tracker_forest_" + plcolor).dataset.state),
+        builder: parseInt($("tracker_tagBuilding_" + plcolor).dataset.state),
+        planner: parseInt($("counter_hand_" + plcolor).dataset.state)
+      };
+      lines =
+        lines +
+        `
+                    <div class=" scorecol">
+                          <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+                          <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
+                          `;
+      for (const key in pg) {
+        lines =
+          lines +
+          `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
+      }
+      lines =
+        lines + `             </div>`;
+    }
+    finalhtm = tablehtm.replace("%lines%", lines);
+    let dlg = new ebg.popindialog();
+    dlg.create("pg_dlg");
+    dlg.setTitle(_("Milestones Summary"));
+    dlg.setContent(finalhtm);
+    dlg.show();
+  }
+  onShowAwardsProgress() {
+    let finalhtm: string = "";
+
+    const tablehtm: string = `
+             <div id="scoretable">
+                <div class="scoreheader scorecol">
+                      <div class="scorecell header">${_("Player Name")}</div>
+                      <div class="scorecell header corp">${_("Corporation")}</div>
+                      <div class="scorecell ">${_("Landlord")}</div>
+                      <div class="scorecell ">${_("Banker")}</div>
+                      <div class="scorecell ">${_("Scientist")}</div>
+                      <div class="scorecell ">${_("Thermalist")}</div>
+                      <div class="scorecell ">${_("Miner")}</div>
+                </div>
+                %lines%
+              </div>`;
+    let lines: string = "";
+    for (let plid in this.gamedatas.players) {
+      const plcolor: any = this.getPlayerColor(parseInt(plid));
+      const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+
+      const pg: object = {
+        landlord: parseInt($("tracker_land_" + plcolor).dataset.state),
+        banker: parseInt($("tracker_pm_" + plcolor).dataset.state),
+        scientist: parseInt($("tracker_tagScience_" + plcolor).dataset.state),
+        thermalist: parseInt($("tracker_h_" + plcolor).dataset.state),
+        miner: parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state)
+      };
+      lines =
+        lines +
+        `
+                    <div class=" scorecol">
+                          <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+                          <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
+                          `;
+      for (const key in pg) {
+        lines =
+          lines +
+          `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
+      }
+      lines =
+        lines + `             </div>`;
+    }
+    finalhtm = tablehtm.replace("%lines%", lines);
+    let dlg = new ebg.popindialog();
+    dlg.create("pg_dlg");
+    dlg.setTitle(_("Awards Summary"));
+    dlg.setContent(finalhtm);
+    dlg.show();
+  }
+
 
   getLocalSettingNamespace(extra: string | number = "") {
     return `${this.game_name}-${this.player_id}-${extra}`;
@@ -1378,8 +1490,11 @@ awarded.`);
     }
 
     if (key.startsWith("card_corp") && location.startsWith("tableau")) {
-      $(location + "_corp_logo").dataset.corp = key;
-      $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
+        $(location + "_corp_logo").dataset.corp = key;
+        $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
+        //adds tt to corp logos
+        this.updateTooltip(key,location + "_corp_logo");
+        this.updateTooltip(key,location.replace("tableau_", "miniboard_corp_logo_"));
     }
 
     if (key.startsWith("card_main") && location.startsWith("tableau")) {
@@ -1874,7 +1989,8 @@ awarded.`);
                 0
               ) > 0
             ) {
-              this.createCustomPayment(opId, detailsInfo);
+              this.addActionButtonColor('btn_create_custompay', _('Custom'), () => this.createCustomPayment(opId, detailsInfo), 'blue');
+
             }
           } else {
             const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
@@ -1982,6 +2098,8 @@ awarded.`);
       available: [],
       rate: []
     };
+
+    if($('btn_create_custompay')) $('btn_create_custompay').remove();
 
     let items_htm = "";
     for (let res in info.resources) {
