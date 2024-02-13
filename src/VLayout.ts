@@ -90,7 +90,7 @@ class VLayout {
       const color = getPart(tokenNode.id, 2);
       if (!markerNode) {
         markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
-        this.convertInto3DCube(markerNode, color);
+        //this.convertInto3DCube(markerNode, color);
       }
 
       let state = parseInt(tokenNode.getAttribute("data-state"));
@@ -166,7 +166,7 @@ class VLayout {
 
     if (!markerNode && create) {
       markerNode = this.game.createDivNode(marker, `marker marker_${type} marker_${color}`, `pboard_${color}`);
-      this.convertInto3DCube(markerNode, color);
+      //this.convertInto3DCube(markerNode, color);
     }
     return markerNode;
   }
@@ -203,8 +203,8 @@ class VLayout {
   }
 
   createHtmlForToken(tokenNode: HTMLElement, displayInfo: TokenDisplayInfo) {
-    if (displayInfo.mainType == "marker") {
-      this.convertInto3DCube(tokenNode, displayInfo.color);
-    }
+    // if (displayInfo.mainType == "marker") {
+    //   this.convertInto3DCube(tokenNode, displayInfo.color);
+    // }
   }
 }

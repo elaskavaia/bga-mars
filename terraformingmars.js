@@ -5962,7 +5962,7 @@ var VLayout = /** @class */ (function () {
             var color = getPart(tokenNode.id, 2);
             if (!markerNode) {
                 markerNode = this.game.createDivNode(marker, "marker marker_tr marker_" + color, "main_board");
-                this.convertInto3DCube(markerNode, color);
+                //this.convertInto3DCube(markerNode, color);
             }
             var state = parseInt(tokenNode.getAttribute("data-state"));
             //this.game.setDomTokenState(markerNode, state);
@@ -6039,7 +6039,7 @@ var VLayout = /** @class */ (function () {
         var markerNode = $(marker);
         if (!markerNode && create) {
             markerNode = this.game.createDivNode(marker, "marker marker_".concat(type, " marker_").concat(color), "pboard_".concat(color));
-            this.convertInto3DCube(markerNode, color);
+            //this.convertInto3DCube(markerNode, color);
         }
         return markerNode;
     };
@@ -6074,9 +6074,9 @@ var VLayout = /** @class */ (function () {
         }
     };
     VLayout.prototype.createHtmlForToken = function (tokenNode, displayInfo) {
-        if (displayInfo.mainType == "marker") {
-            this.convertInto3DCube(tokenNode, displayInfo.color);
-        }
+        // if (displayInfo.mainType == "marker") {
+        //   this.convertInto3DCube(tokenNode, displayInfo.color);
+        // }
     };
     return VLayout;
 }());

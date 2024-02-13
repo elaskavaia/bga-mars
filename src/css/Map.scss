@@ -232,22 +232,10 @@
   background-position: -200% -100%;
 }
 
-
-/*
-.tile .marker {
-  position: absolute;
-  top: 42%;
-  left: 38%;
-  width: calc(var(--map-width) * 0.025);
-  height: calc(var(--map-width) * 0.025);
-  box-shadow: #0b0b0bad 2px 2px 3px 1px;
-}*/
 .tile .marker {
   position: absolute;
   top: 30%;
   left: 30%;
-  width: calc(var(--map-width) * 0.045);
-  height: calc(var(--map-width) * 0.05);
 }
 
 #map_bottom {
@@ -275,15 +263,10 @@
   position: relative;
 
   .marker {
-    /*
-    width: calc(var(--map-width) * 0.025);
-    height: calc(var(--map-width) * 0.025);*/
-    width: calc(var(--map-width) * 0.035);
-    height: calc(var(--map-width) * 0.04);
-    top: 19%;
-    left: 67%;
+    // same size as all markers on map defined in GameTokens.scss
+    top: 5%;
+    left: 35%;
   }
-
 }
 
 .map_milesawardscontent {

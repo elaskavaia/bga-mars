@@ -238,6 +238,13 @@
     width: 50%;
     background: none;
     position: relative;
+
+    .marker {
+      // same size as all markers on map defined in GameTokens.scss
+      top: 40%;
+      left: 35%;
+    }
+
   }
 
   .map_milesawardscontent {
@@ -771,6 +778,7 @@
 
   .corp_holder {
     justify-content: flex-start;
+
     .corp_logo {
       display: none;
     }
@@ -835,33 +843,33 @@
   }
 
   .marker_pm {
-    top: 43%;
-    left: 17%;
+    top: 41%;
+    left: 16%;
   }
 
   .marker_ps {
-    top: 38%;
-    left: 44%;
+    top: 35%;
+    left: 43%;
   }
 
   .marker_pu {
-    top: 38%;
-    left: 71%;
+    top: 35%;
+    left: 69%;
   }
 
   .marker_pp {
-    top: 58%;
-    left: 9%;
+    top: 56%;
+    left: 8%;
   }
 
   .marker_pe {
-    top: 58%;
-    left: 40%;
+    top: 56%;
+    left: 39%;
   }
 
   .marker_ph {
-    top: 58%;
-    left: 69%;
+    top: 56%;
+    left: 68%;
   }
 
   .res,
@@ -890,7 +898,7 @@
   }
 
 
- .tooltipimage.production  {
+  .tooltipimage.production {
     outline: 4px solid #b7915e;
     background-color: #b7915e;
     margin-left: 3px;

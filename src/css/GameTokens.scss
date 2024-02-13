@@ -103,12 +103,20 @@
 .marker {
   background-image: url('img/cubes.png');
   background-size: 600% 100%;
-  position: absolute;
   width: calc(var(--map-width) * 0.045);
   height: calc(var(--map-width) * 0.05);
-  top: 50%;
-  left: 50%;
 }
+
+#main_board .marker {
+  position: absolute;
+}
+
+.player_area .marker {
+  position: absolute;
+  width: calc(var(--card-width) * 0.045 * 3.5 );
+  height: calc(var(--card-width) * 0.05 * 3.5 );
+}
+
 .marker_0000ff {background-position-x:-100%; }
 .marker_ff0000 {background-position-x:0; }
 .marker_008000 {background-position-x:-200%; }
@@ -121,7 +129,7 @@ $colors-list: (
         _ff0000: #ff0000,
         _008000: #008000,
         _ffa500: #ffa500,
-        _773300: #773300,
+        _773300: #333333, // suppose to be more blackish
         _ffffff: #ffffff
 );
 
