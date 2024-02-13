@@ -215,16 +215,37 @@
 }
 
 .marker {
-  width: 10px;
-  height: 10px;
+  background-image: url("img/cubes.png");
+  background-size: 600% 100%;
   position: absolute;
+  width: calc(var(--map-width) * 0.045);
+  height: calc(var(--map-width) * 0.05);
   top: 50%;
   left: 50%;
-  box-shadow: rgba(11, 11, 11, 0.6784313725) 2px 2px 3px 1px;
 }
 
-.marker_0000ff:not(.mcube) {
-  background-color: #0000ff;
+.marker_0000ff {
+  background-position-x: -100%;
+}
+
+.marker_ff0000 {
+  background-position-x: 0;
+}
+
+.marker_008000 {
+  background-position-x: -200%;
+}
+
+.marker_ffa500 {
+  background-position-x: -300%;
+}
+
+.marker_773300 {
+  background-position-x: -400%;
+}
+
+.marker_ffffff {
+  background-position-x: -500%;
 }
 
 .color_0000ff {
@@ -235,20 +256,12 @@
   --plcolor: #0000ff;
 }
 
-.marker_ff0000:not(.mcube) {
-  background-color: #ff0000;
-}
-
 .color_ff0000 {
   color: #ff0000;
 }
 
 .plcolor_ff0000 {
   --plcolor: #ff0000;
-}
-
-.marker_008000:not(.mcube) {
-  background-color: #008000;
 }
 
 .color_008000 {
@@ -259,10 +272,6 @@
   --plcolor: #008000;
 }
 
-.marker_ffa500:not(.mcube) {
-  background-color: #ffa500;
-}
-
 .color_ffa500 {
   color: #ffa500;
 }
@@ -271,20 +280,12 @@
   --plcolor: #ffa500;
 }
 
-.marker_773300:not(.mcube) {
-  background-color: #773300;
-}
-
 .color_773300 {
   color: #773300;
 }
 
 .plcolor_773300 {
   --plcolor: #773300;
-}
-
-.marker_ffffff:not(.mcube) {
-  background-color: #ffffff;
 }
 
 .color_ffffff {
@@ -3937,13 +3938,21 @@
   background-position: -200% -100%;
 }
 
+/*
 .tile .marker {
   position: absolute;
   top: 42%;
   left: 38%;
   width: calc(var(--map-width) * 0.025);
   height: calc(var(--map-width) * 0.025);
-  box-shadow: rgba(11, 11, 11, 0.6784313725) 2px 2px 3px 1px;
+  box-shadow: #0b0b0bad 2px 2px 3px 1px;
+}*/
+.tile .marker {
+  position: absolute;
+  top: 30%;
+  left: 30%;
+  width: calc(var(--map-width) * 0.045);
+  height: calc(var(--map-width) * 0.05);
 }
 
 #map_bottom {
@@ -3970,8 +3979,13 @@
 }
 #main_awards .marker,
 #main_milestones .marker {
+  /*
   width: calc(var(--map-width) * 0.025);
-  height: calc(var(--map-width) * 0.025);
+  height: calc(var(--map-width) * 0.025);*/
+  width: calc(var(--map-width) * 0.035);
+  height: calc(var(--map-width) * 0.04);
+  top: 19%;
+  left: 67%;
 }
 
 .map_milesawardscontent {
@@ -4896,6 +4910,7 @@
 .miniboard.style_2 .playerboard_own {
   position: absolute;
   width: 100%;
+  height: 50%;
   text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
 }
 .miniboard.style_2 .playerboard_produce {
@@ -5082,7 +5097,14 @@
   margin-bottom: 1vh;
 }
 .mcompact .player_area_name {
-  position: absolute;
+  /* position: absolute;
+      top: 12%;
+  */
+  top: -6%;
+  position: relative;
+  font-size: smaller;
+  text-overflow: clip;
+  overflow: hidden;
   z-index: 1;
   color: var(--plcolor);
   font-family: var(--mars-font);
@@ -5091,7 +5113,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 12%;
   border: 0.3vh solid gray;
   border-radius: 13px;
   background: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%);
@@ -5414,8 +5435,11 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  width: calc(var(--resourcesize) * 15.5);
+  min-width: calc(var(--resourcesize) * 17.5);
+  width: 100%;
   --resourcesize:4vh;
+  margin-left: 1%;
+  margin-top: 0.5%;
 }
 
 .corp_effect .card {
@@ -8388,6 +8412,10 @@
   /* 1X --resourcesize: 7.5vw;*/
   --resourcesize: var(--default-resourcesize);
   flex-wrap: wrap;
+}
+.mcompact #ebd-body.mobile_portrait .player_controls {
+  justify-content: flex-start;
+  top: 6%;
 }
 .mcompact #ebd-body.mobile_portrait .hand, .mcompact #ebd-body.mobile_portrait .draw, .mcompact #ebd-body.mobile_portrait .draft {
   padding: 6px 6px 6px calc(var(--card-width) * 0.2);

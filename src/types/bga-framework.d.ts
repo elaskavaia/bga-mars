@@ -146,4 +146,5 @@ declare class GameGui {
   disablePlayerPanel(player_id: number):void;
 
   dontPreloadImage(image_file_name: string):void;
+  updatePageTitle(gamestate: any);
 }
