@@ -97,6 +97,10 @@
   background-image: none;
 }
 
+#ebd-body[data-maop=confturn] #button_undo {
+  float: unset;
+}
+
 #button_rcss {
   float: right;
   background-color: rgb(255, 0, 251);
@@ -215,10 +219,10 @@
 }
 
 .marker {
-  width: calc(var(--map-width) * 0.045);
-  height: calc(var(--map-width) * 0.05);
   background-image: url("img/cubes.png");
   background-size: 600% 100%;
+  width: calc(var(--map-width) * 0.045);
+  height: calc(var(--map-width) * 0.05);
 }
 
 #main_board .marker {
@@ -3945,15 +3949,6 @@
   background-position: -200% -100%;
 }
 
-/*
-.tile .marker {
-  position: absolute;
-  top: 42%;
-  left: 38%;
-  width: calc(var(--map-width) * 0.025);
-  height: calc(var(--map-width) * 0.025);
-  box-shadow: #0b0b0bad 2px 2px 3px 1px;
-}*/
 .tile .marker {
   position: absolute;
   top: 30%;

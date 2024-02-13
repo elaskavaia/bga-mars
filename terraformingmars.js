@@ -2888,6 +2888,9 @@ var GameTokens = /** @class */ (function (_super) {
         var attachNode = $(attachTo);
         if (!attachNode)
             return;
+        // attach node has to have id
+        if (!attachNode.id)
+            attachNode.id = "gen_id_" + Math.random() * 10000000;
         // console.log("tooltips for "+token);
         if (typeof token != "string") {
             console.error("cannot calc tooltip" + token);
@@ -3292,11 +3295,8 @@ var GameXBody = /** @class */ (function (_super) {
             document.querySelectorAll(".tracker").forEach(function (node) {
                 var id = node.id;
                 var tnode = node;
-                if ((node.parentElement && node.parentElement.classList.contains("playerboard_produce")) ||
-                    node.parentElement.classList.contains("playerboard_own")) {
-                    //wont have a tt without an id
-                    if (!node.parentElement.id)
-                        node.parentElement.id = "gen_id_" + Math.random() * 10000000;
+                if (node.parentElement &&
+                    (node.parentElement.classList.contains("playerboard_produce") || node.parentElement.classList.contains("playerboard_own"))) {
                     tnode = node.parentElement;
                 }
                 if (id.startsWith("alt_")) {
@@ -4712,23 +4712,23 @@ var GameXBody = /** @class */ (function (_super) {
         var paramInfo = opArgs.info;
         if (single) {
             this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
+            // add main operation to the body to change style if need be
+            $("ebd-body").dataset.maop = (opInfo.type.replace(/[^a-zA-Z0-9]/g, ''));
             if (opTargets.length == 0) {
                 if (count == from) {
-                    this.addActionButton("button_" + opId, _("Confirm"), function () {
-                        _this.sendActionResolve(opId);
-                    });
+                    this.addActionButton("button_" + opId, _("Confirm"), function () { return _this.sendActionResolve(opId); });
                 }
                 else {
                     // counter select stub for now
                     if (from > 0)
                         this.addActionButton("button_" + opId + "_0", from, function () {
-                            _this.sendActionResolve(opId, {
+                            return _this.sendActionResolve(opId, {
                                 count: from
                             });
                         });
                     if (from == 0 && count > 1) {
                         this.addActionButton("button_" + opId + "_1", "1", function () {
-                            _this.sendActionResolve(opId, {
+                            return _this.sendActionResolve(opId, {
                                 count: 1
                             });
                         });
@@ -4991,9 +4991,8 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.resourcesToHtml = function (resources, show_zeroes) {
         if (show_zeroes === void 0) { show_zeroes = false; }
         var htm = "";
-        var allResources = ["m", "s", "u", "h"];
-        allResources.forEach(function (item) {
-            if (resources[item] != undefined && (resources[item] > 0 || show_zeroes === true)) {
+        this.resourceTrackers.forEach(function (item) {
+            if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
                 htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(resources[item], "</div>");
             }
         });
@@ -5116,6 +5115,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.clientStateArgs.call = "resolve";
         this.clientStateArgs.ops = [];
         this.clearReverseIdMap();
+        $("ebd-body").dataset.maop = "complex";
         var xop = args.op;
         var sortedOps = Object.keys(operations);
         var single = sortedOps.length == 1;
@@ -5349,6 +5349,7 @@ var GameXBody = /** @class */ (function (_super) {
                 return;
             }
         }
+        // sometimes parent are added first and sometimes child, have to handle both independency here...
         var parentId = attachNode.parentElement.id;
         if (parentId) {
             if (parentId.startsWith("hex")) {

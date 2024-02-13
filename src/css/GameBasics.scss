@@ -85,6 +85,10 @@
   background-image: none;
 }
 
+#ebd-body[data-maop="confturn"] #button_undo{
+  float: unset;
+}
+
 #button_rcss {
   float: right;
   background-color: rgb(255, 0, 251);

@@ -102,11 +102,9 @@ class GameXBody extends GameTokens {
         const id = node.id;
         let tnode = node;
         if (
-          (node.parentElement && node.parentElement.classList.contains("playerboard_produce")) ||
-          node.parentElement.classList.contains("playerboard_own")
+          node.parentElement &&
+          (node.parentElement.classList.contains("playerboard_produce") || node.parentElement.classList.contains("playerboard_own"))
         ) {
-          //wont have a tt without an id
-          if (!node.parentElement.id) node.parentElement.id = "gen_id_" + Math.random() * 10000000;
           tnode = node.parentElement;
         }
         if (id.startsWith("alt_")) {
@@ -1778,25 +1776,25 @@ awarded.`);
 
     if (single) {
       this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
+      // add main operation to the body to change style if need be
+      $("ebd-body").dataset.maop=(opInfo.type.replace(/[^a-zA-Z0-9]/g, ''));
       if (opTargets.length == 0) {
         if (count == from) {
-          this.addActionButton("button_" + opId, _("Confirm"), () => {
-            this.sendActionResolve(opId);
-          });
+          this.addActionButton("button_" + opId, _("Confirm"), () => this.sendActionResolve(opId));
         } else {
           // counter select stub for now
           if (from > 0)
-            this.addActionButton("button_" + opId + "_0", from, () => {
+            this.addActionButton("button_" + opId + "_0", from, () =>
               this.sendActionResolve(opId, {
                 count: from
-              });
-            });
+              })
+            );
           if (from == 0 && count > 1) {
-            this.addActionButton("button_" + opId + "_1", "1", () => {
+            this.addActionButton("button_" + opId + "_1", "1", () =>
               this.sendActionResolve(opId, {
                 count: 1
-              });
-            });
+              })
+            );
           }
 
           if (count >= 1)
@@ -2090,10 +2088,8 @@ awarded.`);
 
   resourcesToHtml(resources: any, show_zeroes: boolean = false): string {
     var htm = "";
-    const allResources = ["m", "s", "u", "h"];
-
-    allResources.forEach((item) => {
-      if (resources[item] != undefined && (resources[item] > 0 || show_zeroes === true)) {
+    this.resourceTrackers.forEach((item) => {
+      if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
         htm += `<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
       }
     });
@@ -2214,6 +2210,7 @@ awarded.`);
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();
+    $("ebd-body").dataset.maop="complex";
 
     const xop = args.op;
 
@@ -2452,6 +2449,7 @@ awarded.`);
         return;
       }
     }
+    // sometimes parent are added first and sometimes child, have to handle both independency here...
 
     const parentId = attachNode.parentElement.id;
     if (parentId) {
