@@ -100,11 +100,14 @@ class GameXBody extends GameTokens {
       //Give tooltips to alt trackers in player boards
       document.querySelectorAll(".tracker").forEach((node) => {
         const id = node.id;
-        let tnode=node;
-        if (node.parentElement && node.parentElement.classList.contains('playerboard_produce') || node.parentElement.classList.contains('playerboard_own')) {
+        let tnode = node;
+        if (
+          (node.parentElement && node.parentElement.classList.contains("playerboard_produce")) ||
+          node.parentElement.classList.contains("playerboard_own")
+        ) {
           //wont have a tt without an id
-          if (!node.parentElement.id) node.parentElement.id='gen_id_'+Math.random()*10000000;
-          tnode=node.parentElement;
+          if (!node.parentElement.id) node.parentElement.id = "gen_id_" + Math.random() * 10000000;
+          tnode = node.parentElement;
         }
         if (id.startsWith("alt_")) {
           this.updateTooltip(id.substring(4), node);
@@ -348,8 +351,8 @@ class GameXBody extends GameTokens {
 
     //cleanup old table settings
     //using a simpler namespace context for easier filtering
-   // const purgeSettings = new LocalSettings(this.getLocalSettingNamespace());
-   // purgeSettings.manageObsoleteData(this.table_id);
+    // const purgeSettings = new LocalSettings(this.getLocalSettingNamespace());
+    // purgeSettings.manageObsoleteData(this.table_id);
   }
 
   /**
@@ -2416,18 +2419,49 @@ awarded.`);
     return true;
   }
 
-  handleStackedTooltips(attachNode: Element) {
+  combineTooltips(parentNode: HTMLElement, childNode: HTMLElement) {
+    // combine parent and child tooltips and stuck to parnet, remove child one
+    if (!parentNode) return;
+    if (!childNode) return;
+    if (!parentNode.id) return;
+    if (!childNode.id) return;
+    if (!parentNode.classList.contains("withtooltip")) return;
+    if (!childNode.classList.contains("withtooltip")) return;
+    const parentId = parentNode.id;
+    const parenttt = this.tooltips[parentId];
+    if (parenttt) {
+      const parentToken = parentNode.dataset.tt_token ?? parentId;
+      const childToken = childNode.dataset.tt_token ?? childNode.id;
+      const newhtml = this.getTooptipHtmlForToken(parentToken) + this.getTooptipHtmlForToken(childToken);
+      this.addTooltipHtml(parentId, newhtml, parenttt.showDelay);
+      this.removeTooltip(childNode.id);
+    }
+  }
+
+  // stack or combined tooltips
+  handleStackedTooltips(attachNode: HTMLElement) {
     if (attachNode.childElementCount > 0) {
       if (attachNode.id.startsWith("hex")) {
         this.removeTooltip(attachNode.id);
         return;
       }
+
+      const marker = attachNode.querySelector(".marker") as HTMLElement;
+      if (marker) {
+        this.combineTooltips(attachNode, marker);
+        return;
+      }
     }
+
     const parentId = attachNode.parentElement.id;
     if (parentId) {
       if (parentId.startsWith("hex")) {
         // remove tooltip from parent, it will likely just collide
         this.removeTooltip(parentId);
+      }
+      if (attachNode.id.startsWith("marker_")) {
+        this.combineTooltips(attachNode.parentElement, attachNode);
+        return;
       }
     }
   }

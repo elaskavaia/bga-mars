@@ -559,6 +559,7 @@ class GameBasics extends GameGui {
         <div class='tooltip-body'>
            ${divImg}
            <div class='tooltipmessage tooltiptext'>${message_tr}</div>
+           <div class='tooltipdynamic'></div>
         </div>
         ${actionLine}
     </div>`;

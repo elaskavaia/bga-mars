@@ -477,7 +477,7 @@ var GameBasics = /** @class */ (function (_super) {
         var name_tr = this.getTr(name);
         var message_tr = this.getTr(message);
         var actionLine = action ? this.getActionLine(action) : "";
-        return "<div class='".concat(containerType, "'>\n        <div class='tooltiptitle'>").concat(name_tr, "</div>\n        <div class='tooltip-body-separator'></div>\n        <div class='tooltip-body'>\n           ").concat(divImg, "\n           <div class='tooltipmessage tooltiptext'>").concat(message_tr, "</div>\n        </div>\n        ").concat(actionLine, "\n    </div>");
+        return "<div class='".concat(containerType, "'>\n        <div class='tooltiptitle'>").concat(name_tr, "</div>\n        <div class='tooltip-body-separator'></div>\n        <div class='tooltip-body'>\n           ").concat(divImg, "\n           <div class='tooltipmessage tooltiptext'>").concat(message_tr, "</div>\n           <div class='tooltipdynamic'></div>\n        </div>\n        ").concat(actionLine, "\n    </div>");
     };
     GameBasics.prototype.getTr = function (name) {
         if (name === undefined)
@@ -2914,6 +2914,8 @@ var GameTokens = /** @class */ (function (_super) {
         var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
         if (main) {
             attachNode.classList.add("withtooltip");
+            if (attachNode.id != token)
+                attachNode.setAttribute("tt_token", token); // id of token that provides the tooltip
             if (attachNode.classList.contains("infonode")) {
                 var box_1 = attachNode.querySelector(".infobox");
                 if (box_1) {
@@ -3290,10 +3292,11 @@ var GameXBody = /** @class */ (function (_super) {
             document.querySelectorAll(".tracker").forEach(function (node) {
                 var id = node.id;
                 var tnode = node;
-                if (node.parentElement && node.parentElement.classList.contains('playerboard_produce') || node.parentElement.classList.contains('playerboard_own')) {
+                if ((node.parentElement && node.parentElement.classList.contains("playerboard_produce")) ||
+                    node.parentElement.classList.contains("playerboard_own")) {
                     //wont have a tt without an id
                     if (!node.parentElement.id)
-                        node.parentElement.id = 'gen_id_' + Math.random() * 10000000;
+                        node.parentElement.id = "gen_id_" + Math.random() * 10000000;
                     tnode = node.parentElement;
                 }
                 if (id.startsWith("alt_")) {
@@ -5308,10 +5311,41 @@ var GameXBody = /** @class */ (function (_super) {
         node.dataset.selected = value;
         return true;
     };
+    GameXBody.prototype.combineTooltips = function (parentNode, childNode) {
+        var _a, _b;
+        // combine parent and child tooltips and stuck to parnet, remove child one
+        if (!parentNode)
+            return;
+        if (!childNode)
+            return;
+        if (!parentNode.id)
+            return;
+        if (!childNode.id)
+            return;
+        if (!parentNode.classList.contains("withtooltip"))
+            return;
+        if (!childNode.classList.contains("withtooltip"))
+            return;
+        var parentId = parentNode.id;
+        var parenttt = this.tooltips[parentId];
+        if (parenttt) {
+            var parentToken = (_a = parentNode.dataset.tt_token) !== null && _a !== void 0 ? _a : parentId;
+            var childToken = (_b = childNode.dataset.tt_token) !== null && _b !== void 0 ? _b : childNode.id;
+            var newhtml = this.getTooptipHtmlForToken(parentToken) + this.getTooptipHtmlForToken(childToken);
+            this.addTooltipHtml(parentId, newhtml, parenttt.showDelay);
+            this.removeTooltip(childNode.id);
+        }
+    };
+    // stack or combined tooltips
     GameXBody.prototype.handleStackedTooltips = function (attachNode) {
         if (attachNode.childElementCount > 0) {
             if (attachNode.id.startsWith("hex")) {
                 this.removeTooltip(attachNode.id);
+                return;
+            }
+            var marker = attachNode.querySelector(".marker");
+            if (marker) {
+                this.combineTooltips(attachNode, marker);
                 return;
             }
         }
@@ -5320,6 +5354,10 @@ var GameXBody = /** @class */ (function (_super) {
             if (parentId.startsWith("hex")) {
                 // remove tooltip from parent, it will likely just collide
                 this.removeTooltip(parentId);
+            }
+            if (attachNode.id.startsWith("marker_")) {
+                this.combineTooltips(attachNode.parentElement, attachNode);
+                return;
             }
         }
     };

@@ -420,6 +420,7 @@ class GameTokens extends GameBasics {
 
     if (main) {
       attachNode.classList.add("withtooltip");
+      if (attachNode.id != token) attachNode.setAttribute("tt_token", token); // id of token that provides the tooltip
 
       if (attachNode.classList.contains("infonode")) {
         const box = attachNode.querySelector(".infobox") as HTMLElement;
@@ -445,7 +446,7 @@ class GameTokens extends GameBasics {
     }
   }
 
-  handleStackedTooltips(attachNode: Element) {}
+  handleStackedTooltips(attachNode: HTMLElement) {}
 
   removeTooltip(nodeId: string): void {
     // if (this.tooltips[nodeId])
