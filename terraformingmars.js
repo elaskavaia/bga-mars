@@ -4283,12 +4283,12 @@ var GameXBody = /** @class */ (function (_super) {
                     var count = String($(dest_holder).querySelectorAll(".resource").length);
                     $(dest_holder).dataset.resource_counter = count;
                     $(dest_counter).dataset.resource_counter = count;
-                }
-                if (!removed) {
-                    return this.customAnimation.animatePlaceResourceOnCard(key, location);
-                }
-                else {
-                    return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+                    if (!removed) {
+                        return this.customAnimation.animatePlaceResourceOnCard(key, location);
+                    }
+                    else {
+                        return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+                    }
                 }
             }
         }

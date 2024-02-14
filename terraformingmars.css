@@ -7576,12 +7576,32 @@
   background-image: url(img/full/cards3.jpg);
 }
 
+.mfull {
+  /** discount */
+}
 .mfull #ebd-body {
   /* 
   background-image: url("img/full/tooltipbg.jpg"); 
   background-size: contain;
   */
   background-image: unset;
+}
+.mfull .handy .card[data-discount_cost]::after {
+  content: attr(data-discount_cost);
+  position: absolute;
+  top: 11%;
+  left: 6%;
+  /* background-color: yellow; */
+  width: 14%;
+  text-align: center;
+  border-radius: 20%;
+  color: #bef983;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  font-family: var(--mars-font);
+  font-size: calc(var(--card-width) * 0.09);
+  background-image: url("img/resources.png");
+  background-size: 1000% 200%;
+  background-position: -300% 0;
 }
 .mfull .player-board {
   background-color: unset;
