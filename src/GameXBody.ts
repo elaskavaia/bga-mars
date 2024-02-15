@@ -443,6 +443,13 @@ class GameXBody extends GameTokens {
         default: false,
         ui: "checkbox"
       },
+      {
+        key: "plaincubes",
+        label: _("Plain cubes"),
+        choice: { plain: true },
+        default: false,
+        ui: "checkbox"
+      },
       { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
       { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
     ]);
@@ -1489,9 +1496,10 @@ awarded.`);
     if (key.startsWith("card_corp") && location.startsWith("tableau")) {
       $(location + "_corp_logo").dataset.corp = key;
       $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
+
       //adds tt to corp logos
-      this.updateTooltip(key, location + "_corp_logo");
-      this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
+      this.updateTooltip(key,location + "_corp_logo");
+      this.updateTooltip(key,location.replace("tableau_", "miniboard_corp_logo_"));
     }
 
     if (key.startsWith("card_main") && location.startsWith("tableau")) {

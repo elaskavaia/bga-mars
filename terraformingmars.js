@@ -3576,6 +3576,13 @@ var GameXBody = /** @class */ (function (_super) {
                 default: false,
                 ui: "checkbox"
             },
+            {
+                key: "plaincubes",
+                label: _("Plain cubes"),
+                choice: { plain: true },
+                default: false,
+                ui: "checkbox"
+            },
             { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
             { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
         ]);
@@ -3855,7 +3862,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.defaultAjaxHandler = function (err) {
         console.log("sent", err);
-        gameui.addUndoButton();
+        //(gameui as GameXBody).addUndoButton();
     };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);

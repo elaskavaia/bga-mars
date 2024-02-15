@@ -41,6 +41,7 @@
 
     .counters_holder{
       --resourcesize:   var(--default-resourcesize);
+      min-width:0;
     }
 
     .player_counters {
@@ -50,8 +51,8 @@
     }
 
     .player_controls{
-      justify-content: flex-start;
-      top: 6%;
+     /* justify-content: flex-start;
+      top: 6%;*/
     }
 
     .hand, .draw, .draft {

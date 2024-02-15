@@ -107,6 +107,12 @@
   height: calc(var(--map-width) * 0.05);
 }
 
+#ebd-body[data-localsetting_plaincubes="plain"] {
+  .marker {
+    background-image: url('img/cubes_opaque.png');
+  }
+}
+
 #main_board .marker {
   position: absolute;
 }
@@ -121,6 +127,13 @@
   width: calc(var(--card-width) * 0.045 * 3.5 );
   height: calc(var(--card-width) * 0.05 * 3.5 );
 }
+
+.hex > .marker {
+  left: 28%;
+  top: 24%;
+}
+
+
 
 .marker_0000ff {background-position-x:-100%; }
 .marker_ff0000 {background-position-x:0; }

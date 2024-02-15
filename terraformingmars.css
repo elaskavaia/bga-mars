@@ -225,6 +225,10 @@
   height: calc(var(--map-width) * 0.05);
 }
 
+#ebd-body[data-localsetting_plaincubes=plain] .marker {
+  background-image: url("img/cubes_opaque.png");
+}
+
 #main_board .marker {
   position: absolute;
 }
@@ -238,6 +242,11 @@
   position: absolute;
   width: calc(var(--card-width) * 0.045 * 3.5);
   height: calc(var(--card-width) * 0.05 * 3.5);
+}
+
+.hex > .marker {
+  left: 28%;
+  top: 24%;
 }
 
 .marker_0000ff {
@@ -8482,6 +8491,7 @@
 }
 .mcompact #ebd-body.mobile_portrait .counters_holder {
   --resourcesize: var(--default-resourcesize);
+  min-width: 0;
 }
 .mcompact #ebd-body.mobile_portrait .player_counters {
   /* 1X --resourcesize: 7.5vw;*/
@@ -8489,8 +8499,8 @@
   flex-wrap: wrap;
 }
 .mcompact #ebd-body.mobile_portrait .player_controls {
-  justify-content: flex-start;
-  top: 6%;
+  /* justify-content: flex-start;
+   top: 6%;*/
 }
 .mcompact #ebd-body.mobile_portrait .hand, .mcompact #ebd-body.mobile_portrait .draw, .mcompact #ebd-body.mobile_portrait .draft {
   padding: 6px 6px 6px calc(var(--card-width) * 0.2);
