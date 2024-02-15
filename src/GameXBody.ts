@@ -1974,9 +1974,8 @@ awarded.`);
         });
     } else if (ttype == "enum") {
       if (single) {
-        const args = this.gamedatas.gamestate.args ?? this.gamedatas.gamestate.private_state.args;
-        const operations = args.operations ?? args.player_operations[this.player_id].operations;
-
+    
+        let customNeeded = false;
         opTargets.forEach((tid: string, i: number) => {
           const detailsInfo = paramInfo[tid];
           if (tid == "payment") {
@@ -1989,8 +1988,7 @@ awarded.`);
                 0
               ) > 0
             ) {
-              this.addActionButtonColor('btn_create_custompay', _('Custom'), () => this.createCustomPayment(opId, detailsInfo), 'blue');
-
+              customNeeded = true;
             }
           } else {
             const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
@@ -2002,7 +2000,9 @@ awarded.`);
             let title = this.resourcesToHtml(detailsInfo.resources);
             this.addActionButtonColor(divId, title, () => this.onSelectTarget(opId, tid), buttonColor);
           }
+     
         });
+        if (customNeeded) this.addActionButtonColor('btn_create_custompay', _('Custom'), () => this.createCustomPayment(opId, detailsInfo), 'blue');
       }
     } else if (ttype) {
       console.error("Unknonwn type " + ttype, opInfo);

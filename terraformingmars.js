@@ -1643,7 +1643,7 @@ var CustomAnimation = /** @class */ (function () {
     CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd) {
         var _this = this;
         if (!$(targetId))
-            return;
+            return this.getImmediatePromise();
         var animation = this.animations[animationname];
         return new Promise(function (resolve, reject) {
             var cssClass = 'anim_' + animation.name;
@@ -3342,6 +3342,12 @@ var GameXBody = /** @class */ (function (_super) {
             $("outer_scoretracker").addEventListener("click", function () {
                 _this.onShowScoringTable(0);
             });
+            $("milestones_progress").addEventListener("click", function () {
+                _this.onShowMilestonesProgress();
+            });
+            $("awards_progress").addEventListener("click", function () {
+                _this.onShowAwardsProgress();
+            });
             //2p specific
             if (Object.keys(gamedatas.players).length == 2) {
                 $("ebd-body").classList.add("twoplayers");
@@ -3458,6 +3464,70 @@ var GameXBody = /** @class */ (function (_super) {
                 showFunc(finalhtm);
             });
         }
+    };
+    GameXBody.prototype.onShowMilestonesProgress = function () {
+        var finalhtm = "";
+        var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraformer"), "</div>\n                      <div class=\"scorecell \">").concat(_("Mayor"), "</div>\n                      <div class=\"scorecell \">").concat(_("Gardener"), "</div>\n                      <div class=\"scorecell \">").concat(_("Builder"), "</div>\n                      <div class=\"scorecell \">").concat(_("Planner"), "</div>\n                </div>\n                %lines%\n              </div>");
+        var lines = "";
+        for (var plid in this.gamedatas.players) {
+            var plcolor = this.getPlayerColor(parseInt(plid));
+            var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+            var pg = {
+                terraformer: parseInt($("tracker_tr_" + plcolor).dataset.state),
+                mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
+                gardener: parseInt($("tracker_forest_" + plcolor).dataset.state),
+                builder: parseInt($("tracker_tagBuilding_" + plcolor).dataset.state),
+                planner: parseInt($("counter_hand_" + plcolor).dataset.state)
+            };
+            lines =
+                lines +
+                    "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            for (var key in pg) {
+                lines =
+                    lines +
+                        "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
+            }
+            lines =
+                lines + "             </div>";
+        }
+        finalhtm = tablehtm.replace("%lines%", lines);
+        var dlg = new ebg.popindialog();
+        dlg.create("pg_dlg");
+        dlg.setTitle(_("Milestones Summary"));
+        dlg.setContent(finalhtm);
+        dlg.show();
+    };
+    GameXBody.prototype.onShowAwardsProgress = function () {
+        var finalhtm = "";
+        var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Landlord"), "</div>\n                      <div class=\"scorecell \">").concat(_("Banker"), "</div>\n                      <div class=\"scorecell \">").concat(_("Scientist"), "</div>\n                      <div class=\"scorecell \">").concat(_("Thermalist"), "</div>\n                      <div class=\"scorecell \">").concat(_("Miner"), "</div>\n                </div>\n                %lines%\n              </div>");
+        var lines = "";
+        for (var plid in this.gamedatas.players) {
+            var plcolor = this.getPlayerColor(parseInt(plid));
+            var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+            var pg = {
+                landlord: parseInt($("tracker_land_" + plcolor).dataset.state),
+                banker: parseInt($("tracker_pm_" + plcolor).dataset.state),
+                scientist: parseInt($("tracker_tagScience_" + plcolor).dataset.state),
+                thermalist: parseInt($("tracker_h_" + plcolor).dataset.state),
+                miner: parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state)
+            };
+            lines =
+                lines +
+                    "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            for (var key in pg) {
+                lines =
+                    lines +
+                        "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
+            }
+            lines =
+                lines + "             </div>";
+        }
+        finalhtm = tablehtm.replace("%lines%", lines);
+        var dlg = new ebg.popindialog();
+        dlg.create("pg_dlg");
+        dlg.setTitle(_("Awards Summary"));
+        dlg.setContent(finalhtm);
+        dlg.show();
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ""; }
@@ -4328,6 +4398,9 @@ var GameXBody = /** @class */ (function (_super) {
         if (key.startsWith("card_corp") && location.startsWith("tableau")) {
             $(location + "_corp_logo").dataset.corp = key;
             $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
+            //adds tt to corp logos
+            this.updateTooltip(key, location + "_corp_logo");
+            this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
         }
         if (key.startsWith("card_main") && location.startsWith("tableau")) {
             var t = this.getRulesFor(key, "t");
@@ -4701,7 +4774,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (single === void 0) { single = true; }
         var opId = opInfo.id;
         var opArgs = opInfo.args;
@@ -4790,8 +4863,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (ttype == "enum") {
             if (single) {
-                var args = (_c = this.gamedatas.gamestate.args) !== null && _c !== void 0 ? _c : this.gamedatas.gamestate.private_state.args;
-                var operations = (_d = args.operations) !== null && _d !== void 0 ? _d : args.player_operations[this.player_id].operations;
+                var customNeeded_1 = false;
                 opTargets.forEach(function (tid, i) {
                     var detailsInfo = paramInfo[tid];
                     if (tid == "payment") {
@@ -4800,7 +4872,7 @@ var GameXBody = /** @class */ (function (_super) {
                             var key = _a[0], val = _a[1];
                             return sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0);
                         }, 0) > 0) {
-                            _this.createCustomPayment(opId, detailsInfo);
+                            customNeeded_1 = true;
                         }
                     }
                     else {
@@ -4816,6 +4888,8 @@ var GameXBody = /** @class */ (function (_super) {
                         _this.addActionButtonColor(divId, title, function () { return _this.onSelectTarget(opId, tid); }, buttonColor);
                     }
                 });
+                if (customNeeded_1)
+                    this.addActionButtonColor('btn_create_custompay', _('Custom'), function () { return _this.createCustomPayment(opId, detailsInfo); }, 'blue');
             }
         }
         else if (ttype) {
@@ -4907,6 +4981,8 @@ var GameXBody = /** @class */ (function (_super) {
             available: [],
             rate: []
         };
+        if ($('btn_create_custompay'))
+            $('btn_create_custompay').remove();
         var items_htm = "";
         for (var res in info.resources) {
             this.custom_pay.selected[res] = 0;

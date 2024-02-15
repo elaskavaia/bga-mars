@@ -229,6 +229,11 @@
   position: absolute;
 }
 
+.hex > .marker {
+  left: 28%;
+  top: 24%;
+}
+
 .player_area .marker {
   position: absolute;
   width: calc(var(--card-width) * 0.045 * 3.5);
@@ -4093,6 +4098,20 @@
 .map_milesawardsheader .milesawardscosts .token_img[data-striked="1"] {
   filter: grayscale(1) opacity(0.7);
 }
+.map_milesawardsheader .milesawardsprogress {
+  position: absolute;
+  width: calc(var(--map-width) * 0.04);
+  height: calc(var(--map-width) * 0.04);
+  background: orange;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: calc(var(--map-width) * 0.03);
+  right: 0;
+  cursor: help;
+  border: calc(var(--map-width) * 0.001) solid black;
+}
 
 .map_title {
   /*background-color: #EE6F10;
@@ -5067,6 +5086,27 @@
   width: calc(100% - 100px);
 }
 
+.hand_symbol {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hand_symbol svg {
+  position: absolute;
+  width: 32px;
+  top: 0;
+}
+.hand_symbol .counter_hand {
+  position: relative;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: calc(var(--pb_cellsize) * 0.4);
+  font-family: "SpaceFont";
+}
+
 #ebd-body {
   --pb_cellsize:6vh;
 }
@@ -5765,6 +5805,11 @@
 #generalactions .tracker_h, #gameaction_status_wrap .tracker_h {
   color: white;
   text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+}
+
+#btn_create_custompay {
+  min-height: 30px;
+  vertical-align: middle;
 }
 
 #custom_paiement {
