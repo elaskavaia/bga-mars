@@ -4793,36 +4793,35 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         if (ttype == "token") {
-            var firstTarget = undefined;
+            var firstTarget_1 = undefined;
             for (var _i = 0, opTargets_1 = opTargets; _i < opTargets_1.length; _i++) {
                 var tid = opTargets_1[_i];
                 var divId = this.activateSlotForOp(tid, opId);
-                if (!firstTarget && divId)
-                    firstTarget = divId;
+                if (!firstTarget_1 && divId)
+                    firstTarget_1 = divId;
             }
             if (single) {
-                if (!firstTarget)
-                    firstTarget = "generalactions";
+                if (!firstTarget_1)
+                    firstTarget_1 = "generalactions";
                 var MAGIC_BUTTONS_NUMBER = 6;
-                var hex = firstTarget.startsWith("hex");
-                var showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER && !hex;
+                var MAGIC_HEX_BUTTONS_NUMBER = 3;
+                var hex = firstTarget_1.startsWith("hex");
+                var showAsButtons = hex ? opTargets.length <= MAGIC_HEX_BUTTONS_NUMBER : opTargets.length <= MAGIC_BUTTONS_NUMBER;
                 if (showAsButtons) {
                     this.addTargetButtons(opId, opTargets);
                 }
-                else {
-                    if (hex) {
-                        $(firstTarget).scrollIntoView({ behavior: "smooth", block: "center" });
-                    }
-                    else {
-                        // people confused when buttons are not shown, add button with explanations
-                        var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-                        this.addActionButtonColor("button_x", name_2, function () {
-                            _this.removeTooltip("button_x");
-                            dojo.destroy("button_x");
-                            _this.addTargetButtons(opId, opTargets);
-                        }, "orange");
-                        this.addTooltip("button_x", _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"), _("Click to add buttons"));
-                    }
+                else if (!hex) {
+                    // people confused when buttons are not shown, add button with explanations
+                    var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+                    this.addActionButtonColor("button_x", name_2, function () {
+                        _this.removeTooltip("button_x");
+                        dojo.destroy("button_x");
+                        _this.addTargetButtons(opId, opTargets);
+                    }, "orange");
+                    this.addTooltip("button_x", _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"), _("Click to add buttons"));
+                }
+                if (hex || firstTarget_1.startsWith("award") || firstTarget_1.startsWith("milestone") || firstTarget_1.startsWith("card_stanproj")) {
+                    this.addActionButtonColor("button_map", _("Show on Map"), function () { return $(firstTarget_1).scrollIntoView({ behavior: "smooth", block: "center" }); }, "orange");
                 }
             }
         }
@@ -4904,6 +4903,9 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
         var _this = this;
+        if (opTargets.length == 0) {
+            this.addActionButtonColor("button_0", _("No valid targets"), function () { return _this.sendActionResolveWithCount(opId, 0); }, "orange");
+        }
         opTargets.forEach(function (tid) {
             _this.addActionButtonColor("button_" + tid, _this.getTokenName(tid), function () {
                 _this.sendActionResolveWithTarget(opId, tid);
@@ -5308,13 +5310,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
     };
     GameXBody.prototype.onSelectTarget = function (opId, target, checkActive) {
-        var _a;
         if (checkActive === void 0) { checkActive = false; }
         // can add prompt
         if ($(target) && checkActive && !this.checkActiveSlot(target))
             return;
-        if (this.isCurrentPlayerActive())
-            (_a = $("generalactions")) === null || _a === void 0 ? void 0 : _a.scrollIntoView({ behavior: "smooth", block: "center" });
         return this.sendActionResolveWithTarget(opId, target);
     };
     // on click hooks

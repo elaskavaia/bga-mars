@@ -1907,33 +1907,38 @@ awarded.`);
       if (single) {
         if (!firstTarget) firstTarget = "generalactions";
         const MAGIC_BUTTONS_NUMBER = 6;
+        const MAGIC_HEX_BUTTONS_NUMBER = 3;
         const hex = firstTarget.startsWith("hex");
-        const showAsButtons = opTargets.length <= MAGIC_BUTTONS_NUMBER && !hex;
+        const showAsButtons = hex ? opTargets.length <= MAGIC_HEX_BUTTONS_NUMBER : opTargets.length <= MAGIC_BUTTONS_NUMBER;
 
         if (showAsButtons) {
           this.addTargetButtons(opId, opTargets);
-        } else {
-          if (hex) {
-            $(firstTarget).scrollIntoView({ behavior: "smooth", block: "center" });
-          } else {
-            // people confused when buttons are not shown, add button with explanations
-            const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-            this.addActionButtonColor(
-              "button_x",
-              name,
-              () => {
-                this.removeTooltip("button_x");
-                dojo.destroy("button_x");
-                this.addTargetButtons(opId, opTargets);
-              },
-              "orange"
-            );
-            this.addTooltip(
-              "button_x",
-              _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
-              _("Click to add buttons")
-            );
-          }
+        } else if (!hex) {
+          // people confused when buttons are not shown, add button with explanations
+          const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+          this.addActionButtonColor(
+            "button_x",
+            name,
+            () => {
+              this.removeTooltip("button_x");
+              dojo.destroy("button_x");
+              this.addTargetButtons(opId, opTargets);
+            },
+            "orange"
+          );
+          this.addTooltip(
+            "button_x",
+            _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"),
+            _("Click to add buttons")
+          );
+        }
+        if (hex || firstTarget.startsWith("award") || firstTarget.startsWith("milestone") || firstTarget.startsWith("card_stanproj")) {
+          this.addActionButtonColor(
+            "button_map",
+            _("Show on Map"),
+            () => $(firstTarget).scrollIntoView({ behavior: "smooth", block: "center" }),
+            "orange"
+          );
         }
       }
     } else if (ttype == "player") {
@@ -1977,10 +1982,10 @@ awarded.`);
         if (count == 1) {
           this.addActionButton("button_" + opId, _("Confirm"), () => this.sendActionResolve(opId));
         } else if (count == from) {
-          this.addActionButton("button_" + opId, _("Confirm")+" "+count, () => this.sendActionResolve(opId));
+          this.addActionButton("button_" + opId, _("Confirm") + " " + count, () => this.sendActionResolve(opId));
         } else {
           // counter select stub for now
-          for (let i = from==0?1:from; i < count; i++) {
+          for (let i = from == 0 ? 1 : from; i < count; i++) {
             this.addActionButton(`button_${opId}_${i}`, i, () => this.sendActionResolveWithCount(opId, i));
           }
 
@@ -2007,6 +2012,9 @@ awarded.`);
   }
 
   addTargetButtons(opId: number, opTargets: string[]) {
+    if (opTargets.length == 0) {
+      this.addActionButtonColor("button_0", _("No valid targets"), () => this.sendActionResolveWithCount(opId, 0), "orange");
+    }
     opTargets.forEach((tid: string) => {
       this.addActionButtonColor(
         "button_" + tid,
@@ -2452,7 +2460,6 @@ awarded.`);
   onSelectTarget(opId: number, target: string, checkActive: boolean = false) {
     // can add prompt
     if ($(target) && checkActive && !this.checkActiveSlot(target)) return;
-    if (this.isCurrentPlayerActive()) $("generalactions")?.scrollIntoView({ behavior: "smooth", block: "center" });
     return this.sendActionResolveWithTarget(opId, target);
   }
 
