@@ -70,9 +70,9 @@ class GameUT extends terraformingmars {
         return $values;
     }
 
-    function fakeUserAction($op, $target = null){
+    function fakeUserAction($op, $target = null) {
         $args = ['op_info' => $op];
-        if ($target!==null) $args['target']=$target;
+        if ($target !== null) $args['target'] = $target;
         $count = $this->saction_resolve($op, $args);
         return $this->saction_stack($count, $op);
     }
@@ -487,12 +487,27 @@ final class GameTest extends TestCase {
 
     public function testInstanciateAllOperations() {
         $m = $this->game();
+        $tested = [];
         foreach ($m->token_types as $key => $info) {
             if (!startsWith($key, 'op_')) continue;
             echo ("testing op $key\n");
             $this->subTestOp($m, $key, $info);
+            $tested[$key] = 1;
         }
         $this->subTestOp($m, 'op_acard188', ['type' => 'acard188']);
+
+        $dir = dirname(dirname(__FILE__));
+        $files = glob("$dir/operations/*.php");
+
+        foreach ($files as $file) {
+            $base = basename($file);
+            if (!startsWith($base, 'Operation_')) continue;
+            $mne = preg_replace("/Operation_(.*).php/","\\1", $base);
+            $key = "op_${mne}";
+            if (array_key_exists($key, $tested)) continue;
+            echo ("testing op $key\n");
+            $this->subTestOp($m, $key,  ['type' => $mne]);
+        }
     }
 
     public function testPass() {
@@ -505,7 +520,7 @@ final class GameTest extends TestCase {
         $this->assertFalse($op->canResolveAutomatically());
         $this->assertFalse($op->canSkipChoice());
         $this->assertEquals('pass', $op->getMnemonic());
- 
+
         $ttype = $args['ttype'];
         $this->assertEquals('', $ttype);
     }
@@ -522,14 +537,14 @@ final class GameTest extends TestCase {
         $this->assertTrue($op->canResolveAutomatically());
         $this->assertFalse($op->canSkipChoice());
         $this->assertEquals('2draft', $op->getMnemonic());
- 
+
         $ttype = $args['ttype'];
         $this->assertEquals('token', $ttype);
         $count = 2;
         $this->assertTrue($op->auto(PCOLOR, $count));
     }
 
-    public function testPayop () {
+    public function testPayop() {
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("npu_Any:pu", PCOLOR);
         $this->assertNotNull($op);
@@ -537,7 +552,7 @@ final class GameTest extends TestCase {
     }
 
     public function testDiscardDraw() {
-    
+
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("?(discard:draw)", PCOLOR);
         $this->assertNotNull($op);
@@ -551,9 +566,9 @@ final class GameTest extends TestCase {
     }
 
     function subTestOp($m, $key, $info = []) {
-        $type = array_get($info, 'type', substr($key,3));
+        $type = array_get($info, 'type', substr($key, 3));
         $this->assertTrue(!!$type);
-  
+
         /** @var AbsOperation */
         $op = $m->getOperationInstanceFromType($type, PCOLOR);
         $this->assertNotNull($op);
@@ -572,11 +587,11 @@ final class GameTest extends TestCase {
         $conf = $op->requireConfirmation();
 
         if ($ttype == 'player') {
-            $this->assertTrue( $conf);
+            $this->assertTrue($conf, "conf $type");
         } else  if ($ttype == 'token') {
             // $this->assertTrue( $conf, "$ttype conf $type");
         } else  if ($ttype == 'enum') {
-            $this->assertTrue( $conf);
+            $this->assertTrue($conf);
         } else {
             // $this->assertFalse( $conf);
         }

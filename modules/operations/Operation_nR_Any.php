@@ -43,6 +43,10 @@ class Operation_nR_Any extends AbsOperation {
         return 'player';
     }
 
+    function requireConfirmation() {
+        return true;
+    }
+
     function canResolveAutomatically() {
         if ($this->game->isSolo()) {
             return true;

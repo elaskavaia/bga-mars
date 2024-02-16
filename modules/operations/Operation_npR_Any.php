@@ -36,6 +36,10 @@ class Operation_npR_Any extends AbsOperation {
         return 'player';
     }
 
+    function requireConfirmation(){
+        return true;
+    }
+
     protected function getType() {
         return substr($this->mnemonic, 1, 2);
     }

@@ -7,6 +7,10 @@ class Operation_nolastforest extends AbsOperation {
         return false;
     }
 
+    function getPrimaryArgType() {
+        return '';
+    }
+
     function isVoid(): bool {
         return false;
     }

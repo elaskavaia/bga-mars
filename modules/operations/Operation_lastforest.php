@@ -8,6 +8,10 @@ class Operation_lastforest extends AbsOperation {
         return false;
     }
 
+    function getPrimaryArgType() {
+        return '';
+    }
+
     function canResolveAutomatically() {
         return true;
     }
