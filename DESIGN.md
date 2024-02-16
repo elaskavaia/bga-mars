@@ -34,4 +34,4 @@ API for token table in modules/DBTokens.php and API for machine in modules/DbMac
 https://tesera.ru/images/items/2078855/FAQ_v1.7.pdf
 https://www.fryxgames.se/TerraformingMars/TMRULESFINAL.pdf
 https://ssimeonoff.github.io/cards-list
-
+https://terraforming-mars.herokuapp.com/
