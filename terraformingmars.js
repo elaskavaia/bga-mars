@@ -3483,12 +3483,9 @@ var GameXBody = /** @class */ (function (_super) {
                 lines +
                     "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
             for (var key in pg) {
-                lines =
-                    lines +
-                        "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
+                lines = lines + "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
             }
-            lines =
-                lines + "             </div>";
+            lines = lines + "             </div>";
         }
         finalhtm = tablehtm.replace("%lines%", lines);
         var dlg = new ebg.popindialog();
@@ -3515,12 +3512,9 @@ var GameXBody = /** @class */ (function (_super) {
                 lines +
                     "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
             for (var key in pg) {
-                lines =
-                    lines +
-                        "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
+                lines = lines + "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
             }
-            lines =
-                lines + "             </div>";
+            lines = lines + "             </div>";
         }
         finalhtm = tablehtm.replace("%lines%", lines);
         var dlg = new ebg.popindialog();
@@ -3830,6 +3824,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.ajaxuseraction = function (action, args, handler) {
         this.gameStatusCleanup();
         _super.prototype.ajaxuseraction.call(this, action, args, handler);
+        console.log("sending ".concat(action), args);
     };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);
@@ -4683,6 +4678,12 @@ var GameXBody = /** @class */ (function (_super) {
         });
         return true;
     };
+    GameXBody.prototype.sendActionResolveWithCount = function (op, count) {
+        this.ajaxuseraction("resolve", {
+            ops: [{ op: op, count: count }]
+        });
+        return true;
+    };
     GameXBody.prototype.sendActionDecline = function (op) {
         this.ajaxuseraction("decline", {
             ops: [{ op: op }]
@@ -4786,34 +4787,9 @@ var GameXBody = /** @class */ (function (_super) {
         if (single) {
             this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
             // add main operation to the body to change style if need be
-            $("ebd-body").dataset.maop = (opInfo.type.replace(/[^a-zA-Z0-9]/g, ''));
-            if (opTargets.length == 0) {
-                if (count == from) {
-                    this.addActionButton("button_" + opId, _("Confirm"), function () { return _this.sendActionResolve(opId); });
-                }
-                else {
-                    // counter select stub for now
-                    if (from > 0)
-                        this.addActionButton("button_" + opId + "_0", from, function () {
-                            return _this.sendActionResolve(opId, {
-                                count: from
-                            });
-                        });
-                    if (from == 0 && count > 1) {
-                        this.addActionButton("button_" + opId + "_1", "1", function () {
-                            return _this.sendActionResolve(opId, {
-                                count: 1
-                            });
-                        });
-                    }
-                    if (count >= 1)
-                        this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
-                            // XXX
-                            _this.sendActionResolve(opId, {
-                                count: count
-                            });
-                        });
-                }
+            $("ebd-body").dataset.maop = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
+            if (opArgs.void) {
+                this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
             }
         }
         if (ttype == "token") {
@@ -4851,19 +4827,13 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         else if (ttype == "player") {
-            if (paramInfo) {
-                for (var tid in paramInfo) {
-                    this.activatePlayerSlot(tid, opId, single, __assign(__assign({}, paramInfo[tid]), { op: opInfo }));
-                }
+            for (var tid in paramInfo) {
+                this.activatePlayerSlot(tid, opId, single, __assign(__assign({}, paramInfo[tid]), { op: opInfo }));
             }
-            else
-                opTargets.forEach(function (tid) {
-                    _this.activatePlayerSlot(tid, opId, single);
-                });
         }
         else if (ttype == "enum") {
             if (single) {
-                var customNeeded_1 = false;
+                var customNeeded_1 = undefined;
                 opTargets.forEach(function (tid, i) {
                     var detailsInfo = paramInfo[tid];
                     if (tid == "payment") {
@@ -4872,7 +4842,7 @@ var GameXBody = /** @class */ (function (_super) {
                             var key = _a[0], val = _a[1];
                             return sum + (key !== "m" && typeof val === "number" && Number.isInteger(val) ? val : 0);
                         }, 0) > 0) {
-                            customNeeded_1 = true;
+                            customNeeded_1 = detailsInfo;
                         }
                     }
                     else {
@@ -4889,11 +4859,47 @@ var GameXBody = /** @class */ (function (_super) {
                     }
                 });
                 if (customNeeded_1)
-                    this.addActionButtonColor('btn_create_custompay', _('Custom'), function () { return _this.createCustomPayment(opId, detailsInfo); }, 'blue');
+                    this.addActionButtonColor("btn_create_custompay", _("Custom"), function () { return _this.createCustomPayment(opId, customNeeded_1); }, "blue");
+            }
+        }
+        else if (ttype == "none" || !ttype) {
+            // no arguments
+            if (single) {
+                if (count == 1) {
+                    this.addActionButton("button_" + opId, _("Confirm"), function () { return _this.sendActionResolve(opId); });
+                }
+                else if (count == from) {
+                    this.addActionButton("button_" + opId, _("Confirm") + " " + count, function () { return _this.sendActionResolve(opId); });
+                }
+                else {
+                    var _loop_2 = function (i) {
+                        this_2.addActionButton("button_".concat(opId, "_").concat(i), i, function () { return _this.sendActionResolveWithCount(opId, i); });
+                    };
+                    var this_2 = this;
+                    // counter select stub for now
+                    for (var i = from == 0 ? 1 : from; i < count; i++) {
+                        _loop_2(i);
+                    }
+                    if (count >= 1) {
+                        this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
+                            _this.sendActionResolveWithCount(opId, count);
+                        });
+                    }
+                }
             }
         }
         else if (ttype) {
-            console.error("Unknonwn type " + ttype, opInfo);
+            console.error("Unknown type " + ttype, opInfo);
+        }
+        if (single) {
+            if (opArgs.skipname) {
+                if (opInfo.numops > 1) {
+                    this.addActionButtonColor("button_".concat(opId, "_0"), opArgs.skipname, function () { return _this.sendActionResolveWithCount(opId, 0); }, "orange");
+                }
+                else {
+                    this.addActionButtonColor("button_skip", opArgs.skipname, function () { return _this.sendActionSkip(); }, "orange");
+                }
+            }
         }
     };
     GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
@@ -4981,8 +4987,8 @@ var GameXBody = /** @class */ (function (_super) {
             available: [],
             rate: []
         };
-        if ($('btn_create_custompay'))
-            $('btn_create_custompay').remove();
+        if ($("btn_create_custompay"))
+            $("btn_create_custompay").remove();
         var items_htm = "";
         for (var res in info.resources) {
             this.custom_pay.selected[res] = 0;
@@ -5123,15 +5129,18 @@ var GameXBody = /** @class */ (function (_super) {
         buttonDiv.innerHTML = logo.outerHTML + " " + name;
         return buttonDiv;
     };
-    GameXBody.prototype.completeOpInfo = function (opId, opInfo, xop) {
+    GameXBody.prototype.completeOpInfo = function (opId, opInfo, xop, num) {
         var _a;
         try {
             // server may skip sending some data, this will feel all omitted fields
             opInfo.id = opId; // should be already there but just in case
             opInfo.xop = xop; // parent op
+            opInfo.numops = num; // number of siblings
             opInfo.count = parseInt(opInfo.count);
             if (opInfo.mcount === undefined)
                 opInfo.mcount = opInfo.count;
+            else
+                opInfo.mcount = parseInt(opInfo.mcount);
             var opArgs_1 = opInfo.args;
             if (opArgs_1.void === undefined)
                 opArgs_1.void = false;
@@ -5201,38 +5210,40 @@ var GameXBody = /** @class */ (function (_super) {
             this.setDescriptionOnMyTurn("${you} must choose order of operations");
             sortedOps = this.sortOrderOps(args);
         }
-        var _loop_2 = function (i) {
+        var allSkip = true;
+        var _loop_3 = function (i) {
             var opIdS = sortedOps[i];
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
-            this_2.completeOpInfo(opId, opInfo, xop);
+            this_3.completeOpInfo(opId, opInfo, xop, sortedOps.length);
             var opArgs = opInfo.args;
-            var name_3 = this_2.getButtonNameForOperation(opInfo);
+            var name_3 = this_3.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
-            this_2.updateVisualsFromOp(opInfo, opId);
+            this_3.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
             // - single action
             // - first if ordered
-            // - all if choice of one (!ordered)
+            // - all if choice required (!ordered)
             if (singleOrFirst || !ordered) {
-                this_2.activateSlots(opInfo, singleOrFirst);
-                this_2.updateHandInformation(opInfo.args.info, opInfo.type);
+                this_3.activateSlots(opInfo, singleOrFirst);
+                this_3.updateHandInformation(opInfo.args.info, opInfo.type);
             }
             // if more than one action and they are no ordered add buttons for each
             // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
-                this_2.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_3.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
             }
-            // add done (skip) when optional
-            if (singleOrFirst) {
-                if (opArgs.skipname) {
-                    this_2.addActionButtonColor("button_skip", _(opArgs.skipname), function () { return _this.sendActionSkip(); }, "orange");
-                }
+            // add done (skip) when all optional
+            if (opInfo.mcount > 0) {
+                allSkip = false;
             }
         };
-        var this_2 = this;
+        var this_3 = this;
         for (var i = 0; i < sortedOps.length; i++) {
-            _loop_2(i);
+            _loop_3(i);
+        }
+        if (allSkip && !single) {
+            this.addActionButtonColor("button_skip", _("Skip All"), function () { return _this.sendActionSkip(); }, "red");
         }
         if (chooseorder)
             this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.ajaxuseraction("whatever", {}); }, "orange");
@@ -5254,7 +5265,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.setClientStateUpdOn("client_collect", function (args) {
                 // on update action buttons
                 _this.clearReverseIdMap();
-                _this.activateSlots(opInfo);
+                _this.activateSlots(opInfo, true);
             }, function (tokenId) {
                 // onToken
                 return _this.onSelectTarget(opId, tokenId, true);

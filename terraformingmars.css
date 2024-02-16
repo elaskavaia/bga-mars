@@ -7634,16 +7634,17 @@
 .mfull .handy .card[data-discount_cost]::after {
   content: attr(data-discount_cost);
   position: absolute;
-  top: 11%;
+  top: 14%;
   left: 6%;
-  /* background-color: yellow; */
-  width: 14%;
+  width: calc(var(--card-width) * 0.12);
+  height: calc(var(--card-width) * 0.12);
+  line-height: calc(var(--card-width) * 0.12);
+  font-size: calc(var(--card-width) * 0.08);
   text-align: center;
   border-radius: 20%;
   color: #bef983;
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   font-family: var(--mars-font);
-  font-size: calc(var(--card-width) * 0.09);
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
   background-position: -300% 0;

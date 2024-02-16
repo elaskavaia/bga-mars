@@ -165,8 +165,6 @@ class GameXBody extends GameTokens {
         this.onShowAwardsProgress();
       });
 
-
-
       //2p specific
       if (Object.keys(gamedatas.players).length == 2) {
         $("ebd-body").classList.add("twoplayers");
@@ -360,12 +358,9 @@ class GameXBody extends GameTokens {
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
       for (const key in pg) {
-        lines =
-          lines +
-          `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
+        lines = lines + `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
       }
-      lines =
-        lines + `             </div>`;
+      lines = lines + `             </div>`;
     }
     finalhtm = tablehtm.replace("%lines%", lines);
     let dlg = new ebg.popindialog();
@@ -410,12 +405,9 @@ class GameXBody extends GameTokens {
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
       for (const key in pg) {
-        lines =
-          lines +
-          `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
+        lines = lines + `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
       }
-      lines =
-        lines + `             </div>`;
+      lines = lines + `             </div>`;
     }
     finalhtm = tablehtm.replace("%lines%", lines);
     let dlg = new ebg.popindialog();
@@ -424,7 +416,6 @@ class GameXBody extends GameTokens {
     dlg.setContent(finalhtm);
     dlg.show();
   }
-
 
   getLocalSettingNamespace(extra: string | number = "") {
     return `${this.game_name}-${this.player_id}-${extra}`;
@@ -755,6 +746,7 @@ class GameXBody extends GameTokens {
   ajaxuseraction(action: string, args?: any, handler?: (err: any) => void) {
     this.gameStatusCleanup();
     super.ajaxuseraction(action, args, handler);
+    console.log(`sending ${action}`, args);
   }
 
   onNotif(notif: Notif) {
@@ -1454,7 +1446,6 @@ awarded.`);
             return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
           }
         }
-
       }
     }
     //pop animation on Tiles
@@ -1490,11 +1481,11 @@ awarded.`);
     }
 
     if (key.startsWith("card_corp") && location.startsWith("tableau")) {
-        $(location + "_corp_logo").dataset.corp = key;
-        $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
-        //adds tt to corp logos
-        this.updateTooltip(key,location + "_corp_logo");
-        this.updateTooltip(key,location.replace("tableau_", "miniboard_corp_logo_"));
+      $(location + "_corp_logo").dataset.corp = key;
+      $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
+      //adds tt to corp logos
+      this.updateTooltip(key, location + "_corp_logo");
+      this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
     }
 
     if (key.startsWith("card_main") && location.startsWith("tableau")) {
@@ -1787,6 +1778,13 @@ awarded.`);
     return true;
   }
 
+  sendActionResolveWithCount(op: number, count: number) {
+    this.ajaxuseraction("resolve", {
+      ops: [{ op, count }]
+    });
+    return true;
+  }
+
   sendActionDecline(op: number) {
     this.ajaxuseraction("decline", {
       ops: [{ op: op }]
@@ -1893,34 +1891,9 @@ awarded.`);
     if (single) {
       this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
       // add main operation to the body to change style if need be
-      $("ebd-body").dataset.maop=(opInfo.type.replace(/[^a-zA-Z0-9]/g, ''));
-      if (opTargets.length == 0) {
-        if (count == from) {
-          this.addActionButton("button_" + opId, _("Confirm"), () => this.sendActionResolve(opId));
-        } else {
-          // counter select stub for now
-          if (from > 0)
-            this.addActionButton("button_" + opId + "_0", from, () =>
-              this.sendActionResolve(opId, {
-                count: from
-              })
-            );
-          if (from == 0 && count > 1) {
-            this.addActionButton("button_" + opId + "_1", "1", () =>
-              this.sendActionResolve(opId, {
-                count: 1
-              })
-            );
-          }
-
-          if (count >= 1)
-            this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
-              // XXX
-              this.sendActionResolve(opId, {
-                count: count
-              });
-            });
-        }
+      $("ebd-body").dataset.maop = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
+      if (opArgs.void) {
+        this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
       }
     }
 
@@ -1964,18 +1937,12 @@ awarded.`);
         }
       }
     } else if (ttype == "player") {
-      if (paramInfo) {
-        for (let tid in paramInfo) {
-          this.activatePlayerSlot(tid, opId, single, { ...paramInfo[tid], op: opInfo });
-        }
-      } else
-        opTargets.forEach((tid: string) => {
-          this.activatePlayerSlot(tid, opId, single);
-        });
+      for (let tid in paramInfo) {
+        this.activatePlayerSlot(tid, opId, single, { ...paramInfo[tid], op: opInfo });
+      }
     } else if (ttype == "enum") {
       if (single) {
-    
-        let customNeeded = false;
+        let customNeeded = undefined;
         opTargets.forEach((tid: string, i: number) => {
           const detailsInfo = paramInfo[tid];
           if (tid == "payment") {
@@ -1988,7 +1955,7 @@ awarded.`);
                 0
               ) > 0
             ) {
-              customNeeded = true;
+              customNeeded = detailsInfo;
             }
           } else {
             const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
@@ -2000,12 +1967,42 @@ awarded.`);
             let title = this.resourcesToHtml(detailsInfo.resources);
             this.addActionButtonColor(divId, title, () => this.onSelectTarget(opId, tid), buttonColor);
           }
-     
         });
-        if (customNeeded) this.addActionButtonColor('btn_create_custompay', _('Custom'), () => this.createCustomPayment(opId, detailsInfo), 'blue');
+        if (customNeeded)
+          this.addActionButtonColor("btn_create_custompay", _("Custom"), () => this.createCustomPayment(opId, customNeeded), "blue");
+      }
+    } else if (ttype == "none" || !ttype) {
+      // no arguments
+      if (single) {
+        if (count == 1) {
+          this.addActionButton("button_" + opId, _("Confirm"), () => this.sendActionResolve(opId));
+        } else if (count == from) {
+          this.addActionButton("button_" + opId, _("Confirm")+" "+count, () => this.sendActionResolve(opId));
+        } else {
+          // counter select stub for now
+          for (let i = from==0?1:from; i < count; i++) {
+            this.addActionButton(`button_${opId}_${i}`, i, () => this.sendActionResolveWithCount(opId, i));
+          }
+
+          if (count >= 1) {
+            this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
+              this.sendActionResolveWithCount(opId, count);
+            });
+          }
+        }
       }
     } else if (ttype) {
-      console.error("Unknonwn type " + ttype, opInfo);
+      console.error("Unknown type " + ttype, opInfo);
+    }
+
+    if (single) {
+      if (opArgs.skipname) {
+        if (opInfo.numops > 1) {
+          this.addActionButtonColor(`button_${opId}_0`, opArgs.skipname, () => this.sendActionResolveWithCount(opId, 0), "orange");
+        } else {
+          this.addActionButtonColor("button_skip", opArgs.skipname, () => this.sendActionSkip(), "orange");
+        }
+      }
     }
   }
 
@@ -2099,7 +2096,7 @@ awarded.`);
       rate: []
     };
 
-    if($('btn_create_custompay')) $('btn_create_custompay').remove();
+    if ($("btn_create_custompay")) $("btn_create_custompay").remove();
 
     let items_htm = "";
     for (let res in info.resources) {
@@ -2275,13 +2272,15 @@ awarded.`);
     return buttonDiv;
   }
 
-  completeOpInfo(opId: number, opInfo: any, xop: string) {
+  completeOpInfo(opId: number, opInfo: any, xop: string, num: number) {
     try {
       // server may skip sending some data, this will feel all omitted fields
       opInfo.id = opId; // should be already there but just in case
       opInfo.xop = xop; // parent op
+      opInfo.numops = num; // number of siblings
       opInfo.count = parseInt(opInfo.count);
       if (opInfo.mcount === undefined) opInfo.mcount = opInfo.count;
+      else opInfo.mcount = parseInt(opInfo.mcount);
 
       const opArgs = opInfo.args;
       if (opArgs.void === undefined) opArgs.void = false;
@@ -2329,7 +2328,7 @@ awarded.`);
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();
-    $("ebd-body").dataset.maop="complex";
+    $("ebd-body").dataset.maop = "complex";
 
     const xop = args.op;
 
@@ -2341,12 +2340,13 @@ awarded.`);
       this.setDescriptionOnMyTurn("${you} must choose order of operations");
       sortedOps = this.sortOrderOps(args);
     }
+    let allSkip = true;
 
     for (let i = 0; i < sortedOps.length; i++) {
       let opIdS = sortedOps[i];
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
-      this.completeOpInfo(opId, opInfo, xop);
+      this.completeOpInfo(opId, opInfo, xop, sortedOps.length);
 
       const opArgs = opInfo.args;
 
@@ -2357,7 +2357,7 @@ awarded.`);
       // update screen with activate slots for:
       // - single action
       // - first if ordered
-      // - all if choice of one (!ordered)
+      // - all if choice required (!ordered)
 
       if (singleOrFirst || !ordered) {
         this.activateSlots(opInfo, singleOrFirst);
@@ -2378,12 +2378,14 @@ awarded.`);
         );
       }
 
-      // add done (skip) when optional
-      if (singleOrFirst) {
-        if (opArgs.skipname) {
-          this.addActionButtonColor("button_skip", _(opArgs.skipname), () => this.sendActionSkip(), "orange");
-        }
+      // add done (skip) when all optional
+      if (opInfo.mcount > 0) {
+        allSkip = false;
       }
+    }
+
+    if (allSkip && !single) {
+      this.addActionButtonColor("button_skip", _("Skip All"), () => this.sendActionSkip(), "red");
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
@@ -2404,7 +2406,7 @@ awarded.`);
         (args) => {
           // on update action buttons
           this.clearReverseIdMap();
-          this.activateSlots(opInfo);
+          this.activateSlots(opInfo, true);
         },
         (tokenId: string) =>
           // onToken
