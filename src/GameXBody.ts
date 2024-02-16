@@ -1806,11 +1806,25 @@ awarded.`);
 
     const opTargets = op.args?.target ?? [];
     if (opTargets.length == 1 && !op.type.startsWith("conv")) {
-      const onlyAvailableAction = this.getTokenName(opTargets[0]);
+      const onlyAvailableAction = this.getOpTargetName(op, 0);
       return `${baseActionName} ⤇ ${onlyAvailableAction}`;
     }
 
     return baseActionName;
+  }
+
+  getOpTargetName(op: any, num: number) {
+    const opTargets = op.args?.target ?? [];
+    switch (op.args.ttype) {
+      case "token":
+        return this.getTokenName(opTargets[num]);
+      case "player":
+        return this.getPlayerName(this.getPlayerIdByColor(opTargets[num]));
+      case "enum":
+        return opTargets[num];
+      default:
+        return "!";
+    }
   }
 
   getDivForTracker(id: string, value: string | number = "") {

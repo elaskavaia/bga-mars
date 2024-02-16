@@ -325,7 +325,7 @@ class GameTokens extends GameBasics {
       }
       if (!$(location)) {
         if (location) console.error("Unknown place '" + location + "' for '" + tokenInfo.key + "' " + token);
-        return;
+        return Promise.resolve();
       }
       if (location === "dev_null") {
         // no annimation

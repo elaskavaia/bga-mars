@@ -1409,107 +1409,122 @@ var CustomAnimation = /** @class */ (function () {
         return this.playCssAnimation(counter_id, 'small_tingle', null, null);
     };
     CustomAnimation.prototype.animatePlaceResourceOnCard = function (resource_id, place_id) {
-        var _this = this;
-        if (!this.areAnimationsPlayed())
-            return this.getImmediatePromise();
-        var animate_token = resource_id;
-        if (!this.game.isLayoutFull() && place_id.startsWith('card_main_'))
-            animate_token = place_id.replace('card_main_', 'resource_holder_');
-        var anim_1;
-        if (this.getAnimationAmount() == 2) {
-            anim_1 = this.getImmediatePromise();
-        }
-        else {
-            anim_1 = this.playCssAnimation(place_id, 'pop', function () {
-                dojo.style(place_id, 'filter', 'grayscale(0)');
-            }, function () {
-                dojo.style(place_id, 'transform', 'scale(1.2)');
-            });
-        }
-        var anim_2 = anim_1.then(function () {
-            return _this.playCssAnimation(animate_token, 'great_tingle', function () {
-                dojo.style(animate_token, 'z-index', '10');
-            }, function () {
-                dojo.style(animate_token, 'z-index', '');
+        return __awaiter(this, void 0, void 0, function () {
+            var animate_token, anim_1, anim_2;
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (!this.areAnimationsPlayed())
+                    return [2 /*return*/, this.getImmediatePromise()];
+                animate_token = resource_id;
+                if (!this.game.isLayoutFull() && place_id.startsWith('card_main_'))
+                    animate_token = place_id.replace('card_main_', 'resource_holder_');
+                if (this.getAnimationAmount() == 2) {
+                    anim_1 = this.getImmediatePromise();
+                }
+                else {
+                    anim_1 = this.playCssAnimation(place_id, 'pop', function () {
+                        dojo.style(place_id, 'filter', 'grayscale(0)');
+                    }, function () {
+                        dojo.style(place_id, 'transform', 'scale(1.2)');
+                    });
+                }
+                anim_2 = anim_1.then(function () {
+                    return _this.playCssAnimation(animate_token, 'great_tingle', function () {
+                        dojo.style(animate_token, 'z-index', '10');
+                    }, function () {
+                        dojo.style(animate_token, 'z-index', '');
+                    });
+                });
+                if (this.getAnimationAmount() == 2) {
+                    return [2 /*return*/, anim_2];
+                }
+                else {
+                    return [2 /*return*/, anim_2.then(function () {
+                            return _this.playCssAnimation(place_id, 'depop', function () {
+                                dojo.style(place_id, 'transform', '');
+                            }, function () {
+                                dojo.style(place_id, 'filter', '');
+                            });
+                        })];
+                }
+                return [2 /*return*/];
             });
         });
-        if (this.getAnimationAmount() == 2) {
-            return anim_2;
-        }
-        else {
-            return anim_2.then(function () {
-                return _this.playCssAnimation(place_id, 'depop', function () {
-                    dojo.style(place_id, 'transform', '');
-                }, function () {
-                    dojo.style(place_id, 'filter', '');
-                });
-            });
-        }
     };
     CustomAnimation.prototype.animateRemoveResourceFromCard = function (resource_id, card_id) {
-        if (!this.areAnimationsPlayed())
-            return this.getImmediatePromise();
-        var animate_token = card_id !== null && card_id !== void 0 ? card_id : $(resource_id).parentElement.id;
-        if (animate_token.includes("tableau")) {
-            //too late, resource is not on card anymore
-            return this.getImmediatePromise();
-        }
-        return this.playCssAnimation(animate_token, 'great_tingle', function () {
-            dojo.style(animate_token, 'z-index', '10');
-        }, function () {
-            dojo.style(animate_token, 'z-index', '');
+        return __awaiter(this, void 0, void 0, function () {
+            var animate_token;
+            return __generator(this, function (_a) {
+                if (!this.areAnimationsPlayed())
+                    return [2 /*return*/, this.getImmediatePromise()];
+                animate_token = card_id !== null && card_id !== void 0 ? card_id : $(resource_id).parentElement.id;
+                if (animate_token.includes("tableau")) {
+                    //too late, resource is not on card anymore
+                    return [2 /*return*/, this.getImmediatePromise()];
+                }
+                return [2 /*return*/, this.playCssAnimation(animate_token, 'great_tingle', function () {
+                        dojo.style(animate_token, 'z-index', '10');
+                    }, function () {
+                        dojo.style(animate_token, 'z-index', '');
+                    })];
+            });
         });
     };
     CustomAnimation.prototype.animatePlaceMarker = function (marker_id, place_id) {
-        var _this = this;
-        if (!this.areAnimationsPlayed())
-            return this.getImmediatePromise();
-        var unclip = [];
-        if (place_id.startsWith('tile')) {
-            unclip.push(place_id);
-            unclip.push($(place_id).parentElement.id);
-        }
-        var p_start;
-        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
-            p_start = this.playCssAnimation(place_id, 'award_pop', function () {
-                dojo.style(marker_id, 'opacity', '0');
-                $(place_id).setAttribute('style', 'box-shadow: none !important;');
-            }, function () {
-                $(place_id).setAttribute('style', 'transform: translateY(-200%) scale(1.2); box-shadow: none !important;');
-            });
-        }
-        else {
-            p_start = this.getImmediatePromise();
-        }
-        var p_mid = p_start
-            .then(function () {
-            return _this.playCssAnimation(marker_id, 'fadein_and_drop', function () {
-                dojo.style(marker_id, 'z-index', '10');
-                dojo.style(marker_id, 'opacity', '');
-                for (var _i = 0, unclip_1 = unclip; _i < unclip_1.length; _i++) {
-                    var item = unclip_1[_i];
-                    $(item).setAttribute('style', 'clip-path: none; outline: none; box-shadow: none !important; background-color: revert;');
+        return __awaiter(this, void 0, void 0, function () {
+            var unclip, p_start, p_mid;
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (!this.areAnimationsPlayed())
+                    return [2 /*return*/, this.getImmediatePromise()];
+                unclip = [];
+                if (place_id.startsWith('tile')) {
+                    unclip.push(place_id);
+                    unclip.push($(place_id).parentElement.id);
                 }
-            }, function () {
-                dojo.style(marker_id, 'z-index', '');
-                for (var _i = 0, unclip_2 = unclip; _i < unclip_2.length; _i++) {
-                    var item = unclip_2[_i];
-                    $(item).setAttribute('style', '');
+                if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
+                    p_start = this.playCssAnimation(place_id, 'award_pop', function () {
+                        dojo.style(marker_id, 'opacity', '0');
+                        $(place_id).setAttribute('style', 'box-shadow: none !important;');
+                    }, function () {
+                        $(place_id).setAttribute('style', 'transform: translateY(-200%) scale(1.2); box-shadow: none !important;');
+                    });
                 }
+                else {
+                    p_start = this.getImmediatePromise();
+                }
+                p_mid = p_start
+                    .then(function () {
+                    return _this.playCssAnimation(marker_id, 'fadein_and_drop', function () {
+                        dojo.style(marker_id, 'z-index', '10');
+                        dojo.style(marker_id, 'opacity', '');
+                        for (var _i = 0, unclip_1 = unclip; _i < unclip_1.length; _i++) {
+                            var item = unclip_1[_i];
+                            $(item).setAttribute('style', 'clip-path: none; outline: none; box-shadow: none !important; background-color: revert;');
+                        }
+                    }, function () {
+                        dojo.style(marker_id, 'z-index', '');
+                        for (var _i = 0, unclip_2 = unclip; _i < unclip_2.length; _i++) {
+                            var item = unclip_2[_i];
+                            $(item).setAttribute('style', '');
+                        }
+                    });
+                });
+                if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
+                    return [2 /*return*/, p_mid.then(function () {
+                            return _this.playCssAnimation(place_id, 'award_depop', function () {
+                                $(place_id).setAttribute('style', 'box-shadow: none !important;');
+                            }, function () {
+                                $(place_id).setAttribute('style', '');
+                            });
+                        })];
+                }
+                else {
+                    return [2 /*return*/, this.getImmediatePromise()];
+                }
+                return [2 /*return*/];
             });
         });
-        if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
-            return p_mid.then(function () {
-                return _this.playCssAnimation(place_id, 'award_depop', function () {
-                    $(place_id).setAttribute('style', 'box-shadow: none !important;');
-                }, function () {
-                    $(place_id).setAttribute('style', '');
-                });
-            });
-        }
-        else {
-            return this.getImmediatePromise();
-        }
     };
     CustomAnimation.prototype.animateMapItemAwareness = function (item_id) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1517,7 +1532,7 @@ var CustomAnimation = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!$(item_id))
-                    return [2 /*return*/];
+                    return [2 /*return*/, this.getImmediatePromise()];
                 if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
                     return [2 /*return*/, this.getImmediatePromise()];
                 anim_1 = this.playCssAnimation(item_id, 'pop', function () {
@@ -1536,65 +1551,70 @@ var CustomAnimation = /** @class */ (function () {
         });
     };
     CustomAnimation.prototype.moveResources = function (tracker, qty) {
-        var _this = this;
-        if (!this.areAnimationsPlayed())
-            return this.getImmediatePromise();
-        if (qty == undefined || qty == 0)
-            return this.getImmediatePromise();
-        var trk_item = tracker.replace('tracker_', '').split('_')[0];
-        var delay = 0;
-        var mark = "";
-        if (Math.abs(qty) > 3) {
-            mark = String(Math.abs(qty));
-            qty = -1;
-        }
-        var htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
-        var _loop_1 = function (i) {
-            var tmpid = 'tmp_' + String(Math.random() * 1000000000);
-            var visiblenode = "";
-            if (dojo.style('gameaction_status_wrap', "display") != "none") {
-                visiblenode = 'gameaction_status';
-            }
-            else if (dojo.style('pagemaintitle_wrap', "display") != "none") {
-                visiblenode = 'pagemaintitletext';
-            }
-            var fnode = visiblenode != "" ? $(visiblenode).querySelector('.token_img.tracker_' + trk_item) : null;
-            if (fnode) {
-                dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', fnode);
-            }
-            else {
-                dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
-            }
-            var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
-            var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
-            if (!this_1.nodeExists(origin_1) && origin_1.startsWith('alt_'))
-                origin_1 = tracker;
-            if (!this_1.nodeExists(destination) && destination.startsWith('alt_'))
-                destination = tracker;
-            dojo.place(htm.replace('%t', tmpid), origin_1);
-            this_1.wait(delay).then(function () {
-                if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
-                    dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+        return __awaiter(this, void 0, void 0, function () {
+            var trk_item, delay, mark, htm, _loop_1, this_1, i;
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (!this.areAnimationsPlayed())
+                    return [2 /*return*/, this.getImmediatePromise()];
+                if (qty == undefined || qty == 0)
+                    return [2 /*return*/, this.getImmediatePromise()];
+                trk_item = tracker.replace('tracker_', '').split('_')[0];
+                delay = 0;
+                mark = "";
+                if (Math.abs(qty) > 3) {
+                    mark = String(Math.abs(qty));
+                    qty = -1;
                 }
-                _this.game.slideAndPlace(tmpid, destination, _this.getWaitDuration(500), undefined, function () {
-                    if (dojo.byId(tmpid))
+                htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
+                _loop_1 = function (i) {
+                    var tmpid = 'tmp_' + String(Math.random() * 1000000000);
+                    var visiblenode = "";
+                    if (dojo.style('gameaction_status_wrap', "display") != "none") {
+                        visiblenode = 'gameaction_status';
+                    }
+                    else if (dojo.style('pagemaintitle_wrap', "display") != "none") {
+                        visiblenode = 'pagemaintitletext';
+                    }
+                    var fnode = visiblenode != "" ? $(visiblenode).querySelector('.token_img.tracker_' + trk_item) : null;
+                    if (fnode) {
+                        dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', fnode);
+                    }
+                    else {
+                        dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+                    }
+                    var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
+                    var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
+                    if (!this_1.nodeExists(origin_1) && origin_1.startsWith('alt_'))
+                        origin_1 = tracker;
+                    if (!this_1.nodeExists(destination) && destination.startsWith('alt_'))
+                        destination = tracker;
+                    dojo.place(htm.replace('%t', tmpid), origin_1);
+                    this_1.wait(delay).then(function () {
+                        if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
+                            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+                        }
+                        _this.game.slideAndPlace(tmpid, destination, _this.getWaitDuration(500), undefined, function () {
+                            if (dojo.byId(tmpid))
+                                dojo.destroy(tmpid);
+                            if (dojo.byId('move_from_' + tmpid))
+                                dojo.destroy('move_from_' + tmpid);
+                        });
+                    });
+                    /*
+                    this.wait(delay).then(()=>{return this.slideToObjectAndAttach(tmpid,destination);}).then(()=>{
                         dojo.destroy(tmpid);
-                    if (dojo.byId('move_from_' + tmpid))
-                        dojo.destroy('move_from_' + tmpid);
-                });
+                      }
+                    );*/
+                    delay += this_1.getWaitDuration(200);
+                };
+                this_1 = this;
+                for (i = 0; i < Math.abs(qty); i++) {
+                    _loop_1(i);
+                }
+                return [2 /*return*/, this.wait(delay + this.getWaitDuration(500))];
             });
-            /*
-            this.wait(delay).then(()=>{return this.slideToObjectAndAttach(tmpid,destination);}).then(()=>{
-                dojo.destroy(tmpid);
-              }
-            );*/
-            delay += this_1.getWaitDuration(200);
-        };
-        var this_1 = this;
-        for (var i = 0; i < Math.abs(qty); i++) {
-            _loop_1(i);
-        }
-        return this.wait(delay + this.getWaitDuration(500));
+        });
     };
     CustomAnimation.prototype.addAnimationsToDocument = function (animations) {
         if ($('css_animations'))
@@ -1641,45 +1661,50 @@ var CustomAnimation = /** @class */ (function () {
     //Adds css class on element, plays it, executes onEnd and removes css class
     //a promise is returned for easy chaining
     CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd) {
-        var _this = this;
-        if (!$(targetId))
-            return this.getImmediatePromise();
-        var animation = this.animations[animationname];
-        return new Promise(function (resolve, reject) {
-            var cssClass = 'anim_' + animation.name;
-            var timeoutId = null;
-            var resolvedOK = false;
-            var localCssAnimationCallback = function (e) {
-                if (e.animationName != 'key_' + cssClass) {
-                    //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
-                    return;
-                }
-                resolvedOK = true;
-                $(targetId).removeEventListener('animationend', localCssAnimationCallback);
-                $(targetId).classList.remove(cssClass);
-                if (onEnd)
-                    onEnd();
-                //   this.log('+anim',animationname,'resolved with callback');
-                resolve("");
-            };
-            if (onStart)
-                onStart();
-            $(targetId).addEventListener('animationend', localCssAnimationCallback);
-            dojo.addClass(targetId, cssClass);
-            // this.MAIN.log('+anim',animationname,'starting playing');
-            //timeout security
-            timeoutId = setTimeout(function () {
-                if (resolvedOK)
-                    return;
-                if (_this.nodeExists(targetId)) {
-                    $(targetId).removeEventListener('animationend', localCssAnimationCallback);
-                    $(targetId).classList.remove(cssClass);
-                }
-                if (onEnd)
-                    onEnd();
-                //this.MAIN.log('+anim',animationname,'resolved with timeout');
-                resolve("");
-            }, animation.duration * 1.5);
+        return __awaiter(this, void 0, void 0, function () {
+            var animation;
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (!$(targetId))
+                    return [2 /*return*/, this.getImmediatePromise()];
+                animation = this.animations[animationname];
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var cssClass = 'anim_' + animation.name;
+                        var timeoutId = null;
+                        var resolvedOK = false;
+                        var localCssAnimationCallback = function (e) {
+                            if (e.animationName != 'key_' + cssClass) {
+                                //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
+                                return;
+                            }
+                            resolvedOK = true;
+                            $(targetId).removeEventListener('animationend', localCssAnimationCallback);
+                            $(targetId).classList.remove(cssClass);
+                            if (onEnd)
+                                onEnd();
+                            //   this.log('+anim',animationname,'resolved with callback');
+                            resolve("");
+                        };
+                        if (onStart)
+                            onStart();
+                        $(targetId).addEventListener('animationend', localCssAnimationCallback);
+                        dojo.addClass(targetId, cssClass);
+                        // this.MAIN.log('+anim',animationname,'starting playing');
+                        //timeout security
+                        timeoutId = setTimeout(function () {
+                            if (resolvedOK)
+                                return;
+                            if (_this.nodeExists(targetId)) {
+                                $(targetId).removeEventListener('animationend', localCssAnimationCallback);
+                                $(targetId).classList.remove(cssClass);
+                            }
+                            if (onEnd)
+                                onEnd();
+                            //this.MAIN.log('+anim',animationname,'resolved with timeout');
+                            resolve("");
+                        }, animation.duration * 1.5);
+                    })];
+            });
         });
     };
     CustomAnimation.prototype.slideToObjectAndAttach = function (movingId, destinationId, rotation, posX, posY) {
@@ -2813,7 +2838,7 @@ var GameTokens = /** @class */ (function (_super) {
             if (!$(location_1)) {
                 if (location_1)
                     console.error("Unknown place '" + location_1 + "' for '" + tokenInfo.key + "' " + token);
-                return;
+                return Promise.resolve();
             }
             if (location_1 === "dev_null") {
                 // no annimation
@@ -4703,10 +4728,24 @@ var GameXBody = /** @class */ (function (_super) {
             : this.getButtonNameForOperationExp(op.type);
         var opTargets = (_b = (_a = op.args) === null || _a === void 0 ? void 0 : _a.target) !== null && _b !== void 0 ? _b : [];
         if (opTargets.length == 1 && !op.type.startsWith("conv")) {
-            var onlyAvailableAction = this.getTokenName(opTargets[0]);
+            var onlyAvailableAction = this.getOpTargetName(op, 0);
             return "".concat(baseActionName, " \u2907 ").concat(onlyAvailableAction);
         }
         return baseActionName;
+    };
+    GameXBody.prototype.getOpTargetName = function (op, num) {
+        var _a, _b;
+        var opTargets = (_b = (_a = op.args) === null || _a === void 0 ? void 0 : _a.target) !== null && _b !== void 0 ? _b : [];
+        switch (op.args.ttype) {
+            case "token":
+                return this.getTokenName(opTargets[num]);
+            case "player":
+                return this.getPlayerName(this.getPlayerIdByColor(opTargets[num]));
+            case "enum":
+                return opTargets[num];
+            default:
+                return "!";
+        }
     };
     GameXBody.prototype.getDivForTracker = function (id, value) {
         if (value === void 0) { value = ""; }
