@@ -13,15 +13,14 @@ class ComplexOperation extends AbsOperation {
         $this->operation = $expr->op;
         $this->delegates = [];
         foreach ($expr->args as $arg) {
-            $newop = $this->game->machine->createOperationSimple(OpExpression::str($arg), $this->color);
-            $newop['data'] = $opinfo['data'];
+            $newop = $this->game->machine->createOperationSimple(OpExpression::str($arg), $this->color, $opinfo['data'], $opinfo['id']);
             if ($newop['type'] == $opinfo['type']) throw new BgaSystemException("Cannot create delegate for $type");
             $this->delegates[] = $this->game->getOperationInstance($newop);
         }
     }
 
     protected function getPrimaryArgType() {
-        return 'none';
+        return '';
     }
 
     protected function getVisargs() {
@@ -77,6 +76,11 @@ class ComplexOperation extends AbsOperation {
         return  clienttranslate('${you} must confirm ${name}');
     }
 
+    function getSkipButtonName(){
+        if ($this->isOptional()) return clienttranslate('Skip');
+        return parent::getSkipButtonName();
+    }
+
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
@@ -94,6 +98,7 @@ class ComplexOperation extends AbsOperation {
     }
 
     function canFail(){
+        if ($this->isOptional()) return false;
         return true;
     }
 
@@ -108,6 +113,7 @@ class ComplexOperation extends AbsOperation {
 
     function canResolveAutomatically() {
         if ($this->getMinCount() == 0) return false;
+        if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->operation == '/') return false;
         if ($this->operation == '+') return false;
         foreach ($this->delegates as $i => $sub) {
@@ -116,6 +122,11 @@ class ComplexOperation extends AbsOperation {
         }
         return $subvalue;
     }
+
+    function requireConfirmation() {
+        return false; // this has to be send to server to expand before confirmation
+    }
+
 
     function checkIntegrity() {
         foreach ($this->delegates as $i => $sub) {

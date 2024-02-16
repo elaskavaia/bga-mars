@@ -109,7 +109,7 @@ abstract class PGameMachine extends PGameTokens {
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
         $ops = $this->machine->getTopOperations($curowner);
-        $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE,MACHINE_FLAG_ORDERED);
+        $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE, MACHINE_FLAG_ORDERED);
         $this->gamestate->nextState("next");
     }
 
@@ -128,6 +128,15 @@ abstract class PGameMachine extends PGameTokens {
         $this->gamestate->nextState("next");
     }
 
+    function findOp($opId, array $ops) {
+        foreach ($ops  as $topop) {
+            if ($topop['id'] == $opId) {
+                return $topop;
+            }
+        }
+        return null;
+    }
+
     /**
      * Resolve one or more operation and pass all arguments for its execution
      *
@@ -144,14 +153,7 @@ abstract class PGameMachine extends PGameTokens {
         $this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
-            $info = null; //$this->machine->info($operation_id);
-            foreach ($tops  as $topop) {
-                if ($topop['id'] == $operation_id) {
-                    $info = $topop;
-                    break;
-                }
-            }
-
+            $info = $this-> findOp($operation_id, $tops);
             $this->systemAssertTrue("Illegal operation. Try again?", $info);
             //$this->debugLog("- resolve op " . $info['type'], $args);
 
@@ -163,7 +165,7 @@ abstract class PGameMachine extends PGameTokens {
             }
             // now we will call method for specific user action
             //$this->debug_dumpMachine();
-            $client_op_args = $client_args['operations'][$operation_id];
+            $client_op_args = $this->findOp($operation_id,$client_args['operations']);
             if (array_get($client_op_args, 'args.postpone', false)) {
                 $this->userAssertTrue(_('Cannot choose this operation before one that can fail'));
             }
@@ -206,13 +208,14 @@ abstract class PGameMachine extends PGameTokens {
         $xop = $this->machine->toStringFlags($flags);
 
         $result["op"] = $xop;
-        foreach ($operations as $id => $op) {
+        foreach ($operations as $i => $op) {
+            $id = $i; // array_get($op,'id', $i);
             $result["operations"][$id] = $this->arg_operationMassage($id, $op);
         }
         return $result;
     }
 
-    function arg_operationMassage($id, $op){
+    function arg_operationMassage($id, $op) {
         $result = $op;
         $result["args"] = $this->arg_operation($op);
         return $result;

@@ -132,6 +132,10 @@ class OpExpression extends APP_Object {
     function isSimple() {
         return $this->op == "!";
     }
+
+    function isUnranged(){
+        return ($this->to==$this->from && $this->to==1);
+    }
 }
 
 class OpExpressionTerminal extends OpExpression {

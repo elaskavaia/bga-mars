@@ -14,6 +14,10 @@ class Operation_passauto extends AbsOperation {
         return false;
     }
 
+    protected function getPrimaryArgType() {
+        return '';
+    }
+
     function effect(string $color, int $inc, ?array $args = null): int {
         $operations = $this->game->getTopOperations();
 

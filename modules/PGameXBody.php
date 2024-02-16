@@ -705,11 +705,12 @@ abstract class PGameXBody extends PGameMachine {
 
     function getOperationInstance(array $opinfo): AbsOperation {
         $type = stripslashes($opinfo['type']);
+        if ($opinfo['id']===null) throw new feException('sd');
         $classname = 'xxx';
         try {
             $expr = $this->parseOpExpression($type);
             $issimple = $expr->isSimple();
-            if ($issimple && !$expr->isAtomic()) {
+            if (!$expr->isUnranged()) {
                 $classname = "DelegatedOperation";
                 $opinst = new DelegatedOperation($opinfo, $this);
                 return $opinst;
@@ -747,7 +748,7 @@ abstract class PGameXBody extends PGameMachine {
     function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = '') {
         $opinfo = [
             'type' => $type, 'owner' => $color, 'mcount' => $count, 'count' => $count, 'data' => $data,
-            'flags' => 0
+            'flags' => 0, 'id' => 0
         ];
         return self::getOperationInstance($opinfo);
     }
@@ -812,11 +813,12 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function queueremove($color, $type, $pool = null) {
-        $op = $this->findop($color, $type, $pool);
+        $op = $this->findOpByType($color, $type, $pool);
         if ($op) $this->machine->hide($op);
         return $op;
     }
-    function findop($color, $type, $pool = null) {
+
+    function findOpByType($color, $type, $pool = null) {
         $ops = $this->machine->getOperations($color, $pool);
         foreach ($ops as $op_key => $op) {
             if ($op['type'] == $type) {
@@ -2078,11 +2080,11 @@ abstract class PGameXBody extends PGameMachine {
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
         $ops = $this->machine->getTopOperations($curowner);
-        foreach($ops as $op) {
+        foreach ($ops as $op) {
             $opinst = $this->getOperationInstance($op);
             $opinst->checkVoid();
         }
-        $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE,MACHINE_FLAG_ORDERED);
+        $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE, MACHINE_FLAG_ORDERED);
         $this->gamestate->nextState("next");
     }
 

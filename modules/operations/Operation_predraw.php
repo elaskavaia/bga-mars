@@ -7,4 +7,8 @@ class Operation_predraw extends AbsOperation {
         $this->game->effect_draw($color, "deck_main", "draw_${color}", $inc);
         return $inc;
     }
+
+    protected function getPrimaryArgType() {
+        return '';
+    }
 }

@@ -20,6 +20,10 @@ class Operation_skipsec extends AbsOperation {
         return 1;
     }
 
+    protected function getPrimaryArgType() {
+        return '';
+    }
+
     protected function getVisargs() {
         return array_merge(parent::getVisargs(),[
             'bcolor' => 'orange' // button color

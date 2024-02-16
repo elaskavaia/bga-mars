@@ -12,4 +12,9 @@ class Operation_draw extends AbsOperation {
         if ($this->params === 'auto') return true;
         return false;
     }
+    
+    protected function getPrimaryArgType() {
+        return '';
+    }
+
 }

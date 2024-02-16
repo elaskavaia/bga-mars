@@ -330,6 +330,7 @@ final class GameTest extends TestCase {
         $m->st_gameDispatchMultiplayer();
         $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getPrivateState($p1));
         $m->curid = $p1;
+        $top1 = $m->machine->getTopOperations();
         $op = array_shift($top1);
         $m->action_resolve(['ops' => [['op' => $op['id']]]]);
         $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
@@ -515,7 +516,7 @@ final class GameTest extends TestCase {
         $this->assertNotNull($op);
         $this->assertTrue($op->checkIntegrity());
         $args = $op->arg();
-        $this->assertTrue($op->requireConfirmation());
+        $this->assertFalse($op->requireConfirmation());
         $this->assertTrue($op->noValidTargets());
         $this->assertFalse($op->isVoid());
         $this->assertTrue($op->canResolveAutomatically());
@@ -526,6 +527,27 @@ final class GameTest extends TestCase {
         $this->assertEquals('token', $ttype);
         $count = 2;
         $this->assertTrue($op->auto(PCOLOR, $count));
+    }
+
+    public function testPayop () {
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("npu_Any:pu", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->checkIntegrity());
+    }
+
+    public function testDiscardDraw() {
+    
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("?(discard:draw)", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->checkIntegrity());
+        //$args = $op->arg();
+        $this->assertFalse($op->requireConfirmation());
+        $this->assertTrue($op->isOptional());
+        $this->assertFalse($op->canResolveAutomatically());
+        $this->assertFalse($op->canSkipChoice());
+        $this->assertFalse($op->canFail());
     }
 
     function subTestOp($m, $key, $info = []) {

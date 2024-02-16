@@ -176,7 +176,7 @@ Reason: tile placement may draw cards (information)
     function canResolveAutomatically() {
         if ($this->requireConfirmation()) return false;
 
-        if ($this->getMinCount() == 0) return false;
+        if ($this->isOptional()) return false;
         if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->isFullyAutomated()) return true;
         if ($this->isOneChoice()) return true; // can be perf for prompt
@@ -322,7 +322,9 @@ Reason: tile placement may draw cards (information)
 
     function getUserCount(): ?int {
         if (!$this->user_args) return null;
-        return  (int) ($this->user_args["count"] ??  $this->op_info["count"] ?? 1);
+        $userCount = array_get($this->user_args,"count", null);
+        if ($userCount!==null) return (int) $userCount;
+        return  (int) ($this->op_info["count"] ?? 1);
     }
 
 

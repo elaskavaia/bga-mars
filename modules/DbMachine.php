@@ -122,16 +122,16 @@ class DbMachine extends APP_GameClass {
         return $this->DbGetLastId();
     }
 
-    function createOperationSimple(string $type, string $color, string $data = '') {
+    function createOperationSimple(string $type, string $color, string $data = '', $id = 0) {
         $expr = $this->parseOpExpression($type);
-        $from = 1;
-        $to = 1;
-        if ($expr->op == '!') {
-            $from = $expr->from;
-            $to = $expr->to;
-            $type = OpExpression::str($expr->toUnranged());
-        }
-        return $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_SEQ, 0, $data);
+
+        $from = $expr->from;
+        $to = $expr->to;
+        $type = OpExpression::str($expr->toUnranged());
+
+        $opdb =  $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_SEQ, 0, $data);
+        $opdb['id'] = $id;
+        return $opdb;
     }
 
     public function parseOpExpression($op) {
@@ -378,7 +378,7 @@ class DbMachine extends APP_GameClass {
         return $this->getOperationsByRank(null, $owner, $pool);
     }
 
-    function getBarrierRank(){
+    function getBarrierRank() {
         $barrank = $this->getTopRank(null, 'main');
         return $barrank;
     }
@@ -393,7 +393,7 @@ class DbMachine extends APP_GameClass {
         return $this->getCollectionFromDB($this->getSelectQuery("rank = $rank $andowner"));
     }
 
-    function getOperations( $owner = null, $pool = null) {
+    function getOperations($owner = null, $pool = null) {
         $andowner = '';
         $andpool = '';
         if ($owner) $andowner = " AND owner = '$owner'";
@@ -590,7 +590,7 @@ class DbMachine extends APP_GameClass {
 
     public function expandOp($op, $rank = 1) {
         if (is_numeric($op)) $op = $this->info($op);
-        $this->insertRule($op["type"], $rank, $op["mcount"], $op["count"], $op["owner"], $op["flags"], $op["data"], $op["id"], $op["pool"]);
+        $this->insertRule($op["type"], $rank, $op["mcount"], $op["count"], $op["owner"], $op["flags"], $op["data"], array_get($op, 'id', 0), $op["pool"]);
     }
 
     public function operandCode($op) {
