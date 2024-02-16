@@ -23,7 +23,7 @@ class Operation_convh extends AbsOperation {
         if ($heat < 8) return true; // not enough
         return false;
     }
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return 'token';
     }
 }

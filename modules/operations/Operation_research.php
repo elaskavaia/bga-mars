@@ -37,7 +37,7 @@ class Operation_research extends AbsOperation {
         $this->game->queuePlayersTurn($player_id);
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }

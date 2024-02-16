@@ -22,6 +22,10 @@ class Operation_copybu extends AbsOperation {
         });
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
 
     function canResolveAutomatically() {
         return false;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class Operation_turn extends AbsOperation {
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

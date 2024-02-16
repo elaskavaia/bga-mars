@@ -20,6 +20,10 @@ class Operation_acard149 extends  AbsOperation {
         return $res;
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
 

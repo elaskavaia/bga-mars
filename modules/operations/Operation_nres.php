@@ -52,7 +52,7 @@ class Operation_nres extends AbsOperation {
         return $inc;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

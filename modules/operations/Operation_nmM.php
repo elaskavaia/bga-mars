@@ -4,7 +4,7 @@ declare(strict_types=1);
 // ops like nmu and nms - pay with titanium/ pay with steal
 class Operation_nmM extends AbsOperation {
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return 'enum';
     }
     protected function getPrompt() {

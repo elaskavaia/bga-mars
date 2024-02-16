@@ -15,7 +15,7 @@ class Operation_res extends AbsOperation {
         return $inc;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

@@ -49,6 +49,10 @@ class Operation_buycard extends AbsOperation {
         });
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
     protected function getSkipButtonName() {
         if ($this->getCount() == 1) return clienttranslate("Discard Card");
         return clienttranslate("Discard Remaining");

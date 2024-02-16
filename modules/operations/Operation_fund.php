@@ -31,4 +31,8 @@ class Operation_fund extends AbsOperation {
             return MA_OK;
         });
     }
+
+    function getPrimaryArgType() {
+        return 'token';
+    }
 }

@@ -14,7 +14,7 @@ class Operation_nop extends AbsOperation {
         return true;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }

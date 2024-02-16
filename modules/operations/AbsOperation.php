@@ -193,12 +193,13 @@ Reason: tile placement may draw cards (information)
 
 
     function noValidTargets(): bool {
+        if (!$this->getPrimaryArgType()) return false;
         $arg = $this->arg();
         return count($arg['info']) > 0 && count($arg['target']) == 0;
     }
 
 
-    protected function isOneChoice(): bool {
+    private function isOneChoice(): bool {
         $result  = $this->arg();
         return count($result['target']) == 1;
     }
@@ -218,9 +219,8 @@ Reason: tile placement may draw cards (information)
     /**
      * Argument of player state operation: '' - no arg, token - game token, player - other player, enum - other
      */
-    protected function getPrimaryArgType() {
-        return 'token';
-    }
+    abstract function getPrimaryArgType();
+
 
     protected function getButtonName() {
         if ($this->getCount() == 1) return '${name}';

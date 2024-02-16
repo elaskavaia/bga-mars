@@ -16,6 +16,11 @@ abstract class AbsOperationTile extends AbsOperation {
             return $this->checkPlacement($color, $hex, $info, $map);
         });
     }
+
+    function getPrimaryArgType() {
+        return 'token';
+    }
+    
     function arg() {
         $result = parent::arg();
         $result['object'] = $this->getTileId();

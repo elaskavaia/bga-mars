@@ -13,7 +13,7 @@ class Operation_pR extends AbsOperation {
         return true;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }

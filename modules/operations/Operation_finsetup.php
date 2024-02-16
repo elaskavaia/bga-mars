@@ -5,6 +5,10 @@ declare(strict_types=1);
 
 /** Finish game setup */
 class Operation_finsetup extends AbsOperation {
+    function getPrimaryArgType() {
+        return '';
+    }
+
     function effect(string $color, int $inc): int {
         //$player_id = $this->game->getPlayerIdByColor($color);
         $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);

@@ -11,7 +11,7 @@ class Operation_confirm extends AbsOperation {
         return false;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

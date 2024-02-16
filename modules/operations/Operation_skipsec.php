@@ -20,7 +20,7 @@ class Operation_skipsec extends AbsOperation {
         return 1;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

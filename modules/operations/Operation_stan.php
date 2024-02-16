@@ -20,4 +20,8 @@ class Operation_stan extends AbsOperation {
         $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_stanproj", "display_main"));
         return $this->game->filterPlayable($color, $keys);
     }
+
+    function getPrimaryArgType() {
+        return 'token';
+    }
 }

@@ -89,7 +89,7 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->checkIntegrity();
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }

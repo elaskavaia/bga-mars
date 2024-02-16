@@ -25,6 +25,10 @@ class Operation_draft extends AbsOperation {
             return $info;
         });
     }
+    
+    function getPrimaryArgType() {
+        return 'token';
+    }
 
     protected function getVisargs() {
         $color = $this->color;

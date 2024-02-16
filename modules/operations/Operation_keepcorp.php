@@ -16,6 +16,10 @@ class Operation_keepcorp extends AbsOperation {
         return $keys;
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
 
 
     function noValidTargets(): bool {

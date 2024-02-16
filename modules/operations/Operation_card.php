@@ -19,6 +19,10 @@ class Operation_card extends AbsOperation {
         return $this->game->filterPlayable($color, $keys);
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
     function noValidTargets(): bool {
         $arg = $this->arg();
         return count($arg['target']) == 0;

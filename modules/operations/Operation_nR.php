@@ -21,7 +21,7 @@ class Operation_nR extends AbsOperation {
         return true;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

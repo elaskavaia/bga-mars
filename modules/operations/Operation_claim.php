@@ -26,4 +26,8 @@ class Operation_claim extends AbsOperation {
             return MA_OK;
         });
     }
+
+    function getPrimaryArgType() {
+        return 'token';
+    }
 }

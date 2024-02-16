@@ -8,7 +8,7 @@ class Operation_flip extends AbsOperation {
         $this->game->dbSetTokenState($card, MA_CARD_STATE_FACEDOWN, '');
         return 1;
     }
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }

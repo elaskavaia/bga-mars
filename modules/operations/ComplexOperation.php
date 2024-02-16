@@ -19,15 +19,14 @@ class ComplexOperation extends AbsOperation {
         }
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 
     protected function getVisargs() {
         $result =  [
             "name" => $this->getOpName(),
-            'count' => $this->getCount(),
-            "i18n" => ["name"]
+            'count' => $this->getCount()
         ];
 
         return $result;
@@ -56,7 +55,7 @@ class ComplexOperation extends AbsOperation {
 
         switch ($op) {
             case ':':
-                return $this->getRecName(" => ");
+                return $this->getRecName(" ⤇ ");
             case ',':
             case ';':
                 return $this->getRecName("$op ");
@@ -127,7 +126,7 @@ class ComplexOperation extends AbsOperation {
         return false; // this has to be send to server to expand before confirmation
     }
 
-
+    /** Test function */
     function checkIntegrity() {
         foreach ($this->delegates as $i => $sub) {
             $sub->checkIntegrity();

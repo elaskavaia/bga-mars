@@ -26,4 +26,8 @@ class Operation_activate extends AbsOperation {
             return 0;
         });
     }
+
+    function getPrimaryArgType() {
+        return 'token';
+    }
 }

@@ -14,7 +14,7 @@ class Operation_passauto extends AbsOperation {
         return false;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 

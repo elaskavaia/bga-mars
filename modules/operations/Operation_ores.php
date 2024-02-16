@@ -18,6 +18,10 @@ class Operation_ores extends  AbsOperation {
             return MA_OK;
         });
     }
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
 
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');

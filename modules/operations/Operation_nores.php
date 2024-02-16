@@ -24,6 +24,10 @@ class Operation_nores extends AbsOperation {
         });
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
     function effect(string $owner, int $inc): int {
         if ($this->game->isSolo()) {
             $this->game->notifyMessage(clienttranslate('${player_name} removes resource from neutral opponent'), [], $this->game->getPlayerIdByColor($owner));

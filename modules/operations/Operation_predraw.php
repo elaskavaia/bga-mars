@@ -8,7 +8,7 @@ class Operation_predraw extends AbsOperation {
         return $inc;
     }
 
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }

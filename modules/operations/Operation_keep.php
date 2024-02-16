@@ -19,6 +19,10 @@ class Operation_keep extends AbsOperation {
         return $keys;
     }
 
+    function getPrimaryArgType() {
+        return 'token';
+    }
+
 
     function noValidTargets(): bool {
         $arg = $this->arg();

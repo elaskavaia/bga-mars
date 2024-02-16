@@ -7,7 +7,7 @@ class Operation_finalscoring extends AbsOperation {
         $this->game->effect_finalScoring();
         return 1;
     }
-    protected function getPrimaryArgType() {
+    function getPrimaryArgType() {
         return '';
     }
 }
