@@ -7910,6 +7910,13 @@
 }
 .mfull .resarea {
   position: absolute;
+  color: gray;
+}
+.mfull .resarea::before {
+  content: attr(data-state);
+  position: absolute;
+  top: -6%;
+  right: 1%;
 }
 .mfull .resarea_m {
   width: 36%;
@@ -7918,16 +7925,17 @@
   top: 7%;
 }
 .mfull .resarea_s {
-  width: 26%;
+  width: 25%;
   height: 26%;
   left: 43%;
   top: 7%;
 }
 .mfull .resarea_u {
-  width: 26%;
+  width: 25%;
   height: 26%;
   left: 69%;
   top: 7%;
+  color: #d2cdcd;
 }
 .mfull .resarea_p {
   width: 31%;
@@ -7940,6 +7948,7 @@
   height: 22%;
   left: 38%;
   top: 71%;
+  color: #d2cdcd;
 }
 .mfull .resarea_h {
   width: 28%;

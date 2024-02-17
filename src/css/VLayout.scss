@@ -402,6 +402,15 @@
 
   .resarea {
     position: absolute;
+    color: gray;
+  }
+
+  .resarea::before {
+    content: attr(data-state);
+    position: absolute;
+    top: -6%;
+    right: 1%;
+ 
   }
 
   .resarea_m {
@@ -412,17 +421,18 @@
   }
 
   .resarea_s {
-    width: 26%;
+    width: 25%;
     height: 26%;
     left: 43%;
     top: 7%;
   }
 
   .resarea_u {
-    width: 26%;
+    width: 25%;
     height: 26%;
     left: 69%;
     top: 7%;
+    color: #d2cdcd;
   }
 
   .resarea_p {
@@ -437,6 +447,7 @@
     height: 22%;
     left: 38%;
     top: 71%;
+    color: #d2cdcd;
   }
 
   .resarea_h {
