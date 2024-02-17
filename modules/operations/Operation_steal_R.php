@@ -21,6 +21,7 @@ class Operation_steal_R extends AbsOperation {
     }
 
     function requireConfirmation(){
+        if ($this->game->isSolo()) return false;
         return true;
     }
 
@@ -53,5 +54,15 @@ class Operation_steal_R extends AbsOperation {
         $this->game->effect_incCount($other, $opres, -$value);
         $this->game->effect_incCount($owner, $opres, $value);
         return $inc;
+    }
+
+    protected function getVisargs() {
+        $opres = $this->getType();
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'restype_name' => $this->game->getTokenName("$opres"),
+            'i18n' => ['restype_name']
+        ];
     }
 }

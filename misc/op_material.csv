@@ -54,9 +54,9 @@ ne_Any|Remove Energy (Any Player)
 nh_Any|Remove Heat (Any Player)
 
 #set class=Operation_steal_R
-steal_p|Steal Plant|${you} must select a player who will lose the resources 
-steal_s|Steal Steel|${you} must select a player who will lose the resources 
-steal_m|Steal M€|${you} must select a player who will lose the resources 
+steal_p|Steal Plant|${you} must select a player who will lose ${count} ${restype_name} 
+steal_s|Steal Steel|${you} must select a player who will lose ${count} ${restype_name}
+steal_m|Steal M€|${you} must select a player who will lose ${count} ${restype_name}
 
 
 
