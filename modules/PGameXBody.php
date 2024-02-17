@@ -2077,9 +2077,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function action_whatever() {
-        $curowner = $this->getCurrentPlayerColor();
-        $this->systemAssertTrue("Acting user must be a player", $curowner);
-        $ops = $this->machine->getTopOperations($curowner);
+        $ops = $this->machine->getTopOperations();
         foreach ($ops as $op) {
             $opinst = $this->getOperationInstance($op);
             $opinst->checkVoid();

@@ -106,9 +106,7 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function action_whatever() {
-        $curowner = $this->getCurrentPlayerColor();
-        $this->systemAssertTrue("Acting user must be a player", $curowner);
-        $ops = $this->machine->getTopOperations($curowner);
+        $ops = $this->machine->getTopOperations();
         $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE, MACHINE_FLAG_ORDERED);
         $this->gamestate->nextState("next");
     }
