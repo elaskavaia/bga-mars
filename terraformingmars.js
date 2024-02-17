@@ -4334,6 +4334,8 @@ var GameXBody = /** @class */ (function (_super) {
             var classes = displayInfo.imageTypes.split(/  */);
             (_a = tokenNode.classList).add.apply(_a, classes);
             tokenNode.setAttribute("data-info", "1");
+            if (displayInfo.t)
+                tokenNode.setAttribute("data-card-type", displayInfo.t);
             this.connect(tokenNode, "onclick", "onToken");
             if (!this.isLayoutFull()) {
                 this.createHtmlForToken(tokenNode, displayInfo);

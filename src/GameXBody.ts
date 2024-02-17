@@ -1399,6 +1399,7 @@ awarded.`);
       const classes = displayInfo.imageTypes.split(/  */);
       tokenNode.classList.add(...classes);
       tokenNode.setAttribute("data-info", "1");
+      if (displayInfo.t) tokenNode.setAttribute("data-card-type", displayInfo.t);
       this.connect(tokenNode, "onclick", "onToken");
       if (!this.isLayoutFull()) {
         this.createHtmlForToken(tokenNode, displayInfo);
