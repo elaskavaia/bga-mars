@@ -705,7 +705,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function getOperationInstance(array $opinfo): AbsOperation {
         $type = stripslashes($opinfo['type']);
-        if ($opinfo['id']===null) throw new feException('sd');
+        if ($opinfo['id'] === null) throw new feException('sd');
         $classname = 'xxx';
         try {
             $expr = $this->parseOpExpression($type);
@@ -1397,8 +1397,23 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyMessage(clienttranslate('${player_name} takes back their move'), [], $player_id);
 
 
-        // TODO incomplete DRAFT
+        // DRAFT
+        $selected_draft = $this->tokens->getTokensInLocation("draw_$color", MA_CARD_STATE_SELECTED);
+        if (count($selected_draft)>0) {
+            $this->systemAssertTrue("unexpected non draft", $this->isDraftVariant());
+            foreach ($selected_draft as $card_id => $card) {
+                $this->dbSetTokenLocation($card_id, "draft_$color", 0, '');
+            }
+            $total = count($selected_draft);
+            $this->multiplayerpush($color, $total . 'draft');
+            $this->machine->normalize();
+            //$this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
+            $this->machineMultiplayerDistpatchPrivate($player_id);
+            return;
+        }
+
         $selected = $this->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
+
         $count = count($selected);
         $rest = $this->tokens->getTokensInLocation("draw_$color");
         $left_corp = 0;

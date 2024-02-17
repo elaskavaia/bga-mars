@@ -140,8 +140,10 @@ var GameBasics = /** @class */ (function (_super) {
             var gname = this.game_name;
             var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
             this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
-            this, function (result) { }, handler);
+            this, function (result) { }, handler !== null && handler !== void 0 ? handler : this.defaultAjaxHandler);
         }
+    };
+    GameBasics.prototype.defaultAjaxHandler = function (err) {
     };
     GameBasics.prototype.onCancel = function (event) {
         if (event)
@@ -3850,6 +3852,10 @@ var GameXBody = /** @class */ (function (_super) {
         this.gameStatusCleanup();
         _super.prototype.ajaxuseraction.call(this, action, args, handler);
         console.log("sending ".concat(action), args);
+    };
+    GameXBody.prototype.defaultAjaxHandler = function (err) {
+        console.log("sent", err);
+        gameui.addUndoButton();
     };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);

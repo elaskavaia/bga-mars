@@ -149,9 +149,12 @@ class GameBasics extends GameGui {
         { call: action, lock: true, args: JSON.stringify(args ?? {}) }, //
         this,
         (result) => {},
-        handler
+        handler ?? this.defaultAjaxHandler
       );
     }
+  }
+  defaultAjaxHandler(err: any) {
+  
   }
 
   onCancel(event?: Event) {

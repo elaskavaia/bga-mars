@@ -749,6 +749,12 @@ class GameXBody extends GameTokens {
     console.log(`sending ${action}`, args);
   }
 
+  defaultAjaxHandler(err: any) {
+    console.log(`sent`,err);
+    //(gameui as GameXBody).addUndoButton();
+  }
+
+
   onNotif(notif: Notif) {
     super.onNotif(notif);
     this.darhflog("playing notif " + notif.type + " with args ", notif.args);
