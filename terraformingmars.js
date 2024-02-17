@@ -72,7 +72,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.removeAllClasses(this.classActiveSlot);
     };
     GameBasics.prototype.onUpdateActionButtons = function (stateName, args) {
-        if (this.laststate != stateName) {
+        if (this.laststate != stateName && args != null) { // if args is null it is game state, they are not fired consistencly with onEnter
             // delay firing this until onEnteringState is called so they always called in same order
             this.pendingUpdate = true;
             this.restoreMainBar();
@@ -140,10 +140,8 @@ var GameBasics = /** @class */ (function (_super) {
             var gname = this.game_name;
             var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
             this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
-            this, function (result) { }, handler !== null && handler !== void 0 ? handler : this.defaultAjaxHandler);
+            this, function (result) { }, handler);
         }
-    };
-    GameBasics.prototype.defaultAjaxHandler = function (err) {
     };
     GameBasics.prototype.onCancel = function (event) {
         if (event)
@@ -185,6 +183,10 @@ var GameBasics = /** @class */ (function (_super) {
             this.onEnteringState(gamestate.name, gamestate);
         }
     };
+    // updatePageTitle(state = null) {
+    //   debugger;
+    //   return this.inherited(arguments);
+    // }
     // ANIMATIONS
     /**
      * This method will remove all inline style added to element that affect positioning
@@ -3860,10 +3862,6 @@ var GameXBody = /** @class */ (function (_super) {
         _super.prototype.ajaxuseraction.call(this, action, args, handler);
         console.log("sending ".concat(action), args);
     };
-    GameXBody.prototype.defaultAjaxHandler = function (err) {
-        console.log("sent", err);
-        //(gameui as GameXBody).addUndoButton();
-    };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);
         this.darhflog("playing notif " + notif.type + " with args ", notif.args);
@@ -5341,14 +5339,6 @@ var GameXBody = /** @class */ (function (_super) {
         }
         this.onUpdateActionButtons_playerTurnChoice(operations);
     };
-    GameXBody.prototype.onEnteringState_multiplayerDispatch = function (args) {
-        if (!this.isCurrentPlayerActive()) {
-            this.addUndoButton();
-        }
-    };
-    GameXBody.prototype.onUpdateActionButtons_multiplayerDispatch = function (args) {
-        this.addUndoButton();
-    };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
         if (this.isCurrentPlayerActive()) {
             // add undo on every state
@@ -5356,6 +5346,9 @@ var GameXBody = /** @class */ (function (_super) {
                 this.addCancelButton();
             else
                 this.addUndoButton();
+        }
+        else if (stateName == 'multiplayerDispatch') {
+            this.addUndoButton();
         }
         var parent = document.querySelector(".debug_section"); // studio only
         if (parent)

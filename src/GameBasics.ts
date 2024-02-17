@@ -71,7 +71,7 @@ class GameBasics extends GameGui {
   }
 
   onUpdateActionButtons(stateName: string, args: any) {
-    if (this.laststate != stateName) {
+    if (this.laststate != stateName && args!=null) { // if args is null it is game state, they are not fired consistencly with onEnter
       // delay firing this until onEnteringState is called so they always called in same order
       this.pendingUpdate = true;
       this.restoreMainBar();
@@ -149,14 +149,11 @@ class GameBasics extends GameGui {
         { call: action, lock: true, args: JSON.stringify(args ?? {}) }, //
         this,
         (result) => {},
-        handler ?? this.defaultAjaxHandler
+        handler
       );
     }
   }
-  defaultAjaxHandler(err: any) {
   
-  }
-
   onCancel(event?: Event) {
     if (event) dojo.stopEvent(event);
     this.cancelLocalStateEffects();
@@ -199,6 +196,11 @@ class GameBasics extends GameGui {
       this.onEnteringState(gamestate.name, gamestate);
     }
   }
+
+  // updatePageTitle(state = null) {
+  //   debugger;
+  //   return this.inherited(arguments);
+  // }
 
   // ANIMATIONS
 

@@ -756,12 +756,6 @@ class GameXBody extends GameTokens {
     console.log(`sending ${action}`, args);
   }
 
-  defaultAjaxHandler(err: any) {
-    console.log(`sent`,err);
-    //(gameui as GameXBody).addUndoButton();
-  }
-
-
   onNotif(notif: Notif) {
     super.onNotif(notif);
     this.darhflog("playing notif " + notif.type + " with args ", notif.args);
@@ -2466,21 +2460,14 @@ awarded.`);
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
-  onEnteringState_multiplayerDispatch(args) {
-    if (!this.isCurrentPlayerActive()) {
-      this.addUndoButton();
-    }
-  }
-
-  onUpdateActionButtons_multiplayerDispatch(args) {
-    this.addUndoButton();
-  }
 
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
       // add undo on every state
       if (this.on_client_state) this.addCancelButton();
       else this.addUndoButton();
+    } else if (stateName == 'multiplayerDispatch') {
+      this.addUndoButton();
     }
     var parent = document.querySelector(".debug_section"); // studio only
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
