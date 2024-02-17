@@ -177,7 +177,7 @@ class CustomAnimation {
     return this.playCssAnimation(counter_id, 'small_tingle', null, null);
   }
 
-  animatePlaceResourceOnCard(resource_id:string, place_id:string):Promise<any> {
+  async animatePlaceResourceOnCard(resource_id:string, place_id:string):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
 
     let animate_token = resource_id;
@@ -217,7 +217,7 @@ class CustomAnimation {
 
   }
 
-  animateRemoveResourceFromCard(resource_id:string, card_id?: string):Promise<any> {
+  async animateRemoveResourceFromCard(resource_id:string, card_id?: string):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     const animate_token  = card_id ?? $(resource_id).parentElement.id;
     if (animate_token.includes("tableau")) {
@@ -231,7 +231,7 @@ class CustomAnimation {
     });
   }
 
-  animatePlaceMarker(marker_id:string, place_id:string):Promise<any> {
+  async animatePlaceMarker(marker_id:string, place_id:string):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
 
     let unclip:string[]=[];
@@ -282,7 +282,7 @@ class CustomAnimation {
   }
 
   async animateMapItemAwareness(item_id:string):Promise<any> {
-    if (!$(item_id)) return;
+    if (!$(item_id)) return this.getImmediatePromise();
     if (!this.areAnimationsPlayed() ||  this.getAnimationAmount()==2) return this.getImmediatePromise();
 
 
@@ -301,7 +301,7 @@ class CustomAnimation {
     })
   }
 
-  moveResources(tracker:string,qty:number):Promise<any> {
+  async moveResources(tracker:string,qty:number):Promise<any> {
     if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
     if (qty==undefined || qty==0) return this.getImmediatePromise();
 
@@ -407,7 +407,7 @@ class CustomAnimation {
 
   //Adds css class on element, plays it, executes onEnd and removes css class
   //a promise is returned for easy chaining
-  playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any): Promise<any> {
+  async playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any): Promise<any> {
     if (!$(targetId)) return this.getImmediatePromise();
     const animation = this.animations[animationname];
 
