@@ -3578,7 +3578,7 @@ var GameXBody = /** @class */ (function (_super) {
             },
             {
                 key: "plaincubes",
-                label: _("Plain cubes"),
+                label: _("Opaque cubes"),
                 choice: { plain: true },
                 default: false,
                 ui: "checkbox"

@@ -445,7 +445,7 @@ class GameXBody extends GameTokens {
       },
       {
         key: "plaincubes",
-        label: _("Plain cubes"),
+        label: _("Opaque cubes"),
         choice: { plain: true },
         default: false,
         ui: "checkbox"
