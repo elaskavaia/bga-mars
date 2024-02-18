@@ -6,7 +6,7 @@ declare(strict_types=1);
 class Operation_draft extends AbsOperation {
     function effect(string $color, int $inc): int {
         if ($this->noValidTargets()) {
-            $this->game->notifyWithName('message',clienttranslate('Draft is skipped, no more cards'),[], $this->getPlayerId());
+            $this->game->notifyWithName('message', clienttranslate('Draft is skipped, no more cards'), [], $this->getPlayerId());
             return $inc; // skip draft
         }
         $card_id = $this->getCheckedArg('target');
@@ -25,7 +25,7 @@ class Operation_draft extends AbsOperation {
             return $info;
         });
     }
-    
+
     function getPrimaryArgType() {
         return 'token';
     }
@@ -56,5 +56,27 @@ class Operation_draft extends AbsOperation {
     function noValidTargets(): bool {
         $arg = $this->arg();
         return count($arg['target']) == 0;
+    }
+
+    function undo() {
+        $color = $this->color;
+        $selected_draft = $this->game->tokens->getTokensInLocation("draw_$color", MA_CARD_STATE_SELECTED);
+        $total = count($selected_draft);
+        if ($total == 0) throw new BgaUserException(self::_("Nothing to undo"));
+        $this->game->systemAssertTrue("unexpected non draft", $this->game->isDraftVariant());
+        $this->game->systemAssertTrue("unexpected non multiplayer", $this->game->isInMultiplayerMasterState());
+        $operations = $this->game->machine->getTopOperations(null, 'main');
+        $op = array_shift($operations);
+        $this->game->systemAssertTrue("unexpected state", $op);
+        $optype = $op['type'];
+        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'passdraft');
+        $this->game->systemAssertTrue("unexpected total of draft", $total == 1);
+
+        foreach ($selected_draft as $card_id => $card) {
+            $this->game->dbSetTokenLocation($card_id, "draft_$color", 0, '');
+        }
+
+        $this->game->multiplayerpush($color, 'draft'); // add $total if can draft more than one
+        $this->game->machine->normalize();
     }
 }

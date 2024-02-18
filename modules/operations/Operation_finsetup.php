@@ -15,7 +15,7 @@ class Operation_finsetup extends AbsOperation {
         if ($this->game->getGameStateValue('var_begginers_corp') == 1)  return 1;
 
         // pin drawn cards
-        $selected = $this->game->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
+        $selected = $this->game->tokens->getTokensOfTypeInLocation("card_main_","hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
         }
@@ -25,7 +25,7 @@ class Operation_finsetup extends AbsOperation {
                 'count' => $count
             ], $this->getPlayerId());
 
-        // discard second cord
+        // discard second corp
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_${color}");
         foreach ($rest as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
@@ -39,9 +39,17 @@ class Operation_finsetup extends AbsOperation {
         }
 
         // play selected corp properly
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "tableau_${color}");
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "tableau_${color}"); // old way
         foreach ($rest as $card_id => $card) {
             $this->game->effect_playCorporation($color, $card_id, false);
+        }
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "hand_${color}"); // new new
+        foreach ($rest as $card_id => $card) {
+            $this->game->effect_playCorporation($color, $card_id, false);
+            $corpcost = -$this->game->getRulesFor($card_id, 'cost');
+            $this->game->effect_incCount($color, 'm', $corpcost, ['message' => '']);
+            $this->game->executeImmediately($color,"nm",3 * $count);
+            break;
         }
         return 1;
     }

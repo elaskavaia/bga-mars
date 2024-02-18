@@ -293,14 +293,25 @@ Reason: tile placement may draw cards (information)
         if ($args && array_key_exists($key, $args)) {
             $target = $args[$key];
             if ($target === $possible_targets) return $possible_targets;
-            $index = array_search($target, $possible_targets);
-            $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
-            return $possible_targets[$index];
+            if (is_array($target)) {
+                $multi = $target;
+                $res = [];
+                foreach($multi as $target) {
+                    $index = array_search($target, $possible_targets);
+                    $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
+                    $res []= $possible_targets[$index];
+                }
+                return $res;
+            } else {
+                $index = array_search($target, $possible_targets);
+                $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
+                return $possible_targets[$index];
+            }
         } else if ($this->isOneChoice()) {
             if (is_array($possible_targets)) return array_shift($possible_targets);
             return $possible_targets;
         } else {
-            $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args for $type " . toJson($args));
+            $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args $key for $type " . toJson($args));
             return null;
         }
     }
@@ -376,5 +387,9 @@ Reason: tile placement may draw cards (information)
 
     protected function effect(string $owner, int $count): int {
         return 0; // cannot resolve automatically
+    }
+    
+    function undo() {
+        $this->game->userAssertTrue("Undo is not implemented for this operation");
     }
 }

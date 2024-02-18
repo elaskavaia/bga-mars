@@ -95,7 +95,7 @@ abstract class PGameXBody extends PGameMachine {
             }
 
             if ($this->getGameStateValue('var_begginers_corp') != 1) {
-                $this->effect_queueMultiDraw($initial_draw, $corps);
+                $this->effect_queueMultiDrawSetup($initial_draw, $corps);
             }
 
 
@@ -1250,7 +1250,7 @@ abstract class PGameXBody extends PGameMachine {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
             $cost = -$this->getRulesFor($card_id, 'cost');
-            $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('private: ${player_name} chooses corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
+            $this->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('private: ${player_name} chooses corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
                 "_private" => true,
                 "cost" => $cost
             ], $player_id);
@@ -1353,10 +1353,24 @@ abstract class PGameXBody extends PGameMachine {
         return $numcards;
     }
 
-    function effect_queueMultiDraw($numcards = 4, $corps = 0) {
+    function effect_queueMultiDrawSetup($numcards = 10, $corps = 2) {
         $players = $this->loadPlayersBasicInfos();
-        $setup = $corps > 0;
-        if ($this->isDraftVariant() && !$setup) {
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
+            $this->effect_draw($color, "deck_main", "draw_$color", $numcards);
+        }
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            if ($corps + $numcards) $this->multiplayerqueue($color, "setuppick");
+        }
+    }
+
+    function effect_queueMultiDraw($numcards = 4) {
+        $players = $this->loadPlayersBasicInfos();
+        if ($this->isDraftVariant()) {
             $this->notifyAllPlayers('message', clienttranslate('Research draft'), []);
             $numcards = $this->effect_alteratingDraw($numcards, "draft");
             for ($i = 0; $i < $numcards; $i++) {
@@ -1369,23 +1383,16 @@ abstract class PGameXBody extends PGameMachine {
         } else {
             $numcards = $this->effect_alteratingDraw($numcards, "draw");
         }
-        if ($setup) {
-            foreach ($players as $player_id => $player) {
-                $color = $player["player_color"];
-                $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-            }
-        }
+
         // multiplayer buy
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            if ($corps) $this->multiplayerqueue($color, "keepcorp");
             if ($numcards) $this->multiplayerqueue($color, "${numcards}?buycard");
         }
-        if (!$setup) { // only do this when not setup, setup has special command
-            foreach ($players as $player_id => $player) {
-                $color = $player["player_color"];
-                $this->queue($color, "prediscard");
-            }
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->queue($color, "prediscard");
         }
     }
 
@@ -1395,77 +1402,32 @@ abstract class PGameXBody extends PGameMachine {
         $this->systemAssertTrue("unexpected non multistate", $this->isInMultiplayerMasterState());
 
         $this->notifyMessage(clienttranslate('${player_name} takes back their move'), [], $player_id);
-
-
-        // DRAFT
-        $selected_draft = $this->tokens->getTokensInLocation("draw_$color", MA_CARD_STATE_SELECTED);
-        if (count($selected_draft)>0) {
-            $this->systemAssertTrue("unexpected non draft", $this->isDraftVariant());
-            foreach ($selected_draft as $card_id => $card) {
-                $this->dbSetTokenLocation($card_id, "draft_$color", 0, '');
-            }
-            $total = count($selected_draft);
-            $this->multiplayerpush($color, $total . 'draft');
-            $this->machine->normalize();
-            //$this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
-            $this->machineMultiplayerDistpatchPrivate($player_id);
-            return;
+        $operations = $this->getTopOperationsMulti($owner);
+        if (count($operations) == 0) {
+            $operations = $this->machine->getTopOperations(null, 'main');
         }
-
-        $selected = $this->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
-
-        $count = count($selected);
-        $rest = $this->tokens->getTokensInLocation("draw_$color");
-        $left_corp = 0;
-        foreach ($rest as $card_id => $card) {
-            if (startsWith($card_id, 'card_corp')) {
-                $left_corp += 1;
-            }
-        }
-        $has_corp = $left_corp == 1 ? 1 : 0;
-
-        if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
-        $ops = $this->getTopOperations($color);
-        $this->userAssertTrue("Cannot undo", count($ops) == 1);
-        $op = array_shift($ops);
+        if (count($operations) == 0) throw new BgaUserException(self::_("Nothing to undo"));
+        $op = array_shift($operations);
         $optype = $op['type'];
-        // can be nothing in initial setup
-        if ($optype == 'prediscard') {
-            // nothing is left
-        } else if ($optype == 'buycard') {
-            // partial undo
-            $this->machine->hide($op);
-        } else if ($optype == 'finsetup') {
-            // setup 
-        } else {
-            $this->userAssertTrue("Cannot undo $optype");
+        switch ($optype) {
+            case 'passdraft':
+                $op = $this->getOperationInstanceFromType('draft', $color);
+                $op->undo();
+                $this->machineMultiplayerDistpatchPrivate($player_id);
+                return;
+            case 'finsetup':
+                $op = $this->getOperationInstanceFromType('setuppick', $color);
+                $op->undo();
+                $this->machineMultiplayerDistpatchPrivate($player_id);
+                return;
+            case 'prediscard':
+            case 'buycard':
+                $op = $this->getOperationInstanceFromType('buycard', $color);
+                $op->undo();
+                $this->machineMultiplayerDistpatchPrivate($player_id);
+                return;
         }
-        $total = $count + count($rest) - $has_corp;
-        $this->multiplayerpush($color, $total . '?buycard');
-
-        foreach ($selected as $card_id => $card) {
-            if (!startsWith($card_id, 'card_main')) {
-                continue;
-            }
-            $this->dbSetTokenLocation($card_id, "draw_$color", 0, '');
-            $this->effect_incCount($color, 'm', 3, ['message' => '']);
-        }
-
-        if ($has_corp) {
-            // can undo corp selection also
-            $corp = $this->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
-            if ($corp) {
-                $corp_id = $corp['key'];
-                $this->dbSetTokenLocation($corp_id, "draw_$color", 0, '');
-                // undo crop effects
-                $this->effect_incCount($color, 'm', $this->getRulesFor($corp_id, 'cost'), ['message' => '']);
-                $this->multiplayerpush($color, 'keepcorp');
-            }
-        }
-
-        $this->machine->normalize();
-        //$this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
-        $this->machineMultiplayerDistpatchPrivate($player_id);
+        $this->systemAssertTrue("Cannot undo $optype");
     }
 
     function getPlayCardEvents($card_id, $prefix = ''): array {
