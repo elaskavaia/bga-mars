@@ -72,6 +72,11 @@ abstract class PGameMachine extends PGameTokens {
         $this->debugLog("all stack", ["t" => $t]);
         return $t;
     }
+    function debug_dumpMachineDb() {
+        $t = $this->machine->gettablearr();
+        $this->debugLog("all stack", ["t" => $t]);
+        return $t;
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -233,7 +238,7 @@ abstract class PGameMachine extends PGameTokens {
     //////////// Game state actions
     ////////////
 
-    protected function isInMultiplayerMasterState() {
+    public function isInMultiplayerMasterState() {
         return $this->gamestate->isMutiactiveState();
     }
 
