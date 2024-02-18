@@ -947,8 +947,8 @@
 
 .drag-active {
   transition: 0.01s;
-  transform: translateX(-9999px);
-  width:0.1px;
+  transform: translateX(-9999px); // hmm?
+  width: 0.1px;
   * {
     pointer-events: none;
   }

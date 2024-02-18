@@ -8508,17 +8508,18 @@
 }
 .mfull .hand_sorter {
   position: absolute;
-  top: calc(var(--card-width) * 0.5);
-  left: 0.5%;
+  top: unset;
+  bottom: 5px;
+  left: 5px;
   display: flex;
   flex-direction: column;
-  row-gap: 1vh;
+  row-gap: 3px;
   background-color: unset;
   color: rgba(0, 0, 0, 0.34);
   border-color: rgba(0, 0, 0, 0.34);
   border-radius: 1vh;
   padding: unset;
-  z-index: unset;
+  z-index: 30;
   width: unset;
   height: unset;
   justify-content: center;

@@ -215,7 +215,7 @@ class GameXBody extends GameTokens {
       //So I attached it to the hand area block.
       this.addSortButtonsToHandy($("hand_area"));
 
-      this.enableManualReorder("hand_" + this.player_color);
+      this.enableManualReorder("thething");
       this.connectClass("hs_button", "onclick", (evt: Event) => {
         let btn = evt.currentTarget as HTMLElement;
         dojo.stopEvent(evt);
@@ -357,7 +357,6 @@ class GameXBody extends GameTokens {
       const plcolor: any = this.getPlayerColor(parseInt(plid));
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
 
-
       const pg: object = {
         terraformer: parseInt($("tracker_tr_" + plcolor).dataset.state),
         mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
@@ -366,7 +365,7 @@ class GameXBody extends GameTokens {
         planner: parseInt($("counter_hand_" + plcolor).innerHTML)
       };
 
-      const goals : object ={
+      const goals: object = {
         terraformer: 35,
         mayor: 3,
         gardener: 3,
@@ -381,26 +380,28 @@ class GameXBody extends GameTokens {
                           <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
-      let idx=1;
+      let idx = 1;
       for (const key in pg) {
-        const pc = Math.ceil(pg[key] / goals[key] * 100);
-        let grade="high"
-        if (pc<=34) grade="low"; else if (pc<=67) grade="mid";
-        let scoreval=pg[key];
+        const pc = Math.ceil((pg[key] / goals[key]) * 100);
+        let grade = "high";
+        if (pc <= 34) grade = "low";
+        else if (pc <= 67) grade = "mid";
+        let scoreval = pg[key];
 
-        let adclass="";
-        const cube = $("milestone_"+idx).querySelector(".marker_"+plcolor);
+        let adclass = "";
+        const cube = $("milestone_" + idx).querySelector(".marker_" + plcolor);
         if (cube) {
-         scoreval='<div class="card_vp">5</div>';
-          grade="won";
-          adclass="won";
+          scoreval = '<div class="card_vp">5</div>';
+          grade = "won";
+          adclass = "won";
         }
 
-        lines = lines + `<div id="scorecell_${plcolor}_${key}" class="scorecell score ${adclass}" data-type="${key}" data-position="0"><div class="progress_hist"  data-grade="${grade}"  style="height:${pc}%;"></div><div class="score_val">${scoreval}</div><div class="scoregoal">/${goals[key]}</div></div>`;
+        lines =
+          lines +
+          `<div id="scorecell_${plcolor}_${key}" class="scorecell score ${adclass}" data-type="${key}" data-position="0"><div class="progress_hist"  data-grade="${grade}"  style="height:${pc}%;"></div><div class="score_val">${scoreval}</div><div class="scoregoal">/${goals[key]}</div></div>`;
         idx++;
       }
       lines = lines + `             </div>`;
-
     }
     finalhtm = tablehtm.replace("%lines%", lines);
     let dlg = new ebg.popindialog();
@@ -426,12 +427,12 @@ class GameXBody extends GameTokens {
                 %lines%
               </div>`;
     let lines: string = "";
-    let pg= {
-      landlord:{values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:1},
-      banker: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:2},
-      scientist: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:3},
-      thermalist: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:4},
-      miner: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:5},
+    let pg = {
+      landlord: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 1 },
+      banker: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 2 },
+      scientist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 3 },
+      thermalist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 4 },
+      miner: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 5 }
     };
 
     for (let plid in this.gamedatas.players) {
@@ -439,12 +440,11 @@ class GameXBody extends GameTokens {
 
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
 
-        pg.landlord.values[plcolor]=parseInt($("tracker_land_" + plcolor).dataset.state);
-        pg.banker.values[plcolor]=parseInt($("tracker_pm_" + plcolor).dataset.state);
-        pg.scientist.values[plcolor]=parseInt($("tracker_tagScience_" + plcolor).dataset.state);
-        pg.thermalist.values[plcolor]=parseInt($("tracker_h_" + plcolor).dataset.state);
-        pg.miner.values[plcolor]=parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state);
-
+      pg.landlord.values[plcolor] = parseInt($("tracker_land_" + plcolor).dataset.state);
+      pg.banker.values[plcolor] = parseInt($("tracker_pm_" + plcolor).dataset.state);
+      pg.scientist.values[plcolor] = parseInt($("tracker_tagScience_" + plcolor).dataset.state);
+      pg.thermalist.values[plcolor] = parseInt($("tracker_h_" + plcolor).dataset.state);
+      pg.miner.values[plcolor] = parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state);
 
       lines =
         lines +
@@ -454,7 +454,9 @@ class GameXBody extends GameTokens {
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
       for (const key in pg) {
-        lines = lines + `<div id="scorecell_${plcolor}_${key}" class="scorecell score" data-type="${key}" data-value="${pg[key].values[plcolor]}" data-position="0">${pg[key].values[plcolor]}</div>`;
+        lines =
+          lines +
+          `<div id="scorecell_${plcolor}_${key}" class="scorecell score" data-type="${key}" data-value="${pg[key].values[plcolor]}" data-position="0">${pg[key].values[plcolor]}</div>`;
       }
       lines = lines + `             </div>`;
     }
@@ -465,36 +467,34 @@ class GameXBody extends GameTokens {
     dlg.setContent(finalhtm);
     dlg.show();
 
-
     for (const key in pg) {
       for (const plid in this.gamedatas.players) {
         const plcolor: any = this.getPlayerColor(parseInt(plid));
-        if (pg[key].values[plcolor]>pg[key].max_value) {
-          if (pg[key].max_pl!="") {
-            pg[key].ru_value=pg[key].max_value;
-            pg[key].ru_pl=pg[key].max_pl;
+        if (pg[key].values[plcolor] > pg[key].max_value) {
+          if (pg[key].max_pl != "") {
+            pg[key].ru_value = pg[key].max_value;
+            pg[key].ru_pl = pg[key].max_pl;
           }
-          pg[key].max_value=pg[key].values[plcolor];
-          pg[key].max_pl=plcolor;
-
-        } else if (pg[key].values[plcolor]>pg[key].ru_value) {
-          pg[key].ru_value=pg[key].values[plcolor];
-          pg[key].ru_pl=plcolor;
+          pg[key].max_value = pg[key].values[plcolor];
+          pg[key].max_pl = plcolor;
+        } else if (pg[key].values[plcolor] > pg[key].ru_value) {
+          pg[key].ru_value = pg[key].values[plcolor];
+          pg[key].ru_pl = plcolor;
         }
       }
-      if ( pg[key].max_pl!="")   $('scorecell_'+pg[key].max_pl+'_'+key).dataset.position="1";
-      if ( pg[key].ru_pl!="")  $('scorecell_'+pg[key].ru_pl+'_'+key).dataset.position="2";
+      if (pg[key].max_pl != "") $("scorecell_" + pg[key].max_pl + "_" + key).dataset.position = "1";
+      if (pg[key].ru_pl != "") $("scorecell_" + pg[key].ru_pl + "_" + key).dataset.position = "2";
 
       //equals
       for (let plid in this.gamedatas.players) {
         const plcolor: any = this.getPlayerColor(parseInt(plid));
-        if (pg[key].values[plcolor] == pg[key].max_value) $('scorecell_' +plcolor+ '_' + key).dataset.position = "1";
+        if (pg[key].values[plcolor] == pg[key].max_value) $("scorecell_" + plcolor + "_" + key).dataset.position = "1";
       }
 
       //activated with a cube
-      const cube = $("award_"+pg[key].id).querySelector(".marker");
+      const cube = $("award_" + pg[key].id).querySelector(".marker");
       if (cube) {
-        $('scoreheader_'+pg[key].id).insertAdjacentHTML("afterbegin",cube.outerHTML.replace('"id=marker_','id="marker_tmp_'));
+        $("scoreheader_" + pg[key].id).insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
       }
     }
   }
@@ -2821,31 +2821,25 @@ awarded.`);
 
   /* Manual reordering of cards via drag'n'drop */
   enableManualReorder(idContainer: string) {
-    //$(idContainer).style.border = "red 1px dashed";
-    // XXX code below seems to to just add listeners that do nothing
-    $(idContainer).addEventListener("drop", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-    });
-    $(idContainer).addEventListener("dragover", (event) => {
-      event.preventDefault();
-    });
-    $(idContainer).addEventListener("dragenter", (event) => {
-      event.preventDefault();
-    });
+    $(idContainer).addEventListener("drop", namedEventPreventDefaultAndStopHandler);
+    $(idContainer).addEventListener("dragover", namedEventPreventDefaultHandler);
+    $(idContainer).addEventListener("dragenter", namedEventPreventDefaultHandler);
   }
   enableDragOnCard(node: HTMLElement) {
     if (node.draggable) return;
     //disable on mobile for now
     if ($("ebd-body").classList.contains("mobile_version")) return;
-    console.log("enabled drag on ", node.id);
+    console.log("enable drag on ", node.id);
+    node.querySelectorAll("*").forEach((sub: HTMLElement) => {
+      sub.draggable = false;
+    });
     node.draggable = true;
     node.addEventListener("dragstart", onDragStart);
     node.addEventListener("dragend", onDragEnd);
   }
   disableDragOnCard(node: HTMLElement) {
     if (!node.draggable) return;
-    console.log("disbale drag on ", node.id);
+    console.log("disable drag on ", node.id);
     node.draggable = false;
     node.removeEventListener("dragstart", onDragStart);
     node.removeEventListener("dragend", onDragEnd);
@@ -2915,67 +2909,64 @@ function onDragStart(event: DragEvent) {
   const selectedItem = event.currentTarget as HTMLElement;
   console.log("onDragStart", selectedItem?.id);
   const cardParent = selectedItem.parentElement;
-  if (!cardParent.classList.contains("handy")) return;
+  // no prevent defaults
+  if (!cardParent.classList.contains("handy") || !selectedItem.id) {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("onDragStart - no");
+    return;
+  }
 
   // no checks, handler should not be installed if on mobile and such
-  event.stopPropagation();
-
-  $("ebd-body").classList.add("drag_inpg");
-  selectedItem.classList.add("drag-active");
-  //selectedItem.style.setProperty('user-select','none');
 
   //prevent container from changing size
   const rect = cardParent.getBoundingClientRect();
   cardParent.style.setProperty("width", String(rect.width) + "px");
   cardParent.style.setProperty("height", String(rect.height) + "px");
 
-  /*
-  event.dataTransfer.setData("text/plain", "card"); // not sure if needed
-  event.dataTransfer.effectAllowed = "move";
-  event.dataTransfer.dropEffect = "move";*/
+  $("ebd-body").classList.add("drag_inpg");
+  selectedItem.classList.add("drag-active");
+  selectedItem.style.setProperty('user-select','none');
 
-  selectedItem.classList.add("hide");
+  // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
+  // event.dataTransfer.effectAllowed = "move";
+  // event.dataTransfer.dropEffect = "move";
 
-  cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
-  cardParent.querySelectorAll(".card").forEach((card) => {
-    //prevent
-    if (card.id == selectedItem.id) return;
+  // selectedItem.classList.add("hide"); not in css?
 
-    if (card.nextElementSibling == null) {
-      const dragNodeId = "dragright_" + card.id;
-      const righthtm: string = `<div class="dragzone outsideright"><div id="${dragNodeId}" class="dragzone_inside dragright"></div></div>`;
-      card.insertAdjacentHTML("afterend", righthtm);
-      const dragNode = $(dragNodeId);
-      dragNode.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        dragNode.parentElement.classList.add("over");
-      });
-      dragNode.addEventListener("dragleave", (event) => {
-        event.preventDefault();
-        dragNode.parentElement.classList.remove("over");
-      });
-    }
-    if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
-      const dragNodeId = "dragleft_" + card.id;
-      const lefthtm: string = `<div class="dragzone"><div id="${dragNodeId}" class="dragzone_inside dragleft"></div></div>`;
-      card.insertAdjacentHTML("beforebegin", lefthtm);
-      const dragNode = $(dragNodeId);
-      dragNode.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        dragNode.parentElement.classList.add("over");
-      });
-      dragNode.addEventListener("dragleave", (event) => {
-        event.preventDefault();
-        dragNode.parentElement.classList.remove("over");
-      });
-    }
-  });
+  // without timeout the dom changes cancel the start drag in a lot of cases because the new element under the mouse
+  setTimeout(() => {
+    cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
+    cardParent.querySelectorAll(".card").forEach((card) => {
+      //prevent
+      if (card.id == selectedItem.id) return;
+
+      if (card.nextElementSibling == null) {
+        const dragNodeId = "dragright_" + card.id;
+        const righthtm: string = `<div class="dragzone outsideright"><div id="${dragNodeId}" class="dragzone_inside dragright"></div></div>`;
+        card.insertAdjacentHTML("afterend", righthtm);
+        const dragNode = $(dragNodeId);
+        dragNode.parentElement.addEventListener("dragover", dragOverHandler);
+        dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
+      }
+      if (
+        (card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
+        card.previousElementSibling == null
+      ) {
+        const dragNodeId = "dragleft_" + card.id;
+        const lefthtm: string = `<div class="dragzone"><div id="${dragNodeId}" class="dragzone_inside dragleft"></div></div>`;
+        card.insertAdjacentHTML("beforebegin", lefthtm);
+        const dragNode = $(dragNodeId);
+        dragNode.parentElement.addEventListener("dragover", dragOverHandler);
+        dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
+      }
+    });
+  }, 1);
   console.log("onDragStart commit");
 }
 
 function onDragEnd(event: DragEvent) {
-  event.stopPropagation();
-
+  // no prevent defaults
   const selectedItem = event.target as HTMLElement;
   console.log("onDragEnd", selectedItem?.id);
 
@@ -3008,8 +2999,26 @@ function onDragEnd(event: DragEvent) {
   containerNode.style.removeProperty("width");
   containerNode.style.removeProperty("height");
 
-  dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
+  document.querySelectorAll(".dragzone").forEach(dojo.destroy);
   (gameui as GameXBody).saveLocalManualOrder(containerNode);
 
   console.log("onDragEnd commit");
+}
+
+function namedEventPreventDefaultHandler(event) {
+  event.preventDefault();
+}
+function namedEventPreventDefaultAndStopHandler(event) {
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+function dragOverHandler(event: Event) {
+  event.preventDefault();
+  (event.currentTarget as HTMLElement).classList.add("over");
+}
+
+function dragLeaveHandler(event: Event) {
+  event.preventDefault();
+  (event.currentTarget as HTMLElement).classList.remove("over");
 }

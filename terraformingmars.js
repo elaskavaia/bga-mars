@@ -3427,7 +3427,7 @@ var GameXBody = /** @class */ (function (_super) {
             //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
             //So I attached it to the hand area block.
             this.addSortButtonsToHandy($("hand_area"));
-            this.enableManualReorder("hand_" + this.player_color);
+            this.enableManualReorder("thething");
             this.connectClass("hs_button", "onclick", function (evt) {
                 var btn = evt.currentTarget;
                 dojo.stopEvent(evt);
@@ -3536,7 +3536,7 @@ var GameXBody = /** @class */ (function (_super) {
                     "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
             var idx = 1;
             for (var key in pg) {
-                var pc = Math.ceil(pg[key] / goals[key] * 100);
+                var pc = Math.ceil((pg[key] / goals[key]) * 100);
                 var grade = "high";
                 if (pc <= 34)
                     grade = "low";
@@ -3550,7 +3550,9 @@ var GameXBody = /** @class */ (function (_super) {
                     grade = "won";
                     adclass = "won";
                 }
-                lines = lines + "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score ").concat(adclass, "\" data-type=\"").concat(key, "\" data-position=\"0\"><div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height:").concat(pc, "%;\"></div><div class=\"score_val\">").concat(scoreval, "</div><div class=\"scoregoal\">/").concat(goals[key], "</div></div>");
+                lines =
+                    lines +
+                        "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score ").concat(adclass, "\" data-type=\"").concat(key, "\" data-position=\"0\"><div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height:").concat(pc, "%;\"></div><div class=\"score_val\">").concat(scoreval, "</div><div class=\"scoregoal\">/").concat(goals[key], "</div></div>");
                 idx++;
             }
             lines = lines + "             </div>";
@@ -3571,7 +3573,7 @@ var GameXBody = /** @class */ (function (_super) {
             banker: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 2 },
             scientist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 3 },
             thermalist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 4 },
-            miner: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 5 },
+            miner: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 5 }
         };
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
@@ -3585,7 +3587,9 @@ var GameXBody = /** @class */ (function (_super) {
                 lines +
                     "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
             for (var key in pg) {
-                lines = lines + "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score\" data-type=\"").concat(key, "\" data-value=\"").concat(pg[key].values[plcolor], "\" data-position=\"0\">").concat(pg[key].values[plcolor], "</div>");
+                lines =
+                    lines +
+                        "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score\" data-type=\"").concat(key, "\" data-value=\"").concat(pg[key].values[plcolor], "\" data-position=\"0\">").concat(pg[key].values[plcolor], "</div>");
             }
             lines = lines + "             </div>";
         }
@@ -3612,19 +3616,19 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             }
             if (pg[key].max_pl != "")
-                $('scorecell_' + pg[key].max_pl + '_' + key).dataset.position = "1";
+                $("scorecell_" + pg[key].max_pl + "_" + key).dataset.position = "1";
             if (pg[key].ru_pl != "")
-                $('scorecell_' + pg[key].ru_pl + '_' + key).dataset.position = "2";
+                $("scorecell_" + pg[key].ru_pl + "_" + key).dataset.position = "2";
             //equals
             for (var plid in this.gamedatas.players) {
                 var plcolor = this.getPlayerColor(parseInt(plid));
                 if (pg[key].values[plcolor] == pg[key].max_value)
-                    $('scorecell_' + plcolor + '_' + key).dataset.position = "1";
+                    $("scorecell_" + plcolor + "_" + key).dataset.position = "1";
             }
             //activated with a cube
             var cube = $("award_" + pg[key].id).querySelector(".marker");
             if (cube) {
-                $('scoreheader_' + pg[key].id).insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
+                $("scoreheader_" + pg[key].id).insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
             }
         }
     };
@@ -5681,18 +5685,9 @@ var GameXBody = /** @class */ (function (_super) {
     };
     /* Manual reordering of cards via drag'n'drop */
     GameXBody.prototype.enableManualReorder = function (idContainer) {
-        //$(idContainer).style.border = "red 1px dashed";
-        // XXX code below seems to to just add listeners that do nothing
-        $(idContainer).addEventListener("drop", function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        });
-        $(idContainer).addEventListener("dragover", function (event) {
-            event.preventDefault();
-        });
-        $(idContainer).addEventListener("dragenter", function (event) {
-            event.preventDefault();
-        });
+        $(idContainer).addEventListener("drop", namedEventPreventDefaultAndStopHandler);
+        $(idContainer).addEventListener("dragover", namedEventPreventDefaultHandler);
+        $(idContainer).addEventListener("dragenter", namedEventPreventDefaultHandler);
     };
     GameXBody.prototype.enableDragOnCard = function (node) {
         if (node.draggable)
@@ -5700,7 +5695,10 @@ var GameXBody = /** @class */ (function (_super) {
         //disable on mobile for now
         if ($("ebd-body").classList.contains("mobile_version"))
             return;
-        console.log("enabled drag on ", node.id);
+        console.log("enable drag on ", node.id);
+        node.querySelectorAll("*").forEach(function (sub) {
+            sub.draggable = false;
+        });
         node.draggable = true;
         node.addEventListener("dragstart", onDragStart);
         node.addEventListener("dragend", onDragEnd);
@@ -5708,7 +5706,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.disableDragOnCard = function (node) {
         if (!node.draggable)
             return;
-        console.log("disbale drag on ", node.id);
+        console.log("disable drag on ", node.id);
         node.draggable = false;
         node.removeEventListener("dragstart", onDragStart);
         node.removeEventListener("dragend", onDragEnd);
@@ -5769,60 +5767,55 @@ function onDragStart(event) {
     var selectedItem = event.currentTarget;
     console.log("onDragStart", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
     var cardParent = selectedItem.parentElement;
-    if (!cardParent.classList.contains("handy"))
+    // no prevent defaults
+    if (!cardParent.classList.contains("handy") || !selectedItem.id) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("onDragStart - no");
         return;
+    }
     // no checks, handler should not be installed if on mobile and such
-    event.stopPropagation();
-    $("ebd-body").classList.add("drag_inpg");
-    selectedItem.classList.add("drag-active");
-    //selectedItem.style.setProperty('user-select','none');
     //prevent container from changing size
     var rect = cardParent.getBoundingClientRect();
     cardParent.style.setProperty("width", String(rect.width) + "px");
     cardParent.style.setProperty("height", String(rect.height) + "px");
-    /*
-    event.dataTransfer.setData("text/plain", "card"); // not sure if needed
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.dropEffect = "move";*/
-    selectedItem.classList.add("hide");
-    cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
-    cardParent.querySelectorAll(".card").forEach(function (card) {
-        //prevent
-        if (card.id == selectedItem.id)
-            return;
-        if (card.nextElementSibling == null) {
-            var dragNodeId = "dragright_" + card.id;
-            var righthtm = "<div class=\"dragzone outsideright\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragright\"></div></div>");
-            card.insertAdjacentHTML("afterend", righthtm);
-            var dragNode_1 = $(dragNodeId);
-            dragNode_1.addEventListener("dragover", function (event) {
-                event.preventDefault();
-                dragNode_1.parentElement.classList.add("over");
-            });
-            dragNode_1.addEventListener("dragleave", function (event) {
-                event.preventDefault();
-                dragNode_1.parentElement.classList.remove("over");
-            });
-        }
-        if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) || card.previousElementSibling == null) {
-            var dragNodeId = "dragleft_" + card.id;
-            var lefthtm = "<div class=\"dragzone\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragleft\"></div></div>");
-            card.insertAdjacentHTML("beforebegin", lefthtm);
-            var dragNode_2 = $(dragNodeId);
-            dragNode_2.addEventListener("dragover", function (event) {
-                event.preventDefault();
-                dragNode_2.parentElement.classList.add("over");
-            });
-            dragNode_2.addEventListener("dragleave", function (event) {
-                event.preventDefault();
-                dragNode_2.parentElement.classList.remove("over");
-            });
-        }
-    });
+    $("ebd-body").classList.add("drag_inpg");
+    selectedItem.classList.add("drag-active");
+    selectedItem.style.setProperty('user-select', 'none');
+    // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
+    // event.dataTransfer.effectAllowed = "move";
+    // event.dataTransfer.dropEffect = "move";
+    // selectedItem.classList.add("hide"); not in css?
+    // without timeout the dom changes cancel the start drag in a lot of cases because the new element under the mouse
+    setTimeout(function () {
+        cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
+        cardParent.querySelectorAll(".card").forEach(function (card) {
+            //prevent
+            if (card.id == selectedItem.id)
+                return;
+            if (card.nextElementSibling == null) {
+                var dragNodeId = "dragright_" + card.id;
+                var righthtm = "<div class=\"dragzone outsideright\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragright\"></div></div>");
+                card.insertAdjacentHTML("afterend", righthtm);
+                var dragNode = $(dragNodeId);
+                dragNode.parentElement.addEventListener("dragover", dragOverHandler);
+                dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
+            }
+            if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
+                card.previousElementSibling == null) {
+                var dragNodeId = "dragleft_" + card.id;
+                var lefthtm = "<div class=\"dragzone\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragleft\"></div></div>");
+                card.insertAdjacentHTML("beforebegin", lefthtm);
+                var dragNode = $(dragNodeId);
+                dragNode.parentElement.addEventListener("dragover", dragOverHandler);
+                dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
+            }
+        });
+    }, 1);
     console.log("onDragStart commit");
 }
 function onDragEnd(event) {
-    event.stopPropagation();
+    // no prevent defaults
     var selectedItem = event.target;
     console.log("onDragEnd", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
     var x = event.clientX;
@@ -5852,9 +5845,24 @@ function onDragEnd(event) {
     $("ebd-body").classList.remove("drag_inpg");
     containerNode.style.removeProperty("width");
     containerNode.style.removeProperty("height");
-    dojo.query("#" + selectedItem.parentElement.id + " .dragzone").forEach(dojo.destroy);
+    document.querySelectorAll(".dragzone").forEach(dojo.destroy);
     gameui.saveLocalManualOrder(containerNode);
     console.log("onDragEnd commit");
+}
+function namedEventPreventDefaultHandler(event) {
+    event.preventDefault();
+}
+function namedEventPreventDefaultAndStopHandler(event) {
+    event.preventDefault();
+    event.stopPropagation();
+}
+function dragOverHandler(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add("over");
+}
+function dragLeaveHandler(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove("over");
 }
 var LocalSettings = /** @class */ (function () {
     function LocalSettings(gameName, props) {
