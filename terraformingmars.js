@@ -3260,7 +3260,6 @@ var __assign = (this && this.__assign) || function () {
 var LAYOUT_PREF_ID = 100;
 var GameXBody = /** @class */ (function (_super) {
     __extends(GameXBody, _super);
-    // private parses:any;
     function GameXBody() {
         var _this = _super.call(this) || this;
         _this.productionTrackers = ["pm", "ps", "pu", "pp", "pe", "ph"];
@@ -3268,6 +3267,8 @@ var GameXBody = /** @class */ (function (_super) {
         //score cache
         _this.cachedScoreMoveNbr = "0";
         _this.cachedScoreHtm = "";
+        // private parses:any;
+        _this.currentOperation = {}; // bag of data to support operation engine
         _this.CON = {};
         return _this;
     }
@@ -4816,9 +4817,6 @@ var GameXBody = /** @class */ (function (_super) {
             return this.getRulesFor("op_" + opInfo, key);
         return this.getRulesFor("op_" + opInfo.type, key);
     };
-    GameXBody.prototype.cancelLocalStateEffects = function () {
-        document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
-    };
     GameXBody.prototype.onUpdateActionButtons_playerConfirm = function (args) {
         var _this = this;
         this.addActionButton("button_0", _("Confirm"), function () {
@@ -4852,7 +4850,7 @@ var GameXBody = /** @class */ (function (_super) {
             main = "complex";
         }
         $("ebd-body").dataset.maop = main;
-        this.clientStateArgs.mainop = main;
+        this.currentOperation.opInfo = opInfo;
     };
     GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
@@ -4869,7 +4867,6 @@ var GameXBody = /** @class */ (function (_super) {
             this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
             // add main operation to the body to change style if need be
             this.setMainOperationType(opInfo);
-            this.clientStateArgs.ttype = ttype;
             if (opArgs.void) {
                 this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
             }
@@ -4972,17 +4969,7 @@ var GameXBody = /** @class */ (function (_super) {
         else if (ttype == "token_array") {
             // cannot use client state because multiplayer screws this up
             if (single) {
-                this.clearReverseIdMap();
-                this.setActiveSlots(opTargets);
-                this.addActionButtonColor("button_done", _("Submit"), function () {
-                    var ids = [];
-                    document.querySelectorAll("#draw_".concat(_this.player_color, " .card.selected")).forEach(function (node) { return ids.push(node.id); });
-                    return _this.sendActionResolve(opId, { target: ids }, function (err) {
-                        if (!err)
-                            document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
-                    });
-                }, "blue");
-                this.addCancelButton();
+                this.activateMultiSelectionPrompt(opInfo);
             }
         }
         else if (ttype) {
@@ -4998,6 +4985,59 @@ var GameXBody = /** @class */ (function (_super) {
                 }
             }
         }
+    };
+    GameXBody.prototype.activateMultiSelectionPrompt = function (opInfo) {
+        var _this = this;
+        var _a, _b;
+        var opId = opInfo.id;
+        var opArgs = opInfo.args;
+        var opTargets = (_a = opArgs.target) !== null && _a !== void 0 ? _a : [];
+        var ttype = (_b = opArgs.ttype) !== null && _b !== void 0 ? _b : "none";
+        var skippable = !!opArgs.skipname;
+        var buttonName = _("Submit");
+        var buttonId = "button_done";
+        var onUpdate = function () {
+            var count = document.querySelectorAll(".selected").length;
+            if (count == 0 && skippable) {
+                $(buttonId).classList.add("disabled");
+            }
+            else {
+                $(buttonId).classList.remove("disabled");
+            }
+            if (count > 0) {
+                _this.addActionButton("button_cancel", _("Reset"), function () {
+                    document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
+                    onUpdate();
+                }, null, false, "red");
+            }
+            else {
+                if ($("button_cancel"))
+                    dojo.destroy("button_cancel");
+            }
+            $(buttonId).innerHTML = buttonName + ": " + count;
+        };
+        // Init
+        this.clearReverseIdMap();
+        this.setActiveSlots(opTargets);
+        this.addActionButtonColor(buttonId, buttonName, function () {
+            var ids = [];
+            document.querySelectorAll(".selected").forEach(function (node) { return ids.push(node.id); });
+            return _this.sendActionResolve(opId, { target: ids }, function (err) {
+                if (!err) {
+                    document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
+                    onUpdate();
+                }
+            });
+        }, "blue");
+        onUpdate();
+        this["onToken_".concat(ttype)] = function (tid) {
+            $(tid).classList.toggle("selected");
+            onUpdate();
+        };
+    };
+    GameXBody.prototype.setPrivateStateUpdate = function (name, init, onToken) {
+        init();
+        this["onToken_".concat(name)] = onToken;
     };
     GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
         var _this = this;
@@ -5411,7 +5451,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     // on click hooks
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
-        var _a;
+        var _a, _b, _c;
         //debugger;
         if (!tid)
             return;
@@ -5423,16 +5463,23 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.showError("Not implemented");
         }
-        else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
-            this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
-        }
         else if ($(tid).classList.contains("active_slot")) {
-            if (this.clientStateArgs.ttype == "token_array") {
-                $(tid).classList.toggle("selected");
+            var ttype = (_c = (_b = this.currentOperation.opInfo) === null || _b === void 0 ? void 0 : _b.args) === null || _c === void 0 ? void 0 : _c.ttype;
+            if (ttype) {
+                var methodName = "onToken_" + ttype;
+                var ret = this.callfn(methodName, tid);
+                if (ret === undefined)
+                    return false;
+                return true;
             }
             else {
+                $(tid).classList.toggle("selected"); // fallback
                 this.showError("Not implemented");
+                return false;
             }
+        }
+        else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
+            this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
         }
         else if (tid.startsWith("card_")) {
             if (tid.endsWith("help"))

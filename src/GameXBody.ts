@@ -18,6 +18,7 @@ class GameXBody extends GameTokens {
   private cachedScoreMoveNbr: string = "0";
   private cachedScoreHtm: string = "";
   // private parses:any;
+  private currentOperation: any = {}; // bag of data to support operation engine
 
   constructor() {
     super();
@@ -1892,10 +1893,6 @@ awarded.`);
     return this.getRulesFor("op_" + opInfo.type, key);
   }
 
-  cancelLocalStateEffects(): void {
-    document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
-  }
-
   onUpdateActionButtons_playerConfirm(args) {
     this.addActionButton("button_0", _("Confirm"), () => {
       this.ajaxuseraction("confirm");
@@ -1923,14 +1920,14 @@ awarded.`);
   }
 
   setMainOperationType(opInfo: any) {
-    let main;
+    let main: string;
     if (opInfo) {
       main = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
     } else {
       main = "complex";
     }
     $("ebd-body").dataset.maop = main;
-    this.clientStateArgs.mainop = main;
+    this.currentOperation.opInfo = opInfo;
   }
 
   activateSlots(opInfo: any, single: boolean = true) {
@@ -1946,7 +1943,6 @@ awarded.`);
       this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
       // add main operation to the body to change style if need be
       this.setMainOperationType(opInfo);
-      this.clientStateArgs.ttype = ttype;
 
       if (opArgs.void) {
         this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
@@ -2053,24 +2049,9 @@ awarded.`);
         }
       }
     } else if (ttype == "token_array") {
-		// cannot use client state because multiplayer screws this up
+      // cannot use client state because multiplayer screws this up
       if (single) {
-        this.clearReverseIdMap();
-        this.setActiveSlots(opTargets);
-        this.addActionButtonColor(
-          "button_done",
-          _("Submit"),
-          () => {
-            const ids = [];
-            document.querySelectorAll(`#draw_${this.player_color} .card.selected`).forEach((node) => ids.push(node.id));
-            return this.sendActionResolve(opId, { target: ids }, (err) => {
-              if (!err) document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
-            });
-          },
-          "blue"
-        );
-
-        this.addCancelButton();
+        this.activateMultiSelectionPrompt(opInfo);
       }
     } else if (ttype) {
       console.error("Unknown type " + ttype, opInfo);
@@ -2085,6 +2066,71 @@ awarded.`);
         }
       }
     }
+  }
+
+  activateMultiSelectionPrompt(opInfo: any) {
+    const opId = opInfo.id as number;
+    const opArgs = opInfo.args;
+    const opTargets = opArgs.target ?? [];
+    const ttype = opArgs.ttype ?? "none";
+    const skippable = !!opArgs.skipname;
+    const buttonName = _("Submit");
+    const buttonId = "button_done";
+
+    const onUpdate = () => {
+      const count = document.querySelectorAll(".selected").length;
+      if (count == 0 && skippable) {
+        $(buttonId).classList.add("disabled");
+      } else {
+        $(buttonId).classList.remove("disabled");
+      }
+      if (count > 0) {
+        this.addActionButton(
+          "button_cancel",
+          _("Reset"),
+          () => {
+            document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
+            onUpdate();
+          },
+          null,
+          false,
+          "red"
+        );
+      } else {
+        if ($("button_cancel")) dojo.destroy("button_cancel");
+      }
+      $(buttonId).innerHTML = buttonName + ": " + count;
+    };
+
+    // Init
+    this.clearReverseIdMap();
+    this.setActiveSlots(opTargets);
+    this.addActionButtonColor(
+      buttonId,
+      buttonName,
+      () => {
+        const ids = [];
+        document.querySelectorAll(".selected").forEach((node) => ids.push(node.id));
+        return this.sendActionResolve(opId, { target: ids }, (err) => {
+          if (!err) {
+            document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
+            onUpdate();
+          }
+        });
+      },
+      "blue"
+    );
+    onUpdate();
+
+    this[`onToken_${ttype}`] = (tid: string) => {
+      $(tid).classList.toggle("selected");
+      onUpdate();
+    };
+  }
+
+  setPrivateStateUpdate(name: string, init: () => void, onToken: (id: string) => void) {
+    init();
+    this[`onToken_${name}`] = onToken;
   }
 
   addTargetButtons(opId: number, opTargets: string[]) {
@@ -2540,14 +2586,20 @@ awarded.`);
       const opId = info.op;
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
+    } else if ($(tid).classList.contains("active_slot")) {
+      const ttype = this.currentOperation.opInfo?.args?.ttype;
+      if (ttype) {
+        var methodName = "onToken_" + ttype;
+        let ret = this.callfn(methodName, tid);
+        if (ret === undefined) return false;
+        return true;
+      } else {
+        $(tid).classList.toggle("selected"); // fallback
+        this.showError("Not implemented");
+        return false;
+      }
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
       this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
-    } else if ($(tid).classList.contains("active_slot")) {
-      if (this.clientStateArgs.ttype == "token_array") {
-        $(tid).classList.toggle("selected");
-      } else {
-        this.showError("Not implemented");
-      }
     } else if (tid.startsWith("card_")) {
       if (tid.endsWith("help")) return;
       this.showHiddenContent($(tid).parentElement.id, _("Pile contents"), tid);
