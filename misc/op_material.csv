@@ -17,7 +17,7 @@ sell|Discard Card from Hand to gain M€|${you} must select a card to discard to
 ores|Add resource to another card|${you} must select a card to add ${count} ${restype_name} resource/s
 nores|Remove resource from another card|${you} must select a card to remove ${count} ${restype_name} resource/s
 keep|Keep Card|${you} must select a card to add keep
-buycard|Buy Card|${you} may select a card to buy for 3 M€
+buycard|Buy Card|${you} may select up to ${count} card/s to buy for 3 M€ each
 keepcorp|Keep Corp|${you} must select one corporation card to keep
 draft|Draft Card|${you} must select one card to draft (buy or discard later)
 
