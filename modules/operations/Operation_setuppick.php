@@ -32,8 +32,8 @@ class Operation_setuppick extends AbsOperation {
                 $count++;
             }
         }
-        if ($count==0) {
-            $this->game->notifyPlayer($this->getPlayerId(),'message_warning', clienttranslate('You did not select any initial cards, it may be not a good idea. Undo if not too late'),[]);
+        if ($count == 0) {
+            $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('You did not select any initial cards, it may be not a good idea. Undo if not too late'), []);
         }
         return 1;
     }
@@ -48,9 +48,9 @@ class Operation_setuppick extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_", "draw_${color}"));    
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_", "draw_${color}"));
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
-            $info = ['q' => 0]; 
+            $info = ['q' => 0];
             $info['pre'] = $this->game->precondition($color, $tokenId);
             return $info;
         });
@@ -62,9 +62,12 @@ class Operation_setuppick extends AbsOperation {
     }
 
     function getPrompt() {
-        return clienttranslate('Select one corporation and up to 10 project cards');
+        return clienttranslate('Select one corporation and up to 10 project cards (then submit all choices)');
     }
 
+    function getOpName() {
+        return clienttranslate('Setup Choice');
+    }
 
     function noValidTargets(): bool {
         return false;
