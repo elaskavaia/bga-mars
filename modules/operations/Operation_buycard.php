@@ -82,7 +82,13 @@ class Operation_buycard extends AbsOperation {
         }
         $has_corp = $left_corp == 1 ? 1 : 0;
 
-        if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
+        $operations = $this->game->machine->getTopOperations(null, 'main');
+        $op = array_shift($operations);
+        $this->game->systemAssertTrue("unexpected state", $op);
+        $optype = $op['type'];
+        if ($optype=='prediscard') {
+
+        } else  if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
 
 
         $total = $count + count($rest) - $has_corp;
