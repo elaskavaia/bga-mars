@@ -18,6 +18,8 @@ class Operation_setuppick extends AbsOperation {
         }
         if ($corpmoney == 0) $this->game->userAssertTrue(totranslate("You must select one corporation"));
         $cost = 3;
+        $count = 0;
+
         foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_main")) {
                 $corpmoney -= $cost;
@@ -27,7 +29,11 @@ class Operation_setuppick extends AbsOperation {
                 if ($corpmoney < 0) {
                     $this->game->userAssertTrue(totranslate("You cannot afford that many cards with this choice of corporation"));
                 }
+                $count++;
             }
+        }
+        if ($count==0) {
+            $this->game->notifyPlayer($this->getPlayerId(),'message_warning', clienttranslate('You did not select any initial cards, it may be not a good idea. Undo if not too late'),[]);
         }
         return 1;
     }
@@ -84,7 +90,7 @@ class Operation_setuppick extends AbsOperation {
         $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup');
 
         if ($onlyCheck) return;
-        
+
         foreach ($selected as $card_id => $card) {
             $this->game->dbSetTokenLocation($card_id, "draw_$color", 0, '');
         }
