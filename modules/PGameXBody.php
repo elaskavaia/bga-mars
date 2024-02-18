@@ -1411,6 +1411,7 @@ abstract class PGameXBody extends PGameMachine {
         $optype = $op['type'];
         switch ($optype) {
             case 'passdraft':
+            case 'draft':
                 $op = $this->getOperationInstanceFromType('draft', $color);
                 $op->undo();
                 $this->machineMultiplayerDistpatchPrivate($player_id);
