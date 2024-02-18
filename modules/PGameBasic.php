@@ -157,7 +157,7 @@ abstract class PGameBasic extends Table {
             return;
         }
         $this->dumpError($log);
-        throw new BgaUserException($this->_("Internal Error. That should not have happened. Please raise a bug.") . $log);
+        throw new BgaUserException($this->_("Internal Error. That should not have happened. Please raise a bug.") . " " . $log);
     }
 
     /**
