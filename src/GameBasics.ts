@@ -33,7 +33,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
-    dojo.destroy('debug_output'); // its too slow and useless
+    dojo.destroy("debug_output"); // its too slow and useless
     this.gamedatas_server = dojo.clone(this.gamedatas);
     this.setupInfoPanel();
     // add reload Css debug button
@@ -408,7 +408,6 @@ class GameBasics extends GameGui {
     let over: Element;
     if (ontoWhat) over = $(ontoWhat);
     else over = $("oversurface"); // this div has to exists with pointer-events: none and cover all area with high zIndex
-    var par = elem.parentNode;
     var elemRect = elem.getBoundingClientRect();
 
     //console.log("elemRect", elemRect);
@@ -421,6 +420,7 @@ class GameBasics extends GameGui {
     clone.id = newId;
     clone.classList.add("phantom");
     clone.classList.add("phantom" + postfix);
+    clone.style.transitionDuration = "0ms"; // disable animation during projection
 
     var fullmatrix = this.getFulltransformMatrix(elem.parentNode as Element, over.parentNode as Element);
 
@@ -442,6 +442,7 @@ class GameBasics extends GameGui {
     clone.style.left = offsetX + "px";
     clone.style.top = offsetY + "px";
     clone.style.transform = fullmatrix;
+    clone.style.transitionDuration = undefined;
 
     return clone;
   }
@@ -463,6 +464,7 @@ class GameBasics extends GameGui {
     const noanimation = duration <= 0 || !mobileNode.parentNode;
     var clone = null;
     if (!noanimation) {
+      // do animation
       clone = this.projectOnto(mobileNode, "_temp");
       mobileNode.style.opacity = "0"; // hide original
     }
@@ -772,7 +774,7 @@ class GameBasics extends GameGui {
       id = node?.id;
     }
 
-    console.log("on slot " + id,target?.id || target);
+    console.log("on slot " + id, target?.id || target);
     if (!id) return null;
     if (this.showHelp(id)) return null;
 
@@ -806,7 +808,7 @@ class GameBasics extends GameGui {
   }
   checkActiveSlot(id: ElementOrId) {
     if (!this.isActiveSlot(id)) {
-      console.error(new Error("unauth"),id);
+      console.error(new Error("unauth"), id);
       this.showMoveUnauthorized();
       return false;
     }
@@ -848,6 +850,12 @@ class GameBasics extends GameGui {
     if (!handler) handler = () => this.cancelLocalStateEffects();
     if ($("button_cancel")) dojo.destroy("button_cancel");
     this.addActionButton("button_cancel", name, handler, null, false, "red");
+  }
+
+  addActionButton(id: string, label: string, method: string | eventhandler, destination?: ElementOrId, blinking?: boolean, color?: string) {
+    if ($(id)) dojo.destroy(id);
+    this.inherited(arguments);
+    return $(id);
   }
 
   cloneAndFixIds(orig: ElementOrId, postfix: string, removeInlineStyle?: boolean) {

@@ -147,8 +147,9 @@ abstract class PGameMachine extends PGameTokens {
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
         $tops = $this->getTopOperationsState($curowner);
+        $this->systemAssertTrue('Nothing is on stack',count($tops));
         $client_args = $this->arg_operations($tops);
-        $this->machine->interrupt();
+        //$this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
             $info = $this-> findOp($operation_id, $tops);
@@ -165,7 +166,7 @@ abstract class PGameMachine extends PGameTokens {
             //$this->debug_dumpMachine();
             $client_op_args = $this->findOp($operation_id,$client_args['operations']);
             if (array_get($client_op_args, 'args.postpone', false)) {
-                $this->userAssertTrue(_('Cannot choose this operation before one that can fail'));
+                $this->userAssertTrue(_('Cannot choose this operation before any that can fail'));
             }
             $count = $this->saction_resolve($info, $args);
             // stack operations
@@ -391,6 +392,10 @@ abstract class PGameMachine extends PGameTokens {
             if (count($operations) == 0) {
                 $this->systemAssertTrue("Failed expand for $type. Nothing");
             }
+        
+            // restore orignal rank
+            //$this->machine->renice($operations, $op['rank']);
+            
             $nop = array_shift($operations);
             if ($nop["type"] == $type && $nop['mcount'] == $op['mcount'] && $nop['count'] == $op['count']) {
                 $this->systemAssertTrue("Failed expand for $type. Recursion");
