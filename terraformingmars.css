@@ -210,6 +210,13 @@
 .active_slot.card {
   box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #ff9800 !important;
   transform: translateZ(10px);
+  top: 0px;
+  left: 0px;
+}
+
+.active_slot.selected.card {
+  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #3F51B5 !important;
+  top: -20px;
 }
 
 .active_slot.card:hover {
@@ -8033,13 +8040,6 @@
   transition: all 500ms;
   transition-delay: 500ms;
 }
-.mfull .active_slot.card {
-  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #ff9800 !important;
-  transform: translateZ(10px);
-}
-.mfull .active_slot.card:hover {
-  outline: unset;
-}
 .mfull .card.corp {
   background-size: 600% auto;
 }
@@ -8453,7 +8453,22 @@
   background-color: var(--plcolor);
 }
 .mfull .hand_sorter {
-  display: none;
+  position: absolute;
+  top: calc(var(--card-width) * 0.5);
+  left: 0.5%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1vh;
+  background-color: unset;
+  color: rgba(0, 0, 0, 0.34);
+  border-color: rgba(0, 0, 0, 0.34);
+  border-radius: 1vh;
+  padding: unset;
+  z-index: unset;
+  width: unset;
+  height: unset;
+  justify-content: center;
+  align-items: center;
 }
 
 .mcompact {

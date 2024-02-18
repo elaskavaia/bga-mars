@@ -169,6 +169,18 @@ class GameXBody extends GameTokens {
       if (Object.keys(gamedatas.players).length == 2) {
         $("ebd-body").classList.add("twoplayers");
       }
+      // debug buttons
+      var parent = document.querySelector(".debug_section");
+      if (parent) {
+        this.addActionButton(
+          "button_debug_dump",
+          "Dump Machine",
+          () => {
+            this.ajaxcallwrapper_unchecked("say", { msg: "debug_dumpMachineDb()" });
+          },
+          parent
+        ); // NOI18N
+      }
 
       this.vlayout.setupDone();
       //this.setupOneTimePrompt();
@@ -1493,8 +1505,8 @@ awarded.`);
       $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
 
       //adds tt to corp logos
-      this.updateTooltip(key,location + "_corp_logo");
-      this.updateTooltip(key,location.replace("tableau_", "miniboard_corp_logo_"));
+      this.updateTooltip(key, location + "_corp_logo");
+      this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
     }
 
     if (key.startsWith("card_main") && location.startsWith("tableau")) {
@@ -1779,11 +1791,15 @@ awarded.`);
     }
   }
 
-  sendActionResolve(op: number, args?: any) {
+  sendActionResolve(op: number, args?: any, handler?: eventhandler) {
     if (!args) args = {};
-    this.ajaxuseraction("resolve", {
-      ops: [{ op: op, ...args }]
-    });
+    this.ajaxuseraction(
+      "resolve",
+      {
+        ops: [{ op: op, ...args }]
+      },
+      handler
+    );
     return true;
   }
 
@@ -1876,6 +1892,10 @@ awarded.`);
     return this.getRulesFor("op_" + opInfo.type, key);
   }
 
+  cancelLocalStateEffects(): void {
+    document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
+  }
+
   onUpdateActionButtons_playerConfirm(args) {
     this.addActionButton("button_0", _("Confirm"), () => {
       this.ajaxuseraction("confirm");
@@ -1902,6 +1922,17 @@ awarded.`);
     return divId;
   }
 
+  setMainOperationType(opInfo: any) {
+    let main;
+    if (opInfo) {
+      main = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
+    } else {
+      main = "complex";
+    }
+    $("ebd-body").dataset.maop = main;
+    this.clientStateArgs.mainop = main;
+  }
+
   activateSlots(opInfo: any, single: boolean = true) {
     const opId = opInfo.id as number;
     const opArgs = opInfo.args;
@@ -1914,7 +1945,9 @@ awarded.`);
     if (single) {
       this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
       // add main operation to the body to change style if need be
-      $("ebd-body").dataset.maop = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
+      this.setMainOperationType(opInfo);
+      this.clientStateArgs.ttype = ttype;
+
       if (opArgs.void) {
         this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
       }
@@ -2018,6 +2051,26 @@ awarded.`);
             });
           }
         }
+      }
+    } else if (ttype == "token_array") {
+		// cannot use client state because multiplayer screws this up
+      if (single) {
+        this.clearReverseIdMap();
+        this.setActiveSlots(opTargets);
+        this.addActionButtonColor(
+          "button_done",
+          _("Submit"),
+          () => {
+            const ids = [];
+            document.querySelectorAll(`#draw_${this.player_color} .card.selected`).forEach((node) => ids.push(node.id));
+            return this.sendActionResolve(opId, { target: ids }, (err) => {
+              if (!err) document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
+            });
+          },
+          "blue"
+        );
+
+        this.addCancelButton();
       }
     } else if (ttype) {
       console.error("Unknown type " + ttype, opInfo);
@@ -2359,7 +2412,7 @@ awarded.`);
     this.clientStateArgs.call = "resolve";
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();
-    $("ebd-body").dataset.maop = "complex";
+    this.setMainOperationType(undefined);
 
     const xop = args.op;
 
@@ -2461,13 +2514,12 @@ awarded.`);
     this.onUpdateActionButtons_playerTurnChoice(operations);
   }
 
-
   onUpdateActionButtons_after(stateName: string, args: any): void {
     if (this.isCurrentPlayerActive()) {
       // add undo on every state
       if (this.on_client_state) this.addCancelButton();
       else this.addUndoButton();
-    } else if (stateName == 'multiplayerDispatch') {
+    } else if (stateName == "multiplayerDispatch" || stateName == "client_collectMultiple") {
       this.addUndoButton();
     }
     var parent = document.querySelector(".debug_section"); // studio only
@@ -2490,6 +2542,12 @@ awarded.`);
       else this.showError("Not implemented");
     } else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
       this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
+    } else if ($(tid).classList.contains("active_slot")) {
+      if (this.clientStateArgs.ttype == "token_array") {
+        $(tid).classList.toggle("selected");
+      } else {
+        this.showError("Not implemented");
+      }
     } else if (tid.startsWith("card_")) {
       if (tid.endsWith("help")) return;
       this.showHiddenContent($(tid).parentElement.id, _("Pile contents"), tid);
@@ -2624,15 +2682,14 @@ awarded.`);
     let sort_type: string = localColorSetting.readProp("sort_type", "");
 
     if (sort_type == "") {
-      sort_type = "manual";
+      sort_type = "playable";
       sort_dir = "increase";
     }
-    if (sort_type != "") {
-      let bnode = dojo.query(".hs_button[data-type='" + sort_type + "']")[0];
-      bnode.dataset.direction = sort_dir;
-      $(id).dataset.sort_direction = sort_dir;
-      $(id).dataset.sort_type = sort_type;
-    }
+
+    let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
+    if (bnode) bnode.dataset.direction = sort_dir;
+    $(id).dataset.sort_direction = sort_dir;
+    $(id).dataset.sort_type = sort_type;
 
     const msg = _("Sort cards by %s");
     this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
@@ -2644,6 +2701,7 @@ awarded.`);
   /* Manual reordering of cards via drag'n'drop */
   enableManualReorder(idContainer: string) {
     //$(idContainer).style.border = "red 1px dashed";
+    // XXX code below seems to to just add listeners that do nothing
     $(idContainer).addEventListener("drop", (event) => {
       event.preventDefault();
       event.stopPropagation();

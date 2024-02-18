@@ -91,8 +91,14 @@
 .active_slot.card {
   box-shadow: 2px 2px 3px 3px #00000080, 2px -2px 0px 5px #ff9800 !important;
   transform: translateZ(10px); // make it hover a bit
+  top: 0px;
+  left: 0px;
 }
 
+.active_slot.selected.card {
+  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #3F51B5 !important;
+  top: -20px;
+}
 
 .active_slot.card:hover {
   cursor: pointer;

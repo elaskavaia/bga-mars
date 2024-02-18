@@ -39,7 +39,7 @@ var GameBasics = /** @class */ (function (_super) {
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
-        dojo.destroy('debug_output'); // its too slow and useless
+        dojo.destroy("debug_output"); // its too slow and useless
         this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
         // add reload Css debug button
@@ -342,7 +342,6 @@ var GameBasics = /** @class */ (function (_super) {
             over = $(ontoWhat);
         else
             over = $("oversurface"); // this div has to exists with pointer-events: none and cover all area with high zIndex
-        var par = elem.parentNode;
         var elemRect = elem.getBoundingClientRect();
         //console.log("elemRect", elemRect);
         var newId = elem.id + postfix;
@@ -353,6 +352,7 @@ var GameBasics = /** @class */ (function (_super) {
         clone.id = newId;
         clone.classList.add("phantom");
         clone.classList.add("phantom" + postfix);
+        clone.style.transitionDuration = "0ms"; // disable animation during projection
         var fullmatrix = this.getFulltransformMatrix(elem.parentNode, over.parentNode);
         over.appendChild(clone);
         var cloneRect = clone.getBoundingClientRect();
@@ -369,6 +369,7 @@ var GameBasics = /** @class */ (function (_super) {
         clone.style.left = offsetX + "px";
         clone.style.top = offsetY + "px";
         clone.style.transform = fullmatrix;
+        clone.style.transitionDuration = undefined;
         return clone;
     };
     GameBasics.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
@@ -385,6 +386,7 @@ var GameBasics = /** @class */ (function (_super) {
         var noanimation = duration <= 0 || !mobileNode.parentNode;
         var clone = null;
         if (!noanimation) {
+            // do animation
             clone = this.projectOnto(mobileNode, "_temp");
             mobileNode.style.opacity = "0"; // hide original
         }
@@ -746,6 +748,12 @@ var GameBasics = /** @class */ (function (_super) {
         if ($("button_cancel"))
             dojo.destroy("button_cancel");
         this.addActionButton("button_cancel", name, handler, null, false, "red");
+    };
+    GameBasics.prototype.addActionButton = function (id, label, method, destination, blinking, color) {
+        if ($(id))
+            dojo.destroy(id);
+        this.inherited(arguments);
+        return $(id);
     };
     GameBasics.prototype.cloneAndFixIds = function (orig, postfix, removeInlineStyle) {
         if (!$(orig)) {
@@ -3381,6 +3389,13 @@ var GameXBody = /** @class */ (function (_super) {
             if (Object.keys(gamedatas.players).length == 2) {
                 $("ebd-body").classList.add("twoplayers");
             }
+            // debug buttons
+            var parent = document.querySelector(".debug_section");
+            if (parent) {
+                this.addActionButton("button_debug_dump", "Dump Machine", function () {
+                    _this.ajaxcallwrapper_unchecked("say", { msg: "debug_dumpMachineDb()" });
+                }, parent); // NOI18N
+            }
             this.vlayout.setupDone();
             //this.setupOneTimePrompt();
         }
@@ -4708,12 +4723,12 @@ var GameXBody = /** @class */ (function (_super) {
             console.log.apply(console, args);
         }
     };
-    GameXBody.prototype.sendActionResolve = function (op, args) {
+    GameXBody.prototype.sendActionResolve = function (op, args, handler) {
         if (!args)
             args = {};
         this.ajaxuseraction("resolve", {
             ops: [__assign({ op: op }, args)]
-        });
+        }, handler);
         return true;
     };
     GameXBody.prototype.sendActionResolveWithCount = function (op, count) {
@@ -4801,6 +4816,9 @@ var GameXBody = /** @class */ (function (_super) {
             return this.getRulesFor("op_" + opInfo, key);
         return this.getRulesFor("op_" + opInfo.type, key);
     };
+    GameXBody.prototype.cancelLocalStateEffects = function () {
+        document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
+    };
     GameXBody.prototype.onUpdateActionButtons_playerConfirm = function (args) {
         var _this = this;
         this.addActionButton("button_0", _("Confirm"), function () {
@@ -4825,6 +4843,17 @@ var GameXBody = /** @class */ (function (_super) {
         }
         return divId;
     };
+    GameXBody.prototype.setMainOperationType = function (opInfo) {
+        var main;
+        if (opInfo) {
+            main = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
+        }
+        else {
+            main = "complex";
+        }
+        $("ebd-body").dataset.maop = main;
+        this.clientStateArgs.mainop = main;
+    };
     GameXBody.prototype.activateSlots = function (opInfo, single) {
         var _this = this;
         var _a, _b;
@@ -4839,7 +4868,8 @@ var GameXBody = /** @class */ (function (_super) {
         if (single) {
             this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
             // add main operation to the body to change style if need be
-            $("ebd-body").dataset.maop = opInfo.type.replace(/[^a-zA-Z0-9]/g, "");
+            this.setMainOperationType(opInfo);
+            this.clientStateArgs.ttype = ttype;
             if (opArgs.void) {
                 this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
             }
@@ -4937,6 +4967,22 @@ var GameXBody = /** @class */ (function (_super) {
                         });
                     }
                 }
+            }
+        }
+        else if (ttype == "token_array") {
+            // cannot use client state because multiplayer screws this up
+            if (single) {
+                this.clearReverseIdMap();
+                this.setActiveSlots(opTargets);
+                this.addActionButtonColor("button_done", _("Submit"), function () {
+                    var ids = [];
+                    document.querySelectorAll("#draw_".concat(_this.player_color, " .card.selected")).forEach(function (node) { return ids.push(node.id); });
+                    return _this.sendActionResolve(opId, { target: ids }, function (err) {
+                        if (!err)
+                            document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
+                    });
+                }, "blue");
+                this.addCancelButton();
             }
         }
         else if (ttype) {
@@ -5254,7 +5300,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.clientStateArgs.call = "resolve";
         this.clientStateArgs.ops = [];
         this.clearReverseIdMap();
-        $("ebd-body").dataset.maop = "complex";
+        this.setMainOperationType(undefined);
         var xop = args.op;
         var sortedOps = Object.keys(operations);
         var single = sortedOps.length == 1;
@@ -5349,7 +5395,7 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.addUndoButton();
         }
-        else if (stateName == 'multiplayerDispatch') {
+        else if (stateName == "multiplayerDispatch" || stateName == "client_collectMultiple") {
             this.addUndoButton();
         }
         var parent = document.querySelector(".debug_section"); // studio only
@@ -5379,6 +5425,14 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (tid.endsWith("discard_main") || tid.endsWith("deck_main")) {
             this.showError(_("Cannot inspect deck or discard content - not allowed by the rules"));
+        }
+        else if ($(tid).classList.contains("active_slot")) {
+            if (this.clientStateArgs.ttype == "token_array") {
+                $(tid).classList.toggle("selected");
+            }
+            else {
+                this.showError("Not implemented");
+            }
         }
         else if (tid.startsWith("card_")) {
             if (tid.endsWith("help"))
@@ -5504,15 +5558,14 @@ var GameXBody = /** @class */ (function (_super) {
         var sort_dir = localColorSetting.readProp("sort_direction", "");
         var sort_type = localColorSetting.readProp("sort_type", "");
         if (sort_type == "") {
-            sort_type = "manual";
+            sort_type = "playable";
             sort_dir = "increase";
         }
-        if (sort_type != "") {
-            var bnode = dojo.query(".hs_button[data-type='" + sort_type + "']")[0];
+        var bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']");
+        if (bnode)
             bnode.dataset.direction = sort_dir;
-            $(id).dataset.sort_direction = sort_dir;
-            $(id).dataset.sort_type = sort_type;
-        }
+        $(id).dataset.sort_direction = sort_dir;
+        $(id).dataset.sort_type = sort_type;
         var msg = _("Sort cards by %s");
         this.addTooltip("hs_button_".concat(id, "_cost"), _("Card Sort"), msg.replace("%s", _("cost")));
         this.addTooltip("hs_button_".concat(id, "_playable"), _("Card Sort"), msg.replace("%s", _("playability")));
@@ -5522,6 +5575,7 @@ var GameXBody = /** @class */ (function (_super) {
     /* Manual reordering of cards via drag'n'drop */
     GameXBody.prototype.enableManualReorder = function (idContainer) {
         //$(idContainer).style.border = "red 1px dashed";
+        // XXX code below seems to to just add listeners that do nothing
         $(idContainer).addEventListener("drop", function (event) {
             event.preventDefault();
             event.stopPropagation();
