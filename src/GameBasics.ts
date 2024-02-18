@@ -16,6 +16,7 @@ class GameBasics extends GameGui {
   isLoadingLogsComplete: boolean;
 
   classActiveSlot: string = "active_slot";
+  classButtonDisabled: string = "disabled"; 
 
   gamedatas_server: any; // copy of server state gamedatas
   defaultTooltipDelay: number = 800;
@@ -712,6 +713,17 @@ class GameBasics extends GameGui {
         node.classList.remove(className);
       });
     });
+  }
+
+  /**
+   * Return array of node id, carefull - not all nodes have ids, it could be undefines there
+   * @param query 
+   * @returns array of ids
+   */
+  queryIds(query: string) {
+    const ids = [];
+    document.querySelectorAll(query).forEach((node) => ids.push(node.id));
+    return ids;
   }
 
   /**

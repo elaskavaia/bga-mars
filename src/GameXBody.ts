@@ -19,6 +19,7 @@ class GameXBody extends GameTokens {
   private cachedScoreHtm: string = "";
   // private parses:any;
   private currentOperation: any = {}; // bag of data to support operation engine
+  private classSelected: string = "selected"; // for the purpose of multi-select operations
 
   constructor() {
     super();
@@ -2145,28 +2146,27 @@ awarded.`);
     const skippable = !!opArgs.skipname;
     const buttonName = _(opArgs.args.name);
     const buttonId = "button_done";
+    const cancelButtonId = "button_cancel";
 
     const onUpdate = () => {
-      const count = document.querySelectorAll(".selected").length;
+      const count = document.querySelectorAll(`.${this.classSelected}`).length;
       if (count == 0 && skippable) {
-        $(buttonId).classList.add("disabled");
+        $(buttonId).classList.add(this.classButtonDisabled);
       } else {
-        $(buttonId).classList.remove("disabled");
+        $(buttonId).classList.remove(this.classButtonDisabled);
       }
       if (count > 0) {
-        this.addActionButton(
-          "button_cancel",
+        this.addActionButtonColor(
+          cancelButtonId,
           _("Reset"),
           () => {
-            document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
+            this.removeAllClasses(this.classSelected);
             onUpdate();
           },
-          null,
-          false,
           "red"
         );
       } else {
-        if ($("button_cancel")) dojo.destroy("button_cancel");
+        if ($(cancelButtonId)) dojo.destroy(cancelButtonId);
       }
       $(buttonId).innerHTML = buttonName + ": " + count;
     };
@@ -2178,12 +2178,11 @@ awarded.`);
       buttonId,
       buttonName,
       () => {
-        const ids = [];
-        document.querySelectorAll(".selected").forEach((node) => ids.push(node.id));
-        return this.sendActionResolve(opId, { target: ids }, (err) => {
+        return this.sendActionResolve(opId, { target: this.queryIds(`.${this.classSelected}`) }, (err) => {
           if (!err) {
-            document.querySelectorAll(".selected").forEach((node) => node.classList.remove("selected"));
+            this.removeAllClasses(this.classSelected);
             onUpdate();
+            this.removeAllClasses(this.classActiveSlot);
           }
         });
       },
@@ -2192,14 +2191,9 @@ awarded.`);
     onUpdate();
 
     this[`onToken_${ttype}`] = (tid: string) => {
-      $(tid).classList.toggle("selected");
+      $(tid).classList.toggle(this.classSelected);
       onUpdate();
     };
-  }
-
-  setPrivateStateUpdate(name: string, init: () => void, onToken: (id: string) => void) {
-    init();
-    this[`onToken_${name}`] = onToken;
   }
 
   addTargetButtons(opId: number, opTargets: string[]) {
@@ -2447,8 +2441,10 @@ awarded.`);
     }
 
     if (disabled) {
-      buttonDiv.classList.add("disabled");
+      buttonDiv.classList.add(this.classButtonDisabled);
     }
+
+    buttonDiv.classList.add("ma_button"); // to allow more styling if needed
 
     return buttonDiv;
   }
@@ -2655,7 +2651,7 @@ awarded.`);
       const opId = info.op;
       if (info.param_name == "target") this.onSelectTarget(opId, info.target ?? tid);
       else this.showError("Not implemented");
-    } else if ($(tid).classList.contains("active_slot")) {
+    } else if ($(tid).classList.contains(this.classActiveSlot)) {
       const ttype = this.currentOperation.opInfo?.args?.ttype;
       if (ttype) {
         var methodName = "onToken_" + ttype;

@@ -27,6 +27,7 @@ var GameBasics = /** @class */ (function (_super) {
     function GameBasics() {
         var _this = _super.call(this) || this;
         _this.classActiveSlot = "active_slot";
+        _this.classButtonDisabled = "disabled";
         _this.defaultTooltipDelay = 800;
         _this.defaultAnimationDuration = 500;
         _this._helpMode = false; // help mode where tooltip shown instead of click action
@@ -616,6 +617,16 @@ var GameBasics = /** @class */ (function (_super) {
                 node.classList.remove(className);
             });
         });
+    };
+    /**
+     * Return array of node id, carefull - not all nodes have ids, it could be undefines there
+     * @param query
+     * @returns array of ids
+     */
+    GameBasics.prototype.queryIds = function (query) {
+        var ids = [];
+        document.querySelectorAll(query).forEach(function (node) { return ids.push(node.id); });
+        return ids;
     };
     /**
      * setClientState and defines handler for onUpdateActionButtons
@@ -3269,6 +3280,7 @@ var GameXBody = /** @class */ (function (_super) {
         _this.cachedScoreHtm = "";
         // private parses:any;
         _this.currentOperation = {}; // bag of data to support operation engine
+        _this.classSelected = "selected"; // for the purpose of multi-select operations
         _this.CON = {};
         return _this;
     }
@@ -5060,23 +5072,24 @@ var GameXBody = /** @class */ (function (_super) {
         var skippable = !!opArgs.skipname;
         var buttonName = _(opArgs.args.name);
         var buttonId = "button_done";
+        var cancelButtonId = "button_cancel";
         var onUpdate = function () {
-            var count = document.querySelectorAll(".selected").length;
+            var count = document.querySelectorAll(".".concat(_this.classSelected)).length;
             if (count == 0 && skippable) {
-                $(buttonId).classList.add("disabled");
+                $(buttonId).classList.add(_this.classButtonDisabled);
             }
             else {
-                $(buttonId).classList.remove("disabled");
+                $(buttonId).classList.remove(_this.classButtonDisabled);
             }
             if (count > 0) {
-                _this.addActionButton("button_cancel", _("Reset"), function () {
-                    document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
+                _this.addActionButtonColor(cancelButtonId, _("Reset"), function () {
+                    _this.removeAllClasses(_this.classSelected);
                     onUpdate();
-                }, null, false, "red");
+                }, "red");
             }
             else {
-                if ($("button_cancel"))
-                    dojo.destroy("button_cancel");
+                if ($(cancelButtonId))
+                    dojo.destroy(cancelButtonId);
             }
             $(buttonId).innerHTML = buttonName + ": " + count;
         };
@@ -5084,24 +5097,19 @@ var GameXBody = /** @class */ (function (_super) {
         this.clearReverseIdMap();
         this.setActiveSlots(opTargets);
         this.addActionButtonColor(buttonId, buttonName, function () {
-            var ids = [];
-            document.querySelectorAll(".selected").forEach(function (node) { return ids.push(node.id); });
-            return _this.sendActionResolve(opId, { target: ids }, function (err) {
+            return _this.sendActionResolve(opId, { target: _this.queryIds(".".concat(_this.classSelected)) }, function (err) {
                 if (!err) {
-                    document.querySelectorAll(".selected").forEach(function (node) { return node.classList.remove("selected"); });
+                    _this.removeAllClasses(_this.classSelected);
                     onUpdate();
+                    _this.removeAllClasses(_this.classActiveSlot);
                 }
             });
         }, "blue");
         onUpdate();
         this["onToken_".concat(ttype)] = function (tid) {
-            $(tid).classList.toggle("selected");
+            $(tid).classList.toggle(_this.classSelected);
             onUpdate();
         };
-    };
-    GameXBody.prototype.setPrivateStateUpdate = function (name, init, onToken) {
-        init();
-        this["onToken_".concat(name)] = onToken;
     };
     GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
         var _this = this;
@@ -5313,8 +5321,9 @@ var GameXBody = /** @class */ (function (_super) {
             buttonDiv.classList.add("bgabutton_" + buttonColor);
         }
         if (disabled) {
-            buttonDiv.classList.add("disabled");
+            buttonDiv.classList.add(this.classButtonDisabled);
         }
+        buttonDiv.classList.add("ma_button"); // to allow more styling if needed
         return buttonDiv;
     };
     GameXBody.prototype.addActionButtonPlayer = function (buttonId, playerColor, handler, disabled) {
@@ -5527,7 +5536,7 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 this.showError("Not implemented");
         }
-        else if ($(tid).classList.contains("active_slot")) {
+        else if ($(tid).classList.contains(this.classActiveSlot)) {
             var ttype = (_c = (_b = this.currentOperation.opInfo) === null || _b === void 0 ? void 0 : _b.args) === null || _c === void 0 ? void 0 : _c.ttype;
             if (ttype) {
                 var methodName = "onToken_" + ttype;
