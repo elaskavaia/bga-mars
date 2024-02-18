@@ -6340,7 +6340,7 @@
   background-size: 1200% 100%;
 }
 
-#scoretable {
+.scoretable {
   /*display: table;*/
   display: flex;
   flex-direction: row;
@@ -6350,35 +6350,85 @@
   outline: 0.3em solid #840000;
   border-collapse: separate;
 }
-#scoretable .scorecol {
+.scoretable .marker {
+  background-image: url("img/cubes_opaque.png");
+  position: absolute;
+  opacity: 0.3;
+}
+.scoretable .card_vp {
+  position: relative;
+  display: inline-block;
+}
+.scoretable .scorecol {
   display: flex;
   flex-direction: column;
 }
-#scoretable .scorecell {
+.scoretable .scorecell {
+  position: relative;
   display: table-cell;
   padding: 0.5em;
   border-left: 0.1em solid black;
   border-top: 0.1em solid black;
   text-align: center;
   background-color: #F5E9DB;
+  height: 1.5em;
 }
-#scoretable .score {
+.scoretable .scorecell[data-position="1"]::after {
+  content: "🥇";
+}
+.scoretable .scorecell[data-position="2"]::after {
+  content: "🥈";
+}
+.scoretable .scoregoal {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: #343434;
+  font-size: smaller;
+}
+.scoretable .progress_hist {
+  position: absolute;
+  width: 100%;
+  margin: -0.5em;
+  bottom: 0.5em;
+}
+.scoretable .progress_hist[data-grade=low] {
+  background-color: rgba(255, 165, 165, 0.5);
+}
+.scoretable .progress_hist[data-grade=mid] {
+  background-color: rgba(242, 167, 87, 0.5);
+}
+.scoretable .progress_hist[data-grade=high] {
+  background-color: rgba(105, 210, 3, 0.3);
+}
+.scoretable .progress_hist[data-grade=won] {
+  display: none;
+}
+.scoretable .score_val {
+  position: relative;
+  z-index: 1;
+}
+.scoretable .score {
   font-family: "Kanit";
   font-weight: 300;
 }
-#scoretable .header {
+.scoretable .header {
   background-color: #D0AE8C;
 }
-#scoretable .scoreheader .scorecell {
+.scoretable .scoreheader .scorecell {
   text-align: right;
   border-left: none;
 }
-#scoretable .scorecell.corp {
+.scoretable .scorecell.corp {
   height: 1.5em;
 }
-#scoretable .corp_logo {
+.scoretable .corp_logo {
   width: 4.5em;
   height: 1.5em;
+}
+
+.scorecell.won .scoregoal {
+  display: none;
 }
 
 #popin_score_dlg {

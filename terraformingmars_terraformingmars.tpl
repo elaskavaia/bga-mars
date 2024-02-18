@@ -199,7 +199,7 @@
               </div>
               <div id="milestones_title" class="map_title">Milestones</div>
               <div id="milestones_gains" class="milesawardsgains"><div id="milestone_vp_gain" class="card_vp">5</div></div>
-              <div id="milestones_progress" class="milesawardsprogress" style="display: none;"><i class="fa fa-tasks" aria-hidden="true"></i></div>
+              <div id="milestones_progress" class="milesawardsprogress" ><i class="fa fa-tasks" aria-hidden="true"></i></div>
             </div>
             <div id="display_milestones" class="map_milesawardscontent">
               <div id="milestone_1" class="milestone milestone_1"><div id="milestone_label_1" class="milestone_label">NA</div></div>
@@ -221,7 +221,7 @@
                 <div id="milestone_award_gain_1" class="card_vp">5</div>
                 <div id="milestone_award_gain_2" class="card_vp">2</div>
               </div>
-              <div id="awards_progress" class="milesawardsprogress" style="display: none;"><i class="fa fa-tasks" aria-hidden="true"></i></div>
+              <div id="awards_progress" class="milesawardsprogress" ><i class="fa fa-tasks" aria-hidden="true"></i></div>
             </div>
             <div id="display_awards" class="map_milesawardscontent">
               <div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>

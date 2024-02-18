@@ -292,7 +292,7 @@ class GameXBody extends GameTokens {
 
       this.ajaxcall(url, [], this, (result) => {
         const tablehtm: string = `
-             <div id="scoretable">
+             <div id="scoretable" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Player Name")}</div>
                       <div class="scorecell header corp">${_("Corporation")}</div>
@@ -339,7 +339,7 @@ class GameXBody extends GameTokens {
     let finalhtm: string = "";
 
     const tablehtm: string = `
-             <div id="scoretable">
+             <div id="scoretable_pg_milestones" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Player Name")}</div>
                       <div class="scorecell header corp">${_("Corporation")}</div>
@@ -352,17 +352,28 @@ class GameXBody extends GameTokens {
                 %lines%
               </div>`;
     let lines: string = "";
+
     for (let plid in this.gamedatas.players) {
       const plcolor: any = this.getPlayerColor(parseInt(plid));
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+
 
       const pg: object = {
         terraformer: parseInt($("tracker_tr_" + plcolor).dataset.state),
         mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
         gardener: parseInt($("tracker_forest_" + plcolor).dataset.state),
         builder: parseInt($("tracker_tagBuilding_" + plcolor).dataset.state),
-        planner: parseInt($("counter_hand_" + plcolor).dataset.state)
+        planner: parseInt($("counter_hand_" + plcolor).innerHTML)
       };
+
+      const goals : object ={
+        terraformer: 35,
+        mayor: 3,
+        gardener: 3,
+        builder: 8,
+        planner: 15
+      };
+
       lines =
         lines +
         `
@@ -370,10 +381,26 @@ class GameXBody extends GameTokens {
                           <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
+      let idx=1;
       for (const key in pg) {
-        lines = lines + `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
+        const pc = Math.ceil(pg[key] / goals[key] * 100);
+        let grade="high"
+        if (pc<=34) grade="low"; else if (pc<=67) grade="mid";
+        let scoreval=pg[key];
+
+        let adclass="";
+        const cube = $("milestone_"+idx).querySelector(".marker_"+plcolor);
+        if (cube) {
+         scoreval='<div class="card_vp">5</div>';
+          grade="won";
+          adclass="won";
+        }
+
+        lines = lines + `<div id="scorecell_${plcolor}_${key}" class="scorecell score ${adclass}" data-type="${key}" data-position="0"><div class="progress_hist"  data-grade="${grade}"  style="height:${pc}%;"></div><div class="score_val">${scoreval}</div><div class="scoregoal">/${goals[key]}</div></div>`;
+        idx++;
       }
       lines = lines + `             </div>`;
+
     }
     finalhtm = tablehtm.replace("%lines%", lines);
     let dlg = new ebg.popindialog();
@@ -386,30 +413,39 @@ class GameXBody extends GameTokens {
     let finalhtm: string = "";
 
     const tablehtm: string = `
-             <div id="scoretable">
+             <div id="scoretable_pg_awards" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Player Name")}</div>
                       <div class="scorecell header corp">${_("Corporation")}</div>
-                      <div class="scorecell ">${_("Landlord")}</div>
-                      <div class="scorecell ">${_("Banker")}</div>
-                      <div class="scorecell ">${_("Scientist")}</div>
-                      <div class="scorecell ">${_("Thermalist")}</div>
-                      <div class="scorecell ">${_("Miner")}</div>
+                      <div id="scoreheader_1" class="scorecell ">${_("Landlord")}</div>
+                      <div id="scoreheader_2" class="scorecell ">${_("Banker")}</div>
+                      <div id="scoreheader_3" class="scorecell ">${_("Scientist")}</div>
+                      <div id="scoreheader_4" class="scorecell ">${_("Thermalist")}</div>
+                      <div id="scoreheader_5" class="scorecell ">${_("Miner")}</div>
                 </div>
                 %lines%
               </div>`;
     let lines: string = "";
+    let pg= {
+      landlord:{values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:1},
+      banker: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:2},
+      scientist: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:3},
+      thermalist: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:4},
+      miner: {values:[],max_value:0,max_pl:"",ru_value:0,ru_pl:"",id:5},
+    };
+
     for (let plid in this.gamedatas.players) {
       const plcolor: any = this.getPlayerColor(parseInt(plid));
+
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
 
-      const pg: object = {
-        landlord: parseInt($("tracker_land_" + plcolor).dataset.state),
-        banker: parseInt($("tracker_pm_" + plcolor).dataset.state),
-        scientist: parseInt($("tracker_tagScience_" + plcolor).dataset.state),
-        thermalist: parseInt($("tracker_h_" + plcolor).dataset.state),
-        miner: parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state)
-      };
+        pg.landlord.values[plcolor]=parseInt($("tracker_land_" + plcolor).dataset.state);
+        pg.banker.values[plcolor]=parseInt($("tracker_pm_" + plcolor).dataset.state);
+        pg.scientist.values[plcolor]=parseInt($("tracker_tagScience_" + plcolor).dataset.state);
+        pg.thermalist.values[plcolor]=parseInt($("tracker_h_" + plcolor).dataset.state);
+        pg.miner.values[plcolor]=parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state);
+
+
       lines =
         lines +
         `
@@ -418,7 +454,7 @@ class GameXBody extends GameTokens {
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
       for (const key in pg) {
-        lines = lines + `<div class="scorecell score" data-type="${key}" data-position="0">${pg[key]}</div>`;
+        lines = lines + `<div id="scorecell_${plcolor}_${key}" class="scorecell score" data-type="${key}" data-value="${pg[key].values[plcolor]}" data-position="0">${pg[key].values[plcolor]}</div>`;
       }
       lines = lines + `             </div>`;
     }
@@ -428,6 +464,39 @@ class GameXBody extends GameTokens {
     dlg.setTitle(_("Awards Summary"));
     dlg.setContent(finalhtm);
     dlg.show();
+
+
+    for (const key in pg) {
+      for (const plid in this.gamedatas.players) {
+        const plcolor: any = this.getPlayerColor(parseInt(plid));
+        if (pg[key].values[plcolor]>pg[key].max_value) {
+          if (pg[key].max_pl!="") {
+            pg[key].ru_value=pg[key].max_value;
+            pg[key].ru_pl=pg[key].max_pl;
+          }
+          pg[key].max_value=pg[key].values[plcolor];
+          pg[key].max_pl=plcolor;
+
+        } else if (pg[key].values[plcolor]>pg[key].ru_value) {
+          pg[key].ru_value=pg[key].values[plcolor];
+          pg[key].ru_pl=plcolor;
+        }
+      }
+      if ( pg[key].max_pl!="")   $('scorecell_'+pg[key].max_pl+'_'+key).dataset.position="1";
+      if ( pg[key].ru_pl!="")  $('scorecell_'+pg[key].ru_pl+'_'+key).dataset.position="2";
+
+      //equals
+      for (let plid in this.gamedatas.players) {
+        const plcolor: any = this.getPlayerColor(parseInt(plid));
+        if (pg[key].values[plcolor] == pg[key].max_value) $('scorecell_' +plcolor+ '_' + key).dataset.position = "1";
+      }
+
+      //activated with a cube
+      const cube = $("award_"+pg[key].id).querySelector(".marker");
+      if (cube) {
+        $('scoreheader_'+pg[key].id).insertAdjacentHTML("afterbegin",cube.outerHTML.replace('"id=marker_','id="marker_tmp_'));
+      }
+    }
   }
 
   getLocalSettingNamespace(extra: string | number = "") {

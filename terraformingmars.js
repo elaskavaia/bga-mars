@@ -3493,7 +3493,7 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
             this.ajaxcall(url, [], this, function (result) {
-                var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraforming Rank"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cities"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from greeneries"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Awards"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Milestones"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cards"), "</div>\n                      <div class=\"scorecell header total\">").concat(_("VP total"), "</div>\n                </div>\n                %lines%\n              </div>");
+                var tablehtm = "\n             <div id=\"scoretable\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraforming Rank"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cities"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from greeneries"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Awards"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Milestones"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cards"), "</div>\n                      <div class=\"scorecell header total\">").concat(_("VP total"), "</div>\n                </div>\n                %lines%\n              </div>");
                 var lines = "";
                 for (var plid in result.data.contents) {
                     var entry = result.data.contents[plid];
@@ -3512,7 +3512,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onShowMilestonesProgress = function () {
         var finalhtm = "";
-        var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraformer"), "</div>\n                      <div class=\"scorecell \">").concat(_("Mayor"), "</div>\n                      <div class=\"scorecell \">").concat(_("Gardener"), "</div>\n                      <div class=\"scorecell \">").concat(_("Builder"), "</div>\n                      <div class=\"scorecell \">").concat(_("Planner"), "</div>\n                </div>\n                %lines%\n              </div>");
+        var tablehtm = "\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraformer"), "</div>\n                      <div class=\"scorecell \">").concat(_("Mayor"), "</div>\n                      <div class=\"scorecell \">").concat(_("Gardener"), "</div>\n                      <div class=\"scorecell \">").concat(_("Builder"), "</div>\n                      <div class=\"scorecell \">").concat(_("Planner"), "</div>\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
@@ -3522,13 +3522,36 @@ var GameXBody = /** @class */ (function (_super) {
                 mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
                 gardener: parseInt($("tracker_forest_" + plcolor).dataset.state),
                 builder: parseInt($("tracker_tagBuilding_" + plcolor).dataset.state),
-                planner: parseInt($("counter_hand_" + plcolor).dataset.state)
+                planner: parseInt($("counter_hand_" + plcolor).innerHTML)
+            };
+            var goals = {
+                terraformer: 35,
+                mayor: 3,
+                gardener: 3,
+                builder: 8,
+                planner: 15
             };
             lines =
                 lines +
                     "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            var idx = 1;
             for (var key in pg) {
-                lines = lines + "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
+                var pc = Math.ceil(pg[key] / goals[key] * 100);
+                var grade = "high";
+                if (pc <= 34)
+                    grade = "low";
+                else if (pc <= 67)
+                    grade = "mid";
+                var scoreval = pg[key];
+                var adclass = "";
+                var cube = $("milestone_" + idx).querySelector(".marker_" + plcolor);
+                if (cube) {
+                    scoreval = '<div class="card_vp">5</div>';
+                    grade = "won";
+                    adclass = "won";
+                }
+                lines = lines + "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score ").concat(adclass, "\" data-type=\"").concat(key, "\" data-position=\"0\"><div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height:").concat(pc, "%;\"></div><div class=\"score_val\">").concat(scoreval, "</div><div class=\"scoregoal\">/").concat(goals[key], "</div></div>");
+                idx++;
             }
             lines = lines + "             </div>";
         }
@@ -3541,23 +3564,28 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onShowAwardsProgress = function () {
         var finalhtm = "";
-        var tablehtm = "\n             <div id=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Landlord"), "</div>\n                      <div class=\"scorecell \">").concat(_("Banker"), "</div>\n                      <div class=\"scorecell \">").concat(_("Scientist"), "</div>\n                      <div class=\"scorecell \">").concat(_("Thermalist"), "</div>\n                      <div class=\"scorecell \">").concat(_("Miner"), "</div>\n                </div>\n                %lines%\n              </div>");
+        var tablehtm = "\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div id=\"scoreheader_1\" class=\"scorecell \">").concat(_("Landlord"), "</div>\n                      <div id=\"scoreheader_2\" class=\"scorecell \">").concat(_("Banker"), "</div>\n                      <div id=\"scoreheader_3\" class=\"scorecell \">").concat(_("Scientist"), "</div>\n                      <div id=\"scoreheader_4\" class=\"scorecell \">").concat(_("Thermalist"), "</div>\n                      <div id=\"scoreheader_5\" class=\"scorecell \">").concat(_("Miner"), "</div>\n                </div>\n                %lines%\n              </div>");
         var lines = "";
+        var pg = {
+            landlord: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 1 },
+            banker: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 2 },
+            scientist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 3 },
+            thermalist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 4 },
+            miner: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 5 },
+        };
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            var pg = {
-                landlord: parseInt($("tracker_land_" + plcolor).dataset.state),
-                banker: parseInt($("tracker_pm_" + plcolor).dataset.state),
-                scientist: parseInt($("tracker_tagScience_" + plcolor).dataset.state),
-                thermalist: parseInt($("tracker_h_" + plcolor).dataset.state),
-                miner: parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state)
-            };
+            pg.landlord.values[plcolor] = parseInt($("tracker_land_" + plcolor).dataset.state);
+            pg.banker.values[plcolor] = parseInt($("tracker_pm_" + plcolor).dataset.state);
+            pg.scientist.values[plcolor] = parseInt($("tracker_tagScience_" + plcolor).dataset.state);
+            pg.thermalist.values[plcolor] = parseInt($("tracker_h_" + plcolor).dataset.state);
+            pg.miner.values[plcolor] = parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state);
             lines =
                 lines +
                     "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
             for (var key in pg) {
-                lines = lines + "<div class=\"scorecell score\" data-type=\"".concat(key, "\" data-position=\"0\">").concat(pg[key], "</div>");
+                lines = lines + "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score\" data-type=\"").concat(key, "\" data-value=\"").concat(pg[key].values[plcolor], "\" data-position=\"0\">").concat(pg[key].values[plcolor], "</div>");
             }
             lines = lines + "             </div>";
         }
@@ -3567,6 +3595,38 @@ var GameXBody = /** @class */ (function (_super) {
         dlg.setTitle(_("Awards Summary"));
         dlg.setContent(finalhtm);
         dlg.show();
+        for (var key in pg) {
+            for (var plid in this.gamedatas.players) {
+                var plcolor = this.getPlayerColor(parseInt(plid));
+                if (pg[key].values[plcolor] > pg[key].max_value) {
+                    if (pg[key].max_pl != "") {
+                        pg[key].ru_value = pg[key].max_value;
+                        pg[key].ru_pl = pg[key].max_pl;
+                    }
+                    pg[key].max_value = pg[key].values[plcolor];
+                    pg[key].max_pl = plcolor;
+                }
+                else if (pg[key].values[plcolor] > pg[key].ru_value) {
+                    pg[key].ru_value = pg[key].values[plcolor];
+                    pg[key].ru_pl = plcolor;
+                }
+            }
+            if (pg[key].max_pl != "")
+                $('scorecell_' + pg[key].max_pl + '_' + key).dataset.position = "1";
+            if (pg[key].ru_pl != "")
+                $('scorecell_' + pg[key].ru_pl + '_' + key).dataset.position = "2";
+            //equals
+            for (var plid in this.gamedatas.players) {
+                var plcolor = this.getPlayerColor(parseInt(plid));
+                if (pg[key].values[plcolor] == pg[key].max_value)
+                    $('scorecell_' + plcolor + '_' + key).dataset.position = "1";
+            }
+            //activated with a cube
+            var cube = $("award_" + pg[key].id).querySelector(".marker");
+            if (cube) {
+                $('scoreheader_' + pg[key].id).insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
+            }
+        }
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ""; }
