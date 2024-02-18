@@ -5054,7 +5054,7 @@ var GameXBody = /** @class */ (function (_super) {
         var opTargets = (_a = opArgs.target) !== null && _a !== void 0 ? _a : [];
         var ttype = (_b = opArgs.ttype) !== null && _b !== void 0 ? _b : "none";
         var skippable = !!opArgs.skipname;
-        var buttonName = _("Submit");
+        var buttonName = _(opArgs.args.name);
         var buttonId = "button_done";
         var onUpdate = function () {
             var count = document.querySelectorAll(".selected").length;

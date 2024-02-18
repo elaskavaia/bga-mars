@@ -3502,7 +3502,6 @@ $this->token_types = [
   'ack' => 1,
   'type' => 'buycard',
   'name' => clienttranslate("Buy Card"),
-  'prompt' => '${you} must select up to ${count} card/s to buy for 3 M€ each',
 ],
  'op_keepcorp' => [  //
   'ack' => 1,

@@ -2143,7 +2143,7 @@ awarded.`);
     const opTargets = opArgs.target ?? [];
     const ttype = opArgs.ttype ?? "none";
     const skippable = !!opArgs.skipname;
-    const buttonName = _("Submit");
+    const buttonName = _(opArgs.args.name);
     const buttonId = "button_done";
 
     const onUpdate = () => {

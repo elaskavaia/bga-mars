@@ -59,6 +59,7 @@ class Operation_buycard extends AbsOperation {
     }
 
     function getPrimaryArgType() {
+        if ($this->getCount() == 1) return 'token';
         return 'token_array';
     }
 
@@ -66,6 +67,12 @@ class Operation_buycard extends AbsOperation {
         if ($this->getCount() == 1) return clienttranslate("Discard Card");
         return clienttranslate("Discard All");
     }
+
+    function getPrompt() {
+        if ($this->getCount() == 1) return clienttranslate('${you} may buy this card for 3 M€ or discard');
+        return clienttranslate('${you} must select up to ${count} card/s to buy for 3 M€ each');
+    }
+
 
     function undo() {
         $color = $this->color;
