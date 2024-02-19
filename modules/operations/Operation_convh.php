@@ -24,4 +24,28 @@ class Operation_convh extends AbsOperation {
     function getPrimaryArgType() {
         return 'token';
     }
+
+    function isMax() {
+        $temp = $this->game->getTrackerValue('', 't');
+        if ($temp >= $this->getMax()) return true;
+        return false;
+    }
+
+    function requireConfirmation() {
+        if ($this->isMax()) return true;
+        return false;
+    }
+
+    function getPrompt() {
+        if ($this->isMax()) {
+            return clienttranslate('${you} must confirm, operation ${name} will not have effect as parameter is at max');
+        }
+
+        return parent::getPrompt();
+    }
+
+    function getMax() {
+        $max = $this->game->getRulesFor($this->game->getTrackerId('', 't'), 'max', 0);
+        return $max;
+    }
 }
