@@ -1584,7 +1584,13 @@ abstract class PGameXBody extends PGameMachine {
         } else if (isset($rules['a'])) {
             $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cards
             $this->dbSetTokenState($cardid, $state, '');
+        } else if (isset($rules['e']) && $rules['t'] == MA_CARD_TYPE_EVENT) {
+            if ($this->tokens->getTokenState($cardid) == MA_CARD_STATE_ACTION_SINGLEUSE) {
+                $state = MA_CARD_STATE_FACEDOWN; // flip single use events
+                $this->dbSetTokenState($cardid, $state, '');
+            }
         }
+        
     }
 
     function effect_production() {
