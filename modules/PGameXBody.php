@@ -1941,7 +1941,7 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         if ($commit)
-            $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with implicit points'), [
+            $this->notifyMessage(clienttranslate('${player_name} scores total ${inc} points for cards with fixed points'), [
                 'inc' => $vpdirect
             ], $player_id);
     }
