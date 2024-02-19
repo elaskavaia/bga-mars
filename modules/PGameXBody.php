@@ -745,7 +745,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = '') {
+    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = ''): AbsOperation{
         $opinfo = [
             'type' => $type, 'owner' => $color, 'mcount' => $count, 'count' => $count, 'data' => $data,
             'flags' => 0, 'id' => 0

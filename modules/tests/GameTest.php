@@ -604,4 +604,24 @@ final class GameTest extends TestCase {
 
         return $op;
     }
+
+    public function testRegolithEaters() {
+        $m = $this->game();
+
+        $p = PCOLOR;
+
+        $eaters = $m->mtFind('name', 'Regolith Eaters');
+
+        $m->effect_playCard($p, $eaters);
+        $act = $m->getRulesFor($eaters,'a');
+        //$m->dbSetTokenLocation("resource_${p}_1", $eaters, 0); // add a microbe
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType("$act", $p, 1, $eaters);
+        //$args = $op->argPrimaryDetails();
+        $this->assertEquals(false, $op->isVoid()); 
+
+        $op = $m->getOperationInstanceFromType("2nres", $p, 1, $eaters);
+        //$args = $op->argPrimaryDetails();
+        $this->assertEquals(true, $op->isVoid()); 
+    }
 }

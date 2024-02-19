@@ -53,7 +53,7 @@ class Operation_nres extends AbsOperation {
     }
 
     function getPrimaryArgType() {
-        return '';
+        return 'token';
     }
 
     function canFail(){
