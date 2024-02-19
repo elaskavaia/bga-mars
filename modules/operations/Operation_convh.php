@@ -17,8 +17,6 @@ class Operation_convh extends AbsOperation {
     }
 
     function isVoid(): bool {
-        $temp = $this->game->getTrackerValue('', 't');
-        if ($temp >= 8) return true; // void
         $heat = $this->game->getTrackerValue($this->color, 'h');
         if ($heat < 8) return true; // not enough
         return false;
