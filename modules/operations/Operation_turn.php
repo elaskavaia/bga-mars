@@ -64,7 +64,8 @@ class Operation_turn extends AbsOperation {
 
 
         if ($solo || $secondaction) {
-            if ($this->game->dbUserPrefs->getPrefValue($player_id, MA_PREF_CONFIRM_TURN)) {
+            $pref = (int) $this->game->dbUserPrefs->getPrefValue($player_id, MA_PREF_CONFIRM_TURN);
+            if ($pref) {
                 $this->game->queue($owner, "confturn");
             }
         } else {
