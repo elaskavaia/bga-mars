@@ -361,7 +361,6 @@ class GameXBody extends GameTokens {
         builder: 8,
         planner: 15
       };
-
       lines =
         lines +
         `
@@ -371,7 +370,8 @@ class GameXBody extends GameTokens {
                           `;
       let idx = 1;
       for (const key in pg) {
-        const pc = Math.ceil((pg[key] / goals[key]) * 100);
+        let pc = Math.ceil((pg[key] / goals[key]) * 100);
+        if (pc>100) pc=100;
         let grade = "high";
         if (pc <= 34) grade = "low";
         else if (pc <= 67) grade = "mid";
@@ -2839,7 +2839,7 @@ awarded.`);
   }
 
   isManualSortOrderEnabled() {
-    if ($("hand_area").dataset.sort_type == "manual" && $("hand_area").dataset.sort_type == "increase") {
+    if ($("hand_area").dataset.sort_type == "manual" && $("hand_area").dataset.sort_direction == "increase") {
       return true;
     } else {
       return false;
