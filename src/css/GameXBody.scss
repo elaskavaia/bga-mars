@@ -820,7 +820,7 @@
     position: absolute;
   }
 
-  .hs_button[data-direction="none"] {
+  .hs_button[data-direction=""] {
     .hs_direction::before {
       content:"";
     }

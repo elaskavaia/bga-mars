@@ -3365,11 +3365,6 @@ var GameXBody = /** @class */ (function (_super) {
             $("awards_title").innerHTML = _("Awards");
             //update prereq on cards
             this.updateHandInformation(this.gamedatas["card_info"], "card");
-            if ($("hand_area").dataset.sort_type == "manual") {
-                document.querySelectorAll(".handy .card").forEach(function (node) {
-                    _this.enableDragOnCard(node);
-                });
-            }
             // card reference
             this.setupHelpSheets();
             this.connect($("zoom-out"), "onclick", function () {
@@ -3385,9 +3380,8 @@ var GameXBody = /** @class */ (function (_super) {
                 _this.localSettings.doAction(cs, "plus");
             });
             this.setupResourceFiltering();
-            if (!this.isSpectator && this.player_color) {
-                this.loadLocalManualOrder($("hand_".concat(this.player_color)));
-                this.loadLocalManualOrder($("draw_".concat(this.player_color)));
+            if (!this.isSpectator) {
+                this.applySortOrder();
             }
             $("outer_scoretracker").addEventListener("click", function () {
                 _this.onShowScoringTable(0);
@@ -3444,7 +3438,13 @@ var GameXBody = /** @class */ (function (_super) {
                 var btn = evt.currentTarget;
                 dojo.stopEvent(evt);
                 var actual_dir = btn.dataset.direction;
-                var new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "";
+                var new_dir;
+                if (btn.dataset.type == "manual") {
+                    new_dir = actual_dir == "" ? "increase" : "";
+                }
+                else {
+                    new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
+                }
                 var hand_block = btn.dataset.target;
                 //deactivate sorting on other buttons
                 dojo.query("#" + hand_block + " .hs_button").forEach(function (item) {
@@ -3456,18 +3456,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var localColorSetting = new LocalSettings(_this.getLocalSettingNamespace("card_sort"));
                 localColorSetting.writeProp("sort_direction", new_dir);
                 localColorSetting.writeProp("sort_type", btn.dataset.type);
-                if (btn.dataset.type == "manual" && new_dir == "increase") {
-                    _this.loadLocalManualOrder($("hand_".concat(_this.player_color)));
-                    _this.loadLocalManualOrder($("draw_".concat(_this.player_color)));
-                    document.querySelectorAll("#hand_area .card").forEach(function (card) {
-                        _this.enableDragOnCard(card);
-                    });
-                }
-                else {
-                    document.querySelectorAll("#hand_area .card").forEach(function (card) {
-                        _this.disableDragOnCard(card);
-                    });
-                }
+                _this.applySortOrder();
             });
         }
         //move own player board in main zone
@@ -4446,11 +4435,8 @@ var GameXBody = /** @class */ (function (_super) {
         var prevLocation = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.location;
         var prevState = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.state;
         var inc = tokenInfo.state - prevState;
-        if (key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
-            if ($("hand_area").dataset.sort_type == "manual")
-                this.enableDragOnCard(tokenNode);
-            else
-                this.disableDragOnCard(tokenNode);
+        if (key.startsWith("card_")) {
+            this.maybeEnabledDragOnCard(tokenNode);
         }
         // update resource holder counters
         if (key.startsWith("resource_")) {
@@ -5678,8 +5664,8 @@ var GameXBody = /** @class */ (function (_super) {
         var sort_dir = localColorSetting.readProp("sort_direction", "");
         var sort_type = localColorSetting.readProp("sort_type", "");
         if (sort_type == "") {
-            sort_type = "playable";
-            sort_dir = "increase";
+            sort_type = "manual";
+            sort_dir = "";
         }
         var bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']");
         if (bnode)
@@ -5719,6 +5705,39 @@ var GameXBody = /** @class */ (function (_super) {
         node.draggable = false;
         node.removeEventListener("dragstart", onDragStart);
         node.removeEventListener("dragend", onDragEnd);
+    };
+    GameXBody.prototype.maybeEnabledDragOnCard = function (tokenNode) {
+        if (dojo.hasClass(tokenNode.parentElement, "handy")) {
+            if (this.isManualSortOrderEnabled()) {
+                this.enableDragOnCard(tokenNode);
+                return;
+            }
+        }
+        this.disableDragOnCard(tokenNode);
+    };
+    GameXBody.prototype.isManualSortOrderEnabled = function () {
+        if ($("hand_area").dataset.sort_type == "manual" && $("hand_area").dataset.sort_type == "increase") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    GameXBody.prototype.applySortOrder = function () {
+        var _this = this;
+        if (this.isManualSortOrderEnabled()) {
+            this.loadLocalManualOrder($("hand_".concat(this.player_color)));
+            this.loadLocalManualOrder($("draw_".concat(this.player_color)));
+            document.querySelectorAll(".handy .card").forEach(function (card) {
+                _this.enableDragOnCard(card);
+            });
+        }
+        else {
+            // disable on all cards in case it was moved
+            document.querySelectorAll(".card").forEach(function (card) {
+                _this.disableDragOnCard(card);
+            });
+        }
     };
     GameXBody.prototype.saveLocalManualOrder = function (containerNode) {
         var svOrder = "";

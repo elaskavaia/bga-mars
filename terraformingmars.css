@@ -9398,7 +9398,7 @@
   bottom: -20%;
   position: absolute;
 }
-.hand_sorter .hs_button[data-direction=none] .hs_direction::before {
+.hand_sorter .hs_button[data-direction=""] .hs_direction::before {
   content: "";
 }
 .hand_sorter .hs_button[data-direction=increase] {

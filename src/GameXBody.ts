@@ -126,12 +126,6 @@ class GameXBody extends GameTokens {
       //update prereq on cards
       this.updateHandInformation(this.gamedatas["card_info"], "card");
 
-      if ($("hand_area").dataset.sort_type == "manual") {
-        document.querySelectorAll(".handy .card").forEach((node: HTMLElement) => {
-          this.enableDragOnCard(node);
-        });
-      }
-
       // card reference
       this.setupHelpSheets();
 
@@ -150,9 +144,8 @@ class GameXBody extends GameTokens {
 
       this.setupResourceFiltering();
 
-      if (!this.isSpectator && this.player_color) {
-        this.loadLocalManualOrder($(`hand_${this.player_color}`));
-        this.loadLocalManualOrder($(`draw_${this.player_color}`));
+      if (!this.isSpectator) {
+        this.applySortOrder();
       }
 
       $(`outer_scoretracker`).addEventListener("click", () => {
@@ -221,7 +214,13 @@ class GameXBody extends GameTokens {
         let btn = evt.currentTarget as HTMLElement;
         dojo.stopEvent(evt);
         const actual_dir: string = btn.dataset.direction;
-        const new_dir: string = actual_dir == "" ? "increase" : actual_dir == "increase" && btn.dataset.type != "manual" ? "decrease" : "";
+        let new_dir: string;
+        if (btn.dataset.type == "manual") {
+          new_dir = actual_dir == "" ? "increase" : "";
+        } else {
+          new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
+        }
+
         const hand_block: string = btn.dataset.target;
 
         //deactivate sorting on other buttons
@@ -237,18 +236,7 @@ class GameXBody extends GameTokens {
         localColorSetting.writeProp("sort_direction", new_dir);
         localColorSetting.writeProp("sort_type", btn.dataset.type);
 
-        if (btn.dataset.type == "manual" && new_dir == "increase") {
-          this.loadLocalManualOrder($(`hand_${this.player_color}`));
-          this.loadLocalManualOrder($(`draw_${this.player_color}`));
-
-          document.querySelectorAll("#hand_area .card").forEach((card: any) => {
-            this.enableDragOnCard(card);
-          });
-        } else {
-          document.querySelectorAll("#hand_area .card").forEach((card: any) => {
-            this.disableDragOnCard(card);
-          });
-        }
+        this.applySortOrder();
       });
     }
 
@@ -1502,9 +1490,8 @@ awarded.`);
     const prevState = tokenInfoBefore?.state;
     const inc = tokenInfo.state - prevState;
 
-    if (key.startsWith("card_") && dojo.hasClass(tokenNode.parentElement, "handy")) {
-      if ($("hand_area").dataset.sort_type == "manual") this.enableDragOnCard(tokenNode);
-      else this.disableDragOnCard(tokenNode);
+    if (key.startsWith("card_")) {
+      this.maybeEnabledDragOnCard(tokenNode);
     }
 
     // update resource holder counters
@@ -2795,12 +2782,13 @@ awarded.`);
     node.innerHTML = htm;
 
     const localColorSetting: LocalSettings = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+
     let sort_dir: string = localColorSetting.readProp("sort_direction", "");
     let sort_type: string = localColorSetting.readProp("sort_type", "");
 
     if (sort_type == "") {
-      sort_type = "playable";
-      sort_dir = "increase";
+      sort_type = "manual";
+      sort_dir = "";
     }
 
     let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
@@ -2839,6 +2827,39 @@ awarded.`);
     node.draggable = false;
     node.removeEventListener("dragstart", onDragStart);
     node.removeEventListener("dragend", onDragEnd);
+  }
+  maybeEnabledDragOnCard(tokenNode: HTMLElement) {
+    if (dojo.hasClass(tokenNode.parentElement, "handy")) {
+      if (this.isManualSortOrderEnabled()) {
+        this.enableDragOnCard(tokenNode);
+        return;
+      }
+    }
+    this.disableDragOnCard(tokenNode);
+  }
+
+  isManualSortOrderEnabled() {
+    if ($("hand_area").dataset.sort_type == "manual" && $("hand_area").dataset.sort_type == "increase") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  applySortOrder() {
+    if (this.isManualSortOrderEnabled()) {
+      this.loadLocalManualOrder($(`hand_${this.player_color}`));
+      this.loadLocalManualOrder($(`draw_${this.player_color}`));
+
+      document.querySelectorAll(".handy .card").forEach((card: HTMLElement) => {
+        this.enableDragOnCard(card);
+      });
+    } else {
+      // disable on all cards in case it was moved
+      document.querySelectorAll(".card").forEach((card: HTMLElement) => {
+        this.disableDragOnCard(card);
+      });
+    }
   }
 
   saveLocalManualOrder(containerNode: HTMLElement) {
