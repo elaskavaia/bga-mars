@@ -28,4 +28,7 @@ class Operation_card extends AbsOperation {
         return count($arg['target']) == 0;
     }
 
+    function canSkipChoice() {
+        return false;
+    }
 }

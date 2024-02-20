@@ -30,4 +30,8 @@ class Operation_activate extends AbsOperation {
     function getPrimaryArgType() {
         return 'token';
     }
+
+    function canSkipChoice() {
+        return false;
+    }
 }
