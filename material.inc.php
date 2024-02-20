@@ -3428,7 +3428,6 @@ $this->token_types = [
 
 /* --- gen php begin op_material --- */
  'op_stan' => [  //
-  'ack' => 1,
   'type' => 'stan',
   'name' => clienttranslate("Standard Project"),
   'prompt' => '${you} must select a basic project to play',

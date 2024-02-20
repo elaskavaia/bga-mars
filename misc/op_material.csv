@@ -2,9 +2,11 @@ type|name|prompt|php
 #set id=op_{type}
 #set undo=
 #set class=
-#set ack=1
 
 stan|Standard Project|${you} must select a basic project to play
+
+#set ack=1
+
 claim|Claim a milestone|${you} must select a Milestone to claim
 fund|Fund an award|${you} must select an Award to fund
 w|Place Ocean Tile
