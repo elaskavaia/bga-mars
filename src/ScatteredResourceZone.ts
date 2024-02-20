@@ -63,6 +63,8 @@ class ScatteredResourceZone {
           }
         }
       }
+      // nothing left?
+      break;
     }
   }
 

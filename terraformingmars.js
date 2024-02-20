@@ -6180,6 +6180,8 @@ var ScatteredResourceZone = /** @class */ (function () {
                     }
                 }
             }
+            // nothing left?
+            break;
         }
     };
     ScatteredResourceZone.prototype.split = function (nomination) {
