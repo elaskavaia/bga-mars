@@ -5,8 +5,15 @@ declare(strict_types=1);
 class Operation_discard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $this->game->effect_moveCard($color, $card_id, "discard_main", 0, clienttranslate('${player_name} discards a card'));
-        return 1;
+        if (!is_array($card_id)) {
+            $cards_ids = [$card_id];
+        } else {
+            $cards_ids = $card_id; 
+        }
+        foreach($cards_ids as $card_id) {
+            $this->game->effect_moveCard($color, $card_id, "discard_main", 0, clienttranslate('${player_name} discards a card'));
+        }
+        return count($cards_ids);
     }
 
     function canResolveAutomatically() {
@@ -20,6 +27,7 @@ class Operation_discard extends AbsOperation {
     }
 
     function getPrimaryArgType() {
+        if ($this->getCount()>1) return 'token_array';
         return 'token';
     }
 
