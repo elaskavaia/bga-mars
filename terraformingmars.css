@@ -3297,6 +3297,10 @@
   justify-content: center;
 }
 
+.card_main_165 .card_tt {
+  display: none;
+}
+
 .card_main_173 .card_action_line.card_action_icono {
   flex-direction: column;
 }
@@ -9357,7 +9361,7 @@
 .expandable {
   border-radius: 10px;
   box-shadow: 0px 0px 4px 0px #555;
-  background-color: hsla(27deg, 28.6%, 13.7%, 0.11);
+  background-color: hsla(27, 28.6%, 13.7%, 0.11);
 }
 
 /*Sort*/
@@ -9555,3 +9559,5 @@
     }
 
 }*/
+
+/*# sourceMappingURL=terraformingmars.css.map */
