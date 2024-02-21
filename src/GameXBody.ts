@@ -359,7 +359,7 @@ class GameXBody extends GameTokens {
         mayor: 3,
         gardener: 3,
         builder: 8,
-        planner: 15
+        planner: 16
       };
       lines =
         lines +
