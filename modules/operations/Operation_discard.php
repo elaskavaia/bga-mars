@@ -9,6 +9,9 @@ class Operation_discard extends AbsOperation {
             $cards_ids = [$card_id];
         } else {
             $cards_ids = $card_id; 
+            if (count($cards_ids) < $this->getMinCount()) {
+                $this->game->userAssertTrue(totranslate('Insufficient amount of cards selected'));
+            }
         }
         foreach($cards_ids as $card_id) {
             $this->game->effect_moveCard($color, $card_id, "discard_main", 0, clienttranslate('${player_name} discards a card'));
