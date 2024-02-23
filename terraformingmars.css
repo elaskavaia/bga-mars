@@ -8028,9 +8028,12 @@
 }
 .mfull .tableau {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   flex-direction: row;
   padding: 0.5em;
+}
+.mfull .mobile_version .tableau {
+  flex-wrap: wrap;
 }
 .mfull .cards_bin {
   /* grid-template-columns: repeat(auto-fill, var(--card-width)); */
@@ -9058,6 +9061,18 @@
   background-color: rgb(43, 15, 76);
 }
 
+.bgabutton.disabled {
+  pointer-events: unset;
+}
+
+.bgabutton.disabled:hover {
+  background-color: red;
+}
+
+.bgabutton.disabled:active {
+  pointer-events: none;
+}
+
 .innerbutton {
   display: flex;
   justify-content: center;
@@ -9361,7 +9376,7 @@
 .expandable {
   border-radius: 10px;
   box-shadow: 0px 0px 4px 0px #555;
-  background-color: hsla(27, 28.6%, 13.7%, 0.11);
+  background-color: hsla(27deg, 28.6%, 13.7%, 0.11);
 }
 
 /*Sort*/
@@ -9559,5 +9574,3 @@
     }
 
 }*/
-
-/*# sourceMappingURL=terraformingmars.css.map */

@@ -485,6 +485,17 @@
   background-color: rgb(43, 15, 76);
 }
 
+.bgabutton.disabled {
+  pointer-events: unset; // undo bga default
+}
+
+.bgabutton.disabled:hover {
+	background-color: red;
+}
+.bgabutton.disabled:active {
+	pointer-events: none; // prevent default click, but not hover
+}
+
 .innerbutton {
   display: flex;
   justify-content: center;

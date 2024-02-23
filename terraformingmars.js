@@ -4521,6 +4521,9 @@ var GameXBody = /** @class */ (function (_super) {
             var count = $(location).querySelectorAll("[data-card-type=\"".concat(t, "\"]")).length;
             this.local_counters[plcolor]["cards_" + t] = count;
             this.updatePlayerLocalCounters(plcolor);
+            var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+            tokenNode.parentElement.dataset.subcount = sub;
+            tokenNode.parentElement.style.setProperty("--subcount", sub);
             if (!this.isLayoutFull()) {
                 //auto switch tabs here
                 // this.darhflog("isdoingsetup", this.isDoingSetup);
@@ -5063,11 +5066,13 @@ var GameXBody = /** @class */ (function (_super) {
         var cancelButtonId = "button_cancel";
         var onUpdate = function () {
             var count = document.querySelectorAll(".".concat(_this.classSelected)).length;
-            if (count == 0 && skippable) {
+            if (count == 0 && skippable || opInfo.mcount > count) {
                 $(buttonId).classList.add(_this.classButtonDisabled);
+                $(buttonId).title = _('Cannot use this action because insuffient amount of elements selected');
             }
             else {
                 $(buttonId).classList.remove(_this.classButtonDisabled);
+                $(buttonId).title = '';
             }
             if (count > 0) {
                 _this.addActionButtonColor(cancelButtonId, _("Reset"), function () {
@@ -5152,10 +5157,9 @@ var GameXBody = /** @class */ (function (_super) {
         if (info.q == this.gamedatas.CON.MA_ERR_PROTECTED) {
             buttonDiv.innerHTML += " " + _("(protected)");
         }
-        // tooltips are not working on disabled button
-        // if (info.q !== "0") {
-        //   this.addTooltip(buttonDiv.id, this.getTokenName(`err_${info.q}`),"");
-        // }
+        if (info.q !== "0") {
+            buttonDiv.title = this.getTokenName("err_".concat(info.q));
+        }
     };
     /** When server wants to activate some element, ui may adjust it */
     GameXBody.prototype.getActiveSlotRedirect = function (_node) {
@@ -5433,6 +5437,9 @@ var GameXBody = /** @class */ (function (_super) {
             // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
                 this_3.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                if (opArgs.void) {
+                    $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
+                }
             }
             // add done (skip) when all optional
             if (opInfo.mcount > 0) {

@@ -1573,6 +1573,10 @@ awarded.`);
       const count = $(location).querySelectorAll(`[data-card-type="${t}"]`).length;
       this.local_counters[plcolor]["cards_" + t] = count;
       this.updatePlayerLocalCounters(plcolor);
+      
+      const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+      tokenNode.parentElement.dataset.subcount = sub;
+      tokenNode.parentElement.style.setProperty("--subcount", sub);
 
       if (!this.isLayoutFull()) {
         //auto switch tabs here
@@ -2137,10 +2141,12 @@ awarded.`);
 
     const onUpdate = () => {
       const count = document.querySelectorAll(`.${this.classSelected}`).length;
-      if (count == 0 && skippable) {
+      if (count == 0 && skippable || opInfo.mcount > count) {
         $(buttonId).classList.add(this.classButtonDisabled);
+        $(buttonId).title = _('Cannot use this action because insuffient amount of elements selected');
       } else {
         $(buttonId).classList.remove(this.classButtonDisabled);
+        $(buttonId).title = '';
       }
       if (count > 0) {
         this.addActionButtonColor(
@@ -2240,10 +2246,9 @@ awarded.`);
       buttonDiv.innerHTML += " " + _("(protected)");
     }
 
-    // tooltips are not working on disabled button
-    // if (info.q !== "0") {
-    //   this.addTooltip(buttonDiv.id, this.getTokenName(`err_${info.q}`),"");
-    // }
+    if (info.q !== "0") {
+      buttonDiv.title =  this.getTokenName(`err_${info.q}`);
+    }
   }
 
   /** When server wants to activate some element, ui may adjust it */
@@ -2558,6 +2563,9 @@ awarded.`);
           opInfo.owner,
           opArgs.void
         );
+        if (opArgs.void) {
+          $(`button_${opId}`).title = _("Operation cannot be executed: No valid targets");
+        }
       }
 
       // add done (skip) when all optional
