@@ -8028,45 +8028,46 @@
 }
 .mfull .tableau {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   flex-direction: row;
   padding: 0.5em;
 }
-.mfull .mobile_version .tableau {
-  flex-wrap: wrap;
-}
 .mfull .cards_bin {
-  /* grid-template-columns: repeat(auto-fill, var(--card-width)); */
-  grid-row-start: 1;
-  grid-row-end: -1;
+  --overlap: 0.88;
+  max-height: calc(var(--card-height) * 2.3);
+}
+.mfull .cards_bin.stacked {
+  --overlap: 0.88;
+  max-height: calc(var(--card-height) * (2.3 - var(--overlap)));
+  padding-top: calc(var(--card-height) * var(--overlap));
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  flex: 0 0 auto;
 }
 .mfull .cards_bin.stacked .card {
-  display: block;
+  margin-top: calc(var(--card-height) * var(--overlap) * -1);
 }
-.mfull .cards_bin.stacked .card ~ .card {
-  margin-top: calc(var(--card-height) * -0.88);
-}
-.mfull .cards_1 {
-  grid-column: 2;
-}
-.mfull .cards_2 {
-  grid-column: 3;
+.mfull .cards_2.stacked {
+  --overlap: 0.66;
 }
 .mfull .cards_4 {
-  grid-column: 1;
   padding: 2px;
-}
-.mfull .cards_3 {
-  grid-column: 1;
-  grid-row: 2;
-  justify-self: right;
+  flex: 0 0 auto;
 }
 .mfull .cards_2a {
-  grid-column-end: -1;
-  grid-column-start: 4;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: calc(var(--card-width) * 3);
+  max-height: unset;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  row-gap: 5px;
 }
-.mfull .cards_2a > * {
-  display: inline-block;
+.mfull .cards_3 {
+  /* justify-self: right; */
 }
 .mfull .tableau[data-visibility_2="0"] .cards_2 {
   visibility: hidden;

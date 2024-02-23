@@ -410,7 +410,7 @@
     position: absolute;
     top: -6%;
     right: 1%;
- 
+
   }
 
   .resarea_m {
@@ -465,64 +465,64 @@
     // grid-template-rows: var(--card-width) auto;
     // grid-gap: 0.5em;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     flex-direction: row;
 
     //outline: 2px dashed var(--plcolor);
     padding: 0.5em;
   }
 
-  .mobile_version .tableau {
-    flex-wrap: wrap;
-  }
-
-
   .cards_bin {
-    // display: grid;
-    /* grid-template-columns: repeat(auto-fill, var(--card-width)); */
-    // grid-template-rows: repeat(auto-fill, calc(var(--card-height) * 0.12));
-    grid-row-start: 1;
-    grid-row-end: -1;
-    // grid-gap: 0.2em;
+    --overlap: 0.88;
+    max-height: calc(var(--card-height) * 2.3);
   }
 
   .cards_bin.stacked {
+    --overlap: 0.88;
+    max-height: calc(var(--card-height) * (2.3 - var(--overlap)));
+    padding-top: calc(var(--card-height) * var(--overlap));
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    flex: 0 0 auto;
+
     .card {
-      display: block;
-    }
-
-    .card~.card {
-      margin-top: calc(var(--card-height) * (0.12 - 1));
+      margin-top: calc(var(--card-height) * var(--overlap) * -1);
     }
   }
-
-  .cards_1 {
-    grid-column: 2;
-  }
-
-  .cards_2 {
-    grid-column: 3;
-  }
+  .cards_2.stacked {
+    --overlap: 0.66;
+   }
 
   .cards_4 {
-    grid-column: 1;
     padding: 2px;
+    flex: 0 0 auto;
   }
 
-  .cards_3 {
-    grid-column: 1;
-    grid-row: 2;
-    justify-self: right;
-  }
+  .cards_1 {}
 
   .cards_2a {
-    grid-column-end: -1;
-    grid-column-start: 4;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: calc(var(--card-width) * 3);
+    max-height: unset;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+    row-gap: 5px;
   }
 
-  .cards_2a>* {
-    display: inline-block;
+  
+
+
+
+  .cards_3 {
+
+    /* justify-self: right; */
   }
+
+
 
   .tableau[data-visibility_2="0"] {
     .cards_2 {
@@ -572,10 +572,10 @@
     transition-delay: 500ms;
   }
 
-   .location .card {
-     transition: all 300ms;
-     transition-delay: unset;
-   }
+  .location .card {
+    transition: all 300ms;
+    transition-delay: unset;
+  }
 
   .card.corp {
     background-size: 600% auto;
