@@ -8034,11 +8034,11 @@
 }
 .mfull .cards_bin {
   --overlap: 0.88;
-  max-height: calc(var(--card-height) * 2.3);
+  max-height: calc(var(--card-height) * 2.5);
 }
 .mfull .cards_bin.stacked {
   --overlap: 0.88;
-  max-height: calc(var(--card-height) * (2.3 - var(--overlap)));
+  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
   padding-top: calc(var(--card-height) * var(--overlap));
   display: flex;
   flex-wrap: wrap;
@@ -8054,6 +8054,16 @@
 .mfull .cards_4 {
   padding: 2px;
   flex: 0 0 auto;
+  order: 1;
+}
+.mfull .cards_1 {
+  order: 2;
+}
+.mfull .cards_3 {
+  order: 3;
+}
+.mfull .cards_2 {
+  order: 4;
 }
 .mfull .cards_2a {
   flex-grow: 1;
@@ -8065,9 +8075,7 @@
   flex-direction: row;
   align-content: flex-start;
   row-gap: 5px;
-}
-.mfull .cards_3 {
-  /* justify-self: right; */
+  order: 5;
 }
 .mfull .tableau[data-visibility_2="0"] .cards_2 {
   visibility: hidden;
@@ -8305,13 +8313,6 @@
 .mfull .card_hovertt .card_effect {
   font-size: calc(var(--card-width) * 0.07);
 }
-.mfull .thisplayer_zone {
-  order: 1;
-  flex-grow: 1;
-}
-.mfull .thisplayer_zone ~ .player_area {
-  order: 3;
-}
 .mfull .player_area {
   position: relative;
   width: unset;
@@ -8326,6 +8327,15 @@
   grid-template-rows: min-content auto;
   grid-template-areas: "sidebar  header" "sidebar  content";
   /* outline: 1px dashed var(--plcolor); */
+}
+.mfull .thisplayer_zone {
+  order: 1;
+  flex-grow: 1;
+  flex-basis: auto;
+  flex-shrink: 1;
+}
+.mfull .thisplayer_zone ~ .player_area {
+  order: 3;
 }
 .mfull .player_counters {
   display: none;

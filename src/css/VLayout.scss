@@ -474,12 +474,12 @@
 
   .cards_bin {
     --overlap: 0.88;
-    max-height: calc(var(--card-height) * 2.3);
+    max-height: calc(var(--card-height) * 2.5);
   }
 
   .cards_bin.stacked {
     --overlap: 0.88;
-    max-height: calc(var(--card-height) * (2.3 - var(--overlap)));
+    max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
     padding-top: calc(var(--card-height) * var(--overlap));
     display: flex;
     flex-wrap: wrap;
@@ -490,17 +490,35 @@
       margin-top: calc(var(--card-height) * var(--overlap) * -1);
     }
   }
+
   .cards_2.stacked {
     --overlap: 0.66;
    }
 
+   // player board and corp
   .cards_4 {
     padding: 2px;
     flex: 0 0 auto;
+    order: 1;
   }
 
-  .cards_1 {}
 
+  // green
+  .cards_1 {
+    order: 2;
+  }
+
+  // evetns
+  .cards_3 {
+    order: 3;
+  }
+
+  // blue stacked
+  .cards_2 {
+    order: 4;
+   }
+
+  // blue action
   .cards_2a {
     flex-grow: 1;
     flex-shrink: 1;
@@ -511,16 +529,11 @@
     flex-direction: row;
     align-content: flex-start;
     row-gap: 5px;
+    order: 5;
   }
 
   
 
-
-
-  .cards_3 {
-
-    /* justify-self: right; */
-  }
 
 
 
@@ -668,15 +681,6 @@
   }
 
 
-  .thisplayer_zone {
-    order: 1;
-    flex-grow: 1;
-  }
-
-  .thisplayer_zone~.player_area {
-    // second player
-    order: 3;
-  }
 
 
   .player_area {
@@ -700,6 +704,19 @@
       "sidebar  content";
     /* outline: 1px dashed var(--plcolor); */
   }
+
+  .thisplayer_zone {
+    order: 1;
+    flex-grow: 1;
+    flex-basis: auto;
+    flex-shrink: 1;
+  }
+
+  .thisplayer_zone~.player_area {
+    // second player
+    order: 3;
+  }
+
 
   .player_counters {
     display: none;
