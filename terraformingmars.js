@@ -1302,6 +1302,103 @@ var Card = /** @class */ (function () {
     return Card;
 }());
 ;
+var View;
+(function (View) {
+    View[View["summary"] = 0] = "summary";
+    View[View["hypersynthetic"] = 1] = "hypersynthetic";
+    View[View["stacked"] = 2] = "stacked";
+    View[View["full"] = 3] = "full";
+})(View || (View = {}));
+var CardStack = /** @class */ (function () {
+    function CardStack(game, localsettings, id, label, player_color, card_color_class, default_view) {
+        this.game = game;
+        this.localsettings = localsettings;
+        this.id = 'stack_' + player_color + '_' + id;
+        this.tableau_id = 'tableau_' + player_color + '_' + id;
+        this.player_color = player_color;
+        this.label = label;
+        this.card_color_class = card_color_class;
+        this.default_view = default_view;
+        // this.current_view=this.default_view;
+        this.current_view = parseInt(this.localsettings.readProp(this.id, String(default_view)));
+    }
+    CardStack.prototype.render = function (parent) {
+        var _this = this;
+        var htm = "<div id=\"".concat(this.id, "\" class=\"cardstack ").concat(this.card_color_class, "\" data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"").concat('cnt_cards_' + this.id, "\"  class=\"stack_sum cards\">0</div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n         <div class=\"bottomline\">\n            <div id=\"").concat('detail_label_' + this.id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n        </div>\n       </div>\n       <div class=\"stack_header_right\">\n           <div id=\"").concat('btn_sv_' + this.id, "\" class=\"stack_btn switchview\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></div>\n        </div>\n      </div>          \n      <div id=\"").concat('additional_text_' + this.id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content\">\n      </div>\n    </div>");
+        $(parent).insertAdjacentHTML("afterbegin", htm);
+        $('btn_sv_' + this.id).addEventListener('click', function (evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            _this.onSwitchView();
+        });
+        var insertListen = function (event) {
+            if (event.target.parentNode.id && event.target.parentNode.id == _this.tableau_id) {
+                var num = _this.updateCounts();
+                if (num > 0) {
+                    $(_this.id).style.setProperty("--columns", String(Math.ceil(num / 6)));
+                    if (num % 6 == 0) {
+                        $(_this.tableau_id).removeEventListener("DOMNodeInserted", insertListen);
+                        $(_this.tableau_id).insertAdjacentHTML("beforeend", '<div class="break"></div>');
+                        $(_this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+                    }
+                }
+            }
+        };
+        $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+        this.adjustFromView();
+        /*
+        dojo.connect('btn_sv_'+this.id,'onclick',(e)=>{
+          e.preventDefault();
+        });*/
+    };
+    CardStack.prototype.onSwitchView = function () {
+        $(this.id).dataset.currentview = String(this.getNextView(parseInt($(this.id).dataset.currentview)));
+        this.current_view = parseInt($(this.id).dataset.currentview);
+        this.localsettings.writeProp(this.id, String(this.current_view));
+        this.adjustFromView();
+    };
+    CardStack.prototype.getNextView = function (from_view) {
+        if (from_view == 3)
+            return 0;
+        return from_view + 1;
+    };
+    CardStack.prototype.adjustFromView = function () {
+        //TODO: apply stuff like custom column or line breaks according to selected view
+        var label = "?";
+        var additional_txt = "";
+        switch (this.current_view) {
+            case View.summary:
+                label = _("Hidden view");
+                additional_txt = _("%n card(s) hidden").replace('%n', $('cnt_cards_' + this.id).innerHTML);
+                break;
+            case View.hypersynthetic:
+                label = _("Synthetic view");
+                break;
+            case View.stacked:
+                label = _("Stacked view");
+                break;
+            case View.full:
+                label = _("Full view");
+                break;
+        }
+        if (this.card_color_class == "red" && (this.current_view == View.full || this.current_view == View.stacked)) {
+            additional_txt = _("Events are played face down, tags are not counted.");
+        }
+        $('detail_label_' + this.id).innerHTML = label;
+        $('additional_text_' + this.id).innerHTML = additional_txt;
+    };
+    CardStack.prototype.updateCounts = function () {
+        var count = $(this.tableau_id).querySelectorAll('.card').length;
+        $('cnt_cards_' + this.id).innerHTML = String(count);
+        if (this.current_view == View.summary)
+            $('additional_text_' + this.id).innerHTML = _("%n card(s) hidden").replace('%n', String(count));
+        return count;
+    };
+    CardStack.prototype.getDestinationDiv = function () {
+        return this.tableau_id;
+    };
+    return CardStack;
+}());
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1417,6 +1514,16 @@ var CustomAnimation = /** @class */ (function () {
         }
         else {
             exec();
+        }
+    };
+    CustomAnimation.prototype.setOriginalStackView = function (tableau_elem, value) {
+        if (this.areAnimationsPlayed()) {
+            this.wait(this.getWaitDuration(1500)).then(function () {
+                tableau_elem.dataset.currentview = value;
+            });
+        }
+        else {
+            tableau_elem.dataset.currentview = value;
         }
     };
     CustomAnimation.prototype.animateTilePop = function (token_id) {
@@ -2884,6 +2991,7 @@ var GameTokens = /** @class */ (function (_super) {
                     top: placeInfo.y + "px"
                 };
             }
+            this.preSlideAnimation(tokenNode, tokenInfo, location_1);
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
             return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
         }
@@ -2892,6 +3000,8 @@ var GameTokens = /** @class */ (function (_super) {
             // this.showMessage(token + " -> FAILED -> " + place + "\n" + e, "error");
         }
         return tokenNode;
+    };
+    GameTokens.prototype.preSlideAnimation = function (tokenNode, tokenInfo, location) {
     };
     GameTokens.prototype.placeTokenWithTips = function (token, tokenInfo, args) {
         return __awaiter(this, void 0, void 0, function () {
@@ -3427,6 +3537,7 @@ var GameXBody = /** @class */ (function (_super) {
             cards_3: 0
         };
         this.vlayout.setupPlayer(playerInfo);
+        this.setupPlayerStacks(playerInfo.color);
         //attach sort buttons
         if (playerInfo.id == this.player_id) {
             //generate buttons
@@ -3475,6 +3586,29 @@ var GameXBody = /** @class */ (function (_super) {
             }
             $("tableau_" + playerInfo.color).dataset["visibility_" + selected] = "1";
             $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
+        }
+    };
+    GameXBody.prototype.setupPlayerStacks = function (playerColor) {
+        var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
+        var oldStacks = [
+            'cards_4', 'cards_2a', 'cards_2', 'cards_3vp', 'cards_3', 'cards_1vp', 'cards_1'
+        ];
+        for (var _i = 0, oldStacks_1 = oldStacks; _i < oldStacks_1.length; _i++) {
+            var item = oldStacks_1[_i];
+            if ($('tableau_' + playerColor + '_' + item)) {
+                document.getElementById('tableau_' + playerColor + '_' + item).remove();
+            }
+        }
+        var lsStacks = [
+            { label: _('Events'), div: "cards_3", color_class: 'red', default: 0 },
+            { label: _('Automated'), div: "cards_1", color_class: 'green', default: 2 },
+            { label: _('Effects'), div: "cards_2", color_class: 'blue', default: 3 },
+            { label: _('Actions'), div: "cards_2a", color_class: 'blue', default: 3 },
+        ];
+        for (var _a = 0, lsStacks_1 = lsStacks; _a < lsStacks_1.length; _a++) {
+            var item = lsStacks_1[_a];
+            var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default);
+            stack.render('tableau_' + playerColor);
         }
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
@@ -3973,6 +4107,9 @@ var GameXBody = /** @class */ (function (_super) {
             var opInfo = notif.args.operations[opIdS];
             this.updateHandInformation(opInfo.args.info, opInfo.type);
         }
+    };
+    GameXBody.prototype.notif_scoringTable = function (notif) {
+        console.log(notif);
     };
     GameXBody.prototype.getCardTypeById = function (type) {
         switch (type) {
@@ -4524,33 +4661,6 @@ var GameXBody = /** @class */ (function (_super) {
             var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
             tokenNode.parentElement.dataset.subcount = sub;
             tokenNode.parentElement.style.setProperty("--subcount", sub);
-            if (!this.isLayoutFull()) {
-                //auto switch tabs here
-                // this.darhflog("isdoingsetup", this.isDoingSetup);
-                if (!this.isDoingSetup) {
-                    if ($(location).dataset["visibility_" + t] == "0") {
-                        var original = 0;
-                        for (var i = 0; i <= 3; i++) {
-                            if ($(location).dataset["visibility_" + i] == "1")
-                                original = i;
-                        }
-                        if (original != 0) {
-                            for (var i = 1; i <= 3; i++) {
-                                var btn = "player_viewcards_" + i + "_" + location.replace("tableau_", "");
-                                if (i == t) {
-                                    $(location).dataset["visibility_" + i] = "1";
-                                    $(btn).dataset.selected = "1";
-                                }
-                                else {
-                                    $(btn).dataset.selected = "0";
-                                    $(location).dataset["visibility_" + i] = "0";
-                                }
-                            }
-                            this.customAnimation.setOriginalFilter(location, original, t);
-                        }
-                    }
-                }
-            }
         }
         //move animation on main player board counters
         if (key.startsWith("tracker_")) {
@@ -4568,6 +4678,19 @@ var GameXBody = /** @class */ (function (_super) {
             return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
         }
         return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
+    };
+    GameXBody.prototype.preSlideAnimation = function (tokenNode, tokenInfo, location) {
+        _super.prototype.preSlideAnimation.call(this, tokenNode, tokenInfo, location);
+        if (!this.isLayoutFull()) {
+            //auto switch tabs here
+            if (!this.isDoingSetup) {
+                var parentStack = $(location).parentElement;
+                if (parentStack.dataset.currentview == "0") {
+                    parentStack.dataset.currentview = "2";
+                    this.customAnimation.setOriginalStackView(parentStack, "0");
+                }
+            }
+        }
     };
     GameXBody.prototype.setDomTokenState = function (tokenId, newState) {
         _super.prototype.setDomTokenState.call(this, tokenId, newState);
@@ -4755,13 +4878,14 @@ var GameXBody = /** @class */ (function (_super) {
                 // card can hold stuff
                 result.location = tokenInfo.location + "_cards_2a";
             }
+            /*
             if (!this.isLayoutFull()) {
-                if (t == 1 || t == 3) {
-                    if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
-                        result.location = tokenInfo.location + "_cards_" + t + "vp";
-                    }
+              if (t == 1 || t == 3) {
+                if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
+                  result.location = tokenInfo.location + "_cards_" + t + "vp";
                 }
-            }
+              }
+            }*/
         }
         if (!result.location)
             // if failed to find revert to server one
@@ -5777,6 +5901,8 @@ var GameXBody = /** @class */ (function (_super) {
         _super.prototype.setupNotifications.call(this);
         dojo.subscribe("tokensUpdate", this, "notif_tokensUpdate");
         this.notifqueue.setSynchronous("tokensUpdate", 50);
+        dojo.subscribe("scoringTable", this, "notif_scoringTable");
+        //this.notifqueue.setSynchronous("scoringTable", 50);
     };
     //get settings
     GameXBody.prototype.getSetting = function (key) {

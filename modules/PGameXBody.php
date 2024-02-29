@@ -2135,6 +2135,9 @@ abstract class PGameXBody extends PGameMachine {
             $operations[] = $oparr;
         }
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
+        $table = [];
+        $this->scoreAll($table);
+        $this->notifyAllPlayers('scoringTable','', $table);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {

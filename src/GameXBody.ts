@@ -885,6 +885,9 @@ class GameXBody extends GameTokens {
       this.updateHandInformation(opInfo.args.info, opInfo.type);
     }
   }
+  notif_scoringTable(notif: Notif) {
+    console.log(notif);
+  }
 
   getCardTypeById(type: number) {
     switch (type) {
@@ -2920,6 +2923,9 @@ awarded.`);
 
     dojo.subscribe("tokensUpdate", this, "notif_tokensUpdate");
     this.notifqueue.setSynchronous("tokensUpdate", 50);
+
+    dojo.subscribe("scoringTable", this, "notif_scoringTable");
+    //this.notifqueue.setSynchronous("scoringTable", 50);
   }
 
   //get settings
