@@ -349,6 +349,7 @@ class GameTokens extends GameBasics {
         };
       }
 
+      this.preSlideAnimation(tokenNode,tokenInfo,location);
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
       return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
     } catch (e) {
@@ -358,6 +359,9 @@ class GameTokens extends GameBasics {
     return tokenNode;
   }
 
+  preSlideAnimation(tokenNode:HTMLElement,tokenInfo:Token,location:string) {
+
+  }
   async placeTokenWithTips(token: string, tokenInfo?: Token, args?: any) {
     if (!tokenInfo) {
       tokenInfo = this.gamedatas.tokens[token];

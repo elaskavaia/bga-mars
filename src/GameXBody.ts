@@ -201,6 +201,7 @@ class GameXBody extends GameTokens {
       cards_3: 0
     };
     this.vlayout.setupPlayer(playerInfo);
+    this.setupPlayerStacks(playerInfo.color);
 
     //attach sort buttons
     if (playerInfo.id == this.player_id) {
@@ -261,6 +262,32 @@ class GameXBody extends GameTokens {
       $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
     }
   }
+
+  setupPlayerStacks(playerColor:string):void {
+    const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
+
+    const oldStacks= [
+      'cards_4','cards_2a','cards_2','cards_3vp','cards_3','cards_1vp','cards_1'
+    ]
+    for (const item of oldStacks) {
+      if ($('tableau_'+playerColor+'_'+item)) {
+        document.getElementById('tableau_'+playerColor+'_'+item).remove();
+      }
+    }
+    
+    const lsStacks=[
+      {label:_('Events'),div:"cards_3",color_class:'red',default:0},
+      {label:_('Automated'),div:"cards_1",color_class:'green',default:2},
+      {label:_('Effects'),div:"cards_2",color_class:'blue',default:3},
+      {label:_('Actions'),div:"cards_2a",color_class:'blue',default:3},
+    ];
+    for (const item of lsStacks) {
+      const stack= new CardStack(this,localColorSetting,item.div,item.label,playerColor,item.color_class,item.default);
+      stack.render('tableau_'+playerColor);
+    }
+  }
+
+
 
   onShowScoringTable(playerId: number) {
     const mv: string = $("move_nbr").innerHTML;
@@ -1578,31 +1605,6 @@ awarded.`);
       tokenNode.parentElement.dataset.subcount = sub;
       tokenNode.parentElement.style.setProperty("--subcount", sub);
 
-      if (!this.isLayoutFull()) {
-        //auto switch tabs here
-        // this.darhflog("isdoingsetup", this.isDoingSetup);
-        if (!this.isDoingSetup) {
-          if ($(location).dataset["visibility_" + t] == "0") {
-            let original = 0;
-            for (let i = 0; i <= 3; i++) {
-              if ($(location).dataset["visibility_" + i] == "1") original = i;
-            }
-            if (original != 0) {
-              for (let i = 1; i <= 3; i++) {
-                let btn = "player_viewcards_" + i + "_" + location.replace("tableau_", "");
-                if (i == t) {
-                  $(location).dataset["visibility_" + i] = "1";
-                  $(btn).dataset.selected = "1";
-                } else {
-                  $(btn).dataset.selected = "0";
-                  $(location).dataset["visibility_" + i] = "0";
-                }
-              }
-              this.customAnimation.setOriginalFilter(location, original, t);
-            }
-          }
-        }
-      }
     }
 
     //move animation on main player board counters
@@ -1623,6 +1625,22 @@ awarded.`);
 
     return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
   }
+
+  preSlideAnimation(tokenNode:HTMLElement,tokenInfo:Token,location:string) {
+    super.preSlideAnimation(tokenNode,tokenInfo,location);
+    if (!this.isLayoutFull()) {
+      //auto switch tabs here
+      if (!this.isDoingSetup) {
+        const parentStack = $(location).parentElement;
+        if (parentStack.dataset.currentview=="0") {
+          parentStack.dataset.currentview="2";
+          this.customAnimation.setOriginalStackView(parentStack, "0");
+        }
+
+      }
+    }
+  }
+
 
   setDomTokenState(tokenId: ElementOrId, newState: any) {
     super.setDomTokenState(tokenId, newState);
@@ -1816,13 +1834,14 @@ awarded.`);
         result.location = tokenInfo.location + "_cards_2a";
       }
 
+      /*
       if (!this.isLayoutFull()) {
         if (t == 1 || t == 3) {
           if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
             result.location = tokenInfo.location + "_cards_" + t + "vp";
           }
         }
-      }
+      }*/
     }
     if (!result.location)
       // if failed to find revert to server one
