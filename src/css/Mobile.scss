@@ -112,13 +112,16 @@
         padding: 0.2em;
       }
     }
+
+    .cardstack {
+      .stack_btn {
+        width: calc(var(--card-width) * 0.25);
+        height: calc(var(--card-width) * 0.25);
+        font-size: calc(var(--card-width) * 0.2);
+      }
+    }
+
   }
 
-  .cardstack {
-    .stack_btn {
-      width: calc(var(--card-width) * 0.25);
-      height: calc(var(--card-width) * 0.25);
-      font-size: calc(var(--card-width) * 0.2);
-    }
-  }
+
 }
