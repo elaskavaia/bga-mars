@@ -492,7 +492,7 @@
   }
 
   .cards_2.stacked {
-    --overlap: 0.66;
+    --overlap: 0.63;
    }
 
    // player board and corp
@@ -692,7 +692,7 @@
     border-radius: unset;
     background: unset;
     // override layout settings
-    flex-grow: unset;
+    flex-grow: 1;
     display: grid;
 
 

@@ -8049,7 +8049,7 @@
   margin-top: calc(var(--card-height) * var(--overlap) * -1);
 }
 .mfull .cards_2.stacked {
-  --overlap: 0.66;
+  --overlap: 0.63;
 }
 .mfull .cards_4 {
   padding: 2px;
@@ -8320,7 +8320,7 @@
   border: unset;
   border-radius: unset;
   background: unset;
-  flex-grow: unset;
+  flex-grow: 1;
   display: grid;
   grid-template-columns: min-content auto;
   grid-gap: 2px;
