@@ -166,6 +166,16 @@ class CustomAnimation {
         exec();
     }
   }
+  setOriginalStackView(tableau_elem:HTMLElement,value:string) {
+    if (this.areAnimationsPlayed()) {
+      this.wait(this.getWaitDuration(1500)).then(()=>{
+        tableau_elem.dataset.currentview=value;
+      });
+    } else {
+      tableau_elem.dataset.currentview=value;
+    }
+  }
+
   animateTilePop(token_id: string) {
     if (!this.areAnimationsPlayed() || this.getAnimationAmount()==2) return this.getImmediatePromise();
     return this.playCssAnimation(token_id, 'grow_appear', null, null);
