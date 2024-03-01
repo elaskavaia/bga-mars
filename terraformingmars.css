@@ -5666,29 +5666,22 @@
 
 .cardstack_cards_4 {
   order: 1;
-  flex: 0 0 auto;
 }
 
 .cardstack_cards_1 {
   order: 2;
-  flex: 0 0 auto;
 }
 
 .cardstack_cards_3 {
   order: 3;
-  flex: 0 0 auto;
 }
 
 .cardstack_cards_2 {
   order: 4;
-  flex: 0 0 auto;
 }
 
 .cardstack_cards_2a {
   order: 5;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: calc(var(--card-width) * 3);
 }
 
 /* Not sure why grid - did not work for me
@@ -7940,31 +7933,6 @@
   flex-direction: row;
   padding: 0.5em;
 }
-.mfull .cardstack[data-currentview] .stack_content {
-  --overlap: 0;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-}
-.mfull .cardstack[data-currentview] .stack_content .card {
-  margin-top: calc(var(--card-height) * var(--overlap) * -1);
-}
-.mfull .cardstack[data-currentview="2"] .stack_content {
-  --overlap: 0.88;
-  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
-  padding-top: calc(var(--card-height) * var(--overlap));
-}
-.mfull .cardstack[data-currentview="2"] .stack_content.cards_2 {
-  --overlap: 0.63;
-}
-.mfull .cardstack[data-currentview] .stack_content.cards_4 {
-  padding: 2px;
-}
-.mfull .cardstack[data-currentview="3"] .stack_content {
-  max-height: unset;
-  flex-direction: row;
-  row-gap: 5px;
-}
 .mfull .cardstack .stack_header {
   justify-content: flex-start;
 }
@@ -8420,6 +8388,7 @@
   transition: all 400ms ease-in;
   position: relative;
   user-select: none;
+  flex: 0 0 auto;
 }
 .cardstack .stack_content_txt::after {
   content: ": " var(--subcount);
@@ -8549,12 +8518,13 @@
 }
 
 .stack_content {
+  --overlap: 0;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
-  max-height: calc(var(--card-height) * 2.5);
+  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
   position: relative;
   padding: calc(var(--card-width) * 0.03);
 }
@@ -8578,7 +8548,6 @@
 
 .cardstack[data-currentview="2"] .stack_content {
   --overlap: 0.88;
-  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
   padding-top: calc(var(--card-height) * var(--overlap));
 }
 .cardstack[data-currentview="2"] .stack_content .card {
@@ -8590,8 +8559,7 @@
 }
 
 .cardstack[data-currentview="3"] .stack_content {
-  max-height: unset;
-  flex-direction: row;
+  row-gap: calc(var(--card-height) * 0.01);
 }
 
 .cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {

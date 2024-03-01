@@ -515,33 +515,26 @@
 // player board
 .cardstack_cards_4 {
   order: 1;
-  flex: 0 0 auto;
 }
 
 // green
 .cardstack_cards_1 {
   order: 2;
-  flex: 0 0 auto;
 }
 
 // events
 .cardstack_cards_3 {
   order: 3;
-  flex: 0 0 auto;
 }
 
 // blue effects
 .cardstack_cards_2 {
   order: 4;
-  flex: 0 0 auto;
 }
 
 // blue actions
 .cardstack_cards_2a {
   order: 5;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: calc(var(--card-width) * 3);
 }
 
   /* Not sure why grid - did not work for me

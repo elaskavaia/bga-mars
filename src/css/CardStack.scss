@@ -3,11 +3,12 @@
   transition: all 400ms ease-in;
   position: relative;
   user-select: none;
+  flex: 0 0 auto;
 
   .stack_content_txt::after {
     content: ": "var(--subcount);
   }
-  
+
   .stack_sum.cards::after {
     content: var(--subcount);
     position: relative;
@@ -153,12 +154,13 @@
 
 
 .stack_content{
+  --overlap: 0;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center; 
-  max-height: calc(var(--card-height) * 2.5);
+  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
   position: relative;
   padding: calc(var(--card-width) * 0.03);
 }
@@ -187,9 +189,8 @@
 // stack
 .cardstack[data-currentview="2"] .stack_content {
   --overlap: 0.88;
-  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
+  // padding to offset margin-top
   padding-top: calc(var(--card-height) * var(--overlap));
-
   .card {
     margin-top: calc(var(--card-height) * var(--overlap) * -1);
   }
@@ -201,8 +202,7 @@
 
 // tiles
 .cardstack[data-currentview="3"] .stack_content {
-  max-height: unset;
-  flex-direction: row;
+ row-gap: calc(var(--card-height) * 0.01);
 }
 
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {

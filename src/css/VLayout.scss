@@ -471,38 +471,6 @@
     //outline: 2px dashed var(--plcolor);
     padding: 0.5em;
   }
-
-  .cardstack[data-currentview] .stack_content {
-    --overlap: 0;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    .card {
-      margin-top: calc(var(--card-height) * var(--overlap) * -1);
-    }
-  }
-  .cardstack[data-currentview="2"] .stack_content {
-    --overlap: 0.88;
-    max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
-    padding-top: calc(var(--card-height) * var(--overlap));
-  }
-
-  .cardstack[data-currentview="2"] .stack_content.cards_2  {
-    --overlap: 0.63;
-   }
-
-   // player board and corp
-  .cardstack[data-currentview] .stack_content.cards_4 {
-    padding: 2px;
-  }
-
-  // blue action
-  .cardstack[data-currentview="3"] .stack_content {
-    max-height: unset;
-    flex-direction: row;
-    row-gap: 5px;
-  }
-
   .cardstack {
     .stack_header {
       justify-content: flex-start;
