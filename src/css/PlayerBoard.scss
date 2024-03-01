@@ -97,6 +97,7 @@
     height: calc(var(--pb_cellsize) *0.5);
   }
 
+
 .mcompact {
   .pboard {
     display: none; /* real player board: hide for this layout */
@@ -109,25 +110,8 @@
   .player_area .location {
     width: revert;
   }
-  .tableau {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0.5vh;
 
-    .card[data-card-type="1"] {
-     order:2;
     }
-    .card[data-card-type="2"] {
-      order:1;
-    }
-    .card[data-card-type="3"] {
-      order:3;
-    }
-    .corp {
-      order: 4;
-    }
-  }
-  }
 
   .tableau>.counter {
     display: none;
@@ -263,89 +247,6 @@
   }
   .filter_button[data-enabled="0"]::before {
     content:'☐' ;
-  }
-
-.mcompact {
-  .tableau[data-visibility_2="0"] {
-    .cards_2, .cards_2a {
-     /* visibility: hidden;*/
-      display: none;
-    }
-    .card[data-card-type="2"] {
-      /*position: absolute;*/
-      opacity: 0;
-    }
-  }
-  .tableau[data-visibility_1="0"] {
-    .cards_1,  .cards_1vp  {
-      /* visibility: hidden;*/
-      display: none;
-    }
-    .card[data-card-type="1"] {
-      /*position: absolute;*/
-      opacity: 0;
-    }
-  }
-  .tableau[data-visibility_3="0"] {
-    .cards_3, .cards_3vp {
-      /* visibility: hidden;*/
-      display: none;
-    }
-    .card[data-card-type="3"] {
-      /*position: absolute;*/
-      opacity: 0;
-    }
-  }
-
-  .tableau[data-visibility_0="1"] {
-    display: flex;
-    .cards_2a {
-      order: 0;
-    }
-    .cards_2{
-      order: 1;
-    }
-    .cards_1vp{
-      order: 2;
-    }
-    .cards_3vp{
-      order: 3;
-    }
-    .cards_1{
-      order: 4;
-    }
-    .cards_3{
-      order: 5;
-    }
-
-    .cards_2, .cards_2a {
-     /* visibility: visible;*/
-      display: flex;
-    }
-    .cards_1,  .cards_1vp  {
-      /* visibility: visible;*/
-      display: flex;
-    }
-    .cards_3, .cards_3vp {
-      /* visibility: visible;*/
-      display: flex;
-
-
-    }
-    .card[data-card-type="2"] {
-      opacity: 1;
-    }
-    .card[data-card-type="1"] {
-      opacity: 1;
-    }
-    .card[data-card-type="3"] {
-      opacity: 1;
-    }
-  }
-
-    .cards_1, .cards_3 {
-      display: flex;
-    }
   }
 
   .corp_holder {
@@ -560,65 +461,9 @@
     filter: unset;
   }
 //used
-  .tableau .card[data-state="3"] {
-    filter: grayscale(0.9);
-  }
-
-  .tableau {
-    display: grid;
-    grid-template-columns: 1fr calc(var(--card-width)*1.1);
-    grid-template-rows: 1fr 1fr;
-    grid-column-gap: 5px;
-    grid-row-gap: 5px;
-    min-height: calc(var(--card-height)*2.1);
-  }
-
-
-
-  .cards_2a {
-    grid-area: 1 / 1 / 2 / 2;
-  }
-  .cards_2 {
-    /*
-    unstack this zone
-    grid-area: 1 / 2 / 3 / 3;*/
-    grid-area: 2/1/3/3;
-  }
-  .cards_2.cards_bin.stacked {
-    flex-direction: row;
-    flex-wrap: wrap;
-    .card~.card{
-      margin-top: 0;
-    }
-  }
-  .cards_1vp {
-    grid-area:  1 / 1 / 3 / 2;
-  }
-  .cards_1 {
-    grid-area: 1 / 2 / 3 / 3;
-  }
-
-  .cards_3vp {
-    grid-area:  1 / 1 / 3 / 2;
-  }
-  .cards_3 {
-    grid-area: 1 / 2 / 3 / 3;
-
-  }
-
-
-  .cards_bin{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .cards_bin.stacked {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    .card~.card {
-      margin-top: -105%;
-    }
-  }
+.tableau .card[data-state="3"] {
+  filter: grayscale(0.9);
+}
 
 
   .playerboard_group_underbutton{
@@ -659,6 +504,56 @@
   }
 
 }
+
+
+.tableau {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.5vh;
+}
+
+// player board
+.cardstack_cards_4 {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+// green
+.cardstack_cards_1 {
+  order: 2;
+  flex: 0 0 auto;
+}
+
+// events
+.cardstack_cards_3 {
+  order: 3;
+  flex: 0 0 auto;
+}
+
+// blue effects
+.cardstack_cards_2 {
+  order: 4;
+  flex: 0 0 auto;
+}
+
+// blue actions
+.cardstack_cards_2a {
+  order: 5;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: calc(var(--card-width) * 3);
+}
+
+  /* Not sure why grid - did not work for me
+  .tableau {
+    display: grid;
+    grid-template-columns: 1fr calc(var(--card-width)*1.1);
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    min-height: calc(var(--card-height)*2.1);
+  }
+*/
 
 
 

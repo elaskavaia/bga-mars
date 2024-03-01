@@ -15,7 +15,7 @@ class VLayout {
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
     dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
 
-    $(`local_counter_${color}_cards_0`).innerHTML = "";
+   
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
 
@@ -58,13 +58,13 @@ class VLayout {
 
     dojo.place(`counter_draw_${color}`, `limbo`);
 
-    const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
-    for (let i = 0; i <= 4; i++) {
-      const settingKey = "visibility_" + i;
-      const value = perColorSettings.readProp(settingKey, "1");
-      $("tableau_" + color).dataset[settingKey] = value;
-      $("player_viewcards_" + i + "_" + color).dataset.selected = value;
-    }
+    // const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
+    // for (let i = 0; i <= 4; i++) {
+    //   const settingKey = "visibility_" + i;
+    //   const value = perColorSettings.readProp(settingKey, "1");
+    //   $("tableau_" + color).dataset[settingKey] = value;
+    //   $("player_viewcards_" + i + "_" + color).dataset.selected = value;
+    // }
 
     // var parent = document.querySelector(".debug_section"); // studio only
     // if (!parent)
@@ -73,12 +73,12 @@ class VLayout {
 
   setupDone() {
     if (!this.game.isLayoutFull()) return;
-    const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
+    // const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
 
-    document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {
-      // have to attach tooltip directly, this element does not have a game model
-      this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
-    });
+    // document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {
+    //   // have to attach tooltip directly, this element does not have a game model
+    //   this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
+    // });
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {

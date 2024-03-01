@@ -472,109 +472,43 @@
     padding: 0.5em;
   }
 
-  .cards_bin {
-    --overlap: 0.88;
-    max-height: calc(var(--card-height) * 2.5);
-  }
-
-  .cards_bin.stacked {
-    --overlap: 0.88;
-    max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
-    padding-top: calc(var(--card-height) * var(--overlap));
+  .cardstack[data-currentview] .stack_content {
+    --overlap: 0;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    flex: 0 0 auto;
-
     .card {
       margin-top: calc(var(--card-height) * var(--overlap) * -1);
     }
   }
+  .cardstack[data-currentview="2"] .stack_content {
+    --overlap: 0.88;
+    max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
+    padding-top: calc(var(--card-height) * var(--overlap));
+  }
 
-  .cards_2.stacked {
+  .cardstack[data-currentview="2"] .stack_content.cards_2  {
     --overlap: 0.63;
    }
 
    // player board and corp
-  .cards_4 {
+  .cardstack[data-currentview] .stack_content.cards_4 {
     padding: 2px;
-    flex: 0 0 auto;
-    order: 1;
   }
-
-
-  // green
-  .cards_1 {
-    order: 2;
-  }
-
-  // evetns
-  .cards_3 {
-    order: 3;
-  }
-
-  // blue stacked
-  .cards_2 {
-    order: 4;
-   }
 
   // blue action
-  .cards_2a {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: calc(var(--card-width) * 3);
+  .cardstack[data-currentview="3"] .stack_content {
     max-height: unset;
-    display: flex;
-    flex-wrap: wrap;
     flex-direction: row;
-    align-content: flex-start;
     row-gap: 5px;
-    order: 5;
   }
 
-  
-
-
-
-
-  .tableau[data-visibility_2="0"] {
-    .cards_2 {
-      visibility: hidden;
-      width: 0px;
-      height: var(--card-height);
-    }
-  }
-
-  .tableau[data-visibility_1="0"] {
-
-    .cards_1,
-    .cards_1vp {
-      visibility: hidden;
-      width: 0px;
-      height: var(--card-height);
-    }
-
-  }
-
-  .tableau[data-visibility_3="0"] {
-
-    .cards_3,
-    .cards_3vp {
-      visibility: hidden;
-      width: 0px;
-      height: 20px;
-    }
-  }
-
-  .tableau[data-visibility_0="0"] {
-    .pboard {
-      display: none;
-    }
-  }
-
-  .tableau[data-visibility_4="0"] {
-    .corp_holder {
-      display: none;
+  .cardstack {
+    .stack_header {
+      justify-content: flex-start;
+      .stack_header_middle {
+        display: none;
+      }
     }
   }
 

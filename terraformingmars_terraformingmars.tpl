@@ -355,71 +355,14 @@
               <div id="tracker_land_{PLAYER_COLOR}" class="tracker tracker_land"></div>
             </div>
             <div id="player_controls_{PLAYER_COLOR}" class="player_controls">
-              <div
-                      id="player_viewcards_2_{PLAYER_COLOR}"
-                      class="viewcards_button"
-                      data-cardtype="2"
-                      data-selected="0"
-                      data-player="{PLAYER_COLOR}"
-              >
-                <div class="buttoncard card_icon">
-                  <div id="local_counter_{PLAYER_COLOR}_cards_2" class="viewcardbutton_counter">0</div>
-                  <i class="fa fa-eye" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div
-                      id="player_viewcards_1_{PLAYER_COLOR}"
-                      class="viewcards_button"
-                      data-cardtype="1"
-                      data-selected="0"
-                      data-player="{PLAYER_COLOR}"
-              >
-                <div class="buttoncard card_icon">
-                  <div id="local_counter_{PLAYER_COLOR}_cards_1" class="viewcardbutton_counter">0</div>
-                  <i class="fa fa-eye" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div
-                      id="player_viewcards_3_{PLAYER_COLOR}"
-                      class="viewcards_button"
-                      data-cardtype="3"
-                      data-selected="0"
-                      data-player="{PLAYER_COLOR}"
-              >
-                <div class="buttoncard card_icon">
-                  <div id="local_counter_{PLAYER_COLOR}_cards_3" class="viewcardbutton_counter">0</div>
-                  <i class="fa fa-eye" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div id="player_viewcards_0_{PLAYER_COLOR}"
-                   class="viewcards_button"
-                   data-cardtype="0"
-                   data-selected="1"
-                   data-player="{PLAYER_COLOR}"
-              >
-                <div class="buttoncard card_icon">
-                  <div id="local_counter_{PLAYER_COLOR}_cards_0" class="viewcardbutton_counter">*</div>
-                  <i class="fa fa-eye" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div id="player_viewcards_4_{PLAYER_COLOR}"
-                   class="viewcards_button"
-                   data-cardtype="4"
-                   data-selected="0"
-                   data-player="{PLAYER_COLOR}"
-              >
-                <div class="buttoncard card_icon">
-                  <div id="local_counter_{PLAYER_COLOR}_cards_4" class="viewcardbutton_counter"></div>
-                  <i class="fa fa-eye" aria-hidden="true"></i>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
 
 
 
-        <div id="tableau_{PLAYER_COLOR}" class="tableau" data-visibility_0="1" data-visibility_2="0" data-visibility_1="0" data-visibility_3="0" data-visibility_4="1">
+        <div id="tableau_{PLAYER_COLOR}" class="tableau">
           <div id="pboard_{PLAYER_COLOR}" class="pboard">
             <div id="resarea_m_{PLAYER_COLOR}" class="resarea resarea_m"></div>
             <div id="resarea_s_{PLAYER_COLOR}" class="resarea resarea_s"></div>
@@ -428,13 +371,6 @@
             <div id="resarea_e_{PLAYER_COLOR}" class="resarea resarea_e"></div>
             <div id="resarea_h_{PLAYER_COLOR}" class="resarea resarea_h"></div>
           </div>
-          <div id="tableau_{PLAYER_COLOR}_cards_4" class="cards_4 cards_bin"></div>
-          <div id="tableau_{PLAYER_COLOR}_cards_2a" class="cards_2a cards_bin"></div>
-          <div id="tableau_{PLAYER_COLOR}_cards_2" class="cards_2 cards_bin stacked"></div>
-          <div id="tableau_{PLAYER_COLOR}_cards_3vp" class="cards_3vp cards_bin"></div>
-          <div id="tableau_{PLAYER_COLOR}_cards_3" class="cards_3 cards_bin stacked"></div>
-          <div id="tableau_{PLAYER_COLOR}_cards_1vp" class="cards_1vp cards_bin"></div>
-          <div id="tableau_{PLAYER_COLOR}_cards_1" class="cards_1 cards_bin stacked"></div>
         </div>
       </div>
       <div id="miniboard_{PLAYER_COLOR}" class="style_2">

@@ -3007,7 +3007,7 @@
   top: calc(var(--card-width) * 0.08);
 }
 
-.cards_3vp .card::after, .cards_3 .card::after {
+.mfull .cards_3 .card::after {
   content: "";
   position: absolute;
   width: 100%;
@@ -5228,23 +5228,6 @@
 .mcompact .player_area .location {
   width: revert;
 }
-.mcompact .tableau {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0.5vh;
-}
-.mcompact .tableau .card[data-card-type="1"] {
-  order: 2;
-}
-.mcompact .tableau .card[data-card-type="2"] {
-  order: 1;
-}
-.mcompact .tableau .card[data-card-type="3"] {
-  order: 3;
-}
-.mcompact .tableau .corp {
-  order: 4;
-}
 
 .tableau > .counter {
   display: none;
@@ -5406,76 +5389,6 @@
 
 .filter_button[data-enabled="0"]::before {
   content: "☐";
-}
-
-.mcompact .tableau[data-visibility_2="0"] .cards_2, .mcompact .tableau[data-visibility_2="0"] .cards_2a {
-  /* visibility: hidden;*/
-  display: none;
-}
-.mcompact .tableau[data-visibility_2="0"] .card[data-card-type="2"] {
-  /*position: absolute;*/
-  opacity: 0;
-}
-.mcompact .tableau[data-visibility_1="0"] .cards_1, .mcompact .tableau[data-visibility_1="0"] .cards_1vp {
-  /* visibility: hidden;*/
-  display: none;
-}
-.mcompact .tableau[data-visibility_1="0"] .card[data-card-type="1"] {
-  /*position: absolute;*/
-  opacity: 0;
-}
-.mcompact .tableau[data-visibility_3="0"] .cards_3, .mcompact .tableau[data-visibility_3="0"] .cards_3vp {
-  /* visibility: hidden;*/
-  display: none;
-}
-.mcompact .tableau[data-visibility_3="0"] .card[data-card-type="3"] {
-  /*position: absolute;*/
-  opacity: 0;
-}
-.mcompact .tableau[data-visibility_0="1"] {
-  display: flex;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_2a {
-  order: 0;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_2 {
-  order: 1;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_1vp {
-  order: 2;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_3vp {
-  order: 3;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_1 {
-  order: 4;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_3 {
-  order: 5;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_2, .mcompact .tableau[data-visibility_0="1"] .cards_2a {
-  /* visibility: visible;*/
-  display: flex;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_1, .mcompact .tableau[data-visibility_0="1"] .cards_1vp {
-  /* visibility: visible;*/
-  display: flex;
-}
-.mcompact .tableau[data-visibility_0="1"] .cards_3, .mcompact .tableau[data-visibility_0="1"] .cards_3vp {
-  /* visibility: visible;*/
-  display: flex;
-}
-.mcompact .tableau[data-visibility_0="1"] .card[data-card-type="2"] {
-  opacity: 1;
-}
-.mcompact .tableau[data-visibility_0="1"] .card[data-card-type="1"] {
-  opacity: 1;
-}
-.mcompact .tableau[data-visibility_0="1"] .card[data-card-type="3"] {
-  opacity: 1;
-}
-.mcompact .cards_1, .mcompact .cards_3 {
-  display: flex;
 }
 
 .corp_holder {
@@ -5717,54 +5630,6 @@
 .mcompact .tableau .card[data-state="3"] {
   filter: grayscale(0.9);
 }
-.mcompact .tableau {
-  display: grid;
-  grid-template-columns: 1fr calc(var(--card-width) * 1.1);
-  grid-template-rows: 1fr 1fr;
-  grid-column-gap: 5px;
-  grid-row-gap: 5px;
-  min-height: calc(var(--card-height) * 2.1);
-}
-.mcompact .cards_2a {
-  grid-area: 1/1/2/2;
-}
-.mcompact .cards_2 {
-  /*
-  unstack this zone
-  grid-area: 1 / 2 / 3 / 3;*/
-  grid-area: 2/1/3/3;
-}
-.mcompact .cards_2.cards_bin.stacked {
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-.mcompact .cards_2.cards_bin.stacked .card ~ .card {
-  margin-top: 0;
-}
-.mcompact .cards_1vp {
-  grid-area: 1/1/3/2;
-}
-.mcompact .cards_1 {
-  grid-area: 1/2/3/3;
-}
-.mcompact .cards_3vp {
-  grid-area: 1/1/3/2;
-}
-.mcompact .cards_3 {
-  grid-area: 1/2/3/3;
-}
-.mcompact .cards_bin {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-.mcompact .cards_bin.stacked {
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-.mcompact .cards_bin.stacked .card ~ .card {
-  margin-top: -105%;
-}
 .mcompact .playerboard_group_underbutton {
   width: calc(var(--resourcesize) * 1);
   height: calc(var(--resourcesize) * 1);
@@ -5793,6 +5658,49 @@
   animation: nudge 2000ms infinite ease-in-out;
 }
 
+.tableau {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.5vh;
+}
+
+.cardstack_cards_4 {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+.cardstack_cards_1 {
+  order: 2;
+  flex: 0 0 auto;
+}
+
+.cardstack_cards_3 {
+  order: 3;
+  flex: 0 0 auto;
+}
+
+.cardstack_cards_2 {
+  order: 4;
+  flex: 0 0 auto;
+}
+
+.cardstack_cards_2a {
+  order: 5;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: calc(var(--card-width) * 3);
+}
+
+/* Not sure why grid - did not work for me
+  .tableau {
+    display: grid;
+    grid-template-columns: 1fr calc(var(--card-width)*1.1);
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    min-height: calc(var(--card-height)*2.1);
+  }
+*/
 @keyframes nudge {
   0% {
     transform: translateY(0);
@@ -8032,72 +7940,35 @@
   flex-direction: row;
   padding: 0.5em;
 }
-.mfull .cards_bin {
-  --overlap: 0.88;
-  max-height: calc(var(--card-height) * 2.5);
-}
-.mfull .cards_bin.stacked {
-  --overlap: 0.88;
-  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
-  padding-top: calc(var(--card-height) * var(--overlap));
+.mfull .cardstack[data-currentview] .stack_content {
+  --overlap: 0;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  flex: 0 0 auto;
 }
-.mfull .cards_bin.stacked .card {
+.mfull .cardstack[data-currentview] .stack_content .card {
   margin-top: calc(var(--card-height) * var(--overlap) * -1);
 }
-.mfull .cards_2.stacked {
+.mfull .cardstack[data-currentview="2"] .stack_content {
+  --overlap: 0.88;
+  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
+  padding-top: calc(var(--card-height) * var(--overlap));
+}
+.mfull .cardstack[data-currentview="2"] .stack_content.cards_2 {
   --overlap: 0.63;
 }
-.mfull .cards_4 {
+.mfull .cardstack[data-currentview] .stack_content.cards_4 {
   padding: 2px;
-  flex: 0 0 auto;
-  order: 1;
 }
-.mfull .cards_1 {
-  order: 2;
-}
-.mfull .cards_3 {
-  order: 3;
-}
-.mfull .cards_2 {
-  order: 4;
-}
-.mfull .cards_2a {
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: calc(var(--card-width) * 3);
+.mfull .cardstack[data-currentview="3"] .stack_content {
   max-height: unset;
-  display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
-  align-content: flex-start;
   row-gap: 5px;
-  order: 5;
 }
-.mfull .tableau[data-visibility_2="0"] .cards_2 {
-  visibility: hidden;
-  width: 0px;
-  height: var(--card-height);
+.mfull .cardstack .stack_header {
+  justify-content: flex-start;
 }
-.mfull .tableau[data-visibility_1="0"] .cards_1,
-.mfull .tableau[data-visibility_1="0"] .cards_1vp {
-  visibility: hidden;
-  width: 0px;
-  height: var(--card-height);
-}
-.mfull .tableau[data-visibility_3="0"] .cards_3,
-.mfull .tableau[data-visibility_3="0"] .cards_3vp {
-  visibility: hidden;
-  width: 0px;
-  height: 20px;
-}
-.mfull .tableau[data-visibility_0="0"] .pboard {
-  display: none;
-}
-.mfull .tableau[data-visibility_4="0"] .corp_holder {
+.mfull .cardstack .stack_header .stack_header_middle {
   display: none;
 }
 .mfull .location .card:hover {
@@ -8545,22 +8416,30 @@
 }
 
 .cardstack {
-  width: calc(var(--card-width) * 1.2);
-  height: fit-content;
+  --subcount: "0";
   transition: all 400ms ease-in;
   position: relative;
-  outline: 1px dashed var(--outlinecolor);
   user-select: none;
-  border-radius: calc(var(--card-width) * 0.05);
-  margin: calc(var(--card-width) * 0.02) calc(var(--card-width) * 0.09) calc(var(--card-width) * 0.08) calc(var(--card-width) * 0.01);
+}
+.cardstack .stack_content_txt::after {
+  content: ": " var(--subcount);
+}
+.cardstack .stack_sum.cards::after {
+  content: var(--subcount);
+  position: relative;
+}
+.cardstack .stack_sum.cards {
+  width: calc(var(--card-width) * 0.15);
+  height: calc(var(--card-width) * 0.2);
+  border-radius: 20%;
+  background-color: var(--hlcolor);
+  text-align: center;
 }
 .cardstack .stack_header {
   position: relative;
-  border-radius: calc(var(--card-width) * 0.05);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background-color: var(--outlinecolor);
 }
 .cardstack .stack_header .stack_header_left {
   width: fit-content;
@@ -8575,25 +8454,35 @@
   align-items: center;
 }
 .cardstack .stack_header .stack_header_middle {
-  flex-grow: 100;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
-.cardstack .topline {
+
+.mcompact .cardstack {
+  outline: 1px dashed var(--outlinecolor);
+  border-radius: calc(var(--card-width) * 0.05);
+  margin: calc(var(--card-width) * 0.02) calc(var(--card-width) * 0.09) calc(var(--card-width) * 0.08) calc(var(--card-width) * 0.01);
+}
+.mcompact .cardstack .stack_header {
+  border-radius: calc(var(--card-width) * 0.05);
+  background-color: var(--outlinecolor);
+}
+.mcompact .cardstack .topline {
   display: flex;
   flex-direction: row;
   background-color: var(--outlinecolor);
   padding: calc(var(--card-width) * 0.02);
   align-items: center;
 }
-.cardstack .bottomline {
+.mcompact .cardstack .bottomline {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   /*height: calc(var(--card-width) * 0.25);*/
   align-items: center;
 }
-.cardstack .stack_sum.cards {
+.mcompact .cardstack .stack_sum.cards {
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.2);
   border-radius: 20%;
@@ -8604,19 +8493,19 @@
   background-color: var(--hlcolor);
   box-shadow: black 1px 1px 0px 1px;
 }
-.cardstack .stack_label {
+.mcompact .cardstack .stack_label {
   /*margin-left: 1vh;*/
   font-family: "SpaceFont";
   font-size: calc(var(--card-height) * 0.07);
 }
-.cardstack .stack_detail_txt {
+.mcompact .cardstack .stack_detail_txt {
   font-size: calc(var(--card-height) * 0.05);
   font-style: italic;
 }
-.cardstack .stack_sum {
+.mcompact .cardstack .stack_sum {
   display: none;
 }
-.cardstack .stack_btn {
+.mcompact .cardstack .stack_btn {
   width: calc(var(--card-width) * 0.16);
   height: calc(var(--card-width) * 0.16);
   font-size: calc(var(--card-width) * 0.1);
@@ -8629,17 +8518,13 @@
   background-color: var(--hlcolor);
   box-shadow: black 1px 1px 0px 1px;
 }
-.cardstack .switchview {
+.mcompact .cardstack .switchview {
   margin-right: calc(var(--card-width) * 0.02);
 }
-.cardstack .popout {
+.mcompact .cardstack .popout {
   display: none;
 }
-.cardstack .stack_content {
-  position: relative;
-  padding: calc(var(--card-width) * 0.03);
-}
-.cardstack .stack_content_txt {
+.mcompact .cardstack .stack_content_txt {
   position: relative;
   display: none;
   width: 100%;
@@ -8663,20 +8548,27 @@
   --hlcolor: #b7d7b7;
 }
 
+.stack_content {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  max-height: calc(var(--card-height) * 2.5);
+  position: relative;
+  padding: calc(var(--card-width) * 0.03);
+}
+
 .cardstack[data-currentview="0"] {
   height: calc(var(--card-width) * 0.5);
 }
 .cardstack[data-currentview="0"] .stack_content .card {
   display: none;
 }
-
-.cardstack[data-currentview="1"] .stack_content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: center;
+.cardstack[data-currentview="0"] .stack_content_txt {
+  display: block;
 }
+
 .cardstack[data-currentview="1"] .stack_content .active_slot.card {
   box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 2px #ff9800 !important;
   transform: none;
@@ -8685,33 +8577,21 @@
 }
 
 .cardstack[data-currentview="2"] .stack_content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: center;
+  --overlap: 0.88;
+  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
+  padding-top: calc(var(--card-height) * var(--overlap));
 }
-.cardstack[data-currentview="2"] .stack_content .break {
-  flex-basis: 100%;
-  height: 0;
-}
-.cardstack[data-currentview="2"] .stack_content .card ~ .card {
-  margin-top: -95%;
+.cardstack[data-currentview="2"] .stack_content .card {
+  margin-top: calc(var(--card-height) * var(--overlap) * -1);
 }
 
-.cardstack[data-currentview="3"] {
-  width: fit-content;
+.cardstack[data-currentview="2"].blue .stack_content {
+  --overlap: 0.62;
 }
+
 .cardstack[data-currentview="3"] .stack_content {
-  display: flex;
+  max-height: unset;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.cardstack[data-currentview="0"] .stack_content_txt {
-  display: block;
 }
 
 .cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {

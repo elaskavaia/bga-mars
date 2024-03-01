@@ -147,25 +147,6 @@ class CustomAnimation {
     return parseInt(this.game.getSetting('animationamount'));
   }
 
-  setOriginalFilter(tableau_id:string,original:number,actual:number) {
-    const btn_original ="player_viewcards_" + original + "_" + tableau_id.replace("tableau_", "");
-    const btn_actual ="player_viewcards_" + actual + "_" + tableau_id.replace("tableau_", "");
-
-    const exec = ()=>{
-      $(tableau_id).dataset["visibility_" + original] = "1";
-      $(tableau_id).dataset["visibility_" + actual] = "0";
-      $(btn_original).dataset.selected = "1";
-      $(btn_actual).dataset.selected = "0";
-    };
-
-    if (this.areAnimationsPlayed()) {
-      this.wait(this.getWaitDuration(1500)).then(()=>{
-        exec();
-      });
-    } else {
-        exec();
-    }
-  }
   setOriginalStackView(tableau_elem:HTMLElement,value:string) {
     if (this.areAnimationsPlayed()) {
       this.wait(this.getWaitDuration(1500)).then(()=>{

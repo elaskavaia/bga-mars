@@ -1,126 +1,143 @@
 .cardstack {
-  width: calc(var(--card-width) * 1.2);
-  height: fit-content;
+  --subcount: "0"; // overriden by js
   transition: all 400ms ease-in;
-
   position: relative;
-  outline: 1px dashed var(--outlinecolor);
   user-select: none;
-  border-radius: calc(var(--card-width) * 0.05);
-  margin: calc(var(--card-width) * 0.02) calc(var(--card-width) * 0.09) calc(var(--card-width) * 0.08) calc(var(--card-width) * 0.01);
 
-  .stack_header {
+  .stack_content_txt::after {
+    content: ": "var(--subcount);
+  }
+  
+  .stack_sum.cards::after {
+    content: var(--subcount);
     position: relative;
-    border-radius:  calc(var(--card-width) * 0.05);
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    background-color: var(--outlinecolor);
-
-    .stack_header_left{
-      width:fit-content;
-      padding: 3px;
-      display: flex;
-      align-items: center;
-    }
-
-    .stack_header_right{
-      width:fit-content;
-      padding: 3px;
-      display: flex;
-      align-items: center;
-    }
-
-    .stack_header_middle{
-       flex-grow: 100;
-      display: flex;
-      flex-direction: column;
-    }
   }
-
-
-  .topline{
-    display: flex;
-    flex-direction: row;
-    background-color: var(--outlinecolor);
-    padding: calc(var(--card-width)*0.02);
-    align-items: center;
-  }
-
-  .bottomline{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    /*height: calc(var(--card-width) * 0.25);*/
-    align-items: center;
-  }
-
-  .stack_sum.cards{
+  .stack_sum.cards {
     width: calc(var(--card-width)*0.15);
     height: calc(var(--card-width)*0.2);
     border-radius: 20%;
-    outline:1px solid black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background-color: var(--hlcolor);
-    box-shadow: black 1px 1px 0px 1px;
+    text-align: center;
   }
-
-  .stack_label{
-    /*margin-left: 1vh;*/
-    font-family: "SpaceFont";
-    font-size: calc(var(--card-height) * 0.07);
-  }
-
-  .stack_detail_txt{
-    font-size: calc(var(--card-height) * 0.05);
-    font-style: italic;
-  }
-
-  .stack_sum{
-    display: none;
-  }
-
-
-  .stack_btn{
-    width: calc(var(--card-width) * 0.16);
-    height: calc(var(--card-width) * 0.16);
-    font-size: calc(var(--card-width) * 0.1);
-    border-radius: 50%;
-    outline:1px solid black;
+  .stack_header {
+    position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    background-color: var(--hlcolor);
-    box-shadow: black 1px 1px 0px 1px;
-  }
-  .switchview {
-    margin-right: calc(var(--card-width) * 0.02);
-  }
+    flex-direction: row;
+    justify-content: space-between;
 
-  .popout {
-    display: none;
-  }
+    .stack_header_left {
+      width: fit-content;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+    }
 
-  .stack_content{
-    position: relative;
-    padding: calc(var(--card-width) * 0.03);
-  }
+    .stack_header_right {
+      width: fit-content;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+    }
 
-  .stack_content_txt{
-    position: relative;
-    display: none;
-    width: 100%;
-    font-size: calc(var(--card-height) * 0.05);
-    font-style: italic;
-    color: white;
-  }
+    .stack_header_middle {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
+
+  }
 }
 
+.mcompact {
+  .cardstack {
+    outline: 1px dashed var(--outlinecolor);
+    border-radius: calc(var(--card-width) * 0.05);
+    margin: calc(var(--card-width) * 0.02) calc(var(--card-width) * 0.09) calc(var(--card-width) * 0.08) calc(var(--card-width) * 0.01);
+
+    .stack_header {
+      border-radius: calc(var(--card-width) * 0.05);
+      background-color: var(--outlinecolor);
+    }
+
+
+    .topline {
+      display: flex;
+      flex-direction: row;
+      background-color: var(--outlinecolor);
+      padding: calc(var(--card-width)*0.02);
+      align-items: center;
+    }
+
+    .bottomline {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      /*height: calc(var(--card-width) * 0.25);*/
+      align-items: center;
+    }
+
+    .stack_sum.cards {
+      width: calc(var(--card-width)*0.15);
+      height: calc(var(--card-width)*0.2);
+      border-radius: 20%;
+      outline: 1px solid black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--hlcolor);
+      box-shadow: black 1px 1px 0px 1px;
+    }
+
+    .stack_label {
+      /*margin-left: 1vh;*/
+      font-family: "SpaceFont";
+      font-size: calc(var(--card-height) * 0.07);
+    }
+
+    .stack_detail_txt {
+      font-size: calc(var(--card-height) * 0.05);
+      font-style: italic;
+    }
+
+    .stack_sum {
+      display: none;
+    }
+
+
+    .stack_btn {
+      width: calc(var(--card-width) * 0.16);
+      height: calc(var(--card-width) * 0.16);
+      font-size: calc(var(--card-width) * 0.1);
+      border-radius: 50%;
+      outline: 1px solid black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background-color: var(--hlcolor);
+      box-shadow: black 1px 1px 0px 1px;
+    }
+
+    .switchview {
+      margin-right: calc(var(--card-width) * 0.02);
+    }
+
+    .popout {
+      display: none;
+    }
+
+    .stack_content_txt {
+      position: relative;
+      display: none;
+      width: 100%;
+      font-size: calc(var(--card-height) * 0.05);
+      font-style: italic;
+      color: white;
+    }
+
+  }
+}
 .cardstack.blue {
   --outlinecolor: #8699fa;
   --hlcolor: #c9ccee;
@@ -134,24 +151,31 @@
   --hlcolor: #b7d7b7;
 }
 
+
+.stack_content{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center; 
+  max-height: calc(var(--card-height) * 2.5);
+  position: relative;
+  padding: calc(var(--card-width) * 0.03);
+}
+
+// hidden
 .cardstack[data-currentview="0"] {
-
-   height:calc(var(--card-width) * 0.5);
-
-  .stack_content {
-    .card {
+  height:calc(var(--card-width) * 0.5);
+  .stack_content  .card {
       display: none;
-    }
-
+  }
+  .stack_content_txt {
+    display: block;
   }
 }
-.cardstack[data-currentview="1"] .stack_content{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: center;
 
+// synthetic
+.cardstack[data-currentview="1"] .stack_content{
   .active_slot.card {
     box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 2px #ff9800 !important;
     transform: none;
@@ -159,47 +183,26 @@
     left: 0px;
   }
 }
-.cardstack[data-currentview="2"] {
 
-  .stack_content{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    align-items: center;
+// stack
+.cardstack[data-currentview="2"] .stack_content {
+  --overlap: 0.88;
+  max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
+  padding-top: calc(var(--card-height) * var(--overlap));
 
-    .break {
-      flex-basis: 100%;
-      height: 0;
-    }
-
-    .card {
-
-    }
-
-    .card~.card {
-      margin-top: -95%;
-    }
-
-
+  .card {
+    margin-top: calc(var(--card-height) * var(--overlap) * -1);
   }
 }
 
-.cardstack[data-currentview="3"] {
-  width: fit-content;
-  .stack_content{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    flex-wrap: wrap;
-
-  }
+.cardstack[data-currentview="2"].blue .stack_content {
+  --overlap: 0.62;
 }
-.cardstack[data-currentview="0"] {
-  .stack_content_txt {
-    display: block;
-  }
+
+// tiles
+.cardstack[data-currentview="3"] .stack_content {
+  max-height: unset;
+  flex-direction: row;
 }
 
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {

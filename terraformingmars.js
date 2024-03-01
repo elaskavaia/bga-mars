@@ -1304,57 +1304,51 @@ var Card = /** @class */ (function () {
 ;
 var View;
 (function (View) {
-    View[View["summary"] = 0] = "summary";
-    View[View["hypersynthetic"] = 1] = "hypersynthetic";
-    View[View["stacked"] = 2] = "stacked";
-    View[View["full"] = 3] = "full";
+    View[View["Summary"] = 0] = "Summary";
+    View[View["Synthetic"] = 1] = "Synthetic";
+    View[View["Stacked"] = 2] = "Stacked";
+    View[View["Full"] = 3] = "Full";
 })(View || (View = {}));
 var CardStack = /** @class */ (function () {
-    function CardStack(game, localsettings, id, label, player_color, card_color_class, default_view) {
+    function CardStack(game, // game reference
+    localsettings, // settngs reference
+    bin_type, label, //label (translated) of card stack
+    player_color, //color owner of stack
+    card_color_class, default_view // default layout number
+    ) {
         this.game = game;
         this.localsettings = localsettings;
-        this.id = 'stack_' + player_color + '_' + id;
-        this.tableau_id = 'tableau_' + player_color + '_' + id;
-        this.player_color = player_color;
+        this.bin_type = bin_type;
         this.label = label;
+        this.player_color = player_color;
         this.card_color_class = card_color_class;
         this.default_view = default_view;
-        // this.current_view=this.default_view;
-        this.current_view = parseInt(this.localsettings.readProp(this.id, String(default_view)));
+        this.div_id = "stack_" + player_color + "_" + bin_type;
+        this.tableau_id = "tableau_" + player_color + "_" + bin_type;
+        this.current_view = parseInt(this.localsettings.readProp(this.div_id, String(default_view)));
     }
     CardStack.prototype.render = function (parent) {
         var _this = this;
-        var htm = "<div id=\"".concat(this.id, "\" class=\"cardstack ").concat(this.card_color_class, "\" data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"").concat('cnt_cards_' + this.id, "\"  class=\"stack_sum cards\">0</div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n         <div class=\"bottomline\">\n            <div id=\"").concat('detail_label_' + this.id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n        </div>\n       </div>\n       <div class=\"stack_header_right\">\n           <div id=\"").concat('btn_sv_' + this.id, "\" class=\"stack_btn switchview\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></div>\n        </div>\n      </div>          \n      <div id=\"").concat('additional_text_' + this.id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content\">\n      </div>\n    </div>");
+        var htm = "<div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"").concat("cnt_cards_" + this.div_id, "\"  class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n         <div class=\"bottomline\">\n            <div id=\"").concat("detail_label_" + this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n        </div>\n       </div>\n       <div class=\"stack_header_right\">\n           <div id=\"").concat("btn_sv_" + this.div_id, "\" class=\"stack_btn switchview\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></div>\n        </div>\n      </div>          \n      <div id=\"").concat("additional_text_" + this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\">\n      </div>\n    </div>");
         $(parent).insertAdjacentHTML("afterbegin", htm);
-        $('btn_sv_' + this.id).addEventListener('click', function (evt) {
+        $("btn_sv_" + this.div_id).addEventListener("click", function (evt) {
             evt.stopPropagation();
             evt.preventDefault();
             _this.onSwitchView();
         });
-        var insertListen = function (event) {
-            if (event.target.parentNode.id && event.target.parentNode.id == _this.tableau_id) {
-                var num = _this.updateCounts();
-                if (num > 0) {
-                    $(_this.id).style.setProperty("--columns", String(Math.ceil(num / 6)));
-                    if (num % 6 == 0) {
-                        $(_this.tableau_id).removeEventListener("DOMNodeInserted", insertListen);
-                        $(_this.tableau_id).insertAdjacentHTML("beforeend", '<div class="break"></div>');
-                        $(_this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
-                    }
-                }
-            }
-        };
-        $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+        // this is already set during notif
+        // const insertListen = (event)=> {
+        //   if (event.target.parentNode.id && event.target.parentNode.id==this.tableau_id) {
+        //     this.updateCounts();
+        //   }
+        // }
+        // $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
         this.adjustFromView();
-        /*
-        dojo.connect('btn_sv_'+this.id,'onclick',(e)=>{
-          e.preventDefault();
-        });*/
     };
     CardStack.prototype.onSwitchView = function () {
-        $(this.id).dataset.currentview = String(this.getNextView(parseInt($(this.id).dataset.currentview)));
-        this.current_view = parseInt($(this.id).dataset.currentview);
-        this.localsettings.writeProp(this.id, String(this.current_view));
+        $(this.div_id).dataset.currentview = String(this.getNextView(parseInt($(this.div_id).dataset.currentview)));
+        this.current_view = parseInt($(this.div_id).dataset.currentview);
+        this.localsettings.writeProp(this.div_id, String(this.current_view));
         this.adjustFromView();
     };
     CardStack.prototype.getNextView = function (from_view) {
@@ -1367,31 +1361,31 @@ var CardStack = /** @class */ (function () {
         var label = "?";
         var additional_txt = "";
         switch (this.current_view) {
-            case View.summary:
+            case View.Summary:
                 label = _("Hidden view");
-                additional_txt = _("%n card(s) hidden").replace('%n', $('cnt_cards_' + this.id).innerHTML);
+                additional_txt = _("cards are hidden");
                 break;
-            case View.hypersynthetic:
+            case View.Synthetic:
                 label = _("Synthetic view");
                 break;
-            case View.stacked:
+            case View.Stacked:
                 label = _("Stacked view");
                 break;
-            case View.full:
+            case View.Full:
                 label = _("Full view");
                 break;
         }
-        if (this.card_color_class == "red" && (this.current_view == View.full || this.current_view == View.stacked)) {
+        if (this.card_color_class == "red" && (this.current_view == View.Full || this.current_view == View.Stacked)) {
             additional_txt = _("Events are played face down, tags are not counted.");
         }
-        $('detail_label_' + this.id).innerHTML = label;
-        $('additional_text_' + this.id).innerHTML = additional_txt;
+        $("detail_label_" + this.div_id).innerHTML = label;
+        $("additional_text_" + this.div_id).innerHTML = additional_txt;
     };
     CardStack.prototype.updateCounts = function () {
-        var count = $(this.tableau_id).querySelectorAll('.card').length;
-        $('cnt_cards_' + this.id).innerHTML = String(count);
-        if (this.current_view == View.summary)
-            $('additional_text_' + this.id).innerHTML = _("%n card(s) hidden").replace('%n', String(count));
+        var count = $(this.tableau_id).querySelectorAll(".card").length;
+        $("cnt_cards_" + this.div_id).innerHTML = String(count);
+        if (this.current_view == View.Summary)
+            $("additional_text_" + this.div_id).innerHTML = _("%n card(s) hidden").replace("%n", String(count));
         return count;
     };
     CardStack.prototype.getDestinationDiv = function () {
@@ -1497,24 +1491,6 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.getAnimationAmount = function () {
         return parseInt(this.game.getSetting('animationamount'));
-    };
-    CustomAnimation.prototype.setOriginalFilter = function (tableau_id, original, actual) {
-        var btn_original = "player_viewcards_" + original + "_" + tableau_id.replace("tableau_", "");
-        var btn_actual = "player_viewcards_" + actual + "_" + tableau_id.replace("tableau_", "");
-        var exec = function () {
-            $(tableau_id).dataset["visibility_" + original] = "1";
-            $(tableau_id).dataset["visibility_" + actual] = "0";
-            $(btn_original).dataset.selected = "1";
-            $(btn_actual).dataset.selected = "0";
-        };
-        if (this.areAnimationsPlayed()) {
-            this.wait(this.getWaitDuration(1500)).then(function () {
-                exec();
-            });
-        }
-        else {
-            exec();
-        }
     };
     CustomAnimation.prototype.setOriginalStackView = function (tableau_elem, value) {
         if (this.areAnimationsPlayed()) {
@@ -3536,8 +3512,8 @@ var GameXBody = /** @class */ (function (_super) {
             cards_2: 0,
             cards_3: 0
         };
-        this.vlayout.setupPlayer(playerInfo);
         this.setupPlayerStacks(playerInfo.color);
+        this.vlayout.setupPlayer(playerInfo);
         //attach sort buttons
         if (playerInfo.id == this.player_id) {
             //generate buttons
@@ -3576,39 +3552,22 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
         }
-        //read last saved value for filter in digital view
-        if (!this.isLayoutFull()) {
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color));
-            var selected = localColorSetting.readProp("digital_cardfilter", "0");
-            for (var i = 0; i <= 3; i++) {
-                $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
-                $("player_viewcards_" + i + "_" + playerInfo.color).dataset.selected = "0";
-            }
-            $("tableau_" + playerInfo.color).dataset["visibility_" + selected] = "1";
-            $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
-        }
     };
     GameXBody.prototype.setupPlayerStacks = function (playerColor) {
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
-        var oldStacks = [
-            'cards_4', 'cards_2a', 'cards_2', 'cards_3vp', 'cards_3', 'cards_1vp', 'cards_1'
-        ];
-        for (var _i = 0, oldStacks_1 = oldStacks; _i < oldStacks_1.length; _i++) {
-            var item = oldStacks_1[_i];
-            if ($('tableau_' + playerColor + '_' + item)) {
-                document.getElementById('tableau_' + playerColor + '_' + item).remove();
-            }
-        }
         var lsStacks = [
-            { label: _('Events'), div: "cards_3", color_class: 'red', default: 0 },
-            { label: _('Automated'), div: "cards_1", color_class: 'green', default: 2 },
-            { label: _('Effects'), div: "cards_2", color_class: 'blue', default: 3 },
-            { label: _('Actions'), div: "cards_2a", color_class: 'blue', default: 3 },
+            { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+            { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
+            { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
+            { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
         ];
-        for (var _a = 0, lsStacks_1 = lsStacks; _a < lsStacks_1.length; _a++) {
-            var item = lsStacks_1[_a];
+        if (this.isLayoutFull()) {
+            lsStacks.push({ label: _("Corporation"), div: "cards_4", color_class: "corp", default: View.Full });
+        }
+        for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {
+            var item = lsStacks_1[_i];
             var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default);
-            stack.render('tableau_' + playerColor);
+            stack.render("tableau_" + playerColor);
         }
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
@@ -4659,8 +4618,8 @@ var GameXBody = /** @class */ (function (_super) {
             this.local_counters[plcolor]["cards_" + t] = count;
             this.updatePlayerLocalCounters(plcolor);
             var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
-            tokenNode.parentElement.dataset.subcount = sub;
-            tokenNode.parentElement.style.setProperty("--subcount", sub);
+            tokenNode.parentElement.parentElement.dataset.subcount = sub;
+            tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
         }
         //move animation on main player board counters
         if (key.startsWith("tracker_")) {
@@ -4834,7 +4793,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.updatePlayerLocalCounters = function (plColor) {
         for (var _i = 0, _a = Object.keys(this.local_counters[plColor]); _i < _a.length; _i++) {
             var key = _a[_i];
-            $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
+            //$("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
         }
     };
     /**
@@ -4878,14 +4837,6 @@ var GameXBody = /** @class */ (function (_super) {
                 // card can hold stuff
                 result.location = tokenInfo.location + "_cards_2a";
             }
-            /*
-            if (!this.isLayoutFull()) {
-              if (t == 1 || t == 3) {
-                if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
-                  result.location = tokenInfo.location + "_cards_" + t + "vp";
-                }
-              }
-            }*/
         }
         if (!result.location)
             // if failed to find revert to server one
@@ -5190,13 +5141,13 @@ var GameXBody = /** @class */ (function (_super) {
         var cancelButtonId = "button_cancel";
         var onUpdate = function () {
             var count = document.querySelectorAll(".".concat(_this.classSelected)).length;
-            if (count == 0 && skippable || opInfo.mcount > count) {
+            if ((count == 0 && skippable) || opInfo.mcount > count) {
                 $(buttonId).classList.add(_this.classButtonDisabled);
-                $(buttonId).title = _('Cannot use this action because insuffient amount of elements selected');
+                $(buttonId).title = _("Cannot use this action because insuffient amount of elements selected");
             }
             else {
                 $(buttonId).classList.remove(_this.classButtonDisabled);
-                $(buttonId).title = '';
+                $(buttonId).title = "";
             }
             if (count > 0) {
                 _this.addActionButtonColor(cancelButtonId, _("Reset"), function () {
@@ -5707,34 +5658,6 @@ var GameXBody = /** @class */ (function (_super) {
             var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("mcompact_colorfilter"));
             localColorSetting.writeProp("selected", btncolor);
         }
-        return true;
-    };
-    GameXBody.prototype.onShowTableauCardsOfColor = function (event) {
-        var id = event.currentTarget.id;
-        // Stop this event propagation
-        dojo.stopEvent(event); // XXX
-        var node = $(id);
-        var plcolor = node.dataset.player;
-        var btncolor = node.dataset.cardtype;
-        var tblitem = "visibility_" + btncolor;
-        var value = "1";
-        if (this.isLayoutFull()) {
-            // toggle
-            value = node.dataset.selected == "0" ? "1" : "0";
-            var perColorSettings = new LocalSettings(this.getLocalSettingNamespace(plcolor));
-            perColorSettings.writeProp(tblitem, value);
-        }
-        else {
-            // unselec others (why?)
-            for (var i = 0; i <= 3; i++) {
-                $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
-                $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
-            }
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor));
-            localColorSetting.writeProp("digital_cardfilter", btncolor);
-        }
-        $("tableau_" + plcolor).dataset[tblitem] = value;
-        node.dataset.selected = value;
         return true;
     };
     GameXBody.prototype.combineTooltips = function (parentNode, childNode) {
@@ -6402,7 +6325,6 @@ var VLayout = /** @class */ (function () {
         dojo.place("pboard_".concat(color), "tableau_".concat(color, "_cards_4"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
         dojo.place("player_controls_".concat(color), "player_board_header_".concat(color), "first");
-        $("local_counter_".concat(color, "_cards_0")).innerHTML = "";
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
         //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
         var headerNode = this.game.createDivNode("playerboard_side_".concat(color), "playerboard_side");
@@ -6437,26 +6359,25 @@ var VLayout = /** @class */ (function () {
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
-        var perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
-        for (var i = 0; i <= 4; i++) {
-            var settingKey = "visibility_" + i;
-            var value = perColorSettings.readProp(settingKey, "1");
-            $("tableau_" + color).dataset[settingKey] = value;
-            $("player_viewcards_" + i + "_" + color).dataset.selected = value;
-        }
+        // const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
+        // for (let i = 0; i <= 4; i++) {
+        //   const settingKey = "visibility_" + i;
+        //   const value = perColorSettings.readProp(settingKey, "1");
+        //   $("tableau_" + color).dataset[settingKey] = value;
+        //   $("player_viewcards_" + i + "_" + color).dataset.selected = value;
+        // }
         // var parent = document.querySelector(".debug_section"); // studio only
         // if (!parent)
         //     $(`pboard_${color}`).style.display  = 'none'; // disable for now
     };
     VLayout.prototype.setupDone = function () {
-        var _this = this;
         if (!this.game.isLayoutFull())
             return;
-        var togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
-        document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach(function (node) {
-            // have to attach tooltip directly, this element does not have a game model
-            _this.game.addTooltipHtml(node.id, togglehtml, _this.game.defaultTooltipDelay);
-        });
+        // const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
+        // document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {
+        //   // have to attach tooltip directly, this element does not have a game model
+        //   this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
+        // });
     };
     VLayout.prototype.renderSpecificToken = function (tokenNode) {
         if (!this.game.isLayoutFull())

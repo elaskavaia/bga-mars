@@ -200,8 +200,9 @@ class GameXBody extends GameTokens {
       cards_2: 0,
       cards_3: 0
     };
-    this.vlayout.setupPlayer(playerInfo);
+
     this.setupPlayerStacks(playerInfo.color);
+    this.vlayout.setupPlayer(playerInfo);
 
     //attach sort buttons
     if (playerInfo.id == this.player_id) {
@@ -247,47 +248,27 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
-
-    //read last saved value for filter in digital view
-    if (!this.isLayoutFull()) {
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(playerInfo.color));
-      const selected = localColorSetting.readProp("digital_cardfilter", "0");
-
-      for (let i = 0; i <= 3; i++) {
-        $("tableau_" + playerInfo.color).dataset["visibility_" + i] = "0";
-        $("player_viewcards_" + i + "_" + playerInfo.color).dataset.selected = "0";
-      }
-
-      $("tableau_" + playerInfo.color).dataset["visibility_" + selected] = "1";
-      $("player_viewcards_" + selected + "_" + playerInfo.color).dataset.selected = "1";
-    }
   }
 
-  setupPlayerStacks(playerColor:string):void {
+  setupPlayerStacks(playerColor: string): void {
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
 
-    const oldStacks= [
-      'cards_4','cards_2a','cards_2','cards_3vp','cards_3','cards_1vp','cards_1'
-    ]
-    for (const item of oldStacks) {
-      if ($('tableau_'+playerColor+'_'+item)) {
-        document.getElementById('tableau_'+playerColor+'_'+item).remove();
-      }
-    }
-    
-    const lsStacks=[
-      {label:_('Events'),div:"cards_3",color_class:'red',default:0},
-      {label:_('Automated'),div:"cards_1",color_class:'green',default:2},
-      {label:_('Effects'),div:"cards_2",color_class:'blue',default:3},
-      {label:_('Actions'),div:"cards_2a",color_class:'blue',default:3},
+    const lsStacks = [
+      { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+      { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
+      { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
+      { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
     ];
+    if (this.isLayoutFull()) {
+      lsStacks.push(
+        { label: _("Corporation"), div: "cards_4", color_class: "corp", default: View.Full }
+      );
+    }
     for (const item of lsStacks) {
-      const stack= new CardStack(this,localColorSetting,item.div,item.label,playerColor,item.color_class,item.default);
-      stack.render('tableau_'+playerColor);
+      const stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default);
+      stack.render("tableau_" + playerColor);
     }
   }
-
-
 
   onShowScoringTable(playerId: number) {
     const mv: string = $("move_nbr").innerHTML;
@@ -398,7 +379,7 @@ class GameXBody extends GameTokens {
       let idx = 1;
       for (const key in pg) {
         let pc = Math.ceil((pg[key] / goals[key]) * 100);
-        if (pc>100) pc=100;
+        if (pc > 100) pc = 100;
         let grade = "high";
         if (pc <= 34) grade = "low";
         else if (pc <= 67) grade = "mid";
@@ -1603,11 +1584,10 @@ awarded.`);
       const count = $(location).querySelectorAll(`[data-card-type="${t}"]`).length;
       this.local_counters[plcolor]["cards_" + t] = count;
       this.updatePlayerLocalCounters(plcolor);
-      
-      const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
-      tokenNode.parentElement.dataset.subcount = sub;
-      tokenNode.parentElement.style.setProperty("--subcount", sub);
 
+      const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+      tokenNode.parentElement.parentElement.dataset.subcount = sub;
+      tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
     }
 
     //move animation on main player board counters
@@ -1629,21 +1609,19 @@ awarded.`);
     return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
   }
 
-  preSlideAnimation(tokenNode:HTMLElement,tokenInfo:Token,location:string) {
-    super.preSlideAnimation(tokenNode,tokenInfo,location);
+  preSlideAnimation(tokenNode: HTMLElement, tokenInfo: Token, location: string) {
+    super.preSlideAnimation(tokenNode, tokenInfo, location);
     if (!this.isLayoutFull()) {
       //auto switch tabs here
       if (!this.isDoingSetup) {
         const parentStack = $(location).parentElement;
-        if (parentStack.dataset.currentview=="0") {
-          parentStack.dataset.currentview="2";
+        if (parentStack.dataset.currentview == "0") {
+          parentStack.dataset.currentview = "2";
           this.customAnimation.setOriginalStackView(parentStack, "0");
         }
-
       }
     }
   }
-
 
   setDomTokenState(tokenId: ElementOrId, newState: any) {
     super.setDomTokenState(tokenId, newState);
@@ -1798,7 +1776,7 @@ awarded.`);
   }
   updatePlayerLocalCounters(plColor: string): void {
     for (let key of Object.keys(this.local_counters[plColor])) {
-      $("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
+      //$("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
     }
   }
   /**
@@ -1836,15 +1814,6 @@ awarded.`);
         // card can hold stuff
         result.location = tokenInfo.location + "_cards_2a";
       }
-
-      /*
-      if (!this.isLayoutFull()) {
-        if (t == 1 || t == 3) {
-          if (this.getRulesFor(tokenInfo.key, "vp", "0") != "0") {
-            result.location = tokenInfo.location + "_cards_" + t + "vp";
-          }
-        }
-      }*/
     }
     if (!result.location)
       // if failed to find revert to server one
@@ -2163,12 +2132,12 @@ awarded.`);
 
     const onUpdate = () => {
       const count = document.querySelectorAll(`.${this.classSelected}`).length;
-      if (count == 0 && skippable || opInfo.mcount > count) {
+      if ((count == 0 && skippable) || opInfo.mcount > count) {
         $(buttonId).classList.add(this.classButtonDisabled);
-        $(buttonId).title = _('Cannot use this action because insuffient amount of elements selected');
+        $(buttonId).title = _("Cannot use this action because insuffient amount of elements selected");
       } else {
         $(buttonId).classList.remove(this.classButtonDisabled);
-        $(buttonId).title = '';
+        $(buttonId).title = "";
       }
       if (count > 0) {
         this.addActionButtonColor(
@@ -2269,7 +2238,7 @@ awarded.`);
     }
 
     if (info.q !== "0") {
-      buttonDiv.title =  this.getTokenName(`err_${info.q}`);
+      buttonDiv.title = this.getTokenName(`err_${info.q}`);
     }
   }
 
@@ -2719,36 +2688,6 @@ awarded.`);
       localColorSetting.writeProp("selected", btncolor);
     }
 
-    return true;
-  }
-
-  onShowTableauCardsOfColor(event: Event) {
-    let id = (event.currentTarget as HTMLElement).id;
-    // Stop this event propagation
-    dojo.stopEvent(event); // XXX
-
-    const node = $(id);
-    const plcolor = node.dataset.player;
-    const btncolor = node.dataset.cardtype;
-    const tblitem = "visibility_" + btncolor;
-    let value = "1";
-
-    if (this.isLayoutFull()) {
-      // toggle
-      value = node.dataset.selected == "0" ? "1" : "0";
-      const perColorSettings = new LocalSettings(this.getLocalSettingNamespace(plcolor));
-      perColorSettings.writeProp(tblitem, value);
-    } else {
-      // unselec others (why?)
-      for (let i = 0; i <= 3; i++) {
-        $("tableau_" + plcolor).dataset["visibility_" + i] = "0";
-        $("player_viewcards_" + i + "_" + plcolor).dataset.selected = "0";
-      }
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(plcolor));
-      localColorSetting.writeProp("digital_cardfilter", btncolor);
-    }
-    $("tableau_" + plcolor).dataset[tblitem] = value;
-    node.dataset.selected = value;
     return true;
   }
 

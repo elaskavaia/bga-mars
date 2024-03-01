@@ -1354,7 +1354,8 @@ display: none;
   }
 }
 
-.cards_3vp .card::after, .cards_3 .card::after{
+.mfull { // XXX figure out
+.cards_3 .card::after{
   content: "";
   position: absolute;
   width: 100%;
@@ -1363,6 +1364,7 @@ display: none;
   background-color: black;
   border-radius: 5%;
   background-size: contain;
+}
 }
 
 @keyframes showme {
