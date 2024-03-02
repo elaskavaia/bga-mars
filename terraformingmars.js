@@ -1314,8 +1314,9 @@ var CardStack = /** @class */ (function () {
     localsettings, // settngs reference
     bin_type, label, //label (translated) of card stack
     player_color, //color owner of stack
-    card_color_class, default_view // default layout number
-    ) {
+    card_color_class, default_view, // default layout number
+    view_list) {
+        if (view_list === void 0) { view_list = []; }
         this.game = game;
         this.localsettings = localsettings;
         this.bin_type = bin_type;
@@ -1323,20 +1324,44 @@ var CardStack = /** @class */ (function () {
         this.player_color = player_color;
         this.card_color_class = card_color_class;
         this.default_view = default_view;
+        this.view_list = view_list;
         this.div_id = "stack_" + player_color + "_" + bin_type;
         this.tableau_id = "tableau_" + player_color + "_" + bin_type;
         this.current_view = parseInt(this.localsettings.readProp(this.div_id, String(default_view)));
+        if (view_list.length == 0) {
+            view_list.push(View.Summary, View.Synthetic, View.Stacked, View.Full);
+        }
     }
     CardStack.prototype.render = function (parent) {
         var _this = this;
-        var switchButton = "fa fa-window-restore";
-        var htm = "<div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"").concat("cnt_cards_" + this.div_id, "\"  class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n         <div class=\"bottomline\">\n            <div id=\"").concat("detail_label_" + this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n        </div>\n       </div>\n       <div class=\"stack_header_right\">\n           <div id=\"").concat("btn_sv_" + this.div_id, "\" class=\"stack_btn switchview ").concat(switchButton, "\"></div>\n        </div>\n      </div>          \n      <div id=\"").concat("additional_text_" + this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\">\n      </div>\n    </div>");
+        var htm = "\n    <div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" \n      data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"cnt_cards_").concat(this.div_id, "\" class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n          <div class=\"bottomline\">\n            <div id=\"detail_label_").concat(this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n          </div>\n        </div>\n        <div class=\"stack_header_right\">\n           <div id=\"btn_sv_").concat(this.div_id, "\" class=\"stack_btn switchview\"></div>\n        </div>\n      </div>          \n      <div id=\"additional_text_").concat(this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\">\n      </div>\n    </div>");
         $(parent).insertAdjacentHTML("afterbegin", htm);
-        $("btn_sv_" + this.div_id).addEventListener("click", function (evt) {
-            evt.stopPropagation();
-            evt.preventDefault();
-            _this.onSwitchView();
-        });
+        var switchButton = $("btn_sv_" + this.div_id);
+        if (this.game.isLayoutFull()) {
+            var _loop_1 = function (i) {
+                var layout = this_1.view_list[i];
+                var buttonstr = "<div id=\"btn_switch_".concat(this_1.div_id, "_").concat(layout, "\" class=\"stack_btn switch_").concat(layout, "\"></div>");
+                var laButton = dojo.place(buttonstr, switchButton.parentElement);
+                laButton.classList.add("fa", this_1.getIconClass(layout));
+                laButton.addEventListener("click", function (evt) {
+                    _this.onSwitchView(layout);
+                });
+            };
+            var this_1 = this;
+            // temp trying multiple buttons
+            for (var i = 0; i < this.view_list.length; i++) {
+                _loop_1(i);
+            }
+            switchButton.remove();
+        }
+        else {
+            switchButton.classList.add("fa", this.getIconClass(View.Full));
+            switchButton.addEventListener("click", function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                _this.onSwitchView();
+            });
+        }
         // this is already set during notif
         // const insertListen = (event)=> {
         //   if (event.target.parentNode.id && event.target.parentNode.id==this.tableau_id) {
@@ -1346,16 +1371,29 @@ var CardStack = /** @class */ (function () {
         // $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
         this.adjustFromView();
     };
-    CardStack.prototype.onSwitchView = function () {
-        $(this.div_id).dataset.currentview = String(this.getNextView(parseInt($(this.div_id).dataset.currentview)));
+    CardStack.prototype.getIconClass = function (layout) {
+        switch (layout) {
+            case View.Summary: return "fa-window-close";
+            case View.Synthetic: return "fa-tablet";
+            case View.Stacked: return "fa-window-minimize";
+            case View.Full: return "fa-window-restore";
+        }
+    };
+    CardStack.prototype.onSwitchView = function (next) {
+        if (next === undefined)
+            next = this.getNextView(parseInt($(this.div_id).dataset.currentview));
+        $(this.div_id).dataset.currentview = String(next);
         this.current_view = parseInt($(this.div_id).dataset.currentview);
         this.localsettings.writeProp(this.div_id, String(this.current_view));
         this.adjustFromView();
     };
     CardStack.prototype.getNextView = function (from_view) {
-        if (from_view == 3)
-            return 0;
-        return from_view + 1;
+        for (var i = 0; i < this.view_list.length - 1; i++) {
+            if (this.view_list[i] == from_view) {
+                return this.view_list[i + 1];
+            }
+        }
+        return this.view_list[0];
     };
     CardStack.prototype.adjustFromView = function () {
         //TODO: apply stuff like custom column or line breaks according to selected view
@@ -1659,7 +1697,7 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.moveResources = function (tracker, qty) {
         return __awaiter(this, void 0, void 0, function () {
-            var trk_item, delay, mark, htm, _loop_1, this_1, i;
+            var trk_item, delay, mark, htm, _loop_2, this_2, i;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
@@ -1674,7 +1712,7 @@ var CustomAnimation = /** @class */ (function () {
                     qty = -1;
                 }
                 htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
-                _loop_1 = function (i) {
+                _loop_2 = function (i) {
                     var tmpid = 'tmp_' + String(Math.random() * 1000000000);
                     var visiblenode = "";
                     if (dojo.style('gameaction_status_wrap', "display") != "none") {
@@ -1692,12 +1730,12 @@ var CustomAnimation = /** @class */ (function () {
                     }
                     var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
                     var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
-                    if (!this_1.nodeExists(origin_1) && origin_1.startsWith('alt_'))
+                    if (!this_2.nodeExists(origin_1) && origin_1.startsWith('alt_'))
                         origin_1 = tracker;
-                    if (!this_1.nodeExists(destination) && destination.startsWith('alt_'))
+                    if (!this_2.nodeExists(destination) && destination.startsWith('alt_'))
                         destination = tracker;
                     dojo.place(htm.replace('%t', tmpid), origin_1);
-                    this_1.wait(delay).then(function () {
+                    this_2.wait(delay).then(function () {
                         if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
                             dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
                         }
@@ -1713,11 +1751,11 @@ var CustomAnimation = /** @class */ (function () {
                         dojo.destroy(tmpid);
                       }
                     );*/
-                    delay += this_1.getWaitDuration(200);
+                    delay += this_2.getWaitDuration(200);
                 };
-                this_1 = this;
+                this_2 = this;
                 for (i = 0; i < Math.abs(qty); i++) {
-                    _loop_1(i);
+                    _loop_2(i);
                 }
                 return [2 /*return*/, this.wait(delay + this.getWaitDuration(500))];
             });
@@ -3550,18 +3588,28 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.setupPlayerStacks = function (playerColor) {
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
-        var lsStacks = [
-            { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
-            { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
-            { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
-            { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
-        ];
-        if (this.isLayoutFull()) {
-            lsStacks.push({ label: _("Corporation"), div: "cards_4", color_class: "corp", default: View.Full });
+        var lsStacks;
+        if (!this.isLayoutFull()) {
+            lsStacks = [
+                { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
+                { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
+                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
+            ];
+        }
+        else {
+            var defViews = [View.Summary, View.Stacked, View.Full];
+            lsStacks = [
+                { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked, views: defViews },
+                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary, views: defViews },
+                { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked, views: defViews },
+                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full, views: [View.Stacked, View.Full] },
+                { label: _("Corporation"), div: "cards_4", color_class: "corp", default: View.Full }
+            ];
         }
         for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {
             var item = lsStacks_1[_i];
-            var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default);
+            var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
             stack.render("tableau_" + playerColor);
         }
     };
@@ -5079,13 +5127,13 @@ var GameXBody = /** @class */ (function (_super) {
                     this.addActionButton("button_" + opId, _("Confirm") + " " + count, function () { return _this.sendActionResolve(opId); });
                 }
                 else {
-                    var _loop_2 = function (i) {
-                        this_2.addActionButton("button_".concat(opId, "_").concat(i), i, function () { return _this.sendActionResolveWithCount(opId, i); });
+                    var _loop_3 = function (i) {
+                        this_3.addActionButton("button_".concat(opId, "_").concat(i), i, function () { return _this.sendActionResolveWithCount(opId, i); });
                     };
-                    var this_2 = this;
+                    var this_3 = this;
                     // counter select stub for now
                     for (var i = from == 0 ? 1 : from; i < count; i++) {
-                        _loop_2(i);
+                        _loop_3(i);
                     }
                     if (count >= 1) {
                         this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
@@ -5478,27 +5526,27 @@ var GameXBody = /** @class */ (function (_super) {
             sortedOps = this.sortOrderOps(args);
         }
         var allSkip = true;
-        var _loop_3 = function (i) {
+        var _loop_4 = function (i) {
             var opIdS = sortedOps[i];
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
-            this_3.completeOpInfo(opId, opInfo, xop, sortedOps.length);
+            this_4.completeOpInfo(opId, opInfo, xop, sortedOps.length);
             var opArgs = opInfo.args;
-            var name_3 = this_3.getButtonNameForOperation(opInfo);
+            var name_3 = this_4.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
-            this_3.updateVisualsFromOp(opInfo, opId);
+            this_4.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
             // - single action
             // - first if ordered
             // - all if choice required (!ordered)
             if (singleOrFirst || !ordered) {
-                this_3.activateSlots(opInfo, singleOrFirst);
-                this_3.updateHandInformation(opInfo.args.info, opInfo.type);
+                this_4.activateSlots(opInfo, singleOrFirst);
+                this_4.updateHandInformation(opInfo.args.info, opInfo.type);
             }
             // if more than one action and they are no ordered add buttons for each
             // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
-                this_3.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_4.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
                 }
@@ -5508,9 +5556,9 @@ var GameXBody = /** @class */ (function (_super) {
                 allSkip = false;
             }
         };
-        var this_3 = this;
+        var this_4 = this;
         for (var i = 0; i < sortedOps.length; i++) {
-            _loop_3(i);
+            _loop_4(i);
         }
         if (allSkip && !single) {
             this.addActionButtonColor("button_skip", _("Skip All"), function () { return _this.sendActionSkip(); }, "red");

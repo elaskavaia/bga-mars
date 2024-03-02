@@ -17,48 +17,68 @@ class CardStack {
     readonly game: GameXBody, // game reference
     readonly localsettings: LocalSettings, // settngs reference
     readonly bin_type: string,
-    readonly label: string,//label (translated) of card stack
-    readonly player_color: string,//color owner of stack
+    readonly label: string, //label (translated) of card stack
+    readonly player_color: string, //color owner of stack
     readonly card_color_class: string,
-    readonly default_view: number // default layout number
+    readonly default_view: number, // default layout number
+    readonly view_list: number[] = []
   ) {
     this.div_id = "stack_" + player_color + "_" + bin_type;
     this.tableau_id = "tableau_" + player_color + "_" + bin_type;
     this.current_view = parseInt(this.localsettings.readProp(this.div_id, String(default_view)));
+    if (view_list.length == 0) {
+      view_list.push(View.Summary, View.Synthetic, View.Stacked, View.Full);
+    }
   }
 
   public render(parent: ElementOrId) {
-    const switchButton = "fa fa-window-restore";
-    const htm = `<div id="${this.div_id}" class="cardstack cardstack_${this.bin_type} ${this.card_color_class}" data-currentview="${
-      this.current_view
-    }">
+    const htm = `
+    <div id="${this.div_id}" class="cardstack cardstack_${this.bin_type} ${this.card_color_class}" 
+      data-currentview="${this.current_view}">
       <div class="stack_header">
         <div class="stack_header_left">
-             <div id="${"cnt_cards_" + this.div_id}"  class="stack_sum cards"></div>
+             <div id="cnt_cards_${this.div_id}" class="stack_sum cards"></div>
         </div>
         <div class="stack_header_middle">
           <div class="topline">
             <div class="stack_label">${this.label}</div>
           </div>
-         <div class="bottomline">
-            <div id="${"detail_label_" + this.div_id}" class="stack_detail_txt actual_view">N/A</div>
+          <div class="bottomline">
+            <div id="detail_label_${this.div_id}" class="stack_detail_txt actual_view">N/A</div>
+          </div>
         </div>
-       </div>
-       <div class="stack_header_right">
-           <div id="${"btn_sv_" + this.div_id}" class="stack_btn switchview ${switchButton}"></div>
+        <div class="stack_header_right">
+           <div id="btn_sv_${this.div_id}" class="stack_btn switchview"></div>
         </div>
       </div>          
-      <div id="${"additional_text_" + this.div_id}" class="stack_content_txt"></div>
+      <div id="additional_text_${this.div_id}" class="stack_content_txt"></div>
       <div id="${this.tableau_id}" class="stack_content cards_bin ${this.bin_type}">
       </div>
     </div>`;
 
     $(parent).insertAdjacentHTML("afterbegin", htm);
-    $("btn_sv_" + this.div_id).addEventListener("click", (evt) => {
-      evt.stopPropagation();
-      evt.preventDefault();
-      this.onSwitchView();
-    });
+
+    const switchButton = $("btn_sv_" + this.div_id);
+    if (this.game.isLayoutFull()) {
+      // temp trying multiple buttons
+      for (let i = 0; i < this.view_list.length; i++) {
+        const layout  = this.view_list[i];
+        const buttonstr = `<div id="btn_switch_${this.div_id}_${layout}" class="stack_btn switch_${layout}"></div>`;
+        const laButton = dojo.place(buttonstr, switchButton.parentElement);
+        laButton.classList.add("fa", this.getIconClass(layout));
+        laButton.addEventListener("click", (evt) => {
+          this.onSwitchView(layout);
+        });
+      }
+      switchButton.remove();
+    } else {
+      switchButton.classList.add("fa", this.getIconClass(View.Full));
+      switchButton.addEventListener("click", (evt) => {
+        evt.stopPropagation();
+        evt.preventDefault();
+        this.onSwitchView();
+      });
+    }
 
     // this is already set during notif
     // const insertListen = (event)=> {
@@ -71,8 +91,18 @@ class CardStack {
     this.adjustFromView();
   }
 
-  private onSwitchView() {
-    $(this.div_id).dataset.currentview = String(this.getNextView(parseInt($(this.div_id).dataset.currentview)));
+  private getIconClass(layout: View) {
+    switch (layout) {
+      case View.Summary: return  "fa-window-close";
+      case View.Synthetic: return  "fa-tablet";
+      case View.Stacked: return  "fa-window-minimize";
+      case View.Full: return  "fa-window-restore";
+    }
+  }
+
+  private onSwitchView(next?: number | undefined) {
+    if (next === undefined) next = this.getNextView(parseInt($(this.div_id).dataset.currentview));
+    $(this.div_id).dataset.currentview = String(next);
     this.current_view = parseInt($(this.div_id).dataset.currentview);
 
     this.localsettings.writeProp(this.div_id, String(this.current_view));
@@ -80,8 +110,12 @@ class CardStack {
   }
 
   private getNextView(from_view: number) {
-    if (from_view == 3) return 0;
-    return from_view + 1;
+    for (let i = 0; i < this.view_list.length - 1; i++) {
+      if (this.view_list[i] == from_view) {
+        return this.view_list[i + 1];
+      }
+    }
+    return this.view_list[0];
   }
 
   private adjustFromView() {
@@ -116,7 +150,8 @@ class CardStack {
     const count: number = $(this.tableau_id).querySelectorAll(".card").length;
     $("cnt_cards_" + this.div_id).innerHTML = String(count);
 
-    if (this.current_view == View.Summary) $("additional_text_" + this.div_id).innerHTML = _("%n card(s) hidden").replace("%n", String(count));
+    if (this.current_view == View.Summary)
+      $("additional_text_" + this.div_id).innerHTML = _("%n card(s) hidden").replace("%n", String(count));
 
     return count;
   }

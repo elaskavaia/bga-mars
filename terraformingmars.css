@@ -7925,7 +7925,6 @@
   font-size: 14px;
 }
 .mfull .cardstack .stack_header {
-  justify-content: flex-start;
   outline: 1px dashed var(--outlinecolor);
 }
 .mfull .cardstack .stack_header .stack_header_middle {

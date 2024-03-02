@@ -245,19 +245,26 @@ class GameXBody extends GameTokens {
   setupPlayerStacks(playerColor: string): void {
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
 
-    const lsStacks = [
-      { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
-      { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
-      { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
-      { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
-    ];
-    if (this.isLayoutFull()) {
-      lsStacks.push(
+    let lsStacks: any;
+    if (!this.isLayoutFull()) {
+      lsStacks = [
+        { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+        { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
+        { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
+        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
+      ];
+    } else {
+      const defViews = [View.Summary, View.Stacked, View.Full];
+      lsStacks = [
+        { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked, views: defViews },
+        { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary, views: defViews },
+        { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked, views: defViews  },
+        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full, views: [View.Stacked, View.Full] },
         { label: _("Corporation"), div: "cards_4", color_class: "corp", default: View.Full }
-      );
+      ];
     }
     for (const item of lsStacks) {
-      const stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default);
+      const stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
       stack.render("tableau_" + playerColor);
     }
   }
