@@ -459,26 +459,132 @@
 
 
   .tableau {
-    //height: calc(var(--card-height) * 2);
-    // display: grid;
-    // grid-template-columns: auto auto auto auto auto;
-    // grid-template-rows: var(--card-width) auto;
-    // grid-gap: 0.5em;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-
     //outline: 2px dashed var(--plcolor);
     padding: 0.5em;
   }
+
   .cardstack {
+    font-size: 14px;
+
     .stack_header {
       justify-content: flex-start;
+      outline: 1px dashed var(--outlinecolor);
+
       .stack_header_middle {
         display: none;
       }
     }
+
+    .stack_sum.cards {
+      width: 1.2em;
+      height: 1.2em;
+      border-radius: 20%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--hlcolor);
+    }
+
+    .stack_btn {
+      width: 1.2em;
+      height: 1.2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      padding: 0.1em;
+      color: gray;
+    }
+
+    .stack_btn:hover {
+      background-color: #66666655;
+    }
   }
+
+  // hidden
+  .cardstack[data-currentview="0"] {
+    height: unset;
+
+    .stack_content {
+      --overlap: 0.99;
+    }
+
+    .stack_content .card {
+      display: unset;
+    }
+
+    .stack_content_txt {
+      display: none;
+    }
+  }
+
+  // synthetic
+  .cardstack[data-currentview="1"] {
+    .stack_content {
+      --overlap: 0.1;
+    }
+  }
+
+  .cardstack[data-currentview].cardstack_cards_4.corp {
+    .stack_content {
+      --overlap: 0;
+    }
+
+    .stack_sum.cards {
+      display: none;
+    }
+  }
+
+  // corp/playerboard stack
+  .cardstack[data-currentview="0"].cardstack_cards_4.corp {
+    .pboard {
+      display: none;
+    }
+  }
+
+  .cardstack[data-currentview="1"].cardstack_cards_4.corp {
+    .pboard {
+      display: none;
+    }
+
+    .stack_content .card {
+      display: block;
+    }
+  }
+
+  .cardstack[data-currentview="2"].cardstack_cards_4.corp {
+    .pboard {
+      display: block;
+    }
+
+    .stack_content .card {
+      display: none;
+    }
+  }
+
+  .cardstack[data-currentview="3"].red, .cardstack[data-currentview="2"].red {
+    .cards_3 .card::after {
+      content: unset;
+    }
+  }
+  .cardstack[data-currentview="1"].red {
+    .stack_content {
+      --overlap: 0.88;
+    }
+  }
+
+
+  .cards_3 .card::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url(img/cardback.jpg);
+    background-color: black;
+    border-radius: 5%;
+    background-size: contain;
+  }
+
 
   .location .card:hover {
     z-index: 10;
@@ -595,16 +701,6 @@
     background: unset;
     // override layout settings
     flex-grow: 1;
-    display: grid;
-
-
-    grid-template-columns: min-content auto;
-    grid-gap: 2px;
-    grid-template-rows: min-content auto;
-    grid-template-areas:
-      "sidebar  header"
-      "sidebar  content";
-    /* outline: 1px dashed var(--plcolor); */
   }
 
   .thisplayer_zone {
@@ -629,21 +725,6 @@
   }
 
 
-  .playerboard_side_name {
-    font-family: var(--mars-font);
-    width: 32px;
-    height: var(--card-height);
-    text-overflow: ellipsis;
-    text-wrap: nowrap;
-    color: var(--plcolor);
-  }
-
-  .playerboard_side_name::before {
-    content: attr(data-player-name);
-    position: absolute;
-    transform: rotate(-90deg) translateX(-100%);
-    transform-origin: 0.5em 0.75em 0;
-  }
 
   .playerboard_side_gear::after {
     content: "\f013";
@@ -656,71 +737,33 @@
     animation: fa-spin 2s linear;
   }
 
-  .playerboard_side {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    /* background-image: linear-gradient(to right, var(--plcolor), transparent); */
-    width: 32px;
-    font-size: 32px;
-    grid-area: sidebar;
-  }
+
 
   .player_area {
-
-    .playerboard_header {
-      display: flex;
-      width: fit-content;
-      grid-area: header;
-    }
-
-    .tableau {
-      grid-area: content;
-    }
-
     .playerboard_header .badge~.mini_counter[data-state="0"] {
       opacity: 0.2;
     }
 
     .playerboard_header {
-      .counters_holder {
-        width: unset;
-      }
-
       .corp_logo {
         display: block;
       }
     }
 
     .playerboard_controls {
-      display: block;
-    }
-
-    .player_area_name {
       display: none;
     }
 
-    .player_tags {
-      width: unset;
-      padding: 2px;
+    .player_area_name {
+      text-overflow: clip;
+      overflow: hidden;
+      z-index: 1;
+      color: var(--plcolor);
+      min-width: calc(var(--card-width) * 1);
+      user-select: none;
+      padding-left: 1em;
+      font-size: x-large;
     }
-
-  }
-
-
-
-
-
-  .player_controls {
-    position: relative;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-evenly;
-    gap: 0.5em;
-    width: fit-content;
-    margin-right: 10px;
-    margin-left: 10px;
   }
 
   .corp_holder {
@@ -729,54 +772,6 @@
     .corp_logo {
       display: none;
     }
-  }
-
-  .viewcards_button {
-    display: flex;
-    width: fit-content;
-    height: fit-content;
-    border-radius: 10%;
-    cursor: pointer;
-  }
-
-  .buttoncard {
-    // center content
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    font-weight: normal;
-    width: 24px;
-    height: 32px;
-    border: 1px solid gray;
-    border-radius: 20%;
-  }
-
-  .viewcardbutton_counter {
-    height: calc(var(--resourcesize) * 0.55);
-  }
-
-  .viewcards_button[data-cardtype="1"] .buttoncard {
-    background-color: #b5ff82;
-  }
-
-  .viewcards_button[data-cardtype="2"] .buttoncard {
-    background-color: #67b1f1;
-  }
-
-  .viewcards_button[data-cardtype="3"] .buttoncard {
-    background-color: #e1ac18;
-  }
-
-  .viewcards_button[data-cardtype="0"] .buttoncard {
-    background-color: #8b452d;
-  }
-
-  .viewcards_button[data-cardtype="4"] .buttoncard {
-    background-color: white; // corporation selector
-  }
-
-  .viewcards_button[data-selected="0"] i {
-    display: none;
   }
 
   .mini_counter.badge {

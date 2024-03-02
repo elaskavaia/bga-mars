@@ -9,33 +9,31 @@ class VLayout {
     const board = $(`player_area_${color}`);
     div.appendChild(board);
 
-    dojo.destroy(`tableau_${color}_cards_3vp`);
-    dojo.destroy(`tableau_${color}_cards_1vp`);
     dojo.place(`pboard_${color}`, `tableau_${color}_cards_4`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
-    dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
+    //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
 
    
     dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
-    //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
+    dojo.place(`player_area_name_${color}`, `player_board_header_${color}`, "first");
 
-    const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
-    //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-    dojo.place(headerNode, `player_area_${color}`, "first");
-    const settingNode = $(`player_board_header_${color}`);
-    dojo.place(settingNode, `player_area_${color}`, "first");
-    settingNode.style.display = "none";
-    const gear = this.game.createDivNode(`playerboard_side_gear_${color}`, "playerboard_side_gear", headerNode);
-    gear.addEventListener("click", () => {
-      if (settingNode.style.display == "none") {
-        settingNode.style.display = "flex";
-      } else {
-        settingNode.style.display = "none";
-      }
-    });
+    // const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
+    // //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
+    // dojo.place(headerNode, `player_area_${color}`, "first");
+    // const settingNode = $(`player_board_header_${color}`);
+    // dojo.place(settingNode, `player_area_${color}`, "first");
+    // settingNode.style.display = "none";
+    // const gear = this.game.createDivNode(`playerboard_side_gear_${color}`, "playerboard_side_gear", headerNode);
+    // gear.addEventListener("click", () => {
+    //   if (settingNode.style.display == "none") {
+    //     settingNode.style.display = "flex";
+    //   } else {
+    //     settingNode.style.display = "none";
+    //   }
+    // });
 
-    const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", headerNode);
-    namediv.setAttribute("data-player-name", name);
+    //const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", `player_board_header_${color}`);
+    //namediv.setAttribute("data-player-name", name);
 
     // // relocate tile trackers from tags
     // const places = ["tracker_city", "tracker_forest", "tracker_land"];
@@ -58,13 +56,7 @@ class VLayout {
 
     dojo.place(`counter_draw_${color}`, `limbo`);
 
-    // const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
-    // for (let i = 0; i <= 4; i++) {
-    //   const settingKey = "visibility_" + i;
-    //   const value = perColorSettings.readProp(settingKey, "1");
-    //   $("tableau_" + color).dataset[settingKey] = value;
-    //   $("player_viewcards_" + i + "_" + color).dataset.selected = value;
-    // }
+
 
     // var parent = document.querySelector(".debug_section"); // studio only
     // if (!parent)

@@ -3,7 +3,6 @@ const LAYOUT_PREF_ID = 100;
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_pay: any;
-  private local_counters: any;
   private isDoingSetup: boolean;
   private vlayout: VLayout;
   private localSettings: LocalSettings;
@@ -36,7 +35,6 @@ class GameXBody extends GameTokens {
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
-      this.local_counters = [];
       this.clearReverseIdMap();
       this.customAnimation = new CustomAnimation(this);
 
@@ -194,12 +192,6 @@ class GameXBody extends GameTokens {
     $(`player_score_${playerInfo.id}`).addEventListener("click", () => {
       this.onShowScoringTable(playerInfo.id);
     });
-
-    this.local_counters[playerInfo.color] = {
-      cards_1: 0,
-      cards_2: 0,
-      cards_3: 0
-    };
 
     this.setupPlayerStacks(playerInfo.color);
     this.vlayout.setupPlayer(playerInfo);
@@ -1582,8 +1574,6 @@ awarded.`);
       const t = this.getRulesFor(key, "t");
       const plcolor = getPart(location, 1);
       const count = $(location).querySelectorAll(`[data-card-type="${t}"]`).length;
-      this.local_counters[plcolor]["cards_" + t] = count;
-      this.updatePlayerLocalCounters(plcolor);
 
       const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
       tokenNode.parentElement.parentElement.dataset.subcount = sub;
@@ -1774,11 +1764,7 @@ awarded.`);
       }
     }
   }
-  updatePlayerLocalCounters(plColor: string): void {
-    for (let key of Object.keys(this.local_counters[plColor])) {
-      //$("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
-    }
-  }
+
   /**
    * This function can convert the database info into dom placement info.
    * This SHOULD NOT MODIFY dom state. For that use @see onUpdateTokenInDom

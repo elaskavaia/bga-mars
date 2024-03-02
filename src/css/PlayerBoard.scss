@@ -100,19 +100,19 @@
 
 .mcompact {
   .pboard {
-    display: none; /* real player board: hide for this layout */
-  }
-  .playerboard_header{
-    width: 100%;
-    display: flex;
+    display: none;
+    /* real player board: hide for this layout */
   }
 
   .player_area .location {
     width: revert;
   }
+}
 
-    }
-
+.playerboard_header {
+  width: 100%;
+  display: flex;
+}
   .tableau>.counter {
     display: none;
   }
@@ -319,7 +319,7 @@
   }
 
 .mcompact {
-  .cards_3vp, .cards_3 {
+  .cards_3 {
     .card_badges {
       filter:grayscale(1);
     }

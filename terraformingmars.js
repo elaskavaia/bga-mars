@@ -1329,7 +1329,8 @@ var CardStack = /** @class */ (function () {
     }
     CardStack.prototype.render = function (parent) {
         var _this = this;
-        var htm = "<div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"").concat("cnt_cards_" + this.div_id, "\"  class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n         <div class=\"bottomline\">\n            <div id=\"").concat("detail_label_" + this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n        </div>\n       </div>\n       <div class=\"stack_header_right\">\n           <div id=\"").concat("btn_sv_" + this.div_id, "\" class=\"stack_btn switchview\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></div>\n        </div>\n      </div>          \n      <div id=\"").concat("additional_text_" + this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\">\n      </div>\n    </div>");
+        var switchButton = "fa fa-window-restore";
+        var htm = "<div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"").concat("cnt_cards_" + this.div_id, "\"  class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n         <div class=\"bottomline\">\n            <div id=\"").concat("detail_label_" + this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n        </div>\n       </div>\n       <div class=\"stack_header_right\">\n           <div id=\"").concat("btn_sv_" + this.div_id, "\" class=\"stack_btn switchview ").concat(switchButton, "\"></div>\n        </div>\n      </div>          \n      <div id=\"").concat("additional_text_" + this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\">\n      </div>\n    </div>");
         $(parent).insertAdjacentHTML("afterbegin", htm);
         $("btn_sv_" + this.div_id).addEventListener("click", function (evt) {
             evt.stopPropagation();
@@ -3382,7 +3383,6 @@ var GameXBody = /** @class */ (function (_super) {
             this.defaultTooltipDelay = 800;
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;
-            this.local_counters = [];
             this.clearReverseIdMap();
             this.customAnimation = new CustomAnimation(this);
             //layout
@@ -3507,11 +3507,6 @@ var GameXBody = /** @class */ (function (_super) {
         $("player_score_".concat(playerInfo.id)).addEventListener("click", function () {
             _this.onShowScoringTable(playerInfo.id);
         });
-        this.local_counters[playerInfo.color] = {
-            cards_1: 0,
-            cards_2: 0,
-            cards_3: 0
-        };
         this.setupPlayerStacks(playerInfo.color);
         this.vlayout.setupPlayer(playerInfo);
         //attach sort buttons
@@ -4615,8 +4610,6 @@ var GameXBody = /** @class */ (function (_super) {
             var t = this.getRulesFor(key, "t");
             var plcolor = getPart(location, 1);
             var count = $(location).querySelectorAll("[data-card-type=\"".concat(t, "\"]")).length;
-            this.local_counters[plcolor]["cards_" + t] = count;
-            this.updatePlayerLocalCounters(plcolor);
             var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
             tokenNode.parentElement.parentElement.dataset.subcount = sub;
             tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
@@ -4788,12 +4781,6 @@ var GameXBody = /** @class */ (function (_super) {
                 var txt = _("Draft Direction ⤇ %s").replace("%s", "<span class=\"draft_info\" style=\"color:#".concat(next_color, ";\">").concat(next_name, "</span>"));
                 $("gameaction_status").insertAdjacentHTML("afterend", "<span id=\"draft_info\">".concat(txt, "</span>"));
             }
-        }
-    };
-    GameXBody.prototype.updatePlayerLocalCounters = function (plColor) {
-        for (var _i = 0, _a = Object.keys(this.local_counters[plColor]); _i < _a.length; _i++) {
-            var key = _a[_i];
-            //$("local_counter_" + plColor + "_" + key).innerHTML = this.local_counters[plColor][key];
         }
     };
     /**
@@ -6320,30 +6307,27 @@ var VLayout = /** @class */ (function () {
         var div = $("main_area");
         var board = $("player_area_".concat(color));
         div.appendChild(board);
-        dojo.destroy("tableau_".concat(color, "_cards_3vp"));
-        dojo.destroy("tableau_".concat(color, "_cards_1vp"));
         dojo.place("pboard_".concat(color), "tableau_".concat(color, "_cards_4"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
-        dojo.place("player_controls_".concat(color), "player_board_header_".concat(color), "first");
+        //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
         dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
-        //dojo.place(`player_area_name_${color}`, `tableau_${color}_corp`, "first");
-        var headerNode = this.game.createDivNode("playerboard_side_".concat(color), "playerboard_side");
-        //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-        dojo.place(headerNode, "player_area_".concat(color), "first");
-        var settingNode = $("player_board_header_".concat(color));
-        dojo.place(settingNode, "player_area_".concat(color), "first");
-        settingNode.style.display = "none";
-        var gear = this.game.createDivNode("playerboard_side_gear_".concat(color), "playerboard_side_gear", headerNode);
-        gear.addEventListener("click", function () {
-            if (settingNode.style.display == "none") {
-                settingNode.style.display = "flex";
-            }
-            else {
-                settingNode.style.display = "none";
-            }
-        });
-        var namediv = this.game.createDivNode("playerboard_side_name_".concat(color), "playerboard_side_name", headerNode);
-        namediv.setAttribute("data-player-name", name);
+        dojo.place("player_area_name_".concat(color), "player_board_header_".concat(color), "first");
+        // const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
+        // //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
+        // dojo.place(headerNode, `player_area_${color}`, "first");
+        // const settingNode = $(`player_board_header_${color}`);
+        // dojo.place(settingNode, `player_area_${color}`, "first");
+        // settingNode.style.display = "none";
+        // const gear = this.game.createDivNode(`playerboard_side_gear_${color}`, "playerboard_side_gear", headerNode);
+        // gear.addEventListener("click", () => {
+        //   if (settingNode.style.display == "none") {
+        //     settingNode.style.display = "flex";
+        //   } else {
+        //     settingNode.style.display = "none";
+        //   }
+        // });
+        //const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", `player_board_header_${color}`);
+        //namediv.setAttribute("data-player-name", name);
         // // relocate tile trackers from tags
         // const places = ["tracker_city", "tracker_forest", "tracker_land"];
         // for (const key of places) {
@@ -6359,13 +6343,6 @@ var VLayout = /** @class */ (function () {
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
-        // const perColorSettings = new LocalSettings(this.game.getLocalSettingNamespace(color));
-        // for (let i = 0; i <= 4; i++) {
-        //   const settingKey = "visibility_" + i;
-        //   const value = perColorSettings.readProp(settingKey, "1");
-        //   $("tableau_" + color).dataset[settingKey] = value;
-        //   $("player_viewcards_" + i + "_" + color).dataset.selected = value;
-        // }
         // var parent = document.querySelector(".debug_section"); // studio only
         // if (!parent)
         //     $(`pboard_${color}`).style.display  = 'none'; // disable for now

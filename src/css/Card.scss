@@ -1354,18 +1354,6 @@ display: none;
   }
 }
 
-.mfull { // XXX figure out
-.cards_3 .card::after{
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: url(img/cardback.jpg);
-  background-color: black;
-  border-radius: 5%;
-  background-size: contain;
-}
-}
 
 @keyframes showme {
   0%{

@@ -1,9 +1,18 @@
 .cardstack {
   --subcount: "0"; // overriden by js
+  --outlinecolor: lightgray;
+  --hlcolor: gray;
+
   transition: all 400ms ease-in;
   position: relative;
   user-select: none;
   flex: 0 0 auto;
+
+  .stack_content_txt {
+    position: relative;
+    display: none;
+    width: 100%;
+  }
 
   .stack_content_txt::after {
     content: ": "var(--subcount);
@@ -20,6 +29,7 @@
     background-color: var(--hlcolor);
     text-align: center;
   }
+
   .stack_header {
     position: relative;
     display: flex;
@@ -45,8 +55,6 @@
       display: flex;
       flex-direction: column;
     }
-
-
   }
 }
 
@@ -92,7 +100,6 @@
 
     .stack_label {
       /*margin-left: 1vh;*/
-      font-family: "SpaceFont";
       font-size: calc(var(--card-height) * 0.07);
     }
 
@@ -129,9 +136,6 @@
     }
 
     .stack_content_txt {
-      position: relative;
-      display: none;
-      width: 100%;
       font-size: calc(var(--card-height) * 0.05);
       font-style: italic;
       color: white;
@@ -153,16 +157,22 @@
 }
 
 
-.stack_content{
+.stack_content {
   --overlap: 0;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   flex-wrap: wrap;
-  align-items: center; 
+  align-items: center;
   max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
   position: relative;
   padding: calc(var(--card-width) * 0.03);
+  // padding to offset margin-top + default padding
+  padding-top: calc(var(--card-height) * var(--overlap) + var(--card-width) * 0.03);
+
+  .card {
+    margin-top: calc(var(--card-height) * var(--overlap) * -1);
+  }
 }
 
 // hidden
@@ -189,11 +199,6 @@
 // stack
 .cardstack[data-currentview="2"] .stack_content {
   --overlap: 0.88;
-  // padding to offset margin-top
-  padding-top: calc(var(--card-height) * var(--overlap));
-  .card {
-    margin-top: calc(var(--card-height) * var(--overlap) * -1);
-  }
 }
 
 .cardstack[data-currentview="2"].blue .stack_content {

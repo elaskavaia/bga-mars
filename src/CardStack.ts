@@ -28,6 +28,7 @@ class CardStack {
   }
 
   public render(parent: ElementOrId) {
+    const switchButton = "fa fa-window-restore";
     const htm = `<div id="${this.div_id}" class="cardstack cardstack_${this.bin_type} ${this.card_color_class}" data-currentview="${
       this.current_view
     }">
@@ -44,7 +45,7 @@ class CardStack {
         </div>
        </div>
        <div class="stack_header_right">
-           <div id="${"btn_sv_" + this.div_id}" class="stack_btn switchview"><i class="fa fa-refresh" aria-hidden="true"></i></div>
+           <div id="${"btn_sv_" + this.div_id}" class="stack_btn switchview ${switchButton}"></div>
         </div>
       </div>          
       <div id="${"additional_text_" + this.div_id}" class="stack_content_txt"></div>

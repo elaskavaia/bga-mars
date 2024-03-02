@@ -491,7 +491,7 @@
 }
 
 .bgabutton.disabled:hover {
-	background-color: red;
+	color: red;
 }
 .bgabutton.disabled:active {
 	pointer-events: none; // prevent default click, but not hover
@@ -629,12 +629,12 @@
 .tracker_ers{ 
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
-  background-position: 0 -100%; order:-2;
+  background-position: 0 -100%;
 }
 .tracker_eru{ 
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
-  background-position: -100% -100%;order:-1;
+  background-position: -100% -100%;
 }
 
 .tracker.tracker_city{ 
