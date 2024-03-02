@@ -548,7 +548,7 @@ class GameXBody extends GameTokens {
     if (typeof g_replayFrom != "undefined" || g_archive_mode) return;
     const ls = new LocalSettings(this.getLocalSettingNamespace()); // need another instance to save once per machine not per user/theme like others
 
-    if (ls.readProp("activated")) return;
+    if (ls.readProp("activated",undefined)) return;
     ls.writeProp("activated", "1");
 
     const dialog = new ebg.popindialog();

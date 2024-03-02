@@ -2613,6 +2613,9 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.customcard_action_194 = function () {
         return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">X<div class="cnt_media token_img tracker_e depth_2"></div></div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div>';
     };
+    CustomRenders.customcard_rules_200 = function () {
+        return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div><div class="outer_production"><div class="cnt_media token_img tracker_e depth_1"></div></div></div><div class="production_line cnt_gains"><div class="plusminus">-</div>' + this.parseSingleItemToHTML(this.getParse('m', 0), 2) + '</div></div></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media tracker micon tracker_city depth_1"></div>*</div></div>';
+    };
     CustomRenders.customcard_effect_206 = function () {
         return '<div class="groupline">'
             + '<div class="prereq_content mode_min">'
@@ -3822,7 +3825,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (typeof g_replayFrom != "undefined" || g_archive_mode)
             return;
         var ls = new LocalSettings(this.getLocalSettingNamespace()); // need another instance to save once per machine not per user/theme like others
-        if (ls.readProp("activated"))
+        if (ls.readProp("activated", undefined))
             return;
         ls.writeProp("activated", "1");
         var dialog = new ebg.popindialog();
