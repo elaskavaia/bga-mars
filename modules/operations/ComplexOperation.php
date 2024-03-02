@@ -123,6 +123,7 @@ class ComplexOperation extends AbsOperation {
     }
 
     function requireConfirmation() {
+        if ($this->isOptional()) return true;
         return false; // this has to be send to server to expand before confirmation
     }
 
