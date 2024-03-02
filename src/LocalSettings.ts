@@ -14,22 +14,21 @@ interface LocalProp {
 }
 
 class LocalSettings {
-  constructor(private gameName: string, private props: LocalProp[] = []) {
-
-  }
-
+  constructor(
+    private gameName: string,
+    private props: LocalProp[] = []
+  ) {}
 
   //loads setttings, apply data values to main body
   public setup(): void {
     //this.load();
     for (let prop of this.props) {
-      let stored = this.readProp(prop.key);
+      let stored = this.readProp(prop.key, undefined);
       this.applyChanges(prop, stored, false);
     }
   }
 
-
-  public getLocalSettingById(key: string){
+  public getLocalSettingById(key: string) {
     for (let prop of this.props) {
       if (key == prop.key) return prop;
     }
@@ -54,13 +53,12 @@ class LocalSettings {
       });
     let title = _("Local Settings");
 
-
     let htmcontents = "";
     for (let prop of this.props) {
       if (prop.ui !== false) htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
     }
 
-    const restore_tooltip = _('Click to restore to original values');
+    const restore_tooltip = _("Click to restore to original values");
     let htm = `
       <div id="${this.gameName}_localsettings_window" class="localsettings_window">
          <div class="localsettings_header">${title}<span id="localsettings_restore" title="${restore_tooltip}" class="fa fa-eraser"></span></div>
@@ -74,7 +72,7 @@ class LocalSettings {
       if (prop.ui !== false) this.actionProp(prop);
     }
 
-    $('localsettings_restore').addEventListener("click", (event) => {
+    $("localsettings_restore").addEventListener("click", (event) => {
       const target = event.target as HTMLInputElement;
       this.clear();
       this.setup();
@@ -142,11 +140,11 @@ class LocalSettings {
       });
     }
     $("localsettings_prop_button_minus_" + prop.key).addEventListener("click", () => {
-      this.doAction(prop,"minus");
+      this.doAction(prop, "minus");
     });
 
     $("localsettings_prop_button_plus_" + prop.key).addEventListener("click", () => {
-      this.doAction(prop,"plus");
+      this.doAction(prop, "plus");
     });
   }
 
@@ -180,11 +178,10 @@ class LocalSettings {
       if (value < prop.range.min) value = prop.range.min;
       prop.value = String(value);
     } else if (prop.ui == "checkbox") {
+      if (newvalue === undefined) newvalue = prop.default;
       if (newvalue) {
         const key = Object.keys(prop.choice)[0];
         prop.value = key ?? String(newvalue);
-      } else if (newvalue === undefined) {
-        prop.value = String(prop.default);
       } else {
         const key = Object.keys(prop.choice)[1] ?? "";
         prop.value = key;
@@ -226,14 +223,15 @@ class LocalSettings {
   }
 
   public getLocalStorageItemId(key: string) {
-     return this.gameName + "." + key;
+    return this.gameName + "." + key;
   }
 
-  public readProp(key: string, def: string = ''): string {
+  public readProp(key: string, def: string | undefined): string {
     const value = localStorage.getItem(this.getLocalStorageItemId(key));
-    if (value==undefined) return def;
+    if (value === undefined || value === null) return def;
     return value;
   }
+
   public writeProp(key: string, val: string): Boolean {
     try {
       localStorage.setItem(this.getLocalStorageItemId(key), val);

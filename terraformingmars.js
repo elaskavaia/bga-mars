@@ -3746,7 +3746,7 @@ var GameXBody = /** @class */ (function (_super) {
                 key: "hidebadges",
                 label: _("Hide badges on minipanel"),
                 choice: { hide: true },
-                default: false,
+                default: true,
                 ui: "checkbox"
             },
             {
@@ -5948,7 +5948,7 @@ var LocalSettings = /** @class */ (function () {
         //this.load();
         for (var _i = 0, _a = this.props; _i < _a.length; _i++) {
             var prop = _a[_i];
-            var stored = this.readProp(prop.key);
+            var stored = this.readProp(prop.key, undefined);
             this.applyChanges(prop, stored, false);
         }
     };
@@ -5985,7 +5985,7 @@ var LocalSettings = /** @class */ (function () {
             if (prop.ui !== false)
                 htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
         }
-        var restore_tooltip = _('Click to restore to original values');
+        var restore_tooltip = _("Click to restore to original values");
         var htm = "\n      <div id=\"".concat(this.gameName, "_localsettings_window\" class=\"localsettings_window\">\n         <div class=\"localsettings_header\">").concat(title, "<span id=\"localsettings_restore\" title=\"").concat(restore_tooltip, "\" class=\"fa fa-eraser\"></span></div>\n         ").concat(htmcontents, "\n      </div>\n      ");
         document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
         //add interactivity
@@ -5994,7 +5994,7 @@ var LocalSettings = /** @class */ (function () {
             if (prop.ui !== false)
                 this.actionProp(prop);
         }
-        $('localsettings_restore').addEventListener("click", function (event) {
+        $("localsettings_restore").addEventListener("click", function (event) {
             var target = event.target;
             _this.clear();
             _this.setup();
@@ -6092,12 +6092,11 @@ var LocalSettings = /** @class */ (function () {
             prop.value = String(value);
         }
         else if (prop.ui == "checkbox") {
+            if (newvalue === undefined)
+                newvalue = prop.default;
             if (newvalue) {
                 var key = Object.keys(prop.choice)[0];
                 prop.value = key !== null && key !== void 0 ? key : String(newvalue);
-            }
-            else if (newvalue === undefined) {
-                prop.value = String(prop.default);
             }
             else {
                 var key = (_a = Object.keys(prop.choice)[1]) !== null && _a !== void 0 ? _a : "";
@@ -6146,9 +6145,8 @@ var LocalSettings = /** @class */ (function () {
         return this.gameName + "." + key;
     };
     LocalSettings.prototype.readProp = function (key, def) {
-        if (def === void 0) { def = ''; }
         var value = localStorage.getItem(this.getLocalStorageItemId(key));
-        if (value == undefined)
+        if (value === undefined || value === null)
             return def;
         return value;
     };

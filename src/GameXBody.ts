@@ -511,7 +511,7 @@ class GameXBody extends GameTokens {
         key: "hidebadges",
         label: _("Hide badges on minipanel"),
         choice: { hide: true },
-        default: false,
+        default: true,
         ui: "checkbox"
       },
       {
