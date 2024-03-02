@@ -19,8 +19,8 @@ class Operation_discard extends AbsOperation {
         return count($cards_ids);
     }
 
-    function canResolveAutomatically() {
-        return false;
+    function canSkipChoice() {
+        return true;
     }
 
     function argPrimary() {
