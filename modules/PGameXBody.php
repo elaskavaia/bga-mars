@@ -1428,6 +1428,8 @@ abstract class PGameXBody extends PGameMachine {
                 $op->undo();
                 $this->machineMultiplayerDistpatchPrivate($player_id);
                 return;
+            case 'setuppick':
+                throw new BgaUserException(self::_("Nothing to undo"));
         }
         $this->systemAssertTrue("Cannot undo $optype");
     }
