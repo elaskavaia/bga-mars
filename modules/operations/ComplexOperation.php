@@ -104,6 +104,7 @@ class ComplexOperation extends AbsOperation {
 
     protected function effect(string $owner, int $userCount): int {
         if ($this->game->expandOperation($this->op_info, $userCount)) {
+            if ($userCount>=$this->getMinCount()) return $this->getCount(); // user picked less than all
             return $userCount;
         }
         $type = $this->op_info['type'];
