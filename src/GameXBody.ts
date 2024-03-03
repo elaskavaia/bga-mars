@@ -830,8 +830,11 @@ class GameXBody extends GameTokens {
   //Expands for cleanup
   ajaxuseraction(action: string, args?: any, handler?: (err: any) => void) {
     this.gameStatusCleanup();
-    super.ajaxuseraction(action, args, handler);
     console.log(`sending ${action}`, args);
+    if (action  === "passauto") {
+      return this.ajaxcallwrapper_unchecked(action, {}, handler);
+    }
+    super.ajaxuseraction(action, args, handler);
   }
 
   onNotif(notif: Notif) {
@@ -1838,10 +1841,14 @@ awarded.`);
     }
   }
 
-  sendActionResolve(op: number, args?: any, handler?: eventhandler) {
+  sendActionResolve(op: number, args?: {[key: string]: any},  opInfo?: {[key: string]: any}, handler?: eventhandler) {
     if (!args) args = {};
+    let action = "resolve";
+    if (opInfo?.ooturn) {
+      action = opInfo.type; // ugly hack
+    }
     this.ajaxuseraction(
-      "resolve",
+      action,
       {
         ops: [{ op: op, ...args }]
       },
@@ -1850,11 +1857,14 @@ awarded.`);
     return true;
   }
 
-  sendActionResolveWithCount(op: number, count: number) {
-    this.ajaxuseraction("resolve", {
-      ops: [{ op, count }]
+  sendActionResolveWithCount(opId: number, count: number) {
+    return this.sendActionResolve(opId, {
+      count
     });
-    return true;
+  }
+
+  sendActionResolveWithTargetAndPayment(opId: number, target: string, payment: any) {
+    return this.sendActionResolve(opId, { target, payment });
   }
 
   sendActionDecline(op: number) {
@@ -1943,16 +1953,6 @@ awarded.`);
     this.addActionButton("button_0", _("Confirm"), () => {
       this.ajaxuseraction("confirm");
     });
-  }
-
-  sendActionResolveWithTarget(opId: number, target: string) {
-    return this.sendActionResolve(opId, {
-      target: target
-    });
-  }
-
-  sendActionResolveWithTargetAndPayment(opId: number, target: string, payment: any) {
-    return this.sendActionResolve(opId, { target, payment });
   }
 
   activateSlotForOp(tid: string, opId: number) {
@@ -2078,9 +2078,9 @@ awarded.`);
       // no arguments
       if (single) {
         if (count == 1) {
-          this.addActionButton("button_" + opId, _("Confirm"), () => this.sendActionResolve(opId));
+          this.addActionButton("button_" + opId, _("Confirm"), () => this.sendActionResolve(opId, {}, opInfo));
         } else if (count == from) {
-          this.addActionButton("button_" + opId, _("Confirm") + " " + count, () => this.sendActionResolve(opId));
+          this.addActionButton("button_" + opId, _("Confirm") + " " + count, () => this.sendActionResolve(opId, {}, opInfo));
         } else {
           // counter select stub for now
           for (let i = from == 0 ? 1 : from; i < count; i++) {
@@ -2156,7 +2156,8 @@ awarded.`);
       buttonId,
       buttonName,
       () => {
-        return this.sendActionResolve(opId, { target: this.queryIds(`.${this.classSelected}`) }, (err) => {
+        const target = this.queryIds(`.${this.classSelected}`);
+        return this.sendActionResolve(opId, { target }, opInfo, (err) => {
           if (!err) {
             this.removeAllClasses(this.classSelected);
             onUpdate();
@@ -2183,7 +2184,7 @@ awarded.`);
         "button_" + tid,
         this.getTokenName(tid),
         () => {
-          this.sendActionResolveWithTarget(opId, tid);
+          this.sendActionResolve(opId, {target: tid});
         },
         tid == "none" ? "orange" : "targetcolor"
       );
@@ -2566,26 +2567,63 @@ awarded.`);
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
   }
 
-  onOperationButton(opInfo: any) {
+  onOperationButton(opInfo: any, clientState: boolean = true) {
     const opTargets = opInfo.args?.target ?? [];
     const opId = opInfo.id as number;
     const ack = opInfo.args.ack == 1;
     if (!ack && opInfo.mcount > 0 && opTargets.length == 1) {
       // mandatory and only one choice
-      this.sendActionResolveWithTarget(opId, opTargets[0]);
+      this.sendActionResolve(opId, { target: opTargets[0]}, opInfo);
     } else if (!ack && opTargets.length == 0) {
-      this.sendActionResolve(opId); // operations without targets
+      this.sendActionResolve(opId, {}, opInfo); // operations without targets
     } else {
-      this.setClientStateUpdOn(
-        "client_collect",
-        (args) => {
-          // on update action buttons
-          this.clearReverseIdMap();
-          this.activateSlots(opInfo, true);
-        },
-        (tokenId: string) =>
-          // onToken
-          this.onSelectTarget(opId, tokenId, true)
+      if (clientState)
+        this.setClientStateUpdOn(
+          "client_collect",
+          (args) => {
+            // on update action buttons
+            this.clearReverseIdMap();
+            this.activateSlots(opInfo, true);
+          },
+          (tokenId: string) =>
+            // onToken
+            this.onSelectTarget(opId, tokenId, true)
+        );
+      else {
+        // no client state
+        this.clearReverseIdMap();
+        dojo.empty("generalactions");
+        this.activateSlots(opInfo, true);
+        this.addCancelButton();
+      }
+    }
+  }
+
+  addOutOfTurnOperationButtons(args) {
+    let operations = args.operations;
+    if (!operations) return; // XXX
+    let sortedOps = Object.keys(operations);
+
+
+    for (let i = 0; i < sortedOps.length; i++) {
+      let opIdS = sortedOps[i];
+      const opId = parseInt(opIdS);
+      const opInfo = operations[opId];
+      this.completeOpInfo(opId, opInfo, args.op, sortedOps.length);
+      opInfo.ooturn = true;
+
+      const opArgs = opInfo.args;
+      if (opArgs.void) continue;
+
+      let name = this.getButtonNameForOperation(opInfo);
+
+      this.addActionButtonColor(
+        `button_${opId}`,
+        name,
+        () => this.onOperationButton(opInfo, false),
+        opInfo.args?.args?.bcolor,
+        opInfo.owner,
+        opArgs.void
       );
     }
   }
@@ -2613,13 +2651,17 @@ awarded.`);
     } else if (stateName == "multiplayerDispatch" || stateName == "client_collectMultiple") {
       this.addUndoButton();
     }
+    if (args?.ooturn && !this.isSpectator) {
+      //add buttons for out of turn actions for all players
+      this.addOutOfTurnOperationButtons(args?.ooturn?.player_operations[this.player_id]);
+    }
     var parent = document.querySelector(".debug_section"); // studio only
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
   }
   onSelectTarget(opId: number, target: string, checkActive: boolean = false) {
     // can add prompt
     if ($(target) && checkActive && !this.checkActiveSlot(target)) return;
-    return this.sendActionResolveWithTarget(opId, target);
+    return this.sendActionResolve(opId, {target});
   }
 
   // on click hooks
