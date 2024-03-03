@@ -1531,6 +1531,7 @@ abstract class PGameXBody extends PGameMachine {
             $bonus = $this->getRulesFor($bounus_name, 'r');
             if ($bonus) {
                 //$this->debugLog("-param bonus $bonus");
+                $this->notifyMessageWithTokenName(clienttranslate('Parameter ${token_name} increase triggers a bonus'), $token_id);
                 $this->putInEffectPool($color, $bonus);
             }
         }
