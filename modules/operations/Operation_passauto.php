@@ -3,10 +3,16 @@
 declare(strict_types=1);
 
 /**
- * Pass on next turn
+ * Pass on next turn, special action not handled via action queue
  */
 class Operation_passauto extends AbsOperation {
     function isVoid(): bool {
+        $isMulti = $this->game->isInMultiplayerMasterState();
+        if ($isMulti)  return true; // cannot do this
+        
+        $color = $this->color;
+        $state = $this->game->tokens->getTokenState("tracker_passed_${color}");
+        if ($state != 0) return true; // already passed
         return false; 
     }
 
@@ -19,9 +25,7 @@ class Operation_passauto extends AbsOperation {
     }
 
     function effect(string $color, int $inc, ?array $args = null): int {
-        $operations = $this->game->getTopOperations();
-
-        $isMulti = $this->game->hasMultiPlayerOperations($operations);
+        $isMulti = $this->game->isInMultiplayerMasterState();
 
         if ($isMulti) {
             throw new feException("Pass operation is impossible in this state");
@@ -29,16 +33,16 @@ class Operation_passauto extends AbsOperation {
         
         $this->game->dbSetTokenState("tracker_passed_${color}", 2, '');
         $this->game->notifyPlayer($this->getPlayerId(),'message_warning',clienttranslate('Auto passing on next turn'),[]);
-
-  
-        $sec = $this->game->queueremove($color, 'skipsec');
-        if ($sec) {
-            $this->game->notifyMessage(clienttranslate('${player_name} skips second action'));
-        }
-        //$this->game->queueremove($color, 'confturn');
-        // pass is not an action so decreasig the stat, it was increased before
-        $this->game->incStat(-1, 'game_actions',  $this->getPlayerId());
         return 1;
+    }
+
+    function getPrompt() {
+        $color = $this->color;
+        if ($this->game->getActivePlayerColor()!==$color) {
+            return clienttranslate('${you} must confirm Pass for this GENERATION on your next turn, cannot be undone');
+        } else {
+            return clienttranslate('${you} must confirm Pass for this GENERATION on your next turn, you can finish your current turn normally');
+        }
     }
 
     protected function getVisargs() {

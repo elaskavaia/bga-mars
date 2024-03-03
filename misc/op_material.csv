@@ -32,7 +32,7 @@ prediscard|Discard
 nop|Do nothing
 
 #set ack=1
-passauto|Advanced Pass|${you} must confirm skipping second action and Pass for this generation on your next turn, your turn will end now
+passauto|Advanced Pass
 #set undo=1
 pass|Pass|${you} must confirm Pass for this generation, cannot be undone
 skipsec|Skip Second Action|${you} must confirm skipping second action, turn cannot be undone after this

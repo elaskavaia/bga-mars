@@ -16,7 +16,6 @@ class Operation_turn extends AbsOperation {
         }
         if ($skipsec) {
             $actions[] = 'skipsec';
-            $actions[] = 'passauto'; // not working yet
         } else {
             $actions[] = 'pass';
         }

@@ -3544,7 +3544,6 @@ $this->token_types = [
   'ack' => 1,
   'type' => 'passauto',
   'name' => clienttranslate("Advanced Pass"),
-  'prompt' => '${you} must confirm skipping second action and Pass for this generation on your next turn, your turn will end now',
 ],
  'op_pass' => [  //
   'undo' => 1,

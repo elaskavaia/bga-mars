@@ -1957,6 +1957,22 @@ abstract class PGameXBody extends PGameMachine {
      */
     function arg_playerTurnChoice() {
         $result = [];
+
+        if (!$this->isSolo()) {
+            $players = $this->loadPlayersBasicInfos();
+            $ops = ['passauto'];
+            foreach ($players as $player_id => $player) {
+                $color = $player["player_color"];
+                $operations = [];
+                foreach ($ops as $optype) {
+                    $oparr = $this->machine->createOperationSimple($optype, $color);
+                    $oparr['flags'] = MACHINE_OP_RESOLVE_DEFAULT;
+                    $operations[] = $oparr;
+                }
+                $result['ooturn']['player_operations'][$player_id] = $this->arg_operations($operations);
+            }
+        }
+
         return $result + $this->arg_operations();
     }
 
@@ -2069,6 +2085,16 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->machine->reflag($ops, MACHINE_FLAG_UNIQUE, MACHINE_FLAG_ORDERED);
         $this->gamestate->nextState("next");
+    }
+
+    function action_passauto() {
+        // current player can auto-pass out of turn
+        if (!$this->isRealPlayer($this->getCurrentPlayerId())) return; // weird
+        $color = $this->getCurrentPlayerColor();
+        $opinst = $this->getOperationInstanceFromType('passauto', $color);
+        $opinst->action_resolve(['count' => 1]);
+        $this->queueremove($color, 'passauto');
+        $this->notifyGameStateArgsChange($this->getCurrentPlayerId());
     }
 
     function saction_resolve($opinfo, $args): int {
