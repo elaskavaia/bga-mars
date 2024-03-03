@@ -86,6 +86,7 @@ class GameBasics extends GameGui {
       this.callfn("onUpdateActionButtons_" + stateName, args);
     }
     this.onUpdateActionButtons_after(stateName, args);
+    this.restoreMainBar();
   }
 
   onUpdateActionButtons_before(stateName: string, args: any) {}
@@ -96,7 +97,6 @@ class GameBasics extends GameGui {
         this.addActionButton("button_cancel", _("Cancel"), "onCancel", null, false, "red");
       }
     }
-    this.restoreMainBar();
   }
 
   /**
