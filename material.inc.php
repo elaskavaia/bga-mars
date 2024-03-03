@@ -3587,6 +3587,13 @@ $this->token_types = [
   'name' => clienttranslate("Confirm"),
   'prompt' => '${you} must confirm end of turn or undo (this undoes both actions if able)',
 ],
+ 'op_confnocards' => [  //
+  'undo' => 1,
+  'class' => 'Operation_confirm',
+  'type' => 'confnocards',
+  'name' => clienttranslate("Confirm no Cards"),
+  'prompt' => '${you} must confirm you want to start without any project cards in hand (or Undo)',
+],
  'op_nm_Any' => [  //
   'class' => 'Operation_nR_Any',
   'ack' => 1,

@@ -43,6 +43,7 @@ predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 #set ack=
 confirm|Confirm|${you} must confirm or undo
 confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
+confnocards|Confirm no Cards|${you} must confirm you want to start without any project cards in hand (or Undo)
 
 
 #set undo=

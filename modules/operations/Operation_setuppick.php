@@ -33,6 +33,7 @@ class Operation_setuppick extends AbsOperation {
             }
         }
         if ($count == 0) {
+            $this->game->multiplayerpush($color,'confnocards');
             $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('You did not select any initial cards, it may be not a good idea. Undo if not too late'), []);
         }
         return 1;
@@ -90,13 +91,15 @@ class Operation_setuppick extends AbsOperation {
         $op = array_shift($operations);
         $this->game->systemAssertTrue("unexpected state", $op);
         $optype = $op['type'];
-        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup');
+        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup' || $optype == 'confnocards');
 
         if ($onlyCheck) return;
 
         foreach ($selected as $card_id => $card) {
             $this->game->dbSetTokenLocation($card_id, "draw_$color", 0, '');
         }
+
+        $this->game->queueremove($color,'confnocards');
 
         $this->game->multiplayerpush($color, $this->getMnemonic());
         $this->game->machine->normalize();

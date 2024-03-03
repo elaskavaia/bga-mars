@@ -1417,6 +1417,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->machineMultiplayerDistpatchPrivate($player_id);
                 return;
             case 'finsetup':
+            case 'confnocards':
                 $op = $this->getOperationInstanceFromType('setuppick', $color);
                 $op->undo();
                 $this->machineMultiplayerDistpatchPrivate($player_id);
