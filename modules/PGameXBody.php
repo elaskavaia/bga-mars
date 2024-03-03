@@ -1962,6 +1962,7 @@ abstract class PGameXBody extends PGameMachine {
             $players = $this->loadPlayersBasicInfos();
             $ops = ['passauto'];
             foreach ($players as $player_id => $player) {
+                if ($player_id == $this->getActivePlayerId()) continue; //do not show for current active player
                 $color = $player["player_color"];
                 $operations = [];
                 foreach ($ops as $optype) {

@@ -73,8 +73,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.removeAllClasses(this.classActiveSlot);
     };
     GameBasics.prototype.onUpdateActionButtons = function (stateName, args) {
-        if (this.laststate != stateName && args != null) {
-            // if args is null it is game state, they are not fired consistencly with onEnter
+        if (this.laststate != stateName && args != null) { // if args is null it is game state, they are not fired consistencly with onEnter
             // delay firing this until onEnteringState is called so they always called in same order
             this.pendingUpdate = true;
             this.restoreMainBar();
@@ -138,12 +137,12 @@ var GameBasics = /** @class */ (function (_super) {
      * @param handler
      */
     GameBasics.prototype.ajaxuseraction = function (action, args, handler) {
-        if (!this.checkAction(action))
-            return;
-        var gname = this.game_name;
-        var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
-        this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
-        this, function (result) { }, handler);
+        if (this.checkAction(action)) {
+            var gname = this.game_name;
+            var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
+            this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
+            this, function (result) { }, handler);
+        }
     };
     GameBasics.prototype.onCancel = function (event) {
         if (event)
@@ -5554,6 +5553,9 @@ var GameXBody = /** @class */ (function (_super) {
             // if more than one action and they are no ordered add buttons for each
             // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
+                // temp hack
+                if (opInfo.type === 'passauto')
+                    return "continue";
                 this_4.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
@@ -5610,7 +5612,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.addOutOfTurnOperationButtons = function (args) {
         var _this = this;
         var _a, _b;
-        var operations = args.operations;
+        var operations = args === null || args === void 0 ? void 0 : args.operations;
         if (!operations)
             return; // XXX
         var sortedOps = Object.keys(operations);

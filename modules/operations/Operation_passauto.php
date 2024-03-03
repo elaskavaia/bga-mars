@@ -47,7 +47,7 @@ class Operation_passauto extends AbsOperation {
 
     protected function getVisargs() {
         return array_merge(parent::getVisargs(),[
-            'bcolor' => 'red' // button color
+            'bcolor' => 'orange' // button color
         ]);
     }
 }

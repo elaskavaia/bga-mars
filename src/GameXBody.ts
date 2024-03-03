@@ -2541,6 +2541,9 @@ awarded.`);
       // xxx add something for remaining ops in ordered case?
 
       if (!single && !ordered) {
+        // temp hack
+        if (opInfo.type==='passauto') continue;
+
         this.addActionButtonColor(
           `button_${opId}`,
           name,
@@ -2600,7 +2603,7 @@ awarded.`);
   }
 
   addOutOfTurnOperationButtons(args) {
-    let operations = args.operations;
+    let operations = args?.operations;
     if (!operations) return; // XXX
     let sortedOps = Object.keys(operations);
 
