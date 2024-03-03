@@ -159,12 +159,16 @@
 
 .stack_content {
   --overlap: 0;
+  --cards-in-stack: round(down,(1.5 / (1 - var(--overlap))) + 1, 1);
+  --columns: round(up, calc(var(--subcount-n) / var(--cards-in-stack)),1);
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
   max-height: calc(var(--card-height) * (2.5 - var(--overlap)));
+  min-width: calc(var(--card-width) * 1.03 * var(--columns));
+
   position: relative;
   padding: calc(var(--card-width) * 0.03);
   // padding to offset margin-top + default padding
@@ -177,7 +181,11 @@
 
 // hidden
 .cardstack[data-currentview="0"] {
-  height:calc(var(--card-width) * 0.5);
+  height: calc(var(--card-width) * 0.5);
+  .stack_content  {
+    min-width: unset;
+  }
+  
   .stack_content  .card {
       display: none;
   }
@@ -188,6 +196,7 @@
 
 // synthetic
 .cardstack[data-currentview="1"] .stack_content{
+  --columns: 1; // XXX cannot calculate properly
   .active_slot.card {
     box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 2px #ff9800 !important;
     transform: none;
@@ -207,7 +216,7 @@
 
 // tiles
 .cardstack[data-currentview="3"] .stack_content {
- row-gap: calc(var(--card-height) * 0.01);
+   row-gap: calc(var(--card-height) * 0.01);
 }
 
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {

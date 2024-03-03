@@ -528,6 +528,8 @@
   .cardstack[data-currentview].cardstack_cards_4.corp {
     .stack_content {
       --overlap: 0;
+      --columns: 1;
+      max-width: unset;
     }
 
     .stack_sum.cards {

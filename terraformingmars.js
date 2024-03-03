@@ -1419,6 +1419,7 @@ var CardStack = /** @class */ (function () {
         }
         $("detail_label_" + this.div_id).innerHTML = label;
         $("additional_text_" + this.div_id).innerHTML = additional_txt;
+        $(this.tableau_id).offsetHeight; // reflow
     };
     CardStack.prototype.updateCounts = function () {
         var count = $(this.tableau_id).querySelectorAll(".card").length;
@@ -4664,6 +4665,7 @@ var GameXBody = /** @class */ (function (_super) {
             var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
             tokenNode.parentElement.parentElement.dataset.subcount = sub;
             tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
+            tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
         }
         //move animation on main player board counters
         if (key.startsWith("tracker_")) {

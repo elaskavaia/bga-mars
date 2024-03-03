@@ -1585,6 +1585,7 @@ awarded.`);
       const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
       tokenNode.parentElement.parentElement.dataset.subcount = sub;
       tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
+      tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
     }
 
     //move animation on main player board counters

@@ -144,6 +144,7 @@ class CardStack {
 
     $("detail_label_" + this.div_id).innerHTML = label;
     $("additional_text_" + this.div_id).innerHTML = additional_txt;
+    $(this.tableau_id).offsetHeight; // reflow
   }
 
   private updateCounts(): number {
