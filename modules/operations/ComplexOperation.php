@@ -113,6 +113,7 @@ class ComplexOperation extends AbsOperation {
 
     function canResolveAutomatically() {
         if ($this->getMinCount() == 0) return false;
+        if ($this->isOptional()) return false;
         if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->operation == '/') return false;
         if ($this->operation == '+') return false;
