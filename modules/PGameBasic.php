@@ -119,6 +119,23 @@ abstract class PGameBasic extends Table {
         return 0; // not found
     }
 
+    public function notifyGameStateArgsChange($player_id) {
+        $curr_id =  $this->gamestate->state_id();
+        $gamestate = $this->gamestate->states[$curr_id];
+        $state_args = $this->gamestate->state(false, true);
+        $state_args['type'] =  $gamestate['type'];
+
+        // reload game state args
+        if (isset($gamestate['args'])) {
+            if (!method_exists($this, $gamestate['args']))
+                throw new feException("Invalid 'args' method for state $curr_id");
+
+            $state_args['args'] =  $this->{$gamestate['args']}();
+        }
+
+        $this->notifyPlayer($player_id, 'gameStateChange', '', $state_args);
+    }
+
     // ------ ERROR HANDLING ----------
     /**
      * This will throw an exception if condition is false.
