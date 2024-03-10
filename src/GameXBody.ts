@@ -20,9 +20,12 @@ class GameXBody extends GameTokens {
   private currentOperation: any = {}; // bag of data to support operation engine
   private classSelected: string = "selected"; // for the purpose of multi-select operations
 
+  private stacks:CardStack[];
   constructor() {
     super();
     this.CON = {};
+    this.stacks=[];
+
   }
 
   setup(gamedatas: any) {
@@ -175,6 +178,8 @@ class GameXBody extends GameTokens {
         ); // NOI18N
       }
 
+
+      this.updateStacks();
       this.vlayout.setupDone();
       //this.setupOneTimePrompt();
     } catch (e) {
@@ -204,7 +209,28 @@ class GameXBody extends GameTokens {
       this.addSortButtonsToHandy($("hand_area"));
 
       this.enableManualReorder("thething");
+
       this.connectClass("hs_button", "onclick", (evt: Event) => {
+        dojo.stopEvent(evt);
+        let btn = evt.currentTarget as HTMLElement;
+        let newtype="";
+
+
+        switch (btn.dataset.type) {
+          case "none":newtype="playable"; break;
+          case "playable":newtype="cost";break;
+          case "cost":newtype="vp";  break;
+          case "vp":newtype="manual"; break;
+          case "manual":newtype="none";break;
+        }
+        this.switchHandSort(btn,newtype);
+
+
+      });
+
+      /*
+      this.connectClass("hs_button", "onclick", (evt: Event) => {
+
         let btn = evt.currentTarget as HTMLElement;
         dojo.stopEvent(evt);
         const actual_dir: string = btn.dataset.direction;
@@ -232,6 +258,8 @@ class GameXBody extends GameTokens {
 
         this.applySortOrder();
       });
+
+       */
     }
 
     //move own player board in main zone
@@ -240,6 +268,38 @@ class GameXBody extends GameTokens {
       dojo.place(board, "main_board", "after");
       dojo.addClass(board, "thisplayer_zone");
     }
+  }
+
+  switchHandSort(btn:HTMLElement,newtype:string):void {
+    let fa="";
+    let msg="";
+    let newdir="increase";
+
+    switch (newtype) {
+      case "playable": fa="fa-arrow-down"; msg="playability"; break;
+      case "cost":  fa="fa-eur"; msg="cost";break;
+      case "vp": fa="fa-globe"; newdir="decrease";msg="VP"; break;
+      case "manual": fa="fa-hand-paper-o";msg="manual"; break;
+      case "none":  fa="fa-times"; msg="none";break;
+    }
+
+    btn.dataset.type=newtype;
+    btn.dataset.direction=newdir;
+    btn.querySelector('i').removeAttribute("class")
+    btn.querySelector('i').classList.add("fa",fa);
+
+    const hand_block: string = btn.dataset.target;
+    $(hand_block).dataset.sort_type = newtype;
+    $(hand_block).dataset.sort_direction = newdir;
+
+    const fullmsg =_("Switch card sort method (actual:%s)").replace('%s',msg);
+    this.addTooltip(btn.id,fullmsg,"");
+
+    const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+    localColorSetting.writeProp("sort_direction", newdir);
+    localColorSetting.writeProp("sort_type", btn.dataset.type);
+
+    this.applySortOrder();
   }
 
   setupPlayerStacks(playerColor: string): void {
@@ -266,7 +326,14 @@ class GameXBody extends GameTokens {
     for (const item of lsStacks) {
       const stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
       stack.render("tableau_" + playerColor);
+      this.stacks.push(stack);
     }
+  }
+
+  updateStacks(){
+      for (let stack of this.stacks) {
+        stack.adjustFromView();
+      }
   }
 
   onShowScoringTable(playerId: number) {
@@ -519,6 +586,13 @@ class GameXBody extends GameTokens {
         label: _("Hide badges on minipanel"),
         choice: { hide: true },
         default: true,
+        ui: "checkbox"
+      },
+      {
+        key: "showmicon",
+        label: _("Show cities, greeneries, etc. on minipanel"),
+        choice: { show : true },
+        default: false,
         ui: "checkbox"
       },
       {
@@ -839,7 +913,7 @@ class GameXBody extends GameTokens {
 
   onNotif(notif: Notif) {
     super.onNotif(notif);
-    this.darhflog("playing notif " + notif.type + " with args ", notif.args);
+  //  this.darhflog("playing notif " + notif.type + " with args ", notif.args);
 
     //header cleanup
     this.gameStatusCleanup();
@@ -2780,11 +2854,15 @@ awarded.`);
 
   addSortButtonsToHandy(attachNode: Element): void {
     const id = attachNode.id;
+    /*
     const htm = `
         <div id="hs_button_${id}_cost" class="hs_button" data-target="${id}" data-type="cost" data-direction=""><div class="hs_picto hs_cost"><i class="fa fa-eur" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
         <div id="hs_button_${id}_playable" class="hs_button" data-target="${id}" data-type="playable" data-direction=""><div class="hs_picto hs_playable"><i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
         <div id="hs_button_${id}_vp" class="hs_button" data-target="${id}" data-type="vp" data-direction=""><div class="hs_picto hs_vp">VP</div><div class="hs_direction"></div></div>
         <div id="hs_button_${id}_manual" class="hs_button" data-target="${id}" data-type="manual" data-direction=""><div class="hs_picto hs_manual"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div></div>
+       `;*/
+    const htm = `
+        <div id="hs_button_${id}_switch" class="hs_button" data-target="${id}" data-type="none" data-direction=""><div class="hs_picto hs_cost"><i id="hs_button_${id}_picto" class="fa fa-times" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
        `;
     const node = this.createDivNode("", "hand_sorter", attachNode.id);
     node.innerHTML = htm;
@@ -2798,17 +2876,27 @@ awarded.`);
       sort_type = "manual";
       sort_dir = "";
     }
-
+/*
     let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
     if (bnode) bnode.dataset.direction = sort_dir;
     $(id).dataset.sort_direction = sort_dir;
-    $(id).dataset.sort_type = sort_type;
+    $(id).dataset.sort_type = sort_type;*/
 
-    const msg = _("Sort cards by %s");
+    this.switchHandSort($('hs_button_'+id+'_switch'),sort_type);
+
+
+
+    /*
     this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
     this.addTooltip(`hs_button_${id}_playable`, _("Card Sort"), msg.replace("%s", _("playability")));
     this.addTooltip(`hs_button_${id}_vp`, _("Card Sort"), msg.replace("%s", _("VP")));
     this.addTooltip(`hs_button_${id}_manual`, _("Card Sort"), _("Manual sorting (drag n drop)"));
+
+
+    const msg = _("Switch card sort method (actual:%s)");
+    this.addTooltip('hs_button_'+id+'_switch',msg.replace('%s','none'),'');
+
+     */
   }
 
   /* Manual reordering of cards via drag'n'drop */

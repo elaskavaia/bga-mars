@@ -59,6 +59,10 @@
 }
 
 .mcompact {
+  .tableautoprow{
+    display: flex;
+    width: 100%;
+  }
   .cardstack {
     outline: 1px dashed var(--outlinecolor);
     border-radius: calc(var(--card-width) * 0.05);
@@ -74,7 +78,7 @@
       display: flex;
       flex-direction: row;
       background-color: var(--outlinecolor);
-      padding: calc(var(--card-width)*0.02);
+      padding-left: calc(var(--card-width)*0.02);
       align-items: center;
     }
 
@@ -88,7 +92,7 @@
 
     .stack_sum.cards {
       width: calc(var(--card-width)*0.15);
-      height: calc(var(--card-width)*0.2);
+      height: calc(var(--card-width)*0.18);
       border-radius: 20%;
       outline: 1px solid black;
       display: flex;
@@ -130,6 +134,10 @@
     .switchview {
       margin-right: calc(var(--card-width) * 0.02);
     }
+    .switchview:hover {
+      color:  var(--outlinecolor);
+      background-color: black;
+    }
 
     .popout {
       display: none;
@@ -139,6 +147,7 @@
       font-size: calc(var(--card-height) * 0.05);
       font-style: italic;
       color: white;
+      width: calc(var(--card-width) * 1);
     }
 
   }
@@ -181,9 +190,10 @@
 
 // hidden
 .cardstack[data-currentview="0"] {
-  height: calc(var(--card-width) * 0.5);
+  height: calc(var(--card-width) * 0.4);
   .stack_content  {
-    min-width: unset;
+    /*  min-width: unset;*/
+    min-width: calc(var(--card-width) * 1.03);
   }
   
   .stack_content  .card {
@@ -196,7 +206,8 @@
 
 // synthetic
 .cardstack[data-currentview="1"] .stack_content{
-  --columns: 1; // XXX cannot calculate properly
+ // --columns: 1; // XXX cannot calculate properly
+  min-width: calc(var(--card-width) * 1.03 * var(--columns-synth));
   .active_slot.card {
     box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 2px #ff9800 !important;
     transform: none;
@@ -222,7 +233,7 @@
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {
     .stack_content_txt {
       display: block;
-      width: 100%;
+      width: calc(var(--card-width) * 1);
     }
 }
 
@@ -294,3 +305,43 @@
   }
 }
 
+.stack_dd_buttons{
+  display: none;
+opacity: 0;
+  transition: all 300ms ease-in;
+}
+.stack_dd_buttons.open{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+  opacity: 1;
+
+  width: calc(var(--card-width) * 1.06);
+  right: 2%;
+  top: 100%;
+  background: white;
+  height: fit-content;
+
+ .stack_btn {
+   width: calc(var(--card-width)*1.06);
+   left: 1%;
+   border-radius: 3%;
+   margin-bottom: 2%;
+   position: relative;
+
+   .stack_ddl_icon {
+     display: inline-block;
+     width:10%;
+   }
+   .stack_ddl_label {
+     display: inline-block;
+     width: 80%;
+     text-align: center;
+   }
+ }
+  .stack_btn:hover {
+    color:  var(--outlinecolor);
+    background-color: black;
+  }
+}

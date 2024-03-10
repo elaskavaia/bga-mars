@@ -222,6 +222,11 @@
   .micon {
     display: none; // hide trackers for forest and such, it best just to show progress on milestones instead
   }
+
+}
+
+#ebd-body[data-localsetting_showmicon="show"] .miniboard_tags .micon {
+  display: revert;
 }
 
 .miniboard_entry {

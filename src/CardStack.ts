@@ -12,6 +12,7 @@ class CardStack {
 
   //usage props
   current_view: View;
+  columns_synth:number = 1;
 
   public constructor(
     readonly game: GameXBody, // game reference
@@ -50,9 +51,12 @@ class CardStack {
         <div class="stack_header_right">
            <div id="btn_sv_${this.div_id}" class="stack_btn switchview"></div>
         </div>
+        <div id="stack_dd_buttons_${this.div_id}" class="stack_dd_buttons">
+          
+        </div>
       </div>          
       <div id="additional_text_${this.div_id}" class="stack_content_txt"></div>
-      <div id="${this.tableau_id}" class="stack_content cards_bin ${this.bin_type}">
+      <div id="${this.tableau_id}" class="stack_content cards_bin ${this.bin_type}" style="--columns-synth=${this.columns_synth};">
       </div>
     </div>`;
 
@@ -72,21 +76,40 @@ class CardStack {
       }
       switchButton.remove();
     } else {
-      switchButton.classList.add("fa", this.getIconClass(View.Full));
+     // switchButton.classList.add("fa", this.getIconClass(View.Full));
+      switchButton.classList.add("fa", "fa-align-justify");
+
+      for (let i = 0; i < this.view_list.length; i++) {
+        const layout  = this.view_list[i];
+        const buttonstr = `<div id="btn_switch_${this.div_id}_${layout}" class="stack_btn switch_${layout}"><div id="ddl_icon_${this.div_id}_${layout}" class="stack_ddl_icon"></div><div class="stack_ddl_label">${this.getViewLabel(layout)}</div></div>`;
+        const laButton = dojo.place(buttonstr, `stack_dd_buttons_${this.div_id}`);
+        $(`ddl_icon_${this.div_id}_${layout}`).classList.add("fa", this.getIconClass(layout));
+     //   laButton.classList.add("fa", this.getIconClass(layout));
+        laButton.addEventListener("click", (evt) => {
+          this.onSwitchView(layout);
+        });
+      }
+
       switchButton.addEventListener("click", (evt) => {
         evt.stopPropagation();
         evt.preventDefault();
-        this.onSwitchView();
+        this.onViewMenu();
+       // this.onSwitchView();
       });
     }
 
     // this is already set during notif
-    // const insertListen = (event)=> {
-    //   if (event.target.parentNode.id && event.target.parentNode.id==this.tableau_id) {
-    //     this.updateCounts();
-    //   }
-    // }
-    // $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+    //triggered when a card is added
+    //or a resource (may expand card in synth view)
+     const insertListen = (event)=> {
+      if ((event.target.parentNode.id && event.target.parentNode.id==this.tableau_id)
+      || event.target.id && event.target.id.startsWith('resource_')) {
+        if (this.current_view==View.Synthetic) {
+          this.recalSynthColumns();
+        }
+       }
+    }
+     $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
 
     this.adjustFromView();
   }
@@ -94,6 +117,7 @@ class CardStack {
   private getIconClass(layout: View) {
     switch (layout) {
       case View.Summary: return  "fa-window-close";
+   //   case View.Summary: return  "fa fa-align-justify";
       case View.Synthetic: return  "fa-tablet";
       case View.Stacked: return  "fa-window-minimize";
       case View.Full: return  "fa-window-restore";
@@ -106,7 +130,18 @@ class CardStack {
     this.current_view = parseInt($(this.div_id).dataset.currentview);
 
     this.localsettings.writeProp(this.div_id, String(this.current_view));
+
+    this.onViewMenu();
     this.adjustFromView();
+  }
+
+
+  private onViewMenu() {
+    if ($('stack_dd_buttons_'+this.div_id).classList.contains("open")) {
+      $('stack_dd_buttons_'+this.div_id).classList.remove("open");
+      return;
+    }
+    $('stack_dd_buttons_'+this.div_id).classList.add("open");
   }
 
   private getNextView(from_view: number) {
@@ -118,33 +153,59 @@ class CardStack {
     return this.view_list[0];
   }
 
-  private adjustFromView() {
-    //TODO: apply stuff like custom column or line breaks according to selected view
+  public adjustFromView() {
+
     let label: string = "?";
     let additional_txt = "";
+    label = this.getViewLabel(this.current_view);
+
     switch (this.current_view) {
       case View.Summary:
-        label = _("Hidden view");
         additional_txt = _("cards are hidden");
+        if (!this.game.isLayoutFull()) {
+          if ($(this.div_id).parentElement.id != "tableau_toprow_" + this.player_color) {
+            $("tableau_toprow_" + this.player_color).appendChild($(this.div_id));
+          }
+        }
         break;
-      case View.Synthetic:
-        label = _("Synthetic view");
-        break;
-      case View.Stacked:
-        label = _("Stacked view");
-        break;
-      case View.Full:
-        label = _("Full view");
+      default:
+        if (!this.game.isLayoutFull()) {
+          if ($(this.div_id).parentElement.id == "tableau_toprow_" + this.player_color) {
+            $("tableau_" + this.player_color).appendChild($(this.div_id));
+          }
+        }
         break;
     }
 
     if (this.card_color_class == "red" && (this.current_view == View.Full || this.current_view == View.Stacked)) {
-      additional_txt = _("Events are played face down, tags are not counted.");
+      additional_txt = _("⚠️Events are played face down, tags are not counted.");
     }
 
     $("detail_label_" + this.div_id).innerHTML = label;
     $("additional_text_" + this.div_id).innerHTML = additional_txt;
     $(this.tableau_id).offsetHeight; // reflow
+
+    if (this.current_view==View.Synthetic) {
+      this.recalSynthColumns();
+    }
+  }
+
+  private getViewLabel(view:number) {
+    switch (view) {
+      case View.Summary:
+        return  _("Hidden view");
+      case View.Synthetic:
+        return _("Synthetic view");
+        break;
+      case View.Stacked:
+        return _("Stacked view");
+        break;
+      case View.Full:
+        return _("Full view");
+        break;
+    }
+
+    return "?";
   }
 
   private updateCounts(): number {
@@ -156,6 +217,22 @@ class CardStack {
 
     return count;
   }
+
+  public recalSynthColumns():void {
+      //get last element of list
+     if ($(this.tableau_id).children.length==0) return;
+
+     const last:Element =$(this.tableau_id).lastElementChild;
+     const lastrect=last.getBoundingClientRect();
+     const tableaurect =  $(this.tableau_id).getBoundingClientRect();
+
+     if (lastrect.right>tableaurect.right) {
+       //add one column
+       this.columns_synth++;
+       $(this.tableau_id).style.setProperty('--columns-synth',String(this.columns_synth));
+     }
+  }
+
 
   public getDestinationDiv() {
     return this.tableau_id;
