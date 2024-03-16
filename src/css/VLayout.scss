@@ -542,6 +542,9 @@
     .pboard {
       display: none;
     }
+    .stack_content {
+      --columns: 0;
+    }
   }
 
   .cardstack[data-currentview="1"].cardstack_cards_4.corp {
@@ -573,6 +576,11 @@
     .stack_content {
       --overlap: 0.88;
     }
+  }
+
+  .cardstack[data-currentview="0"] .stack_dd_buttons.open {
+    left: auto;
+    right: auto;
   }
 
 
@@ -878,5 +886,27 @@
     height: unset;
     justify-content: center;
     align-items: center;
+  }
+
+  .stack_dd_buttons.open .stack_btn .stack_ddl_label {
+    text-align: unset;
+    padding-left: 5%;
+  }
+  .ma_selected_menu {
+    .stack_ddl_label {
+      font-weight: bold;
+    }
+  }
+
+  .switchview {
+    margin-right: calc(var(--card-width) * 0.02);
+  }
+  .switchview:hover {
+    color:  var(--outlinecolor);
+    background-color: black;
+  }
+
+  .hs_direction{ 
+    display: none;
   }
 }
