@@ -1,6 +1,6 @@
 /* tooltips */
 .midSizeDialog {
-  max-width: 400px;
+  max-width: none;
 }
 
 .tooltipimage {
@@ -163,10 +163,6 @@
     max-width: 40vh;
   }
 
-  .midSizeDialog {
-    max-width: none;
-  }
-
   .tt_intertitle {
     text-transform: uppercase;
     font-size: 1.7vh;
@@ -271,11 +267,7 @@
       --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);
       --tt-height: calc(var(--tt-width) * 0.688);
   
-  
-      .midSizeDialog {
-        max-width: calc(var(--tt-width));
-      }
-  
+
       .tooltipcontainer {
         background-image: url(img/full/tooltipbg.jpg);
         background-size: calc(var(--tt-width) * 1.2) auto;
