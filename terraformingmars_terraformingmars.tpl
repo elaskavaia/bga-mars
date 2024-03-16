@@ -361,7 +361,7 @@
         </div>
 
 
-
+        <div id="tableau_toprow_{PLAYER_COLOR}" class="tableautoprow"></div>
         <div id="tableau_{PLAYER_COLOR}" class="tableau">
           <div id="pboard_{PLAYER_COLOR}" class="pboard">
             <div id="resarea_m_{PLAYER_COLOR}" class="resarea resarea_m"></div>
