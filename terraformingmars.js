@@ -1325,6 +1325,7 @@ var CardStack = /** @class */ (function () {
         this.card_color_class = card_color_class;
         this.default_view = default_view;
         this.view_list = view_list;
+        this.columns_synth = 1;
         this.div_id = "stack_" + player_color + "_" + bin_type;
         this.tableau_id = "tableau_" + player_color + "_" + bin_type;
         this.current_view = parseInt(this.localsettings.readProp(this.div_id, String(default_view)));
@@ -1334,58 +1335,87 @@ var CardStack = /** @class */ (function () {
     }
     CardStack.prototype.render = function (parent) {
         var _this = this;
-        var htm = "\n    <div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" \n      data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"cnt_cards_").concat(this.div_id, "\" class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n          <div class=\"bottomline\">\n            <div id=\"detail_label_").concat(this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n          </div>\n        </div>\n        <div class=\"stack_header_right\">\n           <div id=\"btn_sv_").concat(this.div_id, "\" class=\"stack_btn switchview\"></div>\n        </div>\n      </div>          \n      <div id=\"additional_text_").concat(this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\">\n      </div>\n    </div>");
+        var header = _("Card Layouts");
+        var htm = "\n    <div id=\"".concat(this.div_id, "\" class=\"cardstack cardstack_").concat(this.bin_type, " ").concat(this.card_color_class, "\" \n      data-currentview=\"").concat(this.current_view, "\">\n      <div class=\"stack_header\">\n        <div class=\"stack_header_left\">\n             <div id=\"cnt_cards_").concat(this.div_id, "\" class=\"stack_sum cards\"></div>\n        </div>\n        <div class=\"stack_header_middle\">\n          <div class=\"topline\">\n            <div class=\"stack_label\">").concat(this.label, "</div>\n          </div>\n          <div class=\"bottomline\">\n            <div id=\"detail_label_").concat(this.div_id, "\" class=\"stack_detail_txt actual_view\">N/A</div>\n          </div>\n        </div>\n        <div class=\"stack_header_right\">\n           <div id=\"btn_sv_").concat(this.div_id, "\" class=\"stack_btn switchview\"></div>\n        </div>\n        <div id=\"stack_dd_buttons_").concat(this.div_id, "\" class=\"stack_dd_buttons\">\n          <div id=\"stack_dd_buttons_").concat(this.div_id, "_close\" class=\"stack_dd_buttons_close\">\n            <span>").concat(header, "</span>\n            <i class=\"fa fa-close\"></i>\n          </div>\n        </div>\n      </div>          \n      <div id=\"additional_text_").concat(this.div_id, "\" class=\"stack_content_txt\"></div>\n      <div id=\"").concat(this.tableau_id, "\" class=\"stack_content cards_bin ").concat(this.bin_type, "\" style=\"--columns-synth=").concat(this.columns_synth, ";\">\n      </div>\n    </div>");
         $(parent).insertAdjacentHTML("afterbegin", htm);
         var switchButton = $("btn_sv_" + this.div_id);
-        if (this.game.isLayoutFull()) {
-            var _loop_1 = function (i) {
-                var layout = this_1.view_list[i];
-                var buttonstr = "<div id=\"btn_switch_".concat(this_1.div_id, "_").concat(layout, "\" class=\"stack_btn switch_").concat(layout, "\"></div>");
-                var laButton = dojo.place(buttonstr, switchButton.parentElement);
-                laButton.classList.add("fa", this_1.getIconClass(layout));
-                laButton.addEventListener("click", function (evt) {
-                    _this.onSwitchView(layout);
-                });
-            };
-            var this_1 = this;
-            // temp trying multiple buttons
-            for (var i = 0; i < this.view_list.length; i++) {
-                _loop_1(i);
-            }
-            switchButton.remove();
-        }
-        else {
-            switchButton.classList.add("fa", this.getIconClass(View.Full));
-            switchButton.addEventListener("click", function (evt) {
-                evt.stopPropagation();
-                evt.preventDefault();
-                _this.onSwitchView();
+        switchButton.classList.add("fa", "fa-align-justify");
+        this.game.addTooltip(switchButton.id, _("Card Layouts Menu"), _("Click to select layout"));
+        this.game.addTooltip("cnt_cards_" + this.div_id, _("Number of cards in this pile"), "");
+        var _loop_1 = function (i) {
+            var layout = this_1.view_list[i];
+            var buttonstr = "<div id=\"btn_switch_".concat(this_1.div_id, "_").concat(layout, "\" class=\"stack_btn switch_").concat(layout, "\">\n      <div id=\"ddl_icon_").concat(this_1.div_id, "_").concat(layout, "\" class=\"stack_ddl_icon\"></div><div class=\"stack_ddl_label\">").concat(this_1.getViewLabel(layout), "</div></div>");
+            var laButton = dojo.place(buttonstr, "stack_dd_buttons_".concat(this_1.div_id));
+            $("ddl_icon_".concat(this_1.div_id, "_").concat(layout)).classList.add("fa", this_1.getIconClass(layout));
+            laButton.addEventListener("click", function () {
+                _this.onSwitchView(layout);
             });
+        };
+        var this_1 = this;
+        for (var i = 0; i < this.view_list.length; i++) {
+            _loop_1(i);
         }
+        $("stack_dd_buttons_".concat(this.div_id, "_close")).addEventListener("click", function (evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            $("stack_dd_buttons_" + _this.div_id).classList.remove("open");
+        });
+        switchButton.addEventListener("click", function (evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            _this.onViewMenu();
+        });
         // this is already set during notif
-        // const insertListen = (event)=> {
-        //   if (event.target.parentNode.id && event.target.parentNode.id==this.tableau_id) {
-        //     this.updateCounts();
-        //   }
-        // }
-        // $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+        //triggered when a card is added
+        //or a resource (may expand card in synth view)
+        var insertListen = function (event) {
+            if ((event.target.parentNode.id && event.target.parentNode.id == _this.tableau_id) ||
+                (event.target.id && event.target.id.startsWith("resource_"))) {
+                if (_this.current_view == View.Synthetic) {
+                    _this.recalSynthColumns();
+                }
+            }
+        };
+        $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
         this.adjustFromView();
     };
     CardStack.prototype.getIconClass = function (layout) {
         switch (layout) {
-            case View.Summary: return "fa-window-close";
-            case View.Synthetic: return "fa-tablet";
-            case View.Stacked: return "fa-window-minimize";
-            case View.Full: return "fa-window-restore";
+            case View.Summary:
+                return "fa-window-close";
+            //   case View.Summary: return  "fa fa-align-justify";
+            case View.Synthetic:
+                return "fa-tablet";
+            case View.Stacked:
+                return "fa-window-minimize";
+            case View.Full:
+                return "fa-window-restore";
         }
     };
     CardStack.prototype.onSwitchView = function (next) {
-        if (next === undefined)
-            next = this.getNextView(parseInt($(this.div_id).dataset.currentview));
         $(this.div_id).dataset.currentview = String(next);
         this.current_view = parseInt($(this.div_id).dataset.currentview);
         this.localsettings.writeProp(this.div_id, String(this.current_view));
+        this.onViewMenu();
         this.adjustFromView();
+    };
+    CardStack.prototype.onViewMenu = function () {
+        var self = $("stack_dd_buttons_" + this.div_id);
+        var was_open = false;
+        if (self.classList.contains("open")) {
+            was_open = true;
+        }
+        // remove all open menus
+        document.querySelectorAll(".stack_dd_buttons").forEach(function (node) {
+            node.classList.remove("open");
+        });
+        if (!was_open)
+            self.classList.add("open");
+        var layout = parseInt($(this.div_id).dataset.currentview);
+        var submenu = $("btn_switch_".concat(this.div_id, "_").concat(layout));
+        document.querySelectorAll(".stack_btn").forEach(function (node) { return node.classList.remove("ma_selected_menu"); });
+        if (submenu)
+            submenu.classList.add("ma_selected_menu");
     };
     CardStack.prototype.getNextView = function (from_view) {
         for (var i = 0; i < this.view_list.length - 1; i++) {
@@ -1396,30 +1426,66 @@ var CardStack = /** @class */ (function () {
         return this.view_list[0];
     };
     CardStack.prototype.adjustFromView = function () {
-        //TODO: apply stuff like custom column or line breaks according to selected view
         var label = "?";
         var additional_txt = "";
+        label = this.getViewLabel(this.current_view);
+        var toprow = "tableau_toprow_" + this.player_color;
         switch (this.current_view) {
             case View.Summary:
-                label = _("Hidden view");
                 additional_txt = _("cards are hidden");
+                if (!this.game.isLayoutFull()) {
+                    if ($(this.div_id).parentElement.id != toprow && $(toprow)) {
+                        $(toprow).appendChild($(this.div_id));
+                    }
+                }
                 break;
-            case View.Synthetic:
-                label = _("Synthetic view");
-                break;
-            case View.Stacked:
-                label = _("Stacked view");
-                break;
-            case View.Full:
-                label = _("Full view");
+            default:
+                if (!this.game.isLayoutFull()) {
+                    if ($(this.div_id).parentElement.id == toprow) {
+                        $("tableau_" + this.player_color).appendChild($(this.div_id));
+                    }
+                }
                 break;
         }
         if (this.card_color_class == "red" && (this.current_view == View.Full || this.current_view == View.Stacked)) {
-            additional_txt = _("Events are played face down, tags are not counted.");
+            additional_txt = _("⚠️Events are played face down, tags are not counted.");
         }
         $("detail_label_" + this.div_id).innerHTML = label;
         $("additional_text_" + this.div_id).innerHTML = additional_txt;
         $(this.tableau_id).offsetHeight; // reflow
+        if (this.current_view == View.Synthetic) {
+            this.recalSynthColumns();
+        }
+    };
+    CardStack.prototype.getViewLabel = function (view) {
+        if (this.bin_type == "cards_4") {
+            switch (view) {
+                case View.Summary:
+                    return _("Hidden");
+                case View.Synthetic:
+                    return _("Corporation");
+                case View.Stacked:
+                    return _("Player Board");
+                case View.Full:
+                    return _("Both");
+            }
+        }
+        switch (view) {
+            case View.Summary:
+                if (!this.game.isLayoutFull()) {
+                    return _("Hidden");
+                }
+                else {
+                    return _("Single");
+                }
+            case View.Synthetic:
+                return _("Synthetic");
+            case View.Stacked:
+                return _("Stack");
+            case View.Full:
+                return _("Grid");
+        }
+        return "?";
     };
     CardStack.prototype.updateCounts = function () {
         var count = $(this.tableau_id).querySelectorAll(".card").length;
@@ -1427,6 +1493,19 @@ var CardStack = /** @class */ (function () {
         if (this.current_view == View.Summary)
             $("additional_text_" + this.div_id).innerHTML = _("%n card(s) hidden").replace("%n", String(count));
         return count;
+    };
+    CardStack.prototype.recalSynthColumns = function () {
+        //get last element of list
+        if ($(this.tableau_id).children.length == 0)
+            return;
+        var last = $(this.tableau_id).lastElementChild;
+        var lastrect = last.getBoundingClientRect();
+        var tableaurect = $(this.tableau_id).getBoundingClientRect();
+        if (lastrect.right > tableaurect.right) {
+            //add one column
+            this.columns_synth++;
+            $(this.tableau_id).style.setProperty("--columns-synth", String(this.columns_synth));
+        }
     };
     CardStack.prototype.getDestinationDiv = function () {
         return this.tableau_id;
@@ -3411,6 +3490,7 @@ var GameXBody = /** @class */ (function (_super) {
         _this.currentOperation = {}; // bag of data to support operation engine
         _this.classSelected = "selected"; // for the purpose of multi-select operations
         _this.CON = {};
+        _this.stacks = [];
         return _this;
     }
     GameXBody.prototype.setup = function (gamedatas) {
@@ -3531,6 +3611,7 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.ajaxcallwrapper_unchecked("say", { msg: "debug_dumpMachineDb()" });
                 }, parent); // NOI18N
             }
+            this.updateStacks();
             this.vlayout.setupDone();
             //this.setupOneTimePrompt();
         }
@@ -3559,29 +3640,60 @@ var GameXBody = /** @class */ (function (_super) {
             this.addSortButtonsToHandy($("hand_area"));
             this.enableManualReorder("thething");
             this.connectClass("hs_button", "onclick", function (evt) {
-                var btn = evt.currentTarget;
                 dojo.stopEvent(evt);
-                var actual_dir = btn.dataset.direction;
-                var new_dir;
-                if (btn.dataset.type == "manual") {
-                    new_dir = actual_dir == "" ? "increase" : "";
+                var btn = evt.currentTarget;
+                var newtype = "";
+                switch (btn.dataset.type) {
+                    case "none":
+                        newtype = "playable";
+                        break;
+                    case "playable":
+                        newtype = "cost";
+                        break;
+                    case "cost":
+                        newtype = "vp";
+                        break;
+                    case "vp":
+                        newtype = "manual";
+                        break;
+                    case "manual":
+                        newtype = "none";
+                        break;
                 }
-                else {
-                    new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
-                }
-                var hand_block = btn.dataset.target;
-                //deactivate sorting on other buttons
-                dojo.query("#" + hand_block + " .hs_button").forEach(function (item) {
-                    $(item).dataset.direction = "";
-                });
-                $(hand_block).dataset.sort_type = btn.dataset.type;
-                $(hand_block).dataset.sort_direction = new_dir;
-                btn.dataset.direction = new_dir;
-                var localColorSetting = new LocalSettings(_this.getLocalSettingNamespace("card_sort"));
-                localColorSetting.writeProp("sort_direction", new_dir);
-                localColorSetting.writeProp("sort_type", btn.dataset.type);
-                _this.applySortOrder();
+                _this.switchHandSort(btn, newtype);
             });
+            /*
+            this.connectClass("hs_button", "onclick", (evt: Event) => {
+      
+              let btn = evt.currentTarget as HTMLElement;
+              dojo.stopEvent(evt);
+              const actual_dir: string = btn.dataset.direction;
+              let new_dir: string;
+              if (btn.dataset.type == "manual") {
+                new_dir = actual_dir == "" ? "increase" : "";
+              } else {
+                new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
+              }
+      
+              const hand_block: string = btn.dataset.target;
+      
+              //deactivate sorting on other buttons
+              dojo.query("#" + hand_block + " .hs_button").forEach((item) => {
+                $(item).dataset.direction = "";
+              });
+      
+              $(hand_block).dataset.sort_type = btn.dataset.type;
+              $(hand_block).dataset.sort_direction = new_dir;
+              btn.dataset.direction = new_dir;
+      
+              const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+              localColorSetting.writeProp("sort_direction", new_dir);
+              localColorSetting.writeProp("sort_type", btn.dataset.type);
+      
+              this.applySortOrder();
+            });
+      
+             */
         }
         //move own player board in main zone
         if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
@@ -3589,6 +3701,47 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
         }
+    };
+    GameXBody.prototype.switchHandSort = function (btn, newtype) {
+        var fa = "";
+        var msg = "";
+        var newdir = "increase";
+        switch (newtype) {
+            case "playable":
+                fa = "fa-arrow-down";
+                msg = _("Playability");
+                break;
+            case "cost":
+                fa = "fa-eur";
+                msg = _("Cost");
+                break;
+            case "vp":
+                fa = "fa-star";
+                newdir = "decrease";
+                msg = _("VP");
+                break;
+            case "manual":
+                fa = "fa-hand-paper-o";
+                msg = _("Manual Drag and Drop");
+                break;
+            case "none":
+                fa = "fa-times";
+                msg = _("None");
+                break;
+        }
+        btn.dataset.type = newtype;
+        btn.dataset.direction = newdir;
+        btn.querySelector('i').removeAttribute("class");
+        btn.querySelector('i').classList.add("fa", fa);
+        var hand_block = btn.dataset.target;
+        $(hand_block).dataset.sort_type = newtype;
+        $(hand_block).dataset.sort_direction = newdir;
+        var fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace('%s', msg);
+        this.addTooltip(btn.id, fullmsg, _("Click to select next sorting mode"));
+        var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
+        localColorSetting.writeProp("sort_direction", newdir);
+        localColorSetting.writeProp("sort_type", btn.dataset.type);
+        this.applySortOrder();
     };
     GameXBody.prototype.setupPlayerStacks = function (playerColor) {
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
@@ -3615,6 +3768,13 @@ var GameXBody = /** @class */ (function (_super) {
             var item = lsStacks_1[_i];
             var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
             stack.render("tableau_" + playerColor);
+            this.stacks.push(stack);
+        }
+    };
+    GameXBody.prototype.updateStacks = function () {
+        for (var _i = 0, _a = this.stacks; _i < _a.length; _i++) {
+            var stack = _a[_i];
+            stack.adjustFromView();
         }
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
@@ -3799,6 +3959,13 @@ var GameXBody = /** @class */ (function (_super) {
                 label: _("Hide badges on minipanel"),
                 choice: { hide: true },
                 default: true,
+                ui: "checkbox"
+            },
+            {
+                key: "showmicon",
+                label: _("Show cities, greeneries, etc. on minipanel"),
+                choice: { show: true },
+                default: false,
                 ui: "checkbox"
             },
             {
@@ -4090,7 +4257,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);
-        this.darhflog("playing notif " + notif.type + " with args ", notif.args);
+        //  this.darhflog("playing notif " + notif.type + " with args ", notif.args);
         //header cleanup
         this.gameStatusCleanup();
         //Displays message in header while the notif is playing
@@ -4531,9 +4698,14 @@ var GameXBody = /** @class */ (function (_super) {
                 tokenNode.style.setProperty("--sort_cost", displayInfo.cost);
                 tokenNode.style.setProperty("--sort_vp", sort_vp);
             }
-            var div = this.createDivNode(null, "card_info_box", tokenNode.id);
-            div.innerHTML = "\n          <div class='token_title'>".concat(displayInfo.name, "</div>\n          <div class='token_cost'>").concat(displayInfo.cost, "</div> \n          <div class='token_rules'>").concat(displayInfo.r, "</div>\n          <div class='token_descr'>").concat(displayInfo.text, "</div>\n          ");
-            tokenNode.appendChild(div);
+            // const div = this.createDivNode(null, "card_info_box", tokenNode.id);
+            // div.innerHTML = `
+            //     <div class='token_title'>${displayInfo.name}</div>
+            //     <div class='token_cost'>${displayInfo.cost}</div> 
+            //     <div class='token_rules'>${displayInfo.r}</div>
+            //     <div class='token_descr'>${displayInfo.text}</div>
+            //     `;
+            // tokenNode.appendChild(div);
             //card tooltip
             //tokenNode.appendChild(ttdiv);
             tokenNode.setAttribute("data-card-type", displayInfo.t);
@@ -5796,7 +5968,14 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.addSortButtonsToHandy = function (attachNode) {
         var id = attachNode.id;
-        var htm = "\n        <div id=\"hs_button_".concat(id, "_cost\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"cost\" data-direction=\"\"><div class=\"hs_picto hs_cost\"><i class=\"fa fa-eur\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_playable\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"playable\" data-direction=\"\"><div class=\"hs_picto hs_playable\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_vp\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"vp\" data-direction=\"\"><div class=\"hs_picto hs_vp\">VP</div><div class=\"hs_direction\"></div></div>\n        <div id=\"hs_button_").concat(id, "_manual\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"manual\" data-direction=\"\"><div class=\"hs_picto hs_manual\"><i class=\"fa fa-hand-paper-o\" aria-hidden=\"true\"></i></div></div>\n       ");
+        /*
+        const htm = `
+            <div id="hs_button_${id}_cost" class="hs_button" data-target="${id}" data-type="cost" data-direction=""><div class="hs_picto hs_cost"><i class="fa fa-eur" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
+            <div id="hs_button_${id}_playable" class="hs_button" data-target="${id}" data-type="playable" data-direction=""><div class="hs_picto hs_playable"><i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
+            <div id="hs_button_${id}_vp" class="hs_button" data-target="${id}" data-type="vp" data-direction=""><div class="hs_picto hs_vp">VP</div><div class="hs_direction"></div></div>
+            <div id="hs_button_${id}_manual" class="hs_button" data-target="${id}" data-type="manual" data-direction=""><div class="hs_picto hs_manual"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div></div>
+           `;*/
+        var htm = "\n        <div id=\"hs_button_".concat(id, "_switch\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"none\" data-direction=\"\"><div class=\"hs_picto hs_cost\"><i id=\"hs_button_").concat(id, "_picto\" class=\"fa fa-times\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n       ");
         var node = this.createDivNode("", "hand_sorter", attachNode.id);
         node.innerHTML = htm;
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
@@ -5806,16 +5985,23 @@ var GameXBody = /** @class */ (function (_super) {
             sort_type = "manual";
             sort_dir = "";
         }
-        var bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']");
-        if (bnode)
-            bnode.dataset.direction = sort_dir;
-        $(id).dataset.sort_direction = sort_dir;
-        $(id).dataset.sort_type = sort_type;
-        var msg = _("Sort cards by %s");
-        this.addTooltip("hs_button_".concat(id, "_cost"), _("Card Sort"), msg.replace("%s", _("cost")));
-        this.addTooltip("hs_button_".concat(id, "_playable"), _("Card Sort"), msg.replace("%s", _("playability")));
-        this.addTooltip("hs_button_".concat(id, "_vp"), _("Card Sort"), msg.replace("%s", _("VP")));
-        this.addTooltip("hs_button_".concat(id, "_manual"), _("Card Sort"), _("Manual sorting (drag n drop)"));
+        /*
+            let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
+            if (bnode) bnode.dataset.direction = sort_dir;
+            $(id).dataset.sort_direction = sort_dir;
+            $(id).dataset.sort_type = sort_type;*/
+        this.switchHandSort($('hs_button_' + id + '_switch'), sort_type);
+        /*
+        this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
+        this.addTooltip(`hs_button_${id}_playable`, _("Card Sort"), msg.replace("%s", _("playability")));
+        this.addTooltip(`hs_button_${id}_vp`, _("Card Sort"), msg.replace("%s", _("VP")));
+        this.addTooltip(`hs_button_${id}_manual`, _("Card Sort"), _("Manual sorting (drag n drop)"));
+    
+    
+        const msg = _("Switch card sort method (actual:%s)");
+        this.addTooltip('hs_button_'+id+'_switch',msg.replace('%s','none'),'');
+    
+         */
     };
     /* Manual reordering of cards via drag'n'drop */
     GameXBody.prototype.enableManualReorder = function (idContainer) {

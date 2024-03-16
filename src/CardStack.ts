@@ -1,8 +1,8 @@
 enum View {
-  Summary=0,
-  Synthetic=1,
-  Stacked=2,
-  Full=3
+  Summary = 0,
+  Synthetic = 1,
+  Stacked = 2,
+  Full = 3
 }
 
 class CardStack {
@@ -12,7 +12,7 @@ class CardStack {
 
   //usage props
   current_view: View;
-  columns_synth:number = 1;
+  columns_synth: number = 1;
 
   public constructor(
     readonly game: GameXBody, // game reference
@@ -33,6 +33,7 @@ class CardStack {
   }
 
   public render(parent: ElementOrId) {
+    const header = _("Card Layouts");
     const htm = `
     <div id="${this.div_id}" class="cardstack cardstack_${this.bin_type} ${this.card_color_class}" 
       data-currentview="${this.current_view}">
@@ -52,7 +53,10 @@ class CardStack {
            <div id="btn_sv_${this.div_id}" class="stack_btn switchview"></div>
         </div>
         <div id="stack_dd_buttons_${this.div_id}" class="stack_dd_buttons">
-          
+          <div id="stack_dd_buttons_${this.div_id}_close" class="stack_dd_buttons_close">
+            <span>${header}</span>
+            <i class="fa fa-close"></i>
+          </div>
         </div>
       </div>          
       <div id="additional_text_${this.div_id}" class="stack_content_txt"></div>
@@ -63,69 +67,67 @@ class CardStack {
     $(parent).insertAdjacentHTML("afterbegin", htm);
 
     const switchButton = $("btn_sv_" + this.div_id);
-    if (this.game.isLayoutFull()) {
-      // temp trying multiple buttons
-      for (let i = 0; i < this.view_list.length; i++) {
-        const layout  = this.view_list[i];
-        const buttonstr = `<div id="btn_switch_${this.div_id}_${layout}" class="stack_btn switch_${layout}"></div>`;
-        const laButton = dojo.place(buttonstr, switchButton.parentElement);
-        laButton.classList.add("fa", this.getIconClass(layout));
-        laButton.addEventListener("click", (evt) => {
-          this.onSwitchView(layout);
-        });
-      }
-      switchButton.remove();
-    } else {
-     // switchButton.classList.add("fa", this.getIconClass(View.Full));
-      switchButton.classList.add("fa", "fa-align-justify");
+    switchButton.classList.add("fa", "fa-align-justify");
+    this.game.addTooltip(switchButton.id,_("Card Layouts Menu"),_("Click to select layout"));
 
-      for (let i = 0; i < this.view_list.length; i++) {
-        const layout  = this.view_list[i];
-        const buttonstr = `<div id="btn_switch_${this.div_id}_${layout}" class="stack_btn switch_${layout}"><div id="ddl_icon_${this.div_id}_${layout}" class="stack_ddl_icon"></div><div class="stack_ddl_label">${this.getViewLabel(layout)}</div></div>`;
-        const laButton = dojo.place(buttonstr, `stack_dd_buttons_${this.div_id}`);
-        $(`ddl_icon_${this.div_id}_${layout}`).classList.add("fa", this.getIconClass(layout));
-     //   laButton.classList.add("fa", this.getIconClass(layout));
-        laButton.addEventListener("click", (evt) => {
-          this.onSwitchView(layout);
-        });
-      }
+    this.game.addTooltip("cnt_cards_" + this.div_id,_("Number of cards in this pile"),"");
 
-      switchButton.addEventListener("click", (evt) => {
-        evt.stopPropagation();
-        evt.preventDefault();
-        this.onViewMenu();
-       // this.onSwitchView();
+    for (let i = 0; i < this.view_list.length; i++) {
+      const layout = this.view_list[i];
+      const buttonstr = `<div id="btn_switch_${this.div_id}_${layout}" class="stack_btn switch_${layout}">
+      <div id="ddl_icon_${this.div_id}_${layout}" class="stack_ddl_icon"></div><div class="stack_ddl_label">${this.getViewLabel(layout)}</div></div>`;
+      const laButton = dojo.place(buttonstr, `stack_dd_buttons_${this.div_id}`);
+      $(`ddl_icon_${this.div_id}_${layout}`).classList.add("fa", this.getIconClass(layout));
+
+      laButton.addEventListener("click", () => {
+        this.onSwitchView(layout);
       });
     }
+    $(`stack_dd_buttons_${this.div_id}_close`).addEventListener("click", (evt) => {
+      evt.stopPropagation();
+      evt.preventDefault();
+      $("stack_dd_buttons_" + this.div_id).classList.remove("open");
+    });
+
+    switchButton.addEventListener("click", (evt) => {
+      evt.stopPropagation();
+      evt.preventDefault();
+      this.onViewMenu();
+    });
 
     // this is already set during notif
     //triggered when a card is added
     //or a resource (may expand card in synth view)
-     const insertListen = (event)=> {
-      if ((event.target.parentNode.id && event.target.parentNode.id==this.tableau_id)
-      || event.target.id && event.target.id.startsWith('resource_')) {
-        if (this.current_view==View.Synthetic) {
+    const insertListen = (event) => {
+      if (
+        (event.target.parentNode.id && event.target.parentNode.id == this.tableau_id) ||
+        (event.target.id && event.target.id.startsWith("resource_"))
+      ) {
+        if (this.current_view == View.Synthetic) {
           this.recalSynthColumns();
         }
-       }
-    }
-     $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+      }
+    };
+    $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
 
     this.adjustFromView();
   }
 
   private getIconClass(layout: View) {
     switch (layout) {
-      case View.Summary: return  "fa-window-close";
-   //   case View.Summary: return  "fa fa-align-justify";
-      case View.Synthetic: return  "fa-tablet";
-      case View.Stacked: return  "fa-window-minimize";
-      case View.Full: return  "fa-window-restore";
+      case View.Summary:
+        return "fa-window-close";
+      //   case View.Summary: return  "fa fa-align-justify";
+      case View.Synthetic:
+        return "fa-tablet";
+      case View.Stacked:
+        return "fa-window-minimize";
+      case View.Full:
+        return "fa-window-restore";
     }
   }
 
-  private onSwitchView(next?: number | undefined) {
-    if (next === undefined) next = this.getNextView(parseInt($(this.div_id).dataset.currentview));
+  private onSwitchView(next: number) {
     $(this.div_id).dataset.currentview = String(next);
     this.current_view = parseInt($(this.div_id).dataset.currentview);
 
@@ -135,13 +137,23 @@ class CardStack {
     this.adjustFromView();
   }
 
-
   private onViewMenu() {
-    if ($('stack_dd_buttons_'+this.div_id).classList.contains("open")) {
-      $('stack_dd_buttons_'+this.div_id).classList.remove("open");
-      return;
+    let self = $("stack_dd_buttons_" + this.div_id);
+    let was_open = false;
+    if (self.classList.contains("open")) {
+      was_open = true;
     }
-    $('stack_dd_buttons_'+this.div_id).classList.add("open");
+    // remove all open menus
+    document.querySelectorAll(".stack_dd_buttons").forEach((node) => {
+      node.classList.remove("open");
+    });
+    if (!was_open) self.classList.add("open");
+
+    const layout = parseInt($(this.div_id).dataset.currentview);
+
+    const submenu = $(`btn_switch_${this.div_id}_${layout}`);
+    document.querySelectorAll(".stack_btn").forEach((node) => node.classList.remove("ma_selected_menu"));
+    if (submenu) submenu.classList.add("ma_selected_menu");
   }
 
   private getNextView(from_view: number) {
@@ -154,23 +166,23 @@ class CardStack {
   }
 
   public adjustFromView() {
-
     let label: string = "?";
     let additional_txt = "";
     label = this.getViewLabel(this.current_view);
+    const toprow = "tableau_toprow_" + this.player_color;
 
     switch (this.current_view) {
       case View.Summary:
         additional_txt = _("cards are hidden");
         if (!this.game.isLayoutFull()) {
-          if ($(this.div_id).parentElement.id != "tableau_toprow_" + this.player_color) {
-            $("tableau_toprow_" + this.player_color).appendChild($(this.div_id));
+          if ($(this.div_id).parentElement.id != toprow && $(toprow)) {
+            $(toprow).appendChild($(this.div_id));
           }
         }
         break;
       default:
         if (!this.game.isLayoutFull()) {
-          if ($(this.div_id).parentElement.id == "tableau_toprow_" + this.player_color) {
+          if ($(this.div_id).parentElement.id == toprow) {
             $("tableau_" + this.player_color).appendChild($(this.div_id));
           }
         }
@@ -185,24 +197,37 @@ class CardStack {
     $("additional_text_" + this.div_id).innerHTML = additional_txt;
     $(this.tableau_id).offsetHeight; // reflow
 
-    if (this.current_view==View.Synthetic) {
+    if (this.current_view == View.Synthetic) {
       this.recalSynthColumns();
     }
   }
 
-  private getViewLabel(view:number) {
+  private getViewLabel(view: number) {
+    if (this.bin_type == "cards_4") {
+      switch (view) {
+        case View.Summary:
+          return _("Hidden");
+        case View.Synthetic:
+          return _("Corporation");
+        case View.Stacked:
+          return _("Player Board");
+        case View.Full:
+          return _("Both");
+      }
+    }
     switch (view) {
       case View.Summary:
-        return  _("Hidden view");
+        if (!this.game.isLayoutFull()) {
+          return _("Hidden");
+        } else {
+          return _("Single");
+        }
       case View.Synthetic:
-        return _("Synthetic view");
-        break;
+        return _("Synthetic");
       case View.Stacked:
-        return _("Stacked view");
-        break;
+        return _("Stack");
       case View.Full:
-        return _("Full view");
-        break;
+        return _("Grid");
     }
 
     return "?";
@@ -218,21 +243,20 @@ class CardStack {
     return count;
   }
 
-  public recalSynthColumns():void {
-      //get last element of list
-     if ($(this.tableau_id).children.length==0) return;
+  public recalSynthColumns(): void {
+    //get last element of list
+    if ($(this.tableau_id).children.length == 0) return;
 
-     const last:Element =$(this.tableau_id).lastElementChild;
-     const lastrect=last.getBoundingClientRect();
-     const tableaurect =  $(this.tableau_id).getBoundingClientRect();
+    const last: Element = $(this.tableau_id).lastElementChild;
+    const lastrect = last.getBoundingClientRect();
+    const tableaurect = $(this.tableau_id).getBoundingClientRect();
 
-     if (lastrect.right>tableaurect.right) {
-       //add one column
-       this.columns_synth++;
-       $(this.tableau_id).style.setProperty('--columns-synth',String(this.columns_synth));
-     }
+    if (lastrect.right > tableaurect.right) {
+      //add one column
+      this.columns_synth++;
+      $(this.tableau_id).style.setProperty("--columns-synth", String(this.columns_synth));
+    }
   }
-
 
   public getDestinationDiv() {
     return this.tableau_id;

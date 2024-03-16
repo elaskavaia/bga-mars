@@ -276,24 +276,40 @@ class GameXBody extends GameTokens {
     let newdir="increase";
 
     switch (newtype) {
-      case "playable": fa="fa-arrow-down"; msg="playability"; break;
-      case "cost":  fa="fa-eur"; msg="cost";break;
-      case "vp": fa="fa-globe"; newdir="decrease";msg="VP"; break;
-      case "manual": fa="fa-hand-paper-o";msg="manual"; break;
-      case "none":  fa="fa-times"; msg="none";break;
+      case "playable":
+        fa = "fa-arrow-down";
+        msg = _("Playability");
+        break;
+      case "cost":
+        fa = "fa-eur";
+        msg = _("Cost");
+        break;
+      case "vp":
+        fa = "fa-star";
+        newdir = "decrease";
+        msg = _("VP");
+        break;
+      case "manual":
+        fa = "fa-hand-paper-o";
+        msg = _("Manual Drag and Drop");
+        break;
+      case "none":
+        fa = "fa-times";
+        msg = _("None");
+        break;
     }
 
     btn.dataset.type=newtype;
     btn.dataset.direction=newdir;
-    btn.querySelector('i').removeAttribute("class")
+    btn.querySelector('i').removeAttribute("class");
     btn.querySelector('i').classList.add("fa",fa);
 
     const hand_block: string = btn.dataset.target;
     $(hand_block).dataset.sort_type = newtype;
     $(hand_block).dataset.sort_direction = newdir;
 
-    const fullmsg =_("Switch card sort method (actual:%s)").replace('%s',msg);
-    this.addTooltip(btn.id,fullmsg,"");
+    const fullmsg =_("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace('%s',msg);
+    this.addTooltip(btn.id,fullmsg,_("Click to select next sorting mode"));
 
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
     localColorSetting.writeProp("sort_direction", newdir);
@@ -1514,15 +1530,15 @@ awarded.`);
         tokenNode.style.setProperty("--sort_vp", sort_vp);
       }
 
-      const div = this.createDivNode(null, "card_info_box", tokenNode.id);
+      // const div = this.createDivNode(null, "card_info_box", tokenNode.id);
 
-      div.innerHTML = `
-          <div class='token_title'>${displayInfo.name}</div>
-          <div class='token_cost'>${displayInfo.cost}</div> 
-          <div class='token_rules'>${displayInfo.r}</div>
-          <div class='token_descr'>${displayInfo.text}</div>
-          `;
-      tokenNode.appendChild(div);
+      // div.innerHTML = `
+      //     <div class='token_title'>${displayInfo.name}</div>
+      //     <div class='token_cost'>${displayInfo.cost}</div> 
+      //     <div class='token_rules'>${displayInfo.r}</div>
+      //     <div class='token_descr'>${displayInfo.text}</div>
+      //     `;
+      // tokenNode.appendChild(div);
 
       //card tooltip
       //tokenNode.appendChild(ttdiv);
