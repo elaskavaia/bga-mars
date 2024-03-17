@@ -1897,9 +1897,9 @@ awarded.`);
 
       if (this.getRulesFor(tokenInfo.key, "a")) {
         result.location = tokenInfo.location + "_cards_2a";
-      } else if (t == 2 && this.getRulesFor(tokenInfo.key, "holds", "")) {
-        // card can hold stuff
-        result.location = tokenInfo.location + "_cards_2a";
+      // } else if (t == 2 && this.getRulesFor(tokenInfo.key, "holds", "")) {
+      //   // card can hold stuff - no longer needed
+      //   result.location = tokenInfo.location + "_cards_2a";
       }
     }
     if (!result.location)
