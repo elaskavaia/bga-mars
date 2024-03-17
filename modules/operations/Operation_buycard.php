@@ -23,7 +23,7 @@ class Operation_buycard extends AbsOperation {
             }
         }
         foreach ($card_ids as $card_id) {
-            $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys card ${token_name}'), [
+            $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You buy ${token_name}'), [
                 "_private" => true
             ]);
         }

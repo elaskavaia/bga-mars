@@ -6,7 +6,7 @@ declare(strict_types=1);
 class Operation_keep extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_id = $this->getCheckedArg('target');
-        $this->game->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} keeps card ${token_name}'), [
+        $this->game->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You keep ${token_name}'), [
             "_private"=>true
         ],  $this->game->getPlayerIdByColor($color));
         $this->game->notifyCounterChanged("hand_$color", ["nod" => true]);

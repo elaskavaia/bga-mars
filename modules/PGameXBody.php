@@ -1253,7 +1253,7 @@ abstract class PGameXBody extends PGameMachine {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
             $cost = -$this->getRulesFor($card_id, 'cost');
-            $this->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
+            $this->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [
                 "_private" => true,
                 "cost" => $cost
             ], $player_id);
