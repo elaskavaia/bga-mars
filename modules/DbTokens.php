@@ -24,17 +24,26 @@ class DbTokens extends APP_GameClass {
     // If defined, tell the name of the deck and what is the corresponding discard (ex : "mydeck" => "mydiscard")
     var $autoreshuffle_custom = array ();
     private $custom_fields;
-    private $g_index;
+    protected $keyindex = []; // cache
 
     function __construct() {
         $this->table = 'token';
         $this->custom_fields = array ();
-        $this->g_index = array ();
     }
 
     // MUST be called before any other method if db table is not called 'token'
     function init($table) {
         $this->table = $table;
+    }
+
+    function clear_cache() {
+        $this->keyindex = [];
+    }
+
+    function init_cache() {
+        if (count($this->keyindex) == 0) {
+            $this->keyindex = $this->getTokensOfTypeInLocation(null);
+        }
     }
 
     // This inserts new records in the database. Generically speaking you should only be calling during setup with some
@@ -110,6 +119,7 @@ class DbTokens extends APP_GameClass {
     }
 
     function DbCreateTokens($values){
+        $this->clear_cache();
         $seqvalues = [];
         foreach($values as $row) {
             $seqvalues [] = "( '$row[0]', '$row[1]', '$row[2]' )";
@@ -129,12 +139,14 @@ class DbTokens extends APP_GameClass {
      * @return string - token key
      */
     function createTokenAutoInc($type, $location = 'limbo', $token_state = 0) {
+        $this->clear_cache();
         $allsuf = $this->getTokensOfTypeInLocation($type);
         $resnum = count($allsuf);
         return $this->createToken("${type}_${resnum}", $location, $token_state);
     }
 
     function createTokensPack($key, $location, $nbr = 1, $nbr_start = 1, $iterArr = null, $token_state = null) {
+        $this->clear_cache();
         if ($iterArr == null)
             $iterArr = array ('' );
         if ( !is_array($iterArr))
@@ -190,6 +202,7 @@ class DbTokens extends APP_GameClass {
     // Shuffle token of a specified location, result of the operation will changes state of the token to be a position after shuffling
     function shuffle($location) {
         self::checkLocation($location);
+        $this->clear_cache();
         $token_keys = self::getObjectListFromDB("SELECT token_key FROM " . $this->table . " WHERE token_location='$location'", true);
         shuffle($token_keys);
         $n = 0;
@@ -201,11 +214,13 @@ class DbTokens extends APP_GameClass {
 
     function deleteAll() {
         self::DbQuery("DELETE FROM " . $this->table);
+        $this->clear_cache();
     }
 
     // Pick the first "$nbr" cards on top of specified deck and place it in target location
     // Return cards infos or void array if no card in the specified location
     function pickTokensForLocation($nbr, $from_location, $to_location, $state = 0, $no_deck_reform = false, &$was_reshuffled = null) {
+        $this->clear_cache();
         $tokens = self::getTokensOnTop($nbr, $from_location);
         $tokens_ids = array ();
         foreach ( $tokens as $i => $card ) {
@@ -269,6 +284,7 @@ class DbTokens extends APP_GameClass {
 
     function reformDeckFromDiscard($from_location) {
         self::checkLocation($from_location);
+        $this->clear_cache();
         if (isset($this->autoreshuffle_custom [$from_location]))
             $discard_location = $this->autoreshuffle_custom [$from_location];
         else
@@ -287,6 +303,7 @@ class DbTokens extends APP_GameClass {
     function setTokenState($token_key, $state) {
         self::checkState($state);
         self::checkKey($token_key);
+        $this->clear_cache();
         $sql = "UPDATE " . $this->table;
         $sql .= " SET token_state='$state'";
         $sql .= " WHERE token_key='$token_key'";
@@ -297,6 +314,7 @@ class DbTokens extends APP_GameClass {
     function incTokenState($token_key, $by) {
         self::checkState($by);
         self::checkKey($token_key);
+        $this->clear_cache();
         $sql = "UPDATE " . $this->table;
         $sql .= " SET token_state = token_state + $by";
         $sql .= " WHERE token_key='$token_key'";
@@ -312,6 +330,7 @@ class DbTokens extends APP_GameClass {
         self::checkLocation($location);
         self::checkState($state, true);
         self::checkKey($token_key);
+        $this->clear_cache();
         $sql = "UPDATE " . $this->table;
         $sql .= " SET token_location='$location'";
         if ($state !== null) {
@@ -335,6 +354,7 @@ class DbTokens extends APP_GameClass {
         }
         $sql .= " WHERE token_key IN ('" . implode("','", $tokens) . "')";
         self::DbQuery($sql);
+        $this->clear_cache();
     }
 
     // Move a card to a specific location where card are ordered. If location_arg place is already taken, increment
@@ -348,6 +368,7 @@ class DbTokens extends APP_GameClass {
         $sql .= " AND token_state>=$state";
         self::DbQuery($sql);
         self::moveToken($token_key, $location, $state);
+        $this->clear_cache();
     }
 
     function insertTokenOnExtremePosition($token_key, $location, $bOnTop) {
@@ -356,6 +377,7 @@ class DbTokens extends APP_GameClass {
             self::insertToken($token_key, $location, $extreme_pos + 1);
         else
             self::insertToken($token_key, $location, $extreme_pos - 1);
+        $this->clear_cache();
     }
 
     // Move all tokens from a location to another
@@ -373,6 +395,7 @@ class DbTokens extends APP_GameClass {
                 $sql .= "AND token_state='$from_state' ";
         }
         self::DbQuery($sql);
+        $this->clear_cache();
     }
 
     /**
@@ -385,6 +408,7 @@ class DbTokens extends APP_GameClass {
         $sql .= " SET token_location='$to_location'";
         $sql .= " WHERE token_location='$from_location'";
         self::DbQuery($sql);
+        $this->clear_cache();
     }
 
     /**
@@ -478,10 +502,12 @@ class DbTokens extends APP_GameClass {
      */
     function getTokenInfo($token_key) {
         self::checkKey($token_key);
-        $sql = $this->getSelectQuery();
-        $sql .= " WHERE token_key='$token_key' ";
-        $dbres = self::DbQuery($sql);
-        return mysql_fetch_assoc($dbres);
+        $this->init_cache();
+        return array_get($this->keyindex,$token_key,null);
+        // $sql = $this->getSelectQuery();
+        // $sql .= " WHERE token_key='$token_key' ";
+        // $dbres = self::DbQuery($sql);
+        // return mysql_fetch_assoc($dbres);
     }
 
     /**

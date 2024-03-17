@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 
 class TokensInMem extends DbTokens {
-    protected $keyindex = [];
+
 
     static function record($arr) {
         return [
@@ -15,6 +15,10 @@ class TokensInMem extends DbTokens {
             "location" => $arr[1],
             "state" => $arr[2],
         ];
+    }
+
+    function clear_cache() {
+        // 
     }
     function getTokenInfo($token_key) {
         self::checkKey($token_key);
