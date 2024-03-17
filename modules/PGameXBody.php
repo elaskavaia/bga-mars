@@ -199,6 +199,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     protected function getAllDatas() {
+        $this->prof_point("getAllDatas", "start");
         $result = parent::getAllDatas();
         $result['CON'] = $this->getPhpConstants("MA_");
         $current = $this->getCurrentPlayerId();
@@ -207,7 +208,7 @@ abstract class PGameXBody extends PGameMachine {
             $result['card_info'] = $this->getCardInfoInHand($current);
         } else
             $result['server_prefs'] = [];
-
+        $this->prof_point("getAllDatas", "end");
         return $result;
     }
     //////////////////////////////////////////////////////////////////////////////

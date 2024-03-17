@@ -580,34 +580,34 @@ abstract class PGameBasic extends Table {
     }
 
     // Profiling
-    function prof_point(string $str, string $type = "now") {
+    function prof_point(string $str, string $type = "now", string $extra = "") {
         if (!$this->isStudio()) return;
         global $prof_times;
         $sid = $_SERVER["REQUEST_TIME_FLOAT"];
-        $time = microtime(true) - $sid;
-        $gameid = spl_object_id($this);
- 
+        $time = microtime(true) - $sid; // timestamp since request
+        $gameid = spl_object_id($this); // object id of the game class
+
         $dur = null;
-        $q = "";
-      
-        if ($type=='start') {
-            $prof_times[$str]=$time;
-           // $q = array_get($_GET,'action','?') . "/". array_get($_GET,'call','');
-        } else if ($type=='end' || $type=='check') {
+
+
+        if ($type == 'start') {
+            $prof_times[$str] = $time;
+            // if (!$extra) $extra = array_get($_GET,'action','?')
+        } else if ($type == 'end' || $type == 'check') {
             if (array_key_exists($str, $prof_times)) {
                 $dur = $time - $prof_times[$str];
             } else {
                 $dur = 0;
             }
-            $prof_times[$str]=$time;
+            $prof_times[$str] = $time;
         }
-        //$this->debug("$prefix ($dur)");
-        if ($dur!==null)
-        $dur_s = sprintf("(%.06f)",$dur);
-        else 
-        $dur_s = "-";
- 
-        $this->warn(sprintf("prof:%.03f: g%3d: %s/%s %s %s", $time, $gameid, $str, $type, $dur_s, $q));
+        
+        if ($dur !== null)
+            $dur_s = sprintf("(%.06f)", $dur);
+        else
+            $dur_s = "-";
+
+        $this->warn(sprintf("prof:%.03f: g%3d: %s/%s %s %s", $time, $gameid, $str, $type, $dur_s, $extra));
     }
 
     // ------ DB ----------
