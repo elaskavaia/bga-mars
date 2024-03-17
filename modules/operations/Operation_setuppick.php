@@ -67,7 +67,7 @@ class Operation_setuppick extends AbsOperation {
     }
 
     function getOpName() {
-        return clienttranslate('Setup Choice');
+        return clienttranslate('Confirm');
     }
 
     function noValidTargets(): bool {
