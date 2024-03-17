@@ -3520,7 +3520,7 @@ var GameXBody = /** @class */ (function (_super) {
             // hexes are not moved so manually connect
             this.connectClass("hex", "onclick", "onToken");
             //player controls
-            this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+            //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
             //Give tooltips to alt trackers in player boards
             var togglehtml_1 = this.getTooptipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", _("Click to show or hide cards"));
             document.querySelectorAll(".player_controls .viewcards_button").forEach(function (node) {
