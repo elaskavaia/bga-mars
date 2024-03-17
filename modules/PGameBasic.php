@@ -579,6 +579,37 @@ abstract class PGameBasic extends Table {
         $this->gamestate->changeActivePlayer($next_player_id);
     }
 
+    // Profiling
+    function prof_point(string $str, string $type = "now") {
+        if (!$this->isStudio()) return;
+        global $prof_times;
+        $sid = $_SERVER["REQUEST_TIME_FLOAT"];
+        $time = microtime(true) - $sid;
+        $gameid = spl_object_id($this);
+ 
+        $dur = null;
+        $q = "";
+      
+        if ($type=='start') {
+            $prof_times[$str]=$time;
+           // $q = array_get($_GET,'action','?') . "/". array_get($_GET,'call','');
+        } else if ($type=='end' || $type=='check') {
+            if (array_key_exists($str, $prof_times)) {
+                $dur = $time - $prof_times[$str];
+            } else {
+                $dur = 0;
+            }
+            $prof_times[$str]=$time;
+        }
+        //$this->debug("$prefix ($dur)");
+        if ($dur!==null)
+        $dur_s = sprintf("(%.06f)",$dur);
+        else 
+        $dur_s = "-";
+ 
+        $this->warn(sprintf("prof:%.03f: g%3d: %s/%s %s %s", $time, $gameid, $str, $type, $dur_s, $q));
+    }
+
     // ------ DB ----------
     function dbGetScore(int $player_id) {
         return $this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id='$player_id'");
