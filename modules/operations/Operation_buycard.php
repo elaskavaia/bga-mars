@@ -23,7 +23,7 @@ class Operation_buycard extends AbsOperation {
             }
         }
         foreach ($card_ids as $card_id) {
-            $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} buys a card ${token_name}'), [
+            $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys card ${token_name}'), [
                 "_private" => true
             ]);
         }
@@ -92,10 +92,10 @@ class Operation_buycard extends AbsOperation {
         $operations = $this->game->machine->getTopOperations(null, 'main');
         $op = array_shift($operations);
         $this->game->systemAssertTrue("unexpected state", $op);
-        $optype = $op['type'];
-        if ($optype=='prediscard') {
-
-        } else  if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
+        // $optype = $op['type'];
+        // if ($optype=='prediscard') { // ?
+        // } 
+        if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
 
 
         $total = $count + count($rest) - $has_corp;
@@ -120,7 +120,7 @@ class Operation_buycard extends AbsOperation {
             $this->game->dbSetTokenState('tracker_m', 0, '');
             $this->game->multiplayerpush($color, 'setuppick');
         } else {
-            $this->game->multiplayerpush($color, $total . '?buycard');
+            if ($count>0) $this->game->multiplayerpush($color, $total . '?buycard');
         }
 
         $this->game->machine->normalize();
