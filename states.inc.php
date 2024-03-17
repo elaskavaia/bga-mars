@@ -104,7 +104,7 @@ $machinestates = [
     STATE_PLAYER_TURN_CHOICE => [
         "name" => "playerTurnChoice",
         "description" => clienttranslate(
-            '${actplayer} makes their choices'
+            '${actplayer} is playing their turn'
         ),
         "descriptionmyturn" => clienttranslate(
             '${you} must choose'
