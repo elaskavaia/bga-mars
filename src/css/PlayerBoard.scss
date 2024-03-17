@@ -292,6 +292,7 @@
     height: calc(var(--card-width) * 0.294);
     background-image: url("img/corps_logos.png");
     background-size: 700% 200%;
+    background-position: 100% 100%; // empty spot
   }
 
   #page-title .corp_logo {
