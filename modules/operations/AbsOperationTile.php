@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 // place an abstract tile
 abstract class AbsOperationTile extends AbsOperation {
+    protected $tile_id = null;
 
     function argPrimaryDetails() {
         $color = $this->color;
@@ -42,17 +43,23 @@ abstract class AbsOperationTile extends AbsOperation {
     }
 
     protected function getTileId() {
+        if ($this->tile_id != null) {
+            return $this->tile_id;
+        }
+        //$this->game->prof_point("tileid","start");
         $type = $this->getTileType();
         $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
         if (!$tile) {
             // XXX can be removed later
             $count = count($this->game->tokens->getTokensOfTypeInLocation("tile_${type}_"));
-            $count+=1;
+            $count += 1;
             $this->game->tokens->createToken("tile_${type}_$count");
             $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
         }
         if (!$tile) throw new BgaSystemException("Cannot find tile of type $type");
-        return $tile['key'];
+        $this->tile_id = $tile['key'];
+        //$this->game->prof_point("tileid","end");
+        return $this->tile_id;
     }
 
     protected function getReservedArea(): ?string {
