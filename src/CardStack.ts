@@ -128,20 +128,23 @@ class CardStack {
   }
 
   private onSwitchView(next: number) {
-    $(this.div_id).dataset.currentview = String(next);
-    this.current_view = parseInt($(this.div_id).dataset.currentview);
+    const str_next = String(next);
+    this.current_view = next;
+    $(this.div_id).dataset.currentview = str_next;
+    this.localsettings.writeProp(this.div_id, str_next);
 
-    this.localsettings.writeProp(this.div_id, String(this.current_view));
-
-    this.onViewMenu();
+    this.onViewMenu(true); // close menu
     this.adjustFromView();
   }
 
-  private onViewMenu() {
+  private onViewMenu(close?: boolean) {
     let self = $("stack_dd_buttons_" + this.div_id);
-    let was_open = false;
-    if (self.classList.contains("open")) {
-      was_open = true;
+    let was_open = close;
+    if (was_open === undefined) {
+      was_open = false;
+      if (self.classList.contains("open")) {
+        was_open = true;
+      }
     }
     // remove all open menus
     document.querySelectorAll(".stack_dd_buttons").forEach((node) => {
@@ -163,6 +166,10 @@ class CardStack {
       }
     }
     return this.view_list[0];
+  }
+
+  public reset() {
+    this.onSwitchView(this.default_view);
   }
 
   public adjustFromView() {
@@ -261,36 +268,4 @@ class CardStack {
   public getDestinationDiv() {
     return this.tableau_id;
   }
-
-  /*setup
-      this.vlayout.setupPlayer(playerInfo);
-
-    this.setupPlayerStacks(playerInfo.color);
-
-  setupPlayerStacks(playerColor:string):void {
-    const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
-
-    const oldStacks= [
-      'cards_4','cards_2a','cards_2','cards_3vp','cards_3','cards_1vp','cards_1'
-    ]
-    for (const item of oldStacks) {
-      document.getElementById('tableau_'+playerColor+'_'+item).remove();
-    }
-
-
-      const lsStacks=[
-      {label:_('Events'),div:"cards_3",color_class:'red',default:0},
-      {label:_('Automated'),div:"cards_1",color_class:'green',default:2},
-      {label:_('Effects'),div:"cards_2",color_class:'blue',default:3},
-      {label:_('Actions'),div:"cards_2a",color_class:'blue',default:3},
-    ];
-    for (const item of lsStacks) {
-      const stack= new CardStack(this,localColorSetting,item.div,item.label,playerColor,item.color_class,item.default);
-      stack.render('tableau_'+playerColor);
-    }
-  }
-
-
-
-   */
 }

@@ -1393,17 +1393,21 @@ var CardStack = /** @class */ (function () {
         }
     };
     CardStack.prototype.onSwitchView = function (next) {
-        $(this.div_id).dataset.currentview = String(next);
-        this.current_view = parseInt($(this.div_id).dataset.currentview);
-        this.localsettings.writeProp(this.div_id, String(this.current_view));
-        this.onViewMenu();
+        var str_next = String(next);
+        this.current_view = next;
+        $(this.div_id).dataset.currentview = str_next;
+        this.localsettings.writeProp(this.div_id, str_next);
+        this.onViewMenu(true); // close menu
         this.adjustFromView();
     };
-    CardStack.prototype.onViewMenu = function () {
+    CardStack.prototype.onViewMenu = function (close) {
         var self = $("stack_dd_buttons_" + this.div_id);
-        var was_open = false;
-        if (self.classList.contains("open")) {
-            was_open = true;
+        var was_open = close;
+        if (was_open === undefined) {
+            was_open = false;
+            if (self.classList.contains("open")) {
+                was_open = true;
+            }
         }
         // remove all open menus
         document.querySelectorAll(".stack_dd_buttons").forEach(function (node) {
@@ -1424,6 +1428,9 @@ var CardStack = /** @class */ (function () {
             }
         }
         return this.view_list[0];
+    };
+    CardStack.prototype.reset = function () {
+        this.onSwitchView(this.default_view);
     };
     CardStack.prototype.adjustFromView = function () {
         var label = "?";
@@ -3662,38 +3669,6 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 _this.switchHandSort(btn, newtype);
             });
-            /*
-            this.connectClass("hs_button", "onclick", (evt: Event) => {
-      
-              let btn = evt.currentTarget as HTMLElement;
-              dojo.stopEvent(evt);
-              const actual_dir: string = btn.dataset.direction;
-              let new_dir: string;
-              if (btn.dataset.type == "manual") {
-                new_dir = actual_dir == "" ? "increase" : "";
-              } else {
-                new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
-              }
-      
-              const hand_block: string = btn.dataset.target;
-      
-              //deactivate sorting on other buttons
-              dojo.query("#" + hand_block + " .hs_button").forEach((item) => {
-                $(item).dataset.direction = "";
-              });
-      
-              $(hand_block).dataset.sort_type = btn.dataset.type;
-              $(hand_block).dataset.sort_direction = new_dir;
-              btn.dataset.direction = new_dir;
-      
-              const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-              localColorSetting.writeProp("sort_direction", new_dir);
-              localColorSetting.writeProp("sort_type", btn.dataset.type);
-      
-              this.applySortOrder();
-            });
-      
-             */
         }
         //move own player board in main zone
         if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
@@ -3771,10 +3746,14 @@ var GameXBody = /** @class */ (function (_super) {
             this.stacks.push(stack);
         }
     };
-    GameXBody.prototype.updateStacks = function () {
+    GameXBody.prototype.updateStacks = function (reset) {
+        if (reset === void 0) { reset = false; }
         for (var _i = 0, _a = this.stacks; _i < _a.length; _i++) {
             var stack = _a[_i];
-            stack.adjustFromView();
+            if (reset)
+                stack.reset();
+            else
+                stack.adjustFromView();
         }
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
@@ -3940,6 +3919,7 @@ var GameXBody = /** @class */ (function (_super) {
         return "".concat(this.game_name, "-").concat(this.player_id, "-").concat(extra);
     };
     GameXBody.prototype.setupLocalSettings = function () {
+        var _this = this;
         var _a;
         //local settings, include user id into setting string so it different per local player and theme
         var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
@@ -3980,7 +3960,10 @@ var GameXBody = /** @class */ (function (_super) {
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
-        this.localSettings.renderContents("settings-controls-container");
+        this.localSettings.renderContents("settings-controls-container", function () {
+            // run on settings reset
+            _this.updateStacks(true);
+        });
         //cleanup old table settings
         //using a simpler namespace context for easier filtering
         // const purgeSettings = new LocalSettings(this.getLocalSettingNamespace());
@@ -5899,21 +5882,6 @@ var GameXBody = /** @class */ (function (_super) {
         this.onToken_playerTurnChoice(tid);
     };
     //custom actions
-    GameXBody.prototype.onFilterButton = function (event) {
-        var id = event.currentTarget.id;
-        // Stop this event propagation
-        dojo.stopEvent(event); // XXX
-        var plcolor = $(id).dataset.player;
-        var btncolor = $(id).dataset.color;
-        var tblitem = "visibility" + btncolor;
-        $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
-        $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
-        if (!this.isLayoutFull()) {
-            var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("mcompact_colorfilter"));
-            localColorSetting.writeProp("selected", btncolor);
-        }
-        return true;
-    };
     GameXBody.prototype.combineTooltips = function (parentNode, childNode) {
         var _a, _b;
         // combine parent and child tooltips and stuck to parnet, remove child one
@@ -6250,7 +6218,7 @@ var LocalSettings = /** @class */ (function () {
         document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
         return true;
     };
-    LocalSettings.prototype.renderContents = function (parentId) {
+    LocalSettings.prototype.renderContents = function (parentId, resetHandler) {
         var _this = this;
         if (!document.getElementById(parentId))
             return false;
@@ -6266,8 +6234,7 @@ var LocalSettings = /** @class */ (function () {
             if (prop.ui !== false)
                 htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
         }
-        var restore_tooltip = _("Click to restore to original values");
-        var htm = "\n      <div id=\"".concat(this.gameName, "_localsettings_window\" class=\"localsettings_window\">\n         <div class=\"localsettings_header\">").concat(title, "<span id=\"localsettings_restore\" title=\"").concat(restore_tooltip, "\" class=\"fa fa-eraser\"></span></div>\n         ").concat(htmcontents, "\n      </div>\n      ");
+        var htm = "\n      <div id=\"".concat(this.gameName, "_localsettings_window\" class=\"localsettings_window\">\n         <div class=\"localsettings_header\">").concat(title, "</div>\n         ").concat(htmcontents, "\n      </div>\n      ");
         document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
         //add interactivity
         for (var _b = 0, _c = this.props; _b < _c.length; _b++) {
@@ -6275,12 +6242,23 @@ var LocalSettings = /** @class */ (function () {
             if (prop.ui !== false)
                 this.actionProp(prop);
         }
-        $("localsettings_restore").addEventListener("click", function (event) {
-            var target = event.target;
-            _this.clear();
-            _this.setup();
-            _this.renderContents(parentId);
+        var restore_tooltip = _("Click to restore all local setting to original values (all tables, this browser)");
+        var restore_title = _("Restore all local settings");
+        var restoreDiv = dojo.create("a", {
+            id: "localsettings_restore",
+            class: "action-button bgabutton bgabutton_gray",
+            innerHTML: "<span title=\"".concat(restore_tooltip, "\">").concat(restore_title, "</span> <span title=\"").concat(restore_tooltip, "\" class=\"fa fa-eraser\"></span>"),
+            onclick: function (event) {
+                var target = event.target;
+                _this.clear();
+                _this.setup();
+                _this.renderContents(parentId, resetHandler);
+                if (resetHandler)
+                    resetHandler();
+            },
+            target: "_blank"
         });
+        document.getElementById("".concat(this.gameName, "_localsettings_window")).appendChild(restoreDiv);
     };
     LocalSettings.prototype.renderProp = function (prop) {
         if (prop.range)

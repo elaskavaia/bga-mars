@@ -225,41 +225,8 @@ class GameXBody extends GameTokens {
         }
         this.switchHandSort(btn,newtype);
 
-
       });
 
-      /*
-      this.connectClass("hs_button", "onclick", (evt: Event) => {
-
-        let btn = evt.currentTarget as HTMLElement;
-        dojo.stopEvent(evt);
-        const actual_dir: string = btn.dataset.direction;
-        let new_dir: string;
-        if (btn.dataset.type == "manual") {
-          new_dir = actual_dir == "" ? "increase" : "";
-        } else {
-          new_dir = actual_dir == "" ? "increase" : actual_dir == "increase" ? "decrease" : "";
-        }
-
-        const hand_block: string = btn.dataset.target;
-
-        //deactivate sorting on other buttons
-        dojo.query("#" + hand_block + " .hs_button").forEach((item) => {
-          $(item).dataset.direction = "";
-        });
-
-        $(hand_block).dataset.sort_type = btn.dataset.type;
-        $(hand_block).dataset.sort_direction = new_dir;
-        btn.dataset.direction = new_dir;
-
-        const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-        localColorSetting.writeProp("sort_direction", new_dir);
-        localColorSetting.writeProp("sort_type", btn.dataset.type);
-
-        this.applySortOrder();
-      });
-
-       */
     }
 
     //move own player board in main zone
@@ -346,9 +313,10 @@ class GameXBody extends GameTokens {
     }
   }
 
-  updateStacks(){
+  updateStacks(reset: boolean = false){
       for (let stack of this.stacks) {
-        stack.adjustFromView();
+        if (reset) stack.reset();
+        else stack.adjustFromView();
       }
   }
 
@@ -623,7 +591,10 @@ class GameXBody extends GameTokens {
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
-    this.localSettings.renderContents("settings-controls-container");
+    this.localSettings.renderContents("settings-controls-container", ()=> {
+      // run on settings reset
+      this.updateStacks(true);
+    });
 
     //cleanup old table settings
     //using a simpler namespace context for easier filtering
@@ -2800,26 +2771,6 @@ awarded.`);
   }
 
   //custom actions
-  onFilterButton(event: Event) {
-    let id = (event.currentTarget as HTMLElement).id;
-    // Stop this event propagation
-    dojo.stopEvent(event); // XXX
-
-    const plcolor = $(id).dataset.player;
-    const btncolor = $(id).dataset.color;
-    const tblitem = "visibility" + btncolor;
-
-    $("tableau_" + plcolor).dataset[tblitem] = $("tableau_" + plcolor).dataset[tblitem] == "1" ? "0" : "1";
-    $(id).dataset.enabled = $(id).dataset.enabled == "1" ? "0" : "1";
-
-    if (!this.isLayoutFull()) {
-      const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("mcompact_colorfilter"));
-      localColorSetting.writeProp("selected", btncolor);
-    }
-
-    return true;
-  }
-
   combineTooltips(parentNode: HTMLElement, childNode: HTMLElement) {
     // combine parent and child tooltips and stuck to parnet, remove child one
     if (!parentNode) return;

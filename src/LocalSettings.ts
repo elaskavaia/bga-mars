@@ -43,7 +43,7 @@ class LocalSettings {
     return true;
   }
 
-  public renderContents(parentId: string): Boolean {
+  public renderContents(parentId: string, resetHandler?: () => void): Boolean {
     if (!document.getElementById(parentId)) return false;
 
     $(parentId)
@@ -58,10 +58,9 @@ class LocalSettings {
       if (prop.ui !== false) htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
     }
 
-    const restore_tooltip = _("Click to restore to original values");
     let htm = `
       <div id="${this.gameName}_localsettings_window" class="localsettings_window">
-         <div class="localsettings_header">${title}<span id="localsettings_restore" title="${restore_tooltip}" class="fa fa-eraser"></span></div>
+         <div class="localsettings_header">${title}</div>
          ${htmcontents}
       </div>
       `;
@@ -72,12 +71,23 @@ class LocalSettings {
       if (prop.ui !== false) this.actionProp(prop);
     }
 
-    $("localsettings_restore").addEventListener("click", (event) => {
-      const target = event.target as HTMLInputElement;
-      this.clear();
-      this.setup();
-      this.renderContents(parentId);
+    const restore_tooltip = _("Click to restore all local setting to original values (all tables, this browser)");
+    const restore_title = _("Restore all local settings");
+    const restoreDiv = dojo.create("a", {
+      id: "localsettings_restore",
+      class: "action-button bgabutton bgabutton_gray",
+      innerHTML: `<span title="${restore_tooltip}">${restore_title}</span> <span title="${restore_tooltip}" class="fa fa-eraser"></span>`,
+      onclick: (event)=>{
+        const target = event.target as HTMLInputElement;
+        this.clear();
+        this.setup();
+        this.renderContents(parentId, resetHandler);
+        if (resetHandler) resetHandler();
+      },
+      target: "_blank"
     });
+
+    document.getElementById(`${this.gameName}_localsettings_window`).appendChild(restoreDiv);
   }
 
   public renderProp(prop: LocalProp): string {
