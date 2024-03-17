@@ -5349,10 +5349,13 @@ var GameXBody = /** @class */ (function (_super) {
                     _this.removeAllClasses(_this.classSelected);
                     onUpdate();
                 }, "red");
+                if ($("button_undo"))
+                    $("button_undo").remove();
             }
             else {
                 if ($(cancelButtonId))
                     dojo.destroy(cancelButtonId);
+                _this.addUndoButton();
             }
             $(buttonId).innerHTML = buttonName + ": " + count;
         };

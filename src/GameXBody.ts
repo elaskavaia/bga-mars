@@ -2204,8 +2204,10 @@ awarded.`);
           },
           "red"
         );
+        if ($("button_undo")) $("button_undo").remove();
       } else {
         if ($(cancelButtonId)) dojo.destroy(cancelButtonId);
+        this.addUndoButton();
       }
       $(buttonId).innerHTML = buttonName + ": " + count;
     };
