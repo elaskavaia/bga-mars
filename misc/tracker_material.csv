@@ -3,7 +3,7 @@ id|name|state|php
 #set type=tracker
 #set create=4
 #set location=miniboard_{COLOR}
-tracker_passed|Player Passed|0
+tracker_passed|Pass|0
 tracker_tr|TR|20
 tracker_m|M€|0
 tracker_s|Steel|0
