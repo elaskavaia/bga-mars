@@ -97,7 +97,7 @@
   background-image: none;
 }
 
-#ebd-body[data-maop=confturn] #button_undo {
+#ebd-body[data-maop=confturn] #button_undo, #ebd-body[data-maop=confnocards] #button_undo, #ebd-body[data-maop=confirm] #button_undo {
   float: unset;
 }
 
