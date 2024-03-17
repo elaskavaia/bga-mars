@@ -3918,7 +3918,7 @@ $this->token_types = [
   'type' => 'tracker',
   'create' => 4,
   'location' => 'miniboard_{COLOR}',
-  'name' => clienttranslate("Player Passed"),
+  'name' => clienttranslate("Pass"),
   'state' => 0,
 ],
  'tracker_tr' => [  //
