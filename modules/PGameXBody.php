@@ -500,6 +500,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->token_types_adjusted2) {
             return $this->token_types;
         }
+        $this->prof_point("adjust", "start");
         parent::adjustedMaterial();
 
         $expr_keys = ['r', 'e', 'a'];
@@ -526,6 +527,7 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         $this->token_types_adjusted2 = true;
+        $this->prof_point("adjust", "end");
         return $this->token_types;
     }
 
@@ -2168,7 +2170,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
         $table = [];
         $this->scoreAll($table);
-        $this->notifyAllPlayers('scoringTable','', $table);
+        $this->notifyAllPlayers('scoringTable', '', $table);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {

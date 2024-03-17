@@ -82,7 +82,9 @@ class action_terraformingmars extends APP_GameAction {
         if (!$method) {
             return;
         }
+        $this->game->prof_point("userAction_$action","start");
         $method->invoke($game, $args);
+        $this->game->prof_point("userAction_$action","end");
     }
 
     private  function getJsArg($var) {
