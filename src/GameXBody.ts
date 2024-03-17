@@ -58,7 +58,7 @@ class GameXBody extends GameTokens {
       this.connectClass("hex", "onclick", "onToken");
 
       //player controls
-      this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
+      //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
       //Give tooltips to alt trackers in player boards
       const togglehtml = this.getTooptipHtml(
