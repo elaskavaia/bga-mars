@@ -67,7 +67,7 @@ class Operation_setuppick extends AbsOperation {
     }
 
     function getOpName() {
-        return clienttranslate('Confirm');
+        return clienttranslate('Confirm (Corp + Cards)');
     }
 
     function noValidTargets(): bool {
