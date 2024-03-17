@@ -202,7 +202,7 @@
 }
 
 .miniboard {
-  --pb_cellsize: 39px;
+  --pb_cellsize: 33px; // this size allows to fit all tags and counters in 2 lines
 }
 
 .miniboard_tags, .miniboard_entry{
@@ -219,14 +219,9 @@
 .miniboard_tags {
   margin-top: 20px;
 
-  .micon {
-    display: none; // hide trackers for forest and such, it best just to show progress on milestones instead
+  .micon, .badge  {
+    display: none; // hide by default
   }
-
-}
-
-#ebd-body[data-localsetting_showmicon="show"] .miniboard_tags .micon {
-  display: revert;
 }
 
 .miniboard_entry {
@@ -234,11 +229,15 @@
 }
 
 
-#ebd-body[data-localsetting_hidebadges='hide'] {
-  .miniboard_tags {
-    display: none;
-  }
+#ebd-body[data-localsetting_showmicon="show"] .miniboard_tags .micon {
+  display: revert;
 }
+
+
+#ebd-body[data-localsetting_showtags="show"]  .miniboard_tags .badge {
+  display: revert;
+}
+
 
 /*
  * Controls in the top bar

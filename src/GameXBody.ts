@@ -566,15 +566,15 @@ class GameXBody extends GameTokens {
       },
 
       {
-        key: "hidebadges",
-        label: _("Hide badges on minipanel"),
-        choice: { hide: true },
-        default: true,
+        key: "showtags",
+        label: _("Show tags on minipanel"),
+        choice: { show: true },
+        default: false,
         ui: "checkbox"
       },
       {
         key: "showmicon",
-        label: _("Show cities, greeneries, etc. on minipanel"),
+        label: _("Show counters on minipanel"),
         choice: { show : true },
         default: false,
         ui: "checkbox"

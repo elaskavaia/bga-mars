@@ -4971,7 +4971,7 @@
 }
 
 .miniboard {
-  --pb_cellsize: 39px;
+  --pb_cellsize: 33px;
 }
 
 .miniboard_tags, .miniboard_entry {
@@ -4986,20 +4986,20 @@
 .miniboard_tags {
   margin-top: 20px;
 }
-.miniboard_tags .micon {
+.miniboard_tags .micon, .miniboard_tags .badge {
   display: none;
-}
-
-#ebd-body[data-localsetting_showmicon=show] .miniboard_tags .micon {
-  display: revert;
 }
 
 .miniboard_entry {
   justify-content: space-between;
 }
 
-#ebd-body[data-localsetting_hidebadges=hide] .miniboard_tags {
-  display: none;
+#ebd-body[data-localsetting_showmicon=show] .miniboard_tags .micon {
+  display: revert;
+}
+
+#ebd-body[data-localsetting_showtags=show] .miniboard_tags .badge {
+  display: revert;
 }
 
 /*
@@ -8282,10 +8282,6 @@
 }
 .mfull .corp_holder .corp_logo {
   display: none;
-}
-.mfull .mini_counter.badge {
-  width: 39px;
-  height: 39px;
 }
 .mfull .pboard .marker {
   position: absolute;
