@@ -1253,7 +1253,7 @@ abstract class PGameXBody extends PGameMachine {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
             $cost = -$this->getRulesFor($card_id, 'cost');
-            $this->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('private: ${player_name} chooses corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
+            $this->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name} and received ${cost} ME. The rest of the perks you will receive after setup is finished'), [
                 "_private" => true,
                 "cost" => $cost
             ], $player_id);
@@ -1569,7 +1569,7 @@ abstract class PGameXBody extends PGameMachine {
         $was_reshuffled = false;
         $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, 0, false, $was_reshuffled);
         $player_id = $this->getPlayerIdByColor($color);
-        $this->dbSetTokensLocation($tokens, $to, null, clienttranslate('private: ${player_name} draws ${token_names}'), [
+        $this->dbSetTokensLocation($tokens, $to, null, clienttranslate('${player_name} draws ${token_names}'), [
             "_private" => true, "place_from" => $deck,
         ], $player_id);
         $this->notifyMessage(clienttranslate('${player_name} draws ${token_count} cards'), [

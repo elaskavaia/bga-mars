@@ -11,7 +11,7 @@ class Operation_setuppick extends AbsOperation {
             if (startsWith($card_id, "card_corp")) {
                 if ($corpmoney > 0) $this->game->userAssertTrue(totranslate("You can only select one corporation"));
                 $corpmoney = -$this->game->getRulesFor($card_id, 'cost');
-                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} chooses corporation ${token_name}'), [
+                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} chooses corporation ${token_name}'), [
                     "_private" => true
                 ]);
             }
@@ -23,7 +23,7 @@ class Operation_setuppick extends AbsOperation {
         foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_main")) {
                 $corpmoney -= $cost;
-                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} buys a card ${token_name}'), [
+                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} buys card ${token_name}'), [
                     "_private" => true
                 ]);
                 if ($corpmoney < 0) {
@@ -34,7 +34,7 @@ class Operation_setuppick extends AbsOperation {
         }
         if ($count == 0) {
             $this->game->multiplayerpush($color,'confnocards');
-            $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('You did not select any initial cards, it may be not a good idea. Undo if not too late'), []);
+            $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('You did not select any initial project cards, it may be not a good idea. Undo if not too late'), []);
         }
         return 1;
     }

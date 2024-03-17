@@ -10,7 +10,7 @@ class Operation_draft extends AbsOperation {
             return $inc; // skip draft
         }
         $card_id = $this->getCheckedArg('target');
-        $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_SELECTED, clienttranslate('private: ${player_name} drafts a card ${token_name}'), [
+        $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_SELECTED, clienttranslate('${player_name} drafts card ${token_name}'), [
             "_private" => true
         ]);
         return 1;
