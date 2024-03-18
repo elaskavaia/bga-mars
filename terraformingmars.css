@@ -7992,7 +7992,15 @@
 .mfull .cardstack[data-currentview="2"].cardstack_cards_4.corp .stack_content .card {
   display: none;
 }
-.mfull .cardstack[data-currentview="3"].red .cards_3 .card::after, .mfull .cardstack[data-currentview="2"].red .cards_3 .card::after {
+.mfull .cardstack[data-currentview="3"].cardstack_cards_4.corp .stack_content {
+  row-gap: calc(var(--card-height) * 0.01);
+  width: unset;
+  min-width: unset;
+  overflow: unset;
+  max-width: 99.2%;
+}
+.mfull .cardstack[data-currentview="3"].red .cards_3 .card::after,
+.mfull .cardstack[data-currentview="2"].red .cards_3 .card::after {
   content: unset;
 }
 .mfull .cardstack[data-currentview="1"].red .stack_content {

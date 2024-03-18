@@ -537,11 +537,14 @@
     }
   }
 
+
+
   // corp/playerboard stack
   .cardstack[data-currentview="0"].cardstack_cards_4.corp {
     .pboard {
       display: none;
     }
+
     .stack_content {
       --columns: 0;
     }
@@ -567,11 +570,25 @@
     }
   }
 
-  .cardstack[data-currentview="3"].red, .cardstack[data-currentview="2"].red {
+  .cardstack[data-currentview="3"].cardstack_cards_4.corp {
+    .stack_content {
+      row-gap: calc(var(--card-height) * 0.01);
+      width: unset;
+      min-width: unset;
+      overflow: unset;
+      max-width: 99.2%;
+    }
+  }
+
+
+  .cardstack[data-currentview="3"].red,
+  .cardstack[data-currentview="2"].red {
     .cards_3 .card::after {
       content: unset;
     }
   }
+
+
   .cardstack[data-currentview="1"].red {
     .stack_content {
       --overlap: 0.88;
@@ -887,6 +904,7 @@
     text-align: unset;
     padding-left: 5%;
   }
+
   .ma_selected_menu {
     .stack_ddl_label {
       font-weight: bold;
@@ -896,12 +914,13 @@
   .switchview {
     margin-right: calc(var(--card-width) * 0.02);
   }
+
   .switchview:hover {
-    color:  var(--outlinecolor);
+    color: var(--outlinecolor);
     background-color: black;
   }
 
-  .hs_direction{ 
+  .hs_direction {
     display: none;
   }
 }
