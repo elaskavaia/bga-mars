@@ -8597,7 +8597,7 @@
   row-gap: calc(var(--card-height) * 0.01);
   width: calc(var(--card-width) * 1.05 * var(--columns));
   min-width: revert;
-  overflow: scroll;
+  overflow: auto;
   max-width: 99.2%;
 }
 
