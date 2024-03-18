@@ -3,10 +3,11 @@
   --outlinecolor: lightgray;
   --hlcolor: gray;
 
-  transition: all 400ms ease-in;
+ /* transition: all 400ms ease-in;*/
   position: relative;
   user-select: none;
   flex: 0 0 auto;
+  max-width: 100%;
 
   .stack_content_txt {
     position: relative;
@@ -62,6 +63,7 @@
   .tableautoprow{
     display: flex;
     width: 100%;
+    flex-wrap: wrap;
   }
   .cardstack {
     outline: 1px dashed var(--outlinecolor);
@@ -129,6 +131,12 @@
       cursor: pointer;
       background-color: var(--hlcolor);
       box-shadow: black 1px 1px 0px 1px;
+    }
+
+    .stack_dd_buttons{
+      .stack_btn {
+        width: 98%;
+      }
     }
 
     .switchview {
@@ -210,7 +218,7 @@
  // --columns: 1; // XXX cannot calculate properly
   min-width: calc(var(--card-width) * 1.03 * var(--columns-synth));
   .active_slot.card {
-    box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 2px #ff9800 !important;
+    box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 3px #ff9800 !important;
     transform: none;
     top: 0px;
     left: 0px;
@@ -228,7 +236,11 @@
 
 // tiles
 .cardstack[data-currentview="3"] .stack_content {
-   row-gap: calc(var(--card-height) * 0.01);
+  row-gap: calc(var(--card-height) * 0.01);
+  width: calc(var(--card-width) * 1.05 * var(--columns));
+  min-width: revert;
+  overflow: scroll;
+  max-width: 99.2%;
 }
 
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {
@@ -246,12 +258,15 @@
 
     .card[data-card-type="2"] {
       background-color: #167abf;
+      outline: 1px solid #225375;;
     }
     .card[data-card-type="1"] {
       background-color: #43a31d;
+      outline: 1px solid #c8e3bd;
     }
     .card[data-card-type="3"] {
       background-color: #ee750e;
+      outline: 1px solid #ecc7a8;
     }
 
     .card {
@@ -260,7 +275,7 @@
       height:fit-content;
       margin-bottom: calc(var(--card-height)*0.03);
       padding-bottom: calc(var(--card-height) * 0.03);
-
+      border-radius: 5px;
 
       .card_decor {
         position: relative;
@@ -303,6 +318,9 @@
         left: 37%;
       }
     }
+  }
+  .stack_dd_buttons_close {
+    font-size: 1vh;
   }
 }
 
@@ -349,6 +367,7 @@
 
 .stack_dd_buttons_close {
   padding: 2px;
+  cursor: pointer;
 }
 
 .stack_dd_buttons_close .fa {
