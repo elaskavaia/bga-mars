@@ -8387,10 +8387,11 @@
   --subcount: "0";
   --outlinecolor: lightgray;
   --hlcolor: gray;
-  transition: all 400ms ease-in;
+  /* transition: all 400ms ease-in;*/
   position: relative;
   user-select: none;
   flex: 0 0 auto;
+  max-width: 100%;
 }
 .cardstack .stack_content_txt {
   position: relative;
@@ -8438,6 +8439,7 @@
 .mcompact .tableautoprow {
   display: flex;
   width: 100%;
+  flex-wrap: wrap;
 }
 .mcompact .cardstack {
   outline: 1px dashed var(--outlinecolor);
@@ -8496,6 +8498,9 @@
   cursor: pointer;
   background-color: var(--hlcolor);
   box-shadow: black 1px 1px 0px 1px;
+}
+.mcompact .cardstack .stack_dd_buttons .stack_btn {
+  width: 98%;
 }
 .mcompact .cardstack .switchview {
   margin-right: calc(var(--card-width) * 0.02);
@@ -8566,7 +8571,7 @@
   min-width: calc(var(--card-width) * 1.03 * var(--columns-synth));
 }
 .cardstack[data-currentview="1"] .stack_content .active_slot.card {
-  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 2px #ff9800 !important;
+  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 3px #ff9800 !important;
   transform: none;
   top: 0px;
   left: 0px;
@@ -8582,6 +8587,10 @@
 
 .cardstack[data-currentview="3"] .stack_content {
   row-gap: calc(var(--card-height) * 0.01);
+  width: calc(var(--card-width) * 1.05 * var(--columns));
+  min-width: revert;
+  overflow: scroll;
+  max-width: 99.2%;
 }
 
 .cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {
@@ -8594,17 +8603,21 @@
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="2"] {
   background-color: #167abf;
+  outline: 1px solid #225375;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="1"] {
   background-color: #43a31d;
+  outline: 1px solid #c8e3bd;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="3"] {
   background-color: #ee750e;
+  outline: 1px solid #ecc7a8;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card {
   height: fit-content;
   margin-bottom: calc(var(--card-height) * 0.03);
   padding-bottom: calc(var(--card-height) * 0.03);
+  border-radius: 5px;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_decor {
   position: relative;
@@ -8640,6 +8653,9 @@
   position: relative;
   margin-top: calc(var(--card-height) * 0.02);
   left: 37%;
+}
+.mcompact .stack_dd_buttons_close {
+  font-size: 1vh;
 }
 
 .stack_dd_buttons {
@@ -8683,6 +8699,7 @@
 
 .stack_dd_buttons_close {
   padding: 2px;
+  cursor: pointer;
 }
 
 .stack_dd_buttons_close .fa {
@@ -8784,10 +8801,45 @@
 .mcompact #ebd-body.mobile_portrait #scoretable .scorecell {
   padding: 0.2em;
 }
+.mcompact #ebd-body.mobile_portrait .cardstack[data-currentview="1"] .stack_content {
+  min-width: revert;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+}
+.mcompact #ebd-body.mobile_portrait .cardstack[data-currentview="2"] .stack_content {
+  /* --overlap: 0.88;*/
+}
+.mcompact #ebd-body.mobile_portrait .cardstack[data-currentview="3"] .stack_content {
+  min-width: revert;
+  width: 100%;
+  overflow: scroll;
+  flex-direction: row;
+  max-height: revert;
+}
+.mcompact #ebd-body.mobile_portrait .cardstack .stack_sum.cards {
+  width: 4vw;
+  height: 5vw;
+  font-size: 3vw;
+}
+.mcompact #ebd-body.mobile_portrait .cardstack .stack_label {
+  font-size: 2vw;
+}
+.mcompact #ebd-body.mobile_portrait .cardstack .stack_detail_txt {
+  font-size: 1.5vw;
+}
+.mcompact #ebd-body.mobile_portrait .cardstack .stack_btn {
+  height: 4vw;
+  font-size: 2.5vw;
+}
 .mcompact #ebd-body.mobile_portrait .cardstack .stack_btn.switchview {
-  width: calc(var(--card-width) * 0.25);
-  height: calc(var(--card-width) * 0.25);
-  font-size: calc(var(--card-width) * 0.2);
+  width: 4vw;
+  height: 4vw;
+  font-size: 3vw;
+}
+.mcompact #ebd-body.mobile_portrait .stack_dd_buttons_close {
+  font-size: 2vw;
 }
 
 /* latin */

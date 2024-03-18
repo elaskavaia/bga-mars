@@ -5155,7 +5155,7 @@ var GameXBody = /** @class */ (function (_super) {
             return undefined; // process by parent
         }
         if (isstr) {
-            if (tokenKey.startsWith("card_")) {
+            if (tokenKey.startsWith("card_main_")) {
                 return '<div class="card_hl_tt"  data-clicktt="' + tokenKey + '">' + this.getTokenName(tokenKey) + "</div>";
             }
             return this.getTokenName(tokenKey); // just a name for now
