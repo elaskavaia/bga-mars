@@ -19,6 +19,7 @@ class GameXBody extends GameTokens {
   // private parses:any;
   private currentOperation: any = {}; // bag of data to support operation engine
   private classSelected: string = "selected"; // for the purpose of multi-select operations
+  private prevLogId = 0;
 
   private stacks:CardStack[];
   constructor() {
@@ -676,25 +677,42 @@ class GameXBody extends GameTokens {
     return pc;
   }
 
-  addMoveToLog(log_id, move_id) {
-    this.inherited(arguments);
-    const node = $("log_" + log_id);
-    let i = 1;
-    node.querySelectorAll(".card_hl_tt").forEach((node) => {
+  addTooltipToLogItems(log_id: number) {
+    const lognode = $("log_" + log_id);
+    lognode.querySelectorAll(".card_hl_tt").forEach((node) => {
       const card_id = node.getAttribute("data-clicktt");
-      node.id = card_id + "_log_" + log_id + "_" + i++; // tooltip API needs id
-      this.updateTooltip(card_id, node);
+      if (card_id) 
+        this.updateTooltip(card_id, node);
     });
+  }
+
+  // onNewLog( html, seemore, logaction, is_gamelog, is_chat, no_red_color, time){
+  //   console.log(html);
+  // }
+
+  addMoveToLog(log_id: number, move_id) {
+    this.inherited(arguments);
+    if (this.prevLogId + 1 < log_id) {
+       // we skip over some logs, but we need to look at them also
+       for (let i = this.prevLogId + 1; i < log_id; i++) {
+        this.addTooltipToLogItems(i);
+       }
+    }
+
+    this.addTooltipToLogItems(log_id);
+
     // add move #
     var prevmove = document.querySelector('[data-move-id="' + move_id + '"]');
     if (!prevmove) {
       const tsnode = document.createElement("div");
       tsnode.classList.add("movestamp");
       tsnode.innerHTML = _("Move #") + move_id;
-      node.appendChild(tsnode);
+      const lognode = $("log_" + log_id);
+      lognode.appendChild(tsnode);
 
       tsnode.setAttribute("data-move-id", move_id);
     }
+    this.prevLogId = log_id;
   }
 
   setupHelpSheets() {
@@ -1990,8 +2008,6 @@ awarded.`);
     }
     if (isstr) {
       if (tokenKey.startsWith("card_main_")) {
-        /* const htm = this.cloneAndFixIds(tokenKey,'_log',true);
-        return '<div class="card_hl_preview"  data-clicktt="'+tokenKey+'">'+htm.outerHTML+'</div>';*/
         return '<div class="card_hl_tt"  data-clicktt="' + tokenKey + '">' + this.getTokenName(tokenKey) + "</div>";
       }
 
