@@ -113,12 +113,59 @@
       }
     }
 
+
+    // synthetic
+    .cardstack[data-currentview="1"] .stack_content{
+      min-width: revert;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      height: fit-content;
+    }
+
+    // stack
+    .cardstack[data-currentview="2"] .stack_content {
+     /* --overlap: 0.88;*/
+    }
+
+
+    // tiles
+    .cardstack[data-currentview="3"] .stack_content {
+      min-width: revert;
+      width: 100%;
+      overflow: scroll;
+      flex-direction: row;
+      max-height: revert;
+    }
+
+
     .cardstack {
-      .stack_btn.switchview {
-        width: calc(var(--card-width) * 0.25);
-        height: calc(var(--card-width) * 0.25);
-        font-size: calc(var(--card-width) * 0.2);
+      .stack_sum.cards {
+        width: 4vw;
+        height: 5vw;
+        font-size: 3vw;
+
       }
+
+      .stack_label {
+        font-size: 2vw;
+      }
+      .stack_detail_txt{
+        font-size: 1.5vw;
+      }
+      .stack_btn{
+        height: 4vw;
+        font-size: 2.5vw;
+      }
+      .stack_btn.switchview {
+        width: 4vw;
+        height: 4vw;
+        font-size: 3vw;
+      }
+    }
+
+    .stack_dd_buttons_close {
+      font-size: 2vw;
     }
 
   }
