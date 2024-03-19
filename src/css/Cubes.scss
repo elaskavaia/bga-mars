@@ -16,16 +16,16 @@
 }
 
 #main_board {
-.mcube ~ .mcube {
+.marker_tr ~ .marker_tr {
     translate: 50%; 
 }
-.mcube ~ .mcube ~ .mcube{
+.marker_tr ~ .marker_tr ~ .marker_tr{
     translate: 0% 50%; 
 }
-.mcube ~ .mcube ~ .mcube ~ .mcube{
+.marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr{
     translate: 50% 50%; 
 }
-.mcube ~ .mcube ~ .mcube ~ .mcube ~ .mcube{
+.marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr{
     translate: 100% 25%; 
 }
 }

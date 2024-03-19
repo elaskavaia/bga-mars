@@ -341,16 +341,16 @@
   transform: rotateX(40deg) rotateY(0deg) rotateZ(40deg) translateZ(var(--half-mcubesize));
 }
 
-#main_board .mcube ~ .mcube {
+#main_board .marker_tr ~ .marker_tr {
   translate: 50%;
 }
-#main_board .mcube ~ .mcube ~ .mcube {
+#main_board .marker_tr ~ .marker_tr ~ .marker_tr {
   translate: 0% 50%;
 }
-#main_board .mcube ~ .mcube ~ .mcube ~ .mcube {
+#main_board .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr {
   translate: 50% 50%;
 }
-#main_board .mcube ~ .mcube ~ .mcube ~ .mcube ~ .mcube {
+#main_board .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr {
   translate: 100% 25%;
 }
 
