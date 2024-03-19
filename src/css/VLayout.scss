@@ -923,4 +923,23 @@
   .hs_direction {
     display: none;
   }
+
+
+  #main_board {
+    .marker_tr~.marker_tr {
+      translate: 50%;
+    }
+
+    .marker_tr~.marker_tr~.marker_tr {
+      translate: 0% 50%;
+    }
+
+    .marker_tr~.marker_tr~.marker_tr~.marker_tr {
+      translate: 50% 50%;
+    }
+
+    .marker_tr~.marker_tr~.marker_tr~.marker_tr~.marker_tr {
+      translate: 100% 25%;
+    }
+  }
 }

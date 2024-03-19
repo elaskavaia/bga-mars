@@ -8390,6 +8390,18 @@
 .mfull .hs_direction {
   display: none;
 }
+.mfull #main_board .marker_tr ~ .marker_tr {
+  translate: 50%;
+}
+.mfull #main_board .marker_tr ~ .marker_tr ~ .marker_tr {
+  translate: 0% 50%;
+}
+.mfull #main_board .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr {
+  translate: 50% 50%;
+}
+.mfull #main_board .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr {
+  translate: 100% 25%;
+}
 
 .cardstack {
   --subcount: "0";
