@@ -182,6 +182,8 @@ class GameXBody extends GameTokens {
 
       this.updateStacks();
       this.vlayout.setupDone();
+      //locale css management
+      $("ebd-body").dataset["locale"] =  _('$locale');
       //this.setupOneTimePrompt();
     } catch (e) {
       console.error(e);
@@ -1363,9 +1365,9 @@ awarded.`);
         //  if (texts.length>1) card_effect= texts[1];
         decor.innerHTML = `
                   <div class="card_bg"></div>
-                  <div class="card_title">${card_title}</div>
-                  <div class="card_initial">${card_initial}</div>
-                  <div class="card_effect">${card_effect}</div>
+                  <div class="card_title">${_(card_title)}</div>
+                  <div class="card_initial">${_(card_initial)}</div>
+                  <div class="card_effect">${_(card_effect)}</div>
             `;
       } else if (tokenNode.id.startsWith("card_stanproj")) {
         //standard project formatting:
@@ -1386,7 +1388,7 @@ awarded.`);
         } else {
           decor.innerHTML = `
                <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
-               <div class='standard_projects_title'>${displayInfo.name}</div>  
+               <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
             `;
         }
       } else {
@@ -1487,7 +1489,7 @@ awarded.`);
         card_a = card_a.replaceAll("%res%", displayInfo.holds);
         let card_action_text = "";
         if (displayInfo.text_action || displayInfo.text_effect) {
-          card_action_text = `<div class="card_action_line card_action_text">${displayInfo.text_action || displayInfo.text_effect}</div>`;
+          card_action_text = `<div class="card_action_line card_action_text">${_(displayInfo.text_action) || _(displayInfo.text_effect)}</div>`;
         }
 
         const holds = displayInfo.holds ?? "Generic";
@@ -1502,10 +1504,10 @@ awarded.`);
                   <div class="card_illustration cardnum_${displayInfo.num}"></div>
                   <div class="card_bg"></div>
                   <div class='card_badges'>${tagshtm}</div>
-                  <div class='card_title'><div class='card_title_inner'>${displayInfo.name}</div></div>
+                  <div class='card_title'><div class='card_title_inner'>${_(displayInfo.name)}</div></div>
                   <div id='cost_${tokenNode.id}' class='card_cost'><div class="number_inside">${displayInfo.cost}</div></div> 
-                  <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${card_action_text}</div><div class="card_action_bottomdecor"></div></div>
-                  <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${displayInfo.text || ""}</div></div>           
+                  <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${_(card_action_text)}</div><div class="card_action_bottomdecor"></div></div>
+                  <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${_(displayInfo.text) || ""}</div></div>           
                   <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
                   <div class="card_number">${displayInfo.num ?? ""}</div>
                   <div class="card_number_binary">${cn_binary}</div>
