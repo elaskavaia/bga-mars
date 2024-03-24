@@ -1882,6 +1882,12 @@ awarded.`);
       }
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       result.location = tokenInfo.location + "_corp_effect";
+      if (this.isSpectator===false && tokenInfo.location=='tableau_'+this.player_color && !this.isLayoutFull()) {
+        CustomRenders.updateUIFromCorp(tokenInfo.key);
+      }
+
+
+
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
@@ -1898,6 +1904,7 @@ awarded.`);
       result.location = tokenInfo.location;
     return result;
   }
+
 
   strikeNextAwardMilestoneCost(kind: string) {
     for (let idx = 1; idx <= 3; idx++) {
@@ -2714,7 +2721,7 @@ awarded.`);
 
   addUndoButton() {
     if (!$("button_undo")) {
-      this.addActionButtonColor("button_undo", _("Undo"), () => this.sendActionUndo(), "red");
+        this.addActionButtonColor("button_undo", _("Undo"), () => this.sendActionUndo(), "red");
     }
   }
 

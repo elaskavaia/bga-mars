@@ -829,6 +829,8 @@
   width: 44%;
   display: flex;
   justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
   /*
   border-radius: calc(var(--stan-width) * 0.08);
   padding: calc(var(--stan-width) * 0.01) calc(var(--stan-width) * 0.03);
@@ -869,7 +871,7 @@
   }
 
   .stanp_cost {
-    left: 33%
+    left: 36%
   }
 }
 
@@ -987,15 +989,23 @@
      background-position: -900% 0;
  */
 
-  width: calc(var(--stan-width) * 0.2);
-  height: calc(var(--stan-width) * 0.2);
+  width: calc(var(--stan-width) * 0.14);
+  height: calc(var(--stan-width) * 0.14);
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: var(--mars-font);
   font-size: calc(var(--stan-width) * 0.1);
-  left: 2%
+  left: 5%;
+  top: 12%;
 }
+.stanp_cost.discounted {
+  color: #bef983;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  outline: calc(var(--card-width) * 0.025) solid #bef983;
+  border-radius: calc(var(--card-width) * 0.02);
+}
+
 
 .stanp_arrow {
   position: relative;

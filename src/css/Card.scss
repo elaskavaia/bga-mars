@@ -46,13 +46,17 @@
 .card_cost {
   font-family: var(--mars-font);
   position: absolute;
-  top: 0%;
-  width: calc(var(--card-width) * 0.16);
-  height: calc(var(--card-width) * 0.16);
+  top: 1.1%;
+  left: 1.3%;
+  border-radius: calc(var(--card-width) * 0.02);
+  width: calc(var(--card-width) * 0.14);
+  height: calc(var(--card-width) * 0.14);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: calc(var(--card-width) * 0.09);
+
+
   /*
      width: calc(var(--card-width) * 0.2);
     height: calc(var(--card-width) * 0.2);
@@ -70,6 +74,8 @@
   .card_cost.discounted{
     color: #bef983;
     text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+    outline: calc(var(--card-width) * 0.025) solid #bef983;
+
     .number_inside{
       display: none;
     }
