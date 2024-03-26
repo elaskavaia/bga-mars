@@ -1,4 +1,5 @@
 const LAYOUT_PREF_ID = 100;
+const MA_PREF_CONFIRM_TURN = 101;
 
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
@@ -645,7 +646,7 @@ class GameXBody extends GameTokens {
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
     console.log("PREF", pref_id);
-    if (pref_id == LAYOUT_PREF_ID || pref_id == 101) {
+    if (pref_id == LAYOUT_PREF_ID || pref_id == MA_PREF_CONFIRM_TURN) {
       const pp = $(prefDivId).parentElement;
       pp.removeChild($(prefDivId));
       this.createCustomPreferenceNode(pref_id, prefDivId, pp);

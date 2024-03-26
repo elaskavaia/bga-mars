@@ -3484,6 +3484,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var LAYOUT_PREF_ID = 100;
+var MA_PREF_CONFIRM_TURN = 101;
 var GameXBody = /** @class */ (function (_super) {
     __extends(GameXBody, _super);
     function GameXBody() {
@@ -3998,7 +3999,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
         console.log("PREF", pref_id);
-        if (pref_id == LAYOUT_PREF_ID || pref_id == 101) {
+        if (pref_id == LAYOUT_PREF_ID || pref_id == MA_PREF_CONFIRM_TURN) {
             var pp = $(prefDivId).parentElement;
             pp.removeChild($(prefDivId));
             this.createCustomPreferenceNode(pref_id, prefDivId, pp);
