@@ -255,13 +255,19 @@ class CardStack {
     if ($(this.tableau_id).children.length == 0) return;
 
     const last: Element = $(this.tableau_id).lastElementChild;
-    const lastrect = last.getBoundingClientRect();
-    const tableaurect = $(this.tableau_id).getBoundingClientRect();
+    let lastrect = last.getBoundingClientRect();
+    let tableaurect = $(this.tableau_id).getBoundingClientRect();
+    let limit=15; //in case something bad happens, limit to 15 attempts
 
-    if (lastrect.right > tableaurect.right) {
+    while (lastrect.right > tableaurect.right && limit>0) {
+      console.log(`adding a new col on ${this.tableau_id}`);
       //add one column
       this.columns_synth++;
+
       $(this.tableau_id).style.setProperty("--columns-synth", String(this.columns_synth));
+       lastrect = last.getBoundingClientRect();
+       tableaurect = $(this.tableau_id).getBoundingClientRect();
+       limit--;
     }
   }
 

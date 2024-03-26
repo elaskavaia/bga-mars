@@ -84,7 +84,22 @@
       ":": { classes: "action_arrow" },
     };
 
-    public static parseExprToHtml(expr: any, card_num?: number, action_mode: boolean = false, effect_mode: boolean = false): string {
+
+   public static updateUIFromCorp(key:string) {
+     switch (key) {
+       case "card_corp_12":
+         //add discount to stanproj_2 ui;
+         if  ($('card_stanproj_2')) {
+           const node= $('card_stanproj_2').querySelector('.stanp_cost');
+           node.innerHTML="8";
+           node.classList.add("discounted");
+         }
+         break;
+     }
+   }
+
+
+   public static parseExprToHtml(expr: any, card_num?: number, action_mode: boolean = false, effect_mode: boolean = false): string {
 
       let rethtm = '';
 

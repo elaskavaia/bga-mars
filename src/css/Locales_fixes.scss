@@ -1,0 +1,28 @@
+html[lang="ko"].mcompact
+,html[lang="zh"].mcompact
+,html[lang="zh-cn"].mcompact
+,html[lang="vi"].mcompact
+,html[lang="th"].mcompact
+,html[lang="sv"].mcompact
+,html[lang="sr"].mcompact
+,html[lang="sk"].mcompact
+,html[lang="ru"].mcompact
+,html[lang="ja"].mcompact
+,html[lang="he"].mcompact
+,html[lang="he"].mcompact
+,html[lang="fa"].mcompact
+,html[lang="bg"].mcompact
+,html[lang="ar"].mcompact
+{
+  .award_label {
+    bottom: 3%;
+    font-family: var(--mars-font);
+    font-size: calc(var(--map-width) * .015);
+  }
+   #ebd-body.mobile_portrait .award_label {
+     bottom: 4%;
+     font-size: calc(var(--map-width) * 0.025);
+  }
+}
+
+

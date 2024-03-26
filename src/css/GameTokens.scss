@@ -51,6 +51,12 @@
   height: calc(var(--card-width) * 0.2);
 }
 
+.mcompact {
+  .handy::after {
+    top:revert;
+    bottom:1.3em;
+  }
+}
 
 .draw:empty,
 .draft:empty {
