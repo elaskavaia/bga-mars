@@ -125,6 +125,8 @@ class GameXBody extends GameTokens {
       $("scoretracker_text").innerHTML = _("Score");
       $("milestones_title").innerHTML = _("Milestones");
       $("awards_title").innerHTML = _("Awards");
+      $("deck_main_title").innerHTML = _("Draw:");
+      $("discard_title").innerHTML = _("Discard:");
 
       //update prereq on cards
       this.updateHandInformation(this.gamedatas["card_info"], "card");
@@ -1266,7 +1268,7 @@ class GameXBody extends GameTokens {
       }
     }
 
-    let vp = displayInfo.text_vp;
+    let vp =_(displayInfo.text_vp);
     if (!vp) vp = displayInfo.vp;
 
     res += this.generateTooltipSection(type_name, card_id);
@@ -1292,19 +1294,19 @@ it. A milestone may only be claimed by one player, and only
 race for these! Each claimed milestone is worth 5 VPs at the
 end of the game.`);
 
-      res += this.generateTooltipSection(_("Criteria"), displayInfo.text);
+      res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
       res += this.generateTooltipSection(_("Victory Points"), vp);
       res += this.generateTooltipSection(_("Info"), text);
     } else if (type == this.CON.MA_CARD_TYPE_AWARD) {
       res += this.generateTooltipSection(
         _("Cost"),
-        `The first player to fund an award pays 8 M€ and
+        _(`The first player to fund an award pays 8 M€ and
 places a player marker on it. The next player to fund an
-award pays 14 M€, the last pays 20 M€.`,
+award pays 14 M€, the last pays 20 M€.`),
         true,
         "tt_cost"
       );
-      res += this.generateTooltipSection(_("Condition"), displayInfo.text);
+      res += this.generateTooltipSection(_("Condition"), _(displayInfo.text));
       const text = _(` Only three awards
 may be funded. Each award can only be funded once.<p>
 In the final scoring, each award is checked, and 5
@@ -1319,9 +1321,9 @@ awarded.`);
     } else {
       const errors = this.getPotentialErrors(displayInfo.key);
 
-      res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
-      res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
-      res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
+      res += this.generateTooltipSection(_("Immediate Effect"), _(displayInfo.text));
+      res += this.generateTooltipSection(_("Effect"), _(displayInfo.text_effect));
+      res += this.generateTooltipSection(_("Action"), _(displayInfo.text_action));
       res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
       res += this.generateTooltipSection(_("Victory Points"), vp);
       res += this.generateTooltipSection(_("Playability"), errors, true, "tt_error");
@@ -1384,7 +1386,7 @@ awarded.`);
                <div class='stanp_cost token_img tracker_m'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
                <div class="action_arrow"></div>
                <div class="token_img tracker_tr"></div>
-               <div class='standard_projects_title'>${displayInfo.name}</div>  
+               <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
             `;
         } else {
           decor.innerHTML = `
