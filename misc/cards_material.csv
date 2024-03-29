@@ -230,7 +230,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set count=10
 #set location=limbo
 #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
-1|Beginner Corp|4|42m|||0|||0|Basic|You start with 42 M€. You keep 10 starting cards||||
+1|Beginner Corp|4|42m|||0|||0|Basic|You start with 42 M€. Instead of choosing from 10 cards during setup, you get 10 cards for free||||
 #set count=10
 #set create=single
 #set location=deck_corp

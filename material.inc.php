@@ -2943,7 +2943,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Basic',
-  'text' => clienttranslate("You start with 42 M€. You keep 10 starting cards"),
+  'text' => clienttranslate("You start with 42 M€. Instead of choosing from 10 cards during setup, you get 10 cards for free"),
 ],
  'card_corp_2' => [  //
   'location' => 'deck_corp',
