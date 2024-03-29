@@ -27,7 +27,7 @@ class Operation_t extends AbsOperation {
     }
 
     function getPrompt(){
-        if ($this->requireConfirmation()) return clienttranslate('${you} must confirm, operation ${name} will not have effect as parameter is at max');
+        if ($this->requireConfirmation()) return clienttranslate('Temperature is already at maximum: you may proceed with this action without raising Temperature further');
         return parent::getPrompt();
     }
 }

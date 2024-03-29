@@ -607,7 +607,7 @@ abstract class PGameBasic extends Table {
         else
             $dur_s = "-";
 
-        $this->warn(sprintf("prof:%.03f: g%3d: %s/%s %s %s", $time, $gameid, $str, $type, $dur_s, $extra));
+        $this->debug(sprintf("prof:%.03f: g%3d: %s/%s %s %s", $time, $gameid, $str, $type, $dur_s, $extra));
     }
 
     // ------ DB ----------

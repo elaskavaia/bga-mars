@@ -28,7 +28,7 @@ class Operation_o extends AbsOperation {
     }
 
     function getPrompt(){
-        if ($this->requireConfirmation()) return clienttranslate('${you} must confirm, operation ${name} will not have effect as parameter is at max');
+        if ($this->requireConfirmation()) return clienttranslate('Oxygen is already at maximum: you may proceed with this action without raising Oxygen further');
         return parent::getPrompt();
     }
 }

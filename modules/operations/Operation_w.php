@@ -55,7 +55,7 @@ class Operation_w extends AbsOperationTile {
     function getPrompt() {
         $oceans = $this->game->getTrackerValue('', $this->getMnemonic());
         if ($oceans >= $this->getMax()) {
-            return clienttranslate('${you} must confirm, operation ${name} will not have effect as parameter is at max');
+            return clienttranslate('No more ocean tiles in the supply: you may proceed with this action without placing an ocean tile');
         }
 
         return clienttranslate('${you} must select a location to place an ocean tile');

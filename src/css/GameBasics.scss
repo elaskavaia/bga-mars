@@ -85,7 +85,13 @@
   background-image: none;
 }
 
-#ebd-body[data-maop="confturn"] #button_undo, #ebd-body[data-maop="confnocards"] #button_undo, #ebd-body[data-maop="confirm"] #button_undo{
+#ebd-body[data-maop="confturn"] #button_undo, 
+#ebd-body[data-maop="confnocards"] #button_undo, 
+#ebd-body[data-maop="confirm"] #button_undo,
+#ebd-body[data-maop="t"] #button_undo,
+#ebd-body[data-maop="o"] #button_undo,
+#ebd-body[data-maop="w"] #button_undo
+{
   float: unset;
 }
 
