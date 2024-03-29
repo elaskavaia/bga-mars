@@ -213,6 +213,7 @@ Reason: tile placement may draw cards (information)
         return [
             "name" => $this->getOpName(),
             'count' => $this->getCount(),
+            'i18n' => ['name']
         ];
     }
 
