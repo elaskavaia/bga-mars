@@ -5238,11 +5238,11 @@ var GameXBody = /** @class */ (function (_super) {
         var count = opInfo.count;
         var paramInfo = opArgs.info;
         if (single) {
-            this.setDescriptionOnMyTurn(opArgs.prompt, opArgs.args);
+            this.setDescriptionOnMyTurn(_(opArgs.prompt), opArgs.args);
             // add main operation to the body to change style if need be
             this.setMainOperationType(opInfo);
             if (opArgs.void) {
-                this.setDescriptionOnMyTurn(opArgs.button + ": " + _("No valid targets"), opArgs.args);
+                this.setDescriptionOnMyTurn(_(opArgs.button) + ": " + _("No valid targets"), opArgs.args);
             }
         }
         if (ttype == "token") {
