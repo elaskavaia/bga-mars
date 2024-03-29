@@ -47,8 +47,8 @@ class VLayout {
     dojo.place("deck_main", "decks_area");
     dojo.place("discard_main", "decks_area");
     dojo.place("oceans_pile", "map_middle");
-    dojo.destroy("deck_holder");
-    dojo.destroy("discard_holder");
+    $("deck_holder").style.display="none";
+    $("discard_holder").style.display="none";
 
     // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
 

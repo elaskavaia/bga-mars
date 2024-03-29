@@ -1508,10 +1508,15 @@ var CardStack = /** @class */ (function () {
         var last = $(this.tableau_id).lastElementChild;
         var lastrect = last.getBoundingClientRect();
         var tableaurect = $(this.tableau_id).getBoundingClientRect();
-        if (lastrect.right > tableaurect.right) {
+        var limit = 15; //in case something bad happens, limit to 15 attempts
+        while (lastrect.right > tableaurect.right && limit > 0) {
+            console.log("adding a new col on ".concat(this.tableau_id));
             //add one column
             this.columns_synth++;
             $(this.tableau_id).style.setProperty("--columns-synth", String(this.columns_synth));
+            lastrect = last.getBoundingClientRect();
+            tableaurect = $(this.tableau_id).getBoundingClientRect();
+            limit--;
         }
     };
     CardStack.prototype.getDestinationDiv = function () {
@@ -2011,6 +2016,18 @@ var CustomAnimation = /** @class */ (function () {
 var CustomRenders = /** @class */ (function () {
     function CustomRenders() {
     }
+    CustomRenders.updateUIFromCorp = function (key) {
+        switch (key) {
+            case "card_corp_12":
+                //add discount to stanproj_2 ui;
+                if ($('card_stanproj_2')) {
+                    var node = $('card_stanproj_2').querySelector('.stanp_cost');
+                    node.innerHTML = "8";
+                    node.classList.add("discounted");
+                }
+                break;
+        }
+    };
     CustomRenders.parseExprToHtml = function (expr, card_num, action_mode, effect_mode) {
         if (action_mode === void 0) { action_mode = false; }
         if (effect_mode === void 0) { effect_mode = false; }
@@ -3580,6 +3597,8 @@ var GameXBody = /** @class */ (function (_super) {
             $("scoretracker_text").innerHTML = _("Score");
             $("milestones_title").innerHTML = _("Milestones");
             $("awards_title").innerHTML = _("Awards");
+            $("deck_main_title").innerHTML = _("Draw:");
+            $("discard_title").innerHTML = _("Discard:");
             //update prereq on cards
             this.updateHandInformation(this.gamedatas["card_info"], "card");
             // card reference
@@ -3622,6 +3641,8 @@ var GameXBody = /** @class */ (function (_super) {
             }
             this.updateStacks();
             this.vlayout.setupDone();
+            //locale css management
+            $("ebd-body").dataset["locale"] = _('$locale');
             //this.setupOneTimePrompt();
         }
         catch (e) {
@@ -4500,7 +4521,7 @@ var GameXBody = /** @class */ (function (_super) {
                 tags += _(tag) + " ";
             }
         }
-        var vp = displayInfo.text_vp;
+        var vp = _(displayInfo.text_vp);
         if (!vp)
             vp = displayInfo.vp;
         res += this.generateTooltipSection(type_name, card_id);
@@ -4517,21 +4538,21 @@ var GameXBody = /** @class */ (function (_super) {
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
         if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
             var text = _("If you meet the criteria of a milestone, you may\nclaim it by paying 8 M\u20AC and placing your player marker on\nit. A milestone may only be claimed by one player, and only\n3 of the 5 milestones may be claimed in total, so there is a\nrace for these! Each claimed milestone is worth 5 VPs at the\nend of the game.");
-            res += this.generateTooltipSection(_("Criteria"), displayInfo.text);
+            res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
             res += this.generateTooltipSection(_("Victory Points"), vp);
             res += this.generateTooltipSection(_("Info"), text);
         }
         else if (type == this.CON.MA_CARD_TYPE_AWARD) {
-            res += this.generateTooltipSection(_("Cost"), "The first player to fund an award pays 8 M\u20AC and\nplaces a player marker on it. The next player to fund an\naward pays 14 M\u20AC, the last pays 20 M\u20AC.", true, "tt_cost");
-            res += this.generateTooltipSection(_("Condition"), displayInfo.text);
+            res += this.generateTooltipSection(_("Cost"), _("The first player to fund an award pays 8 M\u20AC and\nplaces a player marker on it. The next player to fund an\naward pays 14 M\u20AC, the last pays 20 M\u20AC."), true, "tt_cost");
+            res += this.generateTooltipSection(_("Condition"), _(displayInfo.text));
             var text = _(" Only three awards\nmay be funded. Each award can only be funded once.<p>\nIn the final scoring, each award is checked, and 5\nVPs are awarded to the player who wins that category - it\ndoes not matter who funded the award! The second place\ngets 2 VPs (except in a 2-player game where second place\ndoes not give any VPs). Ties are friendly: more than one\nplayer may get the first or second place bonus.\nIf more than one player gets 1st place bonus, no 2nd place is\nawarded.");
             res += this.generateTooltipSection(_("Info"), text);
         }
         else {
             var errors = this.getPotentialErrors(displayInfo.key);
-            res += this.generateTooltipSection(_("Immediate Effect"), displayInfo.text);
-            res += this.generateTooltipSection(_("Effect"), displayInfo.text_effect);
-            res += this.generateTooltipSection(_("Action"), displayInfo.text_action);
+            res += this.generateTooltipSection(_("Immediate Effect"), _(displayInfo.text));
+            res += this.generateTooltipSection(_("Effect"), _(displayInfo.text_effect));
+            res += this.generateTooltipSection(_("Action"), _(displayInfo.text_action));
             res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
             res += this.generateTooltipSection(_("Victory Points"), vp);
             res += this.generateTooltipSection(_("Playability"), errors, true, "tt_error");
@@ -4572,7 +4593,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_title = displayInfo.name || "";
                 //   if (texts.length>0) card_initial = texts[0];
                 //  if (texts.length>1) card_effect= texts[1];
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(card_title, "</div>\n                  <div class=\"card_initial\">").concat(card_initial, "</div>\n                  <div class=\"card_effect\">").concat(card_effect, "</div>\n            ");
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(_(card_initial), "</div>\n                  <div class=\"card_effect\">").concat(_(card_effect), "</div>\n            ");
             }
             else if (tokenNode.id.startsWith("card_stanproj")) {
                 //standard project formatting:
@@ -4582,10 +4603,10 @@ var GameXBody = /** @class */ (function (_super) {
                 var parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
                 //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
                 if (tokenNode.id == "card_stanproj_7") {
-                    decor.innerHTML = "\n               <div class=\"bg_gray\"></div>  \n               <div class='stanp_cost token_img tracker_m'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class=\"action_arrow\"></div>\n               <div class=\"token_img tracker_tr\"></div>\n               <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n            ");
+                    decor.innerHTML = "\n               <div class=\"bg_gray\"></div>  \n               <div class='stanp_cost token_img tracker_m'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class=\"action_arrow\"></div>\n               <div class=\"token_img tracker_tr\"></div>\n               <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n            ");
                 }
                 else {
-                    decor.innerHTML = "\n               <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class='standard_projects_title'>").concat(displayInfo.name, "</div>  \n            ");
+                    decor.innerHTML = "\n               <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n            ");
                 }
             }
             else {
@@ -4684,7 +4705,7 @@ var GameXBody = /** @class */ (function (_super) {
                 card_a = card_a.replaceAll("%res%", displayInfo.holds);
                 var card_action_text = "";
                 if (displayInfo.text_action || displayInfo.text_effect) {
-                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(displayInfo.text_action || displayInfo.text_effect, "</div>");
+                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) || _(displayInfo.text_effect), "</div>");
                 }
                 var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
                 var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +
@@ -4692,7 +4713,7 @@ var GameXBody = /** @class */ (function (_super) {
                     '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' +
                     tokenNode.id.replace("card_main_", "") +
                     '" class="resource_counter"  data-resource_counter="0"></div></div>';
-                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(displayInfo.name, "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(card_action_text, "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(displayInfo.text || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
+                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(_(displayInfo.name), "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(_(card_action_text), "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(_(displayInfo.text) || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
                 tokenNode.style.setProperty("--sort_cost", displayInfo.cost);
                 tokenNode.style.setProperty("--sort_vp", sort_vp);
             }
@@ -5039,6 +5060,9 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
             result.location = tokenInfo.location + "_corp_effect";
+            if (this.isSpectator === false && tokenInfo.location == 'tableau_' + this.player_color && !this.isLayoutFull()) {
+                CustomRenders.updateUIFromCorp(tokenInfo.key);
+            }
         }
         else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
             var t = this.getRulesFor(tokenInfo.key, "t");
@@ -6611,8 +6635,8 @@ var VLayout = /** @class */ (function () {
         dojo.place("deck_main", "decks_area");
         dojo.place("discard_main", "decks_area");
         dojo.place("oceans_pile", "map_middle");
-        dojo.destroy("deck_holder");
-        dojo.destroy("discard_holder");
+        $("deck_holder").style.display = "none";
+        $("discard_holder").style.display = "none";
         // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
         dojo.place("fpholder_".concat(color), "miniboardentry_".concat(color));
         dojo.place("counter_draw_".concat(color), "limbo");
