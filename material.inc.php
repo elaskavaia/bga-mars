@@ -4929,6 +4929,12 @@ $this->token_types = [
   'solo' => [  //
     'gen' => 14,
   ],
+  'exp_0' => [ 
+    'name' => clienttranslate('Basic')
+  ],
+  'exp_1' => [ 
+    'name' => clienttranslate('Corporate')
+  ],
         
   // #error codes - MANUAL ENTRY
   'err_0' => [  //

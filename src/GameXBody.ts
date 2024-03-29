@@ -127,6 +127,7 @@ class GameXBody extends GameTokens {
       $("awards_title").innerHTML = _("Awards");
       $("deck_main_title").innerHTML = _("Draw:");
       $("discard_title").innerHTML = _("Discard:");
+      $("standard_projects_title").innerHTML = _("Standard projects");
 
       //update prereq on cards
       this.updateHandInformation(this.gamedatas["card_info"], "card");
@@ -2177,7 +2178,7 @@ awarded.`);
           }
 
           if (count >= 1) {
-            this.addActionButton("button_" + opId + "_max", count + " (max)", () => {
+            this.addActionButton("button_" + opId + "_max", count + " (" + _("max") + ")", () => {
               this.sendActionResolveWithCount(opId, count);
             });
           }

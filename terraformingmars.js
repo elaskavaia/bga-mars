@@ -2433,7 +2433,7 @@ var CustomRenders = /** @class */ (function () {
         var prefix = "";
         if (op == "<=") {
             mode = "max";
-            prefix = "max ";
+            prefix = _("max") + " ";
         }
         var qtys;
         qtys = qty.toString();
@@ -2759,7 +2759,6 @@ var CustomRenders = /** @class */ (function () {
         onPay_cardSpace: { classes: "tracker badge tracker_tagSpace" },
         onPay_card: { classes: "empty" },
         twopoints: { classes: "txtcontent", content: ':' },
-        play_stan: { classes: "txtcontent", content: 'Standard projects' },
         star: { classes: "txtcontent", content: '*' },
         res_Science: { classes: "token_img tracker_resScience" },
         res_Animal: { classes: "token_img tracker_resAnimal" },
@@ -3599,6 +3598,7 @@ var GameXBody = /** @class */ (function (_super) {
             $("awards_title").innerHTML = _("Awards");
             $("deck_main_title").innerHTML = _("Draw:");
             $("discard_title").innerHTML = _("Discard:");
+            $("standard_projects_title").innerHTML = _("Standard projects");
             //update prereq on cards
             this.updateHandInformation(this.gamedatas["card_info"], "card");
             // card reference
@@ -5333,7 +5333,7 @@ var GameXBody = /** @class */ (function (_super) {
                         _loop_3(i);
                     }
                     if (count >= 1) {
-                        this.addActionButton("button_" + opId + "_max", count + " (max)", function () {
+                        this.addActionButton("button_" + opId + "_max", count + " (" + _("max") + ")", function () {
                             _this.sendActionResolveWithCount(opId, count);
                         });
                     }
