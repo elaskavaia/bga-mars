@@ -236,13 +236,13 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set location=deck_corp
 
 2|CrediCor|4|||play_card:(counter('cost>=20'):4m):that;play_stan:(counter('cost>=20'):4m):that|-57|||0|Basic|You start with 57 M€.||After you pay for a card or standard project with a basic cost of 20 M€ or more, you gain 4 M€.||
-3|Ecoline|4|2pp,3p|||-36||Plant|0|Basic|You start with 2 plant production, 3 plants, and 36 M€,||You may always pay 7 plants, instead of 8, to place 1 greenery.||
+3|Ecoline|4|2pp,3p|||-36||Plant|0|Basic|You start with 2 plant production, 3 plants, and 36 M€.||You may always pay 7 plants, instead of 8, to place 1 greenery.||
 4|Helion|4|3ph|||-42||Space|0|Basic|You start with 3 heat production and 42 M€.||You may use heat as M€. You may not use M€ as heat.||
 5|Interplanetary Cinematics|4|20s||play_cardEvent:2m|-30||Building|0|Basic|You start with 20 steel and 30 M€.||Each time you play an event, you gain 2 M€.||
-6|Inventrix|4|2pdelta|||-45||Science|0|Basic|As your first action in the game, draw 3 cards. Start with 45 M€,||Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.||'a1'=>'3draw'
-7|Mining Guild|4|5s,ps||place_bonus_u:ps;place_bonus_s:ps|-30||Building Building|0|Basic|You start with 5 steel, 1 steel production and 30 M€,||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
+6|Inventrix|4|2pdelta|||-45||Science|0|Basic|As your first action in the game, draw 3 cards. Start with 45 M€.||Your temperature, oxygen, and ocean requirements are +2 or -2 steps, your choice in each case.||'a1'=>'3draw'
+7|Mining Guild|4|5s,ps||place_bonus_u:ps;place_bonus_s:ps|-30||Building Building|0|Basic|You start with 5 steel, 1 steel production and 30 M€.||Each time you get any steel or titanium as a placement bonus on the map, increase your steel production 1 step.||
 8|Saturn Systems|4|pu||play_tagJovian:pm:this:any|-42||Jovian|0|Corporate|You start with 1 titanium production and 42 M€.||Each time any Jovian tag is put into play, including this, increase your M€ production 1 step.||
-9|PhoboLog|4|10u,eru|||-23||Space|0|Basic|You start with 10 titanium and 23 M€,||Your titanium resources are each worth 1 M€ extra.||
+9|PhoboLog|4|10u,eru|||-23||Space|0|Basic|You start with 10 titanium and 23 M€.||Your titanium resources are each worth 1 M€ extra.||
 10|Teractor|4|||onPay_tagEarth:3m|-60||Earth|0|Corporate|You start with 60 M€.||When playing an Earth card, you pay 3 M€ less for it.||
 11|Tharsis Republic|4|||place_cityonmars:pm:this:any;place_city:3m|-40||Building|0|Basic|You start with 40 M€. As your first action in the game, place a city tile.||When any city tile is placed ON MARS, increase your M€ production 1 step. When you place a city tile, gain 3 M€.||'a1'=>'city'
 12|ThorGate|4|pe|||-48||Energy|0|Basic|You start with 1 energy production and 48 M€.||When playing a power card OR THE STANDARD PROJECT POWER PLANT, you pay 3 M€ less for it.||
@@ -252,7 +252,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #16|Manutech|4|ps,35m|||0||Building|0|Venus|You start with 1 steel production and 35 M€.||For each step you increase the production of a resource, including this, you also gain that resource.||
 #17|Morning Star Inc.|4|50m|||0||Venus|0|Venus|You start with 50 M€. As your first action, reveal cards from the deck until you have revealed 3 Venus-tag cards. Take those into hand and discard the rest.||Your Venus requirements are +/- 2 steps, your choice in each case.||
 #18|Viron|4|48m|||0||Microbe|0|Venus|You start with 48 M€.|Use a blue card action that has already been used this generation.|||
-#19|Cheung Shing Mars|4|3pm,44m|||0||Building|0|Prelude|You start with 44 M€ and 3 M€ production,||When you play a building tag, you pay 2 M€ less for it.||
+#19|Cheung Shing Mars|4|3pm,44m|||0||Building|0|Prelude|You start with 44 M€ and 3 M€ production.||When you play a building tag, you pay 2 M€ less for it.||
 #20|Point Luna|4|pu,38m|||0||Space Earth|0|Prelude|You start with 38 M€ and 1 titanium production.||When you play a Earth tag, including this, draw a card.||
 #21|Robinson Industries|4|47m|||0|||0|Prelude|You start with 47 M€.|Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.|||
 #22|Valley Trust|4|37m|||0||Earth|0|Prelude|You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.||When you play a science tag, you pay 2 M€ less for it.||
@@ -261,4 +261,4 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #25|Arklight|4|2pm,45m|||0||Animal|Ref|Colonies|You start with 45 M€. Increase your M€ production 2 steps,||When you play an animal or plant tag, including this, add 1 animal to this card.|1 VP per 2 animals on this card,|'holds' => 'Animals'
 #26|Polyphemos|4|5pm,50m,5u|||0|||0|Colonies|You start with 50 M€. Increase your M€ production 5 steps. Gain 5 titanium.||When you buy a card to hand, pay 5 M€ instead of 3 M€, including the starting hand.||
 #27|Poseidon|4|Ref_pm,45m|||0|||0|Colonies|You start with 45 M€. As your first action, place a colony.||When any colony is placed, including this, raise your M€ production 1 step.||
-#28|Stormcraft Incorporated|4|48m|||0||Jovian|0|Colonies|You start with 48 M€.; Action: Add 1 floater to ANY card.||Floaters on this card may be used as 2 heat each,||'holds' => 'Floaters'
+#28|Stormcraft Incorporated|4|48m|||0||Jovian|0|Colonies|You start with 48 M€. Action: Add 1 floater to ANY card.||Floaters on this card may be used as 2 heat each,||'holds' => 'Floaters'
