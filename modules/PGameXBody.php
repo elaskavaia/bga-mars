@@ -1193,6 +1193,28 @@ abstract class PGameXBody extends PGameMachine {
         $this->undoRestorePoint();
     }
 
+    function undoRestorePoint() {
+        // special case - we need to memorize value of auto-pass for other players, as it should not be restored by other player Undo
+        $active_player_id = $this->getActivePlayerId();
+
+        $players = $this->loadPlayersBasicInfos();
+        $pass_state = [];
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $state = $this->tokens->getTokenState("tracker_passed_${color}");
+            $pass_state[$player_id] = $state;
+        }
+
+        parent::undoRestorePoint();
+
+        $this->tokens->clear_cache();
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            if ($player_id != $active_player_id)
+                $this->tokens->setTokenState("tracker_passed_${color}", $pass_state[$player_id]);
+        }
+    }
+
     function action_changePreference($player_id, $pref, $value) {
         // anytime action, no checks
         $current_player_id = $this->getCurrentPlayerId();
