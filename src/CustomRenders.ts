@@ -30,6 +30,7 @@
       onPay_cardSpace: { classes: "tracker badge tracker_tagSpace" },
       onPay_card: { classes: "empty" },
       twopoints: { classes: "txtcontent", content: ':' },
+      play_stan: { classes: "txtcontent", content: 'Standard projects' },
       star: { classes: "txtcontent", content: '*' },
 
       res_Science: { classes: "token_img tracker_resScience" },
