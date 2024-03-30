@@ -53,10 +53,10 @@
  -con - way to use php constant to alias an numeric id, defines are currently not injected but dumped on console
  name, tooltip, tooltip_action - default fields which are translatable
 
- #set tr=color - using this directive make 'color' translatable field also
- #set sep=, - change separator
- #set sub=/ - use this character or string to replace default separator, i.e. a/b will be replaced to a|b
- #set noquotes=field - do not quotes for field when outputing
+ #set _tr=color - using this directive make 'color' translatable field also
+ #set _sep=, - change separator
+ #set _sub=/ - use this character or string to replace default separator, i.e. a/b will be replaced to a|b
+ #set _noquotes=field - do not quotes for field when outputing
  */
 // $g_field_names = null;
 // $g_field_extra = [];
@@ -242,8 +242,10 @@ function genbody($incsv) {
             }
             if (isTranslatable($key)) {
                 $value = trim($value);
-                if ($value)
-                    $exp = "clienttranslate(\"$value\")";
+                if ($value) {
+                    $value = str_replace("'", "\\'", $value);
+                    $exp = "clienttranslate('$value')";
+                }
                 else
                     continue;
             } else if (is_numeric($value) || array_search($key, $g_noquotes) !== false) {

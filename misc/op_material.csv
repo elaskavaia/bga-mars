@@ -1,5 +1,6 @@
 type|name|prompt|php
 #set id=op_{type}
+#set _tr=prompt
 #set undo=
 #set class=
 

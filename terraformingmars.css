@@ -351,29 +351,6 @@
   transform: rotateX(40deg) rotateY(0deg) rotateZ(40deg) translateZ(var(--half-mcubesize));
 }
 
-#main_board .marker_tr ~ .marker_tr {
-  translate: 50%;
-}
-#main_board .marker_tr ~ .marker_tr ~ .marker_tr {
-  translate: 0% 50%;
-}
-#main_board .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr {
-  translate: 50% 50%;
-}
-#main_board .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr ~ .marker_tr {
-  translate: 100% 25%;
-}
-
-.board {
-  position: relative;
-}
-
-.board > * {
-  display: inline-block;
-  position: relative;
-  margin-right: calc(var(--half-mcubesize) + var(--border-mcubesize));
-}
-
 .mcube {
   display: inline-block;
   transition: all 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275);
