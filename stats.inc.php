@@ -131,11 +131,6 @@ $stats_type = array(
             "name" => totranslate("Corporation"),
             "type" => "int"
         ],
-        "bad" => [
-            "id" => 50,
-            "name" => totranslate("User Interface Theme (Obsolete)"),
-            "type" => "int"
-        ],
         "game_theme" => [
             "id" => 51,
             "name" => totranslate("User Interface Theme"),
