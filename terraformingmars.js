@@ -1236,6 +1236,9 @@ var GameBasics = /** @class */ (function (_super) {
                           @Override
               */
     GameBasics.prototype.setLoader = function (image_progress, logs_progress) {
+        if (typeof g_replayFrom != "undefined" && image_progress >= 8) {
+            dojo.style('loader_mask', 'display', 'none');
+        }
         this.inherited(arguments); // required, this is "super()" call, do not remove
         //console.log("loader", image_progress, logs_progress)
         if (!this.isLoadingLogsComplete && logs_progress >= 100) {
