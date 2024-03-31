@@ -397,6 +397,25 @@ final class GameTest extends TestCase {
     }
 
 
+    public function testIsVoidComplexCount() {
+        $m = $this->game();
+        $m->setTrackerValue(PCOLOR, 'e', 0);
+        $op = $m->getOperationInstanceFromType("counter(e,1):(ne:m)", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->isVoid());
+        $m->setTrackerValue(PCOLOR, 'e', 1);
+        $this->assertFalse($op->isVoid());
+    }
+
+    public function testIsVoidComplexCountInsulation() {
+        $m = $this->game();
+        $m->setTrackerValue(PCOLOR, 'ph', 0);
+        $op = $m->getOperationInstanceFromType("counter(ph,1):(nph:pm)", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertTrue($op->isVoid());
+        $m->setTrackerValue(PCOLOR, 'ph', 2);
+        $this->assertFalse($op->isVoid());
+    }
 
     public function testLavaFlows() {
         $m = $this->game();

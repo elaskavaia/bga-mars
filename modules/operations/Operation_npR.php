@@ -19,7 +19,7 @@ class Operation_npR extends AbsOperation {
 
     public function isVoid(): bool {
         $type = $this->getType();
-        $min = $this->game->getRulesFor($this->game->getTrackerId($this->color, $type), 'min');
+        $min = $this->game->getRulesFor($this->game->getTrackerId($this->color, $type), 'min', 0);
         $value = $this->game->getTrackerValue($this->color, $type);
         $count = $this->getMinCount();
         if ($value - $count < $min) return true;

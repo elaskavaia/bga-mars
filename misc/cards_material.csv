@@ -159,7 +159,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 149|CEO's Favourite Project|3|acard149|||1||Event|0|Corporate|Add 1 resource to a card with at least 1 resource on it.||||
 150|Anti-Gravity Technology|2|||onPay_card:2m|14|tagScience>=7|Science|3|Corporate|||When you play a card, you pay 2 M€ less for it.||
 151|Investment Loan|3|1npm,10m|||3||Earth Event|0|Corporate|Decrease your M€ production 1 step. Gain 10 M€.||||
-152|Insulation|1|counter(ph,0),(nph:pm)|||2|||0|Basic|Decrease your heat production any number of steps and increase your M€ production the same number of steps.||||
+152|Insulation|1|counter(ph,1):(nph:pm)|||2|||0|Basic|Decrease your heat production any number of steps and increase your M€ production the same number of steps.||||
 153|Adaptation Technology|2|2pdelta|||12||Science|1|Basic|||Your global requirements are +2 or -2 steps, your choice in each case.||
 154|Caretaker Contract|2||8nh:1tr||3|t>=0||0|Corporate||Spend 8 heat to increase your terraforming rating 1 step.|||
 155|Designed Microorganisms|1|2pp|||16|t<=-14|Science Microbe|0|Basic|Increase your plant production 2 steps.||||
