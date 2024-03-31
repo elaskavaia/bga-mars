@@ -484,7 +484,7 @@ abstract class PGameTokens extends PGameBasic {
                 $num = 0;
                 $value = $min;
             } else if ($value < $min && $check) {
-                $this->userAssertTrue(self::_("Not enough resources to pay $token_id $current + $num >= 0")); // XXX fix error
+                $this->userAssertTrue(clienttranslate("Not enough resources to pay")); 
             }
         }
         if (array_get($options, 'onlyCheck')) {

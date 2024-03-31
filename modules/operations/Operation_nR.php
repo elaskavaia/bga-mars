@@ -14,7 +14,10 @@ class Operation_nR extends AbsOperation {
 
     public function isVoid(): bool {
         $value = $this->game->getTrackerValue($this->color, $this->getType());
-        return $value - $this->getMinCount() < 0;
+        $min = $this->getMinCount();
+        $diff = $value - $min;
+        if ($diff == -1 && $this->getType() == 'p') return false; // hack: plans can be gained via in play effects
+        return  $diff < 0;
     }
 
     function hasNoSideEffects(): bool {
