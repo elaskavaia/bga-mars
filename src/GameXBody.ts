@@ -2003,7 +2003,8 @@ awarded.`);
 
   getDivForTracker(id: string, value: string | number = "") {
     const res = getPart(id, 1);
-    const icon = `<div class="token_img tracker_${res}">${value}</div>`;
+    const name = this.getTokenName(id);
+    const icon = `<div class="token_img tracker_${res}" title="${name}">${value}</div>`;
     return icon;
   }
 

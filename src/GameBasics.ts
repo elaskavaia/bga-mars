@@ -44,7 +44,7 @@ class GameBasics extends GameGui {
       dojo.connect(butt, "onclick", () => reloadCss());
     }
     this.setupNotifications();
-    this.upldateColorMapping('.player-name *');
+    this.upldateColorMapping(".player-name *");
   }
 
   // state hooks
@@ -942,7 +942,52 @@ class GameBasics extends GameGui {
         target: "_blank"
       });
     }
+
+    // add copy log button
+    let copylog = $("button_copylog");
+    if (!copylog) {
+      copylog = this.addActionButton(
+        "button_copylog",
+        _("Copy LOG"),
+        () => this.copyLogToClipBoard(),
+        "settings-controls-container",
+        false,
+        "gray"
+      );
+    }
+
+    dojo.place(copylog, "settings-controls-container", "first");
     dojo.place(bug, "settings-controls-container", "first");
+  }
+
+  extractTextFromLogItem(node: any) {
+    if (node.title) return node.title;
+    if (node.children?.length>0) {
+      const array = Array.from(node.childNodes);
+      const sep = node.classList.contains("log") ? "\n": "";
+      return array.map((x: any)=>this.extractTextFromLogItem(x)).join(sep);
+    }
+    if (node.nodeType == Node.TEXT_NODE) return node.nodeValue;
+    return node.innerText;
+  }
+
+  copyLogToClipBoard() {
+    let text = "";
+    let lines = 0;
+    document.querySelectorAll("#logs > *").forEach((lognode) => {
+      lines++;
+      if (lines > 100) return;
+      text += this.extractTextFromLogItem(lognode) + "\n";
+    });
+    navigator.clipboard.writeText(text);
+
+    const d = new ebg.popindialog();
+    d.create("current_tooltip");
+    var html = "Text was copied to clipboard, you can just paste it in the bug report<br><pre>";
+    html += text;
+    html += "</pre>";
+    d.setContent(html);
+    d.show();
   }
 
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
@@ -1348,16 +1393,14 @@ class GameBasics extends GameGui {
   }
 
   upldateColorMapping(query: string) {
-    document
-      .querySelectorAll(query)
-      .forEach((node) => {
-        const color = (node as HTMLElement).style?.color;
-        if (!color) return;
-        const cvar = this.getColorMappingVar(color);
-        if (cvar) {
-          (node as HTMLElement).style.color = cvar;
-        }
-      });
+    document.querySelectorAll(query).forEach((node) => {
+      const color = (node as HTMLElement).style?.color;
+      if (!color) return;
+      const cvar = this.getColorMappingVar(color);
+      if (cvar) {
+        (node as HTMLElement).style.color = cvar;
+      }
+    });
   }
   /**
    * This is the hack to keep the status bar on
@@ -1372,7 +1415,7 @@ class GameBasics extends GameGui {
       $("gameaction_status_wrap").setAttribute("data-interface-status", this.interface_status);
     }
     // update hardcoded colors to variable
-    this.upldateColorMapping('#page-title *');
+    this.upldateColorMapping("#page-title *");
   }
 
   onNotif(notif: Notif) {
@@ -1426,8 +1469,8 @@ class GameBasics extends GameGui {
   onLoadingLogsComplete() {
     console.log("Loading logs complete");
     // do something here
-    this.upldateColorMapping('.playername');
-    this.upldateColorMapping('.player-name *');
+    this.upldateColorMapping(".playername");
+    this.upldateColorMapping(".player-name *");
   }
 }
 

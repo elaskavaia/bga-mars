@@ -575,11 +575,6 @@ class GameTokens extends GameBasics {
       if (log && args && !args.processed) {
         args.processed = true;
 
-        // if (!args.name && log.includes("{name}")) {
-        //   debugger;
-        //   console.trace("format_string_recursive(" + log + ")", args);
-        // }
-
         if (args.you) args.you = this.divYou(); // will replace ${you} with colored version
         args.You = this.divYou(); // will replace ${You} with colored version
 

@@ -50,7 +50,7 @@ var GameBasics = /** @class */ (function (_super) {
             dojo.connect(butt, "onclick", function () { return reloadCss(); });
         }
         this.setupNotifications();
-        this.upldateColorMapping('.player-name *');
+        this.upldateColorMapping(".player-name *");
     };
     // state hooks
     GameBasics.prototype.onEnteringState = function (stateName, args) {
@@ -835,7 +835,46 @@ var GameBasics = /** @class */ (function (_super) {
                 target: "_blank"
             });
         }
+        // add copy log button
+        var copylog = $("button_copylog");
+        if (!copylog) {
+            copylog = this.addActionButton("button_copylog", _("Copy LOG"), function () { return _this.copyLogToClipBoard(); }, "settings-controls-container", false, "gray");
+        }
+        dojo.place(copylog, "settings-controls-container", "first");
         dojo.place(bug, "settings-controls-container", "first");
+    };
+    GameBasics.prototype.extractTextFromLogItem = function (node) {
+        var _this = this;
+        var _a;
+        if (node.title)
+            return node.title;
+        if (((_a = node.children) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+            var array = Array.from(node.childNodes);
+            var sep = node.classList.contains("log") ? "\n" : "";
+            return array.map(function (x) { return _this.extractTextFromLogItem(x); }).join(sep);
+        }
+        if (node.nodeType == Node.TEXT_NODE)
+            return node.nodeValue;
+        return node.innerText;
+    };
+    GameBasics.prototype.copyLogToClipBoard = function () {
+        var _this = this;
+        var text = "";
+        var lines = 0;
+        document.querySelectorAll("#logs > *").forEach(function (lognode) {
+            lines++;
+            if (lines > 100)
+                return;
+            text += _this.extractTextFromLogItem(lognode) + "\n";
+        });
+        navigator.clipboard.writeText(text);
+        var d = new ebg.popindialog();
+        d.create("current_tooltip");
+        var html = "Text was copied to clipboard, you can just paste it in the bug report<br><pre>";
+        html += text;
+        html += "</pre>";
+        d.setContent(html);
+        d.show();
     };
     GameBasics.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
@@ -1224,9 +1263,7 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.upldateColorMapping = function (query) {
         var _this = this;
-        document
-            .querySelectorAll(query)
-            .forEach(function (node) {
+        document.querySelectorAll(query).forEach(function (node) {
             var _a;
             var color = (_a = node.style) === null || _a === void 0 ? void 0 : _a.color;
             if (!color)
@@ -1250,7 +1287,7 @@ var GameBasics = /** @class */ (function (_super) {
             $("gameaction_status_wrap").setAttribute("data-interface-status", this.interface_status);
         }
         // update hardcoded colors to variable
-        this.upldateColorMapping('#page-title *');
+        this.upldateColorMapping("#page-title *");
     };
     GameBasics.prototype.onNotif = function (notif) {
         this.restoreMainBar();
@@ -1301,8 +1338,8 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.onLoadingLogsComplete = function () {
         console.log("Loading logs complete");
         // do something here
-        this.upldateColorMapping('.playername');
-        this.upldateColorMapping('.player-name *');
+        this.upldateColorMapping(".playername");
+        this.upldateColorMapping(".player-name *");
     };
     return GameBasics;
 }(GameGui));
@@ -3386,10 +3423,6 @@ var GameTokens = /** @class */ (function (_super) {
             }
             if (log && args && !args.processed) {
                 args.processed = true;
-                // if (!args.name && log.includes("{name}")) {
-                //   debugger;
-                //   console.trace("format_string_recursive(" + log + ")", args);
-                // }
                 if (args.you)
                     args.you = this.divYou(); // will replace ${you} with colored version
                 args.You = this.divYou(); // will replace ${You} with colored version
@@ -5221,7 +5254,8 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.getDivForTracker = function (id, value) {
         if (value === void 0) { value = ""; }
         var res = getPart(id, 1);
-        var icon = "<div class=\"token_img tracker_".concat(res, "\">").concat(value, "</div>");
+        var name = this.getTokenName(id);
+        var icon = "<div class=\"token_img tracker_".concat(res, "\" title=\"").concat(name, "\">").concat(value, "</div>");
         return icon;
     };
     GameXBody.prototype.getTokenPresentaton = function (type, tokenKey) {
