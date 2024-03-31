@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bug report canned replies (mars)
 // @namespace    https://boardgamearena.com/
-// @version      0.1
+// @version      0.2
 // @description  select canned reply
 // @author       elaskavaia
 // @match        https://boardgamearena.com/bug?id=*
@@ -17,8 +17,21 @@
   //debugger;
   let table = [
     {
-      title: "Event tags => notabug",
-      text: "Not a bug. Event tags do not count after event has been played",
+      title: "Rules => notabug",
+      text: `Thanks you for reporting the issue of possible rule violation. However at this point its very unlikey that this is a unique issue.
+      It will be closed automatically unless you provide evidence in the report itself - which is either text of game log or screenshot.
+      These are common cases of rules misinterpretation:
+      - Event tags are not counted
+      - No more then 3 minlestones can be claimed (out of 5)
+      - No milestone can be claimed in solo game
+      - Placing forest after last generation does not increase oxygen
+      - Some cards effects violate the common rules - please READ the text on the card before submitting bug about specific card
+      - Production reduction is MANDATORY
+      - Removing resources to activate card is MANDATORY (i.e. Ants)
+      Some misinterpretation of game interface:
+      - Game does apply all discounts automatically, you see discounted price
+      - Undo undoes both actions
+      `,
       resolution: "notabug",
       acton: "change_bug_status"
     },
@@ -47,8 +60,8 @@
       acton: "change_bug_status"
     },
     {
-      title: "Fixed",
-      text: "Fixed",
+      title: "Fixed in version => fixed",
+      text: "Fixed in latest version",
       resolution: "fixed",
       acton: "change_bug_status"
     }
