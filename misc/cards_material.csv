@@ -201,7 +201,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 191|Permafrost extraction|3|w|||8|t>=-8|Event|0|Basic|Place 1 ocean tile.||||
 192|Invention Contest|3|3predraw,keep,prediscard|||2||Science Event|0|Corporate|Look at the top 3 cards from the deck. Take 1 of them into hand and discard the other 2||||
 193|Plantation|1|forest|||15|tagScience>=2|Plant|0|Basic|Place a greenery tile and raise oxygen 1 step.||||
-194|Power Infrastructure|2||counter(e,1),(ne:m)||4||Building Energy|0|Corporate||Spend any amount of energy to gain that amount of M€.|||
+194|Power Infrastructure|2||counter(e,1):(ne:m)||4||Building Energy|0|Corporate||Spend any amount of energy to gain that amount of M€.|||
 195|Indentured Workers|3|||onPay_card:8m;play_card:flip:that|0||Event|-1|Corporate|The next card you play this generation costs 8MC less.||||
 196|Lagrange Observatory|1|draw|||9||Science Space|1|Corporate|Draw 1 card.||||
 197|Terraforming Ganymede|1|counter(tagJovian)tr|||33||Space Jovian|2|Corporate|Raise your TR 1 step for each Jovian tag you have, including this.||||
