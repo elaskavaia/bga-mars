@@ -16,7 +16,14 @@ class Operation_nR extends AbsOperation {
         $value = $this->game->getTrackerValue($this->color, $this->getType());
         $min = $this->getMinCount();
         $diff = $value - $min;
-        if ($diff == -1 && $this->getType() == 'p') return false; // hack: plans can be gained via in play effects
+
+   
+        if ($diff == -1 && $this->getType() == 'p') {
+            $card_id = $this->getContext(0);
+            //$this->game->warn("context $card_id");
+            // to be precise can check card type and if viral enhancers are in play
+            if ($card_id)  return false; // hack: plans can be gained via play effects
+        }
         return  $diff < 0;
     }
 
