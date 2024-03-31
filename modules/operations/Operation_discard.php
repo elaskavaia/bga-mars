@@ -7,18 +7,32 @@ class Operation_discard extends AbsOperation {
         $card_id = $this->getCheckedArg('target');
         if (!is_array($card_id)) {
             $cards_ids = [$card_id];
+            $num = 1;
         } else {
             $cards_ids = $card_id;
+            $num = count($cards_ids);
             if (count($cards_ids) < $this->getMinCount()) {
                 $this->game->userAssertTrue(totranslate('Insufficient amount of cards selected'));
             }
         }
-        foreach ($cards_ids as $card_id) {
-            $this->game->effect_moveCard($color, $card_id, "discard_main", 0, '', ['_private' => true]);
+
+        if ($num > 0) {
+            $location = null;
+            foreach ($cards_ids as $card_id) {
+                if ($location == null) $location = $this->game->tokens->getTokenLocation($card_id);
+                $this->game->effect_moveCard($color, $card_id, "discard_main", 0, '', ['_private' => true]);
+            }
         }
-        $this->game->notifyMessage(clienttranslate('${player_name} discards ${count} card/s'), ['count' => count($cards_ids)], $this->getPlayerId());
-        $this->game->notifyCounterChanged("discard_main", ["nod" => true]);
-        return count($cards_ids);
+
+        $this->game->notifyWithName(
+            'tokenMovedHidden',
+            clienttranslate('${player_name} discards ${count} card/s'),
+            ['count' => $num, 
+            'place_from' => $location, 'location' => 'discard_main', 'token_type' => 'card'],
+            $this->getPlayerId()
+        );
+
+        return $num;
     }
 
     function canSkipChoice() {
