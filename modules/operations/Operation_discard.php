@@ -8,14 +8,16 @@ class Operation_discard extends AbsOperation {
         if (!is_array($card_id)) {
             $cards_ids = [$card_id];
         } else {
-            $cards_ids = $card_id; 
+            $cards_ids = $card_id;
             if (count($cards_ids) < $this->getMinCount()) {
                 $this->game->userAssertTrue(totranslate('Insufficient amount of cards selected'));
             }
         }
-        foreach($cards_ids as $card_id) {
-            $this->game->effect_moveCard($color, $card_id, "discard_main", 0, clienttranslate('${player_name} discards a card'));
+        foreach ($cards_ids as $card_id) {
+            $this->game->effect_moveCard($color, $card_id, "discard_main", 0, '', ['_private' => true]);
         }
+        $this->game->notifyMessage(clienttranslate('${player_name} discards ${count} card/s'), ['count' => count($cards_ids)], $this->getPlayerId());
+        $this->game->notifyCounterChanged("discard_main", ["nod" => true]);
         return count($cards_ids);
     }
 
@@ -30,7 +32,7 @@ class Operation_discard extends AbsOperation {
     }
 
     function getPrimaryArgType() {
-        if ($this->getCount()>1) return 'token_array';
+        if ($this->getCount() > 1) return 'token_array';
         return 'token';
     }
 
