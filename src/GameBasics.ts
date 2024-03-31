@@ -16,7 +16,7 @@ class GameBasics extends GameGui {
   isLoadingLogsComplete: boolean;
 
   classActiveSlot: string = "active_slot";
-  classButtonDisabled: string = "disabled"; 
+  classButtonDisabled: string = "disabled";
 
   gamedatas_server: any; // copy of server state gamedatas
   defaultTooltipDelay: number = 800;
@@ -44,6 +44,7 @@ class GameBasics extends GameGui {
       dojo.connect(butt, "onclick", () => reloadCss());
     }
     this.setupNotifications();
+    this.upldateColorMapping('.player-name *');
   }
 
   // state hooks
@@ -72,7 +73,8 @@ class GameBasics extends GameGui {
   }
 
   onUpdateActionButtons(stateName: string, args: any) {
-    if (this.laststate != stateName && args!=null) { // if args is null it is game state, they are not fired consistencly with onEnter
+    if (this.laststate != stateName && args != null) {
+      // if args is null it is game state, they are not fired consistencly with onEnter
       // delay firing this until onEnteringState is called so they always called in same order
       this.pendingUpdate = true;
       this.restoreMainBar();
@@ -154,7 +156,7 @@ class GameBasics extends GameGui {
       );
     }
   }
-  
+
   onCancel(event?: Event) {
     if (event) dojo.stopEvent(event);
     this.cancelLocalStateEffects();
@@ -717,7 +719,7 @@ class GameBasics extends GameGui {
 
   /**
    * Return array of node id, carefull - not all nodes have ids, it could be undefines there
-   * @param query 
+   * @param query
    * @returns array of ids
    */
   queryIds(query: string) {
@@ -1309,6 +1311,54 @@ class GameBasics extends GameGui {
     this.restoreMainBar();
   }
 
+  rgbToHex(arr: any[]) {
+    try {
+      return (
+        "#" +
+        arr
+          .map((x) => {
+            if (typeof x === "string") {
+              x = parseInt(x.trim());
+            }
+            const hex = x.toString(16);
+            return hex.length === 1 ? "0" + hex : hex;
+          })
+          .join("")
+      );
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  getColorMappingVar(color: string) {
+    if (!color) return undefined;
+
+    if (color.startsWith("rgb(")) {
+      const rgb = color.substring(4, color.length - 1);
+      color = this.rgbToHex(rgb.split(","));
+    }
+    if (color.startsWith("#")) color = color.substring(1);
+
+    for (let player_id in this.gamedatas.players) {
+      if (this.gamedatas.players[player_id].color == color) {
+        return `var(--color-mapping_${color})`;
+      }
+    }
+    return undefined;
+  }
+
+  upldateColorMapping(query: string) {
+    document
+      .querySelectorAll(query)
+      .forEach((node) => {
+        const color = (node as HTMLElement).style?.color;
+        if (!color) return;
+        const cvar = this.getColorMappingVar(color);
+        if (cvar) {
+          (node as HTMLElement).style.color = cvar;
+        }
+      });
+  }
   /**
    * This is the hack to keep the status bar on
    */
@@ -1321,6 +1371,8 @@ class GameBasics extends GameGui {
       $("gameaction_status").innerHTML = "&nbsp;";
       $("gameaction_status_wrap").setAttribute("data-interface-status", this.interface_status);
     }
+    // update hardcoded colors to variable
+    this.upldateColorMapping('#page-title *');
   }
 
   onNotif(notif: Notif) {
@@ -1361,7 +1413,7 @@ class GameBasics extends GameGui {
    			*/
   setLoader(image_progress: number, logs_progress: number) {
     if (typeof g_replayFrom != "undefined" && image_progress >= 8) {
-      dojo.style('loader_mask', 'display', 'none');
+      dojo.style("loader_mask", "display", "none");
     }
     this.inherited(arguments); // required, this is "super()" call, do not remove
     //console.log("loader", image_progress, logs_progress)
@@ -1374,6 +1426,8 @@ class GameBasics extends GameGui {
   onLoadingLogsComplete() {
     console.log("Loading logs complete");
     // do something here
+    this.upldateColorMapping('.playername');
+    this.upldateColorMapping('.player-name *');
   }
 }
 

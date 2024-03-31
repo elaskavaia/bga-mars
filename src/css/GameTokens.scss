@@ -113,15 +113,15 @@
 }
 
 .marker {
-  background-image: url('img/cubes.png');
+  background-image: url('img/cubes_opaque.png');
   background-size: 600% 100%;
   width: calc(var(--map-width) * 0.045);
   height: calc(var(--map-width) * 0.05);
 }
 
-#ebd-body[data-localsetting_plaincubes="plain"] {
+#ebd-body[data-localsetting_colorblind="colorblind"] {
   .marker {
-    background-image: url('img/cubes_opaque.png');
+    background-image: url('img/cubes_cb.png');
   }
 }
 
@@ -162,6 +162,16 @@ $colors-list: (
         _773300: #333333, // suppose to be more blackish
         _ffffff: #ffffff
 );
+// color blind pallette
+$colors-list-cb: (
+        _0000ff: #0072B2, // blue
+        _ff0000: #CC79A7, // reddish purple
+        _008000: #009E73, // bluish green
+        _ffa500: #E69F00, // orange
+        _773300: #333333, // suppose to be more blackish
+        _ffffff: #ffffff
+);
+
 
 @each $key, $val in $colors-list {
   .color#{$key} {
@@ -171,5 +181,23 @@ $colors-list: (
   .plcolor#{$key} {
     --plcolor: #{$val};
   }
+
+  :root {
+    --color-mapping#{$key}: #{$val};
+  }
 }
 
+#ebd-body[data-localsetting_colorblind="colorblind"] {
+  @each $key, $val in $colors-list-cb {
+    --color-mapping#{$key}: #{$val};
+    
+    .color#{$key} {
+      color: #{$val};
+    }
+  
+    .plcolor#{$key} {
+      --plcolor: #{$val};
+    }
+
+  }
+}

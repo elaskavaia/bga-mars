@@ -50,6 +50,7 @@ var GameBasics = /** @class */ (function (_super) {
             dojo.connect(butt, "onclick", function () { return reloadCss(); });
         }
         this.setupNotifications();
+        this.upldateColorMapping('.player-name *');
     };
     // state hooks
     GameBasics.prototype.onEnteringState = function (stateName, args) {
@@ -73,7 +74,8 @@ var GameBasics = /** @class */ (function (_super) {
         this.removeAllClasses(this.classActiveSlot);
     };
     GameBasics.prototype.onUpdateActionButtons = function (stateName, args) {
-        if (this.laststate != stateName && args != null) { // if args is null it is game state, they are not fired consistencly with onEnter
+        if (this.laststate != stateName && args != null) {
+            // if args is null it is game state, they are not fired consistencly with onEnter
             // delay firing this until onEnteringState is called so they always called in same order
             this.pendingUpdate = true;
             this.restoreMainBar();
@@ -1187,6 +1189,54 @@ var GameBasics = /** @class */ (function (_super) {
         // }
         this.restoreMainBar();
     };
+    GameBasics.prototype.rgbToHex = function (arr) {
+        try {
+            return ("#" +
+                arr
+                    .map(function (x) {
+                    if (typeof x === "string") {
+                        x = parseInt(x.trim());
+                    }
+                    var hex = x.toString(16);
+                    return hex.length === 1 ? "0" + hex : hex;
+                })
+                    .join(""));
+        }
+        catch (e) {
+            return undefined;
+        }
+    };
+    GameBasics.prototype.getColorMappingVar = function (color) {
+        if (!color)
+            return undefined;
+        if (color.startsWith("rgb(")) {
+            var rgb = color.substring(4, color.length - 1);
+            color = this.rgbToHex(rgb.split(","));
+        }
+        if (color.startsWith("#"))
+            color = color.substring(1);
+        for (var player_id in this.gamedatas.players) {
+            if (this.gamedatas.players[player_id].color == color) {
+                return "var(--color-mapping_".concat(color, ")");
+            }
+        }
+        return undefined;
+    };
+    GameBasics.prototype.upldateColorMapping = function (query) {
+        var _this = this;
+        document
+            .querySelectorAll(query)
+            .forEach(function (node) {
+            var _a;
+            var color = (_a = node.style) === null || _a === void 0 ? void 0 : _a.color;
+            if (!color)
+                return;
+            var cvar = _this.getColorMappingVar(color);
+            if (cvar) {
+                node.style.color = cvar;
+            }
+        });
+    };
     /**
      * This is the hack to keep the status bar on
      */
@@ -1199,6 +1249,8 @@ var GameBasics = /** @class */ (function (_super) {
             $("gameaction_status").innerHTML = "&nbsp;";
             $("gameaction_status_wrap").setAttribute("data-interface-status", this.interface_status);
         }
+        // update hardcoded colors to variable
+        this.upldateColorMapping('#page-title *');
     };
     GameBasics.prototype.onNotif = function (notif) {
         this.restoreMainBar();
@@ -1237,7 +1289,7 @@ var GameBasics = /** @class */ (function (_super) {
               */
     GameBasics.prototype.setLoader = function (image_progress, logs_progress) {
         if (typeof g_replayFrom != "undefined" && image_progress >= 8) {
-            dojo.style('loader_mask', 'display', 'none');
+            dojo.style("loader_mask", "display", "none");
         }
         this.inherited(arguments); // required, this is "super()" call, do not remove
         //console.log("loader", image_progress, logs_progress)
@@ -1249,6 +1301,8 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.onLoadingLogsComplete = function () {
         console.log("Loading logs complete");
         // do something here
+        this.upldateColorMapping('.playername');
+        this.upldateColorMapping('.player-name *');
     };
     return GameBasics;
 }(GameGui));
@@ -3976,9 +4030,9 @@ var GameXBody = /** @class */ (function (_super) {
                 ui: "checkbox"
             },
             {
-                key: "plaincubes",
-                label: _("Opaque cubes"),
-                choice: { plain: true },
+                key: "colorblind",
+                label: _("Colorblind support"),
+                choice: { colorblind: true },
                 default: false,
                 ui: "checkbox"
             },
