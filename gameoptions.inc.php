@@ -99,8 +99,8 @@ $game_preferences = [
         'name' => totranslate('Theme'),
         'needReload' => true, // after user changes this preference game interface would auto-reload
         'values' => array(
-            1 => ['name' => totranslate('Digital'), 'cssPref' => 'mcompact', 'description' => totranslate('Layout is optimized for your screen, unnecessary game elements are hidden. Cards are rendered with translated text (if translation is available)')],
-            2 => ['name' => totranslate('Cardboard'), 'cssPref' => 'mfull', 'description' => totranslate('Just like the original cardboard game, have full board, game player board and cubes. Cards are rendered as printed in English (toolips are translated)')],
+            1 => ['name' => clienttranslate('Digital'), 'cssPref' => 'mcompact', 'description' => totranslate('Layout is optimized for your screen, unnecessary game elements are hidden. Cards are rendered with translated text (if translation is available)')],
+            2 => ['name' => clienttranslate('Cardboard'), 'cssPref' => 'mfull', 'description' => totranslate('Just like the original cardboard game, have full board, game player board and cubes. Cards are rendered as printed in English (toolips are translated)')],
         ),
         'default' => 1
     ],
@@ -108,8 +108,8 @@ $game_preferences = [
         'name' => totranslate('Confirm turn end'),
         'needReload' => false, 
         'values' => array(
-            1 => ['name' => totranslate('Confirm') ],
-            0 => ['name' => totranslate('No'), 'description' => totranslate('If you do not confirm your turn you cannot undo, as next player will get the turn') ],
+            1 => ['name' => clienttranslate('Confirm') ],
+            0 => ['name' => clienttranslate('No'), 'description' => totranslate('If you do not confirm your turn you cannot undo, as next player will get the turn') ],
         ),
         'default' => 1
     ]
