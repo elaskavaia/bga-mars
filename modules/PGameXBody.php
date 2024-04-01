@@ -102,6 +102,8 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->queue($color, "finsetup");
+                // give more time for setup
+                $this->giveExtraTime($player_id);
             }
 
             if ($this->isSolo()) {
