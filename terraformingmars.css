@@ -4871,6 +4871,19 @@
   left: 2%;
 }
 
+.reveal {
+  width: var(--card-width);
+  height: var(--card-height);
+  position: absolute;
+  top: 0px;
+  z-index: 30;
+}
+
+#decks_area .reveal .card {
+  width: var(--card-width);
+  height: var(--card-height);
+}
+
 .miniboard {
   display: flex;
   justify-content: center;

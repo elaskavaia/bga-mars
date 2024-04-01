@@ -75,6 +75,9 @@
               <div id="oceans_pile" class="tile tile_3">
                 <div id="alt_tracker_w" class="tracker param tracker_w"></div>
               </div>
+
+              <!-- This area will show cards that has to be revealed from deck  -->
+              <div id="reveal" class="reveal"></div>
             </div>
             <div id="standard_projects_area">
               <div id="standard_projects_title_zone">
