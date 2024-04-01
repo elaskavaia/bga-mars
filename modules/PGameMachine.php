@@ -447,8 +447,10 @@ abstract class PGameMachine extends PGameTokens {
         if ($this->isZombiePlayer($player_id)) return;
 
         if ($this->isInMultiplayerMasterState()) {
-            if (!$this->gamestate->isPlayerActive($player_id))
+            if (!$this->gamestate->isPlayerActive($player_id)) {
                 $this->gamestate->setPlayersMultiactive([$player_id], "notpossible", false);
+            }
+            $this->giveExtraTime($player_id);
             return;
         }
         $active_player = $this->getActivePlayerId();
@@ -456,6 +458,8 @@ abstract class PGameMachine extends PGameTokens {
         if ($active_player != $player_id || $this->isZombiePlayer($active_player)) {
             $this->setNextActivePlayerCustom($player_id);
             $this->undoSavepoint();
+        } else {
+            $this->giveExtraTime($active_player);
         }
     }
 
