@@ -1964,8 +1964,10 @@ awarded.`);
       ops: [{ op: op }]
     });
   }
-  sendActionSkip() {
-    this.ajaxuseraction("skip", {});
+  sendActionSkip(...op: number[]) {
+    this.ajaxuseraction("skip", {
+      oparr: op
+    });
   }
 
   sendActionUndo() {
@@ -2199,7 +2201,7 @@ awarded.`);
         if (opInfo.numops > 1) {
           this.addActionButtonColor(`button_${opId}_0`, opArgs.skipname, () => this.sendActionResolveWithCount(opId, 0), "orange");
         } else {
-          this.addActionButtonColor("button_skip", opArgs.skipname, () => this.sendActionSkip(), "orange");
+          this.addActionButtonColor("button_skip", opArgs.skipname, () => this.sendActionSkip(opId), "orange");
         }
       }
     }
@@ -2608,11 +2610,13 @@ awarded.`);
     }
     let allSkip = true;
 
+    let numops = [];
     for (let i = 0; i < sortedOps.length; i++) {
       let opIdS = sortedOps[i];
       const opId = parseInt(opIdS);
       const opInfo = operations[opId];
       this.completeOpInfo(opId, opInfo, xop, sortedOps.length);
+      numops.push(opId);
 
       const opArgs = opInfo.args;
 
@@ -2657,7 +2661,7 @@ awarded.`);
     }
 
     if (allSkip && !single) {
-      this.addActionButtonColor("button_skip", _("Skip All"), () => this.sendActionSkip(), "red");
+      this.addActionButtonColor("button_skip", _("Skip All"), () => this.sendActionSkip(...numops), "red");
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");

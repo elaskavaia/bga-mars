@@ -94,8 +94,11 @@ abstract class PGameMachine extends PGameTokens {
 
     function action_decline($args) {
         $operation_id = $args["op"];
-        $info = $this->machine->info($operation_id);
-        $this->machine->drop($info);
+        $curowner = $this->getCurrentPlayerColor();
+        $res = $this->checkOperations([$operation_id], $curowner, $this->machine->getTopOperations($curowner));
+        $this->systemAssertTrue("Illegal operation", $res && count($res) == 1);
+        $this->machine->drop($res);
+        $info = array_shift($res);
         $this->notifyMessage(clienttranslate('${player_name} declines ${operation_name}'), [
             "operation_name" => $this->getOperationName($info["type"]),
         ]);
@@ -103,9 +106,11 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function action_skip($args) {
+        $operation_ids = array_get($args,"oparr",null);
+        if ($operation_ids===null) $this->userAssertTrue("Old version of client is used. Reload user interface and try again");
         $curowner = $this->getCurrentPlayerColor();
-        $this->systemAssertTrue("Acting user must be a player", $curowner);
-        $this->machine->drop($this->machine->getTopOperations($curowner));
+        $res = $this->checkOperations($operation_ids, $curowner, $this->machine->getTopOperations($curowner));
+        $this->machine->drop($res);
         $this->notifyMessage(clienttranslate('${player_name} skips rest of actions'));
         $this->gamestate->nextState("next");
     }
@@ -140,6 +145,34 @@ abstract class PGameMachine extends PGameTokens {
         return null;
     }
 
+    function checkOperations($ops, $curPlayerColor, $tops = null) {
+        $this->systemAssertTrue("Acting user must be a player", $curPlayerColor);
+        $op_ids = [];
+        if ($tops == null) $tops = $this->getTopOperationsState($curPlayerColor);
+        foreach ($ops as $args) {
+            if (is_numeric($args)) {
+                $operation_id = $args;
+            } else if (is_array($args)) {
+                $operation_id = array_get($args,"op");
+            } else {
+                $this->userAssertTrue("Illegal operation. Try again?");
+            }
+          
+            $info = $this->findOp($operation_id, $tops);
+            $this->userAssertTrue("Illegal operation. Try again?", $info);
+
+            $color = $info["owner"];
+            if ($color === null) {
+                // ignore
+            } else if ($color != $curPlayerColor) {
+                $this->userAssertTrue("Illegal operation owner. Try again?", $info); 
+            }
+
+            $op_ids[] = $operation_id;
+        }
+        return $this->machine->infos($ops);
+    }
+
     /**
      * Resolve one or more operation and pass all arguments for its execution
      *
@@ -147,17 +180,18 @@ abstract class PGameMachine extends PGameTokens {
      *            $args['op'] the id of operation from db
      */
     function action_resolve($ac_args) {
+        $this->checkAction('resolve');
         $operations_resolve = $ac_args["ops"];
         $currentPlayer = $this->getCurrentPlayerId();
         $curowner = $this->getCurrentPlayerColor();
         $this->systemAssertTrue("Acting user must be a player", $curowner);
         $tops = $this->getTopOperationsState($curowner);
-        $this->systemAssertTrue('Nothing is on stack',count($tops));
+        $this->systemAssertTrue('Nothing is on stack', count($tops));
         $client_args = $this->arg_operations($tops);
         //$this->machine->interrupt();
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
-            $info = $this-> findOp($operation_id, $tops);
+            $info = $this->findOp($operation_id, $tops);
             $this->systemAssertTrue("Illegal operation. Try again?", $info);
             //$this->debugLog("- resolve op " . $info['type'], $args);
 
@@ -169,9 +203,9 @@ abstract class PGameMachine extends PGameTokens {
             }
             // now we will call method for specific user action
             //$this->debug_dumpMachine();
-            $client_op_args = $this->findOp($operation_id,$client_args['operations']);
+            $client_op_args = $this->findOp($operation_id, $client_args['operations']);
             if (array_get($client_op_args, 'args.postpone', false)) {
-                $this->userAssertTrue(_('Cannot choose this operation before any that can fail'));
+                $this->userAssertTrue(totranslate('Cannot choose this operation before any that can fail'));
             }
             $count = $this->saction_resolve($info, $args);
             // stack operations
@@ -397,10 +431,10 @@ abstract class PGameMachine extends PGameTokens {
             if (count($operations) == 0) {
                 $this->systemAssertTrue("Failed expand for $type. Nothing");
             }
-        
+
             // restore orignal rank
             //$this->machine->renice($operations, $op['rank']);
-            
+
             $nop = array_shift($operations);
             if ($nop["type"] == $type && $nop['mcount'] == $op['mcount'] && $nop['count'] == $op['count']) {
                 $this->systemAssertTrue("Failed expand for $type. Recursion");

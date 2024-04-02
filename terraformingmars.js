@@ -5219,7 +5219,13 @@ var GameXBody = /** @class */ (function (_super) {
         });
     };
     GameXBody.prototype.sendActionSkip = function () {
-        this.ajaxuseraction("skip", {});
+        var op = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            op[_i] = arguments[_i];
+        }
+        this.ajaxuseraction("skip", {
+            oparr: op
+        });
     };
     GameXBody.prototype.sendActionUndo = function () {
         this.gameStatusCleanup();
@@ -5447,7 +5453,7 @@ var GameXBody = /** @class */ (function (_super) {
                     this.addActionButtonColor("button_".concat(opId, "_0"), opArgs.skipname, function () { return _this.sendActionResolveWithCount(opId, 0); }, "orange");
                 }
                 else {
-                    this.addActionButtonColor("button_skip", opArgs.skipname, function () { return _this.sendActionSkip(); }, "orange");
+                    this.addActionButtonColor("button_skip", opArgs.skipname, function () { return _this.sendActionSkip(opId); }, "orange");
                 }
             }
         }
@@ -5819,11 +5825,13 @@ var GameXBody = /** @class */ (function (_super) {
             sortedOps = this.sortOrderOps(args);
         }
         var allSkip = true;
+        var numops = [];
         var _loop_4 = function (i) {
             var opIdS = sortedOps[i];
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
             this_4.completeOpInfo(opId, opInfo, xop, sortedOps.length);
+            numops.push(opId);
             var opArgs = opInfo.args;
             var name_3 = this_4.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
@@ -5857,7 +5865,7 @@ var GameXBody = /** @class */ (function (_super) {
             _loop_4(i);
         }
         if (allSkip && !single) {
-            this.addActionButtonColor("button_skip", _("Skip All"), function () { return _this.sendActionSkip(); }, "red");
+            this.addActionButtonColor("button_skip", _("Skip All"), function () { return _this.sendActionSkip.apply(_this, numops); }, "red");
         }
         if (chooseorder)
             this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.ajaxuseraction("whatever", {}); }, "orange");
