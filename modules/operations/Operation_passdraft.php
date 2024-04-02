@@ -39,7 +39,7 @@ class Operation_passdraft extends AbsOperation {
             }
         }
 
-
+        $this->game->undoSavepoint();
         return 1;
     }
 }
