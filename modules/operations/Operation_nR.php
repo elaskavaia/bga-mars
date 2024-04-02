@@ -20,9 +20,11 @@ class Operation_nR extends AbsOperation {
    
         if ($diff == -1 && $this->getType() == 'p') {
             $card_id = $this->getContext(0);
-            //$this->game->warn("context $card_id");
-            // to be precise can check card type and if viral enhancers are in play
-            if ($card_id)  return false; // hack: plans can be gained via play effects
+            if ($card_id && $this->game->hasTag($card_id, 'Plant'))  {
+                if ($this->game->playerHasCard($this->color, 'card_main_74')) { // viral enhancers
+                    return false; // one plant can be gained via viral enhancers
+                }
+            }
         }
         return  $diff < 0;
     }

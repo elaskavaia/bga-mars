@@ -955,6 +955,12 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
+    function hasTag(string $card_id, string $tag){
+        $tags = $this->getRulesFor($card_id, 'tags', '');
+        if (strstr($tags, $tag)) return true;
+        return false;
+    }
+
     function collectDiscounts($owner, $card_id) {
         // event will be onPay_card or similar
         // load all active effect listeners

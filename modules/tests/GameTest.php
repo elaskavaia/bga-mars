@@ -435,6 +435,26 @@ final class GameTest extends TestCase {
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_ff0000"));
     }
 
+    public function testHasTag() {
+        $m = $this->game();
+        $card_id = $m->mtFindByName('Moss');
+        $this->assertTrue($m->hasTag($card_id, 'Plant'));
+    }
+
+    public function testMossAndViralEnhancencers() {
+        $m = $this->game();
+        $moss = $m->mtFindByName('Moss');
+        $vire= $m->mtFindByName('Viral Enhancers');
+        $m->incTrackerValue(PCOLOR, 'm', 4);
+
+        $ops = $m->getRulesFor($moss,'r');
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType($ops, PCOLOR, 1, $moss);
+        $this->assertEquals(true, $op->isVoid()); 
+        $m->effect_playCard(PCOLOR, $vire);
+        $this->assertEquals(false, $op->isVoid()); 
+    }
+
     public function testExtraOcean() {
         $m = $this->game();
         $m->gamestate->changeActivePlayer(PCOLOR);
