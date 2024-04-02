@@ -11,6 +11,12 @@ class Operation_skipsec extends AbsOperation {
         return false;
     }
 
+    function requireConfirmation() {
+        $pref = (int) $this->game->dbUserPrefs->getPrefValue($this->getPlayerId(), MA_PREF_CONFIRM_TURN);
+        if ($pref) return true;
+        return false;
+    }
+
     function effect(string $color, int $inc): int {
         $this->game->notifyMessage(clienttranslate('${player_name} skips second action'));
         $this->game->queueremove($color, 'confturn');
