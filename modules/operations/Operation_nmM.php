@@ -26,7 +26,8 @@ class Operation_nmM extends AbsOperation {
             "name" => $this->getOpName(),
             'count' => $this->getCount(),
             'res_name' => $this->game->getTokenName($ttoken),
-            'card_name' => $this->game->getTokenName($this->getContext())
+            'card_name' => $this->game->getTokenName($this->getContext()),
+            'i18n' => ['res_name','card_name']
         ];
     }
 

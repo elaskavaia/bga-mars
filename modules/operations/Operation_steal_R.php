@@ -20,7 +20,7 @@ class Operation_steal_R extends AbsOperation {
         return 'player';
     }
 
-    function requireConfirmation(){
+    function requireConfirmation() {
         if ($this->game->isSolo()) return false;
         return true;
     }

@@ -5450,10 +5450,10 @@ var GameXBody = /** @class */ (function (_super) {
         if (single) {
             if (opArgs.skipname) {
                 if (opInfo.numops > 1) {
-                    this.addActionButtonColor("button_".concat(opId, "_0"), opArgs.skipname, function () { return _this.sendActionResolveWithCount(opId, 0); }, "orange");
+                    this.addActionButtonColor("button_".concat(opId, "_0"), _(opArgs.skipname), function () { return _this.sendActionResolveWithCount(opId, 0); }, "orange");
                 }
                 else {
-                    this.addActionButtonColor("button_skip", opArgs.skipname, function () { return _this.sendActionSkip(opId); }, "orange");
+                    this.addActionButtonColor("button_skip", _(opArgs.skipname), function () { return _this.sendActionSkip(opId); }, "orange");
                 }
             }
         }
@@ -5821,7 +5821,7 @@ var GameXBody = /** @class */ (function (_super) {
         var ordered = xop == "," && !single;
         var chooseorder = xop == "+" && !single;
         if (chooseorder) {
-            this.setDescriptionOnMyTurn("${you} must choose order of operations");
+            this.setDescriptionOnMyTurn(_("${you} must choose order of operations"));
             sortedOps = this.sortOrderOps(args);
         }
         var allSkip = true;

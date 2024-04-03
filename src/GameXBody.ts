@@ -2199,9 +2199,9 @@ awarded.`);
     if (single) {
       if (opArgs.skipname) {
         if (opInfo.numops > 1) {
-          this.addActionButtonColor(`button_${opId}_0`, opArgs.skipname, () => this.sendActionResolveWithCount(opId, 0), "orange");
+          this.addActionButtonColor(`button_${opId}_0`, _(opArgs.skipname), () => this.sendActionResolveWithCount(opId, 0), "orange");
         } else {
-          this.addActionButtonColor("button_skip", opArgs.skipname, () => this.sendActionSkip(opId), "orange");
+          this.addActionButtonColor("button_skip", _(opArgs.skipname), () => this.sendActionSkip(opId), "orange");
         }
       }
     }
@@ -2605,7 +2605,7 @@ awarded.`);
     const ordered = xop == "," && !single;
     const chooseorder = xop == "+" && !single;
     if (chooseorder) {
-      this.setDescriptionOnMyTurn("${you} must choose order of operations");
+      this.setDescriptionOnMyTurn(_("${you} must choose order of operations"));
       sortedOps = this.sortOrderOps(args);
     }
     let allSkip = true;

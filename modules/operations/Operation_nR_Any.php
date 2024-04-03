@@ -18,6 +18,7 @@ class Operation_nR_Any extends AbsOperation {
             'count' => $this->getCount(),
             'res_name' => $this->game->getTokenName($ttoken),
             'res_type' => $type,
+            'i18n' => ['res_name']
         ];
     }
 
