@@ -40,10 +40,14 @@ class Operation_nores extends AbsOperation {
         $num = $inc;
         foreach ($resources as $key => $info) {
             $num--;
-            $this->game->effect_moveResource($owner, $key, "tableau_$owner", 0, clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), $card);
+            $this->game->effect_moveResource($owner, $key, "tableau_$owner", 0, 
+                 clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), $card);
             if ($num == 0) break;
         }
-        if ($num > 0) throw new feException("Insufficient number of resources on $card");
+        if ($this->getContext(0) == 'card_main_50') { // Virus - up to number of animals to remove, no check
+            return $inc;
+        }
+        $this->game->userAssertTrue(totranslate("Insufficient number of resources on card to remove"), $num==0);
         return $inc;
     }
 

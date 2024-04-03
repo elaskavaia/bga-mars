@@ -9,7 +9,7 @@ class Operation_npR_Any extends AbsOperation {
         $keys = $this->game->getPlayerColors();
         $count = $this->getMinCount();
         $type = $this->getType();
-        $min = $this->game->getRulesFor($this->game->getTrackerId('', $type), 'min');
+        $min = $this->game->getRulesFor($this->game->getTrackerId('', $type), 'min', 0);
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($count, $type, $min) {
             $value = $this->game->getTrackerValue($other_player_color, $type);
             if ($value - $count < $min) return ['q' => MA_ERR_PREREQ, 'max' => $value];
