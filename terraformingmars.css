@@ -591,18 +591,33 @@
    */
 }
 
-.hand .card_cost.discounted, .draw .card_cost.discounted, .draft .card_cost.discounted, .tooltip-body .card_cost.discounted {
+.minidiscount.token_img {
+  display: none;
+  top: 138%;
+  left: 4%;
+  --resourcesize: calc(var(--card-width) * 0.14);
   color: #bef983;
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
-  outline: calc(var(--card-width) * 0.025) solid #bef983;
-}
-.hand .card_cost.discounted .number_inside, .draw .card_cost.discounted .number_inside, .draft .card_cost.discounted .number_inside, .tooltip-body .card_cost.discounted .number_inside {
-  display: none;
-}
-.hand .card_cost.discounted:after, .draw .card_cost.discounted:after, .draft .card_cost.discounted:after, .tooltip-body .card_cost.discounted:after {
-  content: attr(data-discounted_cost);
+  font-family: var(--mars-font);
 }
 
+.discountarrow {
+  display: none;
+  position: absolute;
+  left: 27%;
+  top: 90%;
+  background: #bef983;
+  border-radius: 50%;
+  outline: calc(var(--card-width) * 0.01) solid #bef983;
+  font-size: calc(var(--card-width) * 0.08);
+}
+
+.hand .card_cost.discounted .minidiscount, .draw .card_cost.discounted .minidiscount, .draft .card_cost.discounted .minidiscount, .tooltip-body .card_cost.discounted .minidiscount {
+  display: flex;
+}
+.hand .card_cost.discounted .discountarrow, .draw .card_cost.discounted .discountarrow, .draft .card_cost.discounted .discountarrow, .tooltip-body .card_cost.discounted .discountarrow {
+  display: block;
+}
 #display_main .token_cost {
   border-radius: calc(var(--card-width) * 0.08);
   background-image: url("img/resources.png");
@@ -5112,6 +5127,7 @@
  */
 #player_config {
   margin: 10px 0px;
+  font-size: small;
 }
 #player_config #player_config_row {
   display: flex;
@@ -6210,6 +6226,7 @@
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid gray;
+  font-size: smaller;
 }
 
 #localsettings_restore {
@@ -6236,6 +6253,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  margin-bottom: 5px;
 }
 
 .localsettings_prop_button {
@@ -8848,10 +8866,10 @@
   --default-card-width: 0.2vw;
   --default-pb_cellsize: 9vw;
   --default-resourcesize: 5vw;
-  --map-width: calc(var(--localsetting_mapsize) * var(--default-map-width) );
-  --stan-width: calc(var(--localsetting_mapsize) * var(--default-stan-width) );
-  --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width) );
-  --pb_cellsize:var(--default-pb_cellsize);
+  --map-width: calc(var(--localsetting_mapsize) * var(--default-map-width));
+  --stan-width: calc(var(--localsetting_mapsize) * var(--default-stan-width));
+  --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width));
+  --pb_cellsize: var(--default-pb_cellsize);
 }
 .mcompact #ebd-body.mobile_portrait .milestone_label {
   bottom: 6%;
@@ -8965,6 +8983,17 @@
 }
 .mcompact #ebd-body.mobile_portrait .stack_dd_buttons_close {
   font-size: 2vw;
+}
+.mcompact #ebd-body.mobile_portrait #ebd-body[data-localsetting_handplace=floating] #hand_area .hand_sorter {
+  left: 12%;
+  top: -6%;
+  width: calc(var(--card-width) * 0.3);
+  height: calc(var(--card-width) * 0.3);
+}
+.mcompact #ebd-body.mobile_portrait #ebd-body[data-localsetting_handplace=floating] #hand_area .hand_sorter .hs_button {
+  font-size: calc(var(--card-width) * 0.2);
+  width: calc(var(--card-width) * 0.25);
+  height: calc(var(--card-width) * 0.25);
 }
 
 html[lang=ko].mcompact .award_label,
@@ -9380,6 +9409,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   transform: translateY(80%);
   transition: transform 0.8s;
   z-index: 1000;
+  max-height: 82vh;
 }
 #ebd-body[data-localsetting_handplace=floating] #hand_area .hand_sorter {
   left: 30%;

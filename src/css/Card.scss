@@ -70,19 +70,55 @@
 
 }
 
+.minidiscount.token_img {
+  display: none;
+  top: 138%;
+  left: 4%;
+ // z-index: 2;
+  --resourcesize: calc(var(--card-width) * 0.14);
+  color: #bef983;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  font-family: var(--mars-font);
+
+}
+
+.discountarrow{
+  display: none;
+  position: absolute;
+  left: 27%;
+  top: 90%;
+  //z-index: 3;
+  background: #bef983;
+  border-radius: 50%;
+  outline: calc(var(--card-width) * 0.01) solid #bef983;
+  font-size: calc(var(--card-width) * 0.08);
+}
+
+
+
 .hand,.draw,.draft,.tooltip-body {
+
+
   .card_cost.discounted{
-    color: #bef983;
-    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
-    outline: calc(var(--card-width) * 0.025) solid #bef983;
+   // color: #bef983;
+   // text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+   // outline: calc(var(--card-width) * 0.025) solid #bef983;
 
     .number_inside{
-      display: none;
+   //   display: none;
+    }
+    .minidiscount {
+      display: flex;
+    }
+    .discountarrow {
+      display: block;
     }
   }
   .card_cost.discounted:after{
-    content:attr(data-discounted_cost);
+   // content:attr(data-discounted_cost);
   }
+
+
 }
 
 

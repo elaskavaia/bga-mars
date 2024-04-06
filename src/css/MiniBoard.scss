@@ -244,7 +244,9 @@
  */
 
 #player_config {
-	margin: 10px 0px; 
+	margin: 10px 0px;
+    font-size: small;
+
   #player_config_row {
     display: flex;
     justify-content: space-around;

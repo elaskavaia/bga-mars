@@ -3837,19 +3837,19 @@ var GameXBody = /** @class */ (function (_super) {
         var lsStacks;
         if (!this.isLayoutFull()) {
             lsStacks = [
-                { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
-                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
-                { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
-                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full }
+                { label: _("Automated"), div: "cards_1", color_class: "green", default: parseInt(this.localSettings.readProp('defaultstack_1', String(View.Stacked))) },
+                { label: _("Events"), div: "cards_3", color_class: "red", default: parseInt(this.localSettings.readProp('defaultstack_3', String(View.Summary))) },
+                { label: _("Effects"), div: "cards_2", color_class: "blue", default: parseInt(this.localSettings.readProp('defaultstack_2', String(View.Stacked))) },
+                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: parseInt(this.localSettings.readProp('defaultstack_2a', String(View.Stacked))) },
             ];
         }
         else {
             var defViews = [View.Summary, View.Stacked, View.Full];
             lsStacks = [
-                { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked, views: defViews },
-                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary, views: defViews },
-                { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked, views: defViews },
-                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Full, views: [View.Stacked, View.Full] },
+                { label: _("Automated"), div: "cards_1", color_class: "green", default: parseInt(this.localSettings.readProp('defaultstack_1', String(View.Stacked))), views: defViews },
+                { label: _("Events"), div: "cards_3", color_class: "red", default: parseInt(this.localSettings.readProp('defaultstack_3', String(View.Summary))), views: defViews },
+                { label: _("Effects"), div: "cards_2", color_class: "blue", default: parseInt(this.localSettings.readProp('defaultstack_2', String(View.Stacked))), views: defViews },
+                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: parseInt(this.localSettings.readProp('defaultstack_2a', String(View.Stacked))), views: [View.Stacked, View.Full] },
                 { label: _("Corporation"), div: "cards_4", color_class: "corp", default: View.Full }
             ];
         }
@@ -4070,7 +4070,11 @@ var GameXBody = /** @class */ (function (_super) {
                 ui: "checkbox"
             },
             { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
+            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" },
+            { key: "defaultstack_3", label: _("Default Events View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 0 },
+            { key: "defaultstack_1", label: _("Default Automated View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 2 },
+            { key: "defaultstack_2", label: _("Default Effects View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 2 },
+            { key: "defaultstack_2a", label: _("Default Actions View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 2 },
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
@@ -4804,7 +4808,7 @@ var GameXBody = /** @class */ (function (_super) {
                     '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' +
                     tokenNode.id.replace("card_main_", "") +
                     '" class="resource_counter"  data-resource_counter="0"></div></div>';
-                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(_(displayInfo.name), "</div></div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div></div> \n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(_(card_action_text), "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(_(displayInfo.text) || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
+                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(_(displayInfo.name), "</div></div>\n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(_(card_action_text), "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(_(displayInfo.text) || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div>\n                  <div id='discountedcost_").concat(tokenNode.id, "' class='card_cost minidiscount token_img tracker_m'></div> \n                  <div class=\"discountarrow fa fa-arrow-circle-down\"></div>\n                  </div> \n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
                 tokenNode.style.setProperty("--sort_cost", displayInfo.cost);
                 tokenNode.style.setProperty("--sort_vp", sort_vp);
             }
@@ -5068,19 +5072,26 @@ var GameXBody = /** @class */ (function (_super) {
             node.dataset.cannot_pay = (_c = card_info.c) !== null && _c !== void 0 ? _c : "0";
             node.dataset.op_code = card_info.q;
             var discounted = discount_cost != original_cost;
-            if (discounted) {
-                node.dataset.discounted = String(discounted);
-                node.dataset.discount_cost = String(discount_cost);
-            }
+            //if (discounted) {
+            node.dataset.discounted = String(discounted);
+            node.dataset.discount_cost = String(discount_cost);
+            //} else {
+            //}
             node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
             var costDiv = $("cost_" + cardId);
+            var costdiscountDiv = $('discountedcost_' + cardId);
             if (costDiv) {
                 if (discounted) {
-                    costDiv.dataset.discounted_cost = node.dataset.discount_cost;
+                    // costdiscountDiv.dataset.discounted_cost = node.dataset.discount_cost;
+                    costdiscountDiv.innerHTML = node.dataset.discount_cost;
+                    //   costDiv.dataset.discounted_cost = node.dataset.discount_cost;
+                    // costDiv.dataset.original_cost = node.dataset.original_cost;
                     costDiv.classList.add("discounted");
                 }
                 else {
                     costDiv.dataset.discounted_cost = "";
+                    // costdiscountDiv.dataset.discounted_cost ="";
+                    costdiscountDiv.innerHTML = "";
                     costDiv.classList.remove("discounted");
                 }
             }

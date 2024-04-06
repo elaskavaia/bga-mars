@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid gray;
+  font-size: smaller;
 }
 
 // restore local settings
@@ -30,6 +31,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  margin-bottom:5px;
 }
 .localsettings_prop_button{
   position: relative;
