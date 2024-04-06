@@ -412,6 +412,7 @@
     transform: translateY(80%);
     transition: transform .8s;
     z-index: 1000;
+    max-height: 82vh;
 
     .hand_sorter{
       left: 30%;

@@ -11,10 +11,10 @@
     --default-resourcesize: 5vw;
 
 
-    --map-width: calc(var(--localsetting_mapsize) * var(--default-map-width) );
-    --stan-width: calc(var(--localsetting_mapsize) * var(--default-stan-width) );
-    --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width) );
-    --pb_cellsize:var(--default-pb_cellsize);
+    --map-width: calc(var(--localsetting_mapsize) * var(--default-map-width));
+    --stan-width: calc(var(--localsetting_mapsize) * var(--default-stan-width));
+    --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width));
+    --pb_cellsize: var(--default-pb_cellsize);
 
     .milestone_label {
       bottom: 6%;
@@ -33,34 +33,35 @@
         width: 88%;
         left: 4%;
       }
+
       .award_label {
         bottom: -3%;
         font-size: calc(var(--map-width) * 0.027);
       }
     }
 
-    .counters_holder{
-      --resourcesize:   var(--default-resourcesize);
-      min-width:0;
+    .counters_holder {
+      --resourcesize: var(--default-resourcesize);
+      min-width: 0;
     }
 
     .player_counters {
-     /* 1X --resourcesize: 7.5vw;*/
-      --resourcesize:   var(--default-resourcesize);
+      /* 1X --resourcesize: 7.5vw;*/
+      --resourcesize: var(--default-resourcesize);
       flex-wrap: wrap;
     }
 
-    .player_controls{
-     /* justify-content: flex-start;
-      top: 6%;*/
+    .player_controls {
+      /* justify-content: flex-start;
+       top: 6%;*/
     }
 
     .hand, .draw, .draft {
-      padding: 6px 6px 6px  calc(var(--card-width)*0.2);
+      padding: 6px 6px 6px calc(var(--card-width) * 0.2);
     }
 
     .hand::after, .draw::after, .draft::after {
-      font-size:  calc(var(--card-width)*0.2);
+      font-size: calc(var(--card-width) * 0.2);
     }
 
     #map_bottom {
@@ -115,7 +116,7 @@
 
 
     // synthetic
-    .cardstack[data-currentview="1"] .stack_content{
+    .cardstack[data-currentview="1"] .stack_content {
       min-width: revert;
       width: 100%;
       display: flex;
@@ -125,7 +126,7 @@
 
     // stack
     .cardstack[data-currentview="2"] .stack_content {
-     /* --overlap: 0.88;*/
+      /* --overlap: 0.88;*/
     }
 
 
@@ -150,13 +151,16 @@
       .stack_label {
         font-size: 2vw;
       }
-      .stack_detail_txt{
+
+      .stack_detail_txt {
         font-size: 1.5vw;
       }
-      .stack_btn{
+
+      .stack_btn {
         height: 4vw;
         font-size: 2.5vw;
       }
+
       .stack_btn.switchview {
         width: 4vw;
         height: 4vw;
@@ -168,7 +172,30 @@
       font-size: 2vw;
     }
 
-  }
 
+    #ebd-body[data-localsetting_handplace='floating'] {
+      #hand_area {
+
+
+        .hand_sorter {
+          left: 12%;
+          top: -6%;
+          width: calc(var(--card-width) * 0.3);
+          height: calc(var(--card-width) * 0.3);
+
+          .hs_button {
+            font-size: calc(var(--card-width) * 0.2);
+            width: calc(var(--card-width) * 0.25);
+            height: calc(var(--card-width) * 0.25);
+          }
+        }
+      }
+    }
+
+
+
+
+
+  }
 
 }
