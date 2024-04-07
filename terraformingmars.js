@@ -5176,6 +5176,9 @@ var GameXBody = /** @class */ (function (_super) {
                 //   result.location = tokenInfo.location + "_cards_2a";
             }
         }
+        else if (tokenInfo.key.startsWith("card_prelude") && tokenInfo.location.startsWith("tableau")) {
+            result.location = tokenInfo.location + "_cards_1";
+        }
         if (!result.location)
             // if failed to find revert to server one
             result.location = tokenInfo.location;
@@ -5697,7 +5700,8 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.resourcesToHtml = function (resources, show_zeroes) {
         if (show_zeroes === void 0) { show_zeroes = false; }
         var htm = "";
-        this.resourceTrackers.forEach(function (item) {
+        var trackers = this.resourceTrackers.concat('resMicrobe');
+        trackers.forEach(function (item) {
             if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
                 htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(resources[item], "</div>");
             }

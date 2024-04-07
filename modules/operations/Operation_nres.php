@@ -42,7 +42,6 @@ class Operation_nres extends AbsOperation {
 
         $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
         $num = $inc;
-        $player_id = $this->game->getPlayerIdByColor($owner);
         foreach ($resources as $key => $info) {
             $num--;
             $this->game->effect_moveResource($owner, $key, "tableau_$owner", 0, clienttranslate('${player_name} removes ${restype_name} from ${card_name}'), $card);

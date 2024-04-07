@@ -80,6 +80,8 @@ tracker_tagEnergy|Count of Power tags
 tracker_tagEvent|Count of played Events cards
 #tracker_tagVenus|Count of Venus tags
 
+tracker_resMicrobe|Microbe
+
 
 #hex tiles
 #set create=2

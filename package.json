@@ -26,5 +26,8 @@
     "braceStyle": "1tbs",
     "printWidth": 140,
     "trailingComma": "none"
+  },
+  "dependencies": {
+    "tsc": "^2.0.4"
   }
 }

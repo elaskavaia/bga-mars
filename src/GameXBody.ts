@@ -1918,6 +1918,8 @@ awarded.`);
       //   // card can hold stuff - no longer needed
       //   result.location = tokenInfo.location + "_cards_2a";
       }
+    } else if (tokenInfo.key.startsWith("card_prelude") && tokenInfo.location.startsWith("tableau")) {
+      result.location = tokenInfo.location + "_cards_1";
     }
     if (!result.location)
       // if failed to find revert to server one
@@ -2168,7 +2170,7 @@ awarded.`);
               ) > 0
             ) {
               customNeeded = detailsInfo;
-            }
+            } 
           } else {
             const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
             //console.log("enum details "+tid,detailsInfo);
@@ -2486,7 +2488,8 @@ awarded.`);
 
   resourcesToHtml(resources: any, show_zeroes: boolean = false): string {
     var htm = "";
-    this.resourceTrackers.forEach((item) => {
+    const trackers = this.resourceTrackers.concat('resMicrobe');
+    trackers.forEach((item) => {
       if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
         htm += `<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
       }

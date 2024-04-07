@@ -17,8 +17,10 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
 
 class DbUserPrefs extends APP_GameClass {
     var $table;
-    function __construct() {
+    public PGameXBody $game; // game ref
+    function __construct(PGameXBody $game) {
         $this->table = 'user_preferences';
+        $this->game = $game;
     }
 
     // MUST be called before any other method if db table is not called 'user_preferences'
@@ -28,7 +30,8 @@ class DbUserPrefs extends APP_GameClass {
 
     public function setup($players, $prefs) {
         // Load user preferences
-        include dirname(__FILE__) . '/../gameoptions.inc.php';
+        //include dirname(__FILE__) . '/../gameoptions.inc.php';
+        $game_preferences = $this->game->getTablePreferences();
 
         $values = [];
         //$players = $this->loadPlayersBasicInfos();

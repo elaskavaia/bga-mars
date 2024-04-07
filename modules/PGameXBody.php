@@ -1,7 +1,5 @@
 <?php
 
-use PhpParser\Node\Stmt\Continue_;
-
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
@@ -11,6 +9,7 @@ require_once "operations/DelegatedOperation.php";
 require_once "operations/Operation_turn.php";
 
 define("MA_STAGE_SETUP", 1);
+define("MA_STAGE_PRELUDE", 2);
 define("MA_STAGE_GAME", 3);
 define("MA_STAGE_LASTFOREST", 5);
 define("MA_STAGE_ENDED", 9);
@@ -38,8 +37,9 @@ abstract class PGameXBody extends PGameMachine {
             "var_corporate_era" => 101,
             "var_solo_flavour" => 102,
             "var_draft" => 103,
+            "var_prelude" => 104,
         ]);
-        $this->dbUserPrefs = new DbUserPrefs();
+        $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;
         $this->tokens->autoreshuffle_custom['deck_main'] = 'discard_main';
     }
@@ -61,12 +61,20 @@ abstract class PGameXBody extends PGameMachine {
             $this->createTokens();
             $this->tokens->shuffle("deck_main");
             $this->tokens->shuffle("deck_corp");
+            $prelude  = $this->isPreludeVariant();
+            if ($prelude) {
+                $this->tokens->shuffle("deck_prelude");
+            }
             $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
 
             $initial_draw = 10;
             $tr_value = 20;
             if ($this->isSolo()) {
-                $tr_value = 14;
+                if ($this->isPreludeVariant()) {
+                    $tr_value = 14;
+                } else {
+                    $tr_value = 12;
+                }
             }
             $corps = 2; //(int)(11 / $this->getPlayersNumber())
             foreach ($players as $player_id => $player) {
@@ -95,7 +103,7 @@ abstract class PGameXBody extends PGameMachine {
             }
 
             if ($this->getGameStateValue('var_begginers_corp') != 1) {
-                $this->effect_queueMultiDrawSetup($initial_draw, $corps);
+                $this->effect_queueMultiDrawSetup($initial_draw, $corps, $prelude ? 4 : 0);
             }
 
 
@@ -113,6 +121,7 @@ abstract class PGameXBody extends PGameMachine {
             $player_id = $this->getFirstPlayer();
             $this->setCurrentStartingPlayer($player_id);
             $this->queuePlayersTurn($player_id, false);
+            $this->undoSavepoint();
         } catch (Exception $e) {
             $this->error($e);
         }
@@ -196,6 +205,10 @@ abstract class PGameXBody extends PGameMachine {
         return $this->getGameStateValue('var_corporate_era') == 1 || $this->isSolo();
     }
 
+    function isPreludeVariant() {
+        return $this->getGameStateValue('var_prelude') == 1;
+    }
+
     function isDraftVariant() {
         return $this->getGameStateValue('var_draft') == 1 && !$this->isSolo();
     }
@@ -236,7 +249,7 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->interrupt();
         //$this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
         $cards = $this->tokens->pickTokensForLocation(170, 'deck_main', 'temp');
-        $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');
+        $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');     
         //$this->dbSetTokensLocation($cards, 'temp');
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
@@ -480,11 +493,17 @@ abstract class PGameXBody extends PGameMachine {
 
     protected function createTokens() {
         $corp_era  = $this->isCorporateEraVariant();
+        $prelude  = $this->isPreludeVariant();
         foreach ($this->token_types as $id => $info) {
-            if (!$corp_era) {
-                if (startsWith($id, "card_")) {
-                    $deck = array_get($info, 'deck');
+            if (startsWith($id, "card_")) {
+                $deck = array_get($info, 'deck');
+                if (!$corp_era) {
                     if ($deck == 'Corporate') {
+                        continue;
+                    }
+                }
+                if (!$prelude) {
+                    if ($deck == 'Prelude') {
                         continue;
                     }
                 }
@@ -750,7 +769,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = ''): AbsOperation{
+    function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = ''): AbsOperation {
         $opinfo = [
             'type' => $type, 'owner' => $color, 'mcount' => $count, 'count' => $count, 'data' => $data,
             'flags' => 0, 'id' => 0
@@ -884,6 +903,32 @@ abstract class PGameXBody extends PGameMachine {
         ], $this->getPlayerIdByColor($owner));
     }
 
+    function effect_drawAndRevealTag(string $color, string $tag_name, bool $showWarning = false) {
+        $deck = "deck_main";
+        $card = $this->tokens->getTokenOnTop($deck, false);
+        if (!$card) {
+            $this->notifyMessage(clienttranslate('no more cards'), ['_notifType' => 'message_warning']);
+            return null;
+        }
+        $card_id = $card['key'];
+
+        $this->effect_moveCard($color, $card_id, "reveal", MA_CARD_STATE_SELECTED);
+        $this->undoSavepoint();
+        $tags = $this->getRulesFor($card_id, 'tags', '');
+        $args = ['tag_name' => $tag_name];
+        if ($showWarning)   $args += ['_notifType' => 'message_warning'];
+        if (strstr($tags, $tag_name)) {
+            $this->notifyMessageWithTokenName(clienttranslate('${player_name} reveals ${token_name}: it has a ${tag_name} tag'), $card_id, $color, $args);
+            $this->notifyAnimate(1000); // delay to show the card
+            return $card_id;
+        } else {
+            $this->notifyMessageWithTokenName(clienttranslate('${player_name} reveals ${token_name}: it does not have a ${tag_name} tag'), $card_id, $color, $args);
+            $this->notifyAnimate(1000); // delay to show the card
+            $this->effect_moveCard($color, $card_id, "discard_main", 0);
+            return false;
+        }
+    }
+
     function getNextDraftPlayerColor($color) {
         $player_id = $this->getPlayerIdByColor($color);
         $this->systemAssertTrue("invalid player id", $this->isRealPlayer($player_id));
@@ -955,7 +1000,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function hasTag(string $card_id, string $tag){
+    function hasTag(string $card_id, string $tag) {
         $tags = $this->getRulesFor($card_id, 'tags', '');
         if (strstr($tags, $tag)) return true;
         return false;
@@ -1100,23 +1145,6 @@ abstract class PGameXBody extends PGameMachine {
         return "${costm}nm";
     }
 
-    function getPaymentTypes(string $color, string $card_id) {
-        $tags = $this->getRulesFor($card_id, "tags", '');
-        $types = [];
-        if (strstr($tags, "Building"))
-            $types[] = 's';
-        if (strstr($tags, "Space"))
-            $types[] = 'u';
-
-        $types[] = 'm';
-        // heat is last choice
-        if ($this->playerHasCard($color, 'card_corp_4')) {
-            // Helion
-            $types[] = 'h';
-        }
-        return $types;
-    }
-
     function getCurrentStartingPlayer() {
         $loc = $this->tokens->getTokenLocation('starting_player');
         if (!$loc)
@@ -1162,7 +1190,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->isZombiePlayer($player_id)) return;
 
         if ($this->isInMultiplayerMasterState()) {
-            if (!$this->gamestate->isPlayerActive($player_id)) 
+            if (!$this->gamestate->isPlayerActive($player_id))
                 $this->gamestate->setPlayersMultiactive([$player_id], "notpossible", false);
             $this->giveExtraTime($player_id);
             return;
@@ -1172,7 +1200,8 @@ abstract class PGameXBody extends PGameMachine {
 
         // in this game we never switch active player during the single active state turns
         // except for lastforest
-        if ($this->getGameStateValue('gamestage') == MA_STAGE_LASTFOREST || $this->isZombiePlayer($active_player)) {
+        $stage = $this->getGameStateValue('gamestage');
+        if ($stage == MA_STAGE_LASTFOREST ||  $stage == MA_STAGE_PRELUDE || $this->isZombiePlayer($active_player)) {
             if ($active_player != $player_id) {
                 $this->setNextActivePlayerCustom($player_id);
                 $this->undoSavepoint();
@@ -1254,6 +1283,8 @@ abstract class PGameXBody extends PGameMachine {
         $state = MA_CARD_STATE_TAGUP;
         if ($ttype == MA_CARD_TYPE_EVENT) {
             $state = MA_CARD_STATE_FACEDOWN;
+        }
+        if ($ttype == MA_CARD_TYPE_EVENT || $ttype == MA_CARD_TYPE_PRELUDE) {
             if (isset($rules['e'])) {
                 // single use effect
                 $state = MA_CARD_STATE_ACTION_SINGLEUSE;
@@ -1390,18 +1421,19 @@ abstract class PGameXBody extends PGameMachine {
         return $numcards;
     }
 
-    function effect_queueMultiDrawSetup($numcards = 10, $corps = 2) {
+    function effect_queueMultiDrawSetup($numcards = 10, $corps = 2, $prelude = 0) {
         $players = $this->loadPlayersBasicInfos();
 
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-            $this->effect_draw($color, "deck_main", "draw_$color", $numcards);
+            $this->tokens->pickTokensForLocation($numcards, "deck_main", "draw_${color}");
+            if ($prelude > 0) $this->tokens->pickTokensForLocation($prelude, "deck_prelude", "draw_${color}");
         }
 
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            if ($corps + $numcards) $this->multiplayerqueue($color, "setuppick");
+            if ($corps + $numcards + $prelude) $this->multiplayerqueue($color, "setuppick");
         }
     }
 
@@ -1631,7 +1663,6 @@ abstract class PGameXBody extends PGameMachine {
                 $this->dbSetTokenState($cardid, $state, '');
             }
         }
-        
     }
 
     function effect_production() {

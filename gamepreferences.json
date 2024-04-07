@@ -1,0 +1,47 @@
+{
+    "200": {
+        "name": "Display tooltips",
+        "needReload": false,
+        "generic": true,
+        "values": [
+            {
+                "name": "Enabled"
+            },
+            {
+                "name": "Disabled"
+            }
+        ]
+    },
+    "100": {
+        "name": "Theme",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Digital",
+                "cssPref": "mcompact",
+                "description": "Layout is optimized for your screen, unnecessary game elements are hidden. Cards are rendered with translated text (if translation is available)"
+            },
+            "2": {
+                "name": "Cardboard",
+                "cssPref": "mfull",
+                "description": "Just like the original cardboard game, have full board, game player board and cubes. Cards are rendered as printed in English (toolips are translated)"
+            }
+        },
+        "default": 1
+    },
+    "101": {
+        "$comment": "MA_PREF_CONFIRM_TURN",
+        "name": "Confirm turn end",
+        "needReload": false,
+        "values": {
+            "1": {
+                "name": "Confirm"
+            },
+            "0": {
+                "name": "No",
+                "description": "If you do not confirm your turn you cannot undo, as next player will get the turn"
+            }
+        },
+        "default": 1
+    }
+}

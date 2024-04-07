@@ -11,15 +11,16 @@ class Operation_finsetup extends AbsOperation {
 
     function effect(string $color, int $inc): int {
         //$player_id = $this->game->getPlayerIdByColor($color);
-        $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);
+    
         if ($this->game->getGameStateValue('var_begginers_corp') == 1)  return 1;
 
         // pin drawn cards
-        $selected = $this->game->tokens->getTokensOfTypeInLocation("card_main_","hand_$color", MA_CARD_STATE_SELECTED);
+        $selected = $this->game->tokens->getTokensOfTypeInLocation("card_","hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
         }
-        $count =  count($selected);
+        $selected_proj = $this->game->tokens->getTokensOfTypeInLocation("card_main_","hand_$color", 0);
+        $count =  count($selected_proj);
         if ($count)
             $this->game->notifyWithName('message', clienttranslate('${player_name} keeps ${count} card/s'), [
                 'count' => $count
@@ -27,6 +28,11 @@ class Operation_finsetup extends AbsOperation {
 
         // discard second corp
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_${color}");
+        foreach ($rest as $card_id => $card) {
+            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
+        }
+        // discard remainning prelude
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "draw_${color}");
         foreach ($rest as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
         }
@@ -39,17 +45,20 @@ class Operation_finsetup extends AbsOperation {
         }
 
         // play selected corp properly
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "tableau_${color}"); // old way
-        foreach ($rest as $card_id => $card) {
-            $this->game->effect_playCorporation($color, $card_id, false);
-        }
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "hand_${color}"); // new new
         foreach ($rest as $card_id => $card) {
             $this->game->effect_playCorporation($color, $card_id, false);
             $corpcost = -$this->game->getRulesFor($card_id, 'cost');
             $this->game->effect_incCount($color, 'm', $corpcost, ['message' => '']);
-            $this->game->executeImmediately($color,"nm",3 * $count);
+            $this->game->executeImmediately($color,"nm",3 * $count); // pay for card
             break;
+        }
+
+        $this->game->setGameStateValue('gamestage', MA_STAGE_PRELUDE);
+        // play prelude automatically
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_${color}");
+        foreach ($rest as $card_id => $card) {
+                $this->game->effect_playCard($color, $card_id);
         }
         return 1;
     }

@@ -40,14 +40,14 @@ class Operation_turn extends AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $player_id = $this->game->getPlayerIdByColor($owner);
-        $this->game->gamestate->changeActivePlayer($player_id); // XXX?
+        $this->game->gamestate->changeActivePlayer($player_id); 
+        $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);
         $this->game->incStat(1, 'game_actions',  $player_id);
         if ($this->game->getTrackerValue($owner, 'passed') == 2) {
-            $this->game->gamestate->changeActivePlayer($player_id); 
+            // auto-pass
             $this->game->queue($owner, 'pass');
             $pass = $this->game->getOperationInstanceFromType('pass',$owner);
             $pass->action_resolve(['count'=>1]);
-            $this->game->undoSavepoint();
             return 1;
         }
         $solo = $this->game->isSolo();
@@ -72,7 +72,7 @@ class Operation_turn extends AbsOperation {
         }
 
 
-        if (!$secondaction) $this->game->undoSavepoint();
+        if (!$secondaction && !$this->game->isSolo()) $this->game->undoSavepoint();
         return 1;
     }
 }

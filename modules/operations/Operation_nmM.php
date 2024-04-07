@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+define("MA_RES_MICROBE", "resMicrobe");
 // ops like nmu and nms - pay with titanium/ pay with steal
 class Operation_nmM extends AbsOperation {
 
@@ -21,13 +23,15 @@ class Operation_nmM extends AbsOperation {
         if ($type == 'm' && count($types) > 1) {
             $type = $types[1];
         }
+        $ttoken = $type;
         $ttoken = $this->game->getTrackerId('', $type);
+        
         return [
             "name" => $this->getOpName(),
             'count' => $this->getCount(),
             'res_name' => $this->game->getTokenName($ttoken),
             'card_name' => $this->game->getTokenName($this->getContext()),
-            'i18n' => ['res_name','card_name']
+            'i18n' => ['res_name', 'card_name']
         ];
     }
 
@@ -48,7 +52,7 @@ class Operation_nmM extends AbsOperation {
         ];
         $alltypes = $this->getTypes();
         foreach ($alltypes as $type) {
-            $typecount = $this->game->getTrackerValue($this->color, $type);
+            $typecount = $this->getCountOfResourceType($type);
             $er = $this->getExchangeRate($type);
             $maxres = (int)floor($cost / $er);
             $propres = min($maxres, $typecount);
@@ -106,6 +110,21 @@ class Operation_nmM extends AbsOperation {
 
 
         return $info;
+    }
+
+    function getCountOfResourceType($type) {
+        if ($type == MA_RES_MICROBE) {
+            //P39|Psychrophiles
+            if ($this->game->playerHasCard($this->color, 'card_main_P39')) {
+                $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", 'card_main_P39');
+                $num = count($resources);
+                return $num;
+            }
+            return 0;
+        } else {
+            $typecount = $this->game->getTrackerValue($this->color, $type);
+        }
+        return $typecount;
     }
 
     private function addProposal(array &$info, array $map): bool {
@@ -177,34 +196,40 @@ class Operation_nmM extends AbsOperation {
             // array of restype=>count
             $realinc = 0;
             foreach ($uservalue as $type => $ut) {
-                if (isset($info[$value]['resources'][$type])) {
-                    $tt = $info[$value]['resources'][$type];
-                    if ($ut <= 0 || !((int)$ut)) continue;
-
-                    if ($ut > 0 && $ut <= $tt) $this->game->effect_incCount($owner, $type, -$ut);
-
-                    else {
-                        $message = sprintf(self::_("Invalid amount of %s used for payment: %d of %d (max)"), $this->game->getTokenName($type), $ut, $tt);
-                        throw new BgaUserException($message);
-                    }
-                    $rate = $info[$value]['rate'][$type];
-                    $realinc += $rate * $ut;
-                    //$this->game->warn("User pay $type: $ut of $tt * $rate => $realinc/$inc");
-                } else {
-
-                    throw new BgaUserException("Invalid payment of type $type"); // FIX XSS
-                }
+                $this->payWithResource($type, $ut, $info[$value]);
+                $rate = $info[$value]['rate'][$type];
+                $realinc += $rate * $ut;
             }
             return min($inc, $realinc);
         }
 
         foreach ($this->getTypes() as $type) {
-            if (isset($info[$value]['resources'][$type])) {
-                $tt = $info[$value]['resources'][$type];
-                if ($tt > 0) $this->game->effect_incCount($owner, $type, -$tt);
-            }
+            $this->payWithResource($type, 'full', $info[$value]);
         }
         return $inc;
+    }
+
+    private function payWithResource($type, $ut, $infores) {
+        if (isset($infores['resources'][$type])) {
+            $tt = $infores['resources'][$type];
+            if ($ut === 'full') $ut = $tt;
+            if ($ut <= 0 || !((int)$ut)) return 0;
+
+            if ($ut > 0 && $ut <= $tt) {
+                if ($type == MA_RES_MICROBE) {
+                    $this->game->executeImmediately($this->color,"nres", $ut, 'card_main_P39');
+                } else {
+                    $this->game->effect_incCount($this->color, $type, -$ut);
+                }
+            } else {
+                $message = sprintf(self::_("Invalid amount of %s used for payment: %d of %d (max)"), $this->game->getTokenName($type), $ut, $tt);
+                throw new BgaUserException($message);
+            }
+            return $ut;
+        } else {
+            if ($ut <= 0 || !((int)$ut)) return 0;
+            $this->game->systemAssertTrue("Invalid payment type $type"); // XSS
+        }
     }
 
     private function getTypes() {
@@ -212,12 +237,35 @@ class Operation_nmM extends AbsOperation {
         $effect = $this->getContext(1);
         if ($effect === 'a' || !$card_id) {
             $types = substr($this->mnemonic, 2);
-            $others = $this->game->getPaymentTypes($this->getOwner(), '');
+            $others = $this->getPaymentTypes($this->getOwner(), '');
             if (!$types) return $others;
             return array_merge(str_split($types), $others);
         }
-        return $this->game->getPaymentTypes($this->getOwner(), $card_id);
+        return $this->getPaymentTypes($this->getOwner(), $card_id);
     }
+
+    function getPaymentTypes(string $color, string $card_id) {
+        $tags = $this->game->getRulesFor($card_id, "tags", '');
+        $types = [];
+        if (strstr($tags, "Building"))
+            $types[] = 's';
+        if (strstr($tags, "Space"))
+            $types[] = 'u';
+        if ($this->game->playerHasCard($color, 'card_main_P39')) {
+            //P39|Psychrophiles
+            if (strstr($tags, "Plant"))
+                $types[] = MA_RES_MICROBE; // resources
+        }
+
+        $types[] = 'm';
+        // heat is last choice
+        if ($this->game->playerHasCard($color, 'card_corp_4')) {
+            // Helion
+            $types[] = 'h';
+        }
+        return $types;
+    }
+
 
     private function getCost() {
         $card_id = $this->getContext();
@@ -233,6 +281,7 @@ class Operation_nmM extends AbsOperation {
     private function getExchangeRate($type): int {
         if ($type == 'm') return 1;
         if ($type == 'h') return 1;
+        if ($type == MA_RES_MICROBE) return 2; // for now only microbes
         if ($type == 's' || $type == 'u') {
             $er = $this->game->getTrackerValue($this->color, "er$type");
             return $er;

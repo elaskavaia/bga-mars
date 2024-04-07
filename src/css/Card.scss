@@ -42,6 +42,18 @@
   background-color: #FF5722;// event
 }
 
+.card[data-card-type="5"], .prelude {
+  background-color: #efc0bc; // prelude
+}
+.prelude .card_illustration {
+  background-image: unset;
+}
+.prelude .card_bg {
+  background-image: unset;
+}
+.prelude .card_number_binary {
+  display: none;
+}
 
 .card_cost {
   font-family: var(--mars-font);

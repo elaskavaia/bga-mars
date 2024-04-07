@@ -7,6 +7,7 @@ class Operation_setuppick extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_ids = $this->getCheckedArg('target');
         $corpmoney = 0;
+        $prelude = 0;
         foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_corp")) {
                 if ($corpmoney > 0) $this->game->userAssertTrue(totranslate("You can only select one corporation"));
@@ -15,10 +16,23 @@ class Operation_setuppick extends AbsOperation {
                     "_private" => true
                 ]);
             }
+            if (startsWith($card_id, "card_prelude")) {
+                $prelude++;
+            }
         }
         if ($corpmoney == 0) $this->game->userAssertTrue(totranslate("You must select one corporation"));
+        if ($this->game->isPreludeVariant() && $prelude != 2) $this->game->userAssertTrue(totranslate("You must select exactly 2 Prelude cards"));
         $cost = 3;
         $count = 0;
+
+        foreach ($card_ids as $card_id) {
+            if (startsWith($card_id, "card_prelude")) {
+                //$corpmoney -= $cost;
+                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You got ${token_name}'), [
+                    "_private" => true
+                ]);
+            }
+        }
 
         foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_main")) {

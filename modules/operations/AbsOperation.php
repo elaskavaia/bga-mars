@@ -286,7 +286,7 @@ Reason: tile placement may draw cards (information)
         return $res;
     }
 
-    protected function getCheckedArg($key) {
+    protected function getCheckedArg($key, $strict = true, $def = null) {
         $args = $this->user_args;
         $type = $this->mnemonic;
 
@@ -312,8 +312,9 @@ Reason: tile placement may draw cards (information)
             if (is_array($possible_targets)) return array_shift($possible_targets);
             return $possible_targets;
         } else {
-            $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args $key for $type " . toJson($args));
-            return null;
+            if ($strict)
+                $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args $key for $type " . toJson($args));
+            return $def;
         }
     }
     protected function getUncheckedArg($key) {

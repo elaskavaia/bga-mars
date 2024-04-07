@@ -1,0 +1,111 @@
+{
+    "100": {
+        "name": "Beginners Corporations",
+        "values": {
+            "1": {
+                "name": "Yes",
+                "tmdisplay": "Beginners Corporations",
+                "firstgameonly": true
+            },
+            "0": {
+                "name": "No",
+                "nobeginner": true
+            }
+        },
+        "default": 0
+    },
+    "101": {
+        "name": "Corporate Era",
+        "values": {
+            "1": {
+                "name": "On",
+                "description": "Corporate Era variant includes Corporate Era deck cards and all productions starts at 0",
+                "tmdisplay": "Corporate Era",
+                "nobeginner": true
+            },
+            "0": {
+                "name": "Off",
+                "description": "Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1",
+                "tmdisplay": "Standard Game"
+            }
+        },
+        "displaycondition": [
+            {
+                "type": "minplayers",
+                "value": [
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            }
+        ],
+        "notdisplayedmessage": "Corporate Era is On",
+        "default": 1
+    },
+    "102": {
+        "name": "Solo variant",
+        "values": [
+            {
+                "name": "Standard",
+                "description": "All global parameters must be maxed out by the end of generation 14 to win"
+            },
+            {
+                "name": "TR63",
+                "description": "You must reach a Terraform Rating of 63 by the end of generation 14 to win",
+                "tmdisplay": "TR63"
+            }
+        ],
+        "displaycondition": [
+            {
+                "type": "maxplayers",
+                "value": 1
+            }
+        ],
+        "default": 0
+    },
+    "104": {
+        "name": "Prelude",
+        "values": {
+            "1": {
+                "name": "On",
+                "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
+                "tmdisplay": "Prelude",
+                "beta": true,
+                "nobeginner": true
+            },
+            "0": {
+                "name": "Off",
+                "description": "Not including Prelude"
+            }
+        },
+        "default": 0
+    },
+    "103": {
+        "name": "Draft",
+        "values": {
+            "1": {
+                "name": "Yes",
+                "description": "Draft 4 cards during Research phase, 1st generation is NOT included",
+                "tmdisplay": "Draft",
+                "nobeginner": true
+            },
+            "0": {
+                "name": "No"
+            }
+        },
+        "displaycondition": [
+            {
+                "type": "minplayers",
+                "value": [
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            }
+        ],
+        "notdisplayedmessage": "Draft is Off",
+        "default": 0
+    }
+}

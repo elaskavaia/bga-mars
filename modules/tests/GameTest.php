@@ -363,8 +363,13 @@ final class GameTest extends TestCase {
 
         $subrules = $bu->getProductionOnlyRules('', 'card_main_64');
         $this->assertEquals("pu", $subrules);
+    }
 
+    public function testProductionBuildCards() {
+        $m = $this->game();
         $count = 0;
+        /** @var Operation_copybu */
+        $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
         foreach ($m->token_types as $key => $info) {
             if (!startsWith($key, 'card_main')) continue;
             if (!strstr(array_get($info, 'tags', ''), 'Building')) continue;
@@ -426,10 +431,10 @@ final class GameTest extends TestCase {
         $m->st_gameDispatch();
         $tops = $m->machine->getTopOperations();
         foreach ($tops as $op) {
-            if ($op['type']=='card') continue;
-            if ($op['type']=='activate') continue;
-            if ($op['type']=='pass') continue;
-            $this->assertTrue(false, "Unexpected operation ".($op['type']));
+            if ($op['type'] == 'card') continue;
+            if ($op['type'] == 'activate') continue;
+            if ($op['type'] == 'pass') continue;
+            $this->assertTrue(false, "Unexpected operation " . ($op['type']));
         }
         $this->assertEquals(8, $m->tokens->getTokenState("tracker_t"));
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_ff0000"));
@@ -444,15 +449,15 @@ final class GameTest extends TestCase {
     public function testMossAndViralEnhancencers() {
         $m = $this->game();
         $moss = $m->mtFindByName('Moss');
-        $vire= $m->mtFindByName('Viral Enhancers');
+        $vire = $m->mtFindByName('Viral Enhancers');
         $m->incTrackerValue(PCOLOR, 'm', 4);
 
-        $ops = $m->getRulesFor($moss,'r');
+        $ops = $m->getRulesFor($moss, 'r');
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($ops, PCOLOR, 1, $moss);
-        $this->assertEquals(true, $op->isVoid()); 
+        $this->assertEquals(true, $op->isVoid());
         $m->effect_playCard(PCOLOR, $vire);
-        $this->assertEquals(false, $op->isVoid()); 
+        $this->assertEquals(false, $op->isVoid());
     }
 
     public function testExtraOcean() {
@@ -509,10 +514,10 @@ final class GameTest extends TestCase {
         $m->st_gameDispatch();
         $top = $m->machine->getTopOperations();
         foreach ($top as $op) {
-            if ($op['type']=='card') continue;
-            if ($op['type']=='activate') continue;
-            if ($op['type']=='pass') continue;
-            $this->assertTrue(false, "Unexpected operation ".($op['type']));
+            if ($op['type'] == 'card') continue;
+            if ($op['type'] == 'activate') continue;
+            if ($op['type'] == 'pass') continue;
+            $this->assertTrue(false, "Unexpected operation " . ($op['type']));
         }
     }
 
@@ -549,7 +554,7 @@ final class GameTest extends TestCase {
         foreach ($files as $file) {
             $base = basename($file);
             if (!startsWith($base, 'Operation_')) continue;
-            $mne = preg_replace("/Operation_(.*).php/","\\1", $base);
+            $mne = preg_replace("/Operation_(.*).php/", "\\1", $base);
             $key = "op_${mne}";
             if (array_key_exists($key, $tested)) continue;
             echo ("testing op $key\n");
@@ -660,15 +665,15 @@ final class GameTest extends TestCase {
         $eaters = $m->mtFind('name', 'Regolith Eaters');
 
         $m->effect_playCard($p, $eaters);
-        $act = $m->getRulesFor($eaters,'a');
+        $act = $m->getRulesFor($eaters, 'a');
         //$m->dbSetTokenLocation("resource_${p}_1", $eaters, 0); // add a microbe
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType("$act", $p, 1, $eaters);
         //$args = $op->argPrimaryDetails();
-        $this->assertEquals(false, $op->isVoid()); 
+        $this->assertEquals(false, $op->isVoid());
 
         $op = $m->getOperationInstanceFromType("2nres", $p, 1, $eaters);
         //$args = $op->argPrimaryDetails();
-        $this->assertEquals(true, $op->isVoid()); 
+        $this->assertEquals(true, $op->isVoid());
     }
 }

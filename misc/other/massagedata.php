@@ -52,10 +52,10 @@ function tomyformat($fields, $raw_fields) {
 
 
 
-    $num = $fields['Card #'];
+
     $deck = $fields['Deck'];
     #if (!is_numeric($num)) return;
-    #if ($deck != 'Basic' && $deck != 'Corporate') return;
+    if ($deck != 'Prelude') return;
 
     $t = 0;
     $type = $fields['Card Type'];
@@ -80,7 +80,9 @@ function tomyformat($fields, $raw_fields) {
     }
 
     #if ($t > 3) return;
-    if ($t!=4) return;
+    if ($t == 4) return;
+
+    $num = $fields['Card #'];
 
     $pre = "";
     addpre($pre, $fields['Req: Oxygen'], 'o>=', 0, 14);
@@ -115,15 +117,15 @@ function tomyformat($fields, $raw_fields) {
     addinc($rules, $fields['Temperature'], 't');
     addinc($rules, $fields['Ocean'], 'w');
 
-    $rules .= " ".$fields['Production'];
+    $rules .= " " . $fields['Production'];
 
     $rules = trim($rules);
-    $rules = str_replace('’',"'",$rules);
+    $rules = str_replace('’', "'", $rules);
     $rules = implode(',', explode(' ', $rules));
 
     $tooltip = $fields['One time Effect Text'];
     $actext = $fields['Action or On-going Effect text'];
-    if ($actext && $tooltip) $tooltip = trim($tooltip."; ".$actext);
+    if ($actext && $tooltip) $tooltip = trim($tooltip . "; " . $actext);
     else if ($actext) $tooltip = $actext;
     $tooltip = trim($tooltip);
     $php = [];
@@ -135,7 +137,7 @@ function tomyformat($fields, $raw_fields) {
     $action = "";
     $effect = "";
     if ($eff && $eff != 'No') {
-        if ($eff=='Eff')  $effect = $rules;
+        if ($eff == 'Eff')  $effect = $rules;
         else  $action = $rules;
         $rules = '';
     }
@@ -158,14 +160,24 @@ function tomyformat($fields, $raw_fields) {
         $phpstr = preg_replace("/,\s*$/", "", $phpstr);
     }
 
-    $line = sprintf("%d|%s|%d|%s|%s|%s|%d|%s|%s|%s|%s|%s\n", $num, $raw_fields[0], $t, $rules, $action,$effect, $fields['Cost'], $pre, implode(' ', $tags),$vp,$tooltip, $phpstr);
-    print($line);
+    if ($t != 5) return;
+
+    //$num = substr($num,1);
+    $cost =  (int) $fields['Cost'];
+
+    $line = implode('|', [
+        $num, $raw_fields[0], $t, $rules, $action, $effect, $cost, $pre, implode(' ', $tags), $vp, $deck, $tooltip,
+        '', '', '',
+        $phpstr
+    ]);
+    print($line."\n");
     //if ((int)$num > 18) return false;
     return true;
 }
 
 $g_field_names = null;
-$g_header = 'num|name|t|r|a|e|cost|pre|tags|vp|text|php';
+//$g_header = 'num|name|t|r|a|e|cost|pre|tags|vp|text|php';
+$g_header = 'num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php';
 $g_separator = "|";
 $incsv = $argv[1] ?? "./data.csv";
 $ins = fopen($incsv, "r") or die("Unable to open file! $ins");
@@ -177,8 +189,8 @@ print('
 #project cards
 #set _tr=ac
 #set _tr=text
-#set id=card_main_{num}
-#set location=deck_main
+#set id=card_prelude_{num}
+#set location=deck_prelude
 #set create=single
 '
 );
