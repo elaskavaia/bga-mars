@@ -249,7 +249,7 @@ P24|Nitrogen Shipment|5|pp,5m,tr|||0|||0|Prelude|Raise your terraform rating 1 s
 P25|Orbital Construction Yard|5|pu,4u|||0||Space|0|Prelude|Increase your titanium produciton 1 step. Gain 4 titanium.||||
 P26|Polar Industries|5|2ph,w|||0||Building|0|Prelude|Place 1 ocean tile. Increase your heat production 2 steps.||||
 P27|Power Generation|5|3pe|||0||Energy|0|Prelude|Increase your energy production 3 steps.||||
-P28|Research Network|5|pm,3draw|||0|||0|Prelude|Draw 3 cards, and increase your MC production 1 step. After being played, when you perform an action, the wild tag is any tag of your choice.||||
+P28|Research Network|5|pm,3draw|||0||Wild|0|Prelude|Draw 3 cards, and increase your MC production 1 step. After being played, when you perform an action, the wild tag is any tag of your choice.||||
 P29|Self-Sufficient Settlement|5|2pm,city|||0||Building City|0|Prelude|Place a city tile. Increase your MC production 2 steps.||||
 P30|Smelting Plant|5|5s,2o|||0||Building|0|Prelude|Raise oxygen 2 steps. Gain 5 steel.||||
 P31|Society Support|5|1npm,pp,pe,ph|||0|||0|Prelude|Decrease your MC production  1 step. Increase your plant production, energy production, and heat production 1 step each.||||
@@ -265,7 +265,7 @@ P36|House Printing|1|ps|||10||Building|1|Prelude|Increase your steel production 
 P37|Lava Tube Settlement|1|city('Ascraeus Mons,Pavonis Mons,Arsia Mons,Tharsis Tholus'),1npe,2pm|||15||Building City|0|Prelude|Decrease your energy production 1 step. Increase your MC production 2 steps. Place a city tile ON A VOLCANIC AREA, same as Lava Flows, regardless of adjacent cities.||||
 P38|Martian Survey|3|2draw|||9|o<=4|Science Event|1|Prelude|Oxygen must be 4% or lower. Draw 2 cards.||||
 P39|Psychrophiles|2||res||2|t<=-20|Microbe|0|Prelude|Requires temperature -20°C or colder.|Add a microbe to this card.|When paying for a plant card, microbes here may be used as 2 MC each.||  'holds' => 'Microbe'
-#P40|Research Coordination|1||||4|||0|Prelude|After being played, when you perform an action, the wild tag counts as any tag of your choice.||||
+P40|Research Coordination|1||||4||Wild|0|Prelude|After being played, when you perform an action, the wild tag counts as any tag of your choice.||||
 P41|SF Memorial|1|draw|||7||Building|1|Prelude|Draw 1 card.||||
 P42|Space Hotels|1|4pm|||12|tagEarth>=2|Space Earth|0|Prelude|Requires 2 Earth tags. Increase your MC production 4 steps.||||
 
@@ -301,11 +301,11 @@ P42|Space Hotels|1|4pm|||12|tagEarth>=2|Space Earth|0|Prelude|Requires 2 Earth t
 #16|Manutech|4|ps,35m|||0||Building|0|Venus|You start with 1 steel production and 35 M€.||For each step you increase the production of a resource, including this, you also gain that resource.||
 #17|Morning Star Inc.|4|50m|||0||Venus|0|Venus|You start with 50 M€. As your first action, reveal cards from the deck until you have revealed 3 Venus-tag cards. Take those into hand and discard the rest.||Your Venus requirements are +/- 2 steps, your choice in each case.||
 #18|Viron|4|48m|||0||Microbe|0|Venus|You start with 48 M€.|Use a blue card action that has already been used this generation.|||
-#19|Cheung Shing Mars|4|3pm,44m|||0||Building|0|Prelude|You start with 44 M€ and 3 M€ production.||When you play a building tag, you pay 2 M€ less for it.||
-#20|Point Luna|4|pu,38m|||0||Space Earth|0|Prelude|You start with 38 M€ and 1 titanium production.||When you play a Earth tag, including this, draw a card.||
-#21|Robinson Industries|4|47m|||0|||0|Prelude|You start with 47 M€.|Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.|||
-#22|Valley Trust|4|37m|||0||Earth|0|Prelude|You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.||When you play a science tag, you pay 2 M€ less for it.||
-#23|Vitor|4|45m|||0||Earth|0|Prelude|You start with 45 M€. As your first action, fund an award for free.||When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.||
+#19|Cheung Shing Mars|4|3pm||onPay_tagBuilding:2m|-44||Building|0|Prelude|You start with 44 M€ and 3 M€ production.||When you play a building tag, you pay 2 M€ less for it.||
+#20|Point Luna|4|pu|||-38||Space Earth|0|Prelude|You start with 38 M€ and 1 titanium production.||When you play a Earth tag, including this, draw a card.||
+#21|Robinson Industries|4||||-47|||0|Prelude|You start with 47 M€.|Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.|||
+#22|Valley Trust|4||||-37||Earth|0|Prelude|You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.||When you play a science tag, you pay 2 M€ less for it.||
+#23|Vitor|4||||-45||Earth|0|Prelude|You start with 45 M€. As your first action, fund an award for free.||When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.||
 #24|Aridor|4|Ref_pm,40m|||0|||0|Colonies|You start with 40 M€. As your first action, put an additional Colony Tile of your choice into play.||When you get a new type of tag in play (event cards do not count), increase your M€ production 1 step.||
 #25|Arklight|4|2pm,45m|||0||Animal|Ref|Colonies|You start with 45 M€. Increase your M€ production 2 steps,||When you play an animal or plant tag, including this, add 1 animal to this card.|1 VP per 2 animals on this card,|'holds' => 'Animal'
 #26|Polyphemos|4|5pm,50m,5u|||0|||0|Colonies|You start with 50 M€. Increase your M€ production 5 steps. Gain 5 titanium.||When you buy a card to hand, pay 5 M€ instead of 3 M€, including the starting hand.||

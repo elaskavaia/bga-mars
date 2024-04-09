@@ -3311,6 +3311,7 @@ $this->token_types = [
   't' => 5,
   'r' => 'pm,3draw',
   'cost' => 0,
+  'tags' => 'Wild',
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Draw 3 cards, and increase your MC production 1 step. After being played, when you perform an action, the wild tag is any tag of your choice.'),
@@ -3471,7 +3472,19 @@ $this->token_types = [
   'text_effect' => clienttranslate('When paying for a plant card, microbes here may be used as 2 MC each.'),
     'holds' => 'Microbe',
 ],
-// #P40|Research Coordination|1||||4|||0|Prelude|After being played, when you perform an action, the wild tag counts as any tag of your choice.||||
+ 'card_main_P40' => [  //
+  'location' => 'deck_main',
+  'create' => 'single',
+  'type' => 'card main',
+  'num' => 'P40',
+  'name' => clienttranslate('Research Coordination'),
+  't' => 1,
+  'cost' => 4,
+  'tags' => 'Wild',
+  'vp' => 0,
+  'deck' => 'Prelude',
+  'text' => clienttranslate('After being played, when you perform an action, the wild tag counts as any tag of your choice.'),
+],
  'card_main_P41' => [  //
   'location' => 'deck_main',
   'create' => 'single',
