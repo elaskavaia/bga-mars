@@ -39,6 +39,43 @@
   }
 }
 
+@for $num from 36 through 42 {
+  $i: $num - 36;
+  $col: $i % 10;
+  $row: calc(($i - $col) / 10);
+
+  .mfull .card_main_P#{$num},
+  .cardhelp.card_main_P#{$num} {
+    background-position: calc(100% / 9 * $col) calc(100% / 4 * $row);
+    background-image: url(img/prelude/pre_cards.jpg);
+  }
+}
+
+@for $num from 1 through 9 {
+  $i: $num - 1;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .mfull .card_prelude_P0#{$num},
+  .cardhelp.card_prelude_P0#{$num} {
+    background-position: calc(100% / 5 * $col) calc(100% / 5 * $row);
+    background-image: url(img/prelude/pre_cardsP.jpg);
+  }
+}
+
+@for $num from 1 through 35 {
+  $i: $num - 1;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .mfull .card_prelude_P#{$num},
+  .cardhelp.card_prelude_P#{$num} {
+    background-position: calc(100% / 5 * $col) calc(100% / 5 * $row);
+    background-image: url(img/prelude/pre_cardsP.jpg);
+  }
+}
+
+
 
 .mfull {
   #ebd-body {
@@ -633,6 +670,12 @@
     // begginer
     background-position: 0 100%;
     background-image: url(img/full/cardsC.jpg);
+  }
+
+  .card.prelude {
+    width: var(--card-height);
+    height: var(--card-width);
+    background-size: 600% auto;
   }
 
   @for $num from 2 through 13 {

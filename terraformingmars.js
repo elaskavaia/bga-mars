@@ -5177,7 +5177,12 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         else if (tokenInfo.key.startsWith("card_prelude") && tokenInfo.location.startsWith("tableau")) {
-            result.location = tokenInfo.location + "_cards_1";
+            if (this.isLayoutFull()) {
+                result.location = tokenInfo.location + "_cards_4";
+            }
+            else {
+                result.location = tokenInfo.location + "_cards_1";
+            }
         }
         if (!result.location)
             // if failed to find revert to server one
