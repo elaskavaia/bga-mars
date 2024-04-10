@@ -11,8 +11,11 @@ class Operation_fund extends AbsOperation {
         $no = $this->getPlayerNo();
         $this->game->tokens->setTokenState($milestone, $no);
         $this->game->dbSetTokenLocation($marker, $milestone, 1, clienttranslate('${player_name} funds ${place_name} award'), [],  $this->game->getPlayerIdByColor($color));
-        $cost = $this->getStateArg('cost');
-        $this->game->push($color, "${cost}nm", $milestone);
+        $free = $this->params();
+        if ($free != 'free') {
+            $cost = $this->getStateArg('cost');
+            $this->game->push($color, "${cost}nm", $milestone);
+        }
         return 1;
     }
 
@@ -25,8 +28,10 @@ class Operation_fund extends AbsOperation {
         $cost = $costs[$claimed];
         $this->argresult['cost'] = $cost;
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {
+            $free = $this->params();
             if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
             if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
+            if ($free == 'free') return MA_OK;
             if (!$this->game->canAfford($color, $tokenId, $cost)) return MA_ERR_COST;
             return MA_OK;
         });

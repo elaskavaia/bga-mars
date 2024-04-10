@@ -3806,13 +3806,15 @@ $this->token_types = [
   'num' => 23,
   'name' => clienttranslate('Vitor'),
   't' => 4,
-  'e' => "play_card:(counter('vp>=0'):3m):that",
+  'r' => '3m',
+  'e' => "play_card:(counter('vptag>0'):3m):that",
   'cost' => -45,
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('You start with 45 M€. As your first action, fund an award for free.'),
   'text_effect' => clienttranslate('When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.'),
+  'a1'=>'fund(free)',
 ],
 /* --- gen php end cards_material --- */
 /* --- gen php begin proj_material --- */

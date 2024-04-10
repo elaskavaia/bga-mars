@@ -690,6 +690,12 @@ abstract class PGameXBody extends PGameMachine {
             return $this->getRulesFor($context, 'cost');
         }
 
+        if ($x == 'vptag') {
+            $rules = $this->getRulesFor($context, 'vp', '');
+            if ($rules) return 1;
+            return 0;
+        }
+
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
             $value = $this->tokens->getTokenState("tracker_${x}");
