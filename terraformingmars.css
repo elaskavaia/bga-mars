@@ -8027,6 +8027,111 @@
   background-image: url(img/prelude/pre_cardsP.jpg);
 }
 
+.card_corp_2 {
+  background-position: 0% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_3 {
+  background-position: 20% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_4 {
+  background-position: 40% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_5 {
+  background-position: 60% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_6 {
+  background-position: 80% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_7 {
+  background-position: 100% 0%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_8 {
+  background-position: 0% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_9 {
+  background-position: 20% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_10 {
+  background-position: 40% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_11 {
+  background-position: 60% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_12 {
+  background-position: 80% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_13 {
+  background-position: 100% 50%;
+  background-image: url(img/full/cardsC.jpg);
+}
+
+.card_corp_19 {
+  background-position: 0% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+  background-size: 600%;
+}
+.card_corp_19 .card_decor {
+  display: none;
+}
+
+.card_corp_20 {
+  background-position: 20% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+  background-size: 600%;
+}
+.card_corp_20 .card_decor {
+  display: none;
+}
+
+.card_corp_21 {
+  background-position: 40% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+  background-size: 600%;
+}
+.card_corp_21 .card_decor {
+  display: none;
+}
+
+.card_corp_22 {
+  background-position: 60% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+  background-size: 600%;
+}
+.card_corp_22 .card_decor {
+  display: none;
+}
+
+.card_corp_23 {
+  background-position: 80% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+  background-size: 600%;
+}
+.card_corp_23 .card_decor {
+  display: none;
+}
+
 .mfull {
   /** discount */
 }
@@ -8486,74 +8591,6 @@
   width: var(--card-height);
   height: var(--card-width);
   background-size: 600% auto;
-}
-.mfull .card_corp_2 {
-  background-position: 0% 0%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_3 {
-  background-position: 20% 0%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_4 {
-  background-position: 40% 0%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_5 {
-  background-position: 60% 0%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_6 {
-  background-position: 80% 0%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_7 {
-  background-position: 100% 0%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_8 {
-  background-position: 0% 50%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_9 {
-  background-position: 20% 50%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_10 {
-  background-position: 40% 50%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_11 {
-  background-position: 60% 50%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_12 {
-  background-position: 80% 50%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_13 {
-  background-position: 100% 50%;
-  background-image: url(img/full/cardsC.jpg);
-}
-.mfull .card_corp_19 {
-  background-position: 0% 0;
-  background-image: url(img/prelude/pre_cardsC.jpg);
-}
-.mfull .card_corp_20 {
-  background-position: 20% 0;
-  background-image: url(img/prelude/pre_cardsC.jpg);
-}
-.mfull .card_corp_21 {
-  background-position: 40% 0;
-  background-image: url(img/prelude/pre_cardsC.jpg);
-}
-.mfull .card_corp_22 {
-  background-position: 60% 0;
-  background-image: url(img/prelude/pre_cardsC.jpg);
-}
-.mfull .card_corp_23 {
-  background-position: 80% 0;
-  background-image: url(img/prelude/pre_cardsC.jpg);
 }
 .mfull .card_corp_9 {
   background-position: 0% 50%;

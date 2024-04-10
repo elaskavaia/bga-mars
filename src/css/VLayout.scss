@@ -76,6 +76,34 @@
 }
 
 
+@for $num from 2 through 13 {
+  $i: $num - 2;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .card_corp_#{$num} {
+    background-position: calc(100% / 5 * $col) calc(100% / 2 * $row);
+    background-image: url(img/full/cardsC.jpg);
+  }
+}
+
+@for $num from 19 through 23 {
+  $i: $num - 19;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .card_corp_#{$num} {
+    background-position: calc(100% / 5 * $col) 0;
+    background-image: url(img/prelude/pre_cardsC.jpg);
+    background-size: 600%;
+
+    .card_decor {
+      display: none; // temp until decor is back
+    }
+  }
+}
+
+
 
 .mfull {
   #ebd-body {
@@ -676,28 +704,6 @@
     width: var(--card-height);
     height: var(--card-width);
     background-size: 600% auto;
-  }
-
-  @for $num from 2 through 13 {
-    $i: $num - 2;
-    $col: $i % 6;
-    $row: calc(($i - $col) / 6);
-
-    .card_corp_#{$num} {
-      background-position: calc(100% / 5 * $col) calc(100% / 2 * $row);
-      background-image: url(img/full/cardsC.jpg);
-    }
-  }
-
-  @for $num from 19 through 23 {
-    $i: $num - 19;
-    $col: $i % 6;
-    $row: calc(($i - $col) / 6);
-
-    .card_corp_#{$num} {
-      background-position: calc(100% / 5 * $col) 0;
-      background-image: url(img/prelude/pre_cardsC.jpg);
-    }
   }
 
   .card_corp_9 {

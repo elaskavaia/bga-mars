@@ -727,7 +727,7 @@ class GameXBody extends GameTokens {
   }
 
   setupHelpSheets() {
-    const cc = { main: 0, corp: 0 };
+    const cc = { main: 0, corp: 0, prelude: 0 };
     for (const key in this.gamedatas.token_types) {
       const info = this.gamedatas.token_types[key];
       if (key.startsWith("card")) {
@@ -751,8 +751,10 @@ class GameXBody extends GameTokens {
     }
     const ccmain = cc["main"];
     const cccorp = cc["corp"];
+    const cc_prelude = cc["prelude"];
     $(`allcards_main_title`).innerHTML = _("All Project Cards") + ` (${ccmain})`;
     $(`allcards_corp_title`).innerHTML = _("All Corporate Cards") + ` (${cccorp})`;
+    $(`allcards_prelude_title`).innerHTML = _("All Prelude Cards") + ` (${cc_prelude})`;
 
     // clicks
     dojo.query(".expandablecontent_cards > *").connect("onclick", this, (event) => {

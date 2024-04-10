@@ -4183,7 +4183,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;
-        var cc = { main: 0, corp: 0 };
+        var cc = { main: 0, corp: 0, prelude: 0 };
         for (var key in this.gamedatas.token_types) {
             var info = this.gamedatas.token_types[key];
             if (key.startsWith("card")) {
@@ -4207,8 +4207,10 @@ var GameXBody = /** @class */ (function (_super) {
         }
         var ccmain = cc["main"];
         var cccorp = cc["corp"];
+        var cc_prelude = cc["prelude"];
         $("allcards_main_title").innerHTML = _("All Project Cards") + " (".concat(ccmain, ")");
         $("allcards_corp_title").innerHTML = _("All Corporate Cards") + " (".concat(cccorp, ")");
+        $("allcards_prelude_title").innerHTML = _("All Prelude Cards") + " (".concat(cc_prelude, ")");
         // clicks
         dojo.query(".expandablecontent_cards > *").connect("onclick", this, function (event) {
             var id = event.currentTarget.id;
