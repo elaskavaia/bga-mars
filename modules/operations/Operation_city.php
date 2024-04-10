@@ -13,4 +13,12 @@ class Operation_city extends AbsOperationTile {
         $this->effect_placeTile();
         return 1;
     }
+
+    function getPrompt() {
+        $tokenId = $this->getContext();
+        if (!$tokenId) return parent::getPrompt();
+        $rules = $this->game->getRulesFor($tokenId, 'text', '');
+        if (!$rules) return;
+        return $rules;
+    }
 }

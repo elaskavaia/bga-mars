@@ -95,6 +95,8 @@ ps|Increase Steel Production
 pp|Increase Plant Production
 pe|Increase Energy Production
 ph|Increase Heat Production
+#set class=Operation_pL
+pL|Increase Lowest Production
 #set class=Operation_npR
 npm|Decrease M€ Production
 npp|Decrease Plant Production

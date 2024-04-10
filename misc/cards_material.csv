@@ -301,11 +301,11 @@ P42|Space Hotels|1|4pm|||12|tagEarth>=2|Space Earth|0|Prelude|Requires 2 Earth t
 #16|Manutech|4|ps,35m|||0||Building|0|Venus|You start with 1 steel production and 35 M€.||For each step you increase the production of a resource, including this, you also gain that resource.||
 #17|Morning Star Inc.|4|50m|||0||Venus|0|Venus|You start with 50 M€. As your first action, reveal cards from the deck until you have revealed 3 Venus-tag cards. Take those into hand and discard the rest.||Your Venus requirements are +/- 2 steps, your choice in each case.||
 #18|Viron|4|48m|||0||Microbe|0|Venus|You start with 48 M€.|Use a blue card action that has already been used this generation.|||
-#19|Cheung Shing Mars|4|3pm||onPay_tagBuilding:2m|-44||Building|0|Prelude|You start with 44 M€ and 3 M€ production.||When you play a building tag, you pay 2 M€ less for it.||
-#20|Point Luna|4|pu|||-38||Space Earth|0|Prelude|You start with 38 M€ and 1 titanium production.||When you play a Earth tag, including this, draw a card.||
-#21|Robinson Industries|4||||-47|||0|Prelude|You start with 47 M€.|Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.|||
-#22|Valley Trust|4||||-37||Earth|0|Prelude|You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.||When you play a science tag, you pay 2 M€ less for it.||
-#23|Vitor|4||||-45||Earth|0|Prelude|You start with 45 M€. As your first action, fund an award for free.||When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.||
+19|Point Luna|4|pu||play_tagEarth:draw:this:any|-38||Space Earth|0|Prelude|You start with 38 M€ and 1 titanium production.||When you play a Earth tag, including this, draw a card.||
+20|Robinson Industries|4||4nm:pL||-47|||0|Prelude|You start with 47 M€.|Spend 4 M€ to increase (one of) your LOWEST PRODUCTION 1 step.|||
+21|Cheung Shing Mars|4|3pm||onPay_tagBuilding:2m|-44||Building|0|Prelude|You start with 44 M€ and 3 M€ production.||When you play a building tag, you pay 2 M€ less for it.||
+22|Valley Trust|4||||-37||Earth|0|Prelude|You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.||When you play a science tag, you pay 2 M€ less for it.||
+23|Vitor|4||||-45||Earth|0|Prelude|You start with 45 M€. As your first action, fund an award for free.||When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.||
 #24|Aridor|4|Ref_pm,40m|||0|||0|Colonies|You start with 40 M€. As your first action, put an additional Colony Tile of your choice into play.||When you get a new type of tag in play (event cards do not count), increase your M€ production 1 step.||
 #25|Arklight|4|2pm,45m|||0||Animal|Ref|Colonies|You start with 45 M€. Increase your M€ production 2 steps,||When you play an animal or plant tag, including this, add 1 animal to this card.|1 VP per 2 animals on this card,|'holds' => 'Animal'
 #26|Polyphemos|4|5pm,50m,5u|||0|||0|Colonies|You start with 50 M€. Increase your M€ production 5 steps. Gain 5 titanium.||When you buy a card to hand, pay 5 M€ instead of 3 M€, including the starting hand.||

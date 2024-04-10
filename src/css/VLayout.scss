@@ -689,6 +689,17 @@
     }
   }
 
+  @for $num from 19 through 23 {
+    $i: $num - 19;
+    $col: $i % 6;
+    $row: calc(($i - $col) / 6);
+
+    .card_corp_#{$num} {
+      background-position: calc(100% / 5 * $col) 0;
+      background-image: url(img/prelude/pre_cardsC.jpg);
+    }
+  }
+
   .card_corp_9 {
     background-position: 0% 50%;
   }

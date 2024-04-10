@@ -8535,6 +8535,26 @@
   background-position: 100% 50%;
   background-image: url(img/full/cardsC.jpg);
 }
+.mfull .card_corp_19 {
+  background-position: 0% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+}
+.mfull .card_corp_20 {
+  background-position: 20% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+}
+.mfull .card_corp_21 {
+  background-position: 40% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+}
+.mfull .card_corp_22 {
+  background-position: 60% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+}
+.mfull .card_corp_23 {
+  background-position: 80% 0;
+  background-image: url(img/prelude/pre_cardsC.jpg);
+}
 .mfull .card_corp_9 {
   background-position: 0% 50%;
 }
