@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class Operation_draw extends AbsOperation {
     function effect(string $color, int $inc): int {
-        $tag = $this->params;
+        $tag = $this->params();
         if ($tag) {
             // draw util you get a specific tag
             $tag_name = $tag;
@@ -25,7 +25,7 @@ class Operation_draw extends AbsOperation {
     }
 
     function canResolveAutomatically() {
-        if ($this->params === 'auto') return true;
+        if ($this->params() === 'auto') return true; // XXX never true?
         return false;
     }
 

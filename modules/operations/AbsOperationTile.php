@@ -63,7 +63,7 @@ abstract class AbsOperationTile extends AbsOperation {
     }
 
     protected function getReservedArea(): ?string {
-        return $this->params;
+        return $this->params();
     }
 
     protected function isAdjecentHexesOfType($what, $towhat = 0, $ownwer = null) {

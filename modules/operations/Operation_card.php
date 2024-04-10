@@ -15,7 +15,8 @@ class Operation_card extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensInLocation("hand_${color}"));
+        $location = $this->params('hand');
+        $keys = array_keys($this->game->tokens->getTokensInLocation("${location}_${color}"));
         return $this->game->filterPlayable($color, $keys);
     }
 

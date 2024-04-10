@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 class Operation_nores extends AbsOperation {
     function argPrimaryDetails() {
-        $par = $this->params;
+        $par = $this->params();
         $cards = $this->game->getCardsWithResource($par);
         $keys = array_keys($cards);
 
@@ -72,7 +72,7 @@ class Operation_nores extends AbsOperation {
 
 
     protected function getOpName() {
-        $par = $this->params;
+        $par = $this->params();
         return ['log' => clienttranslate('Remove ${restype_name} (Any Card)'),  "args" => [
             'restype_name' => $this->game->getTokenName("tag$par"),
             'i18n' => ['restype_name']
@@ -84,7 +84,7 @@ class Operation_nores extends AbsOperation {
     }
 
     protected function getVisargs() {
-        $par = $this->params;
+        $par = $this->params();
         return [
             "name" => $this->getOpName(),
             'count' => $this->getCount(),

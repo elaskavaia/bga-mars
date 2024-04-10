@@ -245,11 +245,14 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_q() {
+        $this->debug_op("3predraw(prelude),card(draw),prediscard");
+        return;
         $player_id = $this->getCurrentPlayerId();
         //$this->machine->interrupt();
         //$this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
         $cards = $this->tokens->pickTokensForLocation(170, 'deck_main', 'temp');
         $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');     
+
         //$this->dbSetTokensLocation($cards, 'temp');
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";

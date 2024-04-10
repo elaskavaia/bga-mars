@@ -5,7 +5,7 @@ declare(strict_types=1);
 abstract class AbsOperation {
     protected string $mnemonic; // main operation mnemonic (i.e np_Any)
     public PGameXBody $game; // game ref
-    public string $params; // extra operation params, static, i.e when res(card_22) in this case card_22 is param (static only)
+    private ?string $params; // extra operation params, static, i.e when res(card_22) in this case card_22 is param (static only)
     // dynamic
     protected ?array $argresult; // hold the result when arg is called (cache)
     protected string $color; // owner of the operation (the target player)
@@ -20,7 +20,7 @@ abstract class AbsOperation {
         $this->op_info =  $opinfo;
         $owner =  $opinfo["owner"];
         $this->color =  is_string($owner) ? $owner  : '0';
-        $this->params =  '';
+        $this->params =  null;
     }
 
     /**
@@ -34,10 +34,12 @@ abstract class AbsOperation {
 
 
     function rules() {
-        return $this->game->getOperationRules($this->mnemonic,'*',[]);
+        return $this->game->getOperationRules($this->mnemonic, '*', []);
     }
 
-
+    function params(string $default = '') {
+        return $this->params ?? $default;
+    }
 
 
     public function getMnemonic() {
@@ -144,24 +146,23 @@ Reason: tile placement may draw cards (information)
      * Resolve order 
      */
 
-    public function order(){
+    public function order() {
         $rules = $this->rules();
         $undo = isset($rules['undo']); // no undo actually
         $res = 1;
-        if ($undo) $res+=MA_ORDER_NOUNDO;
+        if ($undo) $res += MA_ORDER_NOUNDO;
         else if (!$this->canFail()) {
-            if (!$this->isFullyAutomated()) $res+=MA_ORDER_AUTO;
-            $res+=MA_ORDER_FAIL;
-        }
-        else return $res;
+            if (!$this->isFullyAutomated()) $res += MA_ORDER_AUTO;
+            $res += MA_ORDER_FAIL;
+        } else return $res;
 
-    
+
 
         return $res;
     }
 
 
-    function canFail(){
+    function canFail() {
         return false;
     }
 
@@ -241,7 +242,7 @@ Reason: tile placement may draw cards (information)
 
     protected function getPrompt() {
         $rules = $this->rules();
-        return  array_get($rules,'prompt') ?? clienttranslate('${you} must confirm');
+        return  array_get($rules, 'prompt') ?? clienttranslate('${you} must confirm');
     }
 
     // --------------------- PLAYER INPUT
@@ -258,7 +259,7 @@ Reason: tile placement may draw cards (information)
         $result['target'] = $this->argPrimary(); // primary list of parameter to choose from in case of emum param (such as token)
         $isvoid = $this->isVoid();
         if ($isvoid) {
-            $result["void"] = $isvoid ; // if action requires params but cannot be perform operation is void, depends on engine it either deail breaker or skip
+            $result["void"] = $isvoid; // if action requires params but cannot be perform operation is void, depends on engine it either deail breaker or skip
         }
         $result["prompt"] = $this->getPrompt();
         $result["button"] = $this->getButtonName();
@@ -269,7 +270,7 @@ Reason: tile placement may draw cards (information)
         if ($this->requireConfirmation()) {
             $result["ack"] = 1; // prompt required
         }
-        
+
         $result["o"] = $this->order(); // prompt required
         return $result;
     }
@@ -297,10 +298,10 @@ Reason: tile placement may draw cards (information)
             if (is_array($target)) {
                 $multi = $target;
                 $res = [];
-                foreach($multi as $target) {
+                foreach ($multi as $target) {
                     $index = array_search($target, $possible_targets);
                     $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
-                    $res []= $possible_targets[$index];
+                    $res[] = $possible_targets[$index];
                 }
                 return $res;
             } else {
@@ -335,8 +336,8 @@ Reason: tile placement may draw cards (information)
 
     function getUserCount(): ?int {
         if (!$this->user_args) return null;
-        $userCount = array_get($this->user_args,"count", null);
-        if ($userCount!==null) return (int) $userCount;
+        $userCount = array_get($this->user_args, "count", null);
+        if ($userCount !== null) return (int) $userCount;
         return  (int) ($this->op_info["count"] ?? 1);
     }
 
@@ -366,7 +367,7 @@ Reason: tile placement may draw cards (information)
         return true;
     }
 
-   function checkVoid() {
+    function checkVoid() {
         if ($this->isVoid()) {
             $op = $this->mnemonic;
             $usertarget = $args['target'] ?? '';
@@ -390,7 +391,7 @@ Reason: tile placement may draw cards (information)
     protected function effect(string $owner, int $count): int {
         return 0; // cannot resolve automatically
     }
-    
+
     function undo() {
         $this->game->userAssertTrue("Undo is not implemented for this operation");
     }

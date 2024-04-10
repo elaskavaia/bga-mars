@@ -9,7 +9,7 @@ class Operation_counter extends AbsOperation {
     }
 
     function evaluate(){
-        $par = $this->params;
+        $par = $this->params();
         $params = explode(",", $par);
         $owner = $this->getOwner();
         $count = $this->game->evaluateExpression(trim($params[0]), $owner, $this->getContext());
