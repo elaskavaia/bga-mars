@@ -47,7 +47,7 @@ class Operation_setuppick extends AbsOperation {
             }
         }
         if ($count == 0) {
-            $this->game->multiplayerpush($color,'confnocards');
+            $this->game->multiplayerpush($color, 'confnocards');
             $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('You did not select any initial project cards, it may be not a good idea. Undo if not too late'), []);
         }
         return 1;
@@ -77,11 +77,17 @@ class Operation_setuppick extends AbsOperation {
     }
 
     function getPrompt() {
-        return clienttranslate('Select one corporation and up to 10 project cards (then submit all choices)');
+        if ($this->game->isPreludeVariant())
+            return clienttranslate('Select one corporation, 2 prelude cards and up to 10 project cards (then submit all choices)');
+        else
+            return clienttranslate('Select one corporation and up to 10 project cards (then submit all choices)');
     }
 
     function getOpName() {
-        return clienttranslate('Confirm (Corp + Cards)');
+        if ($this->game->isPreludeVariant())
+            return clienttranslate('Confirm (Corp + Cards + Prelude)');
+        else
+            return clienttranslate('Confirm (Corp + Cards)');
     }
 
     function noValidTargets(): bool {
@@ -113,7 +119,7 @@ class Operation_setuppick extends AbsOperation {
             $this->game->dbSetTokenLocation($card_id, "draw_$color", 0, '');
         }
 
-        $this->game->queueremove($color,'confnocards');
+        $this->game->queueremove($color, 'confnocards');
 
         $this->game->multiplayerpush($color, $this->getMnemonic());
         $this->game->machine->normalize();
