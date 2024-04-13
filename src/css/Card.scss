@@ -846,6 +846,133 @@ display: none;
 .card_corp_12 .card_bg{background-position: -400% -100%;}
 .card_corp_13 .card_bg{background-position: -500% -100%;}
 
+.mcompact {
+  @for $num from 19 through 23 {
+    $i: $num - 19;
+    $col: $i % 6;
+    $row: calc(($i - $col) / 6);
+
+    .card_corp_#{$num} .card_bg {
+      background-position: calc(100% / 5 * $col) 0;
+      background-image: url(img/prelude/preG_cardsC.jpg);
+      background-size: 600%;
+
+
+    }
+  }
+
+  // prelude
+
+  @for $num from 1 through 35 {
+    $i: $num - 1;
+    $col: $i % 6;
+    $row: calc(($i - $col) / 6);
+
+    .card_prelude_P#{$num} .card_bg,
+    .card_prelude_P0#{$num} .card_bg {
+      background-position: calc(100% / 5 * $col) calc(100% / 5 * $row);
+    }
+  }
+
+  .card.prelude {
+    width: var(--card-height);
+    height: var(--card-width);
+
+    .card_decor {
+      .card_bg {
+        background-image: url("img/prelude/preG_cardsP.jpg");
+        background-size: 600% auto;
+      }
+
+      .card_title {
+        top: 15.5%;
+        left: unset;
+        width: 100%;
+        height: unset;
+      }
+
+      .card_illustration,
+      .card_badges,
+      .card_outer_action,
+      .card_cost {
+        display: none;
+      }
+
+      .card_effect {
+        * {
+          display: none;
+        }
+        .card_tt {
+          display: block;
+          position: absolute;
+        }
+      }
+      .blocks_2 .card_tt {
+        left: 35%;
+      }
+      .blocks_3 .card_tt {
+        left: 50%;
+      }
+
+    }
+  }
+  // individual cards
+  .card_prelude_P02 .card_tt {
+    left: 53% !important;   
+  }
+  .card_prelude_P03 .card_tt {
+    left: 49% !important;   
+  }
+  .card_prelude_P04 .card_tt {
+    left: 50% !important;   
+  }
+  .card_prelude_P05 .card_tt {
+    left: 46% !important;   
+  }
+  .card_prelude_P07 .card_tt {
+    left: 50% !important;   
+  }
+  .card_prelude_P13 .card_tt {
+    left: 46% !important;   
+  }
+  .card_prelude_P14 .card_tt {
+    left: 46% !important;   
+  }
+  .card_prelude_P18 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P20 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P21 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P22 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P23 .card_tt {
+    left: 53% !important;   
+  }
+  .card_prelude_P24 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P25 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P27 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P31 .card_tt {
+    left: 38% !important;   
+  }
+  .card_prelude_P32 .card_tt {
+    left: 48% !important;   
+  }
+  .card_prelude_P35 .card_tt {
+    left: 46% !important;   
+  }
+}
+
 .outer_production{
   background-image: url("img/prodtexture.png");
   display: flex;
@@ -1074,6 +1201,31 @@ display: none;
     top: 26%;
     width: 44.5%;
     left: 44%;
+  }
+}
+
+.card_corp_22,.card_corp_23,.card_corp_21,.card_corp_19 {
+  .card_initial {
+    top: 62%;
+    left: 6.5%;
+    width: 37%;
+  }
+  .card_effect{
+    top: 62%;
+    left: 53%;
+    width: 40%;
+  }
+}
+.card_corp_20 {
+  .card_initial {
+    top: 71%;
+    left: 11%;
+    width: 37%;
+  }
+  .card_effect{
+    top: 67%;
+    left: 46%;
+    width: 42%;
   }
 }
 

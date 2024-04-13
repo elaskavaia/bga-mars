@@ -210,18 +210,6 @@ class CardStack {
   }
 
   private getViewLabel(view: number) {
-    if (this.bin_type == "cards_4") {
-      switch (view) {
-        case View.Summary:
-          return _("Hidden");
-        case View.Synthetic:
-          return _("Corporation");
-        case View.Stacked:
-          return _("Player Board");
-        case View.Full:
-          return _("Both");
-      }
-    }
     switch (view) {
       case View.Summary:
         if (!this.game.isLayoutFull()) {

@@ -2618,6 +2618,259 @@
   background-position: -500% -100%;
 }
 
+.mcompact .card_corp_19 .card_bg {
+  background-position: 0% 0;
+  background-image: url(img/prelude/preG_cardsC.jpg);
+  background-size: 600%;
+}
+.mcompact .card_corp_20 .card_bg {
+  background-position: 20% 0;
+  background-image: url(img/prelude/preG_cardsC.jpg);
+  background-size: 600%;
+}
+.mcompact .card_corp_21 .card_bg {
+  background-position: 40% 0;
+  background-image: url(img/prelude/preG_cardsC.jpg);
+  background-size: 600%;
+}
+.mcompact .card_corp_22 .card_bg {
+  background-position: 60% 0;
+  background-image: url(img/prelude/preG_cardsC.jpg);
+  background-size: 600%;
+}
+.mcompact .card_corp_23 .card_bg {
+  background-position: 80% 0;
+  background-image: url(img/prelude/preG_cardsC.jpg);
+  background-size: 600%;
+}
+.mcompact .card_prelude_P1 .card_bg,
+.mcompact .card_prelude_P01 .card_bg {
+  background-position: 0% 0%;
+}
+.mcompact .card_prelude_P2 .card_bg,
+.mcompact .card_prelude_P02 .card_bg {
+  background-position: 20% 0%;
+}
+.mcompact .card_prelude_P3 .card_bg,
+.mcompact .card_prelude_P03 .card_bg {
+  background-position: 40% 0%;
+}
+.mcompact .card_prelude_P4 .card_bg,
+.mcompact .card_prelude_P04 .card_bg {
+  background-position: 60% 0%;
+}
+.mcompact .card_prelude_P5 .card_bg,
+.mcompact .card_prelude_P05 .card_bg {
+  background-position: 80% 0%;
+}
+.mcompact .card_prelude_P6 .card_bg,
+.mcompact .card_prelude_P06 .card_bg {
+  background-position: 100% 0%;
+}
+.mcompact .card_prelude_P7 .card_bg,
+.mcompact .card_prelude_P07 .card_bg {
+  background-position: 0% 20%;
+}
+.mcompact .card_prelude_P8 .card_bg,
+.mcompact .card_prelude_P08 .card_bg {
+  background-position: 20% 20%;
+}
+.mcompact .card_prelude_P9 .card_bg,
+.mcompact .card_prelude_P09 .card_bg {
+  background-position: 40% 20%;
+}
+.mcompact .card_prelude_P10 .card_bg,
+.mcompact .card_prelude_P010 .card_bg {
+  background-position: 60% 20%;
+}
+.mcompact .card_prelude_P11 .card_bg,
+.mcompact .card_prelude_P011 .card_bg {
+  background-position: 80% 20%;
+}
+.mcompact .card_prelude_P12 .card_bg,
+.mcompact .card_prelude_P012 .card_bg {
+  background-position: 100% 20%;
+}
+.mcompact .card_prelude_P13 .card_bg,
+.mcompact .card_prelude_P013 .card_bg {
+  background-position: 0% 40%;
+}
+.mcompact .card_prelude_P14 .card_bg,
+.mcompact .card_prelude_P014 .card_bg {
+  background-position: 20% 40%;
+}
+.mcompact .card_prelude_P15 .card_bg,
+.mcompact .card_prelude_P015 .card_bg {
+  background-position: 40% 40%;
+}
+.mcompact .card_prelude_P16 .card_bg,
+.mcompact .card_prelude_P016 .card_bg {
+  background-position: 60% 40%;
+}
+.mcompact .card_prelude_P17 .card_bg,
+.mcompact .card_prelude_P017 .card_bg {
+  background-position: 80% 40%;
+}
+.mcompact .card_prelude_P18 .card_bg,
+.mcompact .card_prelude_P018 .card_bg {
+  background-position: 100% 40%;
+}
+.mcompact .card_prelude_P19 .card_bg,
+.mcompact .card_prelude_P019 .card_bg {
+  background-position: 0% 60%;
+}
+.mcompact .card_prelude_P20 .card_bg,
+.mcompact .card_prelude_P020 .card_bg {
+  background-position: 20% 60%;
+}
+.mcompact .card_prelude_P21 .card_bg,
+.mcompact .card_prelude_P021 .card_bg {
+  background-position: 40% 60%;
+}
+.mcompact .card_prelude_P22 .card_bg,
+.mcompact .card_prelude_P022 .card_bg {
+  background-position: 60% 60%;
+}
+.mcompact .card_prelude_P23 .card_bg,
+.mcompact .card_prelude_P023 .card_bg {
+  background-position: 80% 60%;
+}
+.mcompact .card_prelude_P24 .card_bg,
+.mcompact .card_prelude_P024 .card_bg {
+  background-position: 100% 60%;
+}
+.mcompact .card_prelude_P25 .card_bg,
+.mcompact .card_prelude_P025 .card_bg {
+  background-position: 0% 80%;
+}
+.mcompact .card_prelude_P26 .card_bg,
+.mcompact .card_prelude_P026 .card_bg {
+  background-position: 20% 80%;
+}
+.mcompact .card_prelude_P27 .card_bg,
+.mcompact .card_prelude_P027 .card_bg {
+  background-position: 40% 80%;
+}
+.mcompact .card_prelude_P28 .card_bg,
+.mcompact .card_prelude_P028 .card_bg {
+  background-position: 60% 80%;
+}
+.mcompact .card_prelude_P29 .card_bg,
+.mcompact .card_prelude_P029 .card_bg {
+  background-position: 80% 80%;
+}
+.mcompact .card_prelude_P30 .card_bg,
+.mcompact .card_prelude_P030 .card_bg {
+  background-position: 100% 80%;
+}
+.mcompact .card_prelude_P31 .card_bg,
+.mcompact .card_prelude_P031 .card_bg {
+  background-position: 0% 100%;
+}
+.mcompact .card_prelude_P32 .card_bg,
+.mcompact .card_prelude_P032 .card_bg {
+  background-position: 20% 100%;
+}
+.mcompact .card_prelude_P33 .card_bg,
+.mcompact .card_prelude_P033 .card_bg {
+  background-position: 40% 100%;
+}
+.mcompact .card_prelude_P34 .card_bg,
+.mcompact .card_prelude_P034 .card_bg {
+  background-position: 60% 100%;
+}
+.mcompact .card_prelude_P35 .card_bg,
+.mcompact .card_prelude_P035 .card_bg {
+  background-position: 80% 100%;
+}
+.mcompact .card.prelude {
+  width: var(--card-height);
+  height: var(--card-width);
+}
+.mcompact .card.prelude .card_decor .card_bg {
+  background-image: url("img/prelude/preG_cardsP.jpg");
+  background-size: 600% auto;
+}
+.mcompact .card.prelude .card_decor .card_title {
+  top: 15.5%;
+  left: unset;
+  width: 100%;
+  height: unset;
+}
+.mcompact .card.prelude .card_decor .card_illustration,
+.mcompact .card.prelude .card_decor .card_badges,
+.mcompact .card.prelude .card_decor .card_outer_action,
+.mcompact .card.prelude .card_decor .card_cost {
+  display: none;
+}
+.mcompact .card.prelude .card_decor .card_effect * {
+  display: none;
+}
+.mcompact .card.prelude .card_decor .card_effect .card_tt {
+  display: block;
+  position: absolute;
+}
+.mcompact .card.prelude .card_decor .blocks_2 .card_tt {
+  left: 35%;
+}
+.mcompact .card.prelude .card_decor .blocks_3 .card_tt {
+  left: 50%;
+}
+.mcompact .card_prelude_P02 .card_tt {
+  left: 53% !important;
+}
+.mcompact .card_prelude_P03 .card_tt {
+  left: 49% !important;
+}
+.mcompact .card_prelude_P04 .card_tt {
+  left: 50% !important;
+}
+.mcompact .card_prelude_P05 .card_tt {
+  left: 46% !important;
+}
+.mcompact .card_prelude_P07 .card_tt {
+  left: 50% !important;
+}
+.mcompact .card_prelude_P13 .card_tt {
+  left: 46% !important;
+}
+.mcompact .card_prelude_P14 .card_tt {
+  left: 46% !important;
+}
+.mcompact .card_prelude_P18 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P20 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P21 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P22 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P23 .card_tt {
+  left: 53% !important;
+}
+.mcompact .card_prelude_P24 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P25 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P27 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P31 .card_tt {
+  left: 38% !important;
+}
+.mcompact .card_prelude_P32 .card_tt {
+  left: 48% !important;
+}
+.mcompact .card_prelude_P35 .card_tt {
+  left: 46% !important;
+}
+
 .outer_production {
   background-image: url("img/prodtexture.png");
   display: flex;
@@ -2822,6 +3075,28 @@
   top: 26%;
   width: 44.5%;
   left: 44%;
+}
+
+.card_corp_22 .card_initial, .card_corp_23 .card_initial, .card_corp_21 .card_initial, .card_corp_19 .card_initial {
+  top: 62%;
+  left: 6.5%;
+  width: 37%;
+}
+.card_corp_22 .card_effect, .card_corp_23 .card_effect, .card_corp_21 .card_effect, .card_corp_19 .card_effect {
+  top: 62%;
+  left: 53%;
+  width: 40%;
+}
+
+.card_corp_20 .card_initial {
+  top: 71%;
+  left: 11%;
+  width: 37%;
+}
+.card_corp_20 .card_effect {
+  top: 67%;
+  left: 46%;
+  width: 42%;
 }
 
 /* compact corp */
@@ -4881,16 +5156,10 @@
 }
 #card_dlg_content .card {
   opacity: 1;
-  width: var(--card-width);
-  height: var(--card-height);
   position: relative;
   color: black;
   margin-right: 4px;
   margin-bottom: 4px;
-}
-#card_dlg_content .corp {
-  width: var(--card-height);
-  height: var(--card-width);
 }
 
 .twoplayers #milestone_award_gain_2 {
@@ -5625,6 +5894,14 @@
 
 .corp_logo[data-corp=card_corp_13] {
   background-position: -500% -100%;
+}
+
+.corp_logo[data-corp=card_corp_23] {
+  background-image: url("img/prelude/pre_corps_logo.png");
+  background-position: 100% 0%;
+  background-size: 500%;
+  width: calc(var(--card-width) * 0.294);
+  height: calc(var(--card-width) * 0.294);
 }
 
 .corp_effect .card.corp.card_corp_1 .card_title {
@@ -8087,48 +8364,44 @@
   background-image: url(img/full/cardsC.jpg);
 }
 
-.card_corp_19 {
+.mfull .card_corp_19 {
   background-position: 0% 0;
   background-image: url(img/prelude/pre_cardsC.jpg);
   background-size: 600%;
 }
-.card_corp_19 .card_decor {
+.mfull .card_corp_19 .card_decor {
   display: none;
 }
-
-.card_corp_20 {
+.mfull .card_corp_20 {
   background-position: 20% 0;
   background-image: url(img/prelude/pre_cardsC.jpg);
   background-size: 600%;
 }
-.card_corp_20 .card_decor {
+.mfull .card_corp_20 .card_decor {
   display: none;
 }
-
-.card_corp_21 {
+.mfull .card_corp_21 {
   background-position: 40% 0;
   background-image: url(img/prelude/pre_cardsC.jpg);
   background-size: 600%;
 }
-.card_corp_21 .card_decor {
+.mfull .card_corp_21 .card_decor {
   display: none;
 }
-
-.card_corp_22 {
+.mfull .card_corp_22 {
   background-position: 60% 0;
   background-image: url(img/prelude/pre_cardsC.jpg);
   background-size: 600%;
 }
-.card_corp_22 .card_decor {
+.mfull .card_corp_22 .card_decor {
   display: none;
 }
-
-.card_corp_23 {
+.mfull .card_corp_23 {
   background-position: 80% 0;
   background-image: url(img/prelude/pre_cardsC.jpg);
   background-size: 600%;
 }
-.card_corp_23 .card_decor {
+.mfull .card_corp_23 .card_decor {
   display: none;
 }
 
@@ -8516,30 +8789,18 @@
 .mfull .cardstack[data-currentview="1"] .stack_content {
   --overlap: 0.1;
 }
-.mfull .cardstack[data-currentview].cardstack_cards_4.corp .stack_content {
+.mfull .cardstack[data-currentview].cardstack_cards_4 .stack_content {
   --overlap: 0;
   --columns: 1;
   max-width: unset;
+  max-height: unset;
 }
-.mfull .cardstack[data-currentview].cardstack_cards_4.corp .stack_sum.cards {
-  display: none;
+.mfull .cardstack[data-currentview].cardstack_cards_0 .stack_content {
+  --columns: 1;
+  padding-top: 0;
+  max-height: unset;
 }
-.mfull .cardstack[data-currentview="0"].cardstack_cards_4.corp .pboard {
-  display: none;
-}
-.mfull .cardstack[data-currentview="0"].cardstack_cards_4.corp .stack_content {
-  --columns: 0;
-}
-.mfull .cardstack[data-currentview="1"].cardstack_cards_4.corp .pboard {
-  display: none;
-}
-.mfull .cardstack[data-currentview="1"].cardstack_cards_4.corp .stack_content .card {
-  display: block;
-}
-.mfull .cardstack[data-currentview="2"].cardstack_cards_4.corp .pboard {
-  display: block;
-}
-.mfull .cardstack[data-currentview="2"].cardstack_cards_4.corp .stack_content .card {
+.mfull .cardstack[data-currentview].cardstack_cards_0 .stack_sum.cards {
   display: none;
 }
 .mfull .cardstack[data-currentview="3"].cardstack_cards_4.corp .stack_content {
@@ -9079,6 +9340,13 @@
 .stack_content .card {
   margin-top: calc(var(--card-height) * var(--overlap) * -1);
 }
+.stack_content .prelude.card {
+  margin-top: calc(var(--card-width) * var(--overlap) * -1 * 0.9);
+}
+.stack_content .corp.card {
+  margin-top: calc(var(--card-height) * -1 * var(--overlap));
+  margin-bottom: calc(var(--card-width) - (1 - var(--overlap)) * var(--card-width));
+}
 
 .mcompact .cardstack[data-currentview="0"] .stack_content {
   min-width: calc(var(--card-width) * 1.03);
@@ -9140,6 +9408,14 @@
   background-color: #ee750e;
   outline: 1px solid #ecc7a8;
 }
+.mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="5"] {
+  background-color: #91208b;
+  outline: 1px solid #c936b8;
+}
+.mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="4"] {
+  background-color: gray;
+  outline: 1px solid gray;
+}
 .mcompact .cardstack[data-currentview="1"] .stack_content .card {
   height: fit-content;
   margin-bottom: calc(var(--card-height) * 0.03);
@@ -9164,12 +9440,13 @@
   margin-top: calc(var(--card-height) * 0.02);
   top: 0;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_badges, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_cost, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_bg, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_illustration, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_effect, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_prereq, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_number, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_number_binary {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_badges, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_cost, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_bg, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_illustration, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_effect, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_prereq, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_number, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_number_binary, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_initial {
   display: none;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_title {
   position: relative;
   top: 0;
+  display: block;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_vp {
   top: 0;

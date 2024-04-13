@@ -1154,17 +1154,12 @@
 
   .card {
     opacity: 1;
-    width: var(--card-width);
-    height: var(--card-height);
     position: relative;
     color: black;
     margin-right: 4px;
     margin-bottom: 4px;
   }
-  .corp {
-    width: var(--card-height);
-    height: var(--card-width);
-  }
+
 }
 
 .twoplayers #milestone_award_gain_2 {

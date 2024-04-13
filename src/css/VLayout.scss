@@ -87,18 +87,20 @@
   }
 }
 
-@for $num from 19 through 23 {
-  $i: $num - 19;
-  $col: $i % 6;
-  $row: calc(($i - $col) / 6);
+.mfull {
+  @for $num from 19 through 23 {
+    $i: $num - 19;
+    $col: $i % 6;
+    $row: calc(($i - $col) / 6);
 
-  .card_corp_#{$num} {
-    background-position: calc(100% / 5 * $col) 0;
-    background-image: url(img/prelude/pre_cardsC.jpg);
-    background-size: 600%;
+    .card_corp_#{$num} {
+      background-position: calc(100% / 5 * $col) 0;
+      background-image: url(img/prelude/pre_cardsC.jpg);
+      background-size: 600%;
 
-    .card_decor {
-      display: none; // temp until decor is back
+      .card_decor {
+        display: none; // temp until decor is back
+      }
     }
   }
 }
@@ -590,11 +592,23 @@
     }
   }
 
-  .cardstack[data-currentview].cardstack_cards_4.corp {
+  .cardstack[data-currentview].cardstack_cards_4 {
     .stack_content {
       --overlap: 0;
       --columns: 1;
       max-width: unset;
+      max-height: unset;
+    }
+  }
+
+
+
+  // corp/playerboard stack
+  .cardstack[data-currentview].cardstack_cards_0 {
+    .stack_content {
+      --columns: 1;
+      padding-top: 0;
+      max-height: unset;
     }
 
     .stack_sum.cards {
@@ -603,37 +617,6 @@
   }
 
 
-
-  // corp/playerboard stack
-  .cardstack[data-currentview="0"].cardstack_cards_4.corp {
-    .pboard {
-      display: none;
-    }
-
-    .stack_content {
-      --columns: 0;
-    }
-  }
-
-  .cardstack[data-currentview="1"].cardstack_cards_4.corp {
-    .pboard {
-      display: none;
-    }
-
-    .stack_content .card {
-      display: block;
-    }
-  }
-
-  .cardstack[data-currentview="2"].cardstack_cards_4.corp {
-    .pboard {
-      display: block;
-    }
-
-    .stack_content .card {
-      display: none;
-    }
-  }
 
   .cardstack[data-currentview="3"].cardstack_cards_4.corp {
     .stack_content {

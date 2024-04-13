@@ -9,7 +9,7 @@ class VLayout {
     const board = $(`player_area_${color}`);
     div.appendChild(board);
 
-    dojo.place(`pboard_${color}`, `tableau_${color}_cards_4`);
+    dojo.place(`pboard_${color}`, `tableau_${color}_cards_0`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
     //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
 
