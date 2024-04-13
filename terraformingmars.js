@@ -1398,7 +1398,7 @@ var Card = /** @class */ (function () {
 ;
 var View;
 (function (View) {
-    View[View["Summary"] = 0] = "Summary";
+    View[View["Hidden"] = 0] = "Hidden";
     View[View["Synthetic"] = 1] = "Synthetic";
     View[View["Stacked"] = 2] = "Stacked";
     View[View["Full"] = 3] = "Full";
@@ -1424,7 +1424,7 @@ var CardStack = /** @class */ (function () {
         this.tableau_id = "tableau_" + player_color + "_" + bin_type;
         this.current_view = parseInt(this.localsettings.readProp(this.div_id, String(default_view)));
         if (view_list.length == 0) {
-            view_list.push(View.Summary, View.Synthetic, View.Stacked, View.Full);
+            view_list.push(View.Hidden, View.Synthetic, View.Stacked, View.Full);
         }
     }
     CardStack.prototype.render = function (parent) {
@@ -1475,7 +1475,7 @@ var CardStack = /** @class */ (function () {
     };
     CardStack.prototype.getIconClass = function (layout) {
         switch (layout) {
-            case View.Summary:
+            case View.Hidden:
                 return "fa-window-close";
             //   case View.Summary: return  "fa fa-align-justify";
             case View.Synthetic:
@@ -1532,7 +1532,7 @@ var CardStack = /** @class */ (function () {
         label = this.getViewLabel(this.current_view);
         var toprow = "tableau_toprow_" + this.player_color;
         switch (this.current_view) {
-            case View.Summary:
+            case View.Hidden:
                 additional_txt = _("cards are hidden");
                 if (!this.game.isLayoutFull()) {
                     if ($(this.div_id).parentElement.id != toprow && $(toprow)) {
@@ -1560,15 +1560,15 @@ var CardStack = /** @class */ (function () {
     };
     CardStack.prototype.getViewLabel = function (view) {
         switch (view) {
-            case View.Summary:
+            case View.Hidden:
+                return _("Hidden");
+            case View.Synthetic:
                 if (!this.game.isLayoutFull()) {
-                    return _("Hidden");
+                    return _("Synthetic");
                 }
                 else {
                     return _("Single");
                 }
-            case View.Synthetic:
-                return _("Synthetic");
             case View.Stacked:
                 return _("Stack");
             case View.Full:
@@ -1579,7 +1579,7 @@ var CardStack = /** @class */ (function () {
     CardStack.prototype.updateCounts = function () {
         var count = $(this.tableau_id).querySelectorAll(".card").length;
         $("cnt_cards_" + this.div_id).innerHTML = String(count);
-        if (this.current_view == View.Summary)
+        if (this.current_view == View.Hidden)
             $("additional_text_" + this.div_id).innerHTML = _("%n card(s) hidden").replace("%n", String(count));
         return count;
     };
@@ -3823,26 +3823,39 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setupPlayerStacks = function (playerColor) {
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
         var lsStacks;
+        // not allow to hide effects and actions, it has important info affecting game
+        var noHidden = [View.Synthetic, View.Stacked, View.Full];
         if (!this.isLayoutFull()) {
             // digital
             lsStacks = [
                 { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
-                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary },
-                { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked },
-                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked },
+                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Hidden },
+                {
+                    label: _("Effects"),
+                    div: "cards_2",
+                    color_class: "blue",
+                    default: View.Stacked,
+                    views: noHidden
+                },
+                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
                 { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full }
             ];
         }
         else {
             // cardbpard
-            var defViews = [View.Summary, View.Stacked, View.Full];
             lsStacks = [
-                { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Stacked, views: [View.Summary, View.Full] },
-                { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked, views: defViews },
-                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary, views: defViews },
-                { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked, views: defViews },
+                { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Stacked, views: [View.Hidden, View.Synthetic] },
+                { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+                { label: _("Events"), div: "cards_3", color_class: "red", default: View.Hidden },
+                {
+                    label: _("Effects"),
+                    div: "cards_2",
+                    color_class: "blue",
+                    default: View.Stacked,
+                    views: [View.Stacked, View.Full]
+                },
                 { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-                { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full }
+                { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Stacked }
             ];
         }
         for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {

@@ -297,25 +297,38 @@ class GameXBody extends GameTokens {
 
 
     let lsStacks: any;
+    // not allow to hide effects and actions, it has important info affecting game
+    let noHidden =  [View.Synthetic, View.Stacked, View.Full];
     if (!this.isLayoutFull()) {
       // digital
       lsStacks = [
-        { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked},
-        { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary},
-        { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked},
-        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked},
-        { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full}
+        { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+        { label: _("Events"), div: "cards_3", color_class: "red", default: View.Hidden },
+        {
+          label: _("Effects"),
+          div: "cards_2",
+          color_class: "blue",
+          default: View.Stacked,
+          views:noHidden
+        },
+        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
+        { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full }
       ];
     } else {
       // cardbpard
-      const defViews = [View.Summary, View.Stacked, View.Full];
       lsStacks = [
-        { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Stacked, views: [View.Summary, View.Full] },
-        { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked, views: defViews },
-        { label: _("Events"), div: "cards_3", color_class: "red", default: View.Summary, views: defViews },
-        { label: _("Effects"), div: "cards_2", color_class: "blue", default: View.Stacked, views: defViews  },
+        { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Stacked, views: [View.Hidden, View.Synthetic] },
+        { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
+        { label: _("Events"), div: "cards_3", color_class: "red", default: View.Hidden },
+        {
+          label: _("Effects"),
+          div: "cards_2",
+          color_class: "blue",
+          default: View.Stacked,
+          views: [View.Stacked, View.Full]
+        },
         { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-        { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full}
+        { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Stacked }
       ];
     }
     for (const item of lsStacks) {

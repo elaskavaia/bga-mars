@@ -8787,20 +8787,22 @@
   display: none;
 }
 .mfull .cardstack[data-currentview="1"] .stack_content {
-  --overlap: 0.1;
+  --overlap: 0.99;
 }
-.mfull .cardstack[data-currentview].cardstack_cards_4 .stack_content {
+.mfull .cardstack[data-currentview="2"] .stack_content {
+  --overlap: 0.88;
+}
+.mfull .cardstack[data-currentview].cardstack_cards_0 .stack_content {
   --overlap: 0;
   --columns: 1;
   max-width: unset;
   max-height: unset;
-}
-.mfull .cardstack[data-currentview].cardstack_cards_0 .stack_content {
-  --columns: 1;
   padding-top: 0;
-  max-height: unset;
 }
 .mfull .cardstack[data-currentview].cardstack_cards_0 .stack_sum.cards {
+  display: none;
+}
+.mfull .cardstack[data-currentview="0"] .stack_content {
   display: none;
 }
 .mfull .cardstack[data-currentview="3"].cardstack_cards_4.corp .stack_content {
@@ -8814,8 +8816,11 @@
 .mfull .cardstack[data-currentview="2"].red .cards_3 .card::after {
   content: unset;
 }
-.mfull .cardstack[data-currentview="1"].red .stack_content {
-  --overlap: 0.88;
+.mfull .cardstack[data-currentview="1"].corp .stack_content {
+  --overlap: 1;
+}
+.mfull .cardstack[data-currentview="1"].corp .prelude {
+  display: none;
 }
 .mfull .cardstack[data-currentview="0"] .stack_dd_buttons.open {
   left: auto;

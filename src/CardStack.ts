@@ -1,5 +1,5 @@
 enum View {
-  Summary = 0,
+  Hidden = 0,
   Synthetic = 1,
   Stacked = 2,
   Full = 3
@@ -28,7 +28,7 @@ class CardStack {
     this.tableau_id = "tableau_" + player_color + "_" + bin_type;
     this.current_view = parseInt(this.localsettings.readProp(this.div_id, String(default_view)));
     if (view_list.length == 0) {
-      view_list.push(View.Summary, View.Synthetic, View.Stacked, View.Full);
+      view_list.push(View.Hidden, View.Synthetic, View.Stacked, View.Full);
     }
   }
 
@@ -115,7 +115,7 @@ class CardStack {
 
   private getIconClass(layout: View) {
     switch (layout) {
-      case View.Summary:
+      case View.Hidden:
         return "fa-window-close";
       //   case View.Summary: return  "fa fa-align-justify";
       case View.Synthetic:
@@ -179,7 +179,7 @@ class CardStack {
     const toprow = "tableau_toprow_" + this.player_color;
 
     switch (this.current_view) {
-      case View.Summary:
+      case View.Hidden:
         additional_txt = _("cards are hidden");
         if (!this.game.isLayoutFull()) {
           if ($(this.div_id).parentElement.id != toprow && $(toprow)) {
@@ -211,14 +211,14 @@ class CardStack {
 
   private getViewLabel(view: number) {
     switch (view) {
-      case View.Summary:
+      case View.Hidden:
+        return _("Hidden");
+      case View.Synthetic:
         if (!this.game.isLayoutFull()) {
-          return _("Hidden");
+          return _("Synthetic");
         } else {
           return _("Single");
         }
-      case View.Synthetic:
-        return _("Synthetic");
       case View.Stacked:
         return _("Stack");
       case View.Full:
@@ -232,7 +232,7 @@ class CardStack {
     const count: number = $(this.tableau_id).querySelectorAll(".card").length;
     $("cnt_cards_" + this.div_id).innerHTML = String(count);
 
-    if (this.current_view == View.Summary)
+    if (this.current_view == View.Hidden)
       $("additional_text_" + this.div_id).innerHTML = _("%n card(s) hidden").replace("%n", String(count));
 
     return count;
