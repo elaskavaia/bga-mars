@@ -2807,15 +2807,17 @@
 .mcompact .card.prelude .card_decor .card_illustration,
 .mcompact .card.prelude .card_decor .card_badges,
 .mcompact .card.prelude .card_decor .card_outer_action,
-.mcompact .card.prelude .card_decor .card_cost,
 .mcompact .card.prelude .card_decor .card_vp,
 .mcompact .card.prelude .card_decor .card_number_binary,
 .mcompact .card.prelude_main .card_decor .card_illustration,
 .mcompact .card.prelude_main .card_decor .card_badges,
 .mcompact .card.prelude_main .card_decor .card_outer_action,
-.mcompact .card.prelude_main .card_decor .card_cost,
 .mcompact .card.prelude_main .card_decor .card_vp,
 .mcompact .card.prelude_main .card_decor .card_number_binary {
+  display: none;
+}
+.mcompact .card.prelude .card_decor .card_cost .number_inside,
+.mcompact .card.prelude_main .card_decor .card_cost .number_inside {
   display: none;
 }
 .mcompact .card.prelude .card_decor .card_effect *,
@@ -2953,6 +2955,9 @@
 .mcompact .card_main_P42 .card_tt {
   left: 43% !important;
   top: 10% !important;
+}
+.mcompact .card_main_P42 .card_prereq {
+  display: none;
 }
 .mcompact .card_main_P42 .card_bg {
   background-position: 66.6666666667% 0;

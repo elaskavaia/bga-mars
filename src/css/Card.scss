@@ -1030,10 +1030,15 @@
       .card_illustration,
       .card_badges,
       .card_outer_action,
-      .card_cost,
       .card_vp,
       .card_number_binary {
         display: none;
+      }
+
+      .card_cost {
+        .number_inside {
+          display: none;
+        }
       }
 
       .card_effect {
@@ -1228,6 +1233,9 @@
     .card_tt {
       left: 43% !important;
       top: 10% !important;
+    }
+    .card_prereq {
+      display: none;
     }
 
     .card_bg {
