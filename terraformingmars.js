@@ -749,6 +749,15 @@ var GameBasics = /** @class */ (function (_super) {
         }
         return undefined;
     };
+    GameBasics.prototype.getPlayerIdByNo = function (no) {
+        for (var playerId in this.gamedatas.players) {
+            var playerInfo = this.gamedatas.players[playerId];
+            if (no == playerInfo.no) {
+                return parseInt(playerId);
+            }
+        }
+        return undefined;
+    };
     GameBasics.prototype.isReadOnly = function () {
         return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
     };
@@ -857,9 +866,14 @@ var GameBasics = /** @class */ (function (_super) {
             return node.nodeValue;
         return node.innerText;
     };
+    GameBasics.prototype.extractTextGameInfo = function () {
+        var text = "";
+        text += "Current player ".concat(this.getPlayerName(this.player_id), " ").concat(this.getPlayerColor(this.player_id), "\n");
+        return text;
+    };
     GameBasics.prototype.copyLogToClipBoard = function () {
         var _this = this;
-        var text = "";
+        var text = "LOGS (100 last lines)\n";
         var lines = 0;
         document.querySelectorAll("#logs > *").forEach(function (lognode) {
             lines++;
@@ -867,12 +881,12 @@ var GameBasics = /** @class */ (function (_super) {
                 return;
             text += _this.extractTextFromLogItem(lognode) + "\n";
         });
-        navigator.clipboard.writeText(text);
+        var text2 = "GAME situation\n";
+        text2 += this.extractTextGameInfo();
+        navigator.clipboard.writeText(text + text2);
         var d = new ebg.popindialog();
-        d.create("current_tooltip");
-        var html = "Text was copied to clipboard, you can just paste it in the bug report<br><pre>";
-        html += text;
-        html += "</pre>";
+        d.create("log_info");
+        var html = "\n    Text was copied to clipboard, you can just paste it in the bug report<br>\n    NOTE: this may reveal private info about your hand card, please remove this info manually if you care\n    <br>\n    <pre class='mr_scrollable'>\n    ".concat(text, "\n    </pre>\n    <br>\n    <pre class='mr_scrollable'>\n    ").concat(text2, "\n    </pre>\n    ");
         d.setContent(html);
         d.show();
     };
@@ -3588,7 +3602,6 @@ var GameXBody = /** @class */ (function (_super) {
         _this.resourceTrackers = ["m", "s", "u", "p", "e", "h"];
         //score cache
         _this.cachedScoreMoveNbr = "0";
-        _this.cachedScoreHtm = "";
         // private parses:any;
         _this.currentOperation = {}; // bag of data to support operation engine
         _this.classSelected = "mr_selected"; // for the purpose of multi-select operations
@@ -3719,6 +3732,11 @@ var GameXBody = /** @class */ (function (_super) {
                 }, parent); // NOI18N
             }
             this.updateStacks();
+            var move = gamedatas.notifications.move_nbr;
+            this.cachedScoringTable = gamedatas.scoringTable;
+            this.cachedScoreMoveNbr = move;
+            // call this to update cards vp data-vp attr
+            this.createScoringTableHTML(this.cachedScoringTable);
             this.vlayout.setupDone();
             //locale css management
             $("ebd-body").dataset["locale"] = _('$locale');
@@ -3879,8 +3897,8 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
         var _this = this;
-        var mv = $("move_nbr").innerHTML;
-        var finalhtm = "";
+        var mv = this.gamedatas.notifications.move_nbr;
+        ;
         var showFunc = function (htm) {
             var dlg = new ebg.popindialog();
             dlg.create("score_dlg");
@@ -3888,28 +3906,43 @@ var GameXBody = /** @class */ (function (_super) {
             dlg.setContent(htm);
             dlg.show();
         };
-        if (mv === this.cachedScoreMoveNbr && this.cachedScoreHtm != "") {
-            showFunc(this.cachedScoreHtm);
+        if (mv == this.cachedScoreMoveNbr && this.cachedScoringTable) {
+            var finalhtm = this.createScoringTableHTML(this.cachedScoringTable);
+            showFunc(finalhtm);
         }
         else {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
             this.ajaxcall(url, [], this, function (result) {
-                var tablehtm = "\n             <div id=\"scoretable\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraforming Rank"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cities"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from greeneries"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Awards"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from Milestones"), "</div>\n                      <div class=\"scorecell \">").concat(_("VP from cards"), "</div>\n                      <div class=\"scorecell header total\">").concat(_("VP total"), "</div>\n                </div>\n                %lines%\n              </div>");
-                var lines = "";
-                for (var plid in result.data.contents) {
-                    var entry = result.data.contents[plid];
-                    var plcolor = _this.getPlayerColor(parseInt(plid));
-                    var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-                    lines =
-                        lines +
-                            "\n                <div class=\" scorecol\">\n                      <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(_this.gamedatas.players[plid].name, "</div>\n                      <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.awards, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.milestones, "</div>\n                      <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n                      <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n                </div>");
-                }
-                finalhtm = tablehtm.replace("%lines%", lines);
+                _this.cachedScoringTable = result.data.contents;
                 _this.cachedScoreMoveNbr = mv;
-                _this.cachedScoreHtm = finalhtm;
+                var finalhtm = _this.createScoringTableHTML(_this.cachedScoringTable);
                 showFunc(finalhtm);
             });
         }
+    };
+    GameXBody.prototype.createScoringTableHTML = function (scoringTable) {
+        var tablehtm = "\n    <div id=\"scoretable\" class=\"scoretable\">\n       <div class=\"scoreheader scorecol\">\n             <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n             <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n             <div class=\"scorecell \">").concat(_("Terraforming Rank"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from cities"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from greeneries"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from Awards"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from Milestones"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from cards"), "</div>\n             <div class=\"scorecell header total\">").concat(_("VP total"), "</div>\n       </div>\n       %lines%\n     </div>");
+        var lines = "";
+        for (var plid in scoringTable) {
+            var entry = scoringTable[plid];
+            var plcolor = this.getPlayerColor(parseInt(plid));
+            var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+            lines =
+                lines +
+                    "\n       <div class=\" scorecol\">\n             <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n             <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n             <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.awards, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.milestones, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n             <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n       </div>");
+            for (var cat in entry.details) {
+                //['details'][$category][$token_key][$key]
+                for (var token_key in entry.details[cat]) {
+                    var rec = entry.details[cat][token_key];
+                    var node = $(token_key);
+                    if (!node)
+                        continue;
+                    node.dataset.vp = rec.vp;
+                }
+            }
+        }
+        var finalhtm = tablehtm.replace("%lines%", lines);
+        return finalhtm;
     };
     GameXBody.prototype.onShowMilestonesProgress = function () {
         var finalhtm = "";
@@ -4409,6 +4442,11 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.notif_scoringTable = function (notif) {
         console.log(notif);
+        var move = this.gamedatas.notifications.move_nbr;
+        this.cachedScoringTable = notif.args.data;
+        this.cachedScoreMoveNbr = move;
+        // call this to update cards vp data-vp attr
+        this.createScoringTableHTML(this.cachedScoringTable);
     };
     GameXBody.prototype.getCardTypeById = function (type) {
         switch (type) {
@@ -5081,11 +5119,10 @@ var GameXBody = /** @class */ (function (_super) {
             node.dataset.cannot_pay = (_c = card_info.c) !== null && _c !== void 0 ? _c : "0";
             node.dataset.op_code = card_info.q;
             var discounted = discount_cost != original_cost;
-            //if (discounted) {
-            node.dataset.discounted = String(discounted);
-            node.dataset.discount_cost = String(discount_cost);
-            //} else {
-            //}
+            if (discounted || !this.isLayoutFull()) {
+                node.dataset.discounted = String(discounted);
+                node.dataset.discount_cost = String(discount_cost);
+            }
             node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
             var costDiv = $("cost_" + cardId);
             var costdiscountDiv = $('discountedcost_' + cardId);
@@ -6242,6 +6279,89 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             return _super.prototype.phantomMove.call(this, mobileId, newparentId, duration, mobileStyle, onEnd);
         }
+    };
+    GameXBody.prototype.extractTokenText = function (node1, options) {
+        var node = $(node1);
+        if (!node.id)
+            return;
+        var text = '';
+        if (node.id.startsWith('card')) {
+            var name_5 = node.dataset.name;
+            var dcost = node.dataset.discount_cost;
+            var cost = this.getRulesFor(node.id, 'cost', 0);
+            text += "[".concat(name_5, "]");
+            if (cost && (options === null || options === void 0 ? void 0 : options.showCost)) {
+                if (dcost !== undefined && cost != dcost) {
+                    text += " ".concat(cost, "(").concat(dcost, ")ME");
+                }
+                else
+                    text += " ".concat(cost, "ME");
+            }
+            var vp = node.dataset.vp;
+            if (vp !== undefined && (options === null || options === void 0 ? void 0 : options.showVp)) {
+                text += " ".concat(vp, "VP");
+            }
+            var res = node.dataset.resource_counter;
+            if (res) {
+                text += " ".concat(res, "RES");
+            }
+            return text;
+        }
+        if (node.id.startsWith('tile')) {
+            var hex = node.parentNode;
+            var hexname = hex.dataset.name;
+            var tile = node;
+            text += "".concat(hexname, ": ");
+            var name_6 = tile.dataset.name;
+            text += "[".concat(name_6, "]");
+            var state = tile.dataset.state;
+            if (state && state != "0") {
+                var pid = this.getPlayerIdByNo(state);
+                text += " ".concat(this.getPlayerName(pid), "(").concat(this.getPlayerColor(pid), ")");
+            }
+            var vp = tile.dataset.vp;
+            if (vp !== undefined && (options === null || options === void 0 ? void 0 : options.showVp)) {
+                text += " ".concat(vp, "VP");
+            }
+            return text;
+        }
+        if (node.id.startsWith('tracker')) {
+            var name_7 = node.dataset.name;
+            var state = node.dataset.state;
+            text = "".concat(name_7, " ").concat(state);
+            return text;
+        }
+        return node.id;
+    };
+    GameXBody.prototype.extractPileText = function (title, query, options) {
+        var _this = this;
+        var text = title + ": \n";
+        document.querySelectorAll(query).forEach(function (node) {
+            var inner = _this.extractTokenText(node, options);
+            if (!inner)
+                return; // skip empty
+            text += "  " + inner + "\n";
+        });
+        return text;
+    };
+    GameXBody.prototype.extractTextGameInfo = function () {
+        var text = "";
+        text += "Current player ".concat(this.getPlayerName(this.player_id), " ").concat(this.player_color, "\n");
+        var move = this.gamedatas.notifications.move_nbr;
+        text += "Current move ".concat(move, "\n");
+        var plcolor = this.player_color;
+        text += this.extractPileText('HAND', ".hand_".concat(plcolor, " .card"), { showCost: true });
+        text += this.extractPileText('PLAYED', ".tableau_".concat(plcolor, " .card"), { showVp: true });
+        text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor, " .tracker"));
+        for (var plid in this.gamedatas.players) {
+            var plcolor_1 = this.getPlayerColor(parseInt(plid));
+            if (plcolor_1 != this.player_color) {
+                text += this.extractPileText('PLAYED', ".tableau_".concat(plcolor_1, " .card"), { showVp: true });
+                text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor_1, " .tracker"));
+            }
+        }
+        text += this.extractPileText('MAP', ".map .tile", { showVp: true });
+        return text;
     };
     return GameXBody;
 }(GameTokens));

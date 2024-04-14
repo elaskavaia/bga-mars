@@ -854,6 +854,15 @@ class GameBasics extends GameGui {
     }
     return undefined;
   }
+  getPlayerIdByNo(no: string): number | undefined {
+    for (var playerId in this.gamedatas.players) {
+      var playerInfo = this.gamedatas.players[playerId];
+      if (no == playerInfo.no) {
+        return parseInt(playerId);
+      }
+    }
+    return undefined;
+  }
 
   isReadOnly() {
     return this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode;
@@ -971,21 +980,40 @@ class GameBasics extends GameGui {
     return node.innerText;
   }
 
-  copyLogToClipBoard() {
+  extractTextGameInfo(){
     let text = "";
+    text+= `Current player ${this.getPlayerName(this.player_id)} ${this.getPlayerColor(this.player_id)}\n`;
+    
+    return text;
+  }
+
+  copyLogToClipBoard() {
+    let text = "LOGS (100 last lines)\n";
     let lines = 0;
     document.querySelectorAll("#logs > *").forEach((lognode) => {
       lines++;
       if (lines > 100) return;
       text += this.extractTextFromLogItem(lognode) + "\n";
     });
-    navigator.clipboard.writeText(text);
+    let text2 = "GAME situation\n";
+    text2+=this.extractTextGameInfo();
+
+    navigator.clipboard.writeText(text + text2);
 
     const d = new ebg.popindialog();
-    d.create("current_tooltip");
-    var html = "Text was copied to clipboard, you can just paste it in the bug report<br><pre>";
-    html += text;
-    html += "</pre>";
+    d.create("log_info");
+    var html = `
+    Text was copied to clipboard, you can just paste it in the bug report<br>
+    NOTE: this may reveal private info about your hand card, please remove this info manually if you care
+    <br>
+    <pre class='mr_scrollable'>
+    ${text}
+    </pre>
+    <br>
+    <pre class='mr_scrollable'>
+    ${text2}
+    </pre>
+    `;
     d.setContent(html);
     d.show();
   }

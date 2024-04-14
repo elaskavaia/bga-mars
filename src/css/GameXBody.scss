@@ -779,6 +779,13 @@
   cursor:help;
 }
 
+/** Pop-in dialog that capture situation for bug reports */
+.mr_scrollable {
+  height: 400px;
+  overflow: auto;
+}
+
+
 /** Card reference */
 
 .allcards {

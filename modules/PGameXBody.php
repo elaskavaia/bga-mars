@@ -223,6 +223,9 @@ abstract class PGameXBody extends PGameMachine {
             $result['card_info'] = $this->getCardInfoInHand($current);
         } else
             $result['server_prefs'] = [];
+        $table = [];
+        $this->scoreAll($table);
+        $result['scoringTable'] = $table;
         $this->prof_point("getAllDatas", "end");
         return $result;
     }
@@ -2245,7 +2248,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
         $table = [];
         $this->scoreAll($table);
-        $this->notifyAllPlayers('scoringTable', '', $table);
+        $this->notifyAllPlayers('scoringTable', '', ['data'=>$table]);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {

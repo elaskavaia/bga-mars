@@ -16,7 +16,7 @@ class GameXBody extends GameTokens {
   public readonly resourceTrackers = ["m", "s", "u", "p", "e", "h"];
   //score cache
   private cachedScoreMoveNbr: string = "0";
-  private cachedScoreHtm: string = "";
+  private cachedScoringTable: any;
   // private parses:any;
   private currentOperation: any = {}; // bag of data to support operation engine
   private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
@@ -185,6 +185,12 @@ class GameXBody extends GameTokens {
 
 
       this.updateStacks();
+
+      const move = gamedatas.notifications.move_nbr;
+      this.cachedScoringTable = gamedatas.scoringTable;
+      this.cachedScoreMoveNbr = move;
+      // call this to update cards vp data-vp attr
+      this.createScoringTableHTML(this.cachedScoringTable);
       this.vlayout.setupDone();
       //locale css management
       $("ebd-body").dataset["locale"] =  _('$locale');
@@ -347,8 +353,7 @@ class GameXBody extends GameTokens {
   }
 
   onShowScoringTable(playerId: number) {
-    const mv: string = $("move_nbr").innerHTML;
-    let finalhtm: string = "";
+    const mv = this.gamedatas.notifications.move_nbr;;
 
     const showFunc = (htm: string) => {
       let dlg = new ebg.popindialog();
@@ -358,54 +363,70 @@ class GameXBody extends GameTokens {
       dlg.show();
     };
 
-    if (mv === this.cachedScoreMoveNbr && this.cachedScoreHtm != "") {
-      showFunc(this.cachedScoreHtm);
+    if (mv == this.cachedScoreMoveNbr && this.cachedScoringTable) {
+      const finalhtm = this.createScoringTableHTML(this.cachedScoringTable);
+      showFunc(finalhtm);
     } else {
       let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
 
       this.ajaxcall(url, [], this, (result) => {
-        const tablehtm: string = `
-             <div id="scoretable" class="scoretable">
-                <div class="scoreheader scorecol">
-                      <div class="scorecell header">${_("Player Name")}</div>
-                      <div class="scorecell header corp">${_("Corporation")}</div>
-                      <div class="scorecell ">${_("Terraforming Rank")}</div>
-                      <div class="scorecell ">${_("VP from cities")}</div>
-                      <div class="scorecell ">${_("VP from greeneries")}</div>
-                      <div class="scorecell ">${_("VP from Awards")}</div>
-                      <div class="scorecell ">${_("VP from Milestones")}</div>
-                      <div class="scorecell ">${_("VP from cards")}</div>
-                      <div class="scorecell header total">${_("VP total")}</div>
-                </div>
-                %lines%
-              </div>`;
-
-        let lines: string = "";
-        for (let plid in result.data.contents) {
-          const entry: any = result.data.contents[plid];
-          const plcolor: any = this.getPlayerColor(parseInt(plid));
-          const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-          lines =
-            lines +
-            `
-                <div class=" scorecol">
-                      <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
-                      <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
-                      <div class="scorecell score">${entry.total_details.tr}</div>
-                      <div class="scorecell score">${entry.total_details.cities}</div>
-                      <div class="scorecell score">${entry.total_details.greeneries}</div>
-                      <div class="scorecell score">${entry.total_details.awards}</div>
-                      <div class="scorecell score">${entry.total_details.milestones}</div>
-                      <div class="scorecell score">${entry.total_details.cards}</div>
-                      <div class="scorecell score header total">${entry.total}</div>
-                </div>`;
-        }
-        finalhtm = tablehtm.replace("%lines%", lines);
+        this.cachedScoringTable = result.data.contents;
         this.cachedScoreMoveNbr = mv;
-        this.cachedScoreHtm = finalhtm;
+        const finalhtm = this.createScoringTableHTML(this.cachedScoringTable);
         showFunc(finalhtm);
       });
     }
+  }
+
+  createScoringTableHTML(scoringTable: any) {
+    const tablehtm: string = `
+    <div id="scoretable" class="scoretable">
+       <div class="scoreheader scorecol">
+             <div class="scorecell header">${_("Player Name")}</div>
+             <div class="scorecell header corp">${_("Corporation")}</div>
+             <div class="scorecell ">${_("Terraforming Rank")}</div>
+             <div class="scorecell ">${_("VP from cities")}</div>
+             <div class="scorecell ">${_("VP from greeneries")}</div>
+             <div class="scorecell ">${_("VP from Awards")}</div>
+             <div class="scorecell ">${_("VP from Milestones")}</div>
+             <div class="scorecell ">${_("VP from cards")}</div>
+             <div class="scorecell header total">${_("VP total")}</div>
+       </div>
+       %lines%
+     </div>`;
+
+    let lines: string = "";
+    for (let plid in scoringTable) {
+      const entry: any = scoringTable[plid];
+      const plcolor: any = this.getPlayerColor(parseInt(plid));
+      const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
+      lines =
+        lines +
+        `
+       <div class=" scorecol">
+             <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+             <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
+             <div class="scorecell score">${entry.total_details.tr}</div>
+             <div class="scorecell score">${entry.total_details.cities}</div>
+             <div class="scorecell score">${entry.total_details.greeneries}</div>
+             <div class="scorecell score">${entry.total_details.awards}</div>
+             <div class="scorecell score">${entry.total_details.milestones}</div>
+             <div class="scorecell score">${entry.total_details.cards}</div>
+             <div class="scorecell score header total">${entry.total}</div>
+       </div>`;
+
+       for (let cat in entry.details) {
+        //['details'][$category][$token_key][$key]
+        for (let token_key in entry.details[cat]) {
+           const rec = entry.details[cat][token_key];
+           const node = $(token_key);
+           if (!node) continue;
+           node.dataset.vp = rec.vp;
+        }
+       }
+    }
+    const finalhtm = tablehtm.replace("%lines%", lines);
+    return finalhtm;
   }
 
   onShowMilestonesProgress() {
@@ -980,6 +1001,11 @@ class GameXBody extends GameTokens {
   }
   notif_scoringTable(notif: Notif) {
     console.log(notif);
+    const move = this.gamedatas.notifications.move_nbr;
+    this.cachedScoringTable = notif.args.data;
+    this.cachedScoreMoveNbr = move;
+    // call this to update cards vp data-vp attr
+    this.createScoringTableHTML(this.cachedScoringTable);
   }
 
   getCardTypeById(type: number) {
@@ -1829,12 +1855,10 @@ awarded.`);
       node.dataset.op_code = card_info.q;
 
       const discounted = discount_cost != original_cost;
-      //if (discounted) {
+      if (discounted || !this.isLayoutFull()) {
         node.dataset.discounted = String(discounted);
         node.dataset.discount_cost = String(discount_cost);
-      //} else {
-
-      //}
+      }
 
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
 
@@ -3057,6 +3081,92 @@ awarded.`);
     } else {
       return super.phantomMove(mobileId, newparentId, duration, mobileStyle, onEnd);
     }
+  }
+
+  extractTokenText(node1: ElementOrId,  options?: any){
+    const node: HTMLElement = $(node1) ;
+    if (!node.id) return;
+    let text='';
+    if (node.id.startsWith('card')) {
+      let name = node.dataset.name;
+      const dcost =  node.dataset.discount_cost;
+      const cost = this.getRulesFor(node.id,'cost',0);
+      text+=`[${name}]`;
+      if (cost && options?.showCost) {
+        if (dcost !== undefined && cost != dcost) {
+          text += ` ${cost}(${dcost})ME`;
+        } else text += ` ${cost}ME`;
+      }
+      const vp = node.dataset.vp;
+      if (vp !== undefined && options?.showVp) {
+        text+=` ${vp}VP`;
+      }
+      const res =  node.dataset.resource_counter;
+      if (res) {
+        text+=` ${res}RES`;
+      }
+      return text;
+    }
+    if (node.id.startsWith('tile')) {
+      const hex = node.parentNode as HTMLElement;
+      let hexname = hex.dataset.name;
+      const tile = node;
+
+      text += `${hexname}: `;
+      let name = tile.dataset.name;
+      text += `[${name}]`;
+      const state = tile.dataset.state;
+      if (state && state!="0") {
+        const pid = this.getPlayerIdByNo(state);
+        text += ` ${this.getPlayerName(pid)}(${this.getPlayerColor(pid)})`;
+      }
+      const vp =  tile.dataset.vp;
+      if (vp !== undefined && options?.showVp) {
+        text+=` ${vp}VP`;
+      }
+      return text;
+    }
+    if (node.id.startsWith('tracker')) {
+      const name = node.dataset.name;
+      const state = node.dataset.state;
+      text=`${name} ${state}`;
+      return text;
+    }
+    return node.id;
+  }
+  extractPileText(title: string, query: string, options?: any){
+    let text = title + ": \n";
+
+    document.querySelectorAll(query).forEach((node) => {
+      const inner = this.extractTokenText(node, options);
+      if (!inner) return; // skip empty
+      text += "  " + inner + "\n";
+    });
+    return text;
+  }
+  extractTextGameInfo(){
+    let text = "";
+    text+= `Current player ${this.getPlayerName(this.player_id)} ${this.player_color}\n`;
+    const move =  this.gamedatas.notifications.move_nbr;
+    text+= `Current move ${move}\n`;
+    
+    const plcolor = this.player_color;
+    text+= this.extractPileText('HAND',`.hand_${plcolor} .card`, {showCost: true});
+    text+= this.extractPileText('PLAYED',`.tableau_${plcolor} .card`, {showVp: true});
+    text+= this.extractPileText("RESOURCES",`#playerboard_${plcolor} .tracker`);
+
+
+    for (let plid in this.gamedatas.players) {
+      const plcolor = this.getPlayerColor(parseInt(plid));
+      if (plcolor != this.player_color) {
+        text+= this.extractPileText('PLAYED',`.tableau_${plcolor} .card`, {showVp: true});
+        text+= this.extractPileText("RESOURCES",`#playerboard_${plcolor} .tracker`);
+      }
+
+    }
+    text+= this.extractPileText('MAP',`.map .tile`, {showVp: true});
+    
+    return text;
   }
 }
 
