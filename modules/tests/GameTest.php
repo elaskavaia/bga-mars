@@ -82,6 +82,9 @@ class GameUT extends terraformingmars {
 
 
 final class GameTest extends TestCase {
+
+
+
     public function testGameProgression() {
         $m = $this->game();
         $this->assertNotNull($m);
@@ -675,5 +678,60 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType("2nres", $p, 1, $eaters);
         //$args = $op->argPrimaryDetails();
         $this->assertEquals(true, $op->isVoid());
+    }
+    public function testPaymentMicrobes() {
+        $m = $this->game();
+        $p = PCOLOR;
+        $m->incTrackerValue(PCOLOR, 's', 1);
+        $m->incTrackerValue(PCOLOR, 'm', 10);
+        $psyc = $m->mtFindByName('Psychrophiles');
+        $m->effect_playCard(PCOLOR, $psyc);
+        $m->dbSetTokenLocation("resource_${p}_1", $psyc, 0); // add a microbe
+
+
+        $card = $m->mtFindByName('Greenhouses');
+        $payment = $m->getPayment($p, $card);
+        $this->assertEquals($payment, '6nm');
+        $args = $m->debug_oparg($payment, $card);
+
+        $targets = $args['args']['target'];
+        $this->assertEquals(count($targets), 5);
+        $this->assertEquals($targets[0], 'payment');
+        $this->assertEquals($targets[1], '4m1s');
+        $this->assertEquals($targets[2], '4m1resMicrobe');
+        $this->assertEquals($targets[3], '1s1resMicrobe2m');
+        $this->assertEquals($targets[4], '6m');
+
+        $m->dbSetTokenLocation("resource_${p}_2", $psyc, 0); // add a microbe
+        $args = $m->debug_oparg($payment, $card);
+        $targets = $args['args']['target'];
+        $this->assertEquals(count($targets), 5);
+        $this->assertEquals('payment', $targets[0]);
+        $this->assertEquals('4m1s', $targets[1]);
+        $this->assertEquals('2m2resMicrobe', $targets[2]);
+        $this->assertEquals('1s2resMicrobe', $targets[3]);
+    }
+
+    public function testPaymentHeat() {
+        $m = $this->game();
+        $p = PCOLOR;
+        $m->setTrackerValue(PCOLOR, 's', 1);
+        $m->setTrackerValue(PCOLOR, 'u', 1);
+        $m->setTrackerValue(PCOLOR, 'm', 26);
+        $m->setTrackerValue(PCOLOR, 'h', 2);
+        $psyc = $m->mtFindByName('Helion');
+        $m->effect_playCorporation(PCOLOR, $psyc, false);
+
+        $card = $m->mtFindByName('Space Elevator');
+        $payment = $m->getPayment($p, $card);
+        $this->assertEquals($payment, '27nm');
+        $args = $m->debug_oparg($payment, $card);
+        $targets = $args['args']['target'];
+        $this->assertEquals(count($targets), 5);
+        $this->assertEquals('payment', $targets[0]);
+        $this->assertEquals('25m1s', $targets[1]);
+        $this->assertEquals('24m1u', $targets[2]);
+        $this->assertEquals('1s1u22m', $targets[3]);
+        $this->assertEquals('26m1h', $targets[4]);
     }
 }

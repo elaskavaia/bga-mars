@@ -25,7 +25,7 @@ class Operation_nmM extends AbsOperation {
         }
         $ttoken = $type;
         $ttoken = $this->game->getTrackerId('', $type);
-        
+
         return [
             "name" => $this->getOpName(),
             'count' => $this->getCount(),
@@ -70,24 +70,24 @@ class Operation_nmM extends AbsOperation {
         $rem = $cost;
         $prop = [];
         foreach ($alltypes as $type) {
-
             $er = $info['payment']['rate'][$type];
-
-
-            $propres =    $info['payment']['resopti'][$type]; // optimal res
-            $overres =    $info['payment']['resources'][$type]; // overpay res
-
+            $propres = $info['payment']['resopti'][$type]; // optimal res
+            $overres = $info['payment']['resources'][$type]; // overpay res
+            $typecount = $info['payment']['rescount'][$type]; // total res
             if ($er > 1) {
-                if ($this->addProposal($info,  ['m' => $cost - $propres * $er, $type => $propres])) break;
+                // default proposal
+                $this->addProposal($info,  [ $type => $propres,'m' => $cost - $propres * $er]);
+                // overpayment proposal (no money)
                 if ($overres > $propres) $this->addProposal($info,  [$type => $overres]);
             }
 
             $maxres = (int)floor($rem / $er);
-            $rempropres = min($maxres,  $info['payment']['rescount'][$type]);
+            $rempropres = min($maxres, $typecount);
             $rem = $rem - $rempropres * $er;
             $prop[$type] = $rempropres;
             if ($rem <= 0) {
-                if ($this->addProposal($info, $prop)) break;
+                  // multi-resource proposal
+                $this->addProposal($info, $prop);
             }
         }
         $this->addProposal($info, $prop);
@@ -95,14 +95,14 @@ class Operation_nmM extends AbsOperation {
         //  proposal with minimal resource
         $mcount = $info['payment']['rescount']['m'];
         $heatcount = array_get($info['payment']['rescount'], 'h', 0);
-        $mhcount = $mcount + $heatcount;
+        $mhcount = min ($mcount + $heatcount,$cost);
         if ($mhcount > 0) {
             $type = array_shift($alltypes);
             $er = $info['payment']['rate'][$type];
             $propres = min((int)ceil(($cost - $mhcount) / $er), $info['payment']['rescount'][$type]);
             $propm = min($mcount, $cost - $propres * $er);
             $map = ['m' => $propm, $type => $propres];
-            if ($heatcount > 0) {
+            if ($heatcount > 0 && $mhcount - $propm > 0) {
                 $map['h'] = $mhcount - $propm;
             }
             if ($this->addProposal($info, $map)) return $info;
@@ -217,7 +217,7 @@ class Operation_nmM extends AbsOperation {
 
             if ($ut > 0 && $ut <= $tt) {
                 if ($type == MA_RES_MICROBE) {
-                    $this->game->executeImmediately($this->color,"nres", $ut, 'card_main_P39');
+                    $this->game->executeImmediately($this->color, "nres", $ut, 'card_main_P39');
                 } else {
                     $this->game->effect_incCount($this->color, $type, -$ut);
                 }
