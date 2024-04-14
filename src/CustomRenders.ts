@@ -261,7 +261,7 @@
           }
 
         }
-      } else if (op == ',' && arg1.includes('counter(')) {
+      } else if ((op == ',' || op == '+') && arg1.includes('counter(')) {
         let retSrcs = this.parseExprItem(expr[3],depth+1);
         let retGains = this.parseExprItem(expr[4],depth+1);
         let isProd = false;
@@ -274,7 +274,7 @@
           if (isProd) retSrc.production = true;
           items.push(retSrc);
         }
-      } else if (op == "," || op == ";") {
+      } else if (op == "," || op == ";" || op == '+') {
         for (let i = 3; i < expr.length; i++) {
           for (let ret of this.parseExprItem(expr[i],depth+1)) items.push(ret);
         }

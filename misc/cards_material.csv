@@ -87,7 +87,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 77|Solar Wind Power|1|pe,2u|||11||Science Space Energy|0|Basic|Increase your energy production 1 step and gain 2 titanium.||||
 78|Ice Asteroid|3|w,w|||23||Space Event|0|Basic|Place 2 ocean tiles.||||
 79|Quantum Extractor|2|4pe||onPay_cardSpace:2m|13|tagScience>=4|Science Energy|0|Corporate|Increase your energy production 4 steps||When you play a space card, you pay 2 M€ less for it||
-80|Giant Ice Asteroid|3|2t,w,w,6np_Any|||36||Space Event|0|Basic|Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any player.||||
+80|Giant Ice Asteroid|3|2t+w+w+6np_Any|||36||Space Event|0|Basic|Raise temperature 2 steps and place 2 ocean tiles. Remove up to 6 plants from any player.||||
 81|Ganymede Colony|1|city('Ganymede Colony')|||20||Space City Jovian|tagJovian|Basic|Place a city tile ON THE RESERVED AREA [for Ganymede Colony].|||1 VP per Jovian tag you have.|
 82|Callisto Penal Mines|1|3pm|||24||Space Jovian|2|Corporate|Increase your M€ production 3 steps.||||
 83|Giant Space Mirror|1|3pe|||17||Space Energy|0|Basic|Increase your energy production 3 steps.||||

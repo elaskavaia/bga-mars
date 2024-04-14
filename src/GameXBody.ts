@@ -1720,10 +1720,6 @@ awarded.`);
     }
 
     if (key.startsWith("card_") && location.startsWith("tableau")) {
-      const t = this.getRulesFor(key, "t");
-      const plcolor = getPart(location, 1);
-      const count = $(location).querySelectorAll(`[data-card-type="${t}"]`).length;
-
       const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
       tokenNode.parentElement.parentElement.dataset.subcount = sub;
       tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));

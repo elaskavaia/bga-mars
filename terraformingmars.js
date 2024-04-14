@@ -2279,7 +2279,7 @@ var CustomRenders = /** @class */ (function () {
                 }
             }
         }
-        else if (op == ',' && arg1.includes('counter(')) {
+        else if ((op == ',' || op == '+') && arg1.includes('counter(')) {
             var retSrcs = this.parseExprItem(expr[3], depth + 1);
             var retGains = this.parseExprItem(expr[4], depth + 1);
             var isProd = false;
@@ -2297,7 +2297,7 @@ var CustomRenders = /** @class */ (function () {
                 items.push(retSrc);
             }
         }
-        else if (op == "," || op == ";") {
+        else if (op == "," || op == ";" || op == '+') {
             for (var i = 3; i < expr.length; i++) {
                 for (var _b = 0, _c = this.parseExprItem(expr[i], depth + 1); _b < _c.length; _b++) {
                     var ret = _c[_b];
@@ -4995,9 +4995,6 @@ var GameXBody = /** @class */ (function (_super) {
             this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
         }
         if (key.startsWith("card_") && location.startsWith("tableau")) {
-            var t = this.getRulesFor(key, "t");
-            var plcolor = getPart(location, 1);
-            var count = $(location).querySelectorAll("[data-card-type=\"".concat(t, "\"]")).length;
             var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
             tokenNode.parentElement.parentElement.dataset.subcount = sub;
             tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
