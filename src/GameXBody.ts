@@ -409,8 +409,8 @@ class GameXBody extends GameTokens {
              <div class="scorecell score">${entry.total_details.tr}</div>
              <div class="scorecell score">${entry.total_details.cities}</div>
              <div class="scorecell score">${entry.total_details.greeneries}</div>
-             <div class="scorecell score">${entry.total_details.awards}</div>
-             <div class="scorecell score">${entry.total_details.milestones}</div>
+             <div class="scorecell score">${entry.total_details.awards??_('Not Applicable')}</div>
+             <div class="scorecell score">${entry.total_details.milestones??_('Not Applicable')}</div>
              <div class="scorecell score">${entry.total_details.cards}</div>
              <div class="scorecell score header total">${entry.total}</div>
        </div>`;

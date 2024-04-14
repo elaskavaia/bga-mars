@@ -254,7 +254,7 @@ abstract class PGameXBody extends PGameMachine {
         //$this->machine->interrupt();
         //$this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
         $cards = $this->tokens->pickTokensForLocation(170, 'deck_main', 'temp');
-        $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');     
+        $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');
 
         //$this->dbSetTokensLocation($cards, 'temp');
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
@@ -590,8 +590,8 @@ abstract class PGameXBody extends PGameMachine {
                     $delta += $outcome;
                 }
                 if ($delta) {
-                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, $delta)
-                        || $this->evaluateExpression($cond, $owner, $tokenid, -$delta);
+                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta])
+                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta]);
                 }
                 if (!$valid) return false; // fail prereq check
             }
@@ -660,13 +660,13 @@ abstract class PGameXBody extends PGameMachine {
         return MA_OK;
     }
 
-    function evaluateExpression($cond, $owner = 0, $context = null, $mods = null): int {
+    function evaluateExpression($cond, $owner = 0, $context = null, $options = null): int {
         try {
             if (!$owner)
                 $owner = $this->getActivePlayerColor();
             $expr = MathExpression::parse($cond);
-            $mapper = function ($x) use ($owner, $context, $mods) {
-                return $this->evaluateTerm($x, $owner, $context, $mods);
+            $mapper = function ($x) use ($owner, $context, $options) {
+                return $this->evaluateTerm($x, $owner, $context, $options);
             };
             return $expr->evaluate($mapper);
         } catch (Exception $e) {
@@ -675,7 +675,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function evaluateTerm($x, $owner, $context = null, $mods = null) {
+    function evaluateTerm($x, $owner, $context = null, ?array $options = null) {
         if ($x == 'chand') {
             return $this->tokens->countTokensInLocation("hand_$owner");
         }
@@ -703,7 +703,8 @@ abstract class PGameXBody extends PGameMachine {
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
             $value = $this->tokens->getTokenState("tracker_${x}");
-            if (!$mods) return $value;
+            if (!$options) return $value;
+            $mods = array_get($options, 'mods', 0);
             if ($x == 't') $mods = $mods * 2;
             return $value + $mods;
         }
@@ -734,6 +735,13 @@ abstract class PGameXBody extends PGameMachine {
         if ($create == 4) {
             // per player counter XXX _all
             $value = $this->tokens->getTokenState("tracker_${x}_${owner}");
+            if (startsWith($x, 'tag')) {
+                $wilds = array_get($options, 'wild', 0);
+                if ($wilds) {
+                    $valueWild = $this->tokens->getTokenState("tracker_tagWild_${owner}");
+                    $value += $valueWild;
+                }
+            }
         } else {
             $value = $this->tokens->getTokenState("tracker_${x}");
         }
@@ -1792,8 +1800,10 @@ abstract class PGameXBody extends PGameMachine {
                 $curr = $this->tokens->getTokenState("tracker_tr_${color}");
                 $this->scoreTableVp($table, $player_id, 'tr', "tracker_tr_${color}", $curr);
 
-                $this->scoreTableVp($table, $player_id,  'awards');
-                $this->scoreTableVp($table, $player_id,  'milestones');
+                if (!$this->isSolo()) {
+                    $this->scoreTableVp($table, $player_id,  'awards');
+                    $this->scoreTableVp($table, $player_id,  'milestones');
+                }
             }
         } else {
             foreach ($players as $player_id => $player) {
@@ -1807,15 +1817,17 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
 
-        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
-        foreach ($markers as $id => $rec) {
-            $loc = $rec['location']; // award_x
-            $this->scoreAward($loc, $table);
-        }
-        $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
-        foreach ($markers as $id => $rec) {
-            $loc = $rec['location']; // milestone_x
-            $this->scoreMilestone($loc, $id, $table);
+        if (!$this->isSolo()) {
+            $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
+            foreach ($markers as $id => $rec) {
+                $loc = $rec['location']; // award_x
+                $this->scoreAward($loc, $table);
+            }
+            $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
+            foreach ($markers as $id => $rec) {
+                $loc = $rec['location']; // milestone_x
+                $this->scoreMilestone($loc, $id, $table);
+            }
         }
         // score map, this is split per type for animation effects
         foreach ($players as $player) {
@@ -2249,7 +2261,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
         $table = [];
         $this->scoreAll($table);
-        $this->notifyAllPlayers('scoringTable', '', ['data'=>$table]);
+        $this->notifyAllPlayers('scoringTable', '', ['data' => $table]);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
