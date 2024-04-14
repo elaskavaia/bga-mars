@@ -2023,13 +2023,12 @@ abstract class PGameXBody extends PGameMachine {
                 continue;
             }
             try {
-                $value = $this->evaluateExpression($vp, $owner, $card);
+                $value = $this->evaluateExpression($vp, $owner, $card) ?? 0;
                 $this->scoreTableVp($table, $player_id,   $score_category, $card, $value);
-                if ($value && $commit) {
+                if ($commit) {
                     $this->dbIncScoreValueAndNotify($player_id, $value, clienttranslate('${player_name} scores ${inc} point/s for card ${token_name}'), "game_vp_cards", [
                         'target' => $card, 'token_name' => $card
                     ]);
-                    continue;
                 }
             } catch (Exception $e) {
                 $this->debugConsole("error during expression eval $card=>'$vp'");

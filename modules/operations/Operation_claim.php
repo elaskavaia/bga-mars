@@ -21,7 +21,13 @@ class Operation_claim extends AbsOperation {
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $claimed) {
             if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
             if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
-            if ($this->game->precondition($color, $tokenId)) return MA_ERR_PREREQ;
+            $cond = $this->game->getRulesFor($tokenId, "pre");
+            if ($cond) {
+                $valid = $this->game->evaluateExpression($cond, $color, $tokenId, ['wild'=>1]);
+                if (!$valid) return MA_ERR_PREREQ; // fail prereq check
+            }
+     
+
             if (!$this->game->canAfford($color, $tokenId)) return MA_ERR_COST;
             return MA_OK;
         });

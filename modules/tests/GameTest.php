@@ -165,6 +165,23 @@ final class GameTest extends TestCase {
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wild'=>1]));
+
+
+    }
+
+    public function testClaimBuilderMilestoneWithWild() {
+        $m = $this->game();
+        $color = PCOLOR;
+        $m->tokens->setTokenState("tracker_tagBuilding_${color}",7);
+        $m->tokens->setTokenState("tracker_tagWild_${color}",1);
+        $m->setTrackerValue(PCOLOR, 'm', 10);
+   
+        /** @var Operation_claim */
+        $op = $m->getOperationInstanceFromType("claim", PCOLOR);
+        $args = $op->argPrimaryDetails();
+        $builder = array_get($args, 'milestone_4');
+        $this->assertNotNull($builder);
+        $this->assertEquals(MA_OK,$builder['q']);
     }
 
 
