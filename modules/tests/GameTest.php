@@ -151,6 +151,22 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
     }
 
+    public function testEvaluateTagCount() {
+        $m = $this->game();
+        $card = $m->mtFindByName('Power Infrastructure');
+        $m->effect_playCard(PCOLOR, $card);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
+        
+        $card = $m->mtFindByName('Research Coordination');
+        $m->effect_playCard(PCOLOR, $card);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
+        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wild'=>1]));
+    }
+
 
     public function testCounterCall() {
         $m = $this->game();
@@ -696,10 +712,12 @@ final class GameTest extends TestCase {
 
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
-        $this->assertEquals($targets[0], 'payment');
-        $this->assertEquals($targets[1], '4m1s');
-        $this->assertEquals($targets[2], '4m1resMicrobe');
-        $this->assertEquals($targets[3], '1s1resMicrobe2m');
+
+        $this->assertEquals('payment', $targets[0]);
+        $this->assertEquals('1s4m', $targets[1]);
+        $this->assertEquals('1resMicrobe4m', $targets[2]);
+        $this->assertEquals('1s1resMicrobe2m', $targets[3]);
+
         $this->assertEquals($targets[4], '6m');
 
         $m->dbSetTokenLocation("resource_${p}_2", $psyc, 0); // add a microbe
@@ -707,8 +725,8 @@ final class GameTest extends TestCase {
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
         $this->assertEquals('payment', $targets[0]);
-        $this->assertEquals('4m1s', $targets[1]);
-        $this->assertEquals('2m2resMicrobe', $targets[2]);
+        $this->assertEquals('1s4m', $targets[1]);
+        $this->assertEquals('2resMicrobe2m', $targets[2]);
         $this->assertEquals('1s2resMicrobe', $targets[3]);
     }
 
@@ -729,8 +747,8 @@ final class GameTest extends TestCase {
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
         $this->assertEquals('payment', $targets[0]);
-        $this->assertEquals('25m1s', $targets[1]);
-        $this->assertEquals('24m1u', $targets[2]);
+        $this->assertEquals('1s25m', $targets[1]);
+        $this->assertEquals('1u24m', $targets[2]);
         $this->assertEquals('1s1u22m', $targets[3]);
         $this->assertEquals('26m1h', $targets[4]);
     }
