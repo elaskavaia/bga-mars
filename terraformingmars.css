@@ -567,7 +567,8 @@
   background-color: #FF5722;
 }
 
-.card[data-card-type="5"], .prelude {
+.card[data-card-type="5"],
+.prelude {
   background-color: #efc0bc;
 }
 
@@ -628,10 +629,16 @@
   font-size: calc(var(--card-width) * 0.08);
 }
 
-.hand .card_cost.discounted .minidiscount, .draw .card_cost.discounted .minidiscount, .draft .card_cost.discounted .minidiscount, .tooltip-body .card_cost.discounted .minidiscount {
+.hand .card_cost.discounted .minidiscount,
+.draw .card_cost.discounted .minidiscount,
+.draft .card_cost.discounted .minidiscount,
+.tooltip-body .card_cost.discounted .minidiscount {
   display: flex;
 }
-.hand .card_cost.discounted .discountarrow, .draw .card_cost.discounted .discountarrow, .draft .card_cost.discounted .discountarrow, .tooltip-body .card_cost.discounted .discountarrow {
+.hand .card_cost.discounted .discountarrow,
+.draw .card_cost.discounted .discountarrow,
+.draft .card_cost.discounted .discountarrow,
+.tooltip-body .card_cost.discounted .discountarrow {
   display: block;
 }
 #display_main .token_cost {
@@ -2800,20 +2807,32 @@
 .mcompact .card.prelude .card_decor .card_illustration,
 .mcompact .card.prelude .card_decor .card_badges,
 .mcompact .card.prelude .card_decor .card_outer_action,
-.mcompact .card.prelude .card_decor .card_cost {
+.mcompact .card.prelude .card_decor .card_cost,
+.mcompact .card.prelude .card_decor .card_vp,
+.mcompact .card.prelude .card_decor .card_number_binary,
+.mcompact .card.prelude_main .card_decor .card_illustration,
+.mcompact .card.prelude_main .card_decor .card_badges,
+.mcompact .card.prelude_main .card_decor .card_outer_action,
+.mcompact .card.prelude_main .card_decor .card_cost,
+.mcompact .card.prelude_main .card_decor .card_vp,
+.mcompact .card.prelude_main .card_decor .card_number_binary {
   display: none;
 }
-.mcompact .card.prelude .card_decor .card_effect * {
+.mcompact .card.prelude .card_decor .card_effect *,
+.mcompact .card.prelude_main .card_decor .card_effect * {
   display: none;
 }
-.mcompact .card.prelude .card_decor .card_effect .card_tt {
+.mcompact .card.prelude .card_decor .card_effect .card_tt,
+.mcompact .card.prelude_main .card_decor .card_effect .card_tt {
   display: block;
   position: absolute;
 }
-.mcompact .card.prelude .card_decor .blocks_2 .card_tt {
+.mcompact .card.prelude .card_decor .blocks_2 .card_tt,
+.mcompact .card.prelude_main .card_decor .blocks_2 .card_tt {
   left: 35%;
 }
-.mcompact .card.prelude .card_decor .blocks_3 .card_tt {
+.mcompact .card.prelude .card_decor .blocks_3 .card_tt,
+.mcompact .card.prelude_main .card_decor .blocks_3 .card_tt {
   left: 50%;
 }
 .mcompact .card_prelude_P02 .card_tt {
@@ -2869,6 +2888,74 @@
 }
 .mcompact .card_prelude_P35 .card_tt {
   left: 46% !important;
+}
+.mcompact .card.prelude_main .card_bg {
+  background-image: url("img/prelude/preG_cards.jpg");
+  background-size: 1000% auto;
+}
+.mcompact .card.prelude_main .card_title {
+  top: 11%;
+}
+.mcompact .card.prelude_main .card_effect {
+  width: 85%;
+}
+.mcompact .card.prelude_main .card_prereq {
+  top: 4%;
+  font-size: calc(var(--card-width) * 0.055);
+}
+.mcompact .card.prelude_main .card_prereq .badge, .mcompact .card.prelude_main .card_prereq .token_img {
+  display: none;
+}
+.mcompact .card.prelude_main .card_prereq .prereq_content {
+  background: unset;
+}
+.mcompact .card_main_P36 .card_tt {
+  left: 36% !important;
+  top: 20% !important;
+  width: 30%;
+}
+.mcompact .card_main_P36 .card_bg {
+  background-position: 0% 0;
+}
+.mcompact .card_main_P37 .card_tt {
+  left: 40% !important;
+  top: 0% !important;
+}
+.mcompact .card_main_P37 .card_bg {
+  background-position: 11.1111111111% 0;
+}
+.mcompact .card_main_P38 .card_tt {
+  left: 36% !important;
+  width: 30%;
+}
+.mcompact .card_main_P38 .card_bg {
+  background-position: 22.2222222222% 0;
+}
+.mcompact .card_main_P39 .card_tt {
+  left: 20% !important;
+}
+.mcompact .card_main_P39 .card_bg {
+  background-position: 33.3333333333% 0;
+}
+.mcompact .card_main_P40 .card_tt {
+  left: 10% !important;
+  top: 10% !important;
+}
+.mcompact .card_main_P40 .card_bg {
+  background-position: 44.4444444444% 0;
+}
+.mcompact .card_main_P41 .card_tt {
+  left: 40% !important;
+}
+.mcompact .card_main_P41 .card_bg {
+  background-position: 55.5555555556% 0;
+}
+.mcompact .card_main_P42 .card_tt {
+  left: 43% !important;
+  top: 10% !important;
+}
+.mcompact .card_main_P42 .card_bg {
+  background-position: 66.6666666667% 0;
 }
 
 .outer_production {
@@ -3077,12 +3164,18 @@
   left: 44%;
 }
 
-.card_corp_22 .card_initial, .card_corp_23 .card_initial, .card_corp_21 .card_initial, .card_corp_19 .card_initial {
+.card_corp_22 .card_initial,
+.card_corp_23 .card_initial,
+.card_corp_21 .card_initial,
+.card_corp_19 .card_initial {
   top: 62%;
   left: 6.5%;
   width: 37%;
 }
-.card_corp_22 .card_effect, .card_corp_23 .card_effect, .card_corp_21 .card_effect, .card_corp_19 .card_effect {
+.card_corp_22 .card_effect,
+.card_corp_23 .card_effect,
+.card_corp_21 .card_effect,
+.card_corp_19 .card_effect {
   top: 62%;
   left: 53%;
   width: 40%;
@@ -3380,7 +3473,8 @@
 .mcompact .card_resource_holder[data-resource_counter="0"] {
   display: none;
 }
-.mcompact .card_resource_holder[data-resource_counter="1"] .resource_counter, .mcompact .card_resource_holder[data-resource_counter="1"] .counter_sep {
+.mcompact .card_resource_holder[data-resource_counter="1"] .resource_counter,
+.mcompact .card_resource_holder[data-resource_counter="1"] .counter_sep {
   display: none;
 }
 .mcompact .card_resource_holder .resource {
