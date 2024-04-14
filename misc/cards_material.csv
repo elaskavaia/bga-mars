@@ -16,9 +16,9 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 6|Inventors' Guild|2||predraw,?buycard,prediscard||9||Science|0|Corporate||Look at the top card and either buy it or discard it|||
 7|Martian Rails|2||ne:counter(all_cityonmars),m||13||Building|0|Basic||Spend 1 energy to gain 1 M€ for each city tile ON MARS.|||
 8|Capital|1|2npe,5pm,tile|||26|w>=4|Building City|adj_ocean|Basic|Place [the capital city] tile. Decrease your energy production 2 steps and increase your M€ production 5 steps|||1 ADDITIONAL VP FOR EACH OCEAN TILE ADJACENT TO THIS CITY TILE.|
-9|Asteroid|3|2u,t,3np_Any|||14||Space Event|0|Basic|Raise temperature 1 step and gain 2 titanium. Remove up to 3 plants from any player.||||
-10|Comet|3|t,w,3np_Any|||21||Space Event|0|Basic|Raise temperature 1 step and place an ocean tile. Remove up to 3 plants from any player.||||
-11|Big Asteroid|3|4u,2t,4np_Any|||27||Space Event|0|Basic|Raise temperature 2 steps and gain 4 titanium. Remove up to 4 plants from any player.||||
+9|Asteroid|3|2u+t+3np_Any|||14||Space Event|0|Basic|Raise temperature 1 step and gain 2 titanium. Remove up to 3 plants from any player.||||
+10|Comet|3|t+w+3np_Any|||21||Space Event|0|Basic|Raise temperature 1 step and place an ocean tile. Remove up to 3 plants from any player.||||
+11|Big Asteroid|3|4u+2t+4np_Any|||27||Space Event|0|Basic|Raise temperature 2 steps and gain 4 titanium. Remove up to 4 plants from any player.||||
 12|Water Import From Europa|2||12nmu:w||25||Space Jovian|tagJovian|Basic||Pay 12 M€ to place an ocean tile. TITANIUM MAY BE USED as if playing a space card.||1 VP for each Jovian tag you have|
 13|Space Elevator|2|pu|ns:5m||27||Building Space|2|Corporate|Increase your titanium production 1 step.|Spend 1 steel to gain 5 M€|||
 14|Development Center|2||ne:draw||11||Science Building|0|Corporate||Spend 1 energy to draw a card.|||
@@ -46,7 +46,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 36|Release of Inert Gases|3|2tr|||14||Event|0|Basic|Raise your terraform rating 2 steps.||||
 37|Nitrogen-Rich Asteroid|3|2tr,t,counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp|||31||Space Event|0|Basic|Raise your terraforming rating 2 steps and temperature 1 step. Increase your plant production 1 step, or 4 steps if you have 3 plant tags.||||
 38|Rover Construction|2|||place_city:2m:this:any|8||Building|1|Basic|||When any city tile is placed, gain 2 M€||
-39|Deimos Down|3|3t,4s,8np_Any|||31||Space Event|0|Basic|Raise temperature 3 steps and gain 4 steel. Remove up to 8 plants from any player.||||
+39|Deimos Down|3|3t+4s+8np_Any|||31||Space Event|0|Basic|Raise temperature 3 steps and gain 4 steel. Remove up to 8 plants from any player.||||
 40|Asteroid Mining|1|2pu|||30||Space Jovian|2|Basic|Increase your titanium production 2 steps.||||
 41|Food Factory|1|1npp,4pm|||12||Building|1|Basic|Decrease your plant production 1 step and increase your M€ production 4 steps.||||
 42|Archaebacteria|1|pp|||6|t<=-18|Microbe|0|Basic|Increase your plant production 1 step.||||
@@ -70,7 +70,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 60|Trees|1|3pp,p|||13|t>=-4|Plant|1|Basic|Increase your plant production 3 steps. Gain 1 plant.||||
 61|Great Escarpment Consortium|1|nps_Any:ps|||6|ps>0||0|Corporate|Requires that you have steel production. Decrease any steel production 1 step and increase your own 1 step||||
 62|Mineral Deposit|3|5s|||5||Event|0|Corporate|Gain 5 steel.||||
-63|Mining Expedition|3|2s,2np_Any,o|||12||Event|0|Basic|Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.||||
+63|Mining Expedition|3|2s+2np_Any+o|||12||Event|0|Basic|Raise oxygen 1 step. Remove 2 plants from any player. Gain 2 steel.||||
 64|Mining Area|1|tile(adj_own)|||4||Building|0|Corporate|Place [the mining] tile on an area with a steel or titanium placement bonus, adjacent to another of your tiles. Increase your production of that resource 1 step.||||
 65|Building Industries|1|npe,2ps|||6||Building|0|Corporate|Decrease your energy production 1 step and increase your steel production 2 steps.||||
 66|Land Claim|3|acard66|||1||Event|0|Corporate|Place your marker on a non-reserved area. Only you may place a tile here||||
