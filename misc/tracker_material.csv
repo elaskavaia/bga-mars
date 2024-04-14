@@ -79,6 +79,7 @@ tracker_tagJovian|Count of Jovian tags
 tracker_tagEnergy|Count of Power tags
 tracker_tagEvent|Count of played Events cards
 #tracker_tagVenus|Count of Venus tags
+tracker_tagWild|Count of Wild tags
 
 tracker_resMicrobe|Microbe
 
