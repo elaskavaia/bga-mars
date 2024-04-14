@@ -3591,7 +3591,7 @@ var GameXBody = /** @class */ (function (_super) {
         _this.cachedScoreHtm = "";
         // private parses:any;
         _this.currentOperation = {}; // bag of data to support operation engine
-        _this.classSelected = "selected"; // for the purpose of multi-select operations
+        _this.classSelected = "mr_selected"; // for the purpose of multi-select operations
         _this.prevLogId = 0;
         _this.CON = {};
         _this.stacks = [];
@@ -3861,7 +3861,7 @@ var GameXBody = /** @class */ (function (_super) {
         for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {
             var item = lsStacks_1[_i];
             // read default from local storage
-            item.default = parseInt(this.localSettings.readProp('defaultstack_' + getPart(item.div, 1), String(item.default)));
+            item.default = parseInt(this.localSettings.readProp("defaultstack_" + getPart(item.div, 1), String(item.default)));
             var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
             stack.render("tableau_" + playerColor);
             this.stacks.push(stack);
@@ -4883,17 +4883,17 @@ var GameXBody = /** @class */ (function (_super) {
         }
         // update resource holder counters
         if (key.startsWith("resource_")) {
-            //debugger;
+            // debugger;
             var targetCard = 0;
             var removed = false;
             if (location.startsWith("card_")) {
                 //resource added to card
-                targetCard = getIntPart(location, 2);
+                targetCard = getPart(location, 2);
             }
             else if (prevLocation === null || prevLocation === void 0 ? void 0 : prevLocation.startsWith("card_")) {
                 //resource removed from a card
                 removed = true;
-                targetCard = getIntPart(prevLocation, 2);
+                targetCard = getPart(prevLocation, 2);
             }
             if (targetCard) {
                 if (this.isLayoutFull()) {
@@ -6018,7 +6018,7 @@ var GameXBody = /** @class */ (function (_super) {
                 return true;
             }
             else {
-                $(tid).classList.toggle("selected"); // fallback
+                $(tid).classList.toggle(this.classSelected); // fallback
                 this.showError("Not implemented");
                 return false;
             }

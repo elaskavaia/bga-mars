@@ -19,7 +19,7 @@ class GameXBody extends GameTokens {
   private cachedScoreHtm: string = "";
   // private parses:any;
   private currentOperation: any = {}; // bag of data to support operation engine
-  private classSelected: string = "selected"; // for the purpose of multi-select operations
+  private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
   private prevLogId = 0;
 
   private stacks:CardStack[];
@@ -295,10 +295,9 @@ class GameXBody extends GameTokens {
   setupPlayerStacks(playerColor: string): void {
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
 
-
     let lsStacks: any;
     // not allow to hide effects and actions, it has important info affecting game
-    let noHidden =  [View.Synthetic, View.Stacked, View.Full];
+    let noHidden = [View.Synthetic, View.Stacked, View.Full];
     if (!this.isLayoutFull()) {
       // digital
       lsStacks = [
@@ -309,7 +308,7 @@ class GameXBody extends GameTokens {
           div: "cards_2",
           color_class: "blue",
           default: View.Stacked,
-          views:noHidden
+          views: noHidden
         },
         { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
         { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full }
@@ -333,7 +332,7 @@ class GameXBody extends GameTokens {
     }
     for (const item of lsStacks) {
       // read default from local storage
-      item.default = parseInt(this.localSettings.readProp('defaultstack_'+getPart(item.div,1),String(item.default)));
+      item.default = parseInt(this.localSettings.readProp("defaultstack_" + getPart(item.div, 1), String(item.default)));
       const stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
       stack.render("tableau_" + playerColor);
       this.stacks.push(stack);
@@ -1623,16 +1622,16 @@ awarded.`);
 
     // update resource holder counters
     if (key.startsWith("resource_")) {
-      //debugger;
+      // debugger;
       let targetCard = 0;
       let removed = false;
       if (location.startsWith("card_")) {
         //resource added to card
-        targetCard = getIntPart(location, 2);
+        targetCard = getPart(location, 2);
       } else if (prevLocation?.startsWith("card_")) {
         //resource removed from a card
         removed = true;
-        targetCard = getIntPart(prevLocation, 2);
+        targetCard = getPart(prevLocation, 2);
       }
       if (targetCard) {
         if (this.isLayoutFull()) {
@@ -2822,7 +2821,7 @@ awarded.`);
         if (ret === undefined) return false;
         return true;
       } else {
-        $(tid).classList.toggle("selected"); // fallback
+        $(tid).classList.toggle(this.classSelected); // fallback
         this.showError("Not implemented");
         return false;
       }

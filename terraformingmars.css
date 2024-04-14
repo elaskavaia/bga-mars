@@ -224,7 +224,7 @@
   left: 0px;
 }
 
-.active_slot.selected.card {
+.active_slot.mr_selected.card {
   box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #3F51B5 !important;
   top: -20px;
 }
