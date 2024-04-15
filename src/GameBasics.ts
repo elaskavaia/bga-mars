@@ -963,6 +963,7 @@ class GameBasics extends GameGui {
         false,
         "gray"
       );
+      copylog.dataset.lines = "100";
     }
 
     dojo.place(copylog, "settings-controls-container", "first");
@@ -988,11 +989,13 @@ class GameBasics extends GameGui {
   }
 
   copyLogToClipBoard() {
-    let text = "LOGS (100 last lines)\n";
+    const linesMax = parseInt( $('button_copylog')?.dataset.lines ?? "100");
+    let text = `LOGS (${linesMax} last lines)\n`;
     let lines = 0;
+ 
     document.querySelectorAll("#logs > *").forEach((lognode) => {
       lines++;
-      if (lines > 100) return;
+      if (lines > linesMax) return;
       text += this.extractTextFromLogItem(lognode) + "\n";
     });
     let text2 = "GAME situation\n";

@@ -848,6 +848,7 @@ var GameBasics = /** @class */ (function (_super) {
         var copylog = $("button_copylog");
         if (!copylog) {
             copylog = this.addActionButton("button_copylog", _("Copy LOG"), function () { return _this.copyLogToClipBoard(); }, "settings-controls-container", false, "gray");
+            copylog.dataset.lines = "100";
         }
         dojo.place(copylog, "settings-controls-container", "first");
         dojo.place(bug, "settings-controls-container", "first");
@@ -873,11 +874,13 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.copyLogToClipBoard = function () {
         var _this = this;
-        var text = "LOGS (100 last lines)\n";
+        var _a, _b;
+        var linesMax = parseInt((_b = (_a = $('button_copylog')) === null || _a === void 0 ? void 0 : _a.dataset.lines) !== null && _b !== void 0 ? _b : "100");
+        var text = "LOGS (".concat(linesMax, " last lines)\n");
         var lines = 0;
         document.querySelectorAll("#logs > *").forEach(function (lognode) {
             lines++;
-            if (lines > 100)
+            if (lines > linesMax)
                 return;
             text += _this.extractTextFromLogItem(lognode) + "\n";
         });
