@@ -86,9 +86,12 @@ abstract class PGameXBody extends PGameMachine {
                 }
 
                 if (!$this->isCorporateEraVariant()) {
+                    $this->notifyAllPlayers('message',clienttranslate('Basic mode - everybody starts with 1 resource income'),[]);
                     foreach ($production as $prodtype) {
                         $this->effect_incProduction($color, $prodtype, 1);
                     }
+                } else {
+                    $this->notifyAllPlayers('message',clienttranslate('Corporate era mode - no initial resource income'),[]);
                 }
 
                 // set proper TR and matching score and matching stat
@@ -1749,8 +1752,8 @@ abstract class PGameXBody extends PGameMachine {
             $this->setStat($score, 'game_vp_total', $player_id);
             $color = $player["player_color"];
             $corp = $this->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
-            $corp_id = (int) getPart($corp['key'], 2);
-            $this->setStat($corp_id, 'game_corp', $player_id);
+            $corp_id = (int) getPart($corp['key'], 2, true);
+            if ($corp_id) $this->setStat($corp_id, 'game_corp', $player_id);
 
             $theme = $this->dbUserPrefs->getPrefValue($player_id, 100);
             $this->setStat($theme, 'game_theme', $player_id);
@@ -1869,8 +1872,12 @@ abstract class PGameXBody extends PGameMachine {
     function scoreMilestone(string $loc, string $id, array &$table = null) {
         $commit = ($table === null);      // only record the data, do not update the score or send notif
 
-        $color = getPart($id, 1);
+        $color = getPart($id, 1, true);
         $player_id = $this->getPlayerIdByColor($color);
+        if (!$player_id) {
+            $this->warn("no player id found when scoring milestones $color $id");
+            return;
+        }
         $score_category = 'milestones';
         $points = 5;
         if ($commit) $this->dbIncScoreValueAndNotify($player_id, $points, clienttranslate('${player_name} scores ${inc} point/s for milestone'), "game_vp_ms", [
