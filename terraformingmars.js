@@ -875,7 +875,7 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.copyLogToClipBoard = function () {
         var _this = this;
         var _a, _b;
-        var linesMax = parseInt((_b = (_a = $('button_copylog')) === null || _a === void 0 ? void 0 : _a.dataset.lines) !== null && _b !== void 0 ? _b : "100");
+        var linesMax = parseInt((_b = (_a = $("button_copylog")) === null || _a === void 0 ? void 0 : _a.dataset.lines) !== null && _b !== void 0 ? _b : "100");
         var text = "LOGS (".concat(linesMax, " last lines)\n");
         var lines = 0;
         document.querySelectorAll("#logs > *").forEach(function (lognode) {
@@ -887,11 +887,19 @@ var GameBasics = /** @class */ (function (_super) {
         var text2 = "GAME situation\n";
         text2 += this.extractTextGameInfo();
         navigator.clipboard.writeText(text + text2);
-        var d = new ebg.popindialog();
-        d.create("log_info");
         var html = "\n    Text was copied to clipboard, you can just paste it in the bug report<br>\n    NOTE: this may reveal private info about your hand card, please remove this info manually if you care\n    <br>\n    <pre class='mr_scrollable'>\n    ".concat(text, "\n    </pre>\n    <br>\n    <pre class='mr_scrollable'>\n    ").concat(text2, "\n    </pre>\n    ");
-        d.setContent(html);
-        d.show();
+        this.showPopin(html, "log_info", "Game Info for bug report");
+    };
+    GameBasics.prototype.showPopin = function (html, id, title) {
+        if (id === void 0) { id = "mr_dialog"; }
+        if (title === void 0) { title = undefined; }
+        var dialog = new ebg.popindialog();
+        dialog.create(id);
+        if (title)
+            dialog.setTitle(title);
+        dialog.setContent(html);
+        dialog.show();
+        return dialog;
     };
     GameBasics.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
@@ -1032,11 +1040,8 @@ var GameBasics = /** @class */ (function (_super) {
                 return false;
         if (this.tooltips[id]) {
             dijit.hideTooltip(id);
-            this._displayedTooltip = new ebg.popindialog();
-            this._displayedTooltip.create("current_tooltip");
             var html = this.tooltips[id].getContent($(id));
-            this._displayedTooltip.setContent(html);
-            this._displayedTooltip.show();
+            this._displayedTooltip = this.showPopin(html, "current_tooltip");
         }
         return true;
     };
@@ -3898,28 +3903,24 @@ var GameXBody = /** @class */ (function (_super) {
                 stack.adjustFromView();
         }
     };
+    GameXBody.prototype.showGameScoringDialog = function () {
+        if (this.cachedScoringTable) {
+            var html = this.createScoringTableHTML(this.cachedScoringTable);
+            this.showPopin(html, "score_dialog", _("Score Summary"));
+        }
+    };
     GameXBody.prototype.onShowScoringTable = function (playerId) {
         var _this = this;
-        var mv = this.gamedatas.notifications.move_nbr;
-        ;
-        var showFunc = function (htm) {
-            var dlg = new ebg.popindialog();
-            dlg.create("score_dlg");
-            dlg.setTitle(_("Score Summary"));
-            dlg.setContent(htm);
-            dlg.show();
-        };
-        if (mv == this.cachedScoreMoveNbr && this.cachedScoringTable) {
-            var finalhtm = this.createScoringTableHTML(this.cachedScoringTable);
-            showFunc(finalhtm);
+        var move = this.gamedatas.notifications.move_nbr;
+        if (move == this.cachedScoreMoveNbr) {
+            this.showGameScoringDialog();
         }
         else {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
             this.ajaxcall(url, [], this, function (result) {
                 _this.cachedScoringTable = result.data.contents;
-                _this.cachedScoreMoveNbr = mv;
-                var finalhtm = _this.createScoringTableHTML(_this.cachedScoringTable);
-                showFunc(finalhtm);
+                _this.cachedScoreMoveNbr = move;
+                _this.showGameScoringDialog();
             });
         }
     };
@@ -4446,11 +4447,13 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.notif_scoringTable = function (notif) {
         console.log(notif);
-        var move = this.gamedatas.notifications.move_nbr;
         this.cachedScoringTable = notif.args.data;
-        this.cachedScoreMoveNbr = move;
+        this.cachedScoreMoveNbr = this.gamedatas.notifications.move_nbr;
         // call this to update cards vp data-vp attr
         this.createScoringTableHTML(this.cachedScoringTable);
+        if (notif.args.show) {
+            this.showGameScoringDialog();
+        }
     };
     GameXBody.prototype.getCardTypeById = function (type) {
         switch (type) {

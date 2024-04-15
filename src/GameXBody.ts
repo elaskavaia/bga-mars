@@ -352,28 +352,23 @@ class GameXBody extends GameTokens {
       }
   }
 
+  showGameScoringDialog() {
+    if (this.cachedScoringTable) {
+      const html = this.createScoringTableHTML(this.cachedScoringTable);
+      this.showPopin(html,"score_dialog",_("Score Summary"));
+    }
+  }
+
   onShowScoringTable(playerId: number) {
-    const mv = this.gamedatas.notifications.move_nbr;;
-
-    const showFunc = (htm: string) => {
-      let dlg = new ebg.popindialog();
-      dlg.create("score_dlg");
-      dlg.setTitle(_("Score Summary"));
-      dlg.setContent(htm);
-      dlg.show();
-    };
-
-    if (mv == this.cachedScoreMoveNbr && this.cachedScoringTable) {
-      const finalhtm = this.createScoringTableHTML(this.cachedScoringTable);
-      showFunc(finalhtm);
+    const move = this.gamedatas.notifications.move_nbr;
+    if (move == this.cachedScoreMoveNbr) {
+      this.showGameScoringDialog();
     } else {
       let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
-
       this.ajaxcall(url, [], this, (result) => {
         this.cachedScoringTable = result.data.contents;
-        this.cachedScoreMoveNbr = mv;
-        const finalhtm = this.createScoringTableHTML(this.cachedScoringTable);
-        showFunc(finalhtm);
+        this.cachedScoreMoveNbr = move;
+        this.showGameScoringDialog();
       });
     }
   }
@@ -1001,11 +996,13 @@ class GameXBody extends GameTokens {
   }
   notif_scoringTable(notif: Notif) {
     console.log(notif);
-    const move = this.gamedatas.notifications.move_nbr;
     this.cachedScoringTable = notif.args.data;
-    this.cachedScoreMoveNbr = move;
+    this.cachedScoreMoveNbr = this.gamedatas.notifications.move_nbr;
     // call this to update cards vp data-vp attr
     this.createScoringTableHTML(this.cachedScoringTable);
+    if (notif.args.show) {
+      this.showGameScoringDialog();
+    }
   }
 
   getCardTypeById(type: number) {

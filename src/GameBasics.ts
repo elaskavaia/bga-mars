@@ -972,39 +972,37 @@ class GameBasics extends GameGui {
 
   extractTextFromLogItem(node: any) {
     if (node.title) return node.title;
-    if (node.children?.length>0) {
+    if (node.children?.length > 0) {
       const array = Array.from(node.childNodes);
-      const sep = node.classList.contains("log") ? "\n": "";
-      return array.map((x: any)=>this.extractTextFromLogItem(x)).join(sep);
+      const sep = node.classList.contains("log") ? "\n" : "";
+      return array.map((x: any) => this.extractTextFromLogItem(x)).join(sep);
     }
     if (node.nodeType == Node.TEXT_NODE) return node.nodeValue;
     return node.innerText;
   }
 
-  extractTextGameInfo(){
+  extractTextGameInfo() {
     let text = "";
-    text+= `Current player ${this.getPlayerName(this.player_id)} ${this.getPlayerColor(this.player_id)}\n`;
-    
+    text += `Current player ${this.getPlayerName(this.player_id)} ${this.getPlayerColor(this.player_id)}\n`;
+
     return text;
   }
 
   copyLogToClipBoard() {
-    const linesMax = parseInt( $('button_copylog')?.dataset.lines ?? "100");
+    const linesMax = parseInt($("button_copylog")?.dataset.lines ?? "100");
     let text = `LOGS (${linesMax} last lines)\n`;
     let lines = 0;
- 
+
     document.querySelectorAll("#logs > *").forEach((lognode) => {
       lines++;
       if (lines > linesMax) return;
       text += this.extractTextFromLogItem(lognode) + "\n";
     });
     let text2 = "GAME situation\n";
-    text2+=this.extractTextGameInfo();
+    text2 += this.extractTextGameInfo();
 
     navigator.clipboard.writeText(text + text2);
 
-    const d = new ebg.popindialog();
-    d.create("log_info");
     var html = `
     Text was copied to clipboard, you can just paste it in the bug report<br>
     NOTE: this may reveal private info about your hand card, please remove this info manually if you care
@@ -1017,8 +1015,16 @@ class GameBasics extends GameGui {
     ${text2}
     </pre>
     `;
-    d.setContent(html);
-    d.show();
+    this.showPopin(html, "log_info", "Game Info for bug report");
+  }
+
+  showPopin(html: string,  id = "mr_dialog", title: string = undefined) {
+    const dialog = new ebg.popindialog();
+    dialog.create(id);
+    if (title) dialog.setTitle(title);
+    dialog.setContent(html);
+    dialog.show();
+    return dialog;
   }
 
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
@@ -1165,11 +1171,8 @@ class GameBasics extends GameGui {
     if (!force) if (!this._helpMode) return false;
     if (this.tooltips[id]) {
       dijit.hideTooltip(id);
-      this._displayedTooltip = new ebg.popindialog();
-      this._displayedTooltip.create("current_tooltip");
       var html = this.tooltips[id].getContent($(id));
-      this._displayedTooltip.setContent(html);
-      this._displayedTooltip.show();
+      this._displayedTooltip = this.showPopin(html,"current_tooltip");
     }
     return true;
   }
