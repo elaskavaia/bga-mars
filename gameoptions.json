@@ -48,11 +48,11 @@
         "values": [
             {
                 "name": "Standard",
-                "description": "All global parameters must be maxed out by the end of generation 14 to win"
+                "description": "All global parameters must be maxed out by the end of generation 14 to win (12 with Prelude)"
             },
             {
                 "name": "TR63",
-                "description": "You must reach a Terraform Rating of 63 by the end of generation 14 to win",
+                "description": "You must reach a Terraform Rating of 63 by the end of generation 14 to win (12 with Prelude)",
                 "tmdisplay": "TR63"
             }
         ],

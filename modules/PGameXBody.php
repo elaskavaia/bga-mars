@@ -70,11 +70,7 @@ abstract class PGameXBody extends PGameMachine {
             $initial_draw = 10;
             $tr_value = 20;
             if ($this->isSolo()) {
-                if ($this->isPreludeVariant()) {
-                    $tr_value = 14;
-                } else {
-                    $tr_value = 12;
-                }
+                $tr_value = 14;
             }
             $corps = 2; //(int)(11 / $this->getPlayersNumber())
             foreach ($players as $player_id => $player) {
@@ -226,9 +222,7 @@ abstract class PGameXBody extends PGameMachine {
             $result['card_info'] = $this->getCardInfoInHand($current);
         } else
             $result['server_prefs'] = [];
-        $table = [];
-        $this->scoreAll($table);
-        $result['scoringTable'] = $table;
+        $result['scoringTable'] = $this->scoreAllTable();
         $this->prof_point("getAllDatas", "end");
         return $result;
     }
@@ -1190,7 +1184,7 @@ abstract class PGameXBody extends PGameMachine {
     function isEndOfGameAchived() {
         if ($this->isSolo()) {
             $gen = $this->tokens->getTokenState("tracker_gen");
-            $maxgen = $this->getRulesFor('solo', 'gen');
+            $maxgen = $this->getLastGeneration();
             if ($gen >= $maxgen) {
                 return true;
             } else {
@@ -1198,6 +1192,12 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         return $this->getTerraformingProgression() >= 100;
+    }
+
+    function getLastGeneration() {
+        $maxgen = $this->getRulesFor('solo', 'gen');
+        if ($this->isPreludeVariant()) $maxgen -= 2; // Prelude sole ends with 12 generations not 14
+        return $maxgen;
     }
 
     function playerHasCard($color, $token_id) {
@@ -1764,6 +1764,7 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         $this->setGameStateValue('gamestage', MA_STAGE_ENDED);
+        $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable(), 'show' => true]);
 
         if ($this->isSolo()) {
             $color = $this->getPlayerColorById($player_id);
@@ -1793,6 +1794,12 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
         return 1;
+    }
+
+    function scoreAllTable() {
+        $table = [];
+        $this->scoreAll($table);
+        return $table;
     }
 
     function scoreAll(array &$table = null) {
@@ -2265,9 +2272,7 @@ abstract class PGameXBody extends PGameMachine {
             $operations[] = $oparr;
         }
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
-        $table = [];
-        $this->scoreAll($table);
-        $this->notifyAllPlayers('scoringTable', '', ['data' => $table]);
+        $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable()]);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
@@ -2278,9 +2283,8 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getRollingVp($player_id = 0, string $category = '') {
-        $table = [];
-        $this->scoreAll($table);
-
+        $table =  $this->scoreAllTable();
+       
         foreach ($table as $p => $pinfo) {
             if ($player_id && $p != $player_id) {
                 unset($table[$p]);
