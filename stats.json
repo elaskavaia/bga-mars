@@ -1,0 +1,93 @@
+{
+	"table": {
+		"turns_number": {
+			"id": 10,
+			"name": "Number of turns",
+			"type": "int"
+		},
+		"game_gen": {
+			"id": 11,
+			"name": "Number of generations",
+			"type": "int"
+		}
+	},
+	"player": {
+		"turns_number": {
+			"id": 10,
+			"name": "Number of turns",
+			"type": "int"
+		},
+		"game_vp_cards": {
+			"id": 11,
+			"name": "VP from cards",
+			"type": "int"
+		},
+		"game_vp_cities": {
+			"id": 12,
+			"name": "VP from cities",
+			"type": "int"
+		},
+		"game_vp_forest": {
+			"id": 13,
+			"name": "VP from greeneries",
+			"type": "int"
+		},
+		"game_vp_tr": {
+			"id": 14,
+			"name": "VP from Terraforming Rating",
+			"type": "int"
+		},
+		"game_vp_ms": {
+			"id": 15,
+			"name": "VP from Milestones",
+			"type": "int"
+		},
+		"game_vp_award": {
+			"id": 16,
+			"name": "VP from Awards",
+			"type": "int"
+		},
+		"game_vp_total": {
+			"id": 20,
+			"name": "VP total",
+			"type": "int"
+		},
+		"game_actions": {
+			"id": 30,
+			"name": "Number of actions",
+			"type": "int"
+		},
+		"game_corp": {
+			"id": 31,
+			"name": "Corporation",
+			"type": "int"
+		},
+		"game_theme": {
+			"id": 51,
+			"name": "User Interface Theme",
+			"type": "int"
+		}
+	},
+	"value_labels": {
+		"31": {
+			"1": "Beginner Corp",
+			"2": "CrediCor",
+			"3": "Ecoline",
+			"4": "Helion",
+			"5": "Interplanetary Cinematics",
+			"6": "Inventrix",
+			"7": "Mining Guild",
+			"8": "Saturn Systems",
+			"9": "PhoboLog",
+			"10": "Teractor",
+			"11": "Tharsis Republic",
+			"12": "ThorGate",
+			"13": "United Nations Mars Initiative"
+		},
+		"51": [
+			"None",
+			"Digital",
+			"Cardboard"
+		]
+	}
+}
