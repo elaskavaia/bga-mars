@@ -71,7 +71,7 @@
                 "name": "On",
                 "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
                 "tmdisplay": "Prelude",
-                "beta": true,
+                "alpha": true,
                 "nobeginner": true
             },
             "0": {
