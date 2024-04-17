@@ -223,20 +223,20 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set location=deck_prelude
 #set type=card prelude
 P01|Allied Bank|5|4pm,3m|||0||Earth|0|Prelude|Increase your MC production 4 steps. Gain 3 MC.||||
-P02|Aquifer Turbines|5|2pe,3nm,w|||0||Energy|0|Prelude|Place an ocean tile. Increase your energy production 2 steps. Remove 3 MC.||||
+P02|Aquifer Turbines|5|2pe,3nm,w|||0||Energy|0|Prelude|Place an ocean tile. Increase your energy production 2 steps. Remove 3 MC.||||'bc'=>3
 P03|Biofuels|5|pp,pe,2p|||0||Microbe|0|Prelude|Increase your plant production and energy production 1 step each. Gain 2 plants.||||
 P04|Biolabs|5|pp,3draw|||0||Science|0|Prelude|Increase your plant production 1 step. Draw 3 cards.||||
 P05|Biosphere Support|5|1npm,2pp|||0||Plant|0|Prelude|Decrease your MC production 1 step. Increase your plant production 2 steps.||||
-P06|Business Empire|5|6pm,6nm|||0||Earth|0|Prelude|Increase your MC production 6 steps. Remove 6 MC.||||
+P06|Business Empire|5|6pm,6nm|||0||Earth|0|Prelude|Increase your MC production 6 steps. Remove 6 MC.||||'bc'=>6
 P07|Dome Farming|5|2pm,pp|||0||Building Plant|0|Prelude|Increase your plant production 1 step. Increase your MC production 2 steps.||||
 P08|Donation|5|21m|||0|||0|Prelude|Gain 21 MC.||||
 P09|Early Settlement|5|pp,city|||0||Building City|0|Prelude|Place a city tile. Increase your plant production 1 step.||||
 P10|Ecology Experts|5|pp,card||onPre_delta:20;play_card:flip:that|0||Microbe Plant|0|Prelude|Increase your plant production 1 step. Play a card from Hand, ignoring global requirements||||
-P11|Excentric Sponsor|5|card||onPay_card:25m;play_card:flip:that|0|||0|Prelude|Play a card from hand, reducing its costs by 25 MC||||
+P11|Excentric Sponsor|5|?card||onPay_card:25m;play_card:flip:that|0|||0|Prelude|Play a card from hand, reducing its costs by 25 MC||||
 P12|Experimental Forest|5|o,forest,2draw(Plant)|||0||Plant|0|Prelude|Place a greenery tile and increase oxygen 1 step. Reveal cards from the deck until you have revealed 2 plant-tag cards. Take these into your hand, and discard the rest.||||
-P13|Galilean Mining|5|2pu,5nm|||0||Jovian|0|Prelude|Increase your titanium production 2 steps. Remove 5 MC.||||
+P13|Galilean Mining|5|2pu,5nm|||0||Jovian|0|Prelude|Increase your titanium production 2 steps. Remove 5 MC.||||'bc'=>5
 P14|Great Aquifer|5|w,w|||0|||0|Prelude|Place 2 ocean tiles.||||
-P15|Huge Asteroid|5|5nm,3t|||0|||0|Prelude|Raise temperature 3 steps. Remove 5 MC.||||
+P15|Huge Asteroid|5|5nm,3t|||0|||0|Prelude|Raise temperature 3 steps. Remove 5 MC.||||'bc'=>5
 P16|Io Research Outpost|5|pu,draw|||0||Science Jovian|0|Prelude|Increase your titanium production 1 step. Draw 1 card.||||
 P17|Loan|5|2npm,30m|||0|||0|Prelude|Decrease your MC production 2 steps. Gain 30 MC.||||
 P18|Martian Industries|5|ps,pe,6m|||0||Building|0|Prelude|Increase your energy production and steel production 1 step each. Gain 6 MC.||||

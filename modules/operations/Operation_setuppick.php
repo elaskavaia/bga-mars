@@ -26,15 +26,6 @@ class Operation_setuppick extends AbsOperation {
         $count = 0;
 
         foreach ($card_ids as $card_id) {
-            if (startsWith($card_id, "card_prelude")) {
-                //$corpmoney -= $cost;
-                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You got ${token_name}'), [
-                    "_private" => true
-                ]);
-            }
-        }
-
-        foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_main")) {
                 $corpmoney -= $cost;
                 $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You buy ${token_name}'), [
@@ -46,6 +37,21 @@ class Operation_setuppick extends AbsOperation {
                 $count++;
             }
         }
+
+        foreach ($card_ids as $card_id) {
+            if (startsWith($card_id, "card_prelude")) {
+                $buy_cost = $this->game->getRulesFor($card_id,'bc',0);
+                $corpmoney -= $buy_cost; // some cards need money to play - count this to not get yourself into the corder
+                $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You got ${token_name}'), [
+                    "_private" => true
+                ]);
+                if ($corpmoney < 0) {
+                    $this->game->userAssertTrue(totranslate("You cannot afford that many cards with this choice of corporation"));
+                }
+            }
+        }
+
+
         if ($count == 0) {
             $this->game->multiplayerpush($color, 'confnocards');
             $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('You did not select any initial project cards, it may be not a good idea. Undo if not too late'), []);

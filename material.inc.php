@@ -2957,6 +2957,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Place an ocean tile. Increase your energy production 2 steps. Remove 3 MC.'),
+  'bc'=>3,
 ],
  'card_prelude_P03' => [  //
   'location' => 'deck_prelude',
@@ -3013,6 +3014,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Increase your MC production 6 steps. Remove 6 MC.'),
+  'bc'=>6,
 ],
  'card_prelude_P07' => [  //
   'location' => 'deck_prelude',
@@ -3077,7 +3079,7 @@ $this->token_types = [
   'num' => 'P11',
   'name' => clienttranslate('Excentric Sponsor'),
   't' => 5,
-  'r' => 'card',
+  'r' => '?card',
   'e' => 'onPay_card:25m;play_card:flip:that',
   'cost' => 0,
   'vp' => 0,
@@ -3111,6 +3113,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Increase your titanium production 2 steps. Remove 5 MC.'),
+  'bc'=>5,
 ],
  'card_prelude_P14' => [  //
   'location' => 'deck_prelude',
@@ -3137,6 +3140,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Raise temperature 3 steps. Remove 5 MC.'),
+  'bc'=>5,
 ],
  'card_prelude_P16' => [  //
   'location' => 'deck_prelude',
