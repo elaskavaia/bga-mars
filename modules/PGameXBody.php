@@ -72,6 +72,9 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->isSolo()) {
                 $tr_value = 14;
             }
+            if (!$this->isCorporateEraVariant()) {
+                $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
+            }
             $corps = 2; //(int)(11 / $this->getPlayersNumber())
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -82,13 +85,10 @@ abstract class PGameXBody extends PGameMachine {
                 }
 
                 if (!$this->isCorporateEraVariant()) {
-                    $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
                     foreach ($production as $prodtype) {
                         $this->effect_incProduction($color, $prodtype, 1);
                     }
-                } else {
-                    $this->notifyAllPlayers('message', clienttranslate('Corporate era mode - no initial resource income'), []);
-                }
+                } 
 
                 // set proper TR and matching score and matching stat
                 $tr_traker = $this->getTrackerId($color, 'tr');
