@@ -2942,7 +2942,7 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Increase your MC production 4 steps. Gain 3 MC.'),
+  'text' => clienttranslate('Increase your M€ production 4 steps. Gain 3 M€.'),
 ],
  'card_prelude_P02' => [  //
   'location' => 'deck_prelude',
@@ -2956,7 +2956,7 @@ $this->token_types = [
   'tags' => 'Energy',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Place an ocean tile. Increase your energy production 2 steps. Remove 3 MC.'),
+  'text' => clienttranslate('Place an ocean tile. Increase your energy production 2 steps. Remove 3 M€.'),
   'bc'=>3,
 ],
  'card_prelude_P03' => [  //
@@ -2999,7 +2999,7 @@ $this->token_types = [
   'tags' => 'Plant',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Decrease your MC production 1 step. Increase your plant production 2 steps.'),
+  'text' => clienttranslate('Decrease your M€ production 1 step. Increase your plant production 2 steps.'),
 ],
  'card_prelude_P06' => [  //
   'location' => 'deck_prelude',
@@ -3013,7 +3013,7 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Increase your MC production 6 steps. Remove 6 MC.'),
+  'text' => clienttranslate('Increase your M€ production 6 steps. Remove 6 M€.'),
   'bc'=>6,
 ],
  'card_prelude_P07' => [  //
@@ -3028,7 +3028,7 @@ $this->token_types = [
   'tags' => 'Building Plant',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Increase your plant production 1 step. Increase your MC production 2 steps.'),
+  'text' => clienttranslate('Increase your plant production 1 step. Increase your M€ production 2 steps.'),
 ],
  'card_prelude_P08' => [  //
   'location' => 'deck_prelude',
@@ -3041,7 +3041,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Gain 21 MC.'),
+  'text' => clienttranslate('Gain 21 M€.'),
 ],
  'card_prelude_P09' => [  //
   'location' => 'deck_prelude',
@@ -3084,7 +3084,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Play a card from hand, reducing its costs by 25 MC'),
+  'text' => clienttranslate('Play a card from hand, reducing its costs by 25 M€'),
 ],
  'card_prelude_P12' => [  //
   'location' => 'deck_prelude',
@@ -3112,7 +3112,7 @@ $this->token_types = [
   'tags' => 'Jovian',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Increase your titanium production 2 steps. Remove 5 MC.'),
+  'text' => clienttranslate('Increase your titanium production 2 steps. Remove 5 M€.'),
   'bc'=>5,
 ],
  'card_prelude_P14' => [  //
@@ -3139,7 +3139,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Raise temperature 3 steps. Remove 5 MC.'),
+  'text' => clienttranslate('Raise temperature 3 steps. Remove 5 M€.'),
   'bc'=>5,
 ],
  'card_prelude_P16' => [  //
@@ -3167,7 +3167,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Decrease your MC production 2 steps. Gain 30 MC.'),
+  'text' => clienttranslate('Decrease your M€ production 2 steps. Gain 30 M€.'),
 ],
  'card_prelude_P18' => [  //
   'location' => 'deck_prelude',
@@ -3181,7 +3181,7 @@ $this->token_types = [
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Increase your energy production and steel production 1 step each. Gain 6 MC.'),
+  'text' => clienttranslate('Increase your energy production and steel production 1 step each. Gain 6 M€.'),
 ],
  'card_prelude_P19' => [  //
   'location' => 'deck_prelude',
@@ -3207,7 +3207,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Increase your MC production, steel production, and titanium production 1 step each.'),
+  'text' => clienttranslate('Increase your M€ production, steel production, and titanium production 1 step each.'),
 ],
  'card_prelude_P21' => [  //
   'location' => 'deck_prelude',
@@ -3262,7 +3262,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Raise your terraform rating 1 step. Increase your plant production 1 step. Gain 5 MC.'),
+  'text' => clienttranslate('Raise your terraform rating 1 step. Increase your plant production 1 step. Gain 5 M€.'),
 ],
  'card_prelude_P25' => [  //
   'location' => 'deck_prelude',
@@ -3318,7 +3318,7 @@ $this->token_types = [
   'tags' => 'Wild',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Draw 3 cards, and increase your MC production 1 step. After being played, when you perform an action, the wild tag is any tag of your choice.'),
+  'text' => clienttranslate('Draw 3 cards, and increase your M€ production 1 step. After being played, when you perform an action, the wild tag is any tag of your choice.'),
 ],
  'card_prelude_P29' => [  //
   'location' => 'deck_prelude',
@@ -3332,7 +3332,7 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Place a city tile. Increase your MC production 2 steps.'),
+  'text' => clienttranslate('Place a city tile. Increase your M€ production 2 steps.'),
 ],
  'card_prelude_P30' => [  //
   'location' => 'deck_prelude',
@@ -3359,7 +3359,7 @@ $this->token_types = [
   'cost' => 0,
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Decrease your MC production  1 step. Increase your plant production, energy production, and heat production 1 step each.'),
+  'text' => clienttranslate('Decrease your M€ production  1 step. Increase your plant production, energy production, and heat production 1 step each.'),
 ],
  'card_prelude_P32' => [  //
   'location' => 'deck_prelude',
@@ -3441,7 +3441,7 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Decrease your energy production 1 step. Increase your MC production 2 steps. Place a city tile ON A VOLCANIC AREA, same as Lava Flows, regardless of adjacent cities.'),
+  'text' => clienttranslate('Decrease your energy production 1 step. Increase your M€ production 2 steps. Place a city tile ON A VOLCANIC AREA, same as Lava Flows, regardless of adjacent cities.'),
 ],
  'card_main_P38' => [  //
   'location' => 'deck_main',
@@ -3473,7 +3473,7 @@ $this->token_types = [
   'deck' => 'Prelude',
   'text' => clienttranslate('Requires temperature -20°C or colder.'),
   'text_action' => clienttranslate('Add a microbe to this card.'),
-  'text_effect' => clienttranslate('When paying for a plant card, microbes here may be used as 2 MC each.'),
+  'text_effect' => clienttranslate('When paying for a plant card, microbes here may be used as 2 M€ each.'),
     'holds' => 'Microbe',
 ],
  'card_main_P40' => [  //
@@ -3516,7 +3516,7 @@ $this->token_types = [
   'tags' => 'Space Earth',
   'vp' => 0,
   'deck' => 'Prelude',
-  'text' => clienttranslate('Requires 2 Earth tags. Increase your MC production 4 steps.'),
+  'text' => clienttranslate('Requires 2 Earth tags. Increase your M€ production 4 steps.'),
 ],
 // #corp cards
 // #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
