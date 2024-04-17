@@ -82,12 +82,12 @@ abstract class PGameXBody extends PGameMachine {
                 }
 
                 if (!$this->isCorporateEraVariant()) {
-                    $this->notifyAllPlayers('message',clienttranslate('Basic mode - everybody starts with 1 resource income'),[]);
+                    $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
                     foreach ($production as $prodtype) {
                         $this->effect_incProduction($color, $prodtype, 1);
                     }
                 } else {
-                    $this->notifyAllPlayers('message',clienttranslate('Corporate era mode - no initial resource income'),[]);
+                    $this->notifyAllPlayers('message', clienttranslate('Corporate era mode - no initial resource income'), []);
                 }
 
                 // set proper TR and matching score and matching stat
@@ -1545,7 +1545,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($uniqueTags as $tag) {
             $events[] = "${prefix}card$tag";
         }
-        $events[] = "${prefix}card";
+        if (startsWith($card_id, 'card_main'))  $events[] = "${prefix}card";
         return $events;
     }
 
@@ -2284,7 +2284,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function getRollingVp($player_id = 0, string $category = '') {
         $table =  $this->scoreAllTable();
-       
+
         foreach ($table as $p => $pinfo) {
             if ($player_id && $p != $player_id) {
                 unset($table[$p]);
