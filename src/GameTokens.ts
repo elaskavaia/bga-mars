@@ -457,9 +457,9 @@ class GameTokens extends GameBasics {
 
   removeTooltip(nodeId: string): void {
     // if (this.tooltips[nodeId])
-    //     console.log('removing tooltip for ',nodeId);
+
     this.inherited(arguments);
-    this.tooltips[nodeId] = null;
+    delete this.tooltips[nodeId];
   }
 
   getTooptipHtmlForToken(token: string) {
