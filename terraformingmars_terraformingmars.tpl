@@ -481,6 +481,7 @@
           <div id="alt_tracker_tagMicrobe_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagMicrobe"></div>
           <div id="alt_tracker_tagAnimal_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagAnimal"></div>
           <div id="alt_tracker_tagEvent_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagEvent"></div>
+          <div id="alt_tracker_tagWild_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagWild"></div>
           <!-- non tag counters -->
           <div id="alt_tracker_city_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_city"></div>
           <div id="alt_tracker_forest_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_forest"></div>

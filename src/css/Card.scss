@@ -768,7 +768,7 @@
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);
   background-image: url("img/badges.png");
-  background-size: 1200% 100%;
+  background-size: 1300% 100%;
 }
 
 .badge.tag_City {
@@ -820,23 +820,7 @@
 }
 
 .badge.tag_Wild {
-  background-image: none;
-  background-size: revert;
-  color: black;
-  background-color: white;
-  border-radius: 50%;
-  outline: 1px solid black;
-  width: calc(var(--card-width) * 0.13);
-  height: calc(var(--card-width) * 0.13);
-}
-
-.badge.tag_Wild::after {
-  content:"?";
-  font-size: calc(var(--card-width) * 0.09);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: var(--mars-font);
+  background-position-x: -1200%;
 }
 
 .card_bg {
