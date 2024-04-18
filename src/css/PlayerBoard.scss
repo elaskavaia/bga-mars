@@ -316,12 +316,30 @@
   .corp_logo[data-corp="card_corp_12"]{background-position: -400% -100%;}
   .corp_logo[data-corp="card_corp_13"]{background-position: -500% -100%;}
 
-  .corp_logo[data-corp="card_corp_23"]{
+
+  .corp_logo[data-corp=card_corp_19],
+  .corp_logo[data-corp=card_corp_20],
+  .corp_logo[data-corp=card_corp_21],
+  .corp_logo[data-corp=card_corp_22],
+  .corp_logo[data-corp=card_corp_23]
+  {
     background-image: url("img/prelude/pre_corps_logo.png");
-    background-position: 100% 0%;
-    background-size: 500%;
-    width: calc(var(--card-width) * 0.294);
-    height: calc(var(--card-width) * 0.294);
+    background-size: 500% 100%;
+  }
+  .corp_logo[data-corp=card_corp_19] {
+    background-position: 0 0%;
+  }
+  .corp_logo[data-corp=card_corp_20] {
+    background-position: -100% 0%;
+  }
+  .corp_logo[data-corp=card_corp_21] {
+    background-position: -300% 0%;
+  }
+  .corp_logo[data-corp=card_corp_22] {
+    background-position: -200% 0%;
+  }
+  .corp_logo[data-corp=card_corp_23] {
+    background-position: -400% 0%;
   }
 
   .corp_effect .card.corp.card_corp_1 .card_title {
