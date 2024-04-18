@@ -43,6 +43,23 @@
         "notdisplayedmessage": "Corporate Era is On",
         "default": 1
     },
+    "104": {
+        "name": "Prelude",
+        "values": {
+            "1": {
+                "name": "On",
+                "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
+                "tmdisplay": "Prelude",
+                "alpha": true,
+                "nobeginner": true
+            },
+            "0": {
+                "name": "Off",
+                "description": "Not including Prelude"
+            }
+        },
+        "default": 0
+    },
     "102": {
         "name": "Solo variant",
         "values": [
@@ -64,6 +81,7 @@
         ],
         "default": 0
     },
+
     "103": {
         "name": "Draft",
         "values": {
