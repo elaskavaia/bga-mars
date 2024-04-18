@@ -195,6 +195,8 @@ class GameXBody extends GameTokens {
       //locale css management
       $("ebd-body").dataset["locale"] =  _('$locale');
       //this.setupOneTimePrompt();
+
+
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
@@ -202,6 +204,8 @@ class GameXBody extends GameTokens {
     } finally {
       this.isDoingSetup = false;
     }
+
+    this.checkTerraformingCompletion();
   }
 
   setupPlayer(playerInfo: any) {
@@ -1796,6 +1800,11 @@ awarded.`);
         $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();
       }
     }
+
+    //check TM
+    if (node.id.startsWith("tracker_w") ||node.id.startsWith("tracker_t") || node.id.startsWith("tracker_o")) {
+      this.checkTerraformingCompletion();
+    }
   }
 
   //finer control on how to place things
@@ -3162,6 +3171,24 @@ awarded.`);
     
     return text;
   }
+
+   checkTerraformingCompletion() {
+
+
+    if (this.isDoingSetup) return;
+
+    const o:number= parseInt($("tracker_o").dataset.state);
+    const t:number= parseInt($("tracker_t").dataset.state);
+    const w:number= parseInt($("tracker_w").dataset.state);
+
+
+    if (o==14 && t==8 && w==9) {
+      const htm='<div id="terraforming_complete" class="terraforming_complete">⚠️'+_("The terraforming is complete")+"</div>";
+      if (!$('terraforming_complete')) $('game_play_area').insertAdjacentHTML('afterbegin',htm);
+    } else {
+      if ($('$terraforming_complete'))  dojo.destroy($('$terraforming_complete'));
+    }
+  }
 }
 
 class Operation {
@@ -3285,3 +3312,4 @@ function dragLeaveHandler(event: Event) {
   event.preventDefault();
   (event.currentTarget as HTMLElement).classList.remove("over");
 }
+

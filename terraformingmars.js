@@ -3757,6 +3757,7 @@ var GameXBody = /** @class */ (function (_super) {
         finally {
             this.isDoingSetup = false;
         }
+        this.checkTerraformingCompletion();
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
         var _this = this;
@@ -5075,6 +5076,10 @@ var GameXBody = /** @class */ (function (_super) {
                 $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();
             }
         }
+        //check TM
+        if (node.id.startsWith("tracker_w") || node.id.startsWith("tracker_t") || node.id.startsWith("tracker_o")) {
+            this.checkTerraformingCompletion();
+        }
     };
     //finer control on how to place things
     GameXBody.prototype.createDivNode = function (id, classes, location) {
@@ -6366,6 +6371,22 @@ var GameXBody = /** @class */ (function (_super) {
         }
         text += this.extractPileText('MAP', ".map .tile", { showVp: true });
         return text;
+    };
+    GameXBody.prototype.checkTerraformingCompletion = function () {
+        if (this.isDoingSetup)
+            return;
+        var o = parseInt($("tracker_o").dataset.state);
+        var t = parseInt($("tracker_t").dataset.state);
+        var w = parseInt($("tracker_w").dataset.state);
+        if (o == 14 && t == 8 && w == 9) {
+            var htm = '<div id="terraforming_complete" class="terraforming_complete">⚠️' + _("The terraforming is complete") + "</div>";
+            if (!$('terraforming_complete'))
+                $('game_play_area').insertAdjacentHTML('afterbegin', htm);
+        }
+        else {
+            if ($('$terraforming_complete'))
+                dojo.destroy($('$terraforming_complete'));
+        }
     };
     return GameXBody;
 }(GameTokens));

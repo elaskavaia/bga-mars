@@ -5287,6 +5287,17 @@
   height: var(--card-height);
 }
 
+.terraforming_complete {
+  background: #c41010;
+  font-family: var(--mars-font);
+  color: #ffe188;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  font-size: larger;
+}
+
 .miniboard {
   display: flex;
   justify-content: center;
