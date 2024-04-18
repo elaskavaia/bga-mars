@@ -316,8 +316,8 @@ class GameXBody extends GameTokens {
           default: View.Stacked,
           views: noHidden
         },
-        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-        { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Full }
+        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Synthetic, View.Stacked, View.Full] },
+        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full }
       ];
     } else {
       // cardbpard
@@ -333,7 +333,7 @@ class GameXBody extends GameTokens {
           views: [View.Stacked, View.Full]
         },
         { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-        { label: _("Headquaters"), div: "cards_4", color_class: "corp", default: View.Stacked }
+        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked }
       ];
     }
     for (const item of lsStacks) {
