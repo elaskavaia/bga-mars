@@ -634,6 +634,7 @@ class GameXBody extends GameTokens {
       { key: "defaultstack_1", label: _("Default Automated View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 2 },
       { key: "defaultstack_2", label: _("Default Effects View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 2 },
       { key: "defaultstack_2a", label: _("Default Actions View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") }, default: 2 },
+      { key: "defaultstack_4", label: _("Default HQ View"), choice: { 0:_("Hidden"),2:_("Stacked"),3:_("Full") }, default: 2 },
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');

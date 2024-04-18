@@ -252,6 +252,17 @@
   max-width: 99.2%;
 }
 
+//stack for hq
+.cardstack[data-currentview="2"] .stack_content.cards_4 {
+  min-width: calc(var(--card-width) * 1.50 * var(--columns));
+}
+
+
+//tiles for hq
+.cardstack[data-currentview="3"] .stack_content.cards_4 {
+  width: calc(var(--card-width) * 1.50 * var(--columns));
+}
+
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {
     .stack_content_txt {
       display: block;
