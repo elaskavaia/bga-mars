@@ -2838,6 +2838,9 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.customcard_rules_207 = function () {
         return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2' + this.parseSingleItemToHTML(this.getParse('tagBuilding', 0), 1) + '</div></div></div></div>';
     };
+    CustomRenders.customcard_effect_P39 = function (action) {
+        return '<div class="card_action_line card_action_icono">' + action + '</div><div class="card_action_line card_action_icono card_icono">' + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '&nbsp;:&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '&nbsp;=&nbsp;<div class="cnt_media token_img tracker_m depth_1">2</div></div>';
+    };
     CustomRenders.parses = {
         forest: { classes: "tracker tracker_forest" },
         all_city: { classes: "tracker tracker_city", redborder: 'hex' },
@@ -3865,8 +3868,8 @@ var GameXBody = /** @class */ (function (_super) {
                     default: View.Stacked,
                     views: noHidden
                 },
-                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Synthetic, View.Stacked, View.Full] },
-                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full }
+                { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: noHidden },
+                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full, views: [View.Hidden, View.Stacked, View.Full] }
             ];
         }
         else {
@@ -4813,7 +4816,14 @@ var GameXBody = /** @class */ (function (_super) {
                 else {
                     vp = "";
                 }
-                var cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8, "0") : "";
+                var number_for_bin = "";
+                if (typeof (displayInfo.num) == "string" && displayInfo.num.startsWith('P')) {
+                    number_for_bin = displayInfo.num.replace('P', '');
+                }
+                else if (displayInfo.num) {
+                    number_for_bin = displayInfo.num;
+                }
+                var cn_binary = displayInfo.num ? parseInt(number_for_bin).toString(2).padStart(8, "0") : "";
                 //rules+rules styling
                 //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );
                 var card_r = "";
@@ -4863,11 +4873,17 @@ var GameXBody = /** @class */ (function (_super) {
                     card_r = card_a;
                     card_a = "";
                 }
+                if (displayInfo.num == "P39") {
+                    card_a = CustomRenders.customcard_effect_P39(card_a);
+                }
                 //special for "res"
                 card_a = card_a.replaceAll("%res%", displayInfo.holds);
                 var card_action_text = "";
                 if (displayInfo.text_action || displayInfo.text_effect) {
                     card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) || _(displayInfo.text_effect), "</div>");
+                }
+                if (displayInfo.num == "P39") {
+                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) + ' ' + _(displayInfo.text_effect), "</div>");
                 }
                 var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
                 var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +

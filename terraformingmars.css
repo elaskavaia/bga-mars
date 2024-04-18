@@ -2629,6 +2629,117 @@
   background-position: -500% -100%;
 }
 
+.mcompact {
+  /*
+  .card.prelude_main {
+    .card_bg {
+      background-image: url("img/prelude/preG_cards.jpg");
+      background-size: 1000% auto;
+    }
+
+    .card_title {
+      top: 11%;
+    }
+
+    .card_effect {
+      width: 85%;
+    }
+
+    .card_prereq {
+      top: 4%;
+      font-size: calc(var(--card-width) * 0.055);
+      .badge, .token_img {
+        display: none;
+      }
+
+      .prereq_content {
+        background: unset;
+      }
+    }
+
+  }
+
+  .card_main_P36 {
+    .card_tt {
+      left: 36% !important;
+      top: 20% !important;
+      width: 30%;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 0) 0;
+    }
+  }
+
+  .card_main_P37 {
+    .card_tt {
+      left: 40% !important;
+      top: 0% !important;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 1) 0;
+    }
+  }
+
+  .card_main_P38 {
+    .card_tt {
+      left: 36% !important;
+      width: 30%;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 2) 0;
+    }
+  }
+
+  .card_main_P39 {
+    .card_tt {
+      left: 20% !important;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 3) 0;
+    }
+  }
+
+  .card_main_P40 {
+    .card_tt {
+      left: 10% !important;
+      top: 10% !important;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 4) 0;
+    }
+  }
+
+  .card_main_P41 {
+    .card_tt {
+      left: 40% !important;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 5) 0;
+    }
+  }
+
+  .card_main_P42 {
+    .card_tt {
+      left: 43% !important;
+      top: 10% !important;
+    }
+    .card_prereq {
+      display: none;
+    }
+
+    .card_bg {
+      background-position: calc(100% / 9 * 6) 0;
+    }
+  }
+
+   */
+}
 .mcompact .card_corp_19 .card_bg {
   background-position: 0% 0;
   background-image: url(img/prelude/preG_cardsC.jpg);
@@ -2812,33 +2923,23 @@
 .mcompact .card.prelude .card_decor .card_badges,
 .mcompact .card.prelude .card_decor .card_outer_action,
 .mcompact .card.prelude .card_decor .card_vp,
-.mcompact .card.prelude .card_decor .card_number_binary,
-.mcompact .card.prelude_main .card_decor .card_illustration,
-.mcompact .card.prelude_main .card_decor .card_badges,
-.mcompact .card.prelude_main .card_decor .card_outer_action,
-.mcompact .card.prelude_main .card_decor .card_vp,
-.mcompact .card.prelude_main .card_decor .card_number_binary {
+.mcompact .card.prelude .card_decor .card_number_binary {
   display: none;
 }
-.mcompact .card.prelude .card_decor .card_cost .number_inside,
-.mcompact .card.prelude_main .card_decor .card_cost .number_inside {
+.mcompact .card.prelude .card_decor .card_cost .number_inside {
   display: none;
 }
-.mcompact .card.prelude .card_decor .card_effect *,
-.mcompact .card.prelude_main .card_decor .card_effect * {
+.mcompact .card.prelude .card_decor .card_effect * {
   display: none;
 }
-.mcompact .card.prelude .card_decor .card_effect .card_tt,
-.mcompact .card.prelude_main .card_decor .card_effect .card_tt {
+.mcompact .card.prelude .card_decor .card_effect .card_tt {
   display: block;
   position: absolute;
 }
-.mcompact .card.prelude .card_decor .blocks_2 .card_tt,
-.mcompact .card.prelude_main .card_decor .blocks_2 .card_tt {
+.mcompact .card.prelude .card_decor .blocks_2 .card_tt {
   left: 35%;
 }
-.mcompact .card.prelude .card_decor .blocks_3 .card_tt,
-.mcompact .card.prelude_main .card_decor .blocks_3 .card_tt {
+.mcompact .card.prelude .card_decor .blocks_3 .card_tt {
   left: 50%;
 }
 .mcompact .card_prelude_P02 .card_tt {
@@ -2895,76 +2996,30 @@
 .mcompact .card_prelude_P35 .card_tt {
   left: 46% !important;
 }
-.mcompact .card.prelude_main .card_bg {
-  background-image: url("img/prelude/preG_cards.jpg");
-  background-size: 1000% auto;
+.mcompact .card.prelude_main .card_illustration {
+  background-image: url("img/prelude/pre_illustrations.jpg");
+  background-size: 700% 100%;
 }
-.mcompact .card.prelude_main .card_title {
-  top: 11%;
+.mcompact .card_main_P36 .card_illustration {
+  background-position-x: 0;
 }
-.mcompact .card.prelude_main .card_effect {
-  width: 85%;
+.mcompact .card_main_P37 .card_illustration {
+  background-position-x: -100%;
 }
-.mcompact .card.prelude_main .card_prereq {
-  top: 4%;
-  font-size: calc(var(--card-width) * 0.055);
+.mcompact .card_main_P38 .card_illustration {
+  background-position-x: -200%;
 }
-.mcompact .card.prelude_main .card_prereq .badge, .mcompact .card.prelude_main .card_prereq .token_img {
-  display: none;
+.mcompact .card_main_P39 .card_illustration {
+  background-position-x: -300%;
 }
-.mcompact .card.prelude_main .card_prereq .prereq_content {
-  background: unset;
+.mcompact .card_main_P40 .card_illustration {
+  background-position-x: -400%;
 }
-.mcompact .card_main_P36 .card_tt {
-  left: 36% !important;
-  top: 20% !important;
-  width: 30%;
+.mcompact .card_main_P41 .card_illustration {
+  background-position-x: -500%;
 }
-.mcompact .card_main_P36 .card_bg {
-  background-position: 0% 0;
-}
-.mcompact .card_main_P37 .card_tt {
-  left: 40% !important;
-  top: 0% !important;
-}
-.mcompact .card_main_P37 .card_bg {
-  background-position: 11.1111111111% 0;
-}
-.mcompact .card_main_P38 .card_tt {
-  left: 36% !important;
-  width: 30%;
-}
-.mcompact .card_main_P38 .card_bg {
-  background-position: 22.2222222222% 0;
-}
-.mcompact .card_main_P39 .card_tt {
-  left: 20% !important;
-}
-.mcompact .card_main_P39 .card_bg {
-  background-position: 33.3333333333% 0;
-}
-.mcompact .card_main_P40 .card_tt {
-  left: 10% !important;
-  top: 10% !important;
-}
-.mcompact .card_main_P40 .card_bg {
-  background-position: 44.4444444444% 0;
-}
-.mcompact .card_main_P41 .card_tt {
-  left: 40% !important;
-}
-.mcompact .card_main_P41 .card_bg {
-  background-position: 55.5555555556% 0;
-}
-.mcompact .card_main_P42 .card_tt {
-  left: 43% !important;
-  top: 10% !important;
-}
-.mcompact .card_main_P42 .card_prereq {
-  display: none;
-}
-.mcompact .card_main_P42 .card_bg {
-  background-position: 66.6666666667% 0;
+.mcompact .card_main_P42 .card_illustration {
+  background-position-x: -600%;
 }
 
 .outer_production {
@@ -3859,6 +3914,10 @@
 
 .card_main_207 .card_effect .outer_production {
   display: flex;
+}
+
+.card_main_P39 .card_outer_action > .card_action > .card_action_line {
+  flex-direction: column;
 }
 
 #ebd-body {
@@ -5301,6 +5360,7 @@
   position: absolute;
   top: 0px;
   z-index: 30;
+  pointer-events: none;
 }
 
 #decks_area .reveal .card {
@@ -9562,10 +9622,10 @@
   min-width: calc(var(--card-width) * 1.5 * var(--columns));
 }
 
+/*
 .cardstack[data-currentview="3"] .stack_content.cards_4 {
-  width: calc(var(--card-width) * 1.5 * var(--columns));
-}
-
+  width: calc(var(--card-width) * 1.50 * var(--columns));
+}*/
 .cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {
   display: block;
   width: calc(var(--card-width) * 1);
