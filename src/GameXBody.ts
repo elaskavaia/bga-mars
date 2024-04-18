@@ -1484,7 +1484,13 @@ awarded.`);
         } else {
           vp = "";
         }
-        const cn_binary = displayInfo.num ? parseInt(displayInfo.num).toString(2).padStart(8, "0") : "";
+        let number_for_bin="";
+        if (typeof(displayInfo.num)=="string" && displayInfo.num.startsWith('P')) {
+          number_for_bin=displayInfo.num.replace('P','');
+        } else if (displayInfo.num) {
+          number_for_bin=displayInfo.num;
+        }
+        const cn_binary = displayInfo.num ? parseInt(number_for_bin).toString(2).padStart(8, "0") : "";
 
         //rules+rules styling
         //let card_r = this.parseRulesToHtml(displayInfo.r, displayInfo.num || null );

@@ -654,6 +654,28 @@
   background-position: -200% -100%;
 }
 
+.tracker.tracker_tagWild {
+  background-image: none;
+  background-size: revert;
+  color: black;
+  background-color: white;
+  border-radius: 50%;
+  outline: 1px solid black;
+  font-size: calc(var(--pb_cellsize) * 0.4) !important;
+  width: calc(var(--pb_cellsize) * 0.5) !important;
+  height: calc(var(--pb_cellsize) * 0.5) !important;
+  align-self: center !important;
+}
+
+.tracker.tracker_tagWild::after {
+  content:"?";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--mars-font);
+}
+
+
 /*don't display for now*/
 .tracker.tracker_cityonmars {
   display: none !important;
