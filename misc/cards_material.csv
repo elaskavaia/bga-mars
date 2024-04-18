@@ -233,7 +233,7 @@ P08|Donation|5|21m|||0|||0|Prelude|Gain 21 M€.||||
 P09|Early Settlement|5|pp,city|||0||Building City|0|Prelude|Place a city tile. Increase your plant production 1 step.||||
 P10|Ecology Experts|5|pp,card||onPre_delta:20;play_card:flip:that|0||Microbe Plant|0|Prelude|Increase your plant production 1 step. Play a card from Hand, ignoring global requirements||||
 P11|Excentric Sponsor|5|?card||onPay_card:25m;play_card:flip:that|0|||0|Prelude|Play a card from hand, reducing its costs by 25 M€||||
-P12|Experimental Forest|5|o,forest,2draw(Plant)|||0||Plant|0|Prelude|Place a greenery tile and increase oxygen 1 step. Reveal cards from the deck until you have revealed 2 plant-tag cards. Take these into your hand, and discard the rest.||||
+P12|Experimental Forest|5|forest,2draw(Plant)|||0||Plant|0|Prelude|Place a greenery tile and increase oxygen 1 step. Reveal cards from the deck until you have revealed 2 plant-tag cards. Take these into your hand, and discard the rest.||||
 P13|Galilean Mining|5|2pu,5nm|||0||Jovian|0|Prelude|Increase your titanium production 2 steps. Remove 5 M€.||||'bc'=>5
 P14|Great Aquifer|5|w,w|||0|||0|Prelude|Place 2 ocean tiles.||||
 P15|Huge Asteroid|5|5nm,3t|||0|||0|Prelude|Raise temperature 3 steps. Remove 5 M€.||||'bc'=>5
