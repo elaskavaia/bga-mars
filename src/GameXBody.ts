@@ -1056,8 +1056,8 @@ class GameXBody extends GameTokens {
     if (type !== undefined) {
       fulltxt = this.generateCardTooltip(displayInfo);
 
-      if (type >= 1 && type <= 3) {
-        //main cards
+      if ([1,2,3,5].includes(type) ) {
+        //main cards + prelude
         const div = this.cloneAndFixIds(elemId, "_tt", true);
         fullitemhtm = div.outerHTML;
         if (div.getAttribute("data-invalid_prereq") == "1") {

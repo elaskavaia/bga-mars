@@ -4500,8 +4500,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if (type !== undefined) {
             fulltxt = this.generateCardTooltip(displayInfo);
-            if (type >= 1 && type <= 3) {
-                //main cards
+            if ([1, 2, 3, 5].includes(type)) {
+                //main cards + prelude
                 var div_2 = this.cloneAndFixIds(elemId, "_tt", true);
                 fullitemhtm = div_2.outerHTML;
                 if (div_2.getAttribute("data-invalid_prereq") == "1") {
