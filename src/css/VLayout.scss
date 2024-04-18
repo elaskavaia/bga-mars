@@ -775,6 +775,7 @@
     background: unset;
     // override layout settings
     flex-grow: 1;
+
   }
 
   .thisplayer_zone {
@@ -786,7 +787,8 @@
 
   .thisplayer_zone~.player_area {
     // second player
-    order: 3;
+  //  order: 3;
+    order:calc(var(--player_order) + 3);
   }
 
 

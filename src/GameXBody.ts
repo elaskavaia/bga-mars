@@ -23,6 +23,7 @@ class GameXBody extends GameTokens {
   private prevLogId = 0;
 
   private stacks:CardStack[];
+
   constructor() {
     super();
     this.CON = {};
@@ -82,6 +83,8 @@ class GameXBody extends GameTokens {
       this.connect($("hand_area_button_pop"), "onclick", () => {
         $("hand_area").dataset.open = $("hand_area").dataset.open == "1" ? "0" : "1";
       });
+
+
 
       // fixed for undo in fake player panel
       document.querySelectorAll("#player_config > #player_board_params").forEach((node) => {
@@ -181,6 +184,20 @@ class GameXBody extends GameTokens {
           },
           parent
         ); // NOI18N
+      }
+
+      //Order of players
+      let plorder=[];
+      for (let player_id in gamedatas.players) {
+        plorder[this.getPlayerColor(Number(player_id))]=gamedatas.players[player_id].no-1;
+      }
+      if (gamedatas.playerorder) {
+        for (let idx in gamedatas.playerorder) {
+          plorder[this.getPlayerColor(Number(gamedatas.playerorder[idx]))] = Number(idx);
+        }
+      }
+      for (let plcolor in plorder) {
+        $('player_area_'+plcolor).style.setProperty("--player_order", plorder[plcolor]);
       }
 
 
@@ -1925,7 +1942,7 @@ awarded.`);
       const next_color = opargs.args.next_color ?? "";
       const next_name = next_color != "" ? this.getPlayerName(this.getPlayerIdByColor(next_color)) : "";
       if (next_color != "" && !$("draft_info")) {
-        const txt = _("Draft Direction ⤇ %s").replace("%s", `<span class="draft_info" style="color:#${next_color};">${next_name}</span>`);
+        const txt = _("Draft Direction ➡️ %s").replace("%s", `<span class="draft_info" style="color:#${next_color};">${next_name}</span>`);
         $("gameaction_status").insertAdjacentHTML("afterend", `<span id="draft_info">${txt}</span>`);
       }
     }

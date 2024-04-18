@@ -366,6 +366,8 @@
 
 #players_area {
   margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #hand_area {
