@@ -768,7 +768,7 @@
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);
   background-image: url("img/badges.png");
-  background-size: 1200% 100%;
+  background-size: 1300% 100%;
 }
 
 .badge.tag_City {
@@ -817,6 +817,10 @@
 
 .badge.tag_Animal {
   background-position-x: -1100%;
+}
+
+.badge.tag_Wild {
+  background-position-x: -1200%;
 }
 
 .card_bg {
