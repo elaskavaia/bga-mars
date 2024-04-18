@@ -316,8 +316,8 @@ class GameXBody extends GameTokens {
           default: View.Stacked,
           views: noHidden
         },
-        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Synthetic, View.Stacked, View.Full] },
-        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full }
+        { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: noHidden },
+        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full, views: [View.Hidden,View.Stacked, View.Full]  }
       ];
     } else {
       // cardbpard
@@ -1537,11 +1537,21 @@ awarded.`);
           card_a = "";
         }
 
+        if (displayInfo.num=="P39") {
+          card_a =  CustomRenders.customcard_effect_P39(card_a);
+        }
+
         //special for "res"
         card_a = card_a.replaceAll("%res%", displayInfo.holds);
+
         let card_action_text = "";
         if (displayInfo.text_action || displayInfo.text_effect) {
           card_action_text = `<div class="card_action_line card_action_text">${_(displayInfo.text_action) || _(displayInfo.text_effect)}</div>`;
+        }
+
+        if (displayInfo.num=="P39") {
+          card_action_text = `<div class="card_action_line card_action_text">${_(displayInfo.text_action)+' '+_(displayInfo.text_effect)}</div>`;
+
         }
 
         const holds = displayInfo.holds ?? "Generic";

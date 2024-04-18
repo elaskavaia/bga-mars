@@ -243,6 +243,7 @@
   --overlap: 0.62;
 }
 
+
 // tiles
 .cardstack[data-currentview="3"] .stack_content {
   row-gap: calc(var(--card-height) * 0.01);
@@ -251,6 +252,12 @@
   overflow: auto;
   max-width: 99.2%;
 }
+
+//tiles for hq
+.cardstack[data-currentview="3"] .stack_content.cards_4 {
+  width: calc(var(--card-width) * 1.50 * var(--columns));
+}
+
 
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {
     .stack_content_txt {

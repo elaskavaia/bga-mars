@@ -1179,6 +1179,7 @@
   position: absolute;
   top: 0px;
   z-index: 30;
+  pointer-events:none;
 }
 
 #decks_area .reveal .card {

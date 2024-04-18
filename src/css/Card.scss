@@ -819,6 +819,26 @@
   background-position-x: -1100%;
 }
 
+.badge.tag_Wild {
+  background-image: none;
+  background-size: revert;
+  color: black;
+  background-color: white;
+  border-radius: 50%;
+  outline: 1px solid black;
+  width: calc(var(--card-width) * 0.13);
+  height: calc(var(--card-width) * 0.13);
+}
+
+.badge.tag_Wild::after {
+  content:"?";
+  font-size: calc(var(--card-width) * 0.09);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--mars-font);
+}
+
 .card_bg {
   position: absolute;
   width: 100%;
@@ -1023,8 +1043,8 @@
   }
 
 
-  .card.prelude,
-  .card.prelude_main {
+  .card.prelude
+  {
     .card_decor {
 
       .card_illustration,
@@ -1137,6 +1157,24 @@
   }
 
   .card.prelude_main {
+    .card_illustration {
+      background-image: url("img/prelude/pre_illustrations.jpg");
+      background-size: 700%;
+    }
+
+  }
+  .card_main_P36 .card_illustration{ background-position-x:0 ;}
+  .card_main_P37 .card_illustration{ background-position-x:-100%;}
+  .card_main_P38 .card_illustration{ background-position-x:-200% ;}
+  .card_main_P39 .card_illustration{ background-position-x:-300% ;}
+  .card_main_P40 .card_illustration{ background-position-x:-400% ;}
+  .card_main_P41 .card_illustration{ background-position-x:-500% ;}
+  .card_main_P42 .card_illustration{ background-position-x:-600% ;}
+
+
+
+  /*
+  .card.prelude_main {
     .card_bg {
       background-image: url("img/prelude/preG_cards.jpg");
       background-size: 1000% auto;
@@ -1242,6 +1280,8 @@
       background-position: calc(100% / 9 * 6) 0;
     }
   }
+
+   */
 
 }
 

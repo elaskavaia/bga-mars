@@ -862,4 +862,8 @@
    private static customcard_rules_207() {
      return  '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2'+this.parseSingleItemToHTML(this.getParse('tagBuilding',0),1)+'</div></div></div></div>';
    }
+
+   public static customcard_effect_P39(action) {
+     return '<div class="card_action_line card_action_icono">'+action+'</div><div class="card_action_line card_action_icono card_icono">'+this.parseSingleItemToHTML(this.getParse('tagPlant',0),1)+'&nbsp;:&nbsp;'+this.parseSingleItemToHTML(this.getParse('res_Microbe',0),1)+'&nbsp;=&nbsp;<div class="cnt_media token_img tracker_m depth_1">2</div></div>';
+   }
  }
