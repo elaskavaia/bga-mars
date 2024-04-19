@@ -255,7 +255,7 @@ P30|Smelting Plant|5|5s,2o|||0||Building|0|Prelude|Raise oxygen 2 steps. Gain 5 
 P31|Society Support|5|1npm,pp,pe,ph|||0|||0|Prelude|Decrease your M€ production  1 step. Increase your plant production, energy production, and heat production 1 step each.||||
 P32|Supplier|5|2pe,4s|||0||Energy|0|Prelude|Increase your energy production 2 steps. Gain 4 steel.||||
 P33|Supply Drop|5|8s,3u,3p|||0|||0|Prelude|Gain 3 titanium, 8 steel, and 3 plants.||||
-P34|UNMI Contractor|5|3tr,draw|||0||Venus|0|Prelude|Raise your terraform rating 3 steps. Draw 1 card.||||
+P34|UNMI Contractor|5|3tr,draw|||0||Earth|0|Prelude|Raise your terraform rating 3 steps. Draw 1 card.||||
 P35|Acquired Space Agency|5|6u,2draw(Space)|||0|||0|Prelude|Gain 6 titanium. Reveal cards from the deck until you have revealed 2 space cards. Take those into hand, and discard the rest.||||
 
 #set id=card_main_{num}
