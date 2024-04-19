@@ -76,7 +76,7 @@ class Operation_nmM extends AbsOperation {
             $typecount = $info['payment']['rescount'][$type]; // total res
             if ($er > 1) {
                 // default proposal
-                $this->addProposal($info,  [ $type => $propres,'m' => $cost - $propres * $er]);
+                $this->addProposal($info,  [$type => $propres, 'm' => $cost - $propres * $er]);
                 // overpayment proposal (no money)
                 if ($overres > $propres) $this->addProposal($info,  [$type => $overres]);
             }
@@ -86,7 +86,7 @@ class Operation_nmM extends AbsOperation {
             $rem = $rem - $rempropres * $er;
             $prop[$type] = $rempropres;
             if ($rem <= 0) {
-                  // multi-resource proposal
+                // multi-resource proposal
                 $this->addProposal($info, $prop);
             }
         }
@@ -95,13 +95,13 @@ class Operation_nmM extends AbsOperation {
         //  proposal with minimal resource
         $mcount = $info['payment']['rescount']['m'];
         $heatcount = array_get($info['payment']['rescount'], 'h', 0);
-        $mhcount = min ($mcount + $heatcount,$cost);
+        $mhcount = min($mcount + $heatcount, $cost);
         if ($mhcount > 0) {
             $type = array_shift($alltypes);
             $er = $info['payment']['rate'][$type];
             $propres = min((int)ceil(($cost - $mhcount) / $er), $info['payment']['rescount'][$type]);
             $propm = min($mcount, $cost - $propres * $er);
-            $map = ['m' => $propm, $type => $propres];
+            $map = [$type => $propres, 'm' => $propm];
             if ($heatcount > 0 && $mhcount - $propm > 0) {
                 $map['h'] = $mhcount - $propm;
             }
@@ -155,6 +155,7 @@ class Operation_nmM extends AbsOperation {
     }
 
     function canResolveAutomatically() {
+        if ($this->getCount() <= 0) return true;
         $possible = $this->getStateArg('target');
         if (count($possible) == 1) return false; // this is only Custom option
         $info = $this->getStateArg('info');
@@ -174,7 +175,7 @@ class Operation_nmM extends AbsOperation {
     }
 
     function effect(string $owner, int $inc): int {
-        if ($inc <= 0 || $this->getCost() <= 0) return $inc;
+        if ($inc <= 0) return $inc;
         $value = $this->getUncheckedArg('target');
         $possible = $this->getStateArg('target');
         if (!$value) {
@@ -270,7 +271,7 @@ class Operation_nmM extends AbsOperation {
     private function getCost() {
         $card_id = $this->getContext();
         $effect = $this->getContext(1);
-        if ($effect === 'a' || !$card_id) {
+        if ($effect || !$card_id) {
             $cost = $this->getCount(); // XXX
         } else {
             $cost = $this->game->getRulesFor($card_id, 'cost', 0);
@@ -293,7 +294,7 @@ class Operation_nmM extends AbsOperation {
         $count = $this->getCount();
         $value = 0;
         foreach ($this->getTypes() as $type) {
-            $typecount = $this->game->getTrackerValue($this->color, $type);
+            $typecount = $this->getCountOfResourceType($type);
             $er = $this->getExchangeRate($type);
             $value += $typecount * $er;
         }

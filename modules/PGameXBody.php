@@ -1332,7 +1332,7 @@ abstract class PGameXBody extends PGameMachine {
         $playeffect = array_get($rules, 'r', '');
         if ($playeffect) {
             //$this->debugLog("-come in play effect $playeffect");
-            $this->putInEffectPool($color, $playeffect, $card_id);
+            $this->putInEffectPool($color, $playeffect, "$card_id:r");
         }
         $events = $this->getPlayCardEvents($card_id, 'play_');
         $this->notifyEffect($color, $events, $card_id);

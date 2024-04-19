@@ -712,6 +712,32 @@ final class GameTest extends TestCase {
         //$args = $op->argPrimaryDetails();
         $this->assertEquals(true, $op->isVoid());
     }
+
+
+    public function testBusinessEmpire() {
+        $m = $this->game();
+        $p = PCOLOR;
+        $card = $m->mtFind('name', 'Business Empire');
+
+
+        $effect = $m->getRulesFor($card, 'r');
+        //$m->dbSetTokenLocation("resource_${p}_1", $eaters, 0); // add a microbe
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
+        //$args = $op->argPrimaryDetails();
+        $this->assertEquals(true, $op->isVoid());
+        $m->setTrackerValue(PCOLOR, 'm', 6);
+        $this->assertEquals(false, $op->isVoid());
+        $this->assertEquals(true, $op->canResolveAutomatically());
+
+        $m->putInEffectPool(PCOLOR, $effect);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $value = $m->getTrackerValue(PCOLOR, 'm');
+        $this->assertEquals(0, $value);
+        $value = $m->getTrackerValue(PCOLOR, 'pm');
+        $this->assertEquals(6, $value);
+    }
     public function testPaymentMicrobes() {
         $m = $this->game();
         $p = PCOLOR;
@@ -745,6 +771,15 @@ final class GameTest extends TestCase {
         $this->assertEquals('1s4m', $targets[1]);
         $this->assertEquals('2resMicrobe2m', $targets[2]);
         $this->assertEquals('1s2resMicrobe', $targets[3]);
+
+        $m->setTrackerValue(PCOLOR, 'm', 2);
+        $m->dbSetTokenLocation("resource_${p}_2", $psyc, 0); // add a microbe
+        $payment = $m->getPayment($p, $card);
+        $this->assertEquals($payment, '6nm');
+        $args = $m->debug_oparg($payment, $card);
+        $this->assertEquals(false, array_get($args['args'],'void',false));
+        $targets = $args['args']['target'];
+        $this->assertEquals(4, count($targets));
     }
 
     public function testPaymentHeat() {
