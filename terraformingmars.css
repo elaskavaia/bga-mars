@@ -1192,7 +1192,7 @@
   width: calc(var(--card-width) * 0.15);
   height: calc(var(--card-width) * 0.15);
   background-image: url("img/badges.png");
-  background-size: 1200% 100%;
+  background-size: 1300% 100%;
 }
 
 .badge.tag_City {
@@ -1241,6 +1241,10 @@
 
 .badge.tag_Animal {
   background-position-x: -1100%;
+}
+
+.badge.tag_Wild {
+  background-position-x: -1200%;
 }
 
 .card_bg {
@@ -5995,12 +5999,33 @@
   background-position: -500% -100%;
 }
 
+.corp_logo[data-corp=card_corp_19],
+.corp_logo[data-corp=card_corp_20],
+.corp_logo[data-corp=card_corp_21],
+.corp_logo[data-corp=card_corp_22],
 .corp_logo[data-corp=card_corp_23] {
   background-image: url("img/prelude/pre_corps_logo.png");
-  background-position: 100% 0%;
-  background-size: 500%;
-  width: calc(var(--card-width) * 0.294);
-  height: calc(var(--card-width) * 0.294);
+  background-size: 500% 100%;
+}
+
+.corp_logo[data-corp=card_corp_19] {
+  background-position: 0 0%;
+}
+
+.corp_logo[data-corp=card_corp_20] {
+  background-position: -100% 0%;
+}
+
+.corp_logo[data-corp=card_corp_21] {
+  background-position: -300% 0%;
+}
+
+.corp_logo[data-corp=card_corp_22] {
+  background-position: -200% 0%;
+}
+
+.corp_logo[data-corp=card_corp_23] {
+  background-position: -400% 0%;
 }
 
 .corp_effect .card.corp.card_corp_1 .card_title {
@@ -6737,7 +6762,7 @@
   width: 32px;
   background-position-x: -500%; /* tagSpace */
   background-image: url("img/badges.png");
-  background-size: 1200% 100%;
+  background-size: 1300% 100%;
 }
 
 .custom_pref_option.pref_mfull::after {
@@ -6747,7 +6772,7 @@
   width: 32px;
   background-position-x: -800%; /* tagBuilding */
   background-image: url("img/badges.png");
-  background-size: 1200% 100%;
+  background-size: 1300% 100%;
 }
 
 .scoretable {
@@ -10116,6 +10141,10 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   background-position-x: -1100%;
 }
 
+.tracker_tagWild {
+  background-position-x: -1200%;
+}
+
 .thisplayer_zone {
   min-width: calc(var(--map-width) * 1);
   flex-grow: 100;
@@ -10292,7 +10321,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 
 .tracker.badge {
   background-image: url("img/badges.png");
-  background-size: 1200% 100%;
+  background-size: 1300% 100%;
 }
 
 .tracker_resAnimal {

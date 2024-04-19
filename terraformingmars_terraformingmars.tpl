@@ -572,6 +572,7 @@
     </div>
     <div id="params"></div>
     <div id="dev_null" class="defhidden"></div>
+    <div id="discard_prelude" class="defhidden"></div>
 
     <div id="player_board_config" class="player-board">
       <div id="player_config">

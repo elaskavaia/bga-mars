@@ -4446,7 +4446,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.notif_scoringTable = function (notif) {
-        console.log(notif);
+        //console.log(notif);
         this.cachedScoringTable = notif.args.data;
         this.cachedScoreMoveNbr = this.gamedatas.notifications.move_nbr;
         // call this to update cards vp data-vp attr
