@@ -28,13 +28,13 @@ CREATE TABLE IF NOT EXISTS `token` (
 CREATE TABLE IF NOT EXISTS `machine` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `rank` int(10) NOT NULL DEFAULT 1,
-   `type` varchar(64) NOT NULL,
+   `type` varchar(80) NOT NULL,
    `owner` varchar(8),
    `count` int(10) NOT NULL DEFAULT 1,
    `mcount` int(10) NOT NULL DEFAULT 1,
    `flags` int(10) NOT NULL DEFAULT 0,
    `parent` int(10) unsigned  NOT NULL DEFAULT 0, 
-   `data` varchar(64) NOT NULL DEFAULT '',
+   `data` varchar(80) NOT NULL DEFAULT '',
    `pool` varchar(32) NOT NULL DEFAULT 'main',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

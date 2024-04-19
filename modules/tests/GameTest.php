@@ -570,6 +570,12 @@ final class GameTest extends TestCase {
             $op = $m->getOperationInstanceFromType($r, PCOLOR);
             $this->assertNotNull($op);
             $this->assertTrue($op->checkIntegrity());
+            $name = array_get($info, 'name', '');
+
+            if ($r) {
+                $len = strlen($r);
+                $this->assertTrue($len<=80, "type too long for $key $name $len\n");
+            }
         }
     }
 
@@ -689,7 +695,6 @@ final class GameTest extends TestCase {
         } else {
             $this->assertTrue(!!$args['prompt'], "$type");
         }
-
         return $op;
     }
 
@@ -718,10 +723,7 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $p = PCOLOR;
         $card = $m->mtFind('name', 'Business Empire');
-
-
         $effect = $m->getRulesFor($card, 'r');
-        //$m->dbSetTokenLocation("resource_${p}_1", $eaters, 0); // add a microbe
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
         //$args = $op->argPrimaryDetails();
@@ -737,6 +739,32 @@ final class GameTest extends TestCase {
         $this->assertEquals(0, $value);
         $value = $m->getTrackerValue(PCOLOR, 'pm');
         $this->assertEquals(6, $value);
+    }
+    public function testLavaTubeSettlement(){
+        $m = $this->game();
+        $p = PCOLOR;
+        $m->setTrackerValue(PCOLOR, 'pe', 1);
+        $card = $m->mtFind('name', 'Lava Tube Settlement');
+        $effect = $m->getRulesFor($card, 'r');
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
+        $this->assertEquals(false, $op->isVoid());
+        $m->putInEffectPool(PCOLOR, $effect);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $ops = $m->machine->getTopOperations();
+        $op = array_shift($ops);
+        $tt = explode('(',$op['type']);
+        $this->assertEquals('city', $tt[0]);
+        $m->executeOperationSingle($op);
+
+        /** @var ComplexOperation */
+        $opcity = $m->getOperationInstance($op);
+        $this->assertFalse($opcity->isVoid());
+        //$args = $opcity->arg();
+        // "hex_4_2"
+        $opcity->action_resolve(['target'=>'hex_4_2']);
+        return;
     }
     public function testPaymentMicrobes() {
         $m = $this->game();
