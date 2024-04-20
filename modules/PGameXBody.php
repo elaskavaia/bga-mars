@@ -1769,7 +1769,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->isSolo()) {
             $color = $this->getPlayerColorById($player_id);
             $win = false;
-            $maxgen = $this->getRulesFor('solo', 'gen');
+            $maxgen = $this->getLastGeneration();
             if ($this->getGameStateValue('var_solo_flavour') == 1) {      // TR63
                 $this->notifyMessage(
                     clienttranslate('The goal was to achieve terraforming rating of 63 or more by the end of generation ${maxgen}'),
@@ -1781,7 +1781,7 @@ abstract class PGameXBody extends PGameMachine {
                     $win = true;
                 }
             } else {
-                $this->notifyMessage(clienttranslate('The goal was to completing the terraforming by the end of generation ${maxgen}'), ['maxgen' => $maxgen]);
+                $this->notifyMessage(clienttranslate('The goal was to complete the terraforming by the end of generation ${maxgen}'), ['maxgen' => $maxgen]);
                 if ($this->getTerraformingProgression() >= 100) {
                     $win = true;
                 }
