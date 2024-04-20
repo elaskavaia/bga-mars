@@ -135,6 +135,9 @@ class DbMachine extends APP_GameClass {
     }
 
     public function parseOpExpression($op) {
+        if (strlen($op)>80) {
+            throw new BgaSystemException("Parse expression is too long '$op'");
+        }
         try {
             return OpExpression::parseExpression($op);
         } catch (Throwable $e) {
