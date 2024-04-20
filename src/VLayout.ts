@@ -7,14 +7,14 @@ class VLayout {
     const name = playerInfo.name;
     const div = $("main_area");
     const board = $(`player_area_${color}`);
-    div.appendChild(board);
+    //div.appendChild(board);
 
     dojo.place(`pboard_${color}`, `tableau_${color}_cards_0`);
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
     //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
 
    
-    dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
+    //dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     dojo.place(`player_area_name_${color}`, `player_board_header_${color}`, "first");
 
     // const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
@@ -71,6 +71,11 @@ class VLayout {
     //   // have to attach tooltip directly, this element does not have a game model
     //   this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
     // });
+    // move player zones in the same order
+    const div = $("main_area");
+    document.querySelectorAll("#players_area > .player_area").forEach(board => {
+       div.appendChild(board);
+    });
   }
 
   renderSpecificToken(tokenNode: HTMLElement) {

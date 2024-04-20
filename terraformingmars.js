@@ -6873,11 +6873,11 @@ var VLayout = /** @class */ (function () {
         var name = playerInfo.name;
         var div = $("main_area");
         var board = $("player_area_".concat(color));
-        div.appendChild(board);
+        //div.appendChild(board);
         dojo.place("pboard_".concat(color), "tableau_".concat(color, "_cards_0"));
         dojo.place("tableau_".concat(color, "_corp"), "pboard_".concat(color), "after");
         //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
-        dojo.removeClass("tableau_".concat(color, "_corp_effect"), "corp_effect");
+        //dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
         dojo.place("player_area_name_".concat(color), "player_board_header_".concat(color), "first");
         // const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
         // //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
@@ -6922,6 +6922,11 @@ var VLayout = /** @class */ (function () {
         //   // have to attach tooltip directly, this element does not have a game model
         //   this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
         // });
+        // move player zones in the same order
+        var div = $("main_area");
+        document.querySelectorAll("#players_area > .player_area").forEach(function (board) {
+            div.appendChild(board);
+        });
     };
     VLayout.prototype.renderSpecificToken = function (tokenNode) {
         if (!this.game.isLayoutFull())

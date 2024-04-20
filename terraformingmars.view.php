@@ -70,6 +70,7 @@ class view_terraformingmars_terraformingmars extends game_view
     $this->page->begin_block($template, "player_board");
     // inner blocks in player blocks
     // boards in players order
+    $players = $this->game->getPlayersInOrder($cplayer);
     foreach ($players as $player_id => $player) {
       $this->insertBlockWithUppercaseKeys("player_board", $player);
     }
