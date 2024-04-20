@@ -149,6 +149,17 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
         $m->tokens->setTokenState('tracker_t', -8);
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
+
+
+    }
+
+    public function testEvalute2() {
+        $m = $this->game();
+        $this->assertEquals(0, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Nuclear Zone')));
+        $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Lightning Harvest')));
+        $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Ants')));
+        $this->assertEquals(8, $m->evaluateExpression("cost", PCOLOR, $m->mtFindByName('Lightning Harvest')));
+        
     }
 
     public function testEvaluateTagCount() {

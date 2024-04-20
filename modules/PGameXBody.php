@@ -693,7 +693,10 @@ abstract class PGameXBody extends PGameMachine {
 
         if ($x == 'vptag') {
             $rules = $this->getRulesFor($context, 'vp', '');
-            if ($rules) return 1;
+            if ($rules) {
+                if (is_numeric($rules) && $rules < 0) return 0;
+                return 1;
+            }
             return 0;
         }
 
