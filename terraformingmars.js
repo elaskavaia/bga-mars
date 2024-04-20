@@ -5182,7 +5182,7 @@ var GameXBody = /** @class */ (function (_super) {
             var next_color = (_d = opargs.args.next_color) !== null && _d !== void 0 ? _d : "";
             var next_name = next_color != "" ? this.getPlayerName(this.getPlayerIdByColor(next_color)) : "";
             if (next_color != "" && !$("draft_info")) {
-                var txt = _("Draft Direction ⤇ %s").replace("%s", "<span class=\"draft_info\" style=\"color:#".concat(next_color, ";\">").concat(next_name, "</span>"));
+                var txt = _("Draft Direction ➡️ %s").replace("%s", "<span class=\"draft_info\" style=\"color:#".concat(next_color, ";\">").concat(next_name, "</span>"));
                 $("gameaction_status").insertAdjacentHTML("afterend", "<span id=\"draft_info\">".concat(txt, "</span>"));
             }
         }

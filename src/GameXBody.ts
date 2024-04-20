@@ -1918,7 +1918,7 @@ awarded.`);
       const next_color = opargs.args.next_color ?? "";
       const next_name = next_color != "" ? this.getPlayerName(this.getPlayerIdByColor(next_color)) : "";
       if (next_color != "" && !$("draft_info")) {
-        const txt = _("Draft Direction ⤇ %s").replace("%s", `<span class="draft_info" style="color:#${next_color};">${next_name}</span>`);
+        const txt = _("Draft Direction ➡️ %s").replace("%s", `<span class="draft_info" style="color:#${next_color};">${next_name}</span>`);
         $("gameaction_status").insertAdjacentHTML("afterend", `<span id="draft_info">${txt}</span>`);
       }
     }
