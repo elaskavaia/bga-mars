@@ -912,6 +912,11 @@ abstract class PGameXBody extends PGameMachine {
         }
         return $this->eventListners;
     }
+
+    function clearEventListenerCache() {
+        $this->eventListners = null; // clear event cache, have to call after any card comes into play or leaves play
+    }
+
     function effect_moveCard($owner, $card_id, $place_id, $state = null, $notif = "", $args = []) {
         $this->dbSetTokenLocation($card_id,  $place_id, $state, $notif, $args, $this->getPlayerIdByColor($owner));
     }
@@ -1321,7 +1326,7 @@ abstract class PGameXBody extends PGameMachine {
             $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cars
         }
         $this->dbSetTokenLocation($card_id, "tableau_${color}", $state, clienttranslate('${player_name} plays card ${token_name}'), [], $this->getPlayerIdByColor($color));
-        $this->eventListners = null; // clear cache since card came into play
+        $this->clearEventListenerCache(); // clear cache since card came into play
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
         if ($ttype != MA_CARD_TYPE_EVENT && $tags) {
@@ -1355,7 +1360,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [], $player_id);
         $this->effect_untap($card_id);
-        $this->eventListners = null; // clear cache since corp came into play
+        $this->clearEventListenerCache(); // clear cache since corp came into play
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $tagsarr = explode(' ', $tags);
         if ($tags) {
@@ -2267,6 +2272,11 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function effect_endOfActions($player_id) {
+        $this->notifyTokensUpdate($player_id);
+        $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable()]);
+    }
+
+    function notifyTokensUpdate($player_id) {
         $ops = Operation_turn::getStandardActions($this->isSolo());
         $operations = [];
         foreach ($ops as $optype) {
@@ -2275,7 +2285,6 @@ abstract class PGameXBody extends PGameMachine {
             $operations[] = $oparr;
         }
         $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
-        $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable()]);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
