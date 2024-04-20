@@ -577,7 +577,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function evaluatePrecondition($cond, $owner, $tokenid) {
         if ($cond) {
-            $valid = $this->evaluateExpression($cond, $owner, $tokenid);
+            $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wild'=>1]);
             if (!$valid) {
                 $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
                 // there is one more stupid event card that has temp delta effect
@@ -587,8 +587,8 @@ abstract class PGameXBody extends PGameMachine {
                     $delta += $outcome;
                 }
                 if ($delta) {
-                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta])
-                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta]);
+                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wild'=>1])
+                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wild'=>1]);
                 }
                 if (!$valid) return false; // fail prereq check
             }
