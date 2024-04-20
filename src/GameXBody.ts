@@ -630,11 +630,11 @@ class GameXBody extends GameTokens {
       },
       { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
       { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" },
+      { key: "defaultstack_4", label: _("Default HQ View"), choice: { 0:_("Hidden"),1:_("Synthetic"), 2:_("Stacked"),3:_("Full") }, default: 2 },
       { key: "defaultstack_3", label: _("Default Events View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 0 },
       { key: "defaultstack_1", label: _("Default Automated View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 2 },
       { key: "defaultstack_2", label: _("Default Effects View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 2 },
-      { key: "defaultstack_2a", label: _("Default Actions View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") }, default: 2 },
-      { key: "defaultstack_4", label: _("Default HQ View"), choice: { 0:_("Hidden"),2:_("Stacked"),3:_("Full") }, default: 2 },
+      { key: "defaultstack_2a", label: _("Default Actions View"), choice: { 1:_("Synthetic"),2:_("Stacked"),3:_("Full") }, default: 3 },
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');

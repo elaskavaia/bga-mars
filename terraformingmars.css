@@ -9517,6 +9517,14 @@
   max-width: 99.2%;
 }
 
+.cardstack[data-currentview="2"] .stack_content.cards_4 {
+  min-width: calc(var(--card-width) * 1.5 * var(--columns));
+}
+
+.cardstack[data-currentview="3"] .stack_content.cards_4 {
+  width: calc(var(--card-width) * 1.5 * var(--columns));
+}
+
 .cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {
   display: block;
   width: calc(var(--card-width) * 1);
@@ -10048,6 +10056,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 }
 .deck_line .deck_line_text {
   margin-right: 3%;
+  white-space: nowrap;
 }
 .deck_line .carddeck > .counter {
   top: 0;
