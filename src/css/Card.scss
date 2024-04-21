@@ -1881,6 +1881,29 @@
     right: calc(var(--card-width) * 0.05);
     top: calc(var(--card-width) * 0.08);
   }
+
+
+  .card[data-show_calc_vp="1"][data-vp]::after {
+    position: absolute;
+    width: calc(var(--card-width) * 0.15);
+    height: calc(var(--card-width) * 0.15);
+    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+    color: white;
+    font-size: calc(var(--card-width) * 0.1);
+    line-height: calc(var(--card-width) * 0.15);
+    font-family: var(--mars-font);
+    content: attr(data-vp);
+    border-radius: 50%;
+    outline: #e3cc4e calc(var(--card-width) * 0.015) solid;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    background-image: url("img/icons.png");
+    background-size: 1400% 200%;
+    background-position: -1300% 0;
+    right: 6%;
+    bottom: 14%;
+  }
 }
 
 

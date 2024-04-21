@@ -1418,6 +1418,17 @@ awarded.`);
         const card_initial = displayInfo.text || "";
         const card_effect = displayInfo.text_effect || displayInfo.text_action || "";
         const card_title = displayInfo.name || "";
+
+        /*
+        let corp_a = "";
+        let corp_e= "";
+        if (displayInfo.a) {
+          corp_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
+        }
+        if (displayInfo.e) {
+          corp_e = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
+        }*/
+
         //   if (texts.length>0) card_initial = texts[0];
         //  if (texts.length>1) card_effect= texts[1];
         decor.innerHTML = `
@@ -1475,10 +1486,12 @@ awarded.`);
         let vp = "";
 
         let sort_vp: string = "0";
+
         if (displayInfo.vp) {
           if (CustomRenders["customcard_vp_" + displayInfo.num]) {
             vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
             sort_vp = "1";
+            tokenNode.setAttribute("data-show_calc_vp","1");
           } else {
             vp = parseInt(displayInfo.vp)
               ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"

@@ -212,13 +212,13 @@
 }
 
 .cardstack[data-currentview="0"] {
-  height: calc(var(--card-width) * 0.4);
+  height: calc(var(--card-width) * 0.2);
   
   .stack_content  .card {
       display: none;
   }
   .stack_content_txt {
-    display: block;
+    display: none;
   }
 }
 
@@ -291,10 +291,25 @@
     .card[data-card-type="5"] {
       background-color: #91208b;
       outline: 1px solid #c936b8;
+      width: var(--card-width);
     }
     .card[data-card-type="4"] {
-      background-color: gray;
+      background-color: #ddd;
       outline: 1px solid gray;
+      background-image: none;
+      width: var(--card-width);
+
+      .card_effect {
+        display: block;
+        position: relative;
+        top: 0;
+        left: 1%;
+        width: 98%;
+        height: auto;
+        font-size: calc(var(--card-width) * 0.06);
+        background-image: url("img/cards_bg_2_blue_action_texture.jpg");
+        background-size: 100% 100%;
+      }
     }
     .card {
      // height: calc(var(--card-height)*0.4);
@@ -344,6 +359,11 @@
         margin-top: calc(var(--card-height) * 0.02);
         left: 37%;
       }
+
+    }
+    .card[data-show_calc_vp="1"][data-vp]::after {
+      right: 1%;
+      bottom: 2%;
     }
   }
   .stack_dd_buttons_close {
