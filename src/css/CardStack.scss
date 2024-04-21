@@ -65,6 +65,7 @@
     width: 100%;
     flex-wrap: wrap;
   }
+  
   .cardstack {
     outline: 1px dashed var(--outlinecolor);
     border-radius: calc(var(--card-width) * 0.05);
@@ -158,6 +159,18 @@
       width: calc(var(--card-width) * 1);
     }
 
+  }
+
+  //small stack evrsion in header
+  .tableautoprow .cardstack{
+    .stack_header .stack_header_middle{
+      display: none;
+    }
+    width: calc(var(--card-width) * 0.4);
+
+    .stack_dd_buttons.open{
+      right: revert;
+    }
   }
 }
 .cardstack.blue {
