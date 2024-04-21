@@ -94,7 +94,7 @@
   box-shadow: 0px 0px 4px 2px #64b4ff !important;
 }
 
-.active_slot.card {
+.active_slot.card, .active_slot.corp_logo {
   box-shadow: 2px 2px 3px 3px #00000080, 2px -2px 0px 5px #ff9800 !important;
   transform: translateZ(10px); // make it hover a bit
   top: 0px;

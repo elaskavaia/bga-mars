@@ -1374,6 +1374,8 @@ function getIntPart(word, i) {
 }
 function getPart(word, i) {
     var arr = word.split("_");
+    if (arr.length <= i)
+        return "";
     return arr[i];
 }
 function getFirstParts(word, count) {
@@ -4741,6 +4743,15 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_initial = displayInfo.text || "";
                 var card_effect = displayInfo.text_effect || displayInfo.text_action || "";
                 var card_title = displayInfo.name || "";
+                /*
+                let corp_a = "";
+                let corp_e= "";
+                if (displayInfo.a) {
+                  corp_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
+                }
+                if (displayInfo.e) {
+                  corp_e = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
+                }*/
                 //   if (texts.length>0) card_initial = texts[0];
                 //  if (texts.length>1) card_effect= texts[1];
                 decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(_(card_initial), "</div>\n                  <div class=\"card_effect\">").concat(_(card_effect), "</div>\n            ");
@@ -4790,6 +4801,7 @@ var GameXBody = /** @class */ (function (_super) {
                     if (CustomRenders["customcard_vp_" + displayInfo.num]) {
                         vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
                         sort_vp = "1";
+                        tokenNode.setAttribute("data-show_calc_vp", "1");
                     }
                     else {
                         vp = parseInt(displayInfo.vp)
@@ -5381,6 +5393,13 @@ var GameXBody = /** @class */ (function (_super) {
             this.setActiveSlot(divId);
             this.setReverseIdMap(divId, opId, tid);
         }
+        if (tid != divId) {
+            var orig = $(tid);
+            if (orig) {
+                this.setActiveSlot(tid);
+                this.setReverseIdMap(tid, opId, tid);
+            }
+        }
         return divId;
     };
     GameXBody.prototype.setMainOperationType = function (opInfo) {
@@ -5655,8 +5674,13 @@ var GameXBody = /** @class */ (function (_super) {
             if (id.startsWith("tracker_p_")) {
                 target = id.replace("tracker_p_", "playergroup_plants_");
             }
-            if (id.startsWith("tracker_h_")) {
+            else if (id.startsWith("tracker_h_")) {
                 target = id.replace("tracker_h_", "playergroup_heat_");
+            }
+            else if (id.startsWith("card_corp_")) {
+                var tableau = node.parentElement.id;
+                var pcolor = getPart(tableau, 1);
+                target = "tableau_".concat(pcolor, "_corp_logo");
             }
         }
         return target;

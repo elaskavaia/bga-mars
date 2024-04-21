@@ -2134,6 +2134,13 @@ awarded.`);
       this.setActiveSlot(divId);
       this.setReverseIdMap(divId, opId, tid);
     }
+    if (tid != divId) {
+      const orig = $(tid);
+      if (orig) {
+        this.setActiveSlot(tid);
+        this.setReverseIdMap(tid, opId, tid);
+      }
+    }
     return divId;
   }
 
@@ -2424,9 +2431,12 @@ awarded.`);
     if (!this.isLayoutFull()) {
       if (id.startsWith("tracker_p_")) {
         target = id.replace("tracker_p_", "playergroup_plants_");
-      }
-      if (id.startsWith("tracker_h_")) {
+      } else if (id.startsWith("tracker_h_")) {
         target = id.replace("tracker_h_", "playergroup_heat_");
+      } else if (id.startsWith("card_corp_")) {
+        const tableau = node.parentElement.id;
+        const pcolor = getPart(tableau, 1);
+        target = `tableau_${pcolor}_corp_logo`;
       }
     }
     return target;

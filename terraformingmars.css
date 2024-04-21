@@ -217,7 +217,7 @@
   box-shadow: 0px 0px 4px 2px #64b4ff !important;
 }
 
-.active_slot.card {
+.active_slot.card, .active_slot.corp_logo {
   box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 2px -2px 0px 5px #ff9800 !important;
   transform: translateZ(10px);
   top: 0px;
@@ -3496,6 +3496,27 @@
   position: absolute;
   right: calc(var(--card-width) * 0.05);
   top: calc(var(--card-width) * 0.08);
+}
+.mcompact .card[data-show_calc_vp="1"][data-vp]::after {
+  position: absolute;
+  width: calc(var(--card-width) * 0.15);
+  height: calc(var(--card-width) * 0.15);
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  color: white;
+  font-size: calc(var(--card-width) * 0.1);
+  line-height: calc(var(--card-width) * 0.15);
+  font-family: var(--mars-font);
+  content: attr(data-vp);
+  border-radius: 50%;
+  outline: #e3cc4e calc(var(--card-width) * 0.015) solid;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  background-image: url("img/icons.png");
+  background-size: 1400% 200%;
+  background-position: -1300% 0;
+  right: 6%;
+  bottom: 14%;
 }
 
 @keyframes showme {
@@ -9446,6 +9467,15 @@
   color: white;
   width: calc(var(--card-width) * 1);
 }
+.mcompact .tableautoprow .cardstack {
+  width: calc(var(--card-width) * 0.4);
+}
+.mcompact .tableautoprow .cardstack .stack_header .stack_header_middle {
+  display: none;
+}
+.mcompact .tableautoprow .cardstack .stack_dd_buttons.open {
+  right: revert;
+}
 
 .cardstack.blue {
   --outlinecolor: #8699fa;
@@ -9493,13 +9523,13 @@
 }
 
 .cardstack[data-currentview="0"] {
-  height: calc(var(--card-width) * 0.4);
+  height: calc(var(--card-width) * 0.2);
 }
 .cardstack[data-currentview="0"] .stack_content .card {
   display: none;
 }
 .cardstack[data-currentview="0"] .stack_content_txt {
-  display: block;
+  display: none;
 }
 
 .cardstack[data-currentview="1"] .stack_content {
@@ -9559,10 +9589,24 @@
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="5"] {
   background-color: #91208b;
   outline: 1px solid #c936b8;
+  width: var(--card-width);
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="4"] {
-  background-color: gray;
+  background-color: #ddd;
   outline: 1px solid gray;
+  background-image: none;
+  width: var(--card-width);
+}
+.mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="4"] .card_effect {
+  display: block;
+  position: relative;
+  top: 0;
+  left: 1%;
+  width: 98%;
+  height: auto;
+  font-size: calc(var(--card-width) * 0.06);
+  background-image: url("img/cards_bg_2_blue_action_texture.jpg");
+  background-size: 100% 100%;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card {
   height: fit-content;
@@ -9605,6 +9649,10 @@
   position: relative;
   margin-top: calc(var(--card-height) * 0.02);
   left: 37%;
+}
+.mcompact .cardstack[data-currentview="1"] .stack_content .card[data-show_calc_vp="1"][data-vp]::after {
+  right: 1%;
+  bottom: 2%;
 }
 .mcompact .stack_dd_buttons_close {
   font-size: 1vh;
@@ -10786,6 +10834,10 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 }
 .drag_inpg #hand_area {
   /* flex-wrap: nowrap;*/
+}
+
+.defhidden {
+  display: none;
 }
 
 /*

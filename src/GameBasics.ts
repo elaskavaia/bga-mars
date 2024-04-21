@@ -1517,6 +1517,7 @@ function getIntPart(word, i) {
 }
 function getPart(word, i) {
   var arr = word.split("_");
+  if (arr.length <= i) return "";
   return arr[i];
 }
 function getFirstParts(word, count) {
