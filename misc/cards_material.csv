@@ -222,14 +222,14 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set id=card_prelude_{num}
 #set location=deck_prelude
 #set type=card prelude
-P01|Allied Bank|5|4pm,3m|||0||Earth|0|Prelude|Increase your M€ production 4 steps. Gain 3 M€.||||
+P01|Allied Bank|5|4pm,3m|||0||Earth|0|Prelude|Increase your M€ production 4 steps. Gain 3 M€.||||'bc'=>-3
 P02|Aquifer Turbines|5|2pe,3nm,w|||0||Energy|0|Prelude|Place an ocean tile. Increase your energy production 2 steps. Remove 3 M€.||||'bc'=>3
 P03|Biofuels|5|pp,pe,2p|||0||Microbe|0|Prelude|Increase your plant production and energy production 1 step each. Gain 2 plants.||||
 P04|Biolabs|5|pp,3draw|||0||Science|0|Prelude|Increase your plant production 1 step. Draw 3 cards.||||
 P05|Biosphere Support|5|1npm,2pp|||0||Plant|0|Prelude|Decrease your M€ production 1 step. Increase your plant production 2 steps.||||
 P06|Business Empire|5|6pm,6nm|||0||Earth|0|Prelude|Increase your M€ production 6 steps. Remove 6 M€.||||'bc'=>6
 P07|Dome Farming|5|2pm,pp|||0||Building Plant|0|Prelude|Increase your plant production 1 step. Increase your M€ production 2 steps.||||
-P08|Donation|5|21m|||0|||0|Prelude|Gain 21 M€.||||
+P08|Donation|5|21m|||0|||0|Prelude|Gain 21 M€.||||'bc'=>-21
 P09|Early Settlement|5|pp,city|||0||Building City|0|Prelude|Place a city tile. Increase your plant production 1 step.||||
 P10|Ecology Experts|5|pp,card||onPre_delta:20;play_card:flip:that|0||Microbe Plant|0|Prelude|Increase your plant production 1 step. Play a card from Hand, ignoring global requirements||||
 P11|Excentric Sponsor|5|?card||onPay_card:25m;play_card:flip:that|0|||0|Prelude|Play a card from hand, reducing its costs by 25 M€||||
@@ -245,7 +245,7 @@ P20|Metals Company|5|pm,ps,pu|||0|||0|Prelude|Increase your M€ production, ste
 P21|Mining Operations|5|2ps,4s|||0||Building|0|Prelude|Increase your steel production 2 steps. Gain 4 steel.||||
 P22|Mohole|5|3ph,3h|||0||Building|0|Prelude|Increse your heat production 3 steps. Gain 3 heat.||||
 P23|Mohole Excavation|5|ps,2ph,2h|||0||Building|0|Prelude|Increase your steel production 1 step, and your heat production 2 steps. Gain 2 heat.||||
-P24|Nitrogen Shipment|5|pp,5m,tr|||0|||0|Prelude|Raise your terraform rating 1 step. Increase your plant production 1 step. Gain 5 M€.||||
+P24|Nitrogen Shipment|5|pp,5m,tr|||0|||0|Prelude|Raise your terraform rating 1 step. Increase your plant production 1 step. Gain 5 M€.||||'bc'=>-5
 P25|Orbital Construction Yard|5|pu,4u|||0||Space|0|Prelude|Increase your titanium produciton 1 step. Gain 4 titanium.||||
 P26|Polar Industries|5|2ph,w|||0||Building|0|Prelude|Place 1 ocean tile. Increase your heat production 2 steps.||||
 P27|Power Generation|5|3pe|||0||Energy|0|Prelude|Increase your energy production 3 steps.||||

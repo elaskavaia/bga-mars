@@ -2943,6 +2943,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Increase your M€ production 4 steps. Gain 3 M€.'),
+  'bc'=>-3,
 ],
  'card_prelude_P02' => [  //
   'location' => 'deck_prelude',
@@ -3042,6 +3043,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Gain 21 M€.'),
+  'bc'=>-21,
 ],
  'card_prelude_P09' => [  //
   'location' => 'deck_prelude',
@@ -3263,6 +3265,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Raise your terraform rating 1 step. Increase your plant production 1 step. Gain 5 M€.'),
+  'bc'=>-5,
 ],
  'card_prelude_P25' => [  //
   'location' => 'deck_prelude',

@@ -41,7 +41,7 @@ class Operation_setuppick extends AbsOperation {
         foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_prelude")) {
                 $buy_cost = $this->game->getRulesFor($card_id,'bc',0);
-                $corpmoney -= $buy_cost; // some cards need money to play - count this to not get yourself into the corder
+                $corpmoney -= $buy_cost; // some cards need money to play (or give money) - count this to not get yourself into the corner
                 $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You got ${token_name}'), [
                     "_private" => true
                 ]);
