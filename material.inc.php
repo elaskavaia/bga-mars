@@ -3170,6 +3170,7 @@ $this->token_types = [
   'vp' => 0,
   'deck' => 'Prelude',
   'text' => clienttranslate('Decrease your M€ production 2 steps. Gain 30 M€.'),
+  'bc'=>-30,
 ],
  'card_prelude_P18' => [  //
   'location' => 'deck_prelude',

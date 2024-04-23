@@ -238,7 +238,7 @@ P13|Galilean Mining|5|2pu,5nm|||0||Jovian|0|Prelude|Increase your titanium produ
 P14|Great Aquifer|5|w,w|||0|||0|Prelude|Place 2 ocean tiles.||||
 P15|Huge Asteroid|5|5nm,3t|||0|||0|Prelude|Raise temperature 3 steps. Remove 5 M€.||||'bc'=>5
 P16|Io Research Outpost|5|pu,draw|||0||Science Jovian|0|Prelude|Increase your titanium production 1 step. Draw 1 card.||||
-P17|Loan|5|2npm,30m|||0|||0|Prelude|Decrease your M€ production 2 steps. Gain 30 M€.||||
+P17|Loan|5|2npm,30m|||0|||0|Prelude|Decrease your M€ production 2 steps. Gain 30 M€.||||'bc'=>-30
 P18|Martian Industries|5|ps,pe,6m|||0||Building|0|Prelude|Increase your energy production and steel production 1 step each. Gain 6 M€.||||
 P19|Metal-Rich Asteroid|5|4s,4u,t|||0|||0|Prelude|Raise temperature 1 step. Gain 4 titanium, and 4 steel.||||
 P20|Metals Company|5|pm,ps,pu|||0|||0|Prelude|Increase your M€ production, steel production, and titanium production 1 step each.||||
