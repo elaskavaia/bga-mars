@@ -43,12 +43,6 @@ var GameBasics = /** @class */ (function (_super) {
         dojo.destroy("debug_output"); // its too slow and useless
         this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
-        // add reload Css debug button
-        var parent = document.querySelector(".debug_section");
-        if (parent && !$("reloadcss")) {
-            var butt = dojo.create("a", { id: "reloadcss", class: "bgabutton bgabutton_gray", innerHTML: "Reload CSS" }, parent);
-            dojo.connect(butt, "onclick", function () { return reloadCss(); });
-        }
         this.setupNotifications();
         this.upldateColorMapping(".player-name *");
     };
