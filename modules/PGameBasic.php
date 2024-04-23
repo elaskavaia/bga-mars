@@ -716,6 +716,8 @@ abstract class PGameBasic extends Table {
     function undoSavepoint() {
         //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
         $this->undoSaveOnMoveEndDup = true;
+        //$this->statelog("undoSavepoint");
+
     }
 
     function setUndoSavepoint(bool $value) {
@@ -731,11 +733,11 @@ abstract class PGameBasic extends Table {
     function doUndoSavePoint() {
         if (!$this->undoSaveOnMoveEndDup)
             return;
-        //$this->debug("*** doUndoSavePoint ***");
+        //$this->statelog("*** doUndoSavePoint ***");
         $state = $this->gamestate->state();
         if ($state['type'] == 'multipleactiveplayer') {
-            // $name = $state ['name'];
-            //$this->warn("using undo savepoint in multiactive state $name");
+            $name = $state ['name'];
+            $this->warn("using undo savepoint in multiactive state $name");
             return;
         }
         parent::doUndoSavePoint();
@@ -750,6 +752,15 @@ abstract class PGameBasic extends Table {
         parent::sendNotifications();
         if ($this->undoSaveOnMoveEndDup)
             self::doUndoSavePoint();
+    }
+
+    function statelog(string $log = "trace") {
+        $state = $this->gamestate->state();
+        $name = $state['name'];
+        $type = $state['type'];
+        $player = $this->getActivePlayerName();
+        $move = $this->getGameStateValue("playerturn_nbr");
+        $this->debug("$log move $move in $type state $name (act: $player)");
     }
 
     function getPhpConstants($prefix = null) {

@@ -88,7 +88,7 @@ abstract class PGameXBody extends PGameMachine {
                     foreach ($production as $prodtype) {
                         $this->effect_incProduction($color, $prodtype, 1);
                     }
-                } 
+                }
 
                 // set proper TR and matching score and matching stat
                 $tr_traker = $this->getTrackerId($color, 'tr');
@@ -112,6 +112,12 @@ abstract class PGameXBody extends PGameMachine {
                 // give more time for setup
                 $this->giveExtraTime($player_id);
             }
+            if ($prelude) {
+                foreach ($players as $player_id => $player) {
+                    $color = $player["player_color"];
+                    $this->queue($color, "prelude");
+                }
+            }
 
             if ($this->isSolo()) {
                 $this->setupSoloMap();
@@ -120,7 +126,7 @@ abstract class PGameXBody extends PGameMachine {
             $player_id = $this->getFirstPlayer();
             $this->setCurrentStartingPlayer($player_id);
             $this->queuePlayersTurn($player_id, false);
-            $this->undoSavepoint();
+            $this->doUndoSavePoint();
         } catch (Exception $e) {
             $this->error($e);
         }
@@ -577,7 +583,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function evaluatePrecondition($cond, $owner, $tokenid) {
         if ($cond) {
-            $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wild'=>1]);
+            $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wild' => 1]);
             if (!$valid) {
                 $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
                 // there is one more stupid event card that has temp delta effect
@@ -587,8 +593,8 @@ abstract class PGameXBody extends PGameMachine {
                     $delta += $outcome;
                 }
                 if ($delta) {
-                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wild'=>1])
-                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wild'=>1]);
+                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wild' => 1])
+                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wild' => 1]);
                 }
                 if (!$valid) return false; // fail prereq check
             }
@@ -1231,10 +1237,10 @@ abstract class PGameXBody extends PGameMachine {
         $active_player = $this->getActivePlayerId();
 
         // in this game we never switch active player during the single active state turns
-        // except for lastforest
-        $stage = $this->getGameStateValue('gamestage');
-        if ($stage == MA_STAGE_LASTFOREST ||  $stage == MA_STAGE_PRELUDE || $this->isZombiePlayer($active_player)) {
-            if ($active_player != $player_id) {
+        // in the normal game state
+        if ($active_player != $player_id) {
+            $stage = $this->getGameStateValue('gamestage');
+            if ($stage != MA_STAGE_GAME || $this->isZombiePlayer($active_player)) {
                 $this->setNextActivePlayerCustom($player_id);
                 $this->undoSavepoint();
                 return;

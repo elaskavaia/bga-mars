@@ -54,12 +54,8 @@ class Operation_finsetup extends AbsOperation {
             break;
         }
 
-        $this->game->setGameStateValue('gamestage', MA_STAGE_PRELUDE);
-        // play prelude automatically
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_${color}");
-        foreach ($rest as $card_id => $card) {
-                $this->game->effect_playCard($color, $card_id);
-        }
+        $this->game->undoSavepoint();
+        
         return 1;
     }
 }
