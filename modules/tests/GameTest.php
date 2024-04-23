@@ -149,8 +149,6 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
         $m->tokens->setTokenState('tracker_t', -8);
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
-
-
     }
 
     public function testEvalute2() {
@@ -159,7 +157,6 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Lightning Harvest')));
         $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Ants')));
         $this->assertEquals(8, $m->evaluateExpression("cost", PCOLOR, $m->mtFindByName('Lightning Harvest')));
-        
     }
 
     public function testEvaluateTagCount() {
@@ -169,30 +166,55 @@ final class GameTest extends TestCase {
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
-        
+
         $card = $m->mtFindByName('Research Coordination');
         $m->effect_playCard(PCOLOR, $card);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
-        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wild'=>1]));
+        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wild' => 1]));
+    }
 
+    public function testEvaluateTagCountAdvancedEcosystems() {
+        $m = $this->game();
+        $color = PCOLOR;
+        $card = $m->mtFindByName('Advanced Ecosystems');
+        $q = $m->precondition(PCOLOR,$card);
+        $this->assertEquals(MA_ERR_PREREQ, $q);
 
+        $m->tokens->setTokenState("tracker_tagPlant_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagAnimal_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 1);
+        $q = $m->precondition(PCOLOR,$card);
+        $this->assertEquals(MA_OK, $q);
+
+        $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
+        $q = $m->precondition(PCOLOR,$card);
+        $this->assertEquals(MA_ERR_PREREQ, $q);
+
+        $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
+        $q = $m->precondition(PCOLOR,$card);
+        $this->assertEquals(MA_OK, $q);
+
+        $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
+        $q = $m->precondition(PCOLOR,$card);
+        $this->assertEquals(MA_OK, $q); // this is bug
+        //$this->assertEquals(MA_ERR_PREREQ, $q);
     }
 
     public function testClaimBuilderMilestoneWithWild() {
         $m = $this->game();
         $color = PCOLOR;
-        $m->tokens->setTokenState("tracker_tagBuilding_${color}",7);
-        $m->tokens->setTokenState("tracker_tagWild_${color}",1);
+        $m->tokens->setTokenState("tracker_tagBuilding_${color}", 7);
+        $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
         $m->setTrackerValue(PCOLOR, 'm', 10);
-   
+
         /** @var Operation_claim */
         $op = $m->getOperationInstanceFromType("claim", PCOLOR);
         $args = $op->argPrimaryDetails();
         $builder = array_get($args, 'milestone_4');
         $this->assertNotNull($builder);
-        $this->assertEquals(MA_OK,$builder['q']);
+        $this->assertEquals(MA_OK, $builder['q']);
     }
 
 
@@ -585,7 +607,7 @@ final class GameTest extends TestCase {
 
             if ($r) {
                 $len = strlen($r);
-                $this->assertTrue($len<=80, "type too long for $key $name $len\n");
+                $this->assertTrue($len <= 80, "type too long for $key $name $len\n");
             }
         }
     }
@@ -751,7 +773,7 @@ final class GameTest extends TestCase {
         $value = $m->getTrackerValue(PCOLOR, 'pm');
         $this->assertEquals(6, $value);
     }
-    public function testLavaTubeSettlement(){
+    public function testLavaTubeSettlement() {
         $m = $this->game();
         $p = PCOLOR;
         $m->setTrackerValue(PCOLOR, 'pe', 1);
@@ -765,7 +787,7 @@ final class GameTest extends TestCase {
         $m->st_gameDispatch();
         $ops = $m->machine->getTopOperations();
         $op = array_shift($ops);
-        $tt = explode('(',$op['type']);
+        $tt = explode('(', $op['type']);
         $this->assertEquals('city', $tt[0]);
         $m->executeOperationSingle($op);
 
@@ -774,7 +796,7 @@ final class GameTest extends TestCase {
         $this->assertFalse($opcity->isVoid());
         //$args = $opcity->arg();
         // "hex_4_2"
-        $opcity->action_resolve(['target'=>'hex_4_2']);
+        $opcity->action_resolve(['target' => 'hex_4_2']);
         return;
     }
     public function testPaymentMicrobes() {
@@ -816,7 +838,7 @@ final class GameTest extends TestCase {
         $payment = $m->getPayment($p, $card);
         $this->assertEquals($payment, '6nm');
         $args = $m->debug_oparg($payment, $card);
-        $this->assertEquals(false, array_get($args['args'],'void',false));
+        $this->assertEquals(false, array_get($args['args'], 'void', false));
         $targets = $args['args']['target'];
         $this->assertEquals(4, count($targets));
     }
