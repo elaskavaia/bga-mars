@@ -30,6 +30,10 @@ class Operation_passauto extends AbsOperation {
         if ($isMulti) {
             throw new feException("Pass operation is impossible in this state");
         }
+        $stage = $this->game->getGameStateValue('gamestage'); 
+        if ($stage != MA_STAGE_GAME) {
+            throw new feException("Pass operation is impossible in this state");
+        }
         
         $this->game->dbSetTokenState("tracker_passed_${color}", 2, '');
         $this->game->notifyPlayer($this->getPlayerId(),'message_warning',clienttranslate('Auto passing on next turn'),[]);
