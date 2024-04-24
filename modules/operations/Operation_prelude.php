@@ -19,7 +19,8 @@ class Operation_prelude extends AbsOperation {
         // play prelude automatically
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_${color}");
         foreach ($rest as $card_id => $card) {
-                $this->game->effect_playCard($color, $card_id);
+                $this->game->putInEffectPool($color, 'cardx', $card_id);
+                //$this->game->effect_playCard($color, $card_id);
         }
         
         return 1;

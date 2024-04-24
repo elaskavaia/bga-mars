@@ -21,6 +21,17 @@ class Operation_card extends AbsOperation {
         return $this->game->filterPlayable($color, $keys);
     }
 
+    function getDelta() {
+        $owner = $this->color;
+        $delta = $this->game->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
+        $listeners = $this->game->collectListeners($owner, ['onPre_delta']);
+        foreach ($listeners as $lisinfo) {
+            $outcome = $lisinfo['outcome'];
+            $delta += $outcome;
+        }
+        return $delta;
+    }
+
     function getPrimaryArgType() {
         return 'token';
     }
@@ -32,5 +43,12 @@ class Operation_card extends AbsOperation {
 
     function canSkipChoice() {
         return false;
+    }
+
+    function getPrompt() {
+        $delta = $this->getDelta();
+        if ($delta >= 20) return clienttranslate('${you} must select a card to play (ignore global requirements)');
+        //if ($delta >= 0) return clienttranslate('${you} must select a card to play (adjusted global requirements)');
+        return parent::getPrompt();
     }
 }

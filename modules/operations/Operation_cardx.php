@@ -15,4 +15,20 @@ class Operation_cardx extends AbsOperation {
     function getPrimaryArgType() {
         return '';
     }
+
+    function getButtonName() {
+        return clienttranslate('Play Card: ${name}');
+    }
+
+    function getPrompt() {
+        return $this->getButtonName();
+    }
+
+    function getVisargs() {
+        return [
+            "name" => $this->game->getTokenName($this->getContext()),
+            'count' => $this->getCount(),
+            'i18n' => ['name']
+        ];
+    }
 }
