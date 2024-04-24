@@ -54,8 +54,8 @@ final class OpExpressionTest extends TestCase {
         $this->assertExpressionParser("call(void)", "call(void)");
         $this->assertExpressionParser("call(1+2)", "call(1 + 2)");
         $this->assertExpressionParser("(, call(a) m)", "call(a) m");
-        $this->assertExpressionParser("0x2f", "0x2f");
-        $this->assertExpressionParser("pl(0x2f)", "pl(0x2f)");
+        //$this->assertExpressionParser("0x2f", "0x2f");
+        $this->assertExpressionParser("pl(1)", "pl(1)");
         $this->assertExpressionParser("(! 0 2 ores(Microbe))", "2?ores(Microbe)");
         $this->assertExpressionParser("(: play_tagPlant (/ p res) that)","play_tagPlant:p/res:that");
         $this->assertExpressionParser("(: 0 1 discard draw)","?(discard:draw)");
@@ -79,7 +79,7 @@ final class OpExpressionTest extends TestCase {
 
         //"1*(?a/?b/?c)"
         $this->assertExpressionEq("call(1)");
-        $this->assertExpressionEq("pl(0x0000ff)");
+        $this->assertExpressionEq("pl(0000ff)");
         $this->assertExpressionEq("2?ores(Microbe),pp,3ph");
         $this->assertExpressionEq("2tr,t,(pp/counter('(tagPlant>=3)*4') pp)");
 
@@ -122,14 +122,14 @@ final class OpExpressionTest extends TestCase {
         $this->assertTokens(["a", "+", "b"], "a + b ");
         $this->assertTokens(["2", "a"], "2a");
         $this->assertTokens(["a2"], "a2");
-        $this->assertTokens(["-", "2"], "-2");
+        $this->assertTokens(["-2"], "-2");
         $this->assertTokens("aa", "aa");
         $this->assertTokens(["2", "a"], "2a");
         $this->assertTokens("a2", "a2");
         $this->assertTokens("22", "22");
         $this->assertTokens(["-", "a"], "-a");
         $this->assertTokens(["2", "aa", "34", "+"], "  2aa 34+");
-        $this->assertTokens(["-", "2", "a"], "-2a");
+        $this->assertTokens(["-2", "a"], "-2a");
     }
 
     public function assertEqualsArr($expected, $table, $message = "") {

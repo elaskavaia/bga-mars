@@ -667,6 +667,9 @@ abstract class PGameXBody extends PGameMachine {
         try {
             if (!$owner)
                 $owner = $this->getActivePlayerColor();
+            if (strlen($cond) > 80) {
+                throw new BgaSystemException("Parse expression is too long '$cond'");
+            }
             $expr = MathExpression::parse($cond);
             $mapper = function ($x) use ($owner, $context, $options) {
                 return $this->evaluateTerm($x, $owner, $context, $options);

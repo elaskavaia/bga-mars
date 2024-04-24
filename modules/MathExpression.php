@@ -199,12 +199,6 @@ class MathExpressionParser {
 class MathLexer extends OpLexer {
     function __construct() {
         parent::__construct();
-        $this->terminals = array_merge($this->terminals, [
-            "/^(>=)/" => "T_OP",
-            "/^(<=)/" => "T_OP",
-            "/^(==)/" => "T_OP",
-            "/^(-\s*\d+)/" => "T_NUMBER",
-        ]);
     }
     public static function getInstance() {
         if (self::$instance == null) {

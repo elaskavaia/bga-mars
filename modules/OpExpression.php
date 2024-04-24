@@ -133,8 +133,8 @@ class OpExpression extends APP_Object {
         return $this->op == "!";
     }
 
-    function isUnranged(){
-        return ($this->to==$this->from && $this->to==1);
+    function isUnranged() {
+        return ($this->to == $this->from && $this->to == 1);
     }
 }
 
@@ -255,16 +255,10 @@ class OpExpressionRanged extends OpExpression {
 
 class OpLexer {
     protected static $instance;
-    protected $terminals = [
-        "/^(\s+)/" => "T_WHITESPACE",
-        "/^(0x[0-9A-Fa-f]+)/" => "T_NUMBER",
-        "/^(\d+)/" => "T_NUMBER",
-        "/^(\w+)/" => "T_IDENTIFIER",
-        "/^('[^']*')/" => "T_STRING",
-    ];
 
     public function  __construct() {
     }
+
 
     public static function getInstance() {
         if (self::$instance == null) {
@@ -298,20 +292,84 @@ class OpLexer {
 
         return $tokens;
     }
-    protected function nextToken($line, $offset = 0, &$tname = null) {
+
+    function isdigit($c) {
+        $ordc = ord($c);
+        return $ordc >= ord('0') && $ordc <= ord('9');
+    }
+    function isident($c) {
+        $ordc = ord($c);
+        return $c == '_' || ($ordc >= ord('0') && $ordc <= ord('9')) || ($ordc >= ord('a') && $ordc <= ord('z')) || ($ordc >= ord('A') && $ordc <= ord('Z'));
+    }
+    function isspace($c) {
+        return $c == ' ';
+    }
+    protected function nextToken(string $line, $offset = 0, &$tname = null) {
         $tname = "T_EOS";
-        if ($line === '' || $offset >= strlen($line)) {
+        $len = strlen($line);
+        if ($line === '' || $offset >= $len) {
             return "";
         }
-        $string = substr($line, $offset);
-        foreach ($this->terminals as $pattern => $name) {
-            if (preg_match($pattern, $string, $matches)) {
-                $tname = $name;
-                return $matches[1];
+        for ($i = $offset; $i < $len; $i++) {
+            $c = $line[$i];
+            switch ($tname) {
+                case "T_NUMBER":
+                    if ($this->isdigit($c)) break;
+                    return substr($line, $offset, $i - $offset);
+                case "T_WHITESPACE":
+                    if ($this->isspace($c)) break;
+                    return substr($line, $offset, $i - $offset);
+                case "T_IDENTIFIER":
+                    if ($this->isident($c)) break;
+                    return substr($line, $offset, $i - $offset);
+                case "T_STRING":
+                    if ($c == "'") {
+                        return substr($line, $offset, $i - $offset + 1);
+                    }
+                    break;
+                case "T_EOS":
+                    if ($this->isdigit($c)) {
+                        $tname = "T_NUMBER";
+                        break;
+                    }
+                    if ($this->isspace($c)) {
+                        $tname = "T_WHITESPACE";
+                        break;
+                    }
+                    if ($this->isident($c)) {
+                        $tname = "T_IDENTIFIER";
+                        break;
+                    }
+                    if ($c == "'") {
+                        $tname = "T_STRING";
+                        break;
+                    }
+                    if ($i + 1 < $len) {
+                        $cnext = $line[$i + 1];
+                        if ($cnext == '=') {
+                            if ($c == '<' || $c == '>' || $c == '=') {
+                                $tname = "T_OP";
+                                return "${c}${cnext}";
+                            }
+                        }
+                        if ($c == '-') {
+                            if ($this->isdigit($cnext)) {
+                                $tname = "T_NUMBER";
+                                break;
+                            }
+                        }
+                    }
+                    $tname = $c;
+                    return $c;
+                default:
+                    throw new Error("invalid state $tname");
             }
         }
-        $tname = $string[0];
-        return $string[0];
+
+        if ($tname == "T_STRING") throw new Error("unclosed string");
+        if ($tname != "T_EOS") return substr($line, $offset);
+
+        throw new Error("invalid state $tname");
     }
 }
 
