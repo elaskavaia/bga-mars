@@ -11,6 +11,7 @@ define("FAKE_PHPUNIT", 1);
 
 require_once "_autoload.php";
 require_once "tests/GameTest.php";
+require_once "tests/MathExpressionTest.php";
 
 $x = new GameTest();
 $methods = get_class_methods($x);
@@ -20,6 +21,6 @@ foreach ($methods as $method) {
         call_user_func_array([$x, $method], []);
     }
 }
-//$x->testCopyBu();
-//$x->testInstanciateAll();
+$x = new MathExpressionTest();
+$x->testOpExpressionEval();
 echo "DONE, ALL GOOD\n";

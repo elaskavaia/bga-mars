@@ -583,7 +583,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function evaluatePrecondition($cond, $owner, $tokenid) {
         if ($cond) {
-            $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wild' => 1]);
+            $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wilds' => []]);
             if (!$valid) {
                 $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
                 // there is one more stupid event card that has temp delta effect
@@ -593,8 +593,8 @@ abstract class PGameXBody extends PGameMachine {
                     $delta += $outcome;
                 }
                 if ($delta) {
-                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wild' => 1])
-                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wild' => 1]);
+                    $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wilds' => []])
+                        || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wilds' => []]);
                 }
                 if (!$valid) return false; // fail prereq check
             }
@@ -709,6 +709,7 @@ abstract class PGameXBody extends PGameMachine {
             return 0;
         }
 
+
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
             $value = $this->tokens->getTokenState("tracker_${x}");
@@ -745,8 +746,15 @@ abstract class PGameXBody extends PGameMachine {
             // per player counter XXX _all
             $value = $this->tokens->getTokenState("tracker_${x}_${owner}");
             if (startsWith($x, 'tag')) {
-                $wilds = array_get($options, 'wild', 0);
-                if ($wilds) {
+                $wilds = array_get($options, 'wilds', null);
+
+                if ($context == 'card_main_135') { // advanced ecosystems
+                    // special expression one of each tag 
+                    //((tagMicrobe>0) & (tagAnimal>0)) & (tagPlant>0)
+                    // do not add wilds in this case
+                    $wilds = null;
+                }
+                if ($wilds !== null) {
                     $valueWild = $this->tokens->getTokenState("tracker_tagWild_${owner}");
                     $value += $valueWild;
                 }

@@ -1934,7 +1934,7 @@ $this->token_types = [
   'name' => clienttranslate('Advanced Ecosystems'),
   't' => 1,
   'cost' => 11,
-  'pre' => '((tagMicrobe>0) & (tagAnimal>0)) & (tagPlant>0)',
+  'pre' => '((((tagMicrobe>0) + (tagAnimal>0)) + (tagPlant>0)) + tagWild) >= 3',
   'tags' => 'Microbe Plant Animal',
   'vp' => 3,
   'deck' => 'Basic',

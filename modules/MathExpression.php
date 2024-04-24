@@ -99,9 +99,14 @@ class MathBinaryExpression extends MathExpression {
     }
 
     public function evaluate($mapper) {
+        $op = $this->op;
+        if ($op == '(') {
+            // function calls?
+            
+        }
         $left = $this->left->evaluate($mapper);
         $right = $this->right->evaluate($mapper);
-        $op = $this->op;
+ 
         //$res = eval("return $left $op $right;");
         $res = 0;
         switch($op) {

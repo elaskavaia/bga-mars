@@ -12,8 +12,8 @@ class Operation_counter extends AbsOperation {
         $par = $this->params();
         $params = explode(",", $par);
         $owner = $this->getOwner();
-        $count = $this->game->evaluateExpression(trim($params[0]), $owner, $this->getContext(), ['wild'=>1]);
-        $mincount = count($params) > 1 ? $this->game->evaluateExpression(trim($params[1]), $owner, $this->getContext(), ['wild'=>1]) : $count;
+        $count = $this->game->evaluateExpression(trim($params[0]), $owner, $this->getContext(), ['wilds' => []]);
+        $mincount = count($params) > 1 ? $this->game->evaluateExpression(trim($params[1]), $owner, $this->getContext(), ['wilds' => []]) : $count;
         if (!is_numeric($count))  throw new Exception("Did not evaluate to a number $par $count");
         if (!is_numeric($mincount))  throw new Exception("Did not evaluate to a number $par $mincount");
         return [$count,$mincount];

@@ -172,7 +172,7 @@ final class GameTest extends TestCase {
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
-        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wild' => 1]));
+        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wilds' => []]));
     }
 
     public function testEvaluateTagCountAdvancedEcosystems() {
@@ -196,10 +196,23 @@ final class GameTest extends TestCase {
         $q = $m->precondition(PCOLOR,$card);
         $this->assertEquals(MA_OK, $q);
 
+        $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
         $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
+        $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 1);
         $q = $m->precondition(PCOLOR,$card);
-        $this->assertEquals(MA_OK, $q); // this is bug
-        //$this->assertEquals(MA_ERR_PREREQ, $q);
+        $this->assertEquals(MA_ERR_PREREQ, $q);
+        $expr = "(((tagMicrobe>0) + (tagAnimal>0)) + (tagPlant>0)) + tagWild";
+        $this->assertEquals(2, $m->evaluateExpression($expr, PCOLOR, null, []));
+        $this->assertEquals(0, $m->evaluateExpression("($expr) >= 3", PCOLOR, null, []));
+
+        $m->tokens->setTokenState("tracker_tagWild_${color}", 3);
+        $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
+        $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
+        $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 0);
+        $q = $m->precondition(PCOLOR,$card);
+        $this->assertEquals(MA_OK, $q);
+        $this->assertEquals(1, $m->evaluateExpression("($expr) >= 3", PCOLOR, null, []));
     }
 
     public function testClaimBuilderMilestoneWithWild() {

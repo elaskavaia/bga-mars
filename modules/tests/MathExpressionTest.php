@@ -21,19 +21,19 @@ final class MathExpressionTest extends TestCase {
         $mapper = function ($x) {
             return 10;
         };
-        assertEquals(0,$res->evaluate($mapper));
+        $this->assertEquals(0,$res->evaluate($mapper));
 
         $res = MathExpressionParser::parse("b >= 10");
         $this->assertEquals("(b >= 10)", $res->__toString());
         $mapper = function ($x) {
             return 1;
         };
-        assertEquals(0,$res->evaluate($mapper));
+        $this->assertEquals(0,$res->evaluate($mapper));
 
         $mapper = function ($x) {
             return 10;
         };
-        assertEquals(1,$res->evaluate($mapper));
+        $this->assertEquals(1,$res->evaluate($mapper));
 
         $res = MathExpressionParser::parse("(gen)");
         $this->assertEquals("gen", $res->__toString());
@@ -42,11 +42,11 @@ final class MathExpressionTest extends TestCase {
     function checkExpr(string $expr, int $result, $mapper = null) {
         $res = MathExpressionParser::parse($expr);
         $this->assertEquals($expr, $res->__toString());
-        assertEquals($result,$res->evaluate($mapper));
+        $this->assertEquals($result,$res->evaluate($mapper));
     }
     function checkExprValue(string $expr, int $result, $mapper = null) {
         $res = MathExpressionParser::parse($expr);
-        assertEquals($result,$res->evaluate($mapper));
+        $this->assertEquals($result,$res->evaluate($mapper));
     }
     public function testOpExpressionEval(): void {
         $this->checkExprValue("2+2",4);
@@ -86,8 +86,7 @@ final class MathExpressionTest extends TestCase {
         $this->checkExprValue("t>-1",0,$mapper);
 
         $this->checkExprValue("(g>=3)*4",0,$mapper);
-        
-        
+
         //$this->checkExpr("- a",-3,$mapper);
     }
 }

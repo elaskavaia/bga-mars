@@ -23,7 +23,7 @@ class Operation_claim extends AbsOperation {
             if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
             $cond = $this->game->getRulesFor($tokenId, "pre");
             if ($cond) {
-                $valid = $this->game->evaluateExpression($cond, $color, $tokenId, ['wild'=>1]);
+                $valid = $this->game->evaluateExpression($cond, $color, $tokenId, ['wilds' => []]);
                 if (!$valid) return MA_ERR_PREREQ; // fail prereq check
             }
      
