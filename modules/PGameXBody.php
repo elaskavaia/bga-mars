@@ -275,7 +275,7 @@ abstract class PGameXBody extends PGameMachine {
         // ]);
     }
 
-    function debug_drawCard($num, $loc = null, $state = 0) {
+    function debug_drawCard($num, $loc = null, $state = 0, $color = null) {
         if (is_numeric($num)) {
             $token = "card_main_$num";
             if (!array_get($this->token_types, $token)) {
@@ -289,7 +289,7 @@ abstract class PGameXBody extends PGameMachine {
                     return "card not found $num";
             }
         }
-        $color = $this->getCurrentPlayerColor();
+        if ($color===null) $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
         if ($loc == 'draw') $loc = "draw_$color";
         if ($loc == 'tableau') $loc = "tableau_$color";
