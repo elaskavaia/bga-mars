@@ -10,16 +10,14 @@ class Operation_prelude extends AbsOperation {
     }
 
     function effect(string $color, int $inc): int {
-        if ($this->game->getGameStateValue('var_begginers_corp') == 1)  return 1;
         if (!$this->game->isPreludeVariant()) return 1;
         $player_id = $this->game->getPlayerIdByColor($color);
         if ($this->game->isZombiePlayer($player_id))  return 1;
 
         $this->game->setGameStateValue('gamestage', MA_STAGE_PRELUDE);
-        // play prelude automatically
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_${color}");
         foreach ($rest as $card_id => $card) {
-                $this->game->putInEffectPool($color, 'cardx', $card_id);
+                $this->game->push($color, 'cardpre');
                 //$this->game->effect_playCard($color, $card_id);
         }
         

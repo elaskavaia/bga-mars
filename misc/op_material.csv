@@ -27,6 +27,7 @@ draft|Draft Card|${you} must select one card to draft (buy or discard later)
 #set ack=
 activate|Activate Card|${you} must select a card to activate
 card|Play Card|${you} must select a card to play
+cardpre|Play Prelude|${you} must select a Prelude card to play
 res|Add resource to this card
 nres|Remove resource from this card
 prediscard|Discard

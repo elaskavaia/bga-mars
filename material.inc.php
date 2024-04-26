@@ -4206,6 +4206,11 @@ $this->token_types = [
   'name' => clienttranslate('Play Card'),
   'prompt' => clienttranslate('${you} must select a card to play'),
 ],
+ 'op_cardpre' => [  //
+  'type' => 'cardpre',
+  'name' => clienttranslate('Play Prelude'),
+  'prompt' => clienttranslate('${you} must select a Prelude card to play'),
+],
  'op_res' => [  //
   'type' => 'res',
   'name' => clienttranslate('Add resource to this card'),
