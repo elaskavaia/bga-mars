@@ -3804,7 +3804,7 @@ $this->token_types = [
   'deck' => 'Prelude',
   'text' => clienttranslate('You start with 37 M€. As your first action, draw 3 Prelude cards, and play one of them. Discard the other two.'),
   'text_effect' => clienttranslate('When you play a science tag, you pay 2 M€ less for it.'),
-  'a1'=>'3predraw(prelude),card(draw),prediscard',
+  'a1'=>'3predraw(prelude),cardpre(draw),prediscard',
 ],
  'card_corp_23' => [  //
   'location' => 'deck_corp',
