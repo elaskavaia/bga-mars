@@ -37,6 +37,16 @@ class Operation_fund extends AbsOperation {
         });
     }
 
+    function getButtonName()
+    {
+        $free = $this->params();
+        if ($free != 'free') {
+            return parent::getButtonName();
+        } else {
+            return clienttranslate('Fund an award for free');
+        }
+    }
+
     function getPrimaryArgType() {
         return 'token';
     }
