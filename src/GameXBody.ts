@@ -1979,24 +1979,34 @@ awarded.`);
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       //result.location = tokenInfo.location + "_corp_effect";
       result.location = tokenInfo.location + "_cards_4";
-      if (this.isSpectator===false && tokenInfo.location=='tableau_'+this.player_color && !this.isLayoutFull()) {
+      if (this.isSpectator === false && tokenInfo.location == "tableau_" + this.player_color && !this.isLayoutFull()) {
         CustomRenders.updateUIFromCorp(tokenInfo.key);
       }
-
-
-
     } else if (tokenInfo.key.startsWith("card_main") && tokenInfo.location.startsWith("tableau")) {
       const t = this.getRulesFor(tokenInfo.key, "t");
       result.location = tokenInfo.location + "_cards_" + t;
 
       if (this.getRulesFor(tokenInfo.key, "a")) {
         result.location = tokenInfo.location + "_cards_2a";
-      // } else if (t == 2 && this.getRulesFor(tokenInfo.key, "holds", "")) {
-      //   // card can hold stuff - no longer needed
-      //   result.location = tokenInfo.location + "_cards_2a";
+        // } else if (t == 2 && this.getRulesFor(tokenInfo.key, "holds", "")) {
+        //   // card can hold stuff - no longer needed
+        //   result.location = tokenInfo.location + "_cards_2a";
       }
     } else if (tokenInfo.key.startsWith("card_prelude") && tokenInfo.location.startsWith("tableau")) {
       result.location = tokenInfo.location + "_cards_4";
+    } else if (
+      tokenInfo.location.startsWith("hand_") ||
+      tokenInfo.location.startsWith("draw_") ||
+      tokenInfo.location.startsWith("draft_")
+    ) {
+      const tocolor = getPart(tokenInfo.location, 1);
+      if (tocolor != this.player_color) {
+        // this is hidden location
+        result.location = `counter_hand_${tocolor}`;
+        result.onEnd = (node) => {
+          dojo.destroy(node);
+        };
+      }
     }
     if (!result.location)
       // if failed to find revert to server one

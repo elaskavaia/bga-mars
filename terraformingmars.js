@@ -5240,7 +5240,7 @@ var GameXBody = /** @class */ (function (_super) {
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
             //result.location = tokenInfo.location + "_corp_effect";
             result.location = tokenInfo.location + "_cards_4";
-            if (this.isSpectator === false && tokenInfo.location == 'tableau_' + this.player_color && !this.isLayoutFull()) {
+            if (this.isSpectator === false && tokenInfo.location == "tableau_" + this.player_color && !this.isLayoutFull()) {
                 CustomRenders.updateUIFromCorp(tokenInfo.key);
             }
         }
@@ -5256,6 +5256,18 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (tokenInfo.key.startsWith("card_prelude") && tokenInfo.location.startsWith("tableau")) {
             result.location = tokenInfo.location + "_cards_4";
+        }
+        else if (tokenInfo.location.startsWith("hand_") ||
+            tokenInfo.location.startsWith("draw_") ||
+            tokenInfo.location.startsWith("draft_")) {
+            var tocolor = getPart(tokenInfo.location, 1);
+            if (tocolor != this.player_color) {
+                // this is hidden location
+                result.location = "counter_hand_".concat(tocolor);
+                result.onEnd = function (node) {
+                    dojo.destroy(node);
+                };
+            }
         }
         if (!result.location)
             // if failed to find revert to server one
