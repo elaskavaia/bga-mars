@@ -2966,6 +2966,10 @@
 .mcompact .card_prelude_P18 .card_tt {
   left: 48% !important;
 }
+.mcompact .card_prelude_P19 .card_tt {
+  left: 46% !important;
+  top: 10%;
+}
 .mcompact .card_prelude_P20 .card_tt {
   left: 48% !important;
 }
