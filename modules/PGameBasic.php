@@ -793,7 +793,7 @@ function getPart($haystack, $i, $bNoexeption = false) {
         return "";
     }
     if ($i >= $len) {
-        die("Access to $i >= $len for $haystack");
+        throw new feException("Access to $i >= $len for $haystack");
     }
     return $parts[$i];
 }
