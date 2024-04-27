@@ -12,6 +12,7 @@
                 "nobeginner": true
             }
         },
+        "level": "additional",
         "default": 0
     },
     "101": {
@@ -41,6 +42,7 @@
             }
         ],
         "notdisplayedmessage": "Corporate Era is On",
+        "level": "additional",
         "default": 1
     },
     "104": {
@@ -80,6 +82,7 @@
                 "value": 1
             }
         ],
+        "level": "additional",
         "default": 0
     },
 
@@ -115,15 +118,16 @@
         "name": "Live Scoring",
         "values": {
             "1": {
-                "name": "Allowed",
+                "name": "Enabled",
                 "description": "Players at this table can chose to see or not live scoring update via individual game preference"
             },
-            "0": {
-                "name": "Denied",
-                "description": "Players at this table cannot see live scoring update or scoring preview table. Not recommended",
+            "2": {
+                "name": "Disabled",
+                "description": "Players at this table CANNOT see live scoring update or scoring preview table regardless of their preferences. Not recommended",
                 "tmdisplay": "No Live Scoring"
             }
         },
+        "level": "additional",
         "default": 1
     }
 }

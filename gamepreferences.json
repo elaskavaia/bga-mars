@@ -33,18 +33,16 @@
     },
     "105": {
         "name": "Live Scoring",
+        "description": "This option controls if visible score tracks total VP (Show) or only TR (Hide). This only works if table creator did not disable Live Scoring.",
+        "needReload": true,
         "values": {
             "1": {
                 "name": "Show",
                 "description": "See updated VP (only recalculated end of turn). Scoring preview available on demand"
             },
-            "0": {
+            "2": {
                 "name": "Hide",
                 "description": "Hide calculated VP (only show TR rating). Scoring preview available on demand"
-            },
-            "2": {
-                "name": "Disabled",
-                "description": "Table creator disabled the Live Scoring. Scoring preview is not available"
             }
         },
         "default": 1

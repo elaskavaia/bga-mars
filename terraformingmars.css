@@ -5549,9 +5549,7 @@
   background-image: unset;
 }
 
-/*
 .player_score_value {
-
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
   width: 24px;
@@ -5568,11 +5566,10 @@
   cursor: help;
 }
 
-
 .player_score .fa-star {
   display: none;
 }
-*/
+
 .cardback.counter {
   color: white;
 }

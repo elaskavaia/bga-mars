@@ -922,13 +922,14 @@ class GameBasics extends GameGui {
       const prefDivId = "preference_control_" + index;
       const element = this.destroyDivOtherCopies(prefDivId);
       if (element) {
-        let parent = element.parentNode.parentNode;
-        if ((parent.parentNode as HTMLElement).id != userPrefContainerId) {
+        let parent = element.parentElement.parentElement;
+        if (parent.parentElement.id != userPrefContainerId) {
           dojo.place(parent, userPrefContainerId);
-          // remove the class because otherwise framework will hook its own listener there
-          parent.querySelectorAll(".game_preference_control").forEach((node) => dojo.removeClass(node, "game_preference_control"));
-          if (this.refaceUserPreference(index, parent as Element, prefDivId) == false)
+          if (this.refaceUserPreference(index, parent, prefDivId) == false) {
+            // remove the class because otherwise framework will hook its own listener there
+            parent.querySelectorAll(".game_preference_control").forEach((node) => dojo.removeClass(node, "game_preference_control"));
             dojo.connect(parent, "onchange", (e: any) => this.onChangePreferenceCustom(e));
+          }
         }
       }
     }
@@ -1012,7 +1013,8 @@ class GameBasics extends GameGui {
     this.showPopin(html, "log_info", "Game Info for bug report");
   }
 
-  showPopin(html: string,  id = "mr_dialog", title: string = undefined) {
+  /** Show pop in dialog. If you need div id of dialog its `popin_${id}` where id is second parameter here */
+  showPopin(html: string, id = "mr_dialog", title: string = undefined) {
     const dialog = new ebg.popindialog();
     dialog.create(id);
     if (title) dialog.setTitle(title);
@@ -1166,7 +1168,7 @@ class GameBasics extends GameGui {
     if (this.tooltips[id]) {
       dijit.hideTooltip(id);
       var html = this.tooltips[id].getContent($(id));
-      this._displayedTooltip = this.showPopin(html,"current_tooltip");
+      this._displayedTooltip = this.showPopin(html, "current_tooltip");
     }
     return true;
   }

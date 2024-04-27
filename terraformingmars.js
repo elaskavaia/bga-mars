@@ -816,13 +816,14 @@ var GameBasics = /** @class */ (function (_super) {
             var prefDivId = "preference_control_" + index;
             var element = this.destroyDivOtherCopies(prefDivId);
             if (element) {
-                var parent_1 = element.parentNode.parentNode;
-                if (parent_1.parentNode.id != userPrefContainerId) {
+                var parent_1 = element.parentElement.parentElement;
+                if (parent_1.parentElement.id != userPrefContainerId) {
                     dojo.place(parent_1, userPrefContainerId);
-                    // remove the class because otherwise framework will hook its own listener there
-                    parent_1.querySelectorAll(".game_preference_control").forEach(function (node) { return dojo.removeClass(node, "game_preference_control"); });
-                    if (this.refaceUserPreference(index, parent_1, prefDivId) == false)
+                    if (this.refaceUserPreference(index, parent_1, prefDivId) == false) {
+                        // remove the class because otherwise framework will hook its own listener there
+                        parent_1.querySelectorAll(".game_preference_control").forEach(function (node) { return dojo.removeClass(node, "game_preference_control"); });
                         dojo.connect(parent_1, "onchange", function (e) { return _this.onChangePreferenceCustom(e); });
+                    }
                 }
             }
         }
@@ -884,6 +885,7 @@ var GameBasics = /** @class */ (function (_super) {
         var html = "\n    Text was copied to clipboard, you can just paste it in the bug report<br>\n    NOTE: this may reveal private info about your hand card, please remove this info manually if you care\n    <br>\n    <pre class='mr_scrollable'>\n    ".concat(text, "\n    </pre>\n    <br>\n    <pre class='mr_scrollable'>\n    ").concat(text2, "\n    </pre>\n    ");
         this.showPopin(html, "log_info", "Game Info for bug report");
     };
+    /** Show pop in dialog. If you need div id of dialog its `popin_${id}` where id is second parameter here */
     GameBasics.prototype.showPopin = function (html, id, title) {
         if (id === void 0) { id = "mr_dialog"; }
         if (title === void 0) { title = undefined; }
@@ -3599,6 +3601,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var LAYOUT_PREF_ID = 100;
+var LIVESCORING_PREF_ID = 105;
 var MA_PREF_CONFIRM_TURN = 101;
 var GameXBody = /** @class */ (function (_super) {
     __extends(GameXBody, _super);
@@ -3718,7 +3721,7 @@ var GameXBody = /** @class */ (function (_super) {
                 this.applySortOrder();
             }
             $("outer_scoretracker").addEventListener("click", function () {
-                _this.onShowScoringTable(0);
+                _this.onShowScoringTable();
             });
             $("milestones_progress").addEventListener("click", function () {
                 _this.onShowMilestonesProgress();
@@ -3762,8 +3765,18 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = this;
         _super.prototype.setupPlayer.call(this, playerInfo);
         $("player_score_".concat(playerInfo.id)).addEventListener("click", function () {
-            _this.onShowScoringTable(playerInfo.id);
+            _this.onShowScoringTable();
         });
+        var scoreDiv = "player_score_".concat(playerInfo.id);
+        if (this.isLiveScoringDisabled()) {
+            this.addTooltip(scoreDiv, _('Live Scoring is disabled (table option), this value is same as TR'), '');
+        }
+        else if (this.isLiveScoringOn()) {
+            this.addTooltip(scoreDiv, _('Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand'), 'Click to see Scoring table and force the update');
+        }
+        else {
+            this.addTooltip(scoreDiv, _('Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference'), 'Click to see Scoring table (this reveals the currrent score)');
+        }
         this.setupPlayerStacks(playerInfo.color);
         this.vlayout.setupPlayer(playerInfo);
         //attach sort buttons
@@ -3880,7 +3893,13 @@ var GameXBody = /** @class */ (function (_super) {
                     views: [View.Stacked, View.Full]
                 },
                 { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked, views: [View.Hidden, View.Stacked, View.Full] }
+                {
+                    label: _("Headquarters"),
+                    div: "cards_4",
+                    color_class: "corp",
+                    default: View.Stacked,
+                    views: [View.Hidden, View.Stacked, View.Full]
+                }
             ];
         }
         for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {
@@ -3903,7 +3922,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.saveCurrentStackLayoutAsDefault = function () {
-        var html = '';
+        var html = "";
         for (var _i = 0, _a = this.stacks; _i < _a.length; _i++) {
             var stack = _a[_i];
             if (stack.player_color == this.player_color) {
@@ -3917,11 +3936,19 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.showGameScoringDialog = function () {
         if (this.cachedScoringTable) {
             var html = this.createScoringTableHTML(this.cachedScoringTable);
+            var scoringOption = _(this.prefs[LIVESCORING_PREF_ID].name);
+            var desc = _(this.prefs[LIVESCORING_PREF_ID].description);
+            html += "<div><p></p><div title=\"".concat(desc, "\">").concat(scoringOption, "</div><div id='pref_section_in_dialog' class='pref_section_in_dialog'></div></div>");
             this.showPopin(html, "score_dialog", _("Score Summary"));
+            this.createCustomPreferenceNode(LIVESCORING_PREF_ID, "pp" + LIVESCORING_PREF_ID, $("pref_section_in_dialog"));
         }
     };
-    GameXBody.prototype.onShowScoringTable = function (playerId) {
+    GameXBody.prototype.onShowScoringTable = function () {
         var _this = this;
+        if (this.isLiveScoringDisabled()) {
+            this.showPopin(_("This table is created with option to Disable Live Scoring. Score Preview is not available. If you don't like this do not join the table when this option is chosen next time"), "mr_dialog", _("Notice"));
+            return;
+        }
         var move = this.gamedatas.notifications.move_nbr;
         if (move == this.cachedScoreMoveNbr) {
             this.showGameScoringDialog();
@@ -3939,15 +3966,14 @@ var GameXBody = /** @class */ (function (_super) {
         var _a, _b;
         var tablehtm = "\n    <div id=\"scoretable\" class=\"scoretable\">\n       <div class=\"scoreheader scorecol\">\n             <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n             <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n             <div class=\"scorecell \">").concat(_("Terraforming Rank"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from cities"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from greeneries"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from Awards"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from Milestones"), "</div>\n             <div class=\"scorecell \">").concat(_("VP from cards"), "</div>\n             <div class=\"scorecell header total\">").concat(_("VP total"), "</div>\n       </div>\n       %lines%\n     </div>");
         var lines = "";
-        for (var plid in scoringTable) {
-            var entry = scoringTable[plid];
-            var plcolor = this.getPlayerColor(parseInt(plid));
+        for (var playerId in scoringTable) {
+            var entry = scoringTable[playerId];
+            var plcolor = this.getPlayerColor(parseInt(playerId));
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
             lines =
                 lines +
-                    "\n       <div class=\" scorecol\">\n             <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n             <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n             <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n             <div class=\"scorecell score\">").concat((_a = entry.total_details.awards) !== null && _a !== void 0 ? _a : _("Not Applicable"), "</div>\n             <div class=\"scorecell score\">").concat((_b = entry.total_details.milestones) !== null && _b !== void 0 ? _b : _("Not Applicable"), "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n             <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n       </div>");
+                    "\n       <div class=\" scorecol\">\n             <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[playerId].name, "</div>\n             <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n             <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n             <div class=\"scorecell score\">").concat((_a = entry.total_details.awards) !== null && _a !== void 0 ? _a : _("Not Applicable"), "</div>\n             <div class=\"scorecell score\">").concat((_b = entry.total_details.milestones) !== null && _b !== void 0 ? _b : _("Not Applicable"), "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n             <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n       </div>");
             for (var cat in entry.details) {
-                //['details'][$category][$token_key][$key]
                 for (var token_key in entry.details[cat]) {
                     var rec = entry.details[cat][token_key];
                     var node = $(token_key);
@@ -3955,6 +3981,11 @@ var GameXBody = /** @class */ (function (_super) {
                         continue;
                     node.dataset.vp = rec.vp;
                 }
+            }
+            if (this.isLiveScoringOn()) {
+                if (this.scoreCtrl[playerId])
+                    this.scoreCtrl[playerId].toValue(entry.total);
+                this.gamedatas.players[playerId].score = entry.total;
             }
         }
         var finalhtm = tablehtm.replace("%lines%", lines);
@@ -4185,16 +4216,43 @@ var GameXBody = /** @class */ (function (_super) {
         if (desc === void 0) { desc = ""; }
         return "\n    <div class=\"".concat(id, "_title\">").concat(title, "</div>\n    <div class=\"").concat(id, "_desc\">").concat(desc, "</div>\n    <div id=\"").concat(id, "\" class=\"").concat(id, "\"></div>\n    ");
     };
-    GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
+    GameXBody.prototype.isLiveScoringDisabled = function () {
+        var _a;
+        if (((_a = this.gamedatas.table_options["105"]) === null || _a === void 0 ? void 0 : _a.value) === 2) {
+            return true;
+        }
+        return false;
+    };
+    GameXBody.prototype.isLiveScoringOn = function () {
+        if (this.isLiveScoringDisabled())
+            return false;
+        if (this.prefs[LIVESCORING_PREF_ID].value == 2)
+            return false;
+        return true;
+    };
+    GameXBody.prototype.refaceUserPreference = function (pref_id, prefNodeParent, prefDivId) {
         // can override to change apperance
         console.log("PREF", pref_id);
+        var prefNode = $(prefDivId);
         if (pref_id == LAYOUT_PREF_ID) {
-            var pp = $(prefDivId).parentElement;
+            var pp = prefNode.parentElement;
             pp.removeChild($(prefDivId));
             this.createCustomPreferenceNode(pref_id, prefDivId, pp);
             return true;
         }
-        return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+        if (pref_id == LIVESCORING_PREF_ID) {
+            // live scoring
+            if (this.isLiveScoringDisabled()) {
+                prefNode.setAttribute("disabled", "true");
+                prefNodeParent.classList.add("mr_disabled");
+                prefNodeParent.title = _("This preference has no effect as Live Scoring disabled for this table");
+            }
+            else {
+                prefNodeParent.title = this.prefs[LIVESCORING_PREF_ID].description;
+            }
+            return true;
+        }
+        return false; // return false to hook defaut listener, otherwise return true and you have to hook listener yourself
     };
     GameXBody.prototype.createCustomPreferenceNode = function (pref_id, prefDivId, pp) {
         var _this = this;
@@ -4202,7 +4260,7 @@ var GameXBody = /** @class */ (function (_super) {
         var pref = this.prefs[pref_id];
         var pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
         pc.setAttribute("data-pref-id", pref_id + "");
-        pp.parentElement.classList.add('custom_pref_pp');
+        pp.parentElement.classList.add("custom_pref_pp");
         for (var v in pref.values) {
             var optionValue = pref.values[v];
             var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ""), pc);
@@ -5290,7 +5348,7 @@ var GameXBody = /** @class */ (function (_super) {
             tokenInfo.location.startsWith("draw_") ||
             tokenInfo.location.startsWith("draft_")) {
             var tocolor = getPart(tokenInfo.location, 1);
-            if (tocolor != this.player_color) {
+            if (tocolor != this.player_color && tocolor != "area") {
                 // this is hidden location
                 result.location = "counter_hand_".concat(tocolor);
                 result.onEnd = function (node) {

@@ -38,6 +38,7 @@ abstract class PGameXBody extends PGameMachine {
             "var_solo_flavour" => 102,
             "var_draft" => 103,
             "var_prelude" => 104,
+            "var_live_scoring" => 105,
         ]);
         $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;

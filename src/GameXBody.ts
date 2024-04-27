@@ -1,4 +1,5 @@
 const LAYOUT_PREF_ID = 100;
+const LIVESCORING_PREF_ID = 105;
 const MA_PREF_CONFIRM_TURN = 101;
 
 class GameXBody extends GameTokens {
@@ -154,7 +155,7 @@ class GameXBody extends GameTokens {
       }
 
       $(`outer_scoretracker`).addEventListener("click", () => {
-        this.onShowScoringTable(0);
+        this.onShowScoringTable();
       });
 
       $(`milestones_progress`).addEventListener("click", () => {
@@ -208,8 +209,17 @@ class GameXBody extends GameTokens {
     super.setupPlayer(playerInfo);
 
     $(`player_score_${playerInfo.id}`).addEventListener("click", () => {
-      this.onShowScoringTable(playerInfo.id);
+      this.onShowScoringTable();
     });
+
+    const scoreDiv = `player_score_${playerInfo.id}`;
+    if (this.isLiveScoringDisabled()) {
+      this.addTooltip(scoreDiv,_('Live Scoring is disabled (table option), this value is same as TR'),'');
+    } else if (this.isLiveScoringOn()){
+      this.addTooltip(scoreDiv,_('Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand'),'Click to see Scoring table and force the update');
+    } else {
+      this.addTooltip(scoreDiv,_('Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference'),'Click to see Scoring table (this reveals the currrent score)');
+    }
 
     this.setupPlayerStacks(playerInfo.color);
     this.vlayout.setupPlayer(playerInfo);
@@ -340,7 +350,13 @@ class GameXBody extends GameTokens {
           views: [View.Stacked, View.Full]
         },
         { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked, views: [View.Hidden, View.Stacked, View.Full]  }
+        {
+          label: _("Headquarters"),
+          div: "cards_4",
+          color_class: "corp",
+          default: View.Stacked,
+          views: [View.Hidden, View.Stacked, View.Full]
+        }
       ];
     }
     for (const item of lsStacks) {
@@ -360,7 +376,7 @@ class GameXBody extends GameTokens {
   }
 
   saveCurrentStackLayoutAsDefault() {
-    let html = '';
+    let html = "";
     for (let stack of this.stacks) {
       if (stack.player_color == this.player_color) {
         this.localSettings.writeProp(`defaultstack_${stack.bin_type}`, `${stack.current_view}`);
@@ -373,12 +389,24 @@ class GameXBody extends GameTokens {
 
   showGameScoringDialog() {
     if (this.cachedScoringTable) {
-      const html = this.createScoringTableHTML(this.cachedScoringTable);
+      let html = this.createScoringTableHTML(this.cachedScoringTable);
+      const scoringOption = _(this.prefs[LIVESCORING_PREF_ID].name);
+      const desc = _(this.prefs[LIVESCORING_PREF_ID].description);
+      html += `<div><p></p><div title="${desc}">${scoringOption}</div><div id='pref_section_in_dialog' class='pref_section_in_dialog'></div></div>`;
       this.showPopin(html, "score_dialog", _("Score Summary"));
+      this.createCustomPreferenceNode(LIVESCORING_PREF_ID, "pp" + LIVESCORING_PREF_ID, $("pref_section_in_dialog"));
     }
   }
 
-  onShowScoringTable(playerId: number) {
+  onShowScoringTable() {
+    if (this.isLiveScoringDisabled()) {
+      this.showPopin(
+        _("This table is created with option to Disable Live Scoring. Score Preview is not available. If you don't like this do not join the table when this option is chosen next time"),
+        "mr_dialog",
+        _("Notice")
+      );
+      return;
+    }
     const move = this.gamedatas.notifications.move_nbr;
     if (move == this.cachedScoreMoveNbr) {
       this.showGameScoringDialog();
@@ -410,15 +438,15 @@ class GameXBody extends GameTokens {
      </div>`;
 
     let lines: string = "";
-    for (let plid in scoringTable) {
-      const entry: any = scoringTable[plid];
-      const plcolor: any = this.getPlayerColor(parseInt(plid));
+    for (let playerId in scoringTable) {
+      const entry: any = scoringTable[playerId];
+      const plcolor: any = this.getPlayerColor(parseInt(playerId));
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
       lines =
         lines +
         `
        <div class=" scorecol">
-             <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+             <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[playerId].name}</div>
              <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
              <div class="scorecell score">${entry.total_details.tr}</div>
              <div class="scorecell score">${entry.total_details.cities}</div>
@@ -430,13 +458,17 @@ class GameXBody extends GameTokens {
        </div>`;
 
       for (let cat in entry.details) {
-        //['details'][$category][$token_key][$key]
         for (let token_key in entry.details[cat]) {
           const rec = entry.details[cat][token_key];
           const node = $(token_key);
           if (!node) continue;
           node.dataset.vp = rec.vp;
         }
+      }
+
+      if (this.isLiveScoringOn()) {
+        if (this.scoreCtrl[playerId]) this.scoreCtrl[playerId].toValue(entry.total);
+        this.gamedatas.players[playerId].score = entry.total;
       }
     }
     const finalhtm = tablehtm.replace("%lines%", lines);
@@ -724,23 +756,49 @@ class GameXBody extends GameTokens {
     `;
   }
 
-  refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
+  isLiveScoringDisabled() {
+    if (this.gamedatas.table_options["105"]?.value === 2) {
+      return true;
+    }
+    return false;
+  }
+
+  isLiveScoringOn() {
+    if (this.isLiveScoringDisabled()) return false;
+    if (this.prefs[LIVESCORING_PREF_ID].value == 2) return false;
+    return true;
+  }
+
+  refaceUserPreference(pref_id: number, prefNodeParent: HTMLElement, prefDivId: string) {
     // can override to change apperance
     console.log("PREF", pref_id);
+    const prefNode = $(prefDivId) as HTMLElement;
     if (pref_id == LAYOUT_PREF_ID) {
-      const pp = $(prefDivId).parentElement;
+      const pp = prefNode.parentElement;
       pp.removeChild($(prefDivId));
       this.createCustomPreferenceNode(pref_id, prefDivId, pp);
       return true;
     }
-    return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
+    if (pref_id == LIVESCORING_PREF_ID) {
+      // live scoring
+     
+      if (this.isLiveScoringDisabled()) {
+        prefNode.setAttribute("disabled", "true");
+        prefNodeParent.classList.add("mr_disabled");
+        prefNodeParent.title = _("This preference has no effect as Live Scoring disabled for this table");
+      } else {
+        prefNodeParent.title = this.prefs[LIVESCORING_PREF_ID].description;
+      }
+      return true;
+    }
+    return false; // return false to hook defaut listener, otherwise return true and you have to hook listener yourself
   }
 
   createCustomPreferenceNode(pref_id: number, prefDivId: string, pp: HTMLElement) {
     const pref = this.prefs[pref_id];
     const pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
     pc.setAttribute("data-pref-id", pref_id + "");
-    pp.parentElement.classList.add('custom_pref_pp');
+    pp.parentElement.classList.add("custom_pref_pp");
     for (const v in pref.values) {
       const optionValue = pref.values[v];
       const option = this.createDivNode(`${prefDivId}_v${v}`, `custom_pref_option pref_${optionValue.cssPref ?? ""}`, pc);
@@ -2037,7 +2095,7 @@ awarded.`);
       tokenInfo.location.startsWith("draft_")
     ) {
       const tocolor = getPart(tokenInfo.location, 1);
-      if (tocolor != this.player_color) {
+      if (tocolor != this.player_color && tocolor != "area") {
         // this is hidden location
         result.location = `counter_hand_${tocolor}`;
         result.onEnd = (node) => {
