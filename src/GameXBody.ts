@@ -712,9 +712,9 @@ class GameXBody extends GameTokens {
       const optionValue = pref.values[v];
       const option = this.createDivNode(`${prefDivId}_v${v}`, `custom_pref_option pref_${optionValue.cssPref ?? ""}`, pc);
       option.setAttribute("value", v);
-      option.innerHTML = optionValue.name;
+      option.innerHTML = this.getTr(optionValue.name);
       option.setAttribute("data-pref-id", pref_id + "");
-      if (optionValue.description) this.addTooltip(option.id, optionValue.description, "");
+      if (optionValue.description) this.addTooltip(option.id, this.getTr(optionValue.description), "");
       if (pref.value == v) {
         option.setAttribute("selected", "selected");
       }

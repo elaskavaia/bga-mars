@@ -4178,10 +4178,10 @@ var GameXBody = /** @class */ (function (_super) {
             var optionValue = pref.values[v];
             var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ""), pc);
             option.setAttribute("value", v);
-            option.innerHTML = optionValue.name;
+            option.innerHTML = this.getTr(optionValue.name);
             option.setAttribute("data-pref-id", pref_id + "");
             if (optionValue.description)
-                this.addTooltip(option.id, optionValue.description, "");
+                this.addTooltip(option.id, this.getTr(optionValue.description), "");
             if (pref.value == v) {
                 option.setAttribute("selected", "selected");
             }
