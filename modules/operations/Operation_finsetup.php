@@ -17,7 +17,7 @@ class Operation_finsetup extends AbsOperation {
         // pin drawn cards
         $selected = $this->game->tokens->getTokensOfTypeInLocation("card_","hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
-            $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
+            $this->game->effect_moveCard($color, $card_id, "hand_$color", 0,'', ['_private' => true]);
         }
         $selected_proj = $this->game->tokens->getTokensOfTypeInLocation("card_main_","hand_$color", 0);
         $count =  count($selected_proj);
