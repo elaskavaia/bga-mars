@@ -10,9 +10,7 @@ class Operation_draft extends AbsOperation {
             return $inc; // skip draft
         }
         $card_id = $this->getCheckedArg('target');
-        $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_SELECTED, clienttranslate('You draft ${token_name}'), [
-            "_private" => true
-        ]);
+        $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_SELECTED, clienttranslate('You draft ${token_name}'));
         return 1;
     }
 
@@ -73,7 +71,7 @@ class Operation_draft extends AbsOperation {
         $this->game->systemAssertTrue("unexpected total of draft", $total == 1);
 
         foreach ($selected_draft as $card_id => $card) {
-            $this->game->dbSetTokenLocation($card_id, "draft_$color", 0, '');
+            $this->game->effect_moveCard($color,$card_id, "draft_$color", MA_CARD_STATE_NORMAL);
         }
 
         $this->game->multiplayerpush($color, 'draft'); // add $total if can draft more than one

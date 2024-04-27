@@ -63,6 +63,7 @@ if (!defined("MA_GAME")) {
 
   // card states on tableau
   define("MA_CARD_STATE_FACEDOWN", 0);
+  define("MA_CARD_STATE_NORMAL", 0);
   define("MA_CARD_STATE_TAGUP", 1);
   define("MA_CARD_STATE_SELECTED", 1);
   define("MA_CARD_STATE_ACTION_UNUSED", 2);

@@ -290,7 +290,7 @@ abstract class PGameXBody extends PGameMachine {
                     return "card not found $num";
             }
         }
-        if ($color===null) $color = $this->getCurrentPlayerColor();
+        if ($color === null) $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
         if ($loc == 'draw') $loc = "draw_$color";
         if ($loc == 'tableau') $loc = "tableau_$color";
@@ -935,7 +935,14 @@ abstract class PGameXBody extends PGameMachine {
         $this->eventListners = null; // clear event cache, have to call after any card comes into play or leaves play
     }
 
-    function effect_moveCard($owner, $card_id, $place_id, $state = null, $notif = "", $args = []) {
+    function effect_moveCard($owner, $card_id, $place_id, $state = 0, $notif = "", $args = []) {
+        if (!array_key_exists('_private', $args) && $place_id) {
+            // moving cards to hand, draft and draw usuall private
+            $site = getPart($place_id, 0);
+            if ($site == 'hand' || $site == 'draw' || $site == 'draft') {
+                $args['_private'] = true;
+            }
+        }
         $this->dbSetTokenLocation($card_id,  $place_id, $state, $notif, $args, $this->getPlayerIdByColor($owner));
     }
     function effect_moveResource($owner, $res_id, $place_id, $state = null, $notif = "", $card_id) {
@@ -1368,15 +1375,15 @@ abstract class PGameXBody extends PGameMachine {
         $player_id = $this->getPlayerIdByColor($color);
         if ($setup) {
             $cost = -$this->getRulesFor($card_id, 'cost');
-            $this->dbSetTokenLocation($card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [
+            $this->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [
                 "_private" => true,
                 "cost" => $cost
-            ], $player_id);
+            ]);
 
             $this->effect_incCount($color, 'm', $cost, ['message' => '']);
             return;
         }
-        $this->dbSetTokenLocation($card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'), [], $player_id);
+        $this->effect_moveCard($color, $card_id, "tableau_$color", MA_CARD_STATE_ACTION_UNUSED, clienttranslate('${player_name} chooses corporation ${token_name}'));
         $this->effect_untap($card_id);
         $this->clearEventListenerCache(); // clear cache since corp came into play
         $tags = $this->getRulesFor($card_id, 'tags', '');

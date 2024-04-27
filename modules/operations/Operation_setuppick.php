@@ -122,7 +122,7 @@ class Operation_setuppick extends AbsOperation {
         if ($onlyCheck) return;
 
         foreach ($selected as $card_id => $card) {
-            $this->game->dbSetTokenLocation($card_id, "draw_$color", 0, '');
+            $this->game->effect_moveCard($color,$card_id, "draw_$color", 0);
         }
 
         $this->game->queueremove($color, 'confnocards');

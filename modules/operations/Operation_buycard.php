@@ -23,9 +23,7 @@ class Operation_buycard extends AbsOperation {
             }
         }
         foreach ($card_ids as $card_id) {
-            $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You buy ${token_name}'), [
-                "_private" => true
-            ]);
+            $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You buy ${token_name}'));
         }
         $this->game->notifyCounterChanged("hand_$color", ["nod" => true]);
         return $this->getCount(); //remove reset of the counter
@@ -101,19 +99,8 @@ class Operation_buycard extends AbsOperation {
         $total = $count + count($rest) - $has_corp;
 
         foreach ($selected as $card_id => $card) {
-            $this->game->dbSetTokenLocation($card_id, "draw_$color", 0, '', [
-                "_private" => true
-            ]);
+            $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_NORMAL);
             $this->game->effect_incCount($color, 'm', 3, ['message' => '']);
-        }
-
-        if ($has_corp) {
-            // can undo corp selection also OLD way
-            $corp = $this->game->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
-            if ($corp) {
-                $corp_id = $corp['key'];
-                $this->game->dbSetTokenLocation($corp_id, "draw_$color", 0, '');
-            }
         }
 
         if ($left_corp > 0) {

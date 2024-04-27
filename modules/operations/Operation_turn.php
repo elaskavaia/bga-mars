@@ -56,6 +56,7 @@ class Operation_turn extends AbsOperation {
         // first action of the game, some corp has some rules
         $a1 = $this->getSpecialAction($owner);
         if ($a1) {
+            $this->game->notifyMessage(clienttranslate('${player_name} has a mandatory action to perform as a first action'),[],$player_id);
             $this->game->queue($owner, implode("/",[$a1,'pass']));
         } else {
             $this->game->queue($owner, implode("/", $this->getStandardActions($solo, $secondaction)));

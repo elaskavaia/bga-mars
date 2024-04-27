@@ -7,7 +7,7 @@ class Operation_prediscard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $selected = $this->game->tokens->getTokensInLocation("hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
-            $this->game->effect_moveCard($color, $card_id, "hand_$color", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "hand_$color", 0, '', ['_private' => true]);
         }
         $count =  count($selected);
         if ($count)
@@ -23,7 +23,7 @@ class Operation_prediscard extends AbsOperation {
         $rest = $this->game->tokens->getTokensInLocation("draft_$color"); // should not happen
         foreach ($rest as $card_id => $card) {
             $type = getPart($card_id, 1);
-            $this->game->effect_moveCard($color, $card_id, "discard_$type", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "discard_$type", 0, '', ['_private' => true]);
         }
         $this->game->undoSavepoint();
         return 1;
