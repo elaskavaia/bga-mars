@@ -3745,7 +3745,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.createScoringTableHTML(this.cachedScoringTable);
             this.vlayout.setupDone();
             //locale css management
-            $("ebd-body").dataset["locale"] = _('$locale');
+            $("ebd-body").dataset["locale"] = _("$locale");
             //this.setupOneTimePrompt();
         }
         catch (e) {
@@ -3833,12 +3833,12 @@ var GameXBody = /** @class */ (function (_super) {
         }
         btn.dataset.type = newtype;
         btn.dataset.direction = newdir;
-        btn.querySelector('i').removeAttribute("class");
-        btn.querySelector('i').classList.add("fa", fa);
+        btn.querySelector("i").removeAttribute("class");
+        btn.querySelector("i").classList.add("fa", fa);
         var hand_block = btn.dataset.target;
         $(hand_block).dataset.sort_type = newtype;
         $(hand_block).dataset.sort_direction = newdir;
-        var fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace('%s', msg);
+        var fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace("%s", msg);
         this.addTooltip(btn.id, fullmsg, _("Click to select next sorting mode"));
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
         localColorSetting.writeProp("sort_direction", newdir);
@@ -3863,13 +3863,13 @@ var GameXBody = /** @class */ (function (_super) {
                     views: noHidden
                 },
                 { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: noHidden },
-                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full, views: [View.Hidden, View.Stacked, View.Full] }
+                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full }
             ];
         }
         else {
-            // cardbpard
+            // cardboard
             lsStacks = [
-                { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Stacked, views: [View.Hidden, View.Synthetic] },
+                { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Synthetic, views: [View.Hidden, View.Synthetic] },
                 { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
                 { label: _("Events"), div: "cards_3", color_class: "red", default: View.Hidden },
                 {
@@ -3880,7 +3880,7 @@ var GameXBody = /** @class */ (function (_super) {
                     views: [View.Stacked, View.Full]
                 },
                 { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked }
+                { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked, views: [View.Hidden, View.Stacked, View.Full] }
             ];
         }
         for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {
@@ -3901,6 +3901,18 @@ var GameXBody = /** @class */ (function (_super) {
             else
                 stack.adjustFromView();
         }
+    };
+    GameXBody.prototype.saveCurrentStackLayoutAsDefault = function () {
+        var html = '';
+        for (var _i = 0, _a = this.stacks; _i < _a.length; _i++) {
+            var stack = _a[_i];
+            if (stack.player_color == this.player_color) {
+                this.localSettings.writeProp("defaultstack_".concat(stack.bin_type), "".concat(stack.current_view));
+                var layoutName = stack.getViewLabel(stack.current_view);
+                html += "".concat(stack.label, ": ").concat(layoutName, "<br>");
+            }
+        }
+        this.showPopin(html, "dialog", _("Saved Layout"));
     };
     GameXBody.prototype.showGameScoringDialog = function () {
         if (this.cachedScoringTable) {
@@ -3933,7 +3945,7 @@ var GameXBody = /** @class */ (function (_super) {
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
             lines =
                 lines +
-                    "\n       <div class=\" scorecol\">\n             <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n             <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n             <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n             <div class=\"scorecell score\">").concat((_a = entry.total_details.awards) !== null && _a !== void 0 ? _a : _('Not Applicable'), "</div>\n             <div class=\"scorecell score\">").concat((_b = entry.total_details.milestones) !== null && _b !== void 0 ? _b : _('Not Applicable'), "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n             <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n       </div>");
+                    "\n       <div class=\" scorecol\">\n             <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n             <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n             <div class=\"scorecell score\">").concat(entry.total_details.tr, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cities, "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.greeneries, "</div>\n             <div class=\"scorecell score\">").concat((_a = entry.total_details.awards) !== null && _a !== void 0 ? _a : _("Not Applicable"), "</div>\n             <div class=\"scorecell score\">").concat((_b = entry.total_details.milestones) !== null && _b !== void 0 ? _b : _("Not Applicable"), "</div>\n             <div class=\"scorecell score\">").concat(entry.total_details.cards, "</div>\n             <div class=\"scorecell score header total\">").concat(entry.total, "</div>\n       </div>");
             for (var cat in entry.details) {
                 //['details'][$category][$token_key][$key]
                 for (var token_key in entry.details[cat]) {
@@ -4114,23 +4126,39 @@ var GameXBody = /** @class */ (function (_super) {
                 ui: "checkbox"
             },
             { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" },
-            { key: "defaultstack_4", label: _("Default HQ View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 2 },
-            { key: "defaultstack_3", label: _("Default Events View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 0 },
-            { key: "defaultstack_1", label: _("Default Automated View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 2 },
-            { key: "defaultstack_2", label: _("Default Effects View"), choice: { 0: _("Hidden"), 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 2 },
-            { key: "defaultstack_2a", label: _("Default Actions View"), choice: { 1: _("Synthetic"), 2: _("Stacked"), 3: _("Full") }, default: 3 },
+            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
         this.localSettings.renderContents("settings-controls-container", function () {
             // run on settings reset
             _this.updateStacks(true);
+            // re-create this button because local setting div is destroyed on reset
+            _this.createSaveLayoutButton($(_this.localSettings.getDivId()));
         });
+        this.createSaveLayoutButton($(this.localSettings.getDivId()));
         //cleanup old table settings
         //using a simpler namespace context for easier filtering
         // const purgeSettings = new LocalSettings(this.getLocalSettingNamespace());
         // purgeSettings.manageObsoleteData(this.table_id);
+    };
+    GameXBody.prototype.createSaveLayoutButton = function (parentNode) {
+        var _this = this;
+        if (!parentNode)
+            return null;
+        var restore_tooltip = _("Click to save current card layout of main player as default (i.e. each card stack visibility and type)");
+        var restore_title = _("Save current card layout");
+        var div = dojo.create("a", {
+            id: "localsettings_restore",
+            class: "action-button bgabutton bgabutton_gray",
+            innerHTML: "<span title=\"".concat(restore_tooltip, "\">").concat(restore_title, "</span> <span title=\"").concat(restore_tooltip, "\" class='fa fa-align-justify'></span>"),
+            onclick: function (event) {
+                _this.saveCurrentStackLayoutAsDefault();
+            },
+            target: "_blank"
+        });
+        parentNode.appendChild(div);
+        return div;
     };
     /**
      * This asks to select the theme, only on for alpha
@@ -4811,8 +4839,8 @@ var GameXBody = /** @class */ (function (_super) {
                     vp = "";
                 }
                 var number_for_bin = "";
-                if (typeof (displayInfo.num) == "string" && displayInfo.num.startsWith('P')) {
-                    number_for_bin = displayInfo.num.replace('P', '');
+                if (typeof displayInfo.num == "string" && displayInfo.num.startsWith("P")) {
+                    number_for_bin = displayInfo.num.replace("P", "");
                 }
                 else if (displayInfo.num) {
                     number_for_bin = displayInfo.num;
@@ -4833,7 +4861,7 @@ var GameXBody = /** @class */ (function (_super) {
                     if (((cntLosses > 0 && cntGains == 0) || (cntGains > 0 && cntLosses == 0)) &&
                         (cntLosses + cntGains > 1 || (cntLosses + cntGains == 1 && cntProds > 3))) {
                         //exceptions
-                        if (displayInfo.num && displayInfo.num != 19 && displayInfo.imageTypes.indexOf('prelude') == -1) {
+                        if (displayInfo.num && displayInfo.num != 19 && displayInfo.imageTypes.indexOf("prelude") == -1) {
                             card_r = '<div class="groupline">' + card_r + "</div>";
                             addeffclass += " oneline";
                         }
@@ -4877,7 +4905,7 @@ var GameXBody = /** @class */ (function (_super) {
                     card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) || _(displayInfo.text_effect), "</div>");
                 }
                 if (displayInfo.num == "P39") {
-                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) + ' ' + _(displayInfo.text_effect), "</div>");
+                    card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) + " " + _(displayInfo.text_effect), "</div>");
                 }
                 var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
                 var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +
@@ -4892,7 +4920,7 @@ var GameXBody = /** @class */ (function (_super) {
             // const div = this.createDivNode(null, "card_info_box", tokenNode.id);
             // div.innerHTML = `
             //     <div class='token_title'>${displayInfo.name}</div>
-            //     <div class='token_cost'>${displayInfo.cost}</div> 
+            //     <div class='token_cost'>${displayInfo.cost}</div>
             //     <div class='token_rules'>${displayInfo.r}</div>
             //     <div class='token_descr'>${displayInfo.text}</div>
             //     `;
@@ -5156,7 +5184,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
             var costDiv = $("cost_" + cardId);
-            var costdiscountDiv = $('discountedcost_' + cardId);
+            var costdiscountDiv = $("discountedcost_" + cardId);
             if (costDiv) {
                 if (discounted) {
                     // costdiscountDiv.dataset.discounted_cost = node.dataset.discount_cost;
@@ -5802,7 +5830,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.resourcesToHtml = function (resources, show_zeroes) {
         if (show_zeroes === void 0) { show_zeroes = false; }
         var htm = "";
-        var trackers = this.resourceTrackers.concat('resMicrobe');
+        var trackers = this.resourceTrackers.concat("resMicrobe");
         trackers.forEach(function (item) {
             if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
                 htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(resources[item], "</div>");
@@ -5965,7 +5993,7 @@ var GameXBody = /** @class */ (function (_super) {
             // xxx add something for remaining ops in ordered case?
             if (!single && !ordered) {
                 // temp hack
-                if (opInfo.type === 'passauto')
+                if (opInfo.type === "passauto")
                     return "continue";
                 this_4.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
@@ -6210,11 +6238,11 @@ var GameXBody = /** @class */ (function (_super) {
             sort_dir = "";
         }
         /*
-            let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
-            if (bnode) bnode.dataset.direction = sort_dir;
-            $(id).dataset.sort_direction = sort_dir;
-            $(id).dataset.sort_type = sort_type;*/
-        this.switchHandSort($('hs_button_' + id + '_switch'), sort_type);
+        let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
+        if (bnode) bnode.dataset.direction = sort_dir;
+        $(id).dataset.sort_direction = sort_dir;
+        $(id).dataset.sort_type = sort_type;*/
+        this.switchHandSort($("hs_button_" + id + "_switch"), sort_type);
         /*
         this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
         this.addTooltip(`hs_button_${id}_playable`, _("Card Sort"), msg.replace("%s", _("playability")));
@@ -6339,11 +6367,11 @@ var GameXBody = /** @class */ (function (_super) {
         var node = $(node1);
         if (!node.id)
             return;
-        var text = '';
-        if (node.id.startsWith('card')) {
+        var text = "";
+        if (node.id.startsWith("card")) {
             var name_5 = node.dataset.name;
             var dcost = node.dataset.discount_cost;
-            var cost = this.getRulesFor(node.id, 'cost', 0);
+            var cost = this.getRulesFor(node.id, "cost", 0);
             text += "[".concat(name_5, "]");
             if (cost && (options === null || options === void 0 ? void 0 : options.showCost)) {
                 if (dcost !== undefined && cost != dcost) {
@@ -6362,7 +6390,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             return text;
         }
-        if (node.id.startsWith('tile')) {
+        if (node.id.startsWith("tile")) {
             var hex = node.parentNode;
             var hexname = hex.dataset.name;
             var tile = node;
@@ -6380,7 +6408,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             return text;
         }
-        if (node.id.startsWith('tracker')) {
+        if (node.id.startsWith("tracker")) {
             var name_7 = node.dataset.name;
             var state = node.dataset.state;
             text = "".concat(name_7, " ").concat(state);
@@ -6405,17 +6433,17 @@ var GameXBody = /** @class */ (function (_super) {
         var move = this.gamedatas.notifications.move_nbr;
         text += "Current move ".concat(move, "\n");
         var plcolor = this.player_color;
-        text += this.extractPileText('HAND', ".hand_".concat(plcolor, " .card"), { showCost: true });
-        text += this.extractPileText('PLAYED', ".tableau_".concat(plcolor, " .card"), { showVp: true });
+        text += this.extractPileText("HAND", ".hand_".concat(plcolor, " .card"), { showCost: true });
+        text += this.extractPileText("PLAYED", ".tableau_".concat(plcolor, " .card"), { showVp: true });
         text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor, " .tracker"));
         for (var plid in this.gamedatas.players) {
             var plcolor_1 = this.getPlayerColor(parseInt(plid));
             if (plcolor_1 != this.player_color) {
-                text += this.extractPileText('PLAYED', ".tableau_".concat(plcolor_1, " .card"), { showVp: true });
+                text += this.extractPileText("PLAYED", ".tableau_".concat(plcolor_1, " .card"), { showVp: true });
                 text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor_1, " .tracker"));
             }
         }
-        text += this.extractPileText('MAP', ".map .tile", { showVp: true });
+        text += this.extractPileText("MAP", ".map .tile", { showVp: true });
         return text;
     };
     GameXBody.prototype.checkTerraformingCompletion = function () {
@@ -6426,12 +6454,12 @@ var GameXBody = /** @class */ (function (_super) {
         var w = parseInt($("tracker_w").dataset.state);
         if (o == 14 && t == 8 && w == 9) {
             var htm = '<div id="terraforming_complete" class="terraforming_complete">⚠️' + _("The terraforming is complete") + "</div>";
-            if (!$('terraforming_complete'))
-                $('game_play_area').insertAdjacentHTML('afterbegin', htm);
+            if (!$("terraforming_complete"))
+                $("game_play_area").insertAdjacentHTML("afterbegin", htm);
         }
         else {
-            if ($('$terraforming_complete'))
-                dojo.destroy($('$terraforming_complete'));
+            if ($("$terraforming_complete"))
+                dojo.destroy($("$terraforming_complete"));
         }
     };
     return GameXBody;
@@ -6459,7 +6487,7 @@ function onDragStart(event) {
     cardParent.style.setProperty("height", String(rect.height) + "px");
     $("ebd-body").classList.add("drag_inpg");
     selectedItem.classList.add("drag-active");
-    selectedItem.style.setProperty('user-select', 'none');
+    selectedItem.style.setProperty("user-select", "none");
     // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
     // event.dataTransfer.effectAllowed = "move";
     // event.dataTransfer.dropEffect = "move";
@@ -6590,7 +6618,7 @@ var LocalSettings = /** @class */ (function () {
             if (prop.ui !== false)
                 htmcontents = htmcontents + '<div class="localsettings_group">' + this.renderProp(prop) + "</div>";
         }
-        var htm = "\n      <div id=\"".concat(this.gameName, "_localsettings_window\" class=\"localsettings_window\">\n         <div class=\"localsettings_header\">").concat(title, "</div>\n         ").concat(htmcontents, "\n      </div>\n      ");
+        var htm = "\n      <div id=\"".concat(this.getDivId(), "\" class=\"localsettings_window\">\n         <div class=\"localsettings_header\">").concat(title, "</div>\n         ").concat(htmcontents, "\n      </div>\n      ");
         document.getElementById(parentId).insertAdjacentHTML("beforeend", htm);
         //add interactivity
         for (var _b = 0, _c = this.props; _b < _c.length; _b++) {
@@ -6614,7 +6642,12 @@ var LocalSettings = /** @class */ (function () {
             },
             target: "_blank"
         });
-        document.getElementById("".concat(this.gameName, "_localsettings_window")).appendChild(restoreDiv);
+        var node = document.getElementById(this.getDivId());
+        node.appendChild(restoreDiv);
+        return true;
+    };
+    LocalSettings.prototype.getDivId = function () {
+        return "".concat(this.gameName, "_localsettings_window");
     };
     LocalSettings.prototype.renderProp = function (prop) {
         if (prop.range)

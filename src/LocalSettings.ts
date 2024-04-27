@@ -59,7 +59,7 @@ class LocalSettings {
     }
 
     let htm = `
-      <div id="${this.gameName}_localsettings_window" class="localsettings_window">
+      <div id="${this.getDivId()}" class="localsettings_window">
          <div class="localsettings_header">${title}</div>
          ${htmcontents}
       </div>
@@ -87,7 +87,13 @@ class LocalSettings {
       target: "_blank"
     });
 
-    document.getElementById(`${this.gameName}_localsettings_window`).appendChild(restoreDiv);
+    const node = document.getElementById(this.getDivId());
+    node.appendChild(restoreDiv);
+    return true;
+  }
+
+  public getDivId() {
+    return `${this.gameName}_localsettings_window`;
   }
 
   public renderProp(prop: LocalProp): string {

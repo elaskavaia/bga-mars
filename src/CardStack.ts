@@ -209,7 +209,7 @@ class CardStack {
     }
   }
 
-  private getViewLabel(view: number) {
+  public getViewLabel(view: number) {
     switch (view) {
       case View.Hidden:
         return _("Hidden");

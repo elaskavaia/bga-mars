@@ -22,12 +22,11 @@ class GameXBody extends GameTokens {
   private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
   private prevLogId = 0;
 
-  private stacks:CardStack[];
+  private stacks: CardStack[];
   constructor() {
     super();
     this.CON = {};
-    this.stacks=[];
-
+    this.stacks = [];
   }
 
   setup(gamedatas: any) {
@@ -183,7 +182,6 @@ class GameXBody extends GameTokens {
         ); // NOI18N
       }
 
-
       this.updateStacks();
 
       const move = gamedatas.notifications.move_nbr;
@@ -193,10 +191,8 @@ class GameXBody extends GameTokens {
       this.createScoringTableHTML(this.cachedScoringTable);
       this.vlayout.setupDone();
       //locale css management
-      $("ebd-body").dataset["locale"] =  _('$locale');
+      $("ebd-body").dataset["locale"] = _("$locale");
       //this.setupOneTimePrompt();
-
-
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
@@ -230,20 +226,27 @@ class GameXBody extends GameTokens {
       this.connectClass("hs_button", "onclick", (evt: Event) => {
         dojo.stopEvent(evt);
         let btn = evt.currentTarget as HTMLElement;
-        let newtype="";
-
+        let newtype = "";
 
         switch (btn.dataset.type) {
-          case "none":newtype="playable"; break;
-          case "playable":newtype="cost";break;
-          case "cost":newtype="vp";  break;
-          case "vp":newtype="manual"; break;
-          case "manual":newtype="none";break;
+          case "none":
+            newtype = "playable";
+            break;
+          case "playable":
+            newtype = "cost";
+            break;
+          case "cost":
+            newtype = "vp";
+            break;
+          case "vp":
+            newtype = "manual";
+            break;
+          case "manual":
+            newtype = "none";
+            break;
         }
-        this.switchHandSort(btn,newtype);
-
+        this.switchHandSort(btn, newtype);
       });
-
     }
 
     //move own player board in main zone
@@ -254,10 +257,10 @@ class GameXBody extends GameTokens {
     }
   }
 
-  switchHandSort(btn:HTMLElement,newtype:string):void {
-    let fa="";
-    let msg="";
-    let newdir="increase";
+  switchHandSort(btn: HTMLElement, newtype: string): void {
+    let fa = "";
+    let msg = "";
+    let newdir = "increase";
 
     switch (newtype) {
       case "playable":
@@ -283,17 +286,17 @@ class GameXBody extends GameTokens {
         break;
     }
 
-    btn.dataset.type=newtype;
-    btn.dataset.direction=newdir;
-    btn.querySelector('i').removeAttribute("class");
-    btn.querySelector('i').classList.add("fa",fa);
+    btn.dataset.type = newtype;
+    btn.dataset.direction = newdir;
+    btn.querySelector("i").removeAttribute("class");
+    btn.querySelector("i").classList.add("fa", fa);
 
     const hand_block: string = btn.dataset.target;
     $(hand_block).dataset.sort_type = newtype;
     $(hand_block).dataset.sort_direction = newdir;
 
-    const fullmsg =_("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace('%s',msg);
-    this.addTooltip(btn.id,fullmsg,_("Click to select next sorting mode"));
+    const fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace("%s", msg);
+    this.addTooltip(btn.id, fullmsg, _("Click to select next sorting mode"));
 
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
     localColorSetting.writeProp("sort_direction", newdir);
@@ -321,12 +324,12 @@ class GameXBody extends GameTokens {
           views: noHidden
         },
         { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: noHidden },
-        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full, views: [View.Hidden,View.Stacked, View.Full]  }
+        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Full }
       ];
     } else {
-      // cardbpard
+      // cardboard
       lsStacks = [
-        { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Stacked, views: [View.Hidden, View.Synthetic] },
+        { label: _("Resources"), div: "cards_0", color_class: "pb", default: View.Synthetic, views: [View.Hidden, View.Synthetic] },
         { label: _("Automated"), div: "cards_1", color_class: "green", default: View.Stacked },
         { label: _("Events"), div: "cards_3", color_class: "red", default: View.Hidden },
         {
@@ -337,7 +340,7 @@ class GameXBody extends GameTokens {
           views: [View.Stacked, View.Full]
         },
         { label: _("Actions"), div: "cards_2a", color_class: "blue", default: View.Stacked, views: [View.Stacked, View.Full] },
-        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked }
+        { label: _("Headquarters"), div: "cards_4", color_class: "corp", default: View.Stacked, views: [View.Hidden, View.Stacked, View.Full]  }
       ];
     }
     for (const item of lsStacks) {
@@ -349,17 +352,29 @@ class GameXBody extends GameTokens {
     }
   }
 
-  updateStacks(reset: boolean = false){
-      for (let stack of this.stacks) {
-        if (reset) stack.reset();
-        else stack.adjustFromView();
+  updateStacks(reset: boolean = false) {
+    for (let stack of this.stacks) {
+      if (reset) stack.reset();
+      else stack.adjustFromView();
+    }
+  }
+
+  saveCurrentStackLayoutAsDefault() {
+    let html = '';
+    for (let stack of this.stacks) {
+      if (stack.player_color == this.player_color) {
+        this.localSettings.writeProp(`defaultstack_${stack.bin_type}`, `${stack.current_view}`);
+        const layoutName = stack.getViewLabel(stack.current_view);
+        html += `${stack.label}: ${layoutName}<br>`;
       }
+    }
+    this.showPopin(html, "dialog", _("Saved Layout"));
   }
 
   showGameScoringDialog() {
     if (this.cachedScoringTable) {
       const html = this.createScoringTableHTML(this.cachedScoringTable);
-      this.showPopin(html,"score_dialog",_("Score Summary"));
+      this.showPopin(html, "score_dialog", _("Score Summary"));
     }
   }
 
@@ -408,21 +423,21 @@ class GameXBody extends GameTokens {
              <div class="scorecell score">${entry.total_details.tr}</div>
              <div class="scorecell score">${entry.total_details.cities}</div>
              <div class="scorecell score">${entry.total_details.greeneries}</div>
-             <div class="scorecell score">${entry.total_details.awards??_('Not Applicable')}</div>
-             <div class="scorecell score">${entry.total_details.milestones??_('Not Applicable')}</div>
+             <div class="scorecell score">${entry.total_details.awards ?? _("Not Applicable")}</div>
+             <div class="scorecell score">${entry.total_details.milestones ?? _("Not Applicable")}</div>
              <div class="scorecell score">${entry.total_details.cards}</div>
              <div class="scorecell score header total">${entry.total}</div>
        </div>`;
 
-       for (let cat in entry.details) {
+      for (let cat in entry.details) {
         //['details'][$category][$token_key][$key]
         for (let token_key in entry.details[cat]) {
-           const rec = entry.details[cat][token_key];
-           const node = $(token_key);
-           if (!node) continue;
-           node.dataset.vp = rec.vp;
+          const rec = entry.details[cat][token_key];
+          const node = $(token_key);
+          if (!node) continue;
+          node.dataset.vp = rec.vp;
         }
-       }
+      }
     }
     const finalhtm = tablehtm.replace("%lines%", lines);
     return finalhtm;
@@ -621,7 +636,7 @@ class GameXBody extends GameTokens {
       {
         key: "showmicon",
         label: _("Show counters on minipanel"),
-        choice: { show : true },
+        choice: { show: true },
         default: false,
         ui: "checkbox"
       },
@@ -633,24 +648,41 @@ class GameXBody extends GameTokens {
         ui: "checkbox"
       },
       { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-      { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" },
-      { key: "defaultstack_4", label: _("Default HQ View"), choice: { 0:_("Hidden"),1:_("Synthetic"), 2:_("Stacked"),3:_("Full") }, default: 2 },
-      { key: "defaultstack_3", label: _("Default Events View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 0 },
-      { key: "defaultstack_1", label: _("Default Automated View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 2 },
-      { key: "defaultstack_2", label: _("Default Effects View"), choice: { 0:_("Hidden"),1:_("Synthetic"),2:_("Stacked"),3:_("Full") } , default: 2 },
-      { key: "defaultstack_2a", label: _("Default Actions View"), choice: { 1:_("Synthetic"),2:_("Stacked"),3:_("Full") }, default: 3 },
+      { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
-    this.localSettings.renderContents("settings-controls-container", ()=> {
+    this.localSettings.renderContents("settings-controls-container", () => {
       // run on settings reset
       this.updateStacks(true);
+      // re-create this button because local setting div is destroyed on reset
+      this.createSaveLayoutButton($(this.localSettings.getDivId()));
     });
+
+    this.createSaveLayoutButton($(this.localSettings.getDivId()));
 
     //cleanup old table settings
     //using a simpler namespace context for easier filtering
     // const purgeSettings = new LocalSettings(this.getLocalSettingNamespace());
     // purgeSettings.manageObsoleteData(this.table_id);
+  }
+
+  createSaveLayoutButton(parentNode: HTMLElement) {
+    if (!parentNode) return null;
+    const restore_tooltip = _("Click to save current card layout of main player as default (i.e. each card stack visibility and type)");
+    const restore_title = _("Save current card layout");
+    const div = dojo.create("a", {
+      id: "localsettings_restore",
+      class: "action-button bgabutton bgabutton_gray",
+      innerHTML: `<span title="${restore_tooltip}">${restore_title}</span> <span title="${restore_tooltip}" class='fa fa-align-justify'></span>`,
+      onclick: (event) => {
+        this.saveCurrentStackLayoutAsDefault();
+      },
+      target: "_blank"
+    });
+
+    parentNode.appendChild(div);
+    return div;
   }
 
   /**
@@ -660,7 +692,7 @@ class GameXBody extends GameTokens {
     if (typeof g_replayFrom != "undefined" || g_archive_mode) return;
     const ls = new LocalSettings(this.getLocalSettingNamespace()); // need another instance to save once per machine not per user/theme like others
 
-    if (ls.readProp("activated",undefined)) return;
+    if (ls.readProp("activated", undefined)) return;
     ls.writeProp("activated", "1");
 
     const dialog = new ebg.popindialog();
@@ -731,8 +763,7 @@ class GameXBody extends GameTokens {
     const lognode = $("log_" + log_id);
     lognode.querySelectorAll(".card_hl_tt").forEach((node) => {
       const card_id = node.getAttribute("data-clicktt");
-      if (card_id) 
-        this.updateTooltip(card_id, node);
+      if (card_id) this.updateTooltip(card_id, node);
     });
   }
 
@@ -743,10 +774,10 @@ class GameXBody extends GameTokens {
   addMoveToLog(log_id: number, move_id) {
     this.inherited(arguments);
     if (this.prevLogId + 1 < log_id) {
-       // we skip over some logs, but we need to look at them also
-       for (let i = this.prevLogId + 1; i < log_id; i++) {
+      // we skip over some logs, but we need to look at them also
+      for (let i = this.prevLogId + 1; i < log_id; i++) {
         this.addTooltipToLogItems(i);
-       }
+      }
     }
 
     this.addTooltipToLogItems(log_id);
@@ -962,7 +993,7 @@ class GameXBody extends GameTokens {
   ajaxuseraction(action: string, args?: any, handler?: (err: any) => void) {
     this.gameStatusCleanup();
     console.log(`sending ${action}`, args);
-    if (action  === "passauto") {
+    if (action === "passauto") {
       return this.ajaxcallwrapper_unchecked(action, {}, handler);
     }
     super.ajaxuseraction(action, args, handler);
@@ -970,7 +1001,7 @@ class GameXBody extends GameTokens {
 
   onNotif(notif: Notif) {
     super.onNotif(notif);
-  //  this.darhflog("playing notif " + notif.type + " with args ", notif.args);
+    //  this.darhflog("playing notif " + notif.type + " with args ", notif.args);
 
     //header cleanup
     this.gameStatusCleanup();
@@ -1060,7 +1091,7 @@ class GameXBody extends GameTokens {
     if (type !== undefined) {
       fulltxt = this.generateCardTooltip(displayInfo);
 
-      if ([1,2,3,5].includes(type) ) {
+      if ([1, 2, 3, 5].includes(type)) {
         //main cards + prelude
         const div = this.cloneAndFixIds(elemId, "_tt", true);
         fullitemhtm = div.outerHTML;
@@ -1322,7 +1353,7 @@ class GameXBody extends GameTokens {
       }
     }
 
-    let vp =_(displayInfo.text_vp);
+    let vp = _(displayInfo.text_vp);
     if (!vp) vp = displayInfo.vp;
 
     res += this.generateTooltipSection(type_name, card_id);
@@ -1491,7 +1522,7 @@ awarded.`);
           if (CustomRenders["customcard_vp_" + displayInfo.num]) {
             vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
             sort_vp = "1";
-            tokenNode.setAttribute("data-show_calc_vp","1");
+            tokenNode.setAttribute("data-show_calc_vp", "1");
           } else {
             vp = parseInt(displayInfo.vp)
               ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
@@ -1502,11 +1533,11 @@ awarded.`);
         } else {
           vp = "";
         }
-        let number_for_bin="";
-        if (typeof(displayInfo.num)=="string" && displayInfo.num.startsWith('P')) {
-          number_for_bin=displayInfo.num.replace('P','');
+        let number_for_bin = "";
+        if (typeof displayInfo.num == "string" && displayInfo.num.startsWith("P")) {
+          number_for_bin = displayInfo.num.replace("P", "");
         } else if (displayInfo.num) {
-          number_for_bin=displayInfo.num;
+          number_for_bin = displayInfo.num;
         }
         const cn_binary = displayInfo.num ? parseInt(number_for_bin).toString(2).padStart(8, "0") : "";
 
@@ -1527,7 +1558,7 @@ awarded.`);
             (cntLosses + cntGains > 1 || (cntLosses + cntGains == 1 && cntProds > 3))
           ) {
             //exceptions
-            if (displayInfo.num && displayInfo.num != 19 && displayInfo.imageTypes.indexOf('prelude')==-1) {
+            if (displayInfo.num && displayInfo.num != 19 && displayInfo.imageTypes.indexOf("prelude") == -1) {
               card_r = '<div class="groupline">' + card_r + "</div>";
               addeffclass += " oneline";
             }
@@ -1561,8 +1592,8 @@ awarded.`);
           card_a = "";
         }
 
-        if (displayInfo.num=="P39") {
-          card_a =  CustomRenders.customcard_effect_P39(card_a);
+        if (displayInfo.num == "P39") {
+          card_a = CustomRenders.customcard_effect_P39(card_a);
         }
 
         //special for "res"
@@ -1570,12 +1601,15 @@ awarded.`);
 
         let card_action_text = "";
         if (displayInfo.text_action || displayInfo.text_effect) {
-          card_action_text = `<div class="card_action_line card_action_text">${_(displayInfo.text_action) || _(displayInfo.text_effect)}</div>`;
+          card_action_text = `<div class="card_action_line card_action_text">${
+            _(displayInfo.text_action) || _(displayInfo.text_effect)
+          }</div>`;
         }
 
-        if (displayInfo.num=="P39") {
-          card_action_text = `<div class="card_action_line card_action_text">${_(displayInfo.text_action)+' '+_(displayInfo.text_effect)}</div>`;
-
+        if (displayInfo.num == "P39") {
+          card_action_text = `<div class="card_action_line card_action_text">${
+            _(displayInfo.text_action) + " " + _(displayInfo.text_effect)
+          }</div>`;
         }
 
         const holds = displayInfo.holds ?? "Generic";
@@ -1591,7 +1625,9 @@ awarded.`);
                   <div class="card_bg"></div>
                   <div class='card_badges'>${tagshtm}</div>
                   <div class='card_title'><div class='card_title_inner'>${_(displayInfo.name)}</div></div>
-                  <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${_(card_action_text)}</div><div class="card_action_bottomdecor"></div></div>
+                  <div class="card_outer_action"><div class="card_action"><div class="card_action_line card_action_icono">${card_a}</div>${_(
+                    card_action_text
+                  )}</div><div class="card_action_bottomdecor"></div></div>
                   <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${_(displayInfo.text) || ""}</div></div>           
                   <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
                   <div class="card_number">${displayInfo.num ?? ""}</div>
@@ -1614,7 +1650,7 @@ awarded.`);
 
       // div.innerHTML = `
       //     <div class='token_title'>${displayInfo.name}</div>
-      //     <div class='token_cost'>${displayInfo.cost}</div> 
+      //     <div class='token_cost'>${displayInfo.cost}</div>
       //     <div class='token_rules'>${displayInfo.r}</div>
       //     <div class='token_descr'>${displayInfo.text}</div>
       //     `;
@@ -1831,7 +1867,7 @@ awarded.`);
     }
 
     //check TM
-    if (node.id.startsWith("tracker_w") ||node.id.startsWith("tracker_t") || node.id.startsWith("tracker_o")) {
+    if (node.id.startsWith("tracker_w") || node.id.startsWith("tracker_t") || node.id.startsWith("tracker_o")) {
       this.checkTerraformingCompletion();
     }
   }
@@ -1894,20 +1930,20 @@ awarded.`);
 
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
 
-     let costDiv = $("cost_" + cardId);
-      let costdiscountDiv=$('discountedcost_'+ cardId);
+      let costDiv = $("cost_" + cardId);
+      let costdiscountDiv = $("discountedcost_" + cardId);
 
       if (costDiv) {
         if (discounted) {
-         // costdiscountDiv.dataset.discounted_cost = node.dataset.discount_cost;
-          costdiscountDiv.innerHTML=node.dataset.discount_cost;
-       //   costDiv.dataset.discounted_cost = node.dataset.discount_cost;
-         // costDiv.dataset.original_cost = node.dataset.original_cost;
+          // costdiscountDiv.dataset.discounted_cost = node.dataset.discount_cost;
+          costdiscountDiv.innerHTML = node.dataset.discount_cost;
+          //   costDiv.dataset.discounted_cost = node.dataset.discount_cost;
+          // costDiv.dataset.original_cost = node.dataset.original_cost;
           costDiv.classList.add("discounted");
         } else {
           costDiv.dataset.discounted_cost = "";
-         // costdiscountDiv.dataset.discounted_cost ="";
-          costdiscountDiv.innerHTML="";
+          // costdiscountDiv.dataset.discounted_cost ="";
+          costdiscountDiv.innerHTML = "";
           costDiv.classList.remove("discounted");
         }
       }
@@ -2014,7 +2050,6 @@ awarded.`);
     return result;
   }
 
-
   strikeNextAwardMilestoneCost(kind: string) {
     for (let idx = 1; idx <= 3; idx++) {
       if ($(kind + "_cost_" + idx).dataset.striked != "1") {
@@ -2038,7 +2073,7 @@ awarded.`);
     }
   }
 
-  sendActionResolve(op: number, args?: {[key: string]: any},  opInfo?: {[key: string]: any}, handler?: eventhandler) {
+  sendActionResolve(op: number, args?: { [key: string]: any }, opInfo?: { [key: string]: any }, handler?: eventhandler) {
     if (!args) args = {};
     let action = "resolve";
     if (opInfo?.ooturn) {
@@ -2264,7 +2299,7 @@ awarded.`);
               ) > 0
             ) {
               customNeeded = detailsInfo;
-            } 
+            }
           } else {
             const sign = detailsInfo.sign; // 0 complete payment, -1 incomplete, +1 overpay
             //console.log("enum details "+tid,detailsInfo);
@@ -2391,7 +2426,7 @@ awarded.`);
         "button_" + tid,
         this.getTokenName(tid),
         () => {
-          this.sendActionResolve(opId, {target: tid});
+          this.sendActionResolve(opId, { target: tid });
         },
         tid == "none" ? "orange" : "targetcolor"
       );
@@ -2585,7 +2620,7 @@ awarded.`);
 
   resourcesToHtml(resources: any, show_zeroes: boolean = false): string {
     var htm = "";
-    const trackers = this.resourceTrackers.concat('resMicrobe');
+    const trackers = this.resourceTrackers.concat("resMicrobe");
     trackers.forEach((item) => {
       if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
         htm += `<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
@@ -2755,7 +2790,7 @@ awarded.`);
 
       if (!single && !ordered) {
         // temp hack
-        if (opInfo.type==='passauto') continue;
+        if (opInfo.type === "passauto") continue;
 
         this.addActionButtonColor(
           `button_${opId}`,
@@ -2789,7 +2824,7 @@ awarded.`);
     const ack = opInfo.args.ack == 1;
     if (!ack && opInfo.mcount > 0 && opTargets.length == 1) {
       // mandatory and only one choice
-      this.sendActionResolve(opId, { target: opTargets[0]}, opInfo);
+      this.sendActionResolve(opId, { target: opTargets[0] }, opInfo);
     } else if (!ack && opTargets.length == 0) {
       this.sendActionResolve(opId, {}, opInfo); // operations without targets
     } else {
@@ -2820,7 +2855,6 @@ awarded.`);
     if (!operations) return; // XXX
     let sortedOps = Object.keys(operations);
 
-
     for (let i = 0; i < sortedOps.length; i++) {
       let opIdS = sortedOps[i];
       const opId = parseInt(opIdS);
@@ -2846,7 +2880,7 @@ awarded.`);
 
   addUndoButton() {
     if (!$("button_undo")) {
-        this.addActionButtonColor("button_undo", _("Undo"), () => this.sendActionUndo(), "red");
+      this.addActionButtonColor("button_undo", _("Undo"), () => this.sendActionUndo(), "red");
     }
   }
 
@@ -2877,7 +2911,7 @@ awarded.`);
   onSelectTarget(opId: number, target: string, checkActive: boolean = false) {
     // can add prompt
     if ($(target) && checkActive && !this.checkActiveSlot(target)) return;
-    return this.sendActionResolve(opId, {target});
+    return this.sendActionResolve(opId, { target });
   }
 
   // on click hooks
@@ -2995,15 +3029,13 @@ awarded.`);
       sort_type = "manual";
       sort_dir = "";
     }
-/*
+    /*
     let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
     if (bnode) bnode.dataset.direction = sort_dir;
     $(id).dataset.sort_direction = sort_dir;
     $(id).dataset.sort_type = sort_type;*/
 
-    this.switchHandSort($('hs_button_'+id+'_switch'),sort_type);
-
-
+    this.switchHandSort($("hs_button_" + id + "_switch"), sort_type);
 
     /*
     this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
@@ -3135,15 +3167,15 @@ awarded.`);
     }
   }
 
-  extractTokenText(node1: ElementOrId,  options?: any){
-    const node: HTMLElement = $(node1) ;
+  extractTokenText(node1: ElementOrId, options?: any) {
+    const node: HTMLElement = $(node1);
     if (!node.id) return;
-    let text='';
-    if (node.id.startsWith('card')) {
+    let text = "";
+    if (node.id.startsWith("card")) {
       let name = node.dataset.name;
-      const dcost =  node.dataset.discount_cost;
-      const cost = this.getRulesFor(node.id,'cost',0);
-      text+=`[${name}]`;
+      const dcost = node.dataset.discount_cost;
+      const cost = this.getRulesFor(node.id, "cost", 0);
+      text += `[${name}]`;
       if (cost && options?.showCost) {
         if (dcost !== undefined && cost != dcost) {
           text += ` ${cost}(${dcost})ME`;
@@ -3151,15 +3183,15 @@ awarded.`);
       }
       const vp = node.dataset.vp;
       if (vp !== undefined && options?.showVp) {
-        text+=` ${vp}VP`;
+        text += ` ${vp}VP`;
       }
-      const res =  node.dataset.resource_counter;
+      const res = node.dataset.resource_counter;
       if (res) {
-        text+=` ${res}RES`;
+        text += ` ${res}RES`;
       }
       return text;
     }
-    if (node.id.startsWith('tile')) {
+    if (node.id.startsWith("tile")) {
       const hex = node.parentNode as HTMLElement;
       let hexname = hex.dataset.name;
       const tile = node;
@@ -3168,25 +3200,25 @@ awarded.`);
       let name = tile.dataset.name;
       text += `[${name}]`;
       const state = tile.dataset.state;
-      if (state && state!="0") {
+      if (state && state != "0") {
         const pid = this.getPlayerIdByNo(state);
         text += ` ${this.getPlayerName(pid)}(${this.getPlayerColor(pid)})`;
       }
-      const vp =  tile.dataset.vp;
+      const vp = tile.dataset.vp;
       if (vp !== undefined && options?.showVp) {
-        text+=` ${vp}VP`;
+        text += ` ${vp}VP`;
       }
       return text;
     }
-    if (node.id.startsWith('tracker')) {
+    if (node.id.startsWith("tracker")) {
       const name = node.dataset.name;
       const state = node.dataset.state;
-      text=`${name} ${state}`;
+      text = `${name} ${state}`;
       return text;
     }
     return node.id;
   }
-  extractPileText(title: string, query: string, options?: any){
+  extractPileText(title: string, query: string, options?: any) {
     let text = title + ": \n";
 
     document.querySelectorAll(query).forEach((node) => {
@@ -3196,46 +3228,41 @@ awarded.`);
     });
     return text;
   }
-  extractTextGameInfo(){
+  extractTextGameInfo() {
     let text = "";
-    text+= `Current player ${this.getPlayerName(this.player_id)} ${this.player_color}\n`;
-    const move =  this.gamedatas.notifications.move_nbr;
-    text+= `Current move ${move}\n`;
-    
-    const plcolor = this.player_color;
-    text+= this.extractPileText('HAND',`.hand_${plcolor} .card`, {showCost: true});
-    text+= this.extractPileText('PLAYED',`.tableau_${plcolor} .card`, {showVp: true});
-    text+= this.extractPileText("RESOURCES",`#playerboard_${plcolor} .tracker`);
+    text += `Current player ${this.getPlayerName(this.player_id)} ${this.player_color}\n`;
+    const move = this.gamedatas.notifications.move_nbr;
+    text += `Current move ${move}\n`;
 
+    const plcolor = this.player_color;
+    text += this.extractPileText("HAND", `.hand_${plcolor} .card`, { showCost: true });
+    text += this.extractPileText("PLAYED", `.tableau_${plcolor} .card`, { showVp: true });
+    text += this.extractPileText("RESOURCES", `#playerboard_${plcolor} .tracker`);
 
     for (let plid in this.gamedatas.players) {
       const plcolor = this.getPlayerColor(parseInt(plid));
       if (plcolor != this.player_color) {
-        text+= this.extractPileText('PLAYED',`.tableau_${plcolor} .card`, {showVp: true});
-        text+= this.extractPileText("RESOURCES",`#playerboard_${plcolor} .tracker`);
+        text += this.extractPileText("PLAYED", `.tableau_${plcolor} .card`, { showVp: true });
+        text += this.extractPileText("RESOURCES", `#playerboard_${plcolor} .tracker`);
       }
-
     }
-    text+= this.extractPileText('MAP',`.map .tile`, {showVp: true});
-    
+    text += this.extractPileText("MAP", `.map .tile`, { showVp: true });
+
     return text;
   }
 
-   checkTerraformingCompletion() {
-
-
+  checkTerraformingCompletion() {
     if (this.isDoingSetup) return;
 
-    const o:number= parseInt($("tracker_o").dataset.state);
-    const t:number= parseInt($("tracker_t").dataset.state);
-    const w:number= parseInt($("tracker_w").dataset.state);
+    const o: number = parseInt($("tracker_o").dataset.state);
+    const t: number = parseInt($("tracker_t").dataset.state);
+    const w: number = parseInt($("tracker_w").dataset.state);
 
-
-    if (o==14 && t==8 && w==9) {
-      const htm='<div id="terraforming_complete" class="terraforming_complete">⚠️'+_("The terraforming is complete")+"</div>";
-      if (!$('terraforming_complete')) $('game_play_area').insertAdjacentHTML('afterbegin',htm);
+    if (o == 14 && t == 8 && w == 9) {
+      const htm = '<div id="terraforming_complete" class="terraforming_complete">⚠️' + _("The terraforming is complete") + "</div>";
+      if (!$("terraforming_complete")) $("game_play_area").insertAdjacentHTML("afterbegin", htm);
     } else {
-      if ($('$terraforming_complete'))  dojo.destroy($('$terraforming_complete'));
+      if ($("$terraforming_complete")) dojo.destroy($("$terraforming_complete"));
     }
   }
 }
@@ -3265,7 +3292,7 @@ function onDragStart(event: DragEvent) {
 
   $("ebd-body").classList.add("drag_inpg");
   selectedItem.classList.add("drag-active");
-  selectedItem.style.setProperty('user-select','none');
+  selectedItem.style.setProperty("user-select", "none");
 
   // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
   // event.dataTransfer.effectAllowed = "move";
@@ -3361,4 +3388,3 @@ function dragLeaveHandler(event: Event) {
   event.preventDefault();
   (event.currentTarget as HTMLElement).classList.remove("over");
 }
-
