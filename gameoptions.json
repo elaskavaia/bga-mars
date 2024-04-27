@@ -109,5 +109,21 @@
         ],
         "notdisplayedmessage": "Draft is Off",
         "default": 0
+    },
+
+    "105": {
+        "name": "Live Scoring",
+        "values": {
+            "1": {
+                "name": "Allowed",
+                "description": "Players at this table can chose to see or not live scoring update via individual game preference"
+            },
+            "0": {
+                "name": "Denied",
+                "description": "Players at this table cannot see live scoring update or scoring preview table. Not recommended",
+                "tmdisplay": "No Live Scoring"
+            }
+        },
+        "default": 1
     }
 }

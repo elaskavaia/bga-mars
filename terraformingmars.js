@@ -4178,7 +4178,7 @@ var GameXBody = /** @class */ (function (_super) {
         var desc = "\n    Please select a theme below - the user interface will look slightly different. You can change this later.<br>\n    <ul>\n    <li> ".concat(op1.name, "  - ").concat(op1.description, " \n    <li> ").concat(op2.name, "  - ").concat(op2.description, " \n    </ul>\n    For theme and other settings, use the settings menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n    If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.\n    "); // NO I18N
         var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
         dialog.setContent(html);
-        this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, "theme_selector_area");
+        this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, $("theme_selector_area"));
         dialog.show();
     };
     GameXBody.prototype.getThemeSelectorDialogHtml = function (id, title, desc) {
@@ -4188,7 +4188,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.refaceUserPreference = function (pref_id, node, prefDivId) {
         // can override to change apperance
         console.log("PREF", pref_id);
-        if (pref_id == LAYOUT_PREF_ID || pref_id == MA_PREF_CONFIRM_TURN) {
+        if (pref_id == LAYOUT_PREF_ID) {
             var pp = $(prefDivId).parentElement;
             pp.removeChild($(prefDivId));
             this.createCustomPreferenceNode(pref_id, prefDivId, pp);
@@ -4202,6 +4202,7 @@ var GameXBody = /** @class */ (function (_super) {
         var pref = this.prefs[pref_id];
         var pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
         pc.setAttribute("data-pref-id", pref_id + "");
+        pp.parentElement.classList.add('custom_pref_pp');
         for (var v in pref.values) {
             var optionValue = pref.values[v];
             var option = this.createDivNode("".concat(prefDivId, "_v").concat(v), "custom_pref_option pref_".concat((_a = optionValue.cssPref) !== null && _a !== void 0 ? _a : ""), pc);

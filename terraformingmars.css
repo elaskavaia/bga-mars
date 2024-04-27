@@ -5549,7 +5549,9 @@
   background-image: unset;
 }
 
+/*
 .player_score_value {
+
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
   width: 24px;
@@ -5566,10 +5568,11 @@
   cursor: help;
 }
 
+
 .player_score .fa-star {
   display: none;
 }
-
+*/
 .cardback.counter {
   color: white;
 }
@@ -6785,7 +6788,28 @@
   border-top: 1px solid gray;
   margin-top: 10px;
 }
-#settings-controls-container .row-data {
+#settings-controls-container .row-data:not(.custom_pref_pp) {
+  border: none;
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+}
+#settings-controls-container .row-data:not(.custom_pref_pp) .row-label {
+  width: 100%;
+  float: none;
+  color: black;
+  padding-bottom: 0px;
+  text-overflow: initial;
+  white-space: normal;
+  padding: 2px 4px 0;
+  text-align: end;
+}
+#settings-controls-container .row-data:not(.custom_pref_pp) .row-value {
+  min-width: 40%;
+  margin: 0;
+}
+#settings-controls-container .custom_pref_pp {
   border: none;
   display: flex;
   flex-flow: column;
@@ -6793,7 +6817,7 @@
   align-items: center;
   border-bottom: 1px solid gray;
 }
-#settings-controls-container .row-data .row-label {
+#settings-controls-container .custom_pref_pp .row-label {
   width: 100%;
   float: none;
   color: black;
@@ -6801,8 +6825,9 @@
   text-overflow: initial;
   white-space: normal;
   padding: 2px 4px 0px;
+  text-align: center;
 }
-#settings-controls-container .row-data .row-value {
+#settings-controls-container .custom_pref_pp .row-value {
   width: 98%;
   margin: 0;
 }
@@ -6811,7 +6836,8 @@
   position: relative;
 }
 
-#settings-controls-container-prefs::before, .localsettings_header {
+#settings-controls-container-prefs::before,
+.localsettings_header {
   content: attr(data-name);
   width: 100%;
   position: relative;
@@ -6840,7 +6866,8 @@
 }
 
 .custom_pref_option:before {
-  content: "\f10c"; /* .fa-circle-o */
+  content: "\f10c";
+  /* .fa-circle-o */
   font-family: FontAwesome;
   font-size: x-large;
   flex-grow: 0;
@@ -6856,7 +6883,8 @@
   position: relative;
   height: 32px;
   width: 32px;
-  background-position-x: -500%; /* tagSpace */
+  background-position-x: -500%;
+  /* tagSpace */
   background-image: url("img/badges.png");
   background-size: 1300% 100%;
 }
@@ -6866,7 +6894,8 @@
   position: relative;
   height: 32px;
   width: 32px;
-  background-position-x: -800%; /* tagBuilding */
+  background-position-x: -800%;
+  /* tagBuilding */
   background-image: url("img/badges.png");
   background-size: 1300% 100%;
 }

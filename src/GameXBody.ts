@@ -712,7 +712,7 @@ class GameXBody extends GameTokens {
 
     var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
     dialog.setContent(html);
-    this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, "theme_selector_area");
+    this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, $("theme_selector_area"));
     dialog.show();
   }
 
@@ -727,7 +727,7 @@ class GameXBody extends GameTokens {
   refaceUserPreference(pref_id: number, node: Element, prefDivId: string) {
     // can override to change apperance
     console.log("PREF", pref_id);
-    if (pref_id == LAYOUT_PREF_ID || pref_id == MA_PREF_CONFIRM_TURN) {
+    if (pref_id == LAYOUT_PREF_ID) {
       const pp = $(prefDivId).parentElement;
       pp.removeChild($(prefDivId));
       this.createCustomPreferenceNode(pref_id, prefDivId, pp);
@@ -736,10 +736,11 @@ class GameXBody extends GameTokens {
     return false; // return false to hook defaut listener, other return true and you have to hook listener yourself
   }
 
-  createCustomPreferenceNode(pref_id: number, prefDivId: string, pp?: ElementOrId) {
+  createCustomPreferenceNode(pref_id: number, prefDivId: string, pp: HTMLElement) {
     const pref = this.prefs[pref_id];
     const pc = this.createDivNode(prefDivId, "custom_pref " + prefDivId, pp);
     pc.setAttribute("data-pref-id", pref_id + "");
+    pp.parentElement.classList.add('custom_pref_pp');
     for (const v in pref.values) {
       const optionValue = pref.values[v];
       const option = this.createDivNode(`${prefDivId}_v${v}`, `custom_pref_option pref_${optionValue.cssPref ?? ""}`, pc);

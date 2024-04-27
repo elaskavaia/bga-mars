@@ -1,17 +1,4 @@
 {
-    "200": {
-        "name": "Display tooltips",
-        "needReload": false,
-        "generic": true,
-        "values": [
-            {
-                "name": "Enabled"
-            },
-            {
-                "name": "Disabled"
-            }
-        ]
-    },
     "100": {
         "name": "Theme",
         "needReload": true,
@@ -40,6 +27,24 @@
             "0": {
                 "name": "No",
                 "description": "If you do not confirm your turn you cannot undo, as next player will get the turn"
+            }
+        },
+        "default": 1
+    },
+    "105": {
+        "name": "Live Scoring",
+        "values": {
+            "1": {
+                "name": "Show",
+                "description": "See updated VP (only recalculated end of turn). Scoring preview available on demand"
+            },
+            "0": {
+                "name": "Hide",
+                "description": "Hide calculated VP (only show TR rating). Scoring preview available on demand"
+            },
+            "2": {
+                "name": "Disabled",
+                "description": "Table creator disabled the Live Scoring. Scoring preview is not available"
             }
         },
         "default": 1
