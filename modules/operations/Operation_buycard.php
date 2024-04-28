@@ -7,7 +7,7 @@ class Operation_buycard extends AbsOperation {
     function effect(string $color, int $inc): int {
         $card_ids = $this->getCheckedArg('target');
         if (!is_array($card_ids)) {
-            $card_ids = [ $card_ids ];
+            $card_ids = [$card_ids];
         }
         $count = count($card_ids);
         $money = $this->game->getTrackerValue($color, 'm');
@@ -76,40 +76,29 @@ class Operation_buycard extends AbsOperation {
         $color = $this->color;
 
         $selected = $this->game->tokens->getTokensOfTypeInLocation("card_main", "hand_$color", MA_CARD_STATE_SELECTED);
-
         $count = count($selected);
+
         $rest = $this->game->tokens->getTokensInLocation("draw_$color");
-        $left_corp = 0;
-        foreach ($rest as $card_id => $card) {
-            if (startsWith($card_id, 'card_corp')) {
-                $left_corp += 1;
-            }
+
+        $my_operations = $this->game->machine->getTopOperations($color);
+        $my_op = array_shift($my_operations);
+        $this->game->systemAssertTrue("ERR:Operation_buycard:01", $my_op);
+        $optype = array_get($my_op,'type',null);
+     
+
+        if ($optype != 'prediscard') {
+            $this->game->userAssertTrue(totranslate("Nothing to undo"));
         }
-        $has_corp = $left_corp == 1 ? 1 : 0;
-
-        $operations = $this->game->machine->getTopOperations(null, 'main');
-        $op = array_shift($operations);
-        $this->game->systemAssertTrue("unexpected state", $op);
-        // $optype = $op['type'];
-        // if ($optype=='prediscard') { // ?
-        // } 
-        if ($count == 0 && $has_corp == 0) throw new BgaUserException(self::_("Nothing to undo"));
-
-
-        $total = $count + count($rest) - $has_corp;
+   
+        $total = $count + count($rest);
 
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_NORMAL);
             $this->game->effect_incCount($color, 'm', 3, ['message' => '']);
         }
 
-        if ($left_corp > 0) {
-            $this->game->dbSetTokenState('tracker_m', 0, '');
-            $this->game->multiplayerpush($color, 'setuppick');
-        } else {
-            if ($count>0) $this->game->multiplayerpush($color, $total . '?buycard');
-        }
 
+        $this->game->multiplayerpush($color, $total . '?buycard');
         $this->game->machine->normalize();
     }
 }
