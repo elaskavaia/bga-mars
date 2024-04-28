@@ -70,7 +70,15 @@ class CardStack {
     switchButton.classList.add("fa", "fa-align-justify");
     this.game.addTooltip(switchButton.id,_("Card Layouts Menu"),_("Click to select layout"));
 
-    this.game.addTooltip("cnt_cards_" + this.div_id,_("Number of cards in this pile"),"");
+    const cardNumButton = "cnt_cards_" + this.div_id;
+    this.game.addTooltip(cardNumButton,_("Number of cards in this pile"),"");
+
+  
+    $(cardNumButton).addEventListener("click",(event)=>{
+      const parentNode = $(this.div_id);
+      const bin = parentNode.querySelector('.cards_bin');
+      if (bin) this.game.showHiddenContent(bin.id, _("Pile contents"));
+    });
 
     for (let i = 0; i < this.view_list.length; i++) {
       const layout = this.view_list[i];

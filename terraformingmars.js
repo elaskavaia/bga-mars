@@ -1469,7 +1469,14 @@ var CardStack = /** @class */ (function () {
         var switchButton = $("btn_sv_" + this.div_id);
         switchButton.classList.add("fa", "fa-align-justify");
         this.game.addTooltip(switchButton.id, _("Card Layouts Menu"), _("Click to select layout"));
-        this.game.addTooltip("cnt_cards_" + this.div_id, _("Number of cards in this pile"), "");
+        var cardNumButton = "cnt_cards_" + this.div_id;
+        this.game.addTooltip(cardNumButton, _("Number of cards in this pile"), "");
+        $(cardNumButton).addEventListener("click", function (event) {
+            var parentNode = $(_this.div_id);
+            var bin = parentNode.querySelector('.cards_bin');
+            if (bin)
+                _this.game.showHiddenContent(bin.id, _("Pile contents"));
+        });
         var _loop_1 = function (i) {
             var layout = this_1.view_list[i];
             var buttonstr = "<div id=\"btn_switch_".concat(this_1.div_id, "_").concat(layout, "\" class=\"stack_btn switch_").concat(layout, "\">\n      <div id=\"ddl_icon_").concat(this_1.div_id, "_").concat(layout, "\" class=\"stack_ddl_icon\"></div><div class=\"stack_ddl_label\">").concat(this_1.getViewLabel(layout), "</div></div>");
