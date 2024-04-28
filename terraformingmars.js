@@ -6168,7 +6168,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.addUndoButton = function () {
         var _this = this;
-        if (!$("button_undo")) {
+        if (!$("button_undo") && !this.isSpectator) {
             this.addActionButtonColor("button_undo", _("Undo"), function () { return _this.sendActionUndo(); }, "red");
         }
     };

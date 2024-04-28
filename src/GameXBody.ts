@@ -2968,7 +2968,7 @@ awarded.`);
   }
 
   addUndoButton() {
-    if (!$("button_undo")) {
+    if (!$("button_undo") && !this.isSpectator) {
       this.addActionButtonColor("button_undo", _("Undo"), () => this.sendActionUndo(), "red");
     }
   }
