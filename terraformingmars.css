@@ -9320,8 +9320,8 @@
 }
 .mfull .res,
 .mfull .res_n1 {
-  width: 20px;
-  height: 20px;
+  width: calc(var(--card-width) * 20 * 0.005);
+  height: calc(var(--card-width) * 20 * 0.005);
   background-color: unset;
   box-shadow: rgba(11, 11, 11, 0.6784313725) 2px 2px 3px 1px;
   margin-top: 3px;
@@ -9331,14 +9331,19 @@
   background-size: 2250%;
 }
 .mfull .res_n5 {
-  width: 25px;
-  height: 25px;
+  width: calc(var(--card-width) * 25 * 0.005);
+  height: calc(var(--card-width) * 25 * 0.005);
   background-position: 90.3% 99%;
 }
 .mfull .res_n10 {
-  width: 30px;
-  height: 30px;
+  width: calc(var(--card-width) * 30 * 0.005);
+  height: calc(var(--card-width) * 30 * 0.005);
   background-position: 98% 99%;
+}
+.mfull #main_board .res {
+  position: absolute;
+  top: 25%;
+  left: 10%;
 }
 .mfull .tooltipimage.production {
   outline: 4px solid #b7915e;
