@@ -142,7 +142,7 @@ abstract class PGameBasic extends Table {
      * The message should be translated and shown to the user.
      *
      * @param $message string
-     *            user side error message, translation is needed, use self::_() when passing string to it
+     *            user side error message, translation is needed, use totranslate() when passing string to it (because it needs to be marked but this method will wrap it into _)
      * @param $cond boolean
      *            condition of assert
      * @param $log string
@@ -156,7 +156,7 @@ abstract class PGameBasic extends Table {
         if ($log) {
             $this->warn("$message $log|");
         }
-        throw new BgaUserException($message);
+        throw new BgaUserException($this->_($message));
     }
 
     /**

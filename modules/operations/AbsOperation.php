@@ -314,7 +314,7 @@ Reason: tile placement may draw cards (information)
             return $possible_targets;
         } else {
             if ($strict)
-                $this->game->userAssertTrue("Operation is not allowed by the rules", false, "Missing user args $key for $type " . toJson($args));
+                $this->game->userAssertTrue(totranslate("Operation is not allowed by the rules"), false, "Missing user args $key for $type " . toJson($args));
             return $def;
         }
     }

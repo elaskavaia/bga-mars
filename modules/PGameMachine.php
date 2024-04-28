@@ -155,11 +155,11 @@ abstract class PGameMachine extends PGameTokens {
             } else if (is_array($args)) {
                 $operation_id = array_get($args,"op");
             } else {
-                $this->userAssertTrue("Illegal operation. Try again?");
+                $this->userAssertTrue(totranslate("Illegal operation. Try again?"));
             }
           
             $info = $this->findOp($operation_id, $tops);
-            $this->userAssertTrue("Illegal operation. Try again?", $info);
+            $this->userAssertTrue(totranslate("Illegal operation. Try again?"), $info);
 
             $color = $info["owner"];
             if ($color === null) {
