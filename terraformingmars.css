@@ -9220,6 +9220,9 @@
   left: -74%;
   top: 0%;
 }
+.mfull .counters_holder {
+  width: unset;
+}
 .mfull .player_tags .badge[data-state="0"],
 .mfull .player_tags .tracker[data-state="0"],
 .mfull .player_tags .tracker.tracker_eru[data-state="3"],

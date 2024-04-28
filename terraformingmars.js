@@ -3919,7 +3919,8 @@ var GameXBody = /** @class */ (function (_super) {
         for (var _i = 0, lsStacks_1 = lsStacks; _i < lsStacks_1.length; _i++) {
             var item = lsStacks_1[_i];
             // read default from local storage
-            item.default = parseInt(this.localSettings.readProp("defaultstack_" + getPart(item.div, 1), String(item.default)));
+            var setId = "defaultstack_" + getPart(item.div, 1);
+            item.default = parseInt(this.localSettings.readProp(setId, String(item.default)));
             var stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
             stack.render("tableau_" + playerColor);
             this.stacks.push(stack);
@@ -3940,7 +3941,9 @@ var GameXBody = /** @class */ (function (_super) {
         for (var _i = 0, _a = this.stacks; _i < _a.length; _i++) {
             var stack = _a[_i];
             if (stack.player_color == this.player_color) {
-                this.localSettings.writeProp("defaultstack_".concat(stack.bin_type), "".concat(stack.current_view));
+                var num = getPart(stack.bin_type, 1);
+                var setId = "defaultstack_".concat(num);
+                this.localSettings.writeProp(setId, "".concat(stack.current_view));
                 var layoutName = stack.getViewLabel(stack.current_view);
                 html += "".concat(stack.label, ": ").concat(layoutName, "<br>");
             }

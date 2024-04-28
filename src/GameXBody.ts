@@ -369,7 +369,8 @@ class GameXBody extends GameTokens {
     }
     for (const item of lsStacks) {
       // read default from local storage
-      item.default = parseInt(this.localSettings.readProp("defaultstack_" + getPart(item.div, 1), String(item.default)));
+      const setId = "defaultstack_" + getPart(item.div, 1);
+      item.default = parseInt(this.localSettings.readProp(setId, String(item.default)));
       const stack = new CardStack(this, localColorSetting, item.div, item.label, playerColor, item.color_class, item.default, item.views);
       stack.render("tableau_" + playerColor);
       this.stacks.push(stack);
@@ -387,7 +388,9 @@ class GameXBody extends GameTokens {
     let html = "";
     for (let stack of this.stacks) {
       if (stack.player_color == this.player_color) {
-        this.localSettings.writeProp(`defaultstack_${stack.bin_type}`, `${stack.current_view}`);
+        const num = getPart(stack.bin_type,1);
+        const setId = `defaultstack_${num}`;
+        this.localSettings.writeProp(setId, `${stack.current_view}`);
         const layoutName = stack.getViewLabel(stack.current_view);
         html += `${stack.label}: ${layoutName}<br>`;
       }
