@@ -214,11 +214,19 @@ class GameXBody extends GameTokens {
 
     const scoreDiv = `player_score_${playerInfo.id}`;
     if (this.isLiveScoringDisabled()) {
-      this.addTooltip(scoreDiv,_('Live Scoring is disabled (table option), this value is same as TR'),'');
-    } else if (this.isLiveScoringOn()){
-      this.addTooltip(scoreDiv,_('Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand'),'Click to see Scoring table and force the update');
+      this.addTooltip(scoreDiv, _("Live Scoring is disabled (table option), this value is same as TR"), "");
+    } else if (this.isLiveScoringOn()) {
+      this.addTooltip(
+        scoreDiv,
+        _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"),
+        "Click to see Scoring table and force the update"
+      );
     } else {
-      this.addTooltip(scoreDiv,_('Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference'),'Click to see Scoring table (this reveals the currrent score)');
+      this.addTooltip(
+        scoreDiv,
+        _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"),
+        "Click to see Scoring table (this reveals the currrent score)"
+      );
     }
 
     this.setupPlayerStacks(playerInfo.color);
@@ -401,7 +409,9 @@ class GameXBody extends GameTokens {
   onShowScoringTable() {
     if (this.isLiveScoringDisabled()) {
       this.showPopin(
-        _("This table is created with option to Disable Live Scoring. Score Preview is not available. If you don't like this do not join the table when this option is chosen next time"),
+        _(
+          "This table is created with option to Disable Live Scoring. Score Preview is not available. If you don't like this do not join the table when this option is chosen next time"
+        ),
         "mr_dialog",
         _("Notice")
       );
@@ -466,9 +476,19 @@ class GameXBody extends GameTokens {
         }
       }
 
-      if (this.isLiveScoringOn()) {
-        if (this.scoreCtrl[playerId]) this.scoreCtrl[playerId].toValue(entry.total);
-        this.gamedatas.players[playerId].score = entry.total;
+      if (!this.isLiveScoringDisabled()) {
+        let score = entry.total_details.tr;
+        if (this.isLiveScoringOn()) {
+          score = entry.total;
+        }
+        let noanimation = false;
+        if (this.isDoingSetup) noanimation = true;
+        this.updatePlayerScoreWithAnim({
+          player_id: playerId,
+          player_score: score,
+          noa: noanimation,
+          target: `player_board_${playerId}`
+        });
       }
     }
     const finalhtm = tablehtm.replace("%lines%", lines);
@@ -781,7 +801,7 @@ class GameXBody extends GameTokens {
     }
     if (pref_id == LIVESCORING_PREF_ID) {
       // live scoring
-     
+
       if (this.isLiveScoringDisabled()) {
         prefNode.setAttribute("disabled", "true");
         prefNodeParent.classList.add("mr_disabled");

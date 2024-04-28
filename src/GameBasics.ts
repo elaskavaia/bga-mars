@@ -1465,18 +1465,32 @@ class GameBasics extends GameGui {
 
   notif_score(notif: Notif) {
     this.onNotif(notif);
-    const args = notif.args;
     console.log(notif);
-    const prev = this.scoreCtrl[args.player_id].getValue();
+    try {
+      this.updatePlayerScoreWithAnim(notif.args);
+    } finally {
+      this.notifqueue.setSynchronousDuration(notif.args.duration ?? 1000);
+    }
+  }
+
+  updatePlayerScoreWithAnim(args) {
+    if (this.scoreCtrl[args.player_id]) {
+      if (args.noa) this.scoreCtrl[args.player_id].setValue(args.player_score);
+      else this.scoreCtrl[args.player_id].toValue(args.player_score);
+    }
+    const prev = this.gamedatas.players[args.player_id].score;
     const inc = args.player_score - prev;
-    this.scoreCtrl[args.player_id].toValue(args.player_score);
-    if (args.target) {
-      const duration = notif.args.duration ?? 1000;
-      this.notifqueue.setSynchronousDuration(duration);
+
+    this.gamedatas.players[args.player_id].score = args.player_score;
+
+    if (args.target && !args.noa && inc != 0) {
+      const duration = args.duration ?? 1000;
       const color = args.color ?? this.getPlayerColor(args.player_id);
+
       this.displayScoring(args.target, color, inc, args.duration);
+      args.duration = duration;
     } else {
-      this.notifqueue.setSynchronousDuration(50);
+      args.duration = 0;
     }
   }
 

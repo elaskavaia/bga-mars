@@ -1321,21 +1321,35 @@ var GameBasics = /** @class */ (function (_super) {
         this.showBubble(notif.args.target, html, notif.args.delay, duration);
     };
     GameBasics.prototype.notif_score = function (notif) {
-        var _a, _b;
+        var _a;
         this.onNotif(notif);
-        var args = notif.args;
         console.log(notif);
-        var prev = this.scoreCtrl[args.player_id].getValue();
+        try {
+            this.updatePlayerScoreWithAnim(notif.args);
+        }
+        finally {
+            this.notifqueue.setSynchronousDuration((_a = notif.args.duration) !== null && _a !== void 0 ? _a : 1000);
+        }
+    };
+    GameBasics.prototype.updatePlayerScoreWithAnim = function (args) {
+        var _a, _b;
+        if (this.scoreCtrl[args.player_id]) {
+            if (args.noa)
+                this.scoreCtrl[args.player_id].setValue(args.player_score);
+            else
+                this.scoreCtrl[args.player_id].toValue(args.player_score);
+        }
+        var prev = this.gamedatas.players[args.player_id].score;
         var inc = args.player_score - prev;
-        this.scoreCtrl[args.player_id].toValue(args.player_score);
-        if (args.target) {
-            var duration = (_a = notif.args.duration) !== null && _a !== void 0 ? _a : 1000;
-            this.notifqueue.setSynchronousDuration(duration);
+        this.gamedatas.players[args.player_id].score = args.player_score;
+        if (args.target && !args.noa && inc != 0) {
+            var duration = (_a = args.duration) !== null && _a !== void 0 ? _a : 1000;
             var color = (_b = args.color) !== null && _b !== void 0 ? _b : this.getPlayerColor(args.player_id);
             this.displayScoring(args.target, color, inc, args.duration);
+            args.duration = duration;
         }
         else {
-            this.notifqueue.setSynchronousDuration(50);
+            args.duration = 0;
         }
     };
     /*
@@ -3769,13 +3783,13 @@ var GameXBody = /** @class */ (function (_super) {
         });
         var scoreDiv = "player_score_".concat(playerInfo.id);
         if (this.isLiveScoringDisabled()) {
-            this.addTooltip(scoreDiv, _('Live Scoring is disabled (table option), this value is same as TR'), '');
+            this.addTooltip(scoreDiv, _("Live Scoring is disabled (table option), this value is same as TR"), "");
         }
         else if (this.isLiveScoringOn()) {
-            this.addTooltip(scoreDiv, _('Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand'), 'Click to see Scoring table and force the update');
+            this.addTooltip(scoreDiv, _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"), "Click to see Scoring table and force the update");
         }
         else {
-            this.addTooltip(scoreDiv, _('Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference'), 'Click to see Scoring table (this reveals the currrent score)');
+            this.addTooltip(scoreDiv, _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"), "Click to see Scoring table (this reveals the currrent score)");
         }
         this.setupPlayerStacks(playerInfo.color);
         this.vlayout.setupPlayer(playerInfo);
@@ -3982,10 +3996,20 @@ var GameXBody = /** @class */ (function (_super) {
                     node.dataset.vp = rec.vp;
                 }
             }
-            if (this.isLiveScoringOn()) {
-                if (this.scoreCtrl[playerId])
-                    this.scoreCtrl[playerId].toValue(entry.total);
-                this.gamedatas.players[playerId].score = entry.total;
+            if (!this.isLiveScoringDisabled()) {
+                var score = entry.total_details.tr;
+                if (this.isLiveScoringOn()) {
+                    score = entry.total;
+                }
+                var noanimation = false;
+                if (this.isDoingSetup)
+                    noanimation = true;
+                this.updatePlayerScoreWithAnim({
+                    player_id: playerId,
+                    player_score: score,
+                    noa: noanimation,
+                    target: "player_board_".concat(playerId)
+                });
             }
         }
         var finalhtm = tablehtm.replace("%lines%", lines);

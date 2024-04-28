@@ -1369,6 +1369,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $events = $this->getPlayCardEvents($card_id, 'play_');
         $this->notifyEffect($color, $events, $card_id);
+        $this->notifyScoringUpdate();
     }
 
     function effect_playCorporation(string $color, string $card_id, bool $setup) {
@@ -1458,7 +1459,7 @@ abstract class PGameXBody extends PGameMachine {
             //$this->putInEffectPool($color, $bonus, $object);
             $this->executeImmediately($color, $bonus); // not much reason to put in the pool
         }
-
+        $this->notifyScoringUpdate();
         return $object;
     }
 
@@ -1672,12 +1673,33 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
+    function isLiveScoringDisabled() {
+        return $this->getGameStateValue('var_live_scoring') == 2;
+    }
+
+    function notifyScoringUpdate() {
+        if (!$this->isLiveScoringDisabled())
+            $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable()]);
+    }
+
     function effect_incTerraformingRank(string $owner, int $inc) {
         $op = 'tr';
         $this->effect_incCount($owner, $op, $inc);
-        $this->dbIncScoreValueAndNotify($this->getPlayerIdByColor($owner), $inc, '', "game_vp_tr", [
-            'target' => $this->getTrackerId($owner, $op)
-        ]);
+        $player_id = $this->getPlayerIdByColor($owner);
+        $count = $this->dbIncScore($player_id, $inc);
+        $tracker = $this->getTrackerId($owner, $op);
+
+        if ($this->isLiveScoringDisabled()) {
+            $this->notifyWithName("score", '', [
+                "player_score" => $count, "inc" => $inc, "mod" => abs((int) $inc),
+                'target' => $tracker
+            ], $player_id);
+        } else {
+            // send scoring table instead
+            $this->notifyScoringUpdate();
+        }
+
+
         // special case corp United, hardcoded rule - when you increase tr this gen - you can play this action
         $card_id = 'card_corp_13';
         if ($this->playerHasCard($owner, $card_id)) {
@@ -1852,11 +1874,18 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
                 $this->dbSetScore($player_id, 0); // reset to 0
-                $this->dbIncScoreValueAndNotify($player_id, 0, ''); // just to notify reset
+
+                // just to notify reset
+                $this->notifyWithName(
+                    "score", '', ["player_score" => 0, "inc" => 0, "mod" => 0, "noa"=>1],
+                    $player_id
+                );
+
                 $curr = $this->tokens->getTokenState("tracker_tr_${color}");
                 $this->dbIncScoreValueAndNotify($player_id, $curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rating'), "", [
                     'target' => "tracker_tr_${color}"
                 ]);
+                $this->setStat($curr, "game_vp_tr", $player_id);
             }
         }
 
@@ -2298,7 +2327,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function effect_endOfActions($player_id) {
         $this->notifyTokensUpdate($player_id);
-        $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable()]);
+        $this->notifyScoringUpdate();
     }
 
     function notifyTokensUpdate($player_id) {
