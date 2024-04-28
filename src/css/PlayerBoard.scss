@@ -136,38 +136,15 @@
     position: relative;
     width: calc(var(--pb_cellsize) * 0.6);
     height: calc(var(--pb_cellsize) * 0.6);
-    /*
-    position: relative;
-    width: calc(var(--pb_cellsize) * 0.5);
-    height: calc(var(--pb_cellsize) * 0.5);
-
-    display: inline-grid;
-    grid-template-columns: calc(var(--pb_cellsize) * 0.5) calc(var(--pb_cellsize) * 0.3);
-    grid-column-start: 1;
-    font-size: calc(var(--pb_cellsize) * 0.3);
-    margin-right: calc(var(--pb_cellsize) * 0.3);
-
-     */
-  }
-
-  .player_tags .tracker.tracker_pdelta {
-    width: calc(var(--pb_cellsize) * 2);
-    height: calc(var(--pb_cellsize) * 0.5);
-
-    /*  grid-template-columns: calc(var(--pb_cellsize) * 2) calc(var(--pb_cellsize) * 0.3);*/
-    justify-content: revert;
-    align-items: revert;
-    text-align: revert;
-
   }
 
   .player_tags .tracker.tracker_pdelta::after {
-    display: block;
-    position: absolute;
-    left: calc(var(--pb_cellsize) * 0.49);
-    justify-content: revert;
-    align-items: revert;
-    text-align: revert;
+    content: "±" attr(data-state);
+  }
+
+  .player_tags .tracker.tracker_eru::after,
+  .player_tags .tracker.tracker_ers::after {
+    content: "1:" attr(data-state);
   }
 }
 
@@ -175,15 +152,6 @@
 
 .player_area {
   .player_tags .tracker::after {
-    /*
-        content: attr(data-state);
-        grid-column-start: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: var(--mars-font);
-
-         */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -191,7 +159,7 @@
     width: 100%;
     height: 100%;
     text-align: center;
-    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #fff 0px 0px 8px, #fff 0px 0px 8px;
     color: white;
     font-size: calc(var(--pb_cellsize) * 0.3);
     font-family: "SpaceFont";
@@ -199,6 +167,13 @@
 
   .player_tags .tracker[data-state="0"] {
     display: none;
+  }
+  // default exchange rate
+  .player_tags .tracker.tracker_eru[data-state="3"] {
+    opacity: 0.2; 
+  }
+  .player_tags .tracker.tracker_ers[data-state="2"] {
+    opacity: 0.2;
   }
 }
 

@@ -4949,6 +4949,12 @@ $this->token_types = [
   'location' => 'player_tags_{COLOR}',
   'name' => clienttranslate('Count of Power tags'),
 ],
+ 'tracker_tagWild' => [  //
+  'type' => 'tracker badge',
+  'create' => 4,
+  'location' => 'player_tags_{COLOR}',
+  'name' => clienttranslate('Count of Wild tags'),
+],
  'tracker_tagEvent' => [  //
   'type' => 'tracker badge',
   'create' => 4,
@@ -4956,12 +4962,6 @@ $this->token_types = [
   'name' => clienttranslate('Count of played Events cards'),
 ],
 // #tracker_tagVenus|Count of Venus tags
- 'tracker_tagWild' => [  //
-  'type' => 'tracker badge',
-  'create' => 4,
-  'location' => 'player_tags_{COLOR}',
-  'name' => clienttranslate('Count of Wild tags'),
-],
  'tracker_resMicrobe' => [  //
   'type' => 'tracker badge',
   'create' => 4,

@@ -5180,6 +5180,14 @@ var GameXBody = /** @class */ (function (_super) {
         var nodeCopy = $(trackerCopy);
         if (nodeCopy) {
             _super.prototype.setDomTokenState.call(this, trackerCopy, newState);
+            if (node.id.startsWith("tracker_")) {
+                if (newState > 0) {
+                    nodeCopy.setAttribute("data-sign", "+");
+                }
+                else {
+                    nodeCopy.removeAttribute("data-sign");
+                }
+            }
             //alt_tracker_w (on the map)
             if (node.id.startsWith("tracker_w")) {
                 $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();

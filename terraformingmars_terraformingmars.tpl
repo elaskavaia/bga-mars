@@ -352,6 +352,8 @@
               <div id="tracker_tagMicrobe_{PLAYER_COLOR}" class="tracker badge t tracker_tagMicrobe"></div>
               <div id="tracker_tagAnimal_{PLAYER_COLOR}" class="tracker badge tracker_tagAnimal"></div>
 
+              <div id="tracker_tagWild_{PLAYER_COLOR}" class="tracker badge tracker_tagWild"></div>
+
               <div id="tracker_tagEvent_{PLAYER_COLOR}" class="tracker badge tracker_tagEvent"></div>
               <div id="tracker_city_{PLAYER_COLOR}" class="tracker tracker_city"></div>
               <div id="tracker_forest_{PLAYER_COLOR}" class="tracker tracker_forest"></div>
@@ -480,12 +482,17 @@
           <div id="alt_tracker_tagPlant_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagPlant"></div>
           <div id="alt_tracker_tagMicrobe_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagMicrobe"></div>
           <div id="alt_tracker_tagAnimal_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagAnimal"></div>
-          <div id="alt_tracker_tagEvent_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagEvent"></div>
           <div id="alt_tracker_tagWild_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagWild"></div>
+          <div id="alt_tracker_tagEvent_{PLAYER_COLOR}" class="mini_counter tracker badge tracker_tagEvent"></div>
           <!-- non tag counters -->
           <div id="alt_tracker_city_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_city"></div>
           <div id="alt_tracker_forest_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_forest"></div>
           <div id="alt_tracker_land_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_land"></div>
+          <!--
+          <div id="alt_tracker_ers_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_ers"></div>
+          <div id="alt_tracker_eru_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_eru"></div>
+          <div id="alt_tracker_pdelta_{PLAYER_COLOR}" class="mini_counter tracker micon tracker_pdelta"></div>
+          -->
         </div>
       </div>
 

@@ -613,9 +613,10 @@
       display: none;
     }
   }
+
   .cardstack[data-currentview="0"] {
     .stack_content {
-       display: none;
+      display: none;
     }
   }
 
@@ -642,6 +643,7 @@
     .stack_content {
       --overlap: 1;
     }
+
     .prelude {
       display: none; // hide prelude
     }
@@ -751,19 +753,20 @@
     }
   }
 
-  .player_tags .badge[data-state="0"],
-  .player_tags .tracker[data-state="0"] {
-    opacity: 0.2;
-    display: inline-block;
-  }
 
+  .player_tags {
+    .badge[data-state="0"],
+    .tracker[data-state="0"],
+    .tracker.tracker_eru[data-state="3"],
+    .tracker.tracker_ers[data-state="2"] {
+      opacity: 0.2;
+      display: inline-block;
+    }
+  }
 
   .card_hovertt .card_effect {
     font-size: calc(var(--card-width) * 0.07);
   }
-
-
-
 
   .player_area {
     position: relative;

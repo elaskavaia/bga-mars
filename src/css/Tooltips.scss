@@ -65,11 +65,9 @@
   background-size: 1400% 200%;
 }
 
-.tooltipimage.tracker_pdelta {
-  background-image: url("img/p_delta.jpg");
+.tooltipimage.tracker.tracker_pdelta {
+  background-image: url("img/p_delta.png");
   background-size: contain;
-  width: calc(var(--resourcesize)*4);
-  height: var(--resourcesize);
 }
 
 .mcompact {

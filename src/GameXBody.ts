@@ -1918,6 +1918,13 @@ awarded.`);
     const nodeCopy = $(trackerCopy);
     if (nodeCopy) {
       super.setDomTokenState(trackerCopy, newState);
+      if (node.id.startsWith("tracker_")) {
+        if (newState > 0) {
+          nodeCopy.setAttribute("data-sign", "+");
+        } else {
+          nodeCopy.removeAttribute("data-sign");
+        }
+      }
 
       //alt_tracker_w (on the map)
       if (node.id.startsWith("tracker_w")) {

@@ -541,10 +541,6 @@
   background-image:  unset;
 }
 
-.tracker.micon {
-  background-image: url("img/icons.png");
-  background-size: 1400% 200%;
-}
 .tracker.badge {
   background-image: url("img/badges.png");
   background-size: 1300% 100%;
@@ -570,7 +566,7 @@
 }
 
 .tracker_pdelta {
-  background-image: url('img/p_delta.jpg');
+  background-image: url('img/p_delta.png');
   background-size: contain;
 }
 
@@ -696,12 +692,6 @@
     margin-left: 3px;
     margin-right: 3px;
   }
-}
-
-.log .token_img.tracker_pdelta {
-  background-image: url('img/p_delta.jpg');
-  width: 96px;
-  background-size: contain;
 }
 
 .mcompact .movestamp {
