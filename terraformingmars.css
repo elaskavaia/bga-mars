@@ -9507,14 +9507,11 @@
   width: calc(var(--card-width) * 0.16);
   height: calc(var(--card-width) * 0.16);
   font-size: calc(var(--card-width) * 0.1);
-  border-radius: 50%;
-  outline: 1px solid black;
+  border-radius: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: var(--hlcolor);
-  box-shadow: black 1px 1px 0px 1px;
 }
 .mcompact .cardstack .stack_dd_buttons .stack_btn {
   width: 98%;
