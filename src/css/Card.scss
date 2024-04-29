@@ -34,20 +34,20 @@
 }
 
 .card[data-card-type="1"] {
-  background-color: #327935;
+  background-color: var(--card-background-green);
 }
 
 .card[data-card-type="2"] {
-  background-color: #355ca4;
+  background-color: var(--card-background-blue);
 }
 
 .card[data-card-type="3"] {
-  background-color: #FF5722; // event
+  background-color: var(--card-background-event); // event
 }
 
 .card[data-card-type="5"],
 .prelude {
-  background-color: #efc0bc; // prelude
+  background-color: var(--card-background-prelude); // prelude
 }
 
 .prelude .card_illustration {

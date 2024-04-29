@@ -556,20 +556,20 @@
 }
 
 .card[data-card-type="1"] {
-  background-color: #327935;
+  background-color: var(--card-background-green);
 }
 
 .card[data-card-type="2"] {
-  background-color: #355ca4;
+  background-color: var(--card-background-blue);
 }
 
 .card[data-card-type="3"] {
-  background-color: #FF5722;
+  background-color: var(--card-background-event);
 }
 
 .card[data-card-type="5"],
 .prelude {
-  background-color: #efc0bc;
+  background-color: var(--card-background-prelude);
 }
 
 .prelude .card_illustration {
@@ -9551,18 +9551,18 @@
 }
 
 .cardstack.blue {
-  --outlinecolor: #8699fa;
-  --hlcolor: #c9ccee;
+  --outlinecolor: var(--card-outline-blue);
+  --hlcolor: var(--card-background-blue);
 }
 
 .cardstack.red {
-  --outlinecolor: #ce6565;
-  --hlcolor: #daa7a7;
+  --outlinecolor:var(--card-outline-event);
+  --hlcolor: var(--card-background-event);
 }
 
 .cardstack.green {
-  --outlinecolor: #68d968;
-  --hlcolor: #b7d7b7;
+  --outlinecolor: var(--card-outline-green);
+  --hlcolor: var(--card-background-green);
 }
 
 .stack_content {
@@ -9648,25 +9648,25 @@
   display: none;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="2"] {
-  background-color: #167abf;
-  outline: 1px solid #225375;
+  background-color: var(--card-background-blue);
+  outline: 1px solid var(--card-outline-blue);
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="1"] {
-  background-color: #43a31d;
-  outline: 1px solid #c8e3bd;
+  background-color: var(--card-background-green);
+  outline: 1px solid var(--card-outline-green);
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="3"] {
-  background-color: #ee750e;
-  outline: 1px solid #ecc7a8;
+  background-color: var(--card-background-event);
+  outline: 1px solid var(--card-outline-event);
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="5"] {
-  background-color: #91208b;
-  outline: 1px solid #c936b8;
+  background-color: var(--card-background-prelude);
+  outline: 1px solid var(--card-outline-prelude);
   width: var(--card-width);
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card[data-card-type="4"] {
-  background-color: #ddd;
-  outline: 1px solid gray;
+  background-color: var(--card-background-corp);
+  outline: 1px solid var(--card-outline-corp);
   background-image: none;
   width: var(--card-width);
 }
@@ -9685,7 +9685,7 @@
   height: fit-content;
   margin-bottom: calc(var(--card-height) * 0.03);
   padding-bottom: calc(var(--card-height) * 0.03);
-  border-radius: 5px;
+  border-radius: 0.25em;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_decor {
   position: relative;
@@ -9711,6 +9711,7 @@
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_title {
   position: relative;
   top: 0;
+  left: 0.5em;
   display: block;
 }
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_vp {
@@ -10169,16 +10170,6 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   height: calc(var(--stan-width) * 0.5);
 }
 
-#deck_main {
-  /*
-  background-image: url("img/resources.png");
-  background-size: 1000% 200%;
-  background-position: 0 -100%;
-  background-color: grey;
-
-   */
-}
-
 .deck_line {
   color: white;
   font-family: var(--mars-font);
@@ -10284,6 +10275,19 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 
 .tracker_tagWild {
   background-position-x: -1200%;
+}
+
+:root {
+  --card-background-blue: #167abf;
+  --card-outline-blue: #3f98d7;
+  --card-background-green: #43a31d;
+  --card-outline-green: #c8e3bd;
+  --card-background-event: #f66767;
+  --card-outline-event: #ecc7a8;
+  --card-background-prelude: #ebb8f4;
+  --card-outline-prelude: #c936b8;
+  --card-background-corp: #ddd;
+  --card-outline-corp: gray;
 }
 
 .thisplayer_zone {

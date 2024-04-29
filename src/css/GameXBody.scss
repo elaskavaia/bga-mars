@@ -247,16 +247,6 @@
 }
 
 
-#deck_main {
-  /*
-  background-image: url("img/resources.png");
-  background-size: 1000% 200%;
-  background-position: 0 -100%;
-  background-color: grey;
-
-   */
-}
-
 .deck_line {
 
   color: white;
@@ -357,7 +347,22 @@
   background-position-x: -1200%;
 }
 
+:root {
+  --card-background-blue: #167abf;
+  --card-outline-blue: #3f98d7;
 
+  --card-background-green: #43a31d;
+  --card-outline-green: #c8e3bd;
+
+  --card-background-event: #f66767;
+  --card-outline-event: #ecc7a8;
+
+  --card-background-prelude: #ebb8f4;
+  --card-outline-prelude: #c936b8;
+
+  --card-background-corp: #ddd;
+  --card-outline-corp: gray;
+}
 
 .thisplayer_zone {
   min-width: calc(var(--map-width) * 1);
