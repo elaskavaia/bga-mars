@@ -3567,7 +3567,8 @@
   font-family: var(--mars-font);
   content: attr(data-vp);
   border-radius: 50%;
-  outline: #e3cc4e calc(var(--card-width) * 0.015) solid;
+  outline: #e3cc4e 0.15em solid;
+  outline-offset: -0.15em;
   display: inline-block;
   vertical-align: middle;
   text-align: center;
