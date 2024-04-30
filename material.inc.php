@@ -74,6 +74,7 @@ if (!defined("MA_GAME")) {
 
   // prefs
   define("MA_PREF_CONFIRM_TURN", 101);
+  define("MA_PREF_CONFIRM_DRAW", 102);
 
   // op order
 
@@ -4259,7 +4260,7 @@ $this->token_types = [
   'ack' => 1,
   'type' => 'predraw',
   'name' => clienttranslate('Draw Card'),
-  'prompt' => clienttranslate('${you} must confirm draw ${count} card/s, cannot be undone'),
+  'prompt' => clienttranslate('${you} must confirm draw ${count} Prelude card/s, cannot be undone'),
 ],
  'op_confirm' => [  //
   'undo' => 1,
