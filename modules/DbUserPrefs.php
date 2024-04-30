@@ -36,7 +36,7 @@ class DbUserPrefs extends APP_GameClass {
         $values = [];
         //$players = $this->loadPlayersBasicInfos();
         foreach ($game_preferences as $id => $data) {
-            $defaultValue = $data['default'] ?? array_keys($data['values'])[0];
+            $defaultValue = array_get($data,'default') ?? array_keys($data['values'])[0];
 
             foreach ($players as $pId => $infos) {
                 $values[] = [
@@ -72,12 +72,12 @@ class DbUserPrefs extends APP_GameClass {
 
     function getPrefValue($player_id, $pref_id) {
         $res = $this->getPrefInfo($player_id, $pref_id);
-        if ($res == null)
+        if ($res === null)
             return null;
-        return (int) $res ['pref_value'];
+        return (int) $res['pref_value'];
     }
 
-    function setPrefValue($player_id, $pref_id, $pref_value) {
+    function setPrefValue($player_id, $pref_id, $pref_value, $auto_insert = true) {
         $pref_id = (int) $pref_id;
         $player_id = (int) $player_id;
         $pref_value = (int) $pref_value;
@@ -85,15 +85,35 @@ class DbUserPrefs extends APP_GameClass {
         $sql .= " SET pref_value='$pref_value'";
         $sql .= " WHERE player_id='$player_id' AND pref_id='$pref_id'";
         self::DbQuery($sql);
+        if (self::DbAffectedRow() == 0 && $auto_insert) {
+            $sql = "INSERT INTO " . $this->table . " (player_id,pref_id,pref_value)";
+            $sql .= " VALUES ('$player_id', '$pref_id', '$pref_value')";
+            $this->DbQuery($sql);
+        }
         return $pref_value;
     }
 
-    function getPrefInfo($player_id, $pref_id) {
+    function getPrefInfo($player_id, $pref_id, $use_default = true) {
         $pref_id = (int) $pref_id;
         $player_id = (int) $player_id;
         $sql = $this->getSelectQuery();
         $sql .= " WHERE player_id='$player_id' AND pref_id='$pref_id'";
         $dbres = self::DbQuery($sql);
-        return mysql_fetch_assoc($dbres);
+        $res = mysql_fetch_assoc($dbres);
+        if ($use_default && ($res == null || count($res) == 0)) {
+            $def = $this->getDefaultValue($pref_id);
+            return ['player_id' => $player_id, 'pref_id' => $pref_id, 'pref_value' => $def];
+        }
+        return $res;
+    }
+
+    function getDefaultValue($pref_id) {
+        $game_preferences = $this->game->getTablePreferences();
+        $data = array_get($game_preferences, $pref_id);
+        if ($data) {
+            $defaultValue = array_get($data,'default') ?? array_keys($data['values'])[0] ?? 0;
+            return (int) $defaultValue;
+        }
+        return 0;
     }
 }

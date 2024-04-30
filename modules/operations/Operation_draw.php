@@ -24,8 +24,14 @@ class Operation_draw extends AbsOperation {
         return $inc;
     }
 
+    function requireConfirmation() {
+        $pref = (int) $this->game->dbUserPrefs->getPrefValue($this->getPlayerId(), MA_PREF_CONFIRM_DRAW);
+        return $pref;
+    }
+
     function canResolveAutomatically() {
         if ($this->params() === 'auto') return true; // XXX never true?
+        if (!$this->requireConfirmation()) return true;
         return false;
     }
 

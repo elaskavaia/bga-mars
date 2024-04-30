@@ -31,6 +31,21 @@
         },
         "default": 1
     },
+    "102": {
+        "$comment": "MA_PREF_CONFIRM_DRAW",
+        "name": "Confirm draw",
+        "needReload": false,
+        "values": {
+            "1": {
+                "name": "Confirm"
+            },
+            "0": {
+                "name": "No",
+                "description": "If you do not confirm your draw you cannot undo, as draw reveals new information"
+            }
+        },
+        "default": 1
+    },
     "105": {
         "name": "Live Scoring",
         "description": "This option controls if visible score tracks total VP (Show) or only TR (Hide). This only works if table creator did not disable Live Scoring.",

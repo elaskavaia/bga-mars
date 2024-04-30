@@ -252,7 +252,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_q() {
-        $this->debug_op("3predraw(prelude),card(draw),prediscard");
+        $this->debug_op("draw");
         return;
         $player_id = $this->getCurrentPlayerId();
         //$this->machine->interrupt();
@@ -346,6 +346,7 @@ abstract class PGameXBody extends PGameMachine {
             "type" => $type,
             "args" => $inst->arg(),
             "canresolve" => $inst->canResolveAutomatically(),
+            "ack" => $inst->requireConfirmation(),
             "auto" => $inst->isFullyAutomated()
         ];
     }

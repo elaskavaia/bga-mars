@@ -396,6 +396,9 @@ final class GameTest extends TestCase {
 
     public function testMultiplayer() {
         $m = $this->game();
+        $p1 = $m->getPlayerIdByColor(PCOLOR);
+        $m->dbUserPrefs->setPrefValue($p1,MA_PREF_CONFIRM_DRAW,1);
+        $this->assertEquals(1, $m->dbUserPrefs->getPrefValue($p1,MA_PREF_CONFIRM_DRAW));
         $m->machine->push("draw", 1, 1, PCOLOR, MACHINE_OP_SEQ, '', 'multi');
         //$this->assertTrue($m->machine->xtable=== $m->getMultiMachine()->xtable);
 
@@ -407,7 +410,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(2, count($m->machine->getTopOperations()));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $p1 = $m->getPlayerIdByColor(PCOLOR);
+  
         $this->assertEquals("multiplayerDispatch", $m->gamestate->state()['name']);
         $m->st_gameDispatchMultiplayer();
         $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getPrivateState($p1));
