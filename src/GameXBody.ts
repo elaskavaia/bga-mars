@@ -48,6 +48,8 @@ class GameXBody extends GameTokens {
       this.zoneWidth = 0;
       this.zoneHeight = 0;
 
+      this.setupResourceFiltering();
+
       this.setupLocalSettings();
 
       super.setup(gamedatas);
@@ -148,7 +150,7 @@ class GameXBody extends GameTokens {
         this.localSettings.doAction(cs, "plus");
       });
 
-      this.setupResourceFiltering();
+ 
 
       if (!this.isSpectator) {
         this.applySortOrder();
@@ -959,7 +961,8 @@ class GameXBody extends GameTokens {
   }
 
   setupResourceFiltering(): void {
-    const exclude_compact: string[] = [
+    g_img_preload = [];
+    const cradboard: string[] = [
       "full/cards1.jpg",
       "full/cards2.jpg",
       "full/cards3.jpg",
@@ -968,7 +971,7 @@ class GameXBody extends GameTokens {
       "full/TMgameboard.jpg",
       "full/tooltipbg.jpg"
     ];
-    const exclude_full: string[] = [
+    const digital: string[] = [
       "cards_illustrations.jpg",
       "awards_back.png",
       "cards_bg.png",
@@ -983,11 +986,12 @@ class GameXBody extends GameTokens {
       "temperature.png"
     ];
 
-    const exclude_list: string[] = this.isLayoutFull() ? exclude_full : exclude_compact;
-
-    for (let item of exclude_list) {
-      this.dontPreloadImage(item);
-    }
+    // leave this out for now - does not seems to do anything good, causing some loading errors for no reason
+    // if (this.isLayoutFull()) {
+    //   this.ensureSpecificGameImageLoading(cradboard);
+    // } else {
+    //   this.ensureSpecificGameImageLoading(digital); 
+    // }
   }
 
   showHiddenContent(id: ElementOrId, title: string, selectedId?: string) {

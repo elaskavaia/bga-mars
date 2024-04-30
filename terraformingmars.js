@@ -3658,6 +3658,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.previousLayout = "desktop";
             this.zoneWidth = 0;
             this.zoneHeight = 0;
+            this.setupResourceFiltering();
             this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
             // hex tooltips
@@ -3737,7 +3738,6 @@ var GameXBody = /** @class */ (function (_super) {
                 var cs = _this.localSettings.getLocalSettingById("cardsize");
                 _this.localSettings.doAction(cs, "plus");
             });
-            this.setupResourceFiltering();
             if (!this.isSpectator) {
                 this.applySortOrder();
             }
@@ -4425,7 +4425,8 @@ var GameXBody = /** @class */ (function (_super) {
         });*/
     };
     GameXBody.prototype.setupResourceFiltering = function () {
-        var exclude_compact = [
+        g_img_preload = [];
+        var cradboard = [
             "full/cards1.jpg",
             "full/cards2.jpg",
             "full/cards3.jpg",
@@ -4434,7 +4435,7 @@ var GameXBody = /** @class */ (function (_super) {
             "full/TMgameboard.jpg",
             "full/tooltipbg.jpg"
         ];
-        var exclude_full = [
+        var digital = [
             "cards_illustrations.jpg",
             "awards_back.png",
             "cards_bg.png",
@@ -4448,11 +4449,12 @@ var GameXBody = /** @class */ (function (_super) {
             "stanproj_hold.png",
             "temperature.png"
         ];
-        var exclude_list = this.isLayoutFull() ? exclude_full : exclude_compact;
-        for (var _i = 0, exclude_list_1 = exclude_list; _i < exclude_list_1.length; _i++) {
-            var item = exclude_list_1[_i];
-            this.dontPreloadImage(item);
-        }
+        // leave this out for now - does not seems to do anything good, causing some loading errors for no reason
+        // if (this.isLayoutFull()) {
+        //   this.ensureSpecificGameImageLoading(cradboard);
+        // } else {
+        //   this.ensureSpecificGameImageLoading(digital); 
+        // }
     };
     GameXBody.prototype.showHiddenContent = function (id, title, selectedId) {
         var _this = this;

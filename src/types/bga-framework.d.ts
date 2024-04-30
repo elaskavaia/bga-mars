@@ -3,6 +3,7 @@ declare var g_replayFrom: number | undefined;
 declare var g_gamethemeurl: string;
 declare var g_themeurl: string;
 declare var g_archive_mode: boolean;
+declare var g_img_preload: string[];
 declare function _(str: string): string;
 declare function __(site: string, str: string): string;
 declare function $(text: string | Element): HTMLElement;
@@ -84,6 +85,7 @@ declare class GameGui {
   metasiteurl: string;
   interface_status: string;
 
+
   isCurrentPlayerActive(): boolean;
   getActivePlayerId(): number;
   addActionButton(id: string, label: string, method: string | eventhandler, destination?: string, blinking?: boolean, color?: string): void;
@@ -146,5 +148,6 @@ declare class GameGui {
   disablePlayerPanel(player_id: number):void;
 
   dontPreloadImage(image_file_name: string):void;
+  ensureSpecificGameImageLoading(list: string[]):void;
   updatePageTitle(gamestate: any);
 }
