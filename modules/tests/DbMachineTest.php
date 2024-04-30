@@ -6,8 +6,8 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 
-require_once "DbMachine.php";
-require_once "tests/MachineInMem.php";
+require_once "modules/DbMachine.php";
+require_once "modules/tests/MachineInMem.php";
 
 final class DbMachineTest extends TestCase {
     public function assertEqualsArr($expected, $table, $message = "") {

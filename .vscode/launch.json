@@ -30,7 +30,7 @@
       "type": "php",
       "request": "launch",
       "program": "${workspaceFolder}/modules/_testpredeploy.php",
-      "cwd": "${workspaceFolder}/modules/",
+      "cwd": "${workspaceFolder}",
       "port": 0,
       "runtimeArgs": ["-dxdebug.start_with_request=yes"],
       "env": {

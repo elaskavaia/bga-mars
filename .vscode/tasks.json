@@ -6,9 +6,9 @@
         {
             "label": "unit test php",
             "type": "shell",
-            "command": "phpunit --bootstrap ./_autoload.php --colors=always tests",
+            "command": "phpunit --bootstrap ./modules/_autoload.php --colors=always modules/tests",
             "options": {
-                "cwd": "${workspaceFolder}/modules",
+                "cwd": "${workspaceFolder}",
                 "env": {
                     "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/",
                     "XDEBUG_CONFIG": "idekey=VSCODE"

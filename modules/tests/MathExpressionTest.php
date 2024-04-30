@@ -6,7 +6,7 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-require_once "MathExpression.php";
+require_once "modules/MathExpression.php";
 
 final class MathExpressionTest extends TestCase {
     public function testOpExpressionPush(): void {

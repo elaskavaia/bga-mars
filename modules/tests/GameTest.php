@@ -8,7 +8,7 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertTrue;
 
-require_once "../terraformingmars.game.php";
+require_once "terraformingmars.game.php";
 require_once "TokensInMem.php";
 
 
@@ -23,8 +23,8 @@ class GameUT extends terraformingmars {
     var $xtable;
     function __construct() {
         parent::__construct();
-        include "../material.inc.php";
-        include "../states.inc.php";
+        include "./material.inc.php";
+        include "./states.inc.php";
         $this->gamestate = new GameStateInMem($machinestates);
 
         $this->tokens = new TokensInMem();
