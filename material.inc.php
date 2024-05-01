@@ -4260,7 +4260,7 @@ $this->token_types = [
   'ack' => 1,
   'type' => 'predraw',
   'name' => clienttranslate('Draw Card'),
-  'prompt' => clienttranslate('${you} must confirm draw ${count} Prelude card/s, cannot be undone'),
+  'prompt' => clienttranslate('${you} must confirm draw ${count} card/s, cannot be undone'),
 ],
  'op_confirm' => [  //
   'undo' => 1,
