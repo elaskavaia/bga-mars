@@ -3,6 +3,7 @@
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
+require_once "DbMultiUndo.php";
 require_once "operations/AbsOperation.php";
 require_once "operations/ComplexOperation.php";
 require_once "operations/DelegatedOperation.php";
@@ -19,6 +20,7 @@ abstract class PGameXBody extends PGameMachine {
     protected $map = null;
     protected $token_types_adjusted2 = false;
     public $dbUserPrefs;
+    public $dbMultiUndo;
 
 
     // cache
@@ -43,6 +45,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;
         $this->tokens->autoreshuffle_custom['deck_main'] = 'discard_main';
+        $this->dbMultiUndo = new DbMultiUndo($this);
     }
 
     /**
@@ -252,7 +255,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_q() {
-        $this->debug_op("draw");
+        $this->dbMultiUndo->doSaveUndoSnapshot();
         return;
         $player_id = $this->getCurrentPlayerId();
         //$this->machine->interrupt();

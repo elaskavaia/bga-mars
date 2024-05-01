@@ -46,3 +46,11 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
   PRIMARY KEY (`player_id`, `pref_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE IF NOT EXISTS `zz_savepoint_multiundo` (
+  `move_id` int(10) NOT NULL,
+  `player_id` int(10) NOT NULL,
+  `data` mediumtext NOT NULL,
+  `meta` mediumtext NOT NULL,
+  PRIMARY KEY (`move_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
