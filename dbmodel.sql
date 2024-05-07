@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `machine` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `rank` int(10) NOT NULL DEFAULT 1,
    `type` varchar(80) NOT NULL,
-   `owner` varchar(8),
+   `owner` varchar(8) NOT NULL DEFAULT '',
    `count` int(10) NOT NULL DEFAULT 1,
    `mcount` int(10) NOT NULL DEFAULT 1,
    `flags` int(10) NOT NULL DEFAULT 0,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE IF NOT EXISTS `zz_savepoint_multiundo` (
+CREATE TABLE IF NOT EXISTS `multiundo` (
   `move_id` int(10) NOT NULL,
   `player_id` int(10) NOT NULL,
   `data` mediumtext NOT NULL,

@@ -10402,6 +10402,21 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   display: none;
 }
 
+.undomarker {
+  text-decoration: underline;
+  position: relative;
+  width: 100%;
+  font-size: x-small;
+  order: 4;
+  text-align: center;
+  text-underline-position: auto;
+  color: black;
+  background-color: white;
+  display: block;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .bgabutton_orange {
   background-color: #b17300;
 }

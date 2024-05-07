@@ -36,7 +36,8 @@ class action_terraformingmars extends APP_GameAction {
     // REST API FUNCTIONS
     public function undo() {
         self::setAjaxMode();
-        $this->game->action_undo();
+        $move_id = self::getArg('move_id', AT_posint, false, 0);
+        $this->game->action_undo($move_id);
         self::ajaxResponse();
     }
 
@@ -57,9 +58,9 @@ class action_terraformingmars extends APP_GameAction {
     public function changePreference()
     {
         self::setAjaxMode();
-        $pref = self::getArg('pref_id', AT_posint, false);
-        $value = self::getArg('pref_value', AT_int, false);
-        $player_id = self::getArg('player_id', AT_posint, false);
+        $pref = self::getArg('pref_id', AT_posint);
+        $value = self::getArg('pref_value', AT_int);
+        $player_id = self::getArg('player_id', AT_posint);
         $this->game->action_changePreference($player_id, $pref, $value);
         self::ajaxResponse();
     }

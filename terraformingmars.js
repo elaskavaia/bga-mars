@@ -3636,6 +3636,7 @@ var GameXBody = /** @class */ (function (_super) {
         _this.currentOperation = {}; // bag of data to support operation engine
         _this.classSelected = "mr_selected"; // for the purpose of multi-select operations
         _this.prevLogId = 0;
+        _this.lastMoveId = 0;
         _this.CON = {};
         _this.stacks = [];
         return _this;
@@ -3645,6 +3646,7 @@ var GameXBody = /** @class */ (function (_super) {
         var _a;
         try {
             this.isDoingSetup = true;
+            this.lastMoveId = 0;
             this.CON = gamedatas.CON; // PHP contants for game
             var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
             var root = document.children[0]; // weird
@@ -4328,6 +4330,8 @@ var GameXBody = /** @class */ (function (_super) {
     // }
     GameXBody.prototype.addMoveToLog = function (log_id, move_id) {
         this.inherited(arguments);
+        if (move_id)
+            this.lastMoveId = move_id;
         if (this.prevLogId + 1 < log_id) {
             // we skip over some logs, but we need to look at them also
             for (var i = this.prevLogId + 1; i < log_id; i++) {
@@ -4337,7 +4341,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.addTooltipToLogItems(log_id);
         // add move #
         var prevmove = document.querySelector('[data-move-id="' + move_id + '"]');
-        if (!prevmove) {
+        if (!prevmove && move_id) {
             var tsnode = document.createElement("div");
             tsnode.classList.add("movestamp");
             tsnode.innerHTML = _("Move #") + move_id;
@@ -4453,7 +4457,7 @@ var GameXBody = /** @class */ (function (_super) {
         // if (this.isLayoutFull()) {
         //   this.ensureSpecificGameImageLoading(cradboard);
         // } else {
-        //   this.ensureSpecificGameImageLoading(digital); 
+        //   this.ensureSpecificGameImageLoading(digital);
         // }
     };
     GameXBody.prototype.showHiddenContent = function (id, title, selectedId) {
@@ -5462,9 +5466,16 @@ var GameXBody = /** @class */ (function (_super) {
             oparr: op
         });
     };
-    GameXBody.prototype.sendActionUndo = function () {
+    GameXBody.prototype.sendActionUndo = function (undoMove) {
+        var _this = this;
+        if (undoMove === void 0) { undoMove = 0; }
         this.gameStatusCleanup();
-        this.ajaxcallwrapper_unchecked("undo");
+        this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, function (err) {
+            if (err)
+                return;
+            _this.setMainTitle(_("Undo requested..."));
+            dojo.empty("generalactions");
+        });
     };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
         var _a, _b;
@@ -6450,6 +6461,73 @@ var GameXBody = /** @class */ (function (_super) {
         this.notifqueue.setSynchronous("tokensUpdate", 50);
         dojo.subscribe("scoringTable", this, "notif_scoringTable");
         //this.notifqueue.setSynchronous("scoringTable", 50);
+        dojo.subscribe("undoMove", this, "notif_undoMove");
+        dojo.subscribe("undoRestore", this, "notif_undoRestore");
+    };
+    GameXBody.prototype.notif_undoMove = function (notif) {
+        console.log("undoMove", notif);
+        this.setUndoMove(notif.args);
+    };
+    GameXBody.prototype.notif_undoRestore = function (notif) {
+        var _a;
+        console.log("undoRestore", notif);
+        this.setUndoMove({
+            payer_name: this.getPlayerName(notif.args.player_id),
+            player_id: notif.args.player_id,
+            move_id: notif.args.undo_move,
+            barrier: 1,
+            label: (_a = this.gamedatas.undo_moves[notif.args.undo_move]) === null || _a === void 0 ? void 0 : _a.label
+        });
+    };
+    GameXBody.prototype.setUndoMove = function (undoMeta) {
+        var _this = this;
+        var undoMove = undoMeta.move_id;
+        var player_id = undoMeta.player_id;
+        this.gamedatas.undo_move = undoMove;
+        this.gamedatas.undo_player_id = player_id;
+        var moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
+        var place = "after";
+        var placeNode = null;
+        if (!moveNode) {
+            undoMove++;
+            moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
+        }
+        if (!moveNode) {
+            if (this.lastMoveId < this.gamedatas.undo_move) {
+                placeNode = document.querySelector("#logs > *");
+                place = "before";
+            }
+        }
+        else {
+            placeNode = moveNode.parentNode;
+            place = "after";
+        }
+        var undoButId = "button_undo_y" + undoMeta.move_id;
+        if (undoMeta.barrier) {
+            document.querySelectorAll(".undomarker").forEach(function (node) { return dojo.destroy(node); });
+        }
+        else {
+            dojo.destroy(undoButId);
+        }
+        if (placeNode) {
+            var messsage = this.format_string_recursive(_("${player_name} may undo up to this point: ${label}"), {
+                player_name: this.getPlayerName(player_id),
+                label: undoMeta.label
+            });
+            var div = dojo.create("div", {
+                id: undoButId,
+                innerHTML: messsage,
+                class: "undomarker",
+                title: _("Click to undo your move up to this point"),
+                onclick: "return false"
+            });
+            dojo.place(div, placeNode, place);
+            dojo.connect(div, "onclick", this, function () { return _this.sendActionUndo(undoMeta.move_id); });
+            //console.log("undo move connected #" + undoMeta.move_id + " " + placeNode.id);
+        }
+        else {
+            console.log("undo move not connected #" + this.gamedatas.undo_move);
+        }
     };
     //get settings
     GameXBody.prototype.getSetting = function (key) {
@@ -6563,6 +6641,13 @@ var GameXBody = /** @class */ (function (_super) {
         else {
             if ($("$terraforming_complete"))
                 dojo.destroy($("$terraforming_complete"));
+        }
+    };
+    GameXBody.prototype.onLoadingLogsComplete = function () {
+        _super.prototype.onLoadingLogsComplete.call(this);
+        for (var i in this.gamedatas.undo_moves) {
+            var undoMeta = this.gamedatas.undo_moves[i];
+            this.setUndoMove(this.gamedatas.undo_moves[i]);
         }
     };
     return GameXBody;

@@ -83,11 +83,6 @@ abstract class PGameMachine extends PGameTokens {
     //////////// Player actions
     ////////////
 
-    function action_undo() {
-        // unchecked
-        $this->undoRestorePoint();
-    }
-
     function action_confirm() {
         $this->gamestate->nextState("next");
     }
@@ -246,6 +241,7 @@ abstract class PGameMachine extends PGameTokens {
         $xop = $this->machine->toStringFlags($flags);
 
         $result["op"] = $xop;
+        $result["operations"] = [];
         foreach ($operations as $i => $op) {
             $id = $i; // array_get($op,'id', $i);
             $result["operations"][$id] = $this->arg_operationMassage($id, $op);

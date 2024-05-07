@@ -22,6 +22,7 @@ class GameXBody extends GameTokens {
   private currentOperation: any = {}; // bag of data to support operation engine
   private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
   private prevLogId = 0;
+  private lastMoveId = 0;
 
   private stacks: CardStack[];
   constructor() {
@@ -33,6 +34,7 @@ class GameXBody extends GameTokens {
   setup(gamedatas: any) {
     try {
       this.isDoingSetup = true;
+      this.lastMoveId = 0;
       this.CON = gamedatas.CON; // PHP contants for game
       const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
       const root = document.children[0]; // weird
@@ -149,8 +151,6 @@ class GameXBody extends GameTokens {
         const cs = this.localSettings.getLocalSettingById("cardsize");
         this.localSettings.doAction(cs, "plus");
       });
-
- 
 
       if (!this.isSpectator) {
         this.applySortOrder();
@@ -390,7 +390,7 @@ class GameXBody extends GameTokens {
     let html = "";
     for (let stack of this.stacks) {
       if (stack.player_color == this.player_color) {
-        const num = getPart(stack.bin_type,1);
+        const num = getPart(stack.bin_type, 1);
         const setId = `defaultstack_${num}`;
         this.localSettings.writeProp(setId, `${stack.current_view}`);
         const layoutName = stack.getViewLabel(stack.current_view);
@@ -857,6 +857,7 @@ class GameXBody extends GameTokens {
 
   addMoveToLog(log_id: number, move_id) {
     this.inherited(arguments);
+    if (move_id) this.lastMoveId = move_id;
     if (this.prevLogId + 1 < log_id) {
       // we skip over some logs, but we need to look at them also
       for (let i = this.prevLogId + 1; i < log_id; i++) {
@@ -868,7 +869,7 @@ class GameXBody extends GameTokens {
 
     // add move #
     var prevmove = document.querySelector('[data-move-id="' + move_id + '"]');
-    if (!prevmove) {
+    if (!prevmove && move_id) {
       const tsnode = document.createElement("div");
       tsnode.classList.add("movestamp");
       tsnode.innerHTML = _("Move #") + move_id;
@@ -990,7 +991,7 @@ class GameXBody extends GameTokens {
     // if (this.isLayoutFull()) {
     //   this.ensureSpecificGameImageLoading(cradboard);
     // } else {
-    //   this.ensureSpecificGameImageLoading(digital); 
+    //   this.ensureSpecificGameImageLoading(digital);
     // }
   }
 
@@ -2203,9 +2204,13 @@ awarded.`);
     });
   }
 
-  sendActionUndo() {
+  sendActionUndo(undoMove = 0) {
     this.gameStatusCleanup();
-    this.ajaxcallwrapper_unchecked("undo");
+    this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, (err) => {
+      if (err) return;
+      this.setMainTitle(_("Undo requested..."));
+      dojo.empty("generalactions");
+    });
   }
 
   getButtonNameForOperation(op: any) {
@@ -3236,6 +3241,76 @@ awarded.`);
 
     dojo.subscribe("scoringTable", this, "notif_scoringTable");
     //this.notifqueue.setSynchronous("scoringTable", 50);
+
+    dojo.subscribe("undoMove", this, "notif_undoMove");
+    dojo.subscribe("undoRestore", this, "notif_undoRestore");
+  }
+
+  notif_undoMove(notif) {
+    console.log("undoMove", notif);
+    this.setUndoMove(notif.args);
+  }
+
+  notif_undoRestore(notif) {
+    console.log("undoRestore", notif);
+    this.setUndoMove({
+      payer_name: this.getPlayerName(notif.args.player_id),
+      player_id: notif.args.player_id,
+      move_id: notif.args.undo_move,
+      barrier: 1,
+      label: this.gamedatas.undo_moves[notif.args.undo_move]?.label
+    });
+  }
+
+  setUndoMove(undoMeta: any) {
+    let undoMove =  undoMeta.move_id;
+    let player_id = undoMeta.player_id;
+
+    this.gamedatas.undo_move = undoMove;
+    this.gamedatas.undo_player_id = player_id;
+    var moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
+    var place = "after";
+    var placeNode = null;
+    if (!moveNode) {
+      undoMove++;
+      moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
+    }
+    if (!moveNode) {
+      if (this.lastMoveId < this.gamedatas.undo_move) {
+        placeNode = document.querySelector("#logs > *");
+        place = "before";
+      }
+    } else {
+      placeNode = moveNode.parentNode;
+      place = "after";
+    }
+
+    const undoButId = "button_undo_y" + undoMeta.move_id;
+
+    if (undoMeta.barrier){
+      document.querySelectorAll(".undomarker").forEach(node=>dojo.destroy(node));
+    } else {
+      dojo.destroy(undoButId);
+    }
+
+    if (placeNode) {
+      var messsage = this.format_string_recursive(_("${player_name} may undo up to this point: ${label}"), {
+        player_name: this.getPlayerName(player_id),
+        label: undoMeta.label
+      });
+      var div = dojo.create("div", {
+        id: undoButId,
+        innerHTML: messsage,
+        class: "undomarker",
+        title: _("Click to undo your move up to this point"),
+        onclick: "return false"
+      });
+      dojo.place(div, placeNode, place);
+      dojo.connect(div, "onclick", this, () => this.sendActionUndo(undoMeta.move_id));
+      //console.log("undo move connected #" + undoMeta.move_id + " " + placeNode.id);
+    } else {
+      console.log("undo move not connected #" + this.gamedatas.undo_move);
+    }
   }
 
   //get settings
@@ -3356,6 +3431,14 @@ awarded.`);
       if (!$("terraforming_complete")) $("game_play_area").insertAdjacentHTML("afterbegin", htm);
     } else {
       if ($("$terraforming_complete")) dojo.destroy($("$terraforming_complete"));
+    }
+  }
+
+  onLoadingLogsComplete(): void {
+    super.onLoadingLogsComplete();
+    for (let i in this.gamedatas.undo_moves) {
+      const undoMeta = this.gamedatas.undo_moves[i];
+      this.setUndoMove(this.gamedatas.undo_moves[i]);
     }
   }
 }

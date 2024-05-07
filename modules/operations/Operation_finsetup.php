@@ -56,7 +56,7 @@ class Operation_finsetup extends AbsOperation {
             break;
         }
 
-        $this->game->undoSavepoint();
+        $this->game->undoSavepointWithLabel("setup");
         
         return 1;
     }
