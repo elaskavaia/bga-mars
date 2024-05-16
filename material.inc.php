@@ -4274,7 +4274,7 @@ $this->token_types = [
   'class' => 'Operation_confirm',
   'type' => 'confturn',
   'name' => clienttranslate('Confirm'),
-  'prompt' => clienttranslate('${you} must confirm end of turn or undo (this undoes both actions if able)'),
+  'prompt' => clienttranslate('${you} must confirm end of turn or undo'),
 ],
  'op_confnocards' => [  //
   'undo' => 1,

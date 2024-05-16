@@ -32,10 +32,16 @@ var GameBasics = /** @class */ (function (_super) {
         _this.defaultAnimationDuration = 500;
         _this._helpMode = false; // help mode where tooltip shown instead of click action
         _this._displayedTooltip = null; // used in help mode
+        _this._notif_uid_to_log_id = {};
+        _this._notif_uid_to_mobile_log_id = {};
+        _this._last_notif = null;
         _this.zoom = 1.0;
         console.log("game constructor");
         _this.laststate = null;
         _this.pendingUpdate = false;
+        _this._notif_uid_to_log_id = {};
+        _this._notif_uid_to_mobile_log_id = {};
+        _this._last_notif = null;
         return _this;
     }
     GameBasics.prototype.setup = function (gamedatas) {
@@ -171,19 +177,30 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.cancelLocalStateEffects = function () {
         console.log(this.last_server_state);
         this.disconnectAllTemp();
-        this.restoreServerData();
-        this.updateCountersSafe(this.gamedatas.counters);
-        this.restoreServerGameState();
-        if (this.gamedatas.gamestate.private_state != null && this.isCurrentPlayerActive()) {
-            var gamestate = this.gamedatas.gamestate.private_state;
-            this.updatePageTitle(gamestate);
-            this.onEnteringState(gamestate.name, gamestate);
+        //this.restoreServerData();
+        //this.updateCountersSafe(this.gamedatas.counters);
+        if (this.is_client_only)
+            this.restoreServerGameState();
+        if (this.isCurrentPlayerActive()) {
+            if (this.gamedatas.gamestate.private_state != null) {
+                var gamestate = this.gamedatas.gamestate.private_state;
+                this.updatePageTitle(gamestate);
+                this.onEnteringState(gamestate.name, gamestate);
+                this.onUpdateActionButtons(gamestate.name, gamestate.args);
+            }
+            else {
+                this.updatePageTitle(this.gamedatas.gamestate);
+            }
         }
     };
-    // updatePageTitle(state = null) {
-    //   debugger;
-    //   return this.inherited(arguments);
-    // }
+    GameBasics.prototype.updatePageTitle = function (state) {
+        if (state === void 0) { state = null; }
+        //debugger;
+        console.trace("updatePageTitle", state);
+        if (state === null || state === void 0 ? void 0 : state.private_state)
+            this.inherited(state.private_state);
+        return this.inherited(arguments);
+    };
     // ANIMATIONS
     /**
      * This method will remove all inline style added to element that affect positioning
@@ -1351,6 +1368,47 @@ var GameBasics = /** @class */ (function (_super) {
         else {
             args.duration = 0;
         }
+    };
+    /*
+     * [Undocumented] Called by BGA framework on any notification message
+     * Handle cancelling log messages for restart turn
+     */
+    GameBasics.prototype.onPlaceLogOnChannel = function (msg) {
+        var currentLogId = this.notifqueue.next_log_id;
+        var currentMobileLogId = this.next_log_id;
+        var res = this.inherited(arguments);
+        this._notif_uid_to_log_id[msg.uid] = currentLogId;
+        this._notif_uid_to_mobile_log_id[msg.uid] = currentMobileLogId;
+        this._last_notif = {
+            logId: currentLogId,
+            mobileLogId: currentMobileLogId,
+            msg: msg
+        };
+        return res;
+    };
+    /*
+     * cancelLogs:
+     *   strikes all log messages related to the given array of notif ids
+     */
+    GameBasics.prototype.checkLogCancel = function (notifId) {
+        if (this.gamedatas.canceledNotifIds != null && this.gamedatas.canceledNotifIds.includes(notifId)) {
+            this.cancelLogs([notifId]);
+        }
+    };
+    GameBasics.prototype.cancelLogs = function (notifIds) {
+        var _this = this;
+        notifIds.forEach(function (uid) {
+            if (_this._notif_uid_to_log_id.hasOwnProperty(uid)) {
+                var logId = _this._notif_uid_to_log_id[uid];
+                if ($("log_" + logId))
+                    dojo.addClass("log_" + logId, "cancel");
+            }
+            if (_this._notif_uid_to_mobile_log_id.hasOwnProperty(uid)) {
+                var mobileLogId = _this._notif_uid_to_mobile_log_id[uid];
+                if ($("dockedlog_" + mobileLogId))
+                    dojo.addClass("dockedlog_" + mobileLogId, "cancel");
+            }
+        });
     };
     /*
               * [Undocumented] Override BGA framework functions to call onLoadingLogsComplete when loading is done
@@ -3795,10 +3853,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.addTooltip(scoreDiv, _("Live Scoring is disabled (table option), this value is same as TR"), "");
         }
         else if (this.isLiveScoringOn()) {
-            this.addTooltip(scoreDiv, _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"), "Click to see Scoring table and force the update");
+            this.addTooltip(scoreDiv, _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"), _("Click to see Scoring table and force the update"));
         }
         else {
-            this.addTooltip(scoreDiv, _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"), "Click to see Scoring table (this reveals the currrent score)");
+            this.addTooltip(scoreDiv, _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"), _("Click to see Scoring table (this reveals the currrent score)"));
         }
         this.setupPlayerStacks(playerInfo.color);
         this.vlayout.setupPlayer(playerInfo);
@@ -4284,7 +4342,7 @@ var GameXBody = /** @class */ (function (_super) {
                 prefNodeParent.title = _("This preference has no effect as Live Scoring disabled for this table");
             }
             else {
-                prefNodeParent.title = this.prefs[LIVESCORING_PREF_ID].description;
+                prefNodeParent.title = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
             }
             return true;
         }
@@ -5469,12 +5527,37 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.sendActionUndo = function (undoMove) {
         var _this = this;
         if (undoMove === void 0) { undoMove = 0; }
-        this.gameStatusCleanup();
-        this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, function (err) {
-            if (err)
-                return;
-            _this.setMainTitle(_("Undo requested..."));
+        var num = Object.keys(this.gamedatas.undo_moves).length;
+        if (undoMove == 0 && num > 0 && this.gamedatas.undo_move) {
+            this.setMainTitle(_("Select undo move"));
             dojo.empty("generalactions");
+            var _loop_3 = function (i) {
+                var move = this_3.gamedatas.undo_moves[i];
+                var move_id = move === null || move === void 0 ? void 0 : move.move_id;
+                if (num == 1 && move_id) {
+                    this_3.sendActionUndo(move_id);
+                    return { value: void 0 };
+                }
+                var message_1 = this_3.format_string_recursive(_("Undo ${label} (up to move ${movenum})"), { label: _(move.label), movenum: move_id });
+                this_3.addActionButtonColor("button_undo_" + move_id, message_1, function () { return _this.sendActionUndo(move_id); });
+            };
+            var this_3 = this;
+            for (var i in this.gamedatas.undo_moves) {
+                var state_1 = _loop_3(i);
+                if (typeof state_1 === "object")
+                    return state_1.value;
+            }
+            this.addCancelButton();
+            return;
+        }
+        this.gameStatusCleanup();
+        var message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
+        this.setMainTitle(message);
+        dojo.empty("generalactions");
+        this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, function (err) {
+            if (err) {
+                _this.cancelLocalStateEffects();
+            }
         });
     };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
@@ -5675,13 +5758,13 @@ var GameXBody = /** @class */ (function (_super) {
                     this.addActionButton("button_" + opId, _("Confirm") + " " + count, function () { return _this.sendActionResolve(opId, {}, opInfo); });
                 }
                 else {
-                    var _loop_3 = function (i) {
-                        this_3.addActionButton("button_".concat(opId, "_").concat(i), i, function () { return _this.sendActionResolveWithCount(opId, i); });
+                    var _loop_4 = function (i) {
+                        this_4.addActionButton("button_".concat(opId, "_").concat(i), i, function () { return _this.sendActionResolveWithCount(opId, i); });
                     };
-                    var this_3 = this;
+                    var this_4 = this;
                     // counter select stub for now
                     for (var i = from == 0 ? 1 : from; i < count; i++) {
-                        _loop_3(i);
+                        _loop_4(i);
                     }
                     if (count >= 1) {
                         this.addActionButton("button_" + opId + "_max", count + " (" + _("max") + ")", function () {
@@ -6085,23 +6168,23 @@ var GameXBody = /** @class */ (function (_super) {
         }
         var allSkip = true;
         var numops = [];
-        var _loop_4 = function (i) {
+        var _loop_5 = function (i) {
             var opIdS = sortedOps[i];
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
-            this_4.completeOpInfo(opId, opInfo, xop, sortedOps.length);
+            this_5.completeOpInfo(opId, opInfo, xop, sortedOps.length);
             numops.push(opId);
             var opArgs = opInfo.args;
-            var name_3 = this_4.getButtonNameForOperation(opInfo);
+            var name_3 = this_5.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
-            this_4.updateVisualsFromOp(opInfo, opId);
+            this_5.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
             // - single action
             // - first if ordered
             // - all if choice required (!ordered)
             if (singleOrFirst || !ordered) {
-                this_4.activateSlots(opInfo, singleOrFirst);
-                this_4.updateHandInformation(opInfo.args.info, opInfo.type);
+                this_5.activateSlots(opInfo, singleOrFirst);
+                this_5.updateHandInformation(opInfo.args.info, opInfo.type);
             }
             // if more than one action and they are no ordered add buttons for each
             // xxx add something for remaining ops in ordered case?
@@ -6109,7 +6192,7 @@ var GameXBody = /** @class */ (function (_super) {
                 // temp hack
                 if (opInfo.type === "passauto")
                     return "continue";
-                this_4.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_5.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
                 }
@@ -6119,9 +6202,9 @@ var GameXBody = /** @class */ (function (_super) {
                 allSkip = false;
             }
         };
-        var this_4 = this;
+        var this_5 = this;
         for (var i = 0; i < sortedOps.length; i++) {
-            _loop_4(i);
+            _loop_5(i);
         }
         if (allSkip && !single) {
             this.addActionButtonColor("button_skip", _("Skip All"), function () { return _this.sendActionSkip.apply(_this, numops); }, "red");
@@ -6169,21 +6252,21 @@ var GameXBody = /** @class */ (function (_super) {
         if (!operations)
             return; // XXX
         var sortedOps = Object.keys(operations);
-        var _loop_5 = function (i) {
+        var _loop_6 = function (i) {
             var opIdS = sortedOps[i];
             var opId = parseInt(opIdS);
             var opInfo = operations[opId];
-            this_5.completeOpInfo(opId, opInfo, args.op, sortedOps.length);
+            this_6.completeOpInfo(opId, opInfo, args.op, sortedOps.length);
             opInfo.ooturn = true;
             var opArgs = opInfo.args;
             if (opArgs.void)
                 return "continue";
-            var name_4 = this_5.getButtonNameForOperation(opInfo);
-            this_5.addActionButtonColor("button_".concat(opId), name_4, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+            var name_4 = this_6.getButtonNameForOperation(opInfo);
+            this_6.addActionButtonColor("button_".concat(opId), name_4, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
         };
-        var this_5 = this;
+        var this_6 = this;
         for (var i = 0; i < sortedOps.length; i++) {
-            _loop_5(i);
+            _loop_6(i);
         }
     };
     GameXBody.prototype.addUndoButton = function () {
@@ -6472,19 +6555,23 @@ var GameXBody = /** @class */ (function (_super) {
         var _a;
         console.log("undoRestore", notif);
         this.setUndoMove({
-            payer_name: this.getPlayerName(notif.args.player_id),
             player_id: notif.args.player_id,
             move_id: notif.args.undo_move,
             barrier: 1,
-            label: (_a = this.gamedatas.undo_moves[notif.args.undo_move]) === null || _a === void 0 ? void 0 : _a.label
+            label: (_a = this.gamedatas.undo_moves[notif.args.undo_move]) === null || _a === void 0 ? void 0 : _a.label,
+            cancelledIds: notif.args.cancelledIds
         });
     };
     GameXBody.prototype.setUndoMove = function (undoMeta) {
         var _this = this;
+        var _a;
+        if (!undoMeta)
+            return;
         var undoMove = undoMeta.move_id;
         var player_id = undoMeta.player_id;
         this.gamedatas.undo_move = undoMove;
         this.gamedatas.undo_player_id = player_id;
+        this.gamedatas.undo_moves[undoMove] = undoMeta;
         var moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
         var place = "after";
         var placeNode = null;
@@ -6504,6 +6591,8 @@ var GameXBody = /** @class */ (function (_super) {
         }
         var undoButId = "button_undo_y" + undoMeta.move_id;
         if (undoMeta.barrier) {
+            this.gamedatas.undo_moves = {}; // wipe
+            this.gamedatas.undo_moves[undoMove] = undoMeta;
             document.querySelectorAll(".undomarker").forEach(function (node) { return dojo.destroy(node); });
         }
         else {
@@ -6512,7 +6601,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (placeNode) {
             var messsage = this.format_string_recursive(_("${player_name} may undo up to this point: ${label}"), {
                 player_name: this.getPlayerName(player_id),
-                label: undoMeta.label
+                label: (_a = undoMeta.label) !== null && _a !== void 0 ? _a : "unknown"
             });
             var div = dojo.create("div", {
                 id: undoButId,
@@ -6527,6 +6616,9 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else {
             console.log("undo move not connected #" + this.gamedatas.undo_move);
+        }
+        if (undoMeta.cancelledIds) {
+            this.cancelLogs(undoMeta.cancelledIds);
         }
     };
     //get settings
@@ -6645,9 +6737,24 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onLoadingLogsComplete = function () {
         _super.prototype.onLoadingLogsComplete.call(this);
-        for (var i in this.gamedatas.undo_moves) {
-            var undoMeta = this.gamedatas.undo_moves[i];
-            this.setUndoMove(this.gamedatas.undo_moves[i]);
+        var cancelledIds = this.gamedatas.cancelledIds;
+        if (!this.gamedatas.undo_move) {
+            this.setUndoMove({
+                player_id: this.player_id,
+                move_id: 0,
+                barrier: 1,
+                label: "",
+                cancelledIds: cancelledIds
+            });
+        }
+        else {
+            for (var i in this.gamedatas.undo_moves) {
+                if (cancelledIds) {
+                    this.gamedatas.undo_moves[i].cancelledIds = cancelledIds;
+                    cancelledIds = null;
+                }
+                this.setUndoMove(this.gamedatas.undo_moves[i]);
+            }
         }
     };
     return GameXBody;

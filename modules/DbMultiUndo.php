@@ -77,6 +77,12 @@ class DbMultiUndo extends APP_GameClass {
         $this->DbQuery("DELETE FROM $undotable WHERE `move_id` < $move_id");
     }
 
+    function cancelGamelogs(int $move_id) {
+        $packet_id = $this->getUniqueValueFromDB("SELECT MIN(`gamelog_packet_id`) FROM gamelog WHERE `gamelog_move_id` >= $move_id");
+        if (!$packet_id) return;
+        $this->DbQuery("UPDATE gamelog SET `cancel` = 1 WHERE `gamelog_packet_id` >= $packet_id AND `gamelog_private` != 1");
+    }
+
     /**
      * Cannot undo before this move
      */
@@ -88,9 +94,9 @@ class DbMultiUndo extends APP_GameClass {
         // $this->setMoveSnapshot($move_id, $player_id, [], ['barrier' => 1]);
     }
 
-    function getLatestSavedMoveId() {
+    function getLatestSavedMoveId(int $before) {
         $undotable = $this->table;
-        return $this->getUniqueValueFromDB("SELECT MAX(`move_id`) FROM $undotable");
+        return $this->getUniqueValueFromDB("SELECT MAX(`move_id`) FROM $undotable WHERE `move_id` < $before");
     }
 
     function getAvailableUndoMoves() {
@@ -221,26 +227,47 @@ class DbMultiUndo extends APP_GameClass {
     }
 
     function undoRestorePoint(int $move_id = 0) {
+        $next = $this->game->getNextMoveId();
         if ($move_id === 0) {
-            $move_id = $this->getLatestSavedMoveId();
+            $move_id = $this->getLatestSavedMoveId($next);
         }
 
         if (!$move_id) $this->errorCannotUndo();
-        $next = $this->game->getNextMoveId();
-        $this->game->not_a_move_notification = true;
+  
+        //$this->game->not_a_move_notification = true;
         $this->doReplaceUndoSnapshot($move_id);
         $this->game->bgaUndoRestorePoint();
         $this->clearSnapshotsAfter($move_id + 1);
+        $this->cancelGamelogs($move_id);
         $this->rewriteHistory($move_id, $next);
         $this->game->setGameStateValue('next_move_id', $next);
 
-
+        $cancelledIds = $this->getCanceledNotifIds();
         $player_id = $this->game->getActivePlayerId();
         $this->game->notifyWithName('undoRestore', clienttranslate('${player_name} undoes moves ${last_move} - ${undo_move}'), [
             'last_move' => $next,
-            'undo_move' => $move_id
+            'undo_move' => $move_id,
+            'cancelledIds' => $cancelledIds
         ], $player_id);
 
         $this->notifyUndoMove($move_id);
+    }
+
+    public function getCanceledNotifIds()
+    {
+        $cancelledIds = $this->getObjectListFromDB("SELECT `gamelog_notification` FROM gamelog WHERE `cancel` = 1 AND `gamelog_private` != 1");
+        return self::extractNotifIds($cancelledIds);
+    }
+
+    protected static function extractNotifIds($notifications)
+    {
+      $notificationUIds = [];
+      foreach ($notifications as $packet) {
+        $data = \json_decode($packet['gamelog_notification'], true);
+        foreach ($data as $notification) {
+          array_push($notificationUIds, $notification['uid']);
+        }
+      }
+      return $notificationUIds;
     }
 }

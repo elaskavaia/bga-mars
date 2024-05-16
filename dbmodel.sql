@@ -50,7 +50,9 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
 CREATE TABLE IF NOT EXISTS `multiundo` (
   `move_id` int(10) NOT NULL,
   `player_id` int(10) NOT NULL,
-  `data` mediumtext NOT NULL,
-  `meta` mediumtext NOT NULL,
+  `data` JSON NOT NULL,
+  `meta` JSON NOT NULL,
   PRIMARY KEY (`move_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;

@@ -221,13 +221,13 @@ class GameXBody extends GameTokens {
       this.addTooltip(
         scoreDiv,
         _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"),
-        "Click to see Scoring table and force the update"
+        _("Click to see Scoring table and force the update")
       );
     } else {
       this.addTooltip(
         scoreDiv,
         _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"),
-        "Click to see Scoring table (this reveals the currrent score)"
+        _("Click to see Scoring table (this reveals the currrent score)")
       );
     }
 
@@ -812,7 +812,7 @@ class GameXBody extends GameTokens {
         prefNodeParent.classList.add("mr_disabled");
         prefNodeParent.title = _("This preference has no effect as Live Scoring disabled for this table");
       } else {
-        prefNodeParent.title = this.prefs[LIVESCORING_PREF_ID].description;
+        prefNodeParent.title = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
       }
       return true;
     }
@@ -2205,11 +2205,31 @@ awarded.`);
   }
 
   sendActionUndo(undoMove = 0) {
-    this.gameStatusCleanup();
-    this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, (err) => {
-      if (err) return;
-      this.setMainTitle(_("Undo requested..."));
+    const num = Object.keys(this.gamedatas.undo_moves).length;
+    if (undoMove == 0 && num > 0 && this.gamedatas.undo_move) {
+      this.setMainTitle(_("Select undo move"));
       dojo.empty("generalactions");
+      for (let i in this.gamedatas.undo_moves) {
+        const move = this.gamedatas.undo_moves[i];
+        const move_id = move?.move_id;
+        if (num == 1 && move_id) {
+          this.sendActionUndo(move_id);
+          return;
+        }
+        const message = this.format_string_recursive(_("Undo ${label} (up to move ${movenum})"), { label: _(move.label), movenum: move_id });
+        this.addActionButtonColor("button_undo_" + move_id, message, () => this.sendActionUndo(move_id));
+      }
+      this.addCancelButton();
+      return;
+    }
+    this.gameStatusCleanup();
+    const message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
+    this.setMainTitle(message);
+    dojo.empty("generalactions");
+    this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, (err) => {
+      if (err) {
+        this.cancelLocalStateEffects();
+      }
     });
   }
 
@@ -3254,20 +3274,22 @@ awarded.`);
   notif_undoRestore(notif) {
     console.log("undoRestore", notif);
     this.setUndoMove({
-      payer_name: this.getPlayerName(notif.args.player_id),
       player_id: notif.args.player_id,
       move_id: notif.args.undo_move,
       barrier: 1,
-      label: this.gamedatas.undo_moves[notif.args.undo_move]?.label
+      label: this.gamedatas.undo_moves[notif.args.undo_move]?.label,
+      cancelledIds: notif.args.cancelledIds
     });
   }
 
   setUndoMove(undoMeta: any) {
-    let undoMove =  undoMeta.move_id;
+    if (!undoMeta) return;
+    let undoMove = undoMeta.move_id;
     let player_id = undoMeta.player_id;
 
     this.gamedatas.undo_move = undoMove;
     this.gamedatas.undo_player_id = player_id;
+    this.gamedatas.undo_moves[undoMove] = undoMeta;
     var moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
     var place = "after";
     var placeNode = null;
@@ -3287,8 +3309,10 @@ awarded.`);
 
     const undoButId = "button_undo_y" + undoMeta.move_id;
 
-    if (undoMeta.barrier){
-      document.querySelectorAll(".undomarker").forEach(node=>dojo.destroy(node));
+    if (undoMeta.barrier) {
+      this.gamedatas.undo_moves = {}; // wipe
+      this.gamedatas.undo_moves[undoMove] = undoMeta;
+      document.querySelectorAll(".undomarker").forEach((node) => dojo.destroy(node));
     } else {
       dojo.destroy(undoButId);
     }
@@ -3296,7 +3320,7 @@ awarded.`);
     if (placeNode) {
       var messsage = this.format_string_recursive(_("${player_name} may undo up to this point: ${label}"), {
         player_name: this.getPlayerName(player_id),
-        label: undoMeta.label
+        label: undoMeta.label ?? "unknown"
       });
       var div = dojo.create("div", {
         id: undoButId,
@@ -3310,6 +3334,10 @@ awarded.`);
       //console.log("undo move connected #" + undoMeta.move_id + " " + placeNode.id);
     } else {
       console.log("undo move not connected #" + this.gamedatas.undo_move);
+    }
+
+    if (undoMeta.cancelledIds) {
+      this.cancelLogs(undoMeta.cancelledIds);
     }
   }
 
@@ -3436,9 +3464,23 @@ awarded.`);
 
   onLoadingLogsComplete(): void {
     super.onLoadingLogsComplete();
-    for (let i in this.gamedatas.undo_moves) {
-      const undoMeta = this.gamedatas.undo_moves[i];
-      this.setUndoMove(this.gamedatas.undo_moves[i]);
+    let cancelledIds = this.gamedatas.cancelledIds;
+    if (!this.gamedatas.undo_move) {
+      this.setUndoMove({
+        player_id: this.player_id,
+        move_id: 0,
+        barrier: 1,
+        label: "",
+        cancelledIds
+      });
+    } else {
+      for (let i in this.gamedatas.undo_moves) {
+        if (cancelledIds) {
+          this.gamedatas.undo_moves[i].cancelledIds = cancelledIds;
+          cancelledIds = null;
+        }
+        this.setUndoMove(this.gamedatas.undo_moves[i]);
+      }
     }
   }
 }

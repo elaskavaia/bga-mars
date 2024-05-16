@@ -2356,15 +2356,17 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function argUndo() {
-        // $move = $this->getNextMoveId();
-        $undo_move = $this->dbMultiUndo->getLatestSavedMoveId();
+        $move = $this->getNextMoveId();
+        $undo_move = $this->dbMultiUndo->getLatestSavedMoveId($move);
         $undo_moves_player = self::getGameStateValue('undo_moves_player');
-        return ['undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(), 'undo_move' => $undo_move, 'undo_player_id' => $undo_moves_player];
+        return ['undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(), 'undo_move' => $undo_move, 
+        'undo_player_id' => $undo_moves_player, 'cancelledIds' => $this->dbMultiUndo->getCanceledNotifIds()];
     }
 
     function undoSavepointWithLabel($label = '', $barrier = 1) {
         parent::undoSavepoint();
-        $this->undoSavepointMeta = ["label" => $label, 'barrier' => $barrier];
+        $this->undoSavepointMeta["label"] = $label;
+        if ($barrier) $this->undoSavepointMeta['barrier'] = 1;
     }
 
     function undoSavepoint() {
@@ -2372,12 +2374,13 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function doCustomUndoSavePoint() {
-        $this->statelog("*** doCustomUndoSavePoint X ***");
+        //$this->statelog("*** doCustomUndoSavePoint X ***");
         $state = $this->gamestate->state();
         if ($state['type'] == 'multipleactiveplayer') {
             //$name = $state ['name'];
             //$this->warn("using undo savepoint in multiactive state $name");
-            $this->dbMultiUndo->barrier();
+            //$this->dbMultiUndo->barrier();
+            $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta + ['barrier' => 1]);
             return;
         }
         $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta);
