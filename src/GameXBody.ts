@@ -221,13 +221,13 @@ class GameXBody extends GameTokens {
       this.addTooltip(
         scoreDiv,
         _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"),
-        "Click to see Scoring table and force the update"
+        _("Click to see Scoring table and force the update")
       );
     } else {
       this.addTooltip(
         scoreDiv,
         _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"),
-        "Click to see Scoring table (this reveals the currrent score)"
+        _("Click to see Scoring table (this reveals the currrent score)")
       );
     }
 
@@ -403,8 +403,8 @@ class GameXBody extends GameTokens {
   showGameScoringDialog() {
     if (this.cachedScoringTable) {
       let html = this.createScoringTableHTML(this.cachedScoringTable);
-      const scoringOption = _(this.prefs[LIVESCORING_PREF_ID].name);
-      const desc = _(this.prefs[LIVESCORING_PREF_ID].description);
+      const scoringOption = this.getTr(this.prefs[LIVESCORING_PREF_ID].name);
+      const desc = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
       html += `<div><p></p><div title="${desc}">${scoringOption}</div><div id='pref_section_in_dialog' class='pref_section_in_dialog'></div></div>`;
       this.showPopin(html, "score_dialog", _("Score Summary"));
       this.createCustomPreferenceNode(LIVESCORING_PREF_ID, "pp" + LIVESCORING_PREF_ID, $("pref_section_in_dialog"));
@@ -752,25 +752,7 @@ class GameXBody extends GameTokens {
     if (ls.readProp("activated", undefined)) return;
     ls.writeProp("activated", "1");
 
-    const dialog = new ebg.popindialog();
-    dialog.create("theme_selector");
-    const op1 = this.prefs[LAYOUT_PREF_ID].values[1];
-    const op2 = this.prefs[LAYOUT_PREF_ID].values[2];
-    // not translating this - will be removed after alpha
-    const desc = `
-    Please select a theme below - the user interface will look slightly different. You can change this later.<br>
-    <ul>
-    <li> ${op1.name}  - ${op1.description} 
-    <li> ${op2.name}  - ${op2.description} 
-    </ul>
-    For theme and other settings, use the settings menu - Gear button <i class="fa fa-gear"></i> on the top right.
-    If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.
-    `; // NO I18N
-
-    var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
-    dialog.setContent(html);
-    this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, $("theme_selector_area"));
-    dialog.show();
+    // not used now
   }
 
   getThemeSelectorDialogHtml(id: string, title: string, desc: string = "") {
@@ -812,7 +794,7 @@ class GameXBody extends GameTokens {
         prefNodeParent.classList.add("mr_disabled");
         prefNodeParent.title = _("This preference has no effect as Live Scoring disabled for this table");
       } else {
-        prefNodeParent.title = this.prefs[LIVESCORING_PREF_ID].description;
+        prefNodeParent.title = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
       }
       return true;
     }

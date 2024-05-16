@@ -3793,10 +3793,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.addTooltip(scoreDiv, _("Live Scoring is disabled (table option), this value is same as TR"), "");
         }
         else if (this.isLiveScoringOn()) {
-            this.addTooltip(scoreDiv, _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"), "Click to see Scoring table and force the update");
+            this.addTooltip(scoreDiv, _("Live Scoring is enabled, this value is calculated VP. This only updates at the end of the turn or on demand"), _("Click to see Scoring table and force the update"));
         }
         else {
-            this.addTooltip(scoreDiv, _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"), "Click to see Scoring table (this reveals the currrent score)");
+            this.addTooltip(scoreDiv, _("Live Scoring is hidden (not updated), this value is same as TR. You can enable Live Scoring via user preference"), _("Click to see Scoring table (this reveals the currrent score)"));
         }
         this.setupPlayerStacks(playerInfo.color);
         this.vlayout.setupPlayer(playerInfo);
@@ -3960,8 +3960,8 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.showGameScoringDialog = function () {
         if (this.cachedScoringTable) {
             var html = this.createScoringTableHTML(this.cachedScoringTable);
-            var scoringOption = _(this.prefs[LIVESCORING_PREF_ID].name);
-            var desc = _(this.prefs[LIVESCORING_PREF_ID].description);
+            var scoringOption = this.getTr(this.prefs[LIVESCORING_PREF_ID].name);
+            var desc = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
             html += "<div><p></p><div title=\"".concat(desc, "\">").concat(scoringOption, "</div><div id='pref_section_in_dialog' class='pref_section_in_dialog'></div></div>");
             this.showPopin(html, "score_dialog", _("Score Summary"));
             this.createCustomPreferenceNode(LIVESCORING_PREF_ID, "pp" + LIVESCORING_PREF_ID, $("pref_section_in_dialog"));
@@ -4235,16 +4235,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (ls.readProp("activated", undefined))
             return;
         ls.writeProp("activated", "1");
-        var dialog = new ebg.popindialog();
-        dialog.create("theme_selector");
-        var op1 = this.prefs[LAYOUT_PREF_ID].values[1];
-        var op2 = this.prefs[LAYOUT_PREF_ID].values[2];
-        // not translating this - will be removed after alpha
-        var desc = "\n    Please select a theme below - the user interface will look slightly different. You can change this later.<br>\n    <ul>\n    <li> ".concat(op1.name, "  - ").concat(op1.description, " \n    <li> ").concat(op2.name, "  - ").concat(op2.description, " \n    </ul>\n    For theme and other settings, use the settings menu - Gear button <i class=\"fa fa-gear\"></i> on the top right.\n    If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.\n    "); // NO I18N
-        var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
-        dialog.setContent(html);
-        this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, $("theme_selector_area"));
-        dialog.show();
+        // not used now
     };
     GameXBody.prototype.getThemeSelectorDialogHtml = function (id, title, desc) {
         if (desc === void 0) { desc = ""; }
@@ -4282,7 +4273,7 @@ var GameXBody = /** @class */ (function (_super) {
                 prefNodeParent.title = _("This preference has no effect as Live Scoring disabled for this table");
             }
             else {
-                prefNodeParent.title = this.prefs[LIVESCORING_PREF_ID].description;
+                prefNodeParent.title = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
             }
             return true;
         }
