@@ -28,7 +28,6 @@ class GameXBody extends GameTokens {
   constructor() {
     super();
     this.CON = {};
-    this.stacks = [];
   }
 
   setup(gamedatas: any) {
@@ -36,6 +35,7 @@ class GameXBody extends GameTokens {
       this.isDoingSetup = true;
       this.lastMoveId = 0;
       this.CON = gamedatas.CON; // PHP contants for game
+      this.stacks = [];
       const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
       const root = document.children[0]; // weird
       dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
@@ -751,26 +751,7 @@ class GameXBody extends GameTokens {
 
     if (ls.readProp("activated", undefined)) return;
     ls.writeProp("activated", "1");
-
-    const dialog = new ebg.popindialog();
-    dialog.create("theme_selector");
-    const op1 = this.prefs[LAYOUT_PREF_ID].values[1];
-    const op2 = this.prefs[LAYOUT_PREF_ID].values[2];
-    // not translating this - will be removed after alpha
-    const desc = `
-    Please select a theme below - the user interface will look slightly different. You can change this later.<br>
-    <ul>
-    <li> ${op1.name}  - ${op1.description} 
-    <li> ${op2.name}  - ${op2.description} 
-    </ul>
-    For theme and other settings, use the settings menu - Gear button <i class="fa fa-gear"></i> on the top right.
-    If you find a bug, use the Send BUG button in the settings menu. This will automatically insert the table ID.
-    `; // NO I18N
-
-    var html = this.getThemeSelectorDialogHtml("theme_selector_area", "Welcome to Alpha Testing of Terraforming Mars!", desc); // NO I18N
-    dialog.setContent(html);
-    this.createCustomPreferenceNode(LAYOUT_PREF_ID, "pp" + LAYOUT_PREF_ID, $("theme_selector_area"));
-    dialog.show();
+    // no used
   }
 
   getThemeSelectorDialogHtml(id: string, title: string, desc: string = "") {
@@ -796,7 +777,7 @@ class GameXBody extends GameTokens {
 
   refaceUserPreference(pref_id: number, prefNodeParent: HTMLElement, prefDivId: string) {
     // can override to change apperance
-    console.log("PREF", pref_id);
+    //console.log("PREF", pref_id);
     const prefNode = $(prefDivId) as HTMLElement;
     if (pref_id == LAYOUT_PREF_ID) {
       const pp = prefNode.parentElement;
@@ -830,7 +811,7 @@ class GameXBody extends GameTokens {
       option.setAttribute("value", v);
       option.innerHTML = this.getTr(optionValue.name);
       option.setAttribute("data-pref-id", pref_id + "");
-      if (optionValue.description) this.addTooltip(option.id, this.getTr(optionValue.description), "");
+      if (optionValue.description) option.title = this.getTr(optionValue.description); // naive tooltip
       if (pref.value == v) {
         option.setAttribute("selected", "selected");
       }
@@ -869,7 +850,9 @@ class GameXBody extends GameTokens {
 
     // add move #
     var prevmove = document.querySelector('[data-move-id="' + move_id + '"]');
-    if (!prevmove && move_id) {
+    if (prevmove) {
+      // ?
+    } else if (move_id) {
       const tsnode = document.createElement("div");
       tsnode.classList.add("movestamp");
       tsnode.innerHTML = _("Move #") + move_id;
@@ -2206,6 +2189,7 @@ awarded.`);
 
   sendActionUndo(undoMove = 0) {
     const num = Object.keys(this.gamedatas.undo_moves).length;
+    const currentMove = parseInt($('ebd-body')?.dataset.move_nbr);
     if (undoMove == 0 && num > 0 && this.gamedatas.undo_move) {
       this.setMainTitle(_("Select undo move"));
       dojo.empty("generalactions");
@@ -2216,8 +2200,15 @@ awarded.`);
           this.sendActionUndo(move_id);
           return;
         }
-        const message = this.format_string_recursive(_("Undo ${label} (up to move ${movenum})"), { label: _(move.label), movenum: move_id });
-        this.addActionButtonColor("button_undo_" + move_id, message, () => this.sendActionUndo(move_id));
+        const message = this.format_string_recursive(_("Undo ${label} (up to move ${movenum})"), {
+          label: _(move.label),
+          movenum: move_id
+        });
+        const button = this.addActionButtonColor("button_undo_" + move_id, message, () => this.sendActionUndo(move_id));
+        if (move_id >= currentMove) {
+          button.classList.add("disabled");
+          button.title = _("Nothing to undo");
+        }
       }
       this.addCancelButton();
       return;
@@ -2231,6 +2222,12 @@ awarded.`);
         this.cancelLocalStateEffects();
       }
     });
+  }
+
+  // @Override
+  onNextMove( move_id: any ) {
+    this.inherited(arguments);
+    $('ebd-body').dataset.move_nbr = move_id;
   }
 
   getButtonNameForOperation(op: any) {
@@ -2268,24 +2265,29 @@ awarded.`);
     return icon;
   }
 
-  getTokenPresentaton(type: string, tokenKey: string | { log: string; args: any }): string {
-    const isstr = typeof tokenKey == "string";
-    if (isstr && tokenKey.startsWith("tracker")) return this.getDivForTracker(tokenKey);
-    if (type == "token_div_count" && !isstr) {
-      const id = tokenKey.args["token_name"];
-      const mod = tokenKey.args["mod"];
-      if (id.startsWith("tracker_m_")) {
-        // just m
-        return this.getDivForTracker(id, mod);
-      }
-      return undefined; // process by parent
-    }
-    if (isstr) {
+  getTokenPresentaton(type: string, tokenKey: any, args: any = {}): string {
+    const isString = typeof tokenKey == "string";
+    if (isString) {
+      if (tokenKey.startsWith("tracker")) return this.getDivForTracker(tokenKey);
       if (tokenKey.startsWith("card_main_")) {
         return '<div class="card_hl_tt"  data-clicktt="' + tokenKey + '">' + this.getTokenName(tokenKey) + "</div>";
       }
 
       return this.getTokenName(tokenKey); // just a name for now
+    } else {
+      if (type == "undo_button") {
+        if (args.player_id != this.player_id) return " ";
+        return this.createUndoActionDiv(tokenKey as number).outerHTML;
+      }
+      if (type == "token_div_count") {
+        const id = tokenKey.args["token_name"];
+        const mod = tokenKey.args["mod"];
+        if (id.startsWith("tracker_m_")) {
+          // just m
+          return this.getDivForTracker(id, mod);
+        }
+        return undefined; // process by parent
+      }
     }
     return undefined; // process by parent
   }
@@ -3178,7 +3180,7 @@ awarded.`);
     if (node.draggable) return;
     //disable on mobile for now
     if ($("ebd-body").classList.contains("mobile_version")) return;
-    console.log("enable drag on ", node.id);
+    //console.log("enable drag on ", node.id);
     node.querySelectorAll("*").forEach((sub: HTMLElement) => {
       sub.draggable = false;
     });
@@ -3188,7 +3190,7 @@ awarded.`);
   }
   disableDragOnCard(node: HTMLElement) {
     if (!node.draggable) return;
-    console.log("disable drag on ", node.id);
+    //console.log("disable drag on ", node.id);
     node.draggable = false;
     node.removeEventListener("dragstart", onDragStart);
     node.removeEventListener("dragend", onDragEnd);
@@ -3268,21 +3270,15 @@ awarded.`);
 
   notif_undoMove(notif) {
     console.log("undoMove", notif);
-    this.setUndoMove(notif.args);
+    this.setUndoMove(notif.args, notif.move_id);
   }
 
   notif_undoRestore(notif) {
     console.log("undoRestore", notif);
-    this.setUndoMove({
-      player_id: notif.args.player_id,
-      move_id: notif.args.undo_move,
-      barrier: 1,
-      label: this.gamedatas.undo_moves[notif.args.undo_move]?.label,
-      cancelledIds: notif.args.cancelledIds
-    });
+    this.cancelLogs(notif.args.cancelledIds);
   }
 
-  setUndoMove(undoMeta: any) {
+  setUndoMove(undoMeta: any, currentMove: number) {
     if (!undoMeta) return;
     let undoMove = undoMeta.move_id;
     let player_id = undoMeta.player_id;
@@ -3290,55 +3286,34 @@ awarded.`);
     this.gamedatas.undo_move = undoMove;
     this.gamedatas.undo_player_id = player_id;
     this.gamedatas.undo_moves[undoMove] = undoMeta;
-    var moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
-    var place = "after";
-    var placeNode = null;
-    if (!moveNode) {
-      undoMove++;
-      moveNode = document.querySelector('.movestamp[data-move-id="' + undoMove + '"]');
-    }
-    if (!moveNode) {
-      if (this.lastMoveId < this.gamedatas.undo_move) {
-        placeNode = document.querySelector("#logs > *");
-        place = "before";
-      }
-    } else {
-      placeNode = moveNode.parentNode;
-      place = "after";
-    }
 
-    const undoButId = "button_undo_y" + undoMeta.move_id;
+    document.querySelectorAll(".undomarker").forEach((node: HTMLElement) => {
+      if (undoMeta.barrier && node.dataset.move != undoMove) node.classList.add("disabled");
+      else node.classList.remove("disabled");
+      //if (parseInt(node.dataset.move) >= currentMove) node.classList.add("disabled");
+      if (node.dataset.move == undoMove) {
+        node.parentElement.parentElement.classList.remove("log_replayable");
+        this.removeTooltip(node.parentElement.parentElement.id);
+      }
+    });
 
     if (undoMeta.barrier) {
       this.gamedatas.undo_moves = {}; // wipe
       this.gamedatas.undo_moves[undoMove] = undoMeta;
-      document.querySelectorAll(".undomarker").forEach((node) => dojo.destroy(node));
-    } else {
-      dojo.destroy(undoButId);
     }
 
-    if (placeNode) {
-      var messsage = this.format_string_recursive(_("${player_name} may undo up to this point: ${label}"), {
-        player_name: this.getPlayerName(player_id),
-        label: undoMeta.label ?? "unknown"
-      });
-      var div = dojo.create("div", {
-        id: undoButId,
-        innerHTML: messsage,
-        class: "undomarker",
-        title: _("Click to undo your move up to this point"),
-        onclick: "return false"
-      });
-      dojo.place(div, placeNode, place);
-      dojo.connect(div, "onclick", this, () => this.sendActionUndo(undoMeta.move_id));
-      //console.log("undo move connected #" + undoMeta.move_id + " " + placeNode.id);
-    } else {
-      console.log("undo move not connected #" + this.gamedatas.undo_move);
-    }
+    this.cancelLogs(undoMeta.cancelledIds);
+  }
 
-    if (undoMeta.cancelledIds) {
-      this.cancelLogs(undoMeta.cancelledIds);
-    }
+  createUndoActionDiv(move_id: number) {
+    var div = dojo.create("div", {
+      innerHTML: "Undo",
+      class: "undomarker bgabutton bgabutton_red",
+      title: _("Click to undo your move up to this point"),
+      onclick: `gameui.sendActionUndo(${move_id})`
+    });
+    div.dataset.move = move_id;
+    return div;
   }
 
   //get settings
@@ -3464,24 +3439,15 @@ awarded.`);
 
   onLoadingLogsComplete(): void {
     super.onLoadingLogsComplete();
-    let cancelledIds = this.gamedatas.cancelledIds;
-    if (!this.gamedatas.undo_move) {
-      this.setUndoMove({
-        player_id: this.player_id,
-        move_id: 0,
-        barrier: 1,
-        label: "",
-        cancelledIds
-      });
-    } else {
-      for (let i in this.gamedatas.undo_moves) {
-        if (cancelledIds) {
-          this.gamedatas.undo_moves[i].cancelledIds = cancelledIds;
-          cancelledIds = null;
-        }
-        this.setUndoMove(this.gamedatas.undo_moves[i]);
-      }
-    }
+    const currentMove = parseInt(this.gamedatas.notifications.move_nbr);
+
+    this.cancelLogs(this.gamedatas.cancelledIds);
+
+    document.querySelectorAll(".undomarker").forEach((node: HTMLElement) => {
+      //if (parseInt(node.dataset.move) >= currentMove) node.classList.add("disabled");
+      node.parentElement.parentElement.classList.remove("log_replayable");
+      this.removeTooltip(node.parentElement.parentElement.id);
+    });
   }
 }
 

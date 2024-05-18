@@ -65,7 +65,15 @@ class DbMultiUndo extends APP_GameClass {
 
     function notifyUndoMove($move_id) {
         $meta = $this->getMetaForMove($move_id, true);
-        $this->game->notifyWithName('undoMove', '', $meta, $meta['player_id']);
+        $barrier = array_get($meta, 'barrier', 0);
+        $move_id = array_get($meta, 'move_id', 0);
+
+        if ($barrier) {
+            $notif = clienttranslate('${player_name} ${label} ${undo_button} (no undo beyond this point)');
+        } else {
+            $notif = clienttranslate('${player_name} ${label} ${undo_button}');
+        }
+        $this->game->notifyWithName('undoMove', $notif, $meta + ['undo_button' => $move_id], $meta['player_id']);
     }
 
     function clearSnapshotsAfter(int $move_id = 0) {
@@ -108,7 +116,7 @@ class DbMultiUndo extends APP_GameClass {
             $res =  json_decode($value, true);
             $res['player_id'] = $row['player_id'];
             $res['move_id'] = $row['move_id'];
-            $moves [$row['move_id']] = $res;
+            $moves[$row['move_id']] = $res;
         }
         return $moves;
     }
@@ -130,7 +138,7 @@ class DbMultiUndo extends APP_GameClass {
 
         $current =  $this->getNextMoveId();
         $this->warn("restoring to move $move_id ($current)|");
-        if ($move_id == $current) {
+        if ($move_id >= $current - 1) {
             $this->errorCannotUndo($move_id);
         }
         $tables = $this->game->getObjectListFromDB("SHOW TABLES", true);
@@ -227,14 +235,25 @@ class DbMultiUndo extends APP_GameClass {
     }
 
     function undoRestorePoint(int $move_id = 0) {
+        $player_id = $this->game->getActivePlayerId();
+        if ($player_id != $this->game->getCurrentPlayerId()) {
+            $this->game->userAssertTrue(totranslate('Only active player can Undo'));
+        }
         $next = $this->game->getNextMoveId();
         if ($move_id === 0) {
             $move_id = $this->getLatestSavedMoveId($next);
         }
 
         if (!$move_id) $this->errorCannotUndo();
-  
-        //$this->game->not_a_move_notification = true;
+
+        $meta = $this->getMetaForMove($move_id, true);
+        
+        $save_player_id = array_get($meta, 'player_id', 0);
+        if ($player_id != $save_player_id) {
+            $this->game->userAssertTrue(totranslate('Stored Undo data belongs to other player'));
+        }
+
+        //$this->game->not_a_move_notification = false;
         $this->doReplaceUndoSnapshot($move_id);
         $this->game->bgaUndoRestorePoint();
         $this->clearSnapshotsAfter($move_id + 1);
@@ -243,9 +262,10 @@ class DbMultiUndo extends APP_GameClass {
         $this->game->setGameStateValue('next_move_id', $next);
 
         $cancelledIds = $this->getCanceledNotifIds();
-        $player_id = $this->game->getActivePlayerId();
+ 
+
         $this->game->notifyWithName('undoRestore', clienttranslate('${player_name} undoes moves ${last_move} - ${undo_move}'), [
-            'last_move' => $next,
+            'last_move' => $next - 1,
             'undo_move' => $move_id,
             'cancelledIds' => $cancelledIds
         ], $player_id);
@@ -253,21 +273,19 @@ class DbMultiUndo extends APP_GameClass {
         $this->notifyUndoMove($move_id);
     }
 
-    public function getCanceledNotifIds()
-    {
+    public function getCanceledNotifIds() {
         $cancelledIds = $this->getObjectListFromDB("SELECT `gamelog_notification` FROM gamelog WHERE `cancel` = 1 AND `gamelog_private` != 1");
         return self::extractNotifIds($cancelledIds);
     }
 
-    protected static function extractNotifIds($notifications)
-    {
-      $notificationUIds = [];
-      foreach ($notifications as $packet) {
-        $data = \json_decode($packet['gamelog_notification'], true);
-        foreach ($data as $notification) {
-          array_push($notificationUIds, $notification['uid']);
+    protected static function extractNotifIds($notifications) {
+        $notificationUIds = [];
+        foreach ($notifications as $packet) {
+            $data = \json_decode($packet['gamelog_notification'], true);
+            foreach ($data as $notification) {
+                array_push($notificationUIds, $notification['uid']);
+            }
         }
-      }
-      return $notificationUIds;
+        return $notificationUIds;
     }
 }

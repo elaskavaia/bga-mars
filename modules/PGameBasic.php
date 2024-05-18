@@ -754,13 +754,12 @@ abstract class PGameBasic extends Table {
      */
     function undoSavepoint() {
         //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
-        $this->undoSaveOnMoveEndDup = true;
+        $this->setUndoSavepoint(true);
         //$this->statelog("undoSavepoint");
 
     }
 
     function setUndoSavepoint(bool $value) {
-        //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
         $this->undoSaveOnMoveEndDup = $value;
     }
 
@@ -770,12 +769,12 @@ abstract class PGameBasic extends Table {
      * - fixed resetting the save flag when its done
      */
     function doUndoSavePoint() {
-        $this->statelog("*** doUndoSavePoint ***");
+        //$this->statelog("*** doUndoSavePoint ***");
         if (!$this->undoSaveOnMoveEndDup)
             return;
 
         $this->doCustomUndoSavePoint();
-        $this->undoSaveOnMoveEndDup = false;
+        $this->setUndoSavepoint(false);
     }
 
     function doCustomUndoSavePoint() {
@@ -793,12 +792,12 @@ abstract class PGameBasic extends Table {
      * fixed bug where it does not save state if there is no notifications
      */
     function sendNotifications() {
+        $next = $this->getNextMoveId();
         parent::sendNotifications();
         if ($this->undoSaveOnMoveEndDup) {
-            $this->not_a_move_notification  = true;
             $this->doUndoSavePoint();
+            //$this->setGameStateValue('next_move_id', $next); // restore next move so it does not increase
             parent::sendNotifications(); // if any notif was produced by undo save point send them also
-            $this->not_a_move_notification  = false;
         }
     }
 

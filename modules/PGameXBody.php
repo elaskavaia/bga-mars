@@ -131,7 +131,7 @@ abstract class PGameXBody extends PGameMachine {
             $player_id = $this->getFirstPlayer();
             $this->setCurrentStartingPlayer($player_id);
             $this->queuePlayersTurn($player_id, false);
-            $this->doUndoSavePoint();
+            //$this->doUndoSavePoint();
         } catch (Exception $e) {
             $this->error($e);
         }
@@ -2359,7 +2359,8 @@ abstract class PGameXBody extends PGameMachine {
         $move = $this->getNextMoveId();
         $undo_move = $this->dbMultiUndo->getLatestSavedMoveId($move);
         $undo_moves_player = self::getGameStateValue('undo_moves_player');
-        return ['undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(), 'undo_move' => $undo_move, 
+        return ['undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(), 
+        'undo_move' => $undo_move, 'next_move'=>$move,
         'undo_player_id' => $undo_moves_player, 'cancelledIds' => $this->dbMultiUndo->getCanceledNotifIds()];
     }
 
@@ -2389,6 +2390,7 @@ abstract class PGameXBody extends PGameMachine {
 
 
     function undoRestorePoint() {
+        // cannot use this function, we have custom undo system
         $this->systemAssertTrue("ERR:Game:01");
     }
 

@@ -36,7 +36,7 @@ class DbUserPrefs extends APP_GameClass {
         $values = [];
         //$players = $this->loadPlayersBasicInfos();
         foreach ($game_preferences as $id => $data) {
-            $defaultValue = array_get($data,'default') ?? array_keys($data['values'])[0];
+            $defaultValue = array_get($data, 'default') ?? array_keys($data['values'])[0];
 
             foreach ($players as $pId => $infos) {
                 $values[] = [
@@ -81,15 +81,24 @@ class DbUserPrefs extends APP_GameClass {
         $pref_id = (int) $pref_id;
         $player_id = (int) $player_id;
         $pref_value = (int) $pref_value;
-        $sql = "UPDATE " . $this->table;
-        $sql .= " SET pref_value='$pref_value'";
-        $sql .= " WHERE player_id='$player_id' AND pref_id='$pref_id'";
-        self::DbQuery($sql);
-        if (self::DbAffectedRow() == 0 && $auto_insert) {
-            $sql = "INSERT INTO " . $this->table . " (player_id,pref_id,pref_value)";
-            $sql .= " VALUES ('$player_id', '$pref_id', '$pref_value')";
-            $this->DbQuery($sql);
+        $table = $this->table;
+
+        $res = $this->getPrefInfo($player_id, $pref_id, false);
+        if ($res === null) {
+            if ($auto_insert) {
+                $sql = "INSERT INTO $table (player_id, pref_id, pref_value)";
+                $sql .= " VALUES ('$player_id', '$pref_id', '$pref_value')";
+                $this->DbQuery($sql);
+            } else {
+                $this->game->systemAssertTrue("Row not found in pref: $player_id-$pref_id");
+            }
+        } else {
+            $sql = "UPDATE $table";
+            $sql .= " SET pref_value='$pref_value'";
+            $sql .= " WHERE player_id='$player_id' AND pref_id='$pref_id'";
+            self::DbQuery($sql);
         }
+
         return $pref_value;
     }
 
@@ -111,7 +120,7 @@ class DbUserPrefs extends APP_GameClass {
         $game_preferences = $this->game->getTablePreferences();
         $data = array_get($game_preferences, $pref_id);
         if ($data) {
-            $defaultValue = array_get($data,'default') ?? array_keys($data['values'])[0] ?? 0;
+            $defaultValue = array_get($data, 'default') ?? array_keys($data['values'])[0] ?? 0;
             return (int) $defaultValue;
         }
         return 0;

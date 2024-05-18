@@ -1536,7 +1536,8 @@ class GameBasics extends GameGui {
     }
   }
 
-  cancelLogs(notifIds) {
+  cancelLogs(notifIds: any[] | undefined ) {
+    if (!notifIds) return;
     notifIds.forEach((uid) => {
       if (this._notif_uid_to_log_id.hasOwnProperty(uid)) {
         let logId = this._notif_uid_to_log_id[uid];
