@@ -326,6 +326,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
+    function debug_draft($draft = 1) {
+        $this->setGameStateValue('var_draft', $draft);
+    }
+
 
     function debug_opcard($card_id) {
         $color = $this->getCurrentPlayerColor();
