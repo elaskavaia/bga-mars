@@ -939,7 +939,7 @@ function getPartsPrefix($haystack, $i) {
     return implode("_", $parts);
 }
 
-function toJson($data, $options = JSON_PRETTY_PRINT) {
+function toJson($data, $options = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) {
     $json_string = json_encode($data, $options);
     return $json_string;
 }

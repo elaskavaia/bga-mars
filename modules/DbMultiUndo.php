@@ -36,27 +36,33 @@ class DbMultiUndo extends APP_GameClass {
         return $sql;
     }
 
-    function setMoveSnapshot($move_id, $player_id, $data, $meta = []) {
+    function setMoveSnapshot(int $move_id, int $player_id, array $data, array $meta = []) {
         $meta  = $meta + ['version' => 1];
-        $json_data = self::escapeStringForDB(json_encode($data, JSON_NUMERIC_CHECK));
-        $json_meta = self::escapeStringForDB(json_encode($meta, JSON_NUMERIC_CHECK));
-        $sql = "UPDATE " . $this->table;
-        $sql .= " SET data='$json_data', meta='$json_meta', player_id='$player_id'";
-        $sql .= " WHERE move_id='$move_id'";
-        $this->DbQuery($sql);
-        if (self::DbAffectedRow() == 0) {
+        $json_data = $this->escapeStringForDB(fixedJsonEncode($data, JSON_NUMERIC_CHECK));
+        $json_meta = $this->escapeStringForDB(fixedJsonEncode($meta, JSON_NUMERIC_CHECK));
+
+        $table = $this->table;
+        $hasmove = $this->getUniqueValueFromDB("SELECT `move_id` FROM $table WHERE `move_id`='$move_id'");
+        if ($hasmove) {
+            $sql = "UPDATE " . $this->table;
+            $sql .= " SET data='$json_data', meta='$json_meta', player_id='$player_id'";
+            $sql .= " WHERE move_id='$move_id'";
+            $this->DbQuery($sql);
+        } else {
             $sql = "INSERT INTO " . $this->table . " (move_id,player_id,data,meta)";
             $sql .= " VALUES ('$move_id','$player_id', '$json_data', '$json_meta')";
             $this->DbQuery($sql);
         }
     }
 
+
     function doSaveUndoSnapshot(array $meta) {
         $barrier = array_get($meta, 'barrier', 0);
         $player_id = $this->game->getActivePlayerId();
         $move_id = $this->getNextMoveId();
         $this->game->setGameStateValue('undo_moves_player', $player_id);
-        $data_all  = $this->getCurrentTablesAsJson();
+        $data_all  = $this->getCurrentTablesAsObject();
+
         $this->clearSnapshotsAfter($move_id);
         if ($barrier) $this->clearSnapshotsBefore($move_id);
         $this->setMoveSnapshot($move_id, $player_id, $data_all, $meta);
@@ -151,7 +157,7 @@ class DbMultiUndo extends APP_GameClass {
 
         foreach ($tables as $table) {
             if ($this->needsSaving($table)) {
-                $copy = "${prefix}${table}";
+                $copy = "{$prefix}{$table}";
                 $saved_data = $saved[$table];
                 $this->DbQuery("DELETE FROM $copy");
                 $this->game->dbInsertValues($copy, $saved_data);
@@ -160,7 +166,7 @@ class DbMultiUndo extends APP_GameClass {
         }
         foreach ($tables as $table) {
             if ($this->needsCopying($table)) {
-                $copy = "${prefix}${table}";
+                $copy = "{$prefix}{$table}";
                 // special case - override some tables with existing (including self)
                 $fields = $this->game->dbGetFieldListAsString($table);
                 $this->DbQuery("DELETE FROM $copy");
@@ -177,8 +183,12 @@ class DbMultiUndo extends APP_GameClass {
         return false;
     }
 
+
+    /**
+     * The tables that need copying are in "undo" list but the should not be, we preserve current copy instead
+     */
     function needsCopying(string $table) {
-        if ($table == $this->table || $table == 'user_preferences' || $table == 'gamelog') {
+        if ($table == $this->table || $table == 'user_preferences' || $table == 'gamelog' || $table == 'player') {
             return true;
         }
         return false;
@@ -203,7 +213,7 @@ class DbMultiUndo extends APP_GameClass {
         return $res;
     }
 
-    function getCurrentTablesAsJson() {
+    function getCurrentTablesAsObject() {
         $tables = $this->getObjectListFromDB("SHOW TABLES", true);
         $data_all = [];
 
@@ -213,7 +223,6 @@ class DbMultiUndo extends APP_GameClass {
                 $data_all[$table] = $datatable;
             }
         }
-
         return $data_all;
     }
 
@@ -230,7 +239,7 @@ class DbMultiUndo extends APP_GameClass {
         $meta = $this->getMetaForMove($from_move_id);
         $this->game->systemAssertTrue("ERR:DbMultiUndo:01", $meta && is_array($meta));
         $meta['last_move'] = $to_move_id;
-        $json_meta = self::escapeStringForDB(json_encode($meta, JSON_NUMERIC_CHECK));
+        $json_meta = self::escapeStringForDB(fixedJsonEncode($meta, JSON_NUMERIC_CHECK));
         $this->DbQuery("UPDATE $undotable SET `meta` = '$json_meta' WHERE `move_id` = $from_move_id");
     }
 
@@ -247,7 +256,7 @@ class DbMultiUndo extends APP_GameClass {
         if (!$move_id) $this->errorCannotUndo();
 
         $meta = $this->getMetaForMove($move_id, true);
-        
+
         $save_player_id = array_get($meta, 'player_id', 0);
         if ($player_id != $save_player_id) {
             $this->game->userAssertTrue(totranslate('Stored Undo data belongs to other player'));
@@ -262,7 +271,7 @@ class DbMultiUndo extends APP_GameClass {
         $this->game->setGameStateValue('next_move_id', $next);
 
         $cancelledIds = $this->getCanceledNotifIds();
- 
+
 
         $this->game->notifyWithName('undoRestore', clienttranslate('${player_name} undoes moves ${last_move} - ${undo_move}'), [
             'last_move' => $next - 1,
@@ -288,4 +297,37 @@ class DbMultiUndo extends APP_GameClass {
         }
         return $notificationUIds;
     }
+}
+
+
+
+function utf8ize($d) {
+    if (is_array($d)) {
+        foreach ($d as $k => $v) {
+            $d[$k] = utf8ize($v);
+            // if ($d[$k] != $v) {
+            //     throw new BgaUserException("trip point $v $k ($d[$k])");
+            // }
+        }
+    } else if (is_object($d))
+        foreach ($d as $k => $v)
+            $d->$k = utf8ize($v);
+
+    else
+        return utf8_encode($d);
+
+    return $d;
+}
+
+function fixedJsonEncode($data) {
+    $result = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES| JSON_NUMERIC_CHECK);
+    $ret = json_last_error();
+    if ($result === false) {
+        $data = utf8ize($data);
+        $result = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES| JSON_NUMERIC_CHECK);
+    }
+    if ($result === false) {
+        throw new feException("json error $ret");
+    }
+    return $result;
 }

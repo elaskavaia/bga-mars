@@ -2363,9 +2363,11 @@ abstract class PGameXBody extends PGameMachine {
         $move = $this->getNextMoveId();
         $undo_move = $this->dbMultiUndo->getLatestSavedMoveId($move);
         $undo_moves_player = self::getGameStateValue('undo_moves_player');
-        return ['undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(), 
-        'undo_move' => $undo_move, 'next_move'=>$move,
-        'undo_player_id' => $undo_moves_player, 'cancelledIds' => $this->dbMultiUndo->getCanceledNotifIds()];
+        return [
+            'undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(),
+            'undo_move' => $undo_move, 'next_move' => $move,
+            'undo_player_id' => $undo_moves_player, 'cancelledIds' => $this->dbMultiUndo->getCanceledNotifIds()
+        ];
     }
 
     function undoSavepointWithLabel($label = '', $barrier = 1) {
