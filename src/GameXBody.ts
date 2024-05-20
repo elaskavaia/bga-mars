@@ -427,7 +427,7 @@ class GameXBody extends GameTokens {
       this.showGameScoringDialog();
     } else {
       let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
-      this.ajaxcall(url, [], this, (result) => {
+      this.ajaxcall(url, {lock: true}, this, (result) => {
         this.cachedScoringTable = result.data.contents;
         this.cachedScoreMoveNbr = move;
         this.showGameScoringDialog();

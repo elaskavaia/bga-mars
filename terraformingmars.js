@@ -118,7 +118,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         var gname = this.game_name;
         var url = "/".concat(gname, "/").concat(gname, "/").concat(action, ".html");
-        this.ajaxcall(url, args, this, function (result) { }, handler);
+        this.ajaxcall(url, args /** can be no {lock: true} */, this, function (result) { }, handler);
     };
     GameBasics.prototype.ajaxcallwrapper = function (action, args, handler) {
         if (this.checkAction(action)) {
@@ -932,6 +932,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.ajaxcall("/table/table/changePreference.html", {
             id: pref_id,
             value: value,
+            lock: true,
             game: this.game_name
         }, this, function (result) {
             var _this = this;
@@ -3979,7 +3980,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else {
             var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getRollingVp.html");
-            this.ajaxcall(url, [], this, function (result) {
+            this.ajaxcall(url, { lock: true }, this, function (result) {
                 _this.cachedScoringTable = result.data.contents;
                 _this.cachedScoreMoveNbr = move;
                 _this.showGameScoringDialog();
