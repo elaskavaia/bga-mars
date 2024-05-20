@@ -441,14 +441,14 @@ class DbMachine extends APP_GameClass {
 
     function interrupt($from = 0, $count = 1) {
         $set = $this->getUpdateQuery();
-        $this->DBQuery("$set rank = rank + $count WHERE rank >= $from");
+        $this->DbQuery("$set rank = rank + $count WHERE rank >= $from");
     }
 
     function normalize() {
         $top = $this->getTopRank();
         if ($top > 1) {
             $set = $this->getUpdateQuery();
-            $this->DBQuery("$set rank = rank - $top + 1 WHERE rank >= $top");
+            $this->DbQuery("$set rank = rank - $top + 1 WHERE rank >= $top");
         }
     }
 
@@ -545,12 +545,12 @@ class DbMachine extends APP_GameClass {
     function renice($list, $rank) {
         $set = $this->getUpdateQuery();
         $ids = $this->getIdsWhereExpr($list);
-        $this->DBQuery("$set rank = $rank WHERE $ids");
+        $this->DbQuery("$set rank = $rank WHERE $ids");
     }
 
     function clear() {
         $set = $this->getUpdateQuery();
-        $this->DBQuery("$set rank = -1 WHERE 1");
+        $this->DbQuery("$set rank = -1 WHERE 1");
     }
 
     public function validateOptional($list) {
