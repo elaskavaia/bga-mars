@@ -1072,6 +1072,7 @@ class GameBasics extends GameGui {
       {
         id: pref_id,
         value: value,
+        lock: true,
         game: this.game_name
       },
       this,
