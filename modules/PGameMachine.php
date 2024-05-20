@@ -36,7 +36,7 @@ abstract class PGameMachine extends PGameTokens {
      */
 
     function debug_initTables() {
-        $this->DBQuery("DELETE FROM machine");
+        $this->DbQuery("DELETE FROM machine");
         parent::debug_initTables();
     }
 
