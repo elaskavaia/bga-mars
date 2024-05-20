@@ -15,15 +15,6 @@ $gameinfos = array(
 // Name of the game in English (will serve as the basis for translation) 
 'game_name' => 'Terraforming Mars',
 
-// Game designer (or game designers, separated by commas)
-'designer' => 'Jacob Fryxelius',
-
-// Game artist (or game artists, separated by commas)
-'artist' => 'Isaac Fryxelius',
-
-// Year of FIRST publication of this game. Can be negative.
-'year' => 2016,
-
 // Game publisher
 'publisher' => 'FryxGames',
 
@@ -73,18 +64,7 @@ $gameinfos = array(
 // Is this game cooperative (all players wins together or lose together)
 'is_coop' => 0, 
 
-
-// Complexity of the game, from 0 (extremely simple) to 5 (extremely complex)
-'complexity' => 4,    
-
-// Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
-'luck' => 3,    
-
-// Strategy of the game, from 0 (no strategy can be setup) to 5 (totally based on strategy)
-'strategy' => 4,    
-
-// Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
-'diplomacy' => 1,    
+  
 
 // Colors attributed to players
 'player_colors' => array( "ff0000", "008000", "0000ff", "ffa500", "773300" ),
@@ -110,17 +90,6 @@ $gameinfos = array(
 ),
 'db_undo_support' => true,
 
-'presentation' => array(
-    totranslate("In the 2400s, mankind begins to terraform the planet Mars. Giant corporations, sponsored by the World Government on Earth, initiate huge projects to raise the temperature, the oxygen level, and the ocean coverage until the environment is habitable. In Terraforming Mars, you play one of those corporations and work together in the terraforming process, but compete for getting victory points that are awarded not only for your contribution to the terraforming, but also for advancing human infrastructure throughout the solar system, and doing other commendable things."),
-),
-// Games categories
-//  You can attribute a maximum of FIVE "tags" for your game.
-//  Each tag has a specific ID (ex: 22 for the category "Prototype", 101 for the tag "Science-fiction theme game")
-//  Please see the "Game meta information" entry in the BGA Studio documentation for a full list of available tags:
-//  http://en.doc.boardgamearena.com/Game_meta-information:_gameinfos.inc.php
-//  IMPORTANT: this list should be ORDERED, with the most important tag first.
-//  IMPORTANT: it is mandatory that the FIRST tag is 1, 2, 3 and 4 (= game category)
-'tags' => array( 4, 101, 200, 20 ),
 
 
 //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)
