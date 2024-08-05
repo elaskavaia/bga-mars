@@ -16,7 +16,7 @@ class Operation_draft extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draft_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draft_$color"));
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             $info = ['q' => 0]; // always can draft
             $this->game->playability($color, $tokenId, $info);

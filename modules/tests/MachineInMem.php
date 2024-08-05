@@ -11,7 +11,7 @@ class MachineInMem extends DbMachine {
     function __construct($game = null, $table = "machine", $pool = "main", &$xtable_ref = null) {
         parent::__construct($game, $table, $pool);
         $this->xtable = [];
-        if ($xtable_ref!=null) $this->xtable =& $xtable_ref;
+        if ($xtable_ref != null) $this->xtable = &$xtable_ref;
     }
 
     function _($text) {
@@ -62,9 +62,8 @@ class MachineInMem extends DbMachine {
     function DbGetLastId() {
         return count($this->xtable);
     }
-    function DbQuery($str) {
-        $this->query = $str;
-        echo "dbquery: $str\n";
+    static public function DbQuery($sql, $specific_db = null, $bMulti = false) {
+        echo "dbquery: $sql\n";
         throw new feException("not implemented query");
     }
 
@@ -77,7 +76,7 @@ class MachineInMem extends DbMachine {
         }
     }
 
-    function getCollectionFromDB($query, $single = false) {
+    static public function getCollectionFromDB($sql, $bSingleValue = false, $low_priority_select = false) {
         throw new feException("not implemented query");
     }
 
@@ -87,8 +86,8 @@ class MachineInMem extends DbMachine {
                 $row["id"] = $this->DbGetLastId() + 1;
             }
             $row["rank"] = $rank;
-            if (!$row['pool']) 
-            throw new feException("");
+            if (!$row['pool'])
+                throw new feException("");
             $this->xtable[] = $row;
         }
 

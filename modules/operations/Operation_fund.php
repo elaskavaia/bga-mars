@@ -14,7 +14,7 @@ class Operation_fund extends AbsOperation {
         $free = $this->params();
         if ($free != 'free') {
             $cost = $this->getStateArg('cost');
-            $this->game->push($color, "${cost}nm", $milestone);
+            $this->game->push($color, "{$cost}nm", $milestone);
         }
         return 1;
     }

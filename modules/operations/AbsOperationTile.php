@@ -48,13 +48,13 @@ abstract class AbsOperationTile extends AbsOperation {
         }
         //$this->game->prof_point("tileid","start");
         $type = $this->getTileType();
-        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+        $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
         if (!$tile) {
             // XXX can be removed later
-            $count = count($this->game->tokens->getTokensOfTypeInLocation("tile_${type}_"));
+            $count = count($this->game->tokens->getTokensOfTypeInLocation("tile_{$type}_"));
             $count += 1;
-            $this->game->tokens->createToken("tile_${type}_$count");
-            $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+            $this->game->tokens->createToken("tile_{$type}_$count");
+            $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
         }
         if (!$tile) throw new BgaSystemException("Cannot find tile of type $type");
         $this->tile_id = $tile['key'];
