@@ -12,7 +12,7 @@ class Operation_keep extends AbsOperation {
 
     function argPrimary() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_$color"));
         return $keys;
     }
 

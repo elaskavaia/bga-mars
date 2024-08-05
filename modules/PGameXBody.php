@@ -82,7 +82,7 @@ abstract class PGameXBody extends PGameMachine {
                 if ($this->getGameStateValue('var_begginers_corp') == 1) {
                     $corp = $this->tokens->getTokenOfTypeInLocation("card_corp_1_", null, 0);
                     $this->effect_playCorporation($color, $corp['key'], false);
-                    $this->tokens->pickTokensForLocation($initial_draw, "deck_main", "hand_${color}");
+                    $this->tokens->pickTokensForLocation($initial_draw, "deck_main", "hand_$color");
                 }
 
                 if (!$this->isCorporateEraVariant()) {
@@ -461,7 +461,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$player_id)
             $player_id  = $this->getCurrentPlayerId();
         $color = $this->getPlayerColorById($player_id);
-        $keys = array_keys($this->tokens->getTokensInLocation("hand_${color}"));
+        $keys = array_keys($this->tokens->getTokensInLocation("hand_$color"));
         return $this->filterPlayable($color, $keys);
     }
 
@@ -1351,7 +1351,7 @@ abstract class PGameXBody extends PGameMachine {
         if (isset($rules['a'])) {
             $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cars
         }
-        $this->dbSetTokenLocation($card_id, "tableau_${color}", $state, clienttranslate('${player_name} plays card ${token_name}'), [], $this->getPlayerIdByColor($color));
+        $this->dbSetTokenLocation($card_id, "tableau_$color", $state, clienttranslate('${player_name} plays card ${token_name}'), [], $this->getPlayerIdByColor($color));
         $this->clearEventListenerCache(); // clear cache since card came into play
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
@@ -1485,9 +1485,9 @@ abstract class PGameXBody extends PGameMachine {
 
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_${color}");
-            $this->tokens->pickTokensForLocation($numcards, "deck_main", "draw_${color}");
-            if ($prelude > 0) $this->tokens->pickTokensForLocation($prelude, "deck_prelude", "draw_${color}");
+            $this->tokens->pickTokensForLocation($corps, "deck_corp", "draw_$color");
+            $this->tokens->pickTokensForLocation($numcards, "deck_main", "draw_$color");
+            if ($prelude > 0) $this->tokens->pickTokensForLocation($prelude, "deck_prelude", "draw_$color");
         }
 
         foreach ($players as $player_id => $player) {

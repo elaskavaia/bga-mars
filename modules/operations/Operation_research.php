@@ -19,15 +19,15 @@ class Operation_research extends AbsOperation {
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             // unpass
-            $this->game->dbSetTokenState("tracker_passed_${color}", 0, '');
+            $this->game->dbSetTokenState("tracker_passed_{$color}", 0, '');
             // untap
-            $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card", "tableau_${color}"));
+            $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card", "tableau_{$color}"));
             foreach ($keys as $cardid) {
                 $this->game->effect_untap($cardid);
             }
             if ($this->game->isZombiePlayer($player_id)) {
                 // zombie auto-pass
-                $this->game->dbSetTokenState("tracker_passed_${color}", 1, '');
+                $this->game->dbSetTokenState("tracker_passed_{$color}", 1, '');
             }
         }
         $this->game->effect_queueMultiDraw(4);

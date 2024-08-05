@@ -17,13 +17,13 @@ class Operation_card extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
         $location = $this->params('hand');
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main_","${location}_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main_","{$location}_{$color}"));
         return $this->game->filterPlayable($color, $keys);
     }
 
     function getDelta() {
         $owner = $this->color;
-        $delta = $this->game->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
+        $delta = $this->game->tokens->getTokenState("tracker_pdelta_{$owner}") ?? 0;
         $listeners = $this->game->collectListeners($owner, ['onPre_delta']);
         foreach ($listeners as $lisinfo) {
             $outcome = $lisinfo['outcome'];

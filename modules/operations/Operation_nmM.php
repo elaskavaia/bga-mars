@@ -137,7 +137,7 @@ class Operation_nmM extends AbsOperation {
             if ($type_try > $type_count) return false;
             $er = $info['payment']['rate'][$type];
             $total += $type_try * $er;
-            $proposal .= "${type_try}${type}";
+            $proposal .= "{$type_try}{$type}";
         }
         // already there
         if (array_get($info, $proposal)) return false;

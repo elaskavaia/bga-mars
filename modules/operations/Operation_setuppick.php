@@ -69,7 +69,7 @@ class Operation_setuppick extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_", "draw_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_", "draw_{$color}"));
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             $info = ['q' => 0];
             $info['pre'] = $this->game->precondition($color, $tokenId);

@@ -11,7 +11,7 @@ class Operation_passauto extends AbsOperation {
         if ($isMulti)  return true; // cannot do this
         
         $color = $this->color;
-        $state = $this->game->tokens->getTokenState("tracker_passed_${color}");
+        $state = $this->game->tokens->getTokenState("tracker_passed_$color");
         if ($state != 0) return true; // already passed
         return false; 
     }
@@ -35,7 +35,7 @@ class Operation_passauto extends AbsOperation {
             throw new feException("Pass operation is impossible in this state");
         }
         
-        $this->game->dbSetTokenState("tracker_passed_${color}", 2, '');
+        $this->game->dbSetTokenState("tracker_passed_$color", 2, '');
         $this->game->notifyPlayer($this->getPlayerId(),'message_warning',clienttranslate('Auto passing on next turn'),[]);
         return 1;
     }

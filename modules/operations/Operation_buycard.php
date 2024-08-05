@@ -19,7 +19,7 @@ class Operation_buycard extends AbsOperation {
             $this->game->effect_incCount($color, "m", -$tcost); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
         } else {
             foreach ($card_ids as $card_id) {
-                $this->game->multiplayerpush($color, "${cost}nm", "$card_id:a");
+                $this->game->multiplayerpush($color, "{$cost}nm", "$card_id:a");
             }
         }
         foreach ($card_ids as $card_id) {
@@ -45,7 +45,7 @@ class Operation_buycard extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_$color"));
         $hasmoney = !$this->game->isVoidSingle("3nm", $color);
         $q = MA_ERR_COST;
         if ($hasmoney) $q = MA_OK;

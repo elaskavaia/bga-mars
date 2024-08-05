@@ -13,7 +13,7 @@ class Operation_cardpre extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
         $location = $this->params('hand');
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_prelude_","${location}_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_prelude_","{$location}_{$color}"));
         return $this->game->filterPlayable($color, $keys);
     }
 

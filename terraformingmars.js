@@ -118,7 +118,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         var gname = this.game_name;
         var url = "/".concat(gname, "/").concat(gname, "/").concat(action, ".html");
-        this.ajaxcall(url, args /** can be no {lock: true} */, this, function (result) { }, handler);
+        this.ajaxcall(url, args, this, function (result) { }, handler);
     };
     GameBasics.prototype.ajaxcallwrapper = function (action, args, handler) {
         if (this.checkAction(action)) {

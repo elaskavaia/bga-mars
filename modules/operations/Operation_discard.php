@@ -41,7 +41,7 @@ class Operation_discard extends AbsOperation {
 
     function argPrimary() {
         $color = $this->color;
-        $keys = array_keys($this->game->tokens->getTokensInLocation("hand_${color}"));
+        $keys = array_keys($this->game->tokens->getTokensInLocation("hand_$color"));
         return $keys;
     }
 

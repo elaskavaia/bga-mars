@@ -782,6 +782,8 @@ function startsWith($haystack, $needle) {
 }
 
 function endsWith($haystack, $needle) {
+    if ($haystack===null) 
+        return false;
     $length = strlen($needle);
     return $length === 0 || substr($haystack, -$length) === $needle;
 }

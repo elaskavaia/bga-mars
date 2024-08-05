@@ -12,7 +12,7 @@ class Operation_convp extends AbsOperation {
 
     function effect(string $color, int $inc): int {
         $cost = $this->getCost();
-        $this->game->push($color, "${cost}np:forest");
+        $this->game->push($color, "{$cost}np:forest");
         return 1;
     }
 
@@ -24,7 +24,7 @@ class Operation_convp extends AbsOperation {
     function isVoid(): bool {
         $color = $this->color;
         $cost = $this->getCost();
-        return $this->game->isVoidSingle("${cost}np", $color) || $this->game->isVoidSingle("forest", $color);
+        return $this->game->isVoidSingle("{$cost}np", $color) || $this->game->isVoidSingle("forest", $color);
     }
     function getPrimaryArgType() {
         return 'token';

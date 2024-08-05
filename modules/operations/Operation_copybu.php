@@ -6,7 +6,7 @@ declare(strict_types=1);
 class Operation_copybu extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
-        $map = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_${color}");
+        $map = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
         $keys = array_keys($map);
         return $this->game->createArgInfo($color, $keys, function ($color, $card_id) {
             $tags = $this->game->getRulesFor($card_id, 'tags', '');

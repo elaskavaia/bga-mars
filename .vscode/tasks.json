@@ -6,7 +6,7 @@
         {
             "label": "unit test php",
             "type": "shell",
-            "command": "phpunit --bootstrap ./modules/_autoload.php --colors=always modules/tests",
+            "command": "phpunit --display-deprecations --display-warnings --bootstrap ./modules/_autoload.php --colors=always modules/tests",
             "options": {
                 "cwd": "${workspaceFolder}",
                 "env": {

@@ -15,7 +15,7 @@ class Operation_prelude extends AbsOperation {
         if ($this->game->isZombiePlayer($player_id))  return 1;
 
         $this->game->setGameStateValue('gamestage', MA_STAGE_PRELUDE);
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_${color}");
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_{$color}");
         foreach ($rest as $card_id => $card) {
                 $this->game->push($color, 'cardpre');
                 //$this->game->effect_playCard($color, $card_id);

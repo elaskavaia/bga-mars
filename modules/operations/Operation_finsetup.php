@@ -27,12 +27,12 @@ class Operation_finsetup extends AbsOperation {
             ], $this->getPlayerId());
 
         // discard second corp
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_${color}");
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_{$color}");
         foreach ($rest as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
         }
         // discard remainning prelude
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "draw_${color}");
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "draw_{$color}");
         foreach ($rest as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
         }
@@ -47,7 +47,7 @@ class Operation_finsetup extends AbsOperation {
         }
 
         // play selected corp properly
-        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "hand_${color}"); // new new
+        $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "hand_{$color}"); // new new
         foreach ($rest as $card_id => $card) {
             $this->game->effect_playCorporation($color, $card_id, false);
             $corpcost = -$this->game->getRulesFor($card_id, 'cost');
