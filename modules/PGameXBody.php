@@ -973,6 +973,7 @@ abstract class PGameXBody extends PGameMachine {
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $args = ['tag_name' => $tag_name];
         if ($showWarning)   $args += ['_notifType' => 'message_warning'];
+        $this->giveExtraTime($this->getPlayerIdByColor($color), 2); // compensate for reveal time
         if (strstr($tags, $tag_name)) {
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} reveals ${token_name}: it has a ${tag_name} tag'), $card_id, $color, $args);
             $this->notifyAnimate(1000); // delay to show the card

@@ -12,10 +12,12 @@ class Operation_draw extends AbsOperation {
             $took = 0;
             while ($took < $inc) {
                 $card_id = $this->game->effect_drawAndRevealTag($color, $tag_name, false);
+
                 if ($card_id === null) return $inc; // no more cards
                 if ($card_id !== false) {
-                    $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
-                    $took ++;
+                    // not private since we revealed it
+                    $this->game->effect_moveCard($color, $card_id, "hand_$color", 0, "", ["_private" => false]);
+                    $took++;
                 }
             }
         } else {

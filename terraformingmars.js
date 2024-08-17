@@ -5427,6 +5427,12 @@ var GameXBody = /** @class */ (function (_super) {
         if (opInfo === null || opInfo === void 0 ? void 0 : opInfo.ooturn) {
             action = opInfo.type; // ugly hack
         }
+        if (!handler)
+            handler = function (err) {
+                if (err)
+                    return;
+                dojo.empty('generalactions');
+            };
         this.ajaxuseraction(action, {
             ops: [__assign({ op: op }, args)]
         }, handler);
