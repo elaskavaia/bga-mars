@@ -2154,10 +2154,10 @@ awarded.`);
     if (opInfo?.ooturn) {
       action = opInfo.type; // ugly hack
     }
-    if (!handler) handler = (err) => {
-      if (err) return; 			
-      dojo.empty('generalactions');
-    }
+    // if (!handler) handler = (err) => {
+    //   if (err) return; 			
+    //   dojo.empty('generalactions');
+    // }
     this.ajaxuseraction(
       action,
       {
