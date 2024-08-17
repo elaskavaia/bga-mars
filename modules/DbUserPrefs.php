@@ -36,7 +36,7 @@ class DbUserPrefs extends APP_GameClass {
         $values = [];
         //$players = $this->loadPlayersBasicInfos();
         foreach ($game_preferences as $id => $data) {
-            $defaultValue = array_get($data,'default') ?? array_keys($data['values'])[0];
+            $defaultValue = array_get($data, 'default') ?? array_keys($data['values'])[0];
 
             foreach ($players as $pId => $infos) {
                 $values[] = [
@@ -111,7 +111,7 @@ class DbUserPrefs extends APP_GameClass {
         $game_preferences = $this->game->getTablePreferences();
         $data = array_get($game_preferences, $pref_id);
         if ($data) {
-            $defaultValue = array_get($data,'default') ?? array_keys($data['values'])[0] ?? 0;
+            $defaultValue = array_get($data, 'default') ?? array_keys($data['values'])[0] ?? 0;
             return (int) $defaultValue;
         }
         return 0;

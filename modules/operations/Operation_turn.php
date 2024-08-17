@@ -40,14 +40,14 @@ class Operation_turn extends AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $player_id = $this->game->getPlayerIdByColor($owner);
-        $this->game->gamestate->changeActivePlayer($player_id); 
+        $this->game->gamestate->changeActivePlayer($player_id);
         $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);
         $this->game->incStat(1, 'game_actions',  $player_id);
         if ($this->game->getTrackerValue($owner, 'passed') == 2) {
             // auto-pass
             $this->game->queue($owner, 'pass');
-            $pass = $this->game->getOperationInstanceFromType('pass',$owner);
-            $pass->action_resolve(['count'=>1]);
+            $pass = $this->game->getOperationInstanceFromType('pass', $owner);
+            $pass->action_resolve(['count' => 1]);
             return 1;
         }
         $solo = $this->game->isSolo();
@@ -56,8 +56,8 @@ class Operation_turn extends AbsOperation {
         // first action of the game, some corp has some rules
         $a1 = $this->getSpecialAction($owner);
         if ($a1) {
-            $this->game->notifyMessage(clienttranslate('${player_name} has a mandatory action to perform as a first action'),[],$player_id);
-            $this->game->queue($owner, implode("/",[$a1,'pass']));
+            $this->game->notifyMessage(clienttranslate('${player_name} has a mandatory action to perform as a first action'), [], $player_id);
+            $this->game->queue($owner, implode("/", [$a1, 'pass']));
         } else {
             $this->game->queue($owner, implode("/", $this->getStandardActions($solo, $secondaction)));
         }
