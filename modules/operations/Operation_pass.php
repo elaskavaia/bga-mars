@@ -21,7 +21,7 @@ class Operation_pass extends AbsOperation {
         $this->game->notifyMessage(clienttranslate('${player_name} passes'));
         // pass is not an action so decreasig the stat, it was increased before
         $this->game->incStat(-1, 'game_actions',  $this->getPlayerId());
-        $this->game->undoSavepoint();
+        $this->game->undoSavepointWithLabel("pass", 0);
         return 1;
     }
 

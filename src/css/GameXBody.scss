@@ -488,6 +488,25 @@
     }
   }
 }
+
+.undomarker {
+  text-decoration: unset;
+  position: relative;
+  text-underline-position: auto;
+  display: inline-block;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.log.cancel .undomarker {
+  border: unset;
+  background-color: unset;
+  box-shadow: unset;
+  color: revert;
+}
+
 .bgabutton_orange {
   background-color: #b17300;
 }
@@ -681,6 +700,23 @@
 
 
 /* --------------- LOGS -------------------- */
+
+/* Cancelled notification messages */
+.log.cancel {
+  color: #c62828 !important;
+  text-decoration: line-through;
+}
+
+/* Desktop logs */
+.log.cancel .roundedbox {
+  background-color: rgba(240, 186, 117, 0.6) !important;
+}
+
+/* Mobile logs */
+.log.cancel.roundedbox {
+  background-color: #ef9a9a;
+}
+
 
 .log .token_img {
   width: 24px;

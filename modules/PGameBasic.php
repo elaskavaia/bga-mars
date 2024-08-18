@@ -75,7 +75,7 @@ abstract class PGameBasic extends Table {
                 "')";
         }
         $sql .= implode(",", $values);
-        self::DbQuery($sql);
+        $this->DbQuery($sql);
         if ($gameinfos["favorite_colors_support"]) {
             self::reattributeColorsBasedOnPreferences($players, $gameinfos["player_colors"]);
         }
@@ -601,7 +601,7 @@ abstract class PGameBasic extends Table {
             }
             $prof_times[$str] = $time;
         }
-        
+
         if ($dur !== null)
             $dur_s = sprintf("(%.06f)", $dur);
         else
@@ -706,7 +706,46 @@ abstract class PGameBasic extends Table {
         if ($player_id > 0) {
             $sql .= " AND player_id = $player_id";
         }
-        self::DbQuery($sql);
+        $this->DbQuery($sql);
+    }
+
+    function dbGetFieldList(string $table) {
+        $result = [];
+        $fields = $this->getObjectListFromDB("SHOW COLUMNS FROM $table");
+        foreach ($fields as $field) {
+            $result[] = $field['Field'];
+        }
+        return $result;
+    }
+
+    function dbGetFieldListAsString(string $table) {
+        $fields_list = $this->dbGetFieldList($table);
+        $fields = '`' . implode('`,`', $fields_list) . '`';
+        return $fields;
+    }
+
+    function dbInsertValues($table, $values) {
+        $fields_list = $this->dbGetFieldList($table);
+        $seqvalues = [];
+        foreach ($values as $row) {
+            $quoted = [];
+            foreach ($fields_list as $field) {
+                $value = array_get($row, $field, null);
+                if ($value === null) {
+                    $quoted[] = "NULL";
+                } else if (is_numeric($value)) {
+                    $quoted[] = "$value";
+                } else {
+                    $value = $this->escapeStringForDB($value);
+                    $quoted[] = "'$value'";
+                }
+            }
+            $seqvalues[] = "( " . (implode(',', $quoted)) . " )";
+        }
+        $fields = '`' . implode('`,`', $fields_list) . '`';
+        $sql = "INSERT INTO $table ($fields)";
+        $sql .= " VALUES " . implode(",", $seqvalues);
+        $this->DbQuery($sql);
     }
 
     /*
@@ -715,13 +754,12 @@ abstract class PGameBasic extends Table {
      */
     function undoSavepoint() {
         //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
-        $this->undoSaveOnMoveEndDup = true;
+        $this->setUndoSavepoint(true);
         //$this->statelog("undoSavepoint");
 
     }
 
     function setUndoSavepoint(bool $value) {
-        //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
         $this->undoSaveOnMoveEndDup = $value;
     }
 
@@ -731,27 +769,107 @@ abstract class PGameBasic extends Table {
      * - fixed resetting the save flag when its done
      */
     function doUndoSavePoint() {
+        //$this->statelog("*** doUndoSavePoint ***");
         if (!$this->undoSaveOnMoveEndDup)
             return;
+
+        $this->doCustomUndoSavePoint();
+        $this->setUndoSavepoint(false);
+    }
+
+    function doCustomUndoSavePoint() {
         //$this->statelog("*** doUndoSavePoint ***");
         $state = $this->gamestate->state();
         if ($state['type'] == 'multipleactiveplayer') {
-            $name = $state ['name'];
+            //$name = $state ['name'];
             //$this->warn("using undo savepoint in multiactive state $name");
             return;
         }
         parent::doUndoSavePoint();
-        $this->undoSaveOnMoveEndDup = false;
     }
-
     /*
      * @Override
      * fixed bug where it does not save state if there is no notifications
      */
     function sendNotifications() {
+        $next = $this->getNextMoveId();
         parent::sendNotifications();
-        if ($this->undoSaveOnMoveEndDup)
-            self::doUndoSavePoint();
+        if ($this->undoSaveOnMoveEndDup) {
+            $this->doUndoSavePoint();
+            //$this->setGameStateValue('next_move_id', $next); // restore next move so it does not increase
+            parent::sendNotifications(); // if any notif was produced by undo save point send them also
+        }
+    }
+
+    function bgaUndoRestorePoint() {
+        $this->notifyAllPlayers('undoRestorePoint', '', []);
+
+
+        $undo_moves_player = self::getGameStateValue('undo_moves_player');
+        if ($undo_moves_player != self::getActivePlayerId())
+            throw new feException("The stored UNDO corresponds to another player's turn : you cannot restore it");
+
+        $state = $this->gamestate->state();
+        if ($state['type'] == 'multipleactiveplayer')
+            throw new feException("UNDO cannot be used for multiple active players game states");
+
+
+        // Copy all savepoints tables back to their respective table
+        $tables = self::getObjectListFromDB("SHOW TABLES", true);
+        $prefix = "zz_savepoint_";
+
+        $player_id =  $this->getActivePlayerId();
+
+
+        // Particular case: keep current "zombie" states and reflexion time
+        // Note: for the ACTIVE player we must NOT keep reflexion time values (start and remaining) for the case where some extra time has been added between
+        //  the save and the restore. If some extra time has been added, keeping the time can lead to infinite loop (action => extratime => undo)
+        //  where the player can accumulate as much time as he wants
+        $this->DbQuery("UPDATE zz_savepoint_player, player
+                                SET    zz_savepoint_player.player_zombie=player.player_zombie,
+                                       zz_savepoint_player.player_start_reflexion_time=player.player_start_reflexion_time,
+                                       zz_savepoint_player.player_remaining_reflexion_time=player.player_remaining_reflexion_time
+                                WHERE  zz_savepoint_player.player_id=player.player_id
+                                  AND  zz_savepoint_player.player_id!=$player_id");
+
+
+        // Another particular case: keep globals that cannot be undone
+        // GAMESTATE_GAME_RESULT_NEUTRALIZED
+        // GAMESTATE_NEUTRALIZED_PLAYER_ID
+        $this->DbQuery("UPDATE zz_savepoint_global, `global`
+                                SET zz_savepoint_global.global_value=`global`.global_value
+                                WHERE zz_savepoint_global.global_id=`global`.global_id
+                                  AND `global`.global_id IN (301, 302)");
+
+
+        foreach ($tables as $table) {
+            if (startsWith($table, $prefix)) {
+                // Save point => must be restored
+                $original = substr($table, strlen($prefix));
+                $copy = $table;
+
+                if ($original == 'gamelog') {
+                    // Particular case: keep private messages
+                    $this->DbQuery("DELETE FROM $original WHERE gamelog_private!='1'");
+                    $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
+                } else {
+                    $this->DbQuery("DELETE FROM $original");
+                    $this->DbQuery("INSERT INTO $original SELECT * FROM $copy");
+                }
+            } else {
+                // This table is an original 
+            }
+        }
+    }
+
+    function getNextMoveId() {
+        //getGameStateValue does not work when dealing with undo, have to read directly from db
+        $next_move_index = 3;
+        $subsql = "SELECT global_value FROM global WHERE global_id='$next_move_index' ";
+        $dbres = $this->DbQuery($subsql);
+        $row = mysql_fetch_assoc($dbres);
+        $move_id = (int) $row['global_value'];
+        return $move_id;
     }
 
     function statelog(string $log = "trace") {
@@ -823,7 +941,7 @@ function getPartsPrefix($haystack, $i) {
     return implode("_", $parts);
 }
 
-function toJson($data, $options = JSON_PRETTY_PRINT) {
+function toJson($data, $options = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) {
     $json_string = json_encode($data, $options);
     return $json_string;
 }

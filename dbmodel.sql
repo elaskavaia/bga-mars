@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `machine` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `rank` int(10) NOT NULL DEFAULT 1,
    `type` varchar(80) NOT NULL,
-   `owner` varchar(8),
+   `owner` varchar(8) NOT NULL DEFAULT '',
    `count` int(10) NOT NULL DEFAULT 1,
    `mcount` int(10) NOT NULL DEFAULT 1,
    `flags` int(10) NOT NULL DEFAULT 0,
@@ -46,3 +46,13 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
   PRIMARY KEY (`player_id`, `pref_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE IF NOT EXISTS `multiundo` (
+  `move_id` int(10) NOT NULL,
+  `player_id` int(10) NOT NULL,
+  `data` JSON NOT NULL,
+  `meta` JSON NOT NULL,
+  PRIMARY KEY (`move_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;

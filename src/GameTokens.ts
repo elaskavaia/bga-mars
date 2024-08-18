@@ -457,7 +457,7 @@ class GameTokens extends GameBasics {
 
   removeTooltip(nodeId: string): void {
     // if (this.tooltips[nodeId])
-
+    if (!nodeId) return;
     this.inherited(arguments);
     delete this.tooltips[nodeId];
   }
@@ -561,7 +561,7 @@ class GameTokens extends GameBasics {
     return tokenInfo;
   }
 
-  getTokenPresentaton(type: string, tokenKey: string): string {
+  getTokenPresentaton(type: string, tokenKey: string, args: any = {}): string {
     return this.getTokenName(tokenKey); // just a name for now
   }
 
@@ -578,7 +578,7 @@ class GameTokens extends GameBasics {
         if (args.you) args.you = this.divYou(); // will replace ${you} with colored version
         args.You = this.divYou(); // will replace ${You} with colored version
 
-        var keys = ["token_name", "token_divs", "token_names", "token_div", "token_div_count", "place_name"];
+        var keys = ["token_name", "token_divs", "token_names", "token_div", "token_div_count", "place_name", "undo_button"];
         for (var i in keys) {
           const key = keys[i];
           // console.log("checking " + key + " for " + log);
@@ -591,7 +591,7 @@ class GameTokens extends GameBasics {
             for (let l = 0; l < list.length; l++) {
               const value = list[l];
               if (l > 0) res += ", ";
-              res += this.getTokenPresentaton(key, value);
+              res += this.getTokenPresentaton(key, value, args);
             }
             res = res.trim();
             if (res) args[key] = res;
@@ -600,7 +600,7 @@ class GameTokens extends GameBasics {
           if (typeof arg_value == "string" && this.isMarkedForTranslation(key, args)) {
             continue;
           }
-          var res = this.getTokenPresentaton(key, arg_value);
+          var res = this.getTokenPresentaton(key, arg_value, args);
           if (res) args[key] = res;
         }
       }

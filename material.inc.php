@@ -4179,7 +4179,7 @@ $this->token_types = [
   'ack' => 1,
   'type' => 'keep',
   'name' => clienttranslate('Keep Card'),
-  'prompt' => clienttranslate('${you} must select a card to add keep'),
+  'prompt' => clienttranslate('${you} must select a card to keep'),
 ],
  'op_buycard' => [  //
   'ack' => 1,

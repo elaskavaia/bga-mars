@@ -22,18 +22,20 @@ class GameXBody extends GameTokens {
   private currentOperation: any = {}; // bag of data to support operation engine
   private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
   private prevLogId = 0;
+  private lastMoveId = 0;
 
   private stacks: CardStack[];
   constructor() {
     super();
     this.CON = {};
-    this.stacks = [];
   }
 
   setup(gamedatas: any) {
     try {
       this.isDoingSetup = true;
+      this.lastMoveId = 0;
       this.CON = gamedatas.CON; // PHP contants for game
+      this.stacks = [];
       const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
       const root = document.children[0]; // weird
       dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
@@ -149,8 +151,6 @@ class GameXBody extends GameTokens {
         const cs = this.localSettings.getLocalSettingById("cardsize");
         this.localSettings.doAction(cs, "plus");
       });
-
- 
 
       if (!this.isSpectator) {
         this.applySortOrder();
@@ -390,7 +390,7 @@ class GameXBody extends GameTokens {
     let html = "";
     for (let stack of this.stacks) {
       if (stack.player_color == this.player_color) {
-        const num = getPart(stack.bin_type,1);
+        const num = getPart(stack.bin_type, 1);
         const setId = `defaultstack_${num}`;
         this.localSettings.writeProp(setId, `${stack.current_view}`);
         const layoutName = stack.getViewLabel(stack.current_view);
@@ -403,8 +403,8 @@ class GameXBody extends GameTokens {
   showGameScoringDialog() {
     if (this.cachedScoringTable) {
       let html = this.createScoringTableHTML(this.cachedScoringTable);
-      const scoringOption = this.getTr(this.prefs[LIVESCORING_PREF_ID].name);
-      const desc = this.getTr(this.prefs[LIVESCORING_PREF_ID].description);
+      const scoringOption = _(this.prefs[LIVESCORING_PREF_ID].name);
+      const desc = _(this.prefs[LIVESCORING_PREF_ID].description);
       html += `<div><p></p><div title="${desc}">${scoringOption}</div><div id='pref_section_in_dialog' class='pref_section_in_dialog'></div></div>`;
       this.showPopin(html, "score_dialog", _("Score Summary"));
       this.createCustomPreferenceNode(LIVESCORING_PREF_ID, "pp" + LIVESCORING_PREF_ID, $("pref_section_in_dialog"));
@@ -751,8 +751,7 @@ class GameXBody extends GameTokens {
 
     if (ls.readProp("activated", undefined)) return;
     ls.writeProp("activated", "1");
-
-    // not used now
+    // no used
   }
 
   getThemeSelectorDialogHtml(id: string, title: string, desc: string = "") {
@@ -778,7 +777,7 @@ class GameXBody extends GameTokens {
 
   refaceUserPreference(pref_id: number, prefNodeParent: HTMLElement, prefDivId: string) {
     // can override to change apperance
-    console.log("PREF", pref_id);
+    //console.log("PREF", pref_id);
     const prefNode = $(prefDivId) as HTMLElement;
     if (pref_id == LAYOUT_PREF_ID) {
       const pp = prefNode.parentElement;
@@ -812,7 +811,7 @@ class GameXBody extends GameTokens {
       option.setAttribute("value", v);
       option.innerHTML = this.getTr(optionValue.name);
       option.setAttribute("data-pref-id", pref_id + "");
-      if (optionValue.description) this.addTooltip(option.id, this.getTr(optionValue.description), "");
+      if (optionValue.description) option.title = this.getTr(optionValue.description); // naive tooltip
       if (pref.value == v) {
         option.setAttribute("selected", "selected");
       }
@@ -839,6 +838,7 @@ class GameXBody extends GameTokens {
 
   addMoveToLog(log_id: number, move_id) {
     this.inherited(arguments);
+    if (move_id) this.lastMoveId = move_id;
     if (this.prevLogId + 1 < log_id) {
       // we skip over some logs, but we need to look at them also
       for (let i = this.prevLogId + 1; i < log_id; i++) {
@@ -850,7 +850,9 @@ class GameXBody extends GameTokens {
 
     // add move #
     var prevmove = document.querySelector('[data-move-id="' + move_id + '"]');
-    if (!prevmove) {
+    if (prevmove) {
+      // ?
+    } else if (move_id) {
       const tsnode = document.createElement("div");
       tsnode.classList.add("movestamp");
       tsnode.innerHTML = _("Move #") + move_id;
@@ -972,7 +974,7 @@ class GameXBody extends GameTokens {
     // if (this.isLayoutFull()) {
     //   this.ensureSpecificGameImageLoading(cradboard);
     // } else {
-    //   this.ensureSpecificGameImageLoading(digital); 
+    //   this.ensureSpecificGameImageLoading(digital);
     // }
   }
 
@@ -2194,6 +2196,12 @@ awarded.`);
     this.ajaxcallwrapper_unchecked("undo");
   }
 
+  // @Override
+  onNextMove( move_id: any ) {
+    this.inherited(arguments);
+    $('ebd-body').dataset.move_nbr = move_id;
+  }
+
   getButtonNameForOperation(op: any) {
     const baseActionName = op.args.button
       ? this.format_string_recursive(op.args.button, op.args.args)
@@ -2229,24 +2237,29 @@ awarded.`);
     return icon;
   }
 
-  getTokenPresentaton(type: string, tokenKey: string | { log: string; args: any }): string {
-    const isstr = typeof tokenKey == "string";
-    if (isstr && tokenKey.startsWith("tracker")) return this.getDivForTracker(tokenKey);
-    if (type == "token_div_count" && !isstr) {
-      const id = tokenKey.args["token_name"];
-      const mod = tokenKey.args["mod"];
-      if (id.startsWith("tracker_m_")) {
-        // just m
-        return this.getDivForTracker(id, mod);
-      }
-      return undefined; // process by parent
-    }
-    if (isstr) {
+  getTokenPresentaton(type: string, tokenKey: any, args: any = {}): string {
+    const isString = typeof tokenKey == "string";
+    if (isString) {
+      if (tokenKey.startsWith("tracker")) return this.getDivForTracker(tokenKey);
       if (tokenKey.startsWith("card_main_")) {
         return '<div class="card_hl_tt"  data-clicktt="' + tokenKey + '">' + this.getTokenName(tokenKey) + "</div>";
       }
 
       return this.getTokenName(tokenKey); // just a name for now
+    } else {
+      if (type == "undo_button") {
+        if (args.player_id != this.player_id) return " ";
+        return this.createUndoActionDiv(tokenKey as number).outerHTML;
+      }
+      if (type == "token_div_count") {
+        const id = tokenKey.args["token_name"];
+        const mod = tokenKey.args["mod"];
+        if (id.startsWith("tracker_m_")) {
+          // just m
+          return this.getDivForTracker(id, mod);
+        }
+        return undefined; // process by parent
+      }
     }
     return undefined; // process by parent
   }
@@ -3139,7 +3152,7 @@ awarded.`);
     if (node.draggable) return;
     //disable on mobile for now
     if ($("ebd-body").classList.contains("mobile_version")) return;
-    console.log("enable drag on ", node.id);
+    //console.log("enable drag on ", node.id);
     node.querySelectorAll("*").forEach((sub: HTMLElement) => {
       sub.draggable = false;
     });
@@ -3149,7 +3162,7 @@ awarded.`);
   }
   disableDragOnCard(node: HTMLElement) {
     if (!node.draggable) return;
-    console.log("disable drag on ", node.id);
+    //console.log("disable drag on ", node.id);
     node.draggable = false;
     node.removeEventListener("dragstart", onDragStart);
     node.removeEventListener("dragend", onDragEnd);
@@ -3222,6 +3235,57 @@ awarded.`);
 
     dojo.subscribe("scoringTable", this, "notif_scoringTable");
     //this.notifqueue.setSynchronous("scoringTable", 50);
+
+    dojo.subscribe("undoMove", this, "notif_undoMove");
+    dojo.subscribe("undoRestore", this, "notif_undoRestore");
+  }
+
+  notif_undoMove(notif) {
+    console.log("undoMove", notif);
+    this.setUndoMove(notif.args, notif.move_id);
+  }
+
+  notif_undoRestore(notif) {
+    console.log("undoRestore", notif);
+    this.cancelLogs(notif.args.cancelledIds);
+  }
+
+  setUndoMove(undoMeta: any, currentMove: number) {
+    if (!undoMeta) return;
+    let undoMove = undoMeta.move_id;
+    let player_id = undoMeta.player_id;
+
+    this.gamedatas.undo_move = undoMove;
+    this.gamedatas.undo_player_id = player_id;
+    this.gamedatas.undo_moves[undoMove] = undoMeta;
+
+    document.querySelectorAll(".undomarker").forEach((node: HTMLElement) => {
+      if (undoMeta.barrier && node.dataset.move != undoMove) node.classList.add("disabled");
+      else node.classList.remove("disabled");
+      //if (parseInt(node.dataset.move) >= currentMove) node.classList.add("disabled");
+      if (node.dataset.move == undoMove) {
+        node.parentElement.parentElement.classList.remove("log_replayable");
+        this.removeTooltip(node.parentElement.parentElement.id);
+      }
+    });
+
+    if (undoMeta.barrier) {
+      this.gamedatas.undo_moves = {}; // wipe
+      this.gamedatas.undo_moves[undoMove] = undoMeta;
+    }
+
+    this.cancelLogs(undoMeta.cancelledIds);
+  }
+
+  createUndoActionDiv(move_id: number) {
+    var div = dojo.create("div", {
+      innerHTML: "Undo",
+      class: "undomarker bgabutton bgabutton_red",
+      title: _("Click to undo your move up to this point"),
+      onclick: `gameui.sendActionUndo(${move_id})`
+    });
+    div.dataset.move = move_id;
+    return div;
   }
 
   //get settings
@@ -3343,6 +3407,19 @@ awarded.`);
     } else {
       if ($("$terraforming_complete")) dojo.destroy($("$terraforming_complete"));
     }
+  }
+
+  onLoadingLogsComplete(): void {
+    super.onLoadingLogsComplete();
+    const currentMove = parseInt(this.gamedatas.notifications.move_nbr);
+
+    this.cancelLogs(this.gamedatas.cancelledIds);
+
+    document.querySelectorAll(".undomarker").forEach((node: HTMLElement) => {
+      //if (parseInt(node.dataset.move) >= currentMove) node.classList.add("disabled");
+      node.parentElement.parentElement.classList.remove("log_replayable");
+      this.removeTooltip(node.parentElement.parentElement.id);
+    });
   }
 }
 

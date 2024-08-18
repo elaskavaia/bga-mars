@@ -40,6 +40,8 @@ declare class GameNotifQueue {
    * NOTE: this cannot be used for syncronious unbound notifications
    */
   setIgnoreNotificationCheck(notif_type: string, predicate: (notif: object) => boolean): void;
+
+  next_log_id: number;
 }
 declare interface Notif {
   type: string; // type of the notification (as passed by php function)
@@ -84,6 +86,7 @@ declare class GameGui {
   table_id: number;
   metasiteurl: string;
   interface_status: string;
+  next_log_id: number;
 
 
   isCurrentPlayerActive(): boolean;

@@ -71,9 +71,12 @@ class Operation_turn extends AbsOperation {
         } else {
             $this->game->queue($owner, "turn2");
         }
-
-
-        if (!$secondaction && !$this->game->isSolo()) $this->game->undoSavepoint();
+        if ($this->game->isSolo())
+            ; //$this->game->undoSavepointWithLabel(clienttranslate("action"), 0);
+        else if ($secondaction)
+            ; //$this->game->undoSavepointWithLabel(clienttranslate("second action"), 0);
+        else
+            $this->game->undoSavepointWithLabel(clienttranslate("first action"), 1 /** barrier */); 
         return 1;
     }
 }

@@ -23,6 +23,10 @@ class GameBasics extends GameGui {
   defaultAnimationDuration: number = 500;
   _helpMode: boolean = false; // help mode where tooltip shown instead of click action
   _displayedTooltip: any = null; // used in help mode
+  _notif_uid_to_log_id: any = {};
+  _notif_uid_to_mobile_log_id: any = {};
+  _last_notif: any = null;
+
   zoom: number = 1.0;
 
   constructor() {
@@ -30,6 +34,9 @@ class GameBasics extends GameGui {
     console.log("game constructor");
     this.laststate = null;
     this.pendingUpdate = false;
+    this._notif_uid_to_log_id = {};
+    this._notif_uid_to_mobile_log_id = {};
+    this._last_notif = null;
   }
 
   setup(gamedatas: any) {
@@ -182,22 +189,29 @@ class GameBasics extends GameGui {
   cancelLocalStateEffects() {
     console.log(this.last_server_state);
     this.disconnectAllTemp();
-    this.restoreServerData();
-    this.updateCountersSafe(this.gamedatas.counters);
+    //this.restoreServerData();
+    //this.updateCountersSafe(this.gamedatas.counters);
 
-    this.restoreServerGameState();
+    if (this.is_client_only) this.restoreServerGameState();
 
-    if (this.gamedatas.gamestate.private_state != null && this.isCurrentPlayerActive()) {
-      let gamestate = this.gamedatas.gamestate.private_state;
-      this.updatePageTitle(gamestate);
-      this.onEnteringState(gamestate.name, gamestate);
+    if (this.isCurrentPlayerActive()) {
+      if (this.gamedatas.gamestate.private_state != null) {
+        let gamestate = this.gamedatas.gamestate.private_state;
+        this.updatePageTitle(gamestate);
+        this.onEnteringState(gamestate.name, gamestate);
+        this.onUpdateActionButtons(gamestate.name, gamestate.args);
+      } else {
+        this.updatePageTitle(this.gamedatas.gamestate);
+      }
     }
   }
 
-  // updatePageTitle(state = null) {
-  //   debugger;
-  //   return this.inherited(arguments);
-  // }
+  updatePageTitle(state = null) {
+    //debugger;
+    console.trace("updatePageTitle",state);
+    if (state?.private_state) this.inherited(state.private_state)
+    return this.inherited(arguments);
+  }
 
   // ANIMATIONS
 
@@ -1493,6 +1507,48 @@ class GameBasics extends GameGui {
     } else {
       args.duration = 0;
     }
+  }
+
+  /*
+   * [Undocumented] Called by BGA framework on any notification message
+   * Handle cancelling log messages for restart turn
+   */
+  onPlaceLogOnChannel(msg) {
+    var currentLogId = this.notifqueue.next_log_id;
+    var currentMobileLogId = this.next_log_id;
+    var res = this.inherited(arguments);
+    this._notif_uid_to_log_id[msg.uid] = currentLogId;
+    this._notif_uid_to_mobile_log_id[msg.uid] = currentMobileLogId;
+    this._last_notif = {
+      logId: currentLogId,
+      mobileLogId: currentMobileLogId,
+      msg
+    };
+    return res;
+  }
+
+  /*
+   * cancelLogs:
+   *   strikes all log messages related to the given array of notif ids
+   */
+  checkLogCancel(notifId) {
+    if (this.gamedatas.canceledNotifIds != null && this.gamedatas.canceledNotifIds.includes(notifId)) {
+      this.cancelLogs([notifId]);
+    }
+  }
+
+  cancelLogs(notifIds: any[] | undefined ) {
+    if (!notifIds) return;
+    notifIds.forEach((uid) => {
+      if (this._notif_uid_to_log_id.hasOwnProperty(uid)) {
+        let logId = this._notif_uid_to_log_id[uid];
+        if ($("log_" + logId)) dojo.addClass("log_" + logId, "cancel");
+      }
+      if (this._notif_uid_to_mobile_log_id.hasOwnProperty(uid)) {
+        let mobileLogId = this._notif_uid_to_mobile_log_id[uid];
+        if ($("dockedlog_" + mobileLogId)) dojo.addClass("dockedlog_" + mobileLogId, "cancel");
+      }
+    });
   }
 
   /*

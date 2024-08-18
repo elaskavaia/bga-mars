@@ -83,11 +83,6 @@ abstract class PGameMachine extends PGameTokens {
     //////////// Player actions
     ////////////
 
-    function action_undo() {
-        // unchecked
-        $this->undoRestorePoint();
-    }
-
     function action_confirm() {
         $this->gamestate->nextState("next");
     }
@@ -192,8 +187,9 @@ abstract class PGameMachine extends PGameTokens {
         foreach ($operations_resolve as $args) {
             $operation_id = $args["op"];
             $info = $this->findOp($operation_id, $tops);
-            $this->systemAssertTrue("Illegal operation. Try again?", $info);
-            //$this->debugLog("- resolve op " . $info['type'], $args);
+            //$this->error("error resolvig op $operation_id ".toJson($tops)." ".toJson($args));
+            $this->systemAssertTrue("Illegal operation. Refresh and try again?", $info);
+      
 
 
             $color = $info["owner"];
@@ -246,6 +242,7 @@ abstract class PGameMachine extends PGameTokens {
         $xop = $this->machine->toStringFlags($flags);
 
         $result["op"] = $xop;
+        $result["operations"] = [];
         foreach ($operations as $i => $op) {
             $id = $i; // array_get($op,'id', $i);
             $result["operations"][$id] = $this->arg_operationMassage($id, $op);

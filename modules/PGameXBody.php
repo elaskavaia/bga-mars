@@ -15,10 +15,12 @@ define("MA_STAGE_LASTFOREST", 5);
 define("MA_STAGE_ENDED", 9);
 
 abstract class PGameXBody extends PGameMachine {
-    protected $eventListners = null; // cache
-    protected $map = null;
+    protected $eventListners = null; // events cache
+    protected $map = null; // mars map cache
     protected $token_types_adjusted2 = false;
     public $dbUserPrefs;
+    public $dbMultiUndo;
+    protected $undoSavepointMeta = [];
 
 
     // cache
@@ -230,6 +232,7 @@ abstract class PGameXBody extends PGameMachine {
         } else
             $result['server_prefs'] = [];
         $result['scoringTable'] = $this->scoreAllTable();
+        $result += $this->argUndo();
         $this->prof_point("getAllDatas", "end");
         return $result;
     }
@@ -252,8 +255,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_q() {
-        $this->debug_op("draw");
-        return;
+        //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
         //$this->machine->interrupt();
         //$this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
@@ -969,7 +971,7 @@ abstract class PGameXBody extends PGameMachine {
         $card_id = $card['key'];
 
         $this->effect_moveCard($color, $card_id, "reveal", MA_CARD_STATE_SELECTED);
-        $this->undoSavepoint();
+        $this->undoSavepointWithLabel("draw");
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $args = ['tag_name' => $tag_name];
         if ($showWarning)   $args += ['_notifType' => 'message_warning'];
@@ -1267,7 +1269,7 @@ abstract class PGameXBody extends PGameMachine {
             $stage = $this->getGameStateValue('gamestage');
             if ($stage != MA_STAGE_GAME || $this->isZombiePlayer($active_player)) {
                 $this->setNextActivePlayerCustom($player_id);
-                $this->undoSavepoint();
+                $this->undoSavepointWithLabel("switchplayer");
                 return;
             }
         }
@@ -1280,7 +1282,7 @@ abstract class PGameXBody extends PGameMachine {
     ////////////
 
 
-    function action_undo() {
+    function action_undo(int $move_id) {
         // unchecked action
 
         $state = $this->gamestate->state();
@@ -1731,7 +1733,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->notifyMessage(clienttranslate('${player_name} reshuffles project card deck'), [], $player_id);
             $this->notifyCounterChanged($this->tokens->autoreshuffle_custom[$deck], ["nod" => true]);
         }
-        $this->undoSavepoint();
+        $this->undoSavepointWithLabel("draw");
         return $tokens;
     }
 
@@ -1884,7 +1886,9 @@ abstract class PGameXBody extends PGameMachine {
 
                 // just to notify reset
                 $this->notifyWithName(
-                    "score", '', ["player_score" => 0, "inc" => 0, "mod" => 0, "noa"=>1],
+                    "score",
+                    '',
+                    ["player_score" => 0, "inc" => 0, "mod" => 0, "noa" => 1],
                     $player_id
                 );
 
@@ -2372,6 +2376,67 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         return $table;
+    }
+
+    function argUndo() {
+        return [];
+        // $move = $this->getNextMoveId();
+        // $undo_move = $this->dbMultiUndo->getLatestSavedMoveId($move);
+        // $undo_moves_player = self::getGameStateValue('undo_moves_player');
+        // return [
+        //     'undo_moves' => $this->dbMultiUndo->getAvailableUndoMoves(),
+        //     'undo_move' => $undo_move, 'next_move' => $move,
+        //     'undo_player_id' => $undo_moves_player, 'cancelledIds' => $this->dbMultiUndo->getCanceledNotifIds()
+        // ];
+    }
+
+    function undoSavepointWithLabel($label = '', $barrier = 1) {
+        parent::undoSavepoint();
+        $this->undoSavepointMeta["label"] = $label;
+        if ($barrier) $this->undoSavepointMeta['barrier'] = 1;
+    }
+
+    // function undoSavepoint() {
+    //     $this->systemAssertTrue("ERR:Game:02");
+    // }
+
+    // function doCustomUndoSavePoint() {
+    //     //$this->statelog("*** doCustomUndoSavePoint X ***");
+    //     $state = $this->gamestate->state();
+    //     if ($state['type'] == 'multipleactiveplayer') {
+    //         //$name = $state ['name'];
+    //         //$this->warn("using undo savepoint in multiactive state $name");
+    //         //$this->dbMultiUndo->barrier();
+    //         $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta + ['barrier' => 1]);
+    //         return;
+    //     }
+    //     $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta);
+    // }
+
+
+
+    // function undoRestorePoint() {
+    //     // cannot use this function, we have custom undo system
+    //     $this->systemAssertTrue("ERR:Game:01");
+    // }
+
+    function customUndoRestorePoint(int $move_id) {
+        // special case - we need to memorize value of auto-pass for other players, as it should not be restored by other player Undo
+
+        $players = $this->loadPlayersBasicInfos();
+        $pass_state = [];
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $state = $this->tokens->getTokenState("tracker_passed_${color}");
+            $pass_state[$player_id] = $state;
+        }
+
+        $this->dbMultiUndo->undoRestorePoint($move_id);
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->tokens->setTokenState("tracker_passed_${color}", $pass_state[$player_id]);
+        }
     }
 
     function zombieTurn($state, $active_player) {

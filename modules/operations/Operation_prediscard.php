@@ -25,7 +25,7 @@ class Operation_prediscard extends AbsOperation {
             $type = getPart($card_id, 1);
             $this->game->effect_moveCard($color, $card_id, "discard_$type", 0, '', ['_private' => true]);
         }
-        $this->game->undoSavepoint();
+        $this->game->undoSavepointWithLabel("discard");
         return 1;
     }
     function getPrimaryArgType() {
