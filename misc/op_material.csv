@@ -46,7 +46,7 @@ predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
 confirm|Confirm|${you} must confirm or undo
 confturn|Confirm|${you} must confirm end of turn or undo (this undoes both actions if able)
 confnocards|Confirm no Cards|${you} must confirm you want to start without any project cards in hand (or Undo)
-
+confnoprelude|Confirm Prelude|${you} must confirm that you may not be able to play all your Prelude cards (or Undo)
 
 #set undo=
 #set class=Operation_nR_Any

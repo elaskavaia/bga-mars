@@ -40,15 +40,21 @@ class Operation_setuppick extends AbsOperation {
 
         foreach ($card_ids as $card_id) {
             if (startsWith($card_id, "card_prelude")) {
-                $buy_cost = $this->game->getRulesFor($card_id,'bc',0);
+                $buy_cost = $this->game->getRulesFor($card_id, 'bc', 0);
                 $corpmoney -= $buy_cost; // some cards need money to play (or give money) - count this to not get yourself into the corner
                 $this->game->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, clienttranslate('You got ${token_name}'), [
                     "_private" => true
                 ]);
-                if ($corpmoney < 0) {
-                    $this->game->userAssertTrue(totranslate("You cannot afford that many cards with this choice of corporation"));
-                }
             }
+        }
+        if ($corpmoney < 0) {
+            $this->game->multiplayerpush($color, 'confnoprelude');
+            $this->game->notifyPlayer(
+                $this->getPlayerId(),
+                'message_warning',
+                totranslate("You won't be able to play all your Prelude cards"),
+                []
+            );
         }
 
 
@@ -117,12 +123,12 @@ class Operation_setuppick extends AbsOperation {
         $op = array_shift($operations);
         $this->game->systemAssertTrue("unexpected state", $op);
         $optype = $op['type'];
-        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup' || $optype == 'confnocards');
+        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup' ||  startsWith($optype,'conf'));
 
         if ($onlyCheck) return;
 
         foreach ($selected as $card_id => $card) {
-            $this->game->effect_moveCard($color,$card_id, "draw_$color", 0);
+            $this->game->effect_moveCard($color, $card_id, "draw_$color", 0);
         }
 
         $this->game->queueremove($color, 'confnocards');

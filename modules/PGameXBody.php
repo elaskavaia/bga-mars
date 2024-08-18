@@ -1532,7 +1532,7 @@ abstract class PGameXBody extends PGameMachine {
     function effect_undoBuyCards($owner) {
         $color = $owner;
         $player_id = $this->getPlayerIdByColor($color);
-        $this->systemAssertTrue("unexpected non multistate", $this->isInMultiplayerMasterState());
+        $this->systemAssertTrue("unexpected non multiplayerstate", $this->isInMultiplayerMasterState());
 
         $this->notifyMessage(clienttranslate('${player_name} takes back their move'), [], $player_id);
         $operations = $this->getTopOperationsMulti($owner);
@@ -1551,6 +1551,7 @@ abstract class PGameXBody extends PGameMachine {
                 return;
             case 'finsetup':
             case 'confnocards':
+            case 'confnoprelude':
                 $op = $this->getOperationInstanceFromType('setuppick', $color);
                 $op->undo();
                 $this->machineMultiplayerDistpatchPrivate($player_id);
