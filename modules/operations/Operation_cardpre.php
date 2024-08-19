@@ -29,6 +29,10 @@ class Operation_cardpre extends AbsOperation {
         return 'token';
     }
 
+    function requireConfirmation() {
+        return true;
+    }
+
     function noValidTargets(): bool {
         $arg = $this->arg();
         return count($arg['target']) == 0;

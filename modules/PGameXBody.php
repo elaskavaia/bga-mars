@@ -589,7 +589,7 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
-    function evaluatePrecondition($cond, $owner, $tokenid) {
+    function evaluatePrecondition($cond, $owner, $tokenid, $gdelta = 0) {
         if ($cond) {
             $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wilds' => []]);
             if (!$valid) {
@@ -600,6 +600,7 @@ abstract class PGameXBody extends PGameMachine {
                     $outcome = $lisinfo['outcome'];
                     $delta += $outcome;
                 }
+                $delta += $gdelta;
                 if ($delta) {
                     $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wilds' => []])
                         || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wilds' => []]);
@@ -610,11 +611,11 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
-    function precondition($owner, $tokenid) {
+    function precondition($owner, $tokenid, $gdelta = 0) {
         // check precondition
         $cond = $this->getRulesFor($tokenid, "pre");
         if ($cond) {
-            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid);
+            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid, $gdelta);
             if (!$valid) return MA_ERR_PREREQ; // fail prereq check
         }
         return MA_OK;
@@ -647,7 +648,7 @@ abstract class PGameXBody extends PGameMachine {
 
 
         // check precondition
-        $info['pre'] = $this->precondition($owner, $tokenid);
+        $info['pre'] = $this->precondition($owner, $tokenid, array_get($info,'delta',0));
 
         // check immediate effect affordability
         $info['m'] = $this->postcondition($owner, $tokenid);
