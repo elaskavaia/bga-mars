@@ -792,13 +792,17 @@ abstract class PGameBasic extends Table {
      * fixed bug where it does not save state if there is no notifications
      */
     function sendNotifications() {
-        $next = $this->getNextMoveId();
+        //$next = $this->getNextMoveId();
         parent::sendNotifications();
         if ($this->undoSaveOnMoveEndDup) {
             $this->doUndoSavePoint();
             //$this->setGameStateValue('next_move_id', $next); // restore next move so it does not increase
-            parent::sendNotifications(); // if any notif was produced by undo save point send them also
+            //parent::sendNotifications(); // if any notif was produced by undo save point send them also
         }
+    }
+
+    function undoRestorePoint() {
+        $this->bgaUndoRestorePoint();
     }
 
     function bgaUndoRestorePoint() {
@@ -847,14 +851,20 @@ abstract class PGameBasic extends Table {
                 // Save point => must be restored
                 $original = substr($table, strlen($prefix));
                 $copy = $table;
-
+                $fields = self::getFieldsListOfTable($original);
+                $fields_copy = self::getFieldsListOfTable($original);
                 if ($original == 'gamelog') {
                     // Particular case: keep private messages
                     $this->DbQuery("DELETE FROM $original WHERE gamelog_private!='1'");
-                    $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
+                    try {
+                        $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
+                    } catch (Exception $ex) {
+                        $this->DbQuery("INSERT INTO $original ($fields_copy) SELECT $fields_copy FROM $copy WHERE gamelog_private!='1'");
+                    }
                 } else {
                     $this->DbQuery("DELETE FROM $original");
-                    $this->DbQuery("INSERT INTO $original SELECT * FROM $copy");
+
+                    $this->DbQuery("INSERT INTO $original ($fields_copy) SELECT $fields_copy FROM $copy");
                 }
             } else {
                 // This table is an original 
@@ -900,7 +910,7 @@ function startsWith($haystack, $needle) {
 }
 
 function endsWith($haystack, $needle) {
-    if ($haystack===null) 
+    if ($haystack === null)
         return false;
     $length = strlen($needle);
     return $length === 0 || substr($haystack, -$length) === $needle;
