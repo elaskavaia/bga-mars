@@ -785,7 +785,7 @@ abstract class PGameBasic extends Table {
             //$this->warn("using undo savepoint in multiactive state $name");
             return;
         }
-        parent::doUndoSavePoint();
+        $this->bgaUndoSavePoint();
     }
     /*
      * @Override
@@ -801,9 +801,9 @@ abstract class PGameBasic extends Table {
         }
     }
 
-    function undoRestorePoint() {
-        $this->bgaUndoRestorePoint();
-    }
+    // function undoRestorePoint() {
+    //     $this->bgaUndoRestorePoint();
+    // }
 
     function bgaUndoRestorePoint() {
         $this->notifyAllPlayers('undoRestorePoint', '', []);
@@ -852,22 +852,78 @@ abstract class PGameBasic extends Table {
                 $original = substr($table, strlen($prefix));
                 $copy = $table;
                 $fields = self::getFieldsListOfTable($original);
-                $fields_copy = self::getFieldsListOfTable($original);
                 if ($original == 'gamelog') {
                     // Particular case: keep private messages
                     $this->DbQuery("DELETE FROM $original WHERE gamelog_private!='1'");
                     try {
                         $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
                     } catch (Exception $ex) {
+                        $fields_copy = str_replace(',`cancel`', '', $fields);
                         $this->DbQuery("INSERT INTO $original ($fields_copy) SELECT $fields_copy FROM $copy WHERE gamelog_private!='1'");
                     }
                 } else {
                     $this->DbQuery("DELETE FROM $original");
-
-                    $this->DbQuery("INSERT INTO $original ($fields_copy) SELECT $fields_copy FROM $copy");
+                    $this->DbQuery("INSERT INTO $original ($fields) SELECT $fields FROM $copy");
                 }
             } else {
                 // This table is an original 
+            }
+        }
+
+                // At the end of the undo, we must erase the old savepoint by the new one.
+        // This may be paradoxal, but this way we ensure that the savepoint gets all the recent updates that was not concerned by the undo,
+        // including the latest notifications "undoRestorePoint".
+        // Also, it allows us to have a reliable undoIsCurrentlyOnSavepoint
+        self::undoSavepoint();
+    }
+
+    function bgaUndoSavePoint() {
+      
+        $state = $this->gamestate->state();
+        if ($state['type'] == 'multipleactiveplayer') {
+            throw new feException('UNDO cannot be used for multiple active players game states');
+        }
+
+
+        // Copy all tables to their respective savepoints
+
+        $tables = self::getObjectListFromDB('SHOW TABLES', true);
+        $prefix = 'zz_savepoint_';
+        $other_prefix = 'zz_replay';
+        self::setGameStateValue('undo_moves_player', self::getActivePlayerId());
+
+        // Check that undo tables exists
+        $bUndoConfigured = false;
+        foreach ($tables as $table) {
+            if (substr($table, 0, strlen($prefix)) == $prefix) {
+                $bUndoConfigured = true;
+            }
+        }
+
+        if (!$bUndoConfigured) {
+            // Undo has not been configured
+            // (may be because we added undo AFTER the game has been released)
+            // => ignore the doUndoSave saving
+            return;
+        }
+
+        foreach ($tables as $table) {
+            if (substr($table, 0, strlen($prefix)) == $prefix) {
+                // Save point => do not copy
+            } elseif (substr($table, 0, strlen($other_prefix)) == $other_prefix) {
+            } elseif ($table == 'replaysavepoint' ||  $table == 'bga_user_preferences') {
+            } else {
+                // This table must be saved into its copy
+                $copy = $prefix . $table;
+                self::DbQuery("DELETE FROM $copy");
+                $fields = self::getFieldsListOfTable($table);
+                $fields = str_replace(',`cancel`', '', $fields);
+                try {
+                    self::DbQuery("INSERT INTO $copy ($fields) SELECT $fields FROM $table");
+                } catch (Exception $ex) {
+                    $fields = self::getFieldsListOfTable($copy);
+                    self::DbQuery("INSERT INTO $copy ($fields) SELECT $fields FROM $table");
+                }
             }
         }
     }

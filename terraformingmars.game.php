@@ -95,22 +95,30 @@ class terraformingmars extends PGameXBody {
      *
      */
     function upgradeTableDb($from_version) {
-        // $from_version is the current version of this game database, in numerical form.
-        // For example, if the game was running with a release of your game named "140430-1345",
-        // $from_version is equal to 1404301345
-        // Example:
-        //        if( $from_version <= 1404301345 )
-        //        {
-        //            $sql = "ALTER TABLE xxxxxxx ....";
-        //            self::DbQuery( $sql );
-        //        }
-        //        if( $from_version <= 1405061421 )
-        //        {
-        //            $sql = "CREATE TABLE xxxxxxx ....";
-        //            self::DbQuery( $sql );
-        //        }
-        //        // Please add your future database scheme changes here
-        //
-        //
+
+        if ($from_version <= 2408211710) { // where your CURRENT version in production has number YYMMDD-HHMM
+
+            // // You DB schema update request.
+            // // Note: all tables names should be prefixed by "DBPREFIX_" to be compatible with the applyDbUpgradeToAllDB method you should use below
+            // try {
+            //     $sql = "ALTER TABLE `DBPREFIX_gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
+
+            //     // The method below is applying your DB schema update request to all tables, including the BGA framework utility tables like "zz_replayXXXX" or "zz_savepointXXXX".
+            //     // You should really use this request, in conjunction with "DBPREFIX_" in your $sql, so ALL tables are updated. All utility tables MUST have the same schema than the main table, otherwise the game may be blocked.
+            //     self::applyDbUpgradeToAllDB($sql);
+            //     return;
+            // } catch (Exception $e) {
+            // }
+            try {
+                $sql = "ALTER TABLE `zz_savepoint_gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
+                $this->DbQuery($sql);
+            } catch (Exception $e) {
+            }
+            try {
+                $sql = "ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
+                $this->DbQuery($sql);
+            } catch (Exception $e) {
+            }
+        }
     }
 }
