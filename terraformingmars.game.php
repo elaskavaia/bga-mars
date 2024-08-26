@@ -110,13 +110,21 @@ class terraformingmars extends PGameXBody {
             // } catch (Exception $e) {
             // }
             try {
-                $sql = "ALTER TABLE `zz_savepoint_gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
-                $this->DbQuery($sql);
+                $result = $this->getCollectionFromDB("SHOW COLUMNS FROM `zz_savepoint_gamelog` LIKE 'cancel'");
+                $exists = (count($result) > 0) ? TRUE : FALSE;
+                if (!$exists) {
+                    $sql = "ALTER TABLE `zz_savepoint_gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
+                    $this->DbQuery($sql);
+                }
             } catch (Exception $e) {
             }
             try {
-                $sql = "ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
-                $this->DbQuery($sql);
+                $result = $this->getCollectionFromDB("SHOW COLUMNS FROM `gamelog` LIKE 'cancel'");
+                $exists = (count($result) > 0) ? TRUE : FALSE;
+                if (!$exists) {
+                    $sql =  "ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
+                    $this->DbQuery($sql);
+                }
             } catch (Exception $e) {
             }
         }
