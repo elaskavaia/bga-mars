@@ -147,8 +147,19 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
         $m->tokens->setTokenState('tracker_o', 8);
         $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
+        $info = [];
+        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators'), $info, 'card_prelude_P10'));
         $m->tokens->setTokenState('tracker_t', -8);
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
+    }
+
+
+    public function testCanAfford() {
+        $m = $this->game();
+        $info = [];
+        $m->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals(false, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P10'));
+        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P11'));
     }
 
     public function testEvalute2() {

@@ -91,6 +91,7 @@ $machinestates = [
         "description" => "",
         "type" => "game",
         "action" => "st_gameDispatch",
+        "args" => "arg_gameDispatch",
         "updateGameProgression" => true,
         "transitions" => [
             "next" => STATE_PLAYER_TURN_CHOICE,

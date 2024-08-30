@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 require_once "Operation_card.php";
 
-class Operation_cardEE extends Operation_card {
-    function getDelta() {
-        return 20;
-    }
+class Operation_cardES extends Operation_card {
+
 
     function argPrimaryDetails() {
         $color = $this->color;

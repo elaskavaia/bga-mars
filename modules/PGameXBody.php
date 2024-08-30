@@ -1,5 +1,7 @@
 <?php
 
+use PhpParser\Node\Stmt\Continue_;
+
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
@@ -278,26 +280,33 @@ abstract class PGameXBody extends PGameMachine {
         // ]);
     }
 
-    function debug_drawCard($num, $loc = null, $state = 0, $color = null) {
-        if (is_numeric($num)) {
-            $token = "card_main_$num";
-            if (!array_get($this->token_types, $token)) {
-                return "card not found $token";
-            }
-        } else if (is_string($num)) {
-            $token = $num;
-            if (!array_get($this->token_types, $token)) {
-                $token = $this->mtFind('name', $num);
-                if (!$token)
-                    return "card not found $num";
-            }
-        }
+    function debug_drawCard($fuzzy_card, $loc = null, $state = 0, $color = null) {
+        $token = $this->findCard($fuzzy_card);
         if ($color === null) $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
         if ($loc == 'draw') $loc = "draw_$color";
         if ($loc == 'tableau') $loc = "tableau_$color";
         $this->dbSetTokenLocation($token, $loc, $state);
-        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+    }
+    function findCard($num) {
+        if (is_numeric($num)) {
+            $token = "card_main_$num";
+            if (!array_get($this->token_types, $token)) {
+                throw new feException("card not found $token");
+            }
+        } else if (is_string($num)) {
+            $token = $num;
+            if (!array_get($this->token_types, $token)) {
+                $token = $this->mtFind('name', $num);
+                if (!$token) throw new feException("card not found $num");
+            }
+        }
+        return $token;
+    }
+    function debug_discardCard($fuzzy_card, $color = null) {
+        if ($color === null) $color = $this->getCurrentPlayerColor();
+        $card_id = $this->findCard($fuzzy_card);
+        $this->effect_moveCard($color, $card_id, "discard_main", 0);
     }
 
     function debug_op($type) {
@@ -378,7 +387,11 @@ abstract class PGameXBody extends PGameMachine {
             return []; // space areas
         $dx = ($y % 2) - 1;
         $trylist = [
-            [$x + $dx, $y - 1], [$x + $dx + 1, $y - 1], [$x - 1, $y], [$x + 1, $y], [$x + $dx, $y + 1],
+            [$x + $dx, $y - 1],
+            [$x + $dx + 1, $y - 1],
+            [$x - 1, $y],
+            [$x + 1, $y],
+            [$x + $dx, $y + 1],
             [$x + $dx + 1, $y + 1],
         ];
         foreach ($trylist as $newax) {
@@ -574,12 +587,12 @@ abstract class PGameXBody extends PGameMachine {
     /**
      * Checks if can afford payment, if 4th arg is passed sets field $info['payop'] to payment operation  
      */
-    function canAfford($color, $tokenid, $cost = null, &$info = null) {
+    function canAfford($color, $tokenid, $cost = null, &$info = null, string $extracontext = null) {
         if ($info == null) $info = [];
         if ($cost !== null) {
             $payment_op = "${cost}nm";
         } else
-            $payment_op = $this->getPayment($color, $tokenid);
+            $payment_op = $this->getPayment($color, $tokenid, $extracontext);
 
         $info['payop'] = $payment_op;
         if ($this->isVoidSingle($payment_op, $color, 1, $tokenid)) {
@@ -589,18 +602,18 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
-    function evaluatePrecondition($cond, $owner, $tokenid, $gdelta = 0) {
+    function evaluatePrecondition($cond, $owner, $tokenid, string $extracontext = null) {
         if ($cond) {
             $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wilds' => []]);
             if (!$valid) {
                 $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
                 // there is one more stupid event card that has temp delta effect
-                $listeners = $this->collectListeners($owner, ['onPre_delta']);
+                $listeners = $this->collectListeners($owner, ['onPre_delta'], null, $extracontext);
+
                 foreach ($listeners as $lisinfo) {
                     $outcome = $lisinfo['outcome'];
                     $delta += $outcome;
                 }
-                $delta += $gdelta;
                 if ($delta) {
                     $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => $delta, 'wilds' => []])
                         || $this->evaluateExpression($cond, $owner, $tokenid, ['mods' => -$delta, 'wilds' => []]);
@@ -611,11 +624,11 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
-    function precondition($owner, $tokenid, $gdelta = 0) {
+    function precondition($owner, $tokenid, string $extracontext = null) {
         // check precondition
         $cond = $this->getRulesFor($tokenid, "pre");
         if ($cond) {
-            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid, $gdelta);
+            $valid = $this->evaluatePrecondition($cond, $owner, $tokenid, $extracontext);
             if (!$valid) return MA_ERR_PREREQ; // fail prereq check
         }
         return MA_OK;
@@ -639,7 +652,7 @@ abstract class PGameXBody extends PGameMachine {
         return MA_OK;
     }
 
-    function playability($owner, $tokenid, &$info = null) {
+    function playability($owner, $tokenid, &$info = null, $extracontext = null) {
         if ($info == null) $info = [];
 
         if (!$owner) {
@@ -648,13 +661,13 @@ abstract class PGameXBody extends PGameMachine {
 
 
         // check precondition
-        $info['pre'] = $this->precondition($owner, $tokenid, array_get($info,'delta',0));
+        $info['pre'] = $this->precondition($owner, $tokenid, $extracontext);
 
         // check immediate effect affordability
         $info['m'] = $this->postcondition($owner, $tokenid);
 
         // check cost
-        $info['c'] = $this->canAfford($owner, $tokenid, null, $info) ? MA_OK : MA_ERR_COST;
+        $info['c'] = $this->canAfford($owner, $tokenid, null, $info, $extracontext) ? MA_OK : MA_ERR_COST;
 
 
         if ($info['pre']) {
@@ -818,8 +831,13 @@ abstract class PGameXBody extends PGameMachine {
 
     function getOperationInstanceFromType(string $type, string $color, ?int $count = 1, string $data = ''): AbsOperation {
         $opinfo = [
-            'type' => $type, 'owner' => $color, 'mcount' => $count, 'count' => $count, 'data' => $data,
-            'flags' => 0, 'id' => 0
+            'type' => $type,
+            'owner' => $color,
+            'mcount' => $count,
+            'count' => $count,
+            'data' => $data,
+            'flags' => 0,
+            'id' => 0
         ];
         return self::getOperationInstance($opinfo);
     }
@@ -925,18 +943,24 @@ abstract class PGameXBody extends PGameMachine {
             //$this->debugConsole("info",["cards"=>$cards]);
             $this->eventListners = [];
             foreach ($cards as $key => $info) {
-                $e = $this->getRulesFor($key, 'e');
-                if (!$e)
-                    continue;
-                if ($info['state'] == MA_CARD_STATE_FACEDOWN)
-                    continue;
-                $info['e'] = $e;
-                $info['owner'] = substr($info['location'], strlen('tableau_'));
-                $info['key'] = $key;
-                $this->eventListners[$key] = $info;
+                if ($this->updateListenerInfoForCard($key, $info))
+                    $this->eventListners[$key] = $info;
             }
         }
         return $this->eventListners;
+    }
+
+    function updateListenerInfoForCard($key, &$info) {
+        $e = $this->getRulesFor($key, 'e');
+        if (!$e)
+            return false;
+        if (array_get($info, 'state', 1) == MA_CARD_STATE_FACEDOWN)
+            return false;
+        $info['e'] = $e;
+        $loc = array_get($info, 'location');
+        $info['owner'] = $loc ? substr($loc, strlen('tableau_')) : "";
+        $info['key'] = $key;
+        return true;
     }
 
     function clearEventListenerCache() {
@@ -1066,7 +1090,7 @@ abstract class PGameXBody extends PGameMachine {
         return false;
     }
 
-    function collectDiscounts($owner, $card_id) {
+    function collectDiscounts($owner, $card_id, string $extracontext = null) {
         // event will be onPay_card or similar
         // load all active effect listeners
         $discount = 0;
@@ -1080,7 +1104,7 @@ abstract class PGameXBody extends PGameMachine {
         if (startsWith($card_id, 'card_main')) {
             $events = $this->getPlayCardEvents($card_id, 'onPay_');
 
-            $listeners = $this->collectListeners($owner, $events);
+            $listeners = $this->collectListeners($owner, $events, null, $extracontext);
             foreach ($listeners as $lisinfo) {
                 $outcome = $lisinfo['outcome'];
                 // at this point only discounts are MC
@@ -1092,17 +1116,21 @@ abstract class PGameXBody extends PGameMachine {
         return $discount;
     }
 
-    function collectListeners($owner, $events, $card_context = null) {
+    function collectListeners($owner, $events, $card_context = null, string $extracontext = null) {
         // load all active effect listeners
         $cards = $this->getActiveEventListeners();
+
         if (!is_array($events)) {
             $events = [$events];
         }
+        $contextcardinplay = false;
         $res = [];
         foreach ($cards as $info) {
-            $e = $info['e'];
-            $card = $info['key'];
-            $lisowner = $info['owner'];
+            $card = array_get($info, 'key');
+            if ($card === $extracontext) $contextcardinplay = true;
+            $e = array_get($info, 'e');
+            if (!$e) continue;
+            $lisowner = $info['owner'] ? $info['owner'] : $owner;
             foreach ($events as $event) {
                 $ret = $info;
                 // filter for listener for specific effect
@@ -1114,6 +1142,11 @@ abstract class PGameXBody extends PGameMachine {
                     $res[] = $ret;
                 }
             }
+        }
+        if ($extracontext && !$contextcardinplay) {
+            $info = ['key' => $extracontext];
+            $this->updateListenerInfoForCard($extracontext, $info);
+            $cards[] = $info;
         }
         return $res;
     }
@@ -1194,10 +1227,10 @@ abstract class PGameXBody extends PGameMachine {
         return $match;
     }
 
-    function getPayment($color, $card_id): string {
+    function getPayment($color, $card_id, string $extracontext = null): string {
         $costm = $this->getRulesFor($card_id, "cost", 0);
 
-        $discount = $this->collectDiscounts($color, $card_id);
+        $discount = $this->collectDiscounts($color, $card_id, $extracontext);
         $costm = max(0, $costm - $discount);
         if ($costm == 0)
             return "nop"; // no-op
@@ -1655,7 +1688,8 @@ abstract class PGameXBody extends PGameMachine {
         $value = $this->tokens->setTokenState($token_id, $current + $inc);
         $message = clienttranslate('${player_name} increases ${token_name} by ${steps} step/s to a value of ${counter_value}');
         $this->notifyCounterDirect($token_id, $value, $message, [
-            "inc" => $inc, "steps" => $steps,
+            "inc" => $inc,
+            "steps" => $steps,
             "token_name" => $token_id,
         ], $this->getPlayerIdByColor($color));
         if ($value >= $max) {
@@ -1701,7 +1735,9 @@ abstract class PGameXBody extends PGameMachine {
 
         if ($this->isLiveScoringDisabled()) {
             $this->notifyWithName("score", '', [
-                "player_score" => $count, "inc" => $inc, "mod" => abs((int) $inc),
+                "player_score" => $count,
+                "inc" => $inc,
+                "mod" => abs((int) $inc),
                 'target' => $tracker
             ], $player_id);
         } else {
@@ -1725,7 +1761,8 @@ abstract class PGameXBody extends PGameMachine {
         $tokens = $this->tokens->pickTokensForLocation($inc, $deck, $to, 0, false, $was_reshuffled);
         $player_id = $this->getPlayerIdByColor($color);
         $this->dbSetTokensLocation($tokens, $to, null, clienttranslate('${player_name} draws ${token_names}'), [
-            "_private" => true, "place_from" => $deck,
+            "_private" => true,
+            "place_from" => $deck,
         ], $player_id);
         $this->notifyMessage(clienttranslate('${player_name} draws ${token_count} cards'), [
             "token_count" => count($tokens),
@@ -2073,7 +2110,8 @@ abstract class PGameXBody extends PGameMachine {
             if ($tt == MA_TILE_CITY) {
                 $cf = count($this->getAdjecentHexesOfType($hex, MA_TILE_FOREST));
                 if ($commit) $this->dbIncScoreValueAndNotify($player_id, $cf, clienttranslate('${player_name} scores ${inc} point/s for city tile at ${place_name}'), "game_vp_cities", [
-                    'target' => $hex, 'place_name' => $this->getTokenName($hex)
+                    'target' => $hex,
+                    'place_name' => $this->getTokenName($hex)
                 ]);
                 $cities += 1;
                 $this->scoreTableVp($table, $player_id,  $score_category_city, $tile, $cf);
@@ -2115,7 +2153,8 @@ abstract class PGameXBody extends PGameMachine {
                 $this->scoreTableVp($table, $player_id,   $score_category, $card, $value);
                 if ($commit) {
                     $this->dbIncScoreValueAndNotify($player_id, $value, clienttranslate('${player_name} scores ${inc} point/s for card ${token_name}'), "game_vp_cards", [
-                        'target' => $card, 'token_name' => $card
+                        'target' => $card,
+                        'token_name' => $card
                     ]);
                 }
             } catch (Exception $e) {
@@ -2163,6 +2202,12 @@ abstract class PGameXBody extends PGameMachine {
     function arg_multiplayerTurnChoice() {
         $result = [];
         return $result + $this->arg_operations();
+    }
+
+    function arg_gameDispatch(){
+        return [
+            '_no_notify' => true
+          ];
     }
 
     function createArgInfo(string $color, array $keys, callable $filter) {
