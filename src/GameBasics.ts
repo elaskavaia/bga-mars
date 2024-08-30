@@ -208,7 +208,7 @@ class GameBasics extends GameGui {
 
   updatePageTitle(state = null) {
     //debugger;
-    console.trace("updatePageTitle",state);
+    console.log("updatePageTitle",state);
     if (state?.private_state) this.inherited(state.private_state)
     return this.inherited(arguments);
   }
@@ -1188,50 +1188,8 @@ class GameBasics extends GameGui {
     return true;
   }
 
-  checkZoom(zoom: any): number {
-    zoom = parseFloat(zoom);
-    if (!zoom || zoom < 0.1 || zoom > 10) {
-      zoom = 1;
-    }
-    return zoom;
-  }
-
-  setZoom(zoom: number | string) {
-    if (!zoom) zoom = localStorage.getItem("mars.zoom");
-    this.zoom = this.doSetZoom(this.checkZoom(zoom));
-    localStorage.setItem("mars.zoom", "" + this.zoom);
-  }
-
-  incZoom(inc: number) {
-    this.setZoom(this.checkZoom(this.zoom) + inc);
-  }
-
-  doSetZoom(zoom: number) {
-    //console.log("set zoom "+zoom);
-    zoom = this.checkZoom(zoom);
-    var inner = document.getElementById("thething");
-    const prevzoom = inner.getAttribute("data-zoom");
-    if (parseInt(prevzoom) == zoom) return;
-    var div = inner.parentElement;
-    if (zoom == 1) {
-      inner.style.removeProperty("transform");
-      inner.style.removeProperty("width");
-      div.style.removeProperty("height");
-    } else {
-      //inner.style.transform = "scale(" + zoom + ")";
-      inner.offsetHeight; // reflow
-      inner.style.transformOrigin = "0 0";
-      inner.style.scale = "" + zoom;
-      inner.style.width = 100 / zoom + "%";
-      div.style.height = inner.offsetHeight * zoom + "px";
-    }
-    inner.setAttribute("data-zoom", "" + zoom);
-    return zoom;
-  }
-
   onScreenWidthChange() {
     // override
-    //this.zoom = this.doSetZoom(this.zoom);
   }
 
   setupInfoPanel() {

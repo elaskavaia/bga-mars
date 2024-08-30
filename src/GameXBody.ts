@@ -1009,7 +1009,7 @@ class GameXBody extends GameTokens {
       const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-      dojo.style("page-content", "zoom", "");
+      //dojo.style("page-content", "zoom", "");
 
       if (this.zoneWidth != width || this.zoneHeight != height) {
         //   console.log("changed res w,h", width, height);
@@ -1095,6 +1095,7 @@ class GameXBody extends GameTokens {
   }
 
   notif_tokensUpdate(notif: Notif) {
+    console.log("Notif",notif);
     for (const opIdS in notif.args.operations) {
       const opInfo = notif.args.operations[opIdS];
       this.updateHandInformation(opInfo.args.info, opInfo.type);
@@ -2003,6 +2004,9 @@ awarded.`);
       if (discounted || !this.isLayoutFull()) {
         node.dataset.discounted = String(discounted);
         node.dataset.discount_cost = String(discount_cost);
+      } else {
+        delete node.dataset.discounted;
+        delete node.dataset.discount_cost;
       }
 
       node.dataset.in_hand = node.parentElement.classList.contains("handy") ? "1" : "0";
