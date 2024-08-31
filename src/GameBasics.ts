@@ -192,7 +192,7 @@ class GameBasics extends GameGui {
     //this.restoreServerData();
     //this.updateCountersSafe(this.gamedatas.counters);
 
-    if (this.is_client_only) this.restoreServerGameState();
+    if (this.on_client_state) this.restoreServerGameState();
 
     if (this.isCurrentPlayerActive()) {
       if (this.gamedatas.gamestate.private_state != null) {

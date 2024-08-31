@@ -81,7 +81,6 @@ declare class GameGui {
   scoreCtrl: {[player_id: number]: Counter};
   on_client_state: boolean;
   tooltips: string[];
-  is_client_only: boolean;
   prefs: any[];
   table_id: number;
   metasiteurl: string;

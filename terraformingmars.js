@@ -179,7 +179,7 @@ var GameBasics = /** @class */ (function (_super) {
         this.disconnectAllTemp();
         //this.restoreServerData();
         //this.updateCountersSafe(this.gamedatas.counters);
-        if (this.is_client_only)
+        if (this.on_client_state)
             this.restoreServerGameState();
         if (this.isCurrentPlayerActive()) {
             if (this.gamedatas.gamestate.private_state != null) {
