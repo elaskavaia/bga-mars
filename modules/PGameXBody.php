@@ -280,13 +280,13 @@ abstract class PGameXBody extends PGameMachine {
         // ]);
     }
 
-    function debug_drawCard($fuzzy_card, $loc = null, $state = 0, $color = null) {
+    function debug_drawCard($fuzzy_card, $loc = null) {
         $token = $this->findCard($fuzzy_card);
-        if ($color === null) $color = $this->getCurrentPlayerColor();
+        $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
         if ($loc == 'draw') $loc = "draw_$color";
         if ($loc == 'tableau') $loc = "tableau_$color";
-        $this->dbSetTokenLocation($token, $loc, $state);
+        $this->dbSetTokenLocation($token, $loc, 0);
     }
     function findCard($num) {
         if (is_numeric($num)) {
