@@ -1125,6 +1125,11 @@ abstract class PGameXBody extends PGameMachine {
         }
         $contextcardinplay = false;
         $res = [];
+        if ($extracontext && !$contextcardinplay) {
+            $info = ['key' => $extracontext];
+            $this->updateListenerInfoForCard($extracontext, $info);
+            $cards[] = $info;
+        }
         foreach ($cards as $info) {
             $card = array_get($info, 'key');
             if ($card === $extracontext) $contextcardinplay = true;
@@ -1143,11 +1148,7 @@ abstract class PGameXBody extends PGameMachine {
                 }
             }
         }
-        if ($extracontext && !$contextcardinplay) {
-            $info = ['key' => $extracontext];
-            $this->updateListenerInfoForCard($extracontext, $info);
-            $cards[] = $info;
-        }
+   
         return $res;
     }
 
