@@ -78,7 +78,7 @@ class action_terraformingmars extends APP_GameAction {
     // UTILS
     private function invoke($action, $args) {
         $game = $this->game;
-        $game->checkAction($action); // this makes sure action is in the list of declared action by state, so its not a limited list 
+        $game->checkAction($action); // this makes sure action is in the list of declared action by state, so its a whitelist 
         $method = new ReflectionMethod(get_class($game), "action_${action}");
         if (!$method) {
             return;
