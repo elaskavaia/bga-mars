@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
+use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertTrue;
@@ -159,7 +160,15 @@ final class GameTest extends TestCase {
         $info = [];
         $m->setTrackerValue(PCOLOR, 'm', 10);
         $this->assertEquals(false, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P10'));
+        // eccentric sponsor
         $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P11'));
+        
+        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Deimos Down'), null, $info, 'card_prelude_P11'));
+        $this->assertEquals("6nm", $info['payop']);
+
+        $m->effect_playCard(PCOLOR, 'card_prelude_P11' );
+        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Deimos Down'), null, $info, 'card_prelude_P11'));
+        $this->assertEquals("6nm", $info['payop']);
     }
 
     public function testEvalute2() {
@@ -190,28 +199,28 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $color = PCOLOR;
         $card = $m->mtFindByName('Advanced Ecosystems');
-        $q = $m->precondition(PCOLOR,$card);
+        $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
 
         $m->tokens->setTokenState("tracker_tagPlant_${color}", 1);
         $m->tokens->setTokenState("tracker_tagAnimal_${color}", 1);
         $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 1);
-        $q = $m->precondition(PCOLOR,$card);
+        $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_OK, $q);
 
         $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
-        $q = $m->precondition(PCOLOR,$card);
+        $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
 
         $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
-        $q = $m->precondition(PCOLOR,$card);
+        $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_OK, $q);
 
         $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
         $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
         $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
         $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 1);
-        $q = $m->precondition(PCOLOR,$card);
+        $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
         $expr = "(((tagMicrobe>0) + (tagAnimal>0)) + (tagPlant>0)) + tagWild";
         $this->assertEquals(2, $m->evaluateExpression($expr, PCOLOR, null, []));
@@ -221,7 +230,7 @@ final class GameTest extends TestCase {
         $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
         $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
         $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 0);
-        $q = $m->precondition(PCOLOR,$card);
+        $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_OK, $q);
         $this->assertEquals(1, $m->evaluateExpression("($expr) >= 3", PCOLOR, null, []));
     }
@@ -408,8 +417,8 @@ final class GameTest extends TestCase {
     public function testMultiplayer() {
         $m = $this->game();
         $p1 = $m->getPlayerIdByColor(PCOLOR);
-        $m->dbUserPrefs->setPrefValue($p1,MA_PREF_CONFIRM_DRAW,1);
-        $this->assertEquals(1, $m->dbUserPrefs->getPrefValue($p1,MA_PREF_CONFIRM_DRAW));
+        $m->dbUserPrefs->setPrefValue($p1, MA_PREF_CONFIRM_DRAW, 1);
+        $this->assertEquals(1, $m->dbUserPrefs->getPrefValue($p1, MA_PREF_CONFIRM_DRAW));
         $m->machine->push("draw", 1, 1, PCOLOR, MACHINE_OP_SEQ, '', 'multi');
         //$this->assertTrue($m->machine->xtable=== $m->getMultiMachine()->xtable);
 
@@ -421,7 +430,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(2, count($m->machine->getTopOperations()));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-  
+
         $this->assertEquals("multiplayerDispatch", $m->gamestate->state()['name']);
         $m->st_gameDispatchMultiplayer();
         $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getPrivateState($p1));
@@ -628,8 +637,7 @@ final class GameTest extends TestCase {
             echo ("testing $key <$r>\n");
             /** @var AbsOperation */
             $op = $m->getOperationInstanceFromType($r, PCOLOR);
-            $this->assertNotNull($op);
-            $this->assertTrue($op->checkIntegrity());
+            $this->subTestOperationIntegrity($op);
             $name = array_get($info, 'name', '');
 
             if ($r) {
@@ -682,14 +690,13 @@ final class GameTest extends TestCase {
     public function testDraft() {
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("2draft", PCOLOR);
-        $this->assertNotNull($op);
-        $this->assertTrue($op->checkIntegrity());
+        $this->subTestOperationIntegrity($op);
         $args = $op->arg();
         $this->assertFalse($op->requireConfirmation());
         $this->assertTrue($op->noValidTargets());
-        $this->assertFalse($op->isVoid());
+        $this->assertFalse($op->isVoid()); // is not void if no cards its skipped
         $this->assertTrue($op->canResolveAutomatically());
-        $this->assertFalse($op->canSkipChoice());
+        $this->assertTrue($op->canSkipChoice());
         $this->assertEquals('2draft', $op->getMnemonic());
 
         $ttype = $args['ttype'];
@@ -701,22 +708,143 @@ final class GameTest extends TestCase {
     public function testPayop() {
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("npu_Any:pu", PCOLOR);
-        $this->assertNotNull($op);
-        $this->assertTrue($op->checkIntegrity());
+        $this->subTestOperationIntegrity($op);
     }
 
     public function testDiscardDraw() {
 
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("?(discard:draw)", PCOLOR);
-        $this->assertNotNull($op);
-        $this->assertTrue($op->checkIntegrity());
+        $this->subTestOperationIntegrity($op);
         //$args = $op->arg();
         $this->assertFalse($op->requireConfirmation());
         $this->assertTrue($op->isOptional());
-        $this->assertFalse($op->canResolveAutomatically());
-        $this->assertFalse($op->canSkipChoice());
+        $this->assertTrue($op->noValidTargets());
+        $this->assertTrue($op->canResolveAutomatically());
+        $this->assertTrue($op->canSkipChoice());
         $this->assertFalse($op->canFail());
+
+        $count = 1;
+        $this->assertTrue($op->auto(PCOLOR, $count));
+    }
+
+    public function testDiscardOpt() {
+
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("?discard", PCOLOR);
+        $this->subTestOperationIntegrity($op);
+        //$args = $op->arg();
+        $this->assertFalse($op->requireConfirmation());
+        $this->assertTrue($op->isOptional());
+        $this->assertTrue($op->noValidTargets());
+        $this->assertTrue($op->canResolveAutomatically());
+        $this->assertTrue($op->canSkipChoice());
+        $this->assertFalse($op->canFail());
+
+        $count = 1;
+        $this->assertTrue($op->auto(PCOLOR, $count));
+    }
+
+    public function testDiscardNVT() {
+
+        $m = $this->game();
+        $op = $m->getOperationInstanceFromType("discard", PCOLOR);
+        $this->subTestOperationIntegrity($op);
+        //$args = $op->arg();
+        $this->assertTrue($op->requireConfirmation());
+        $this->assertFalse($op->isOptional());
+        $this->assertTrue($op->noValidTargets());
+        $this->assertFalse($op->canResolveAutomatically());
+        $this->assertTrue($op->canSkipChoice());
+        $this->assertTrue($op->canFail());
+
+        $count = 1;
+        $this->assertFalse($op->auto(PCOLOR, $count));
+    }
+
+    public function testComplex() {
+        $m = $this->game();
+        $card = $m->mtFind('name',  'Olympus Conference');
+        //$m->effect_playCard(PCOLOR, $card);
+
+        $optype = "res,m/nres";
+        $op = $m->getOperationInstanceFromType($optype, PCOLOR, 1, "$card:e:$card");
+        $this->subTestOperationIntegrity($op);
+        $this->assertFalse($op->requireConfirmation());
+        $this->assertFalse($op->isOptional());
+        $this->assertFalse($op->noValidTargets());
+        $this->assertFalse($op->canResolveAutomatically());
+        $m->putInEffectPool(PCOLOR, $optype, "$card:e:$card");
+        $top = $this->dispatchOneStep($m);
+        $this->assertEquals(2, count($top)); // expended into 2
+        $top = $this->dispatchOneStep($m);
+        $this->assertEquals(1, count($top)); // reduced to one because nres is void
+        $top = $this->dispatchOneStep($m);
+        $this->assertEquals(2, count($top)); // res, m 
+        $top = $this->dispatchOneStep($m); // m left
+        $this->assertEquals(0,  $m->getTrackerValue(PCOLOR, 'm'));
+        $this->dispatchOneStep($m, false); // done
+
+        $this->assertEquals(1,  $m->getTrackerValue(PCOLOR, 'm'));
+    }
+
+    public function testComplex2() {
+        $m = $this->game();
+        $optype = "1npp,4pm";
+        $op = $m->getOperationInstanceFromType($optype, PCOLOR, 1);
+        $this->subTestOperationIntegrity($op);
+    }
+
+    public function test_res(){
+        $m = $this->game();
+        $optype = "p/res";
+        $card = $m->mtFind('name',  'Arctic Algae');
+        $op = $m->getOperationInstanceFromType($optype, PCOLOR, 1, $card);
+        $this->subTestOperationIntegrity($op);
+        $m->putInEffectPool(PCOLOR, $optype, $card);
+        $top = $this->dispatchOneStep($m);
+        $this->assertEquals(2, count($top)); // p/res
+        $top = $this->dispatchOneStep($m);
+        $this->assertEquals(1, count($top)); // p
+        $this->dispatchOneStep($m, false); // done
+
+        $this->assertEquals(1,  $m->getTrackerValue(PCOLOR, 'p'));
+    }
+
+    function dispatchOneStep($game, $done = false) {
+        $this->assertEquals($done, $game->machineDistpatchOneStep());
+        return $game->machine->getTopOperations();
+    }
+
+    function subTestOperationIntegrity($op) {
+        $this->assertNotNull($op);
+        $this->assertTrue($op->checkIntegrity());
+        $mne = ($op->getMnemonic());
+        $opargs = $op->arg();
+        $this->assertNotNull($opargs);
+        $visargs = $opargs['args'];
+        $this->assertNotNull($visargs);
+        $complex = $op instanceof ComplexOperation;
+        if ($op->isOptional()) {
+            $this->assertFalse($op->isVoid());
+            if ($op->canSkipChoice()) {
+                $this->assertTrue($op->noValidTargets(), "can skip choice but valid targets $mne");
+                $this->assertTrue($op->canResolveAutomatically());
+            }
+        } else {
+            if ($op->canSkipChoice()) {
+                $this->assertTrue($op->isVoid(), "can skip choice but not void $mne");
+                if (!$complex)
+                    $this->assertTrue($op->noValidTargets(), "can skip choice but valid targets $mne");
+            }
+        }
+        if (!$op->noValidTargets()) {
+            if (!$complex)
+                $this->assertFalse($op->isVoid(), "void with valid targets $mne");
+        }
+        if ($op->isVoid()) {
+            $this->assertTrue($op->canFail(), "can fail $mne");
+        }
     }
 
     function subTestOp($m, $key, $info = []) {
@@ -725,8 +853,7 @@ final class GameTest extends TestCase {
 
         /** @var AbsOperation */
         $op = $m->getOperationInstanceFromType($type, PCOLOR);
-        $this->assertNotNull($op);
-        $this->assertTrue($op->checkIntegrity());
+        $this->subTestOperationIntegrity($op);
 
         $args = $op->arg();
         $ttype = $args['ttype'];

@@ -259,13 +259,10 @@ abstract class PGameXBody extends PGameMachine {
     function debug_q() {
         //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
-        //$this->machine->interrupt();
-        //$this->machine->push("draw/nop", 1, 1, $this->getCurrentPlayerColor());
-        $cards = $this->tokens->pickTokensForLocation(170, 'deck_main', 'temp');
-        $cards = $this->tokens->pickTokensForLocation(13, 'discard_main', 'temp');
+        return $this->debug_oparg("nres,draw/res", "card_main_185:e:card_main_185");
 
         //$this->dbSetTokensLocation($cards, 'temp');
-        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        //$this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
         //return $this->debug_oparg("counter(all_city),m", $card);
         //$this->gamestate->nextState("next");
@@ -313,6 +310,16 @@ abstract class PGameXBody extends PGameMachine {
         $color = $this->getCurrentPlayerColor();
         $this->push($color, $type);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+    }
+    function debug_dispatch() {
+        $this->machine->normalize();
+        // $this->debugLog("- done resolve", ["t" => $this->machine->gettableexpr()]);
+        if ($this->isInMultiplayerMasterState()) {
+            $currentPlayer = $this->getCurrentPlayerId();
+            $this->machineMultiplayerDistpatchPrivate($currentPlayer);
+        } else {
+            $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        }
     }
 
     function debug_money($x = 40) {
@@ -1124,6 +1131,10 @@ abstract class PGameXBody extends PGameMachine {
             $events = [$events];
         }
         $contextcardinplay = false;
+        foreach ($cards as $info) {
+            $card = array_get($info, 'key');
+            if ($card === $extracontext) $contextcardinplay = true;
+        }
         $res = [];
         if ($extracontext && !$contextcardinplay) {
             $info = ['key' => $extracontext];
@@ -1148,7 +1159,7 @@ abstract class PGameXBody extends PGameMachine {
                 }
             }
         }
-   
+
         return $res;
     }
 
@@ -2205,10 +2216,10 @@ abstract class PGameXBody extends PGameMachine {
         return $result + $this->arg_operations();
     }
 
-    function arg_gameDispatch(){
+    function arg_gameDispatch() {
         return [
             '_no_notify' => true
-          ];
+        ];
     }
 
     function createArgInfo(string $color, array $keys, callable $filter) {

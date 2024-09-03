@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 class Operation_convp extends AbsOperation {
     function argPrimary() {
         $color = $this->color;
@@ -21,11 +20,12 @@ class Operation_convp extends AbsOperation {
         return 8;
     }
 
-    function isVoid(): bool {
+    function noValidTargets(): bool {
         $color = $this->color;
         $cost = $this->getCost();
         return $this->game->isVoidSingle("{$cost}np", $color) || $this->game->isVoidSingle("forest", $color);
     }
+
     function getPrimaryArgType() {
         return 'token';
     }

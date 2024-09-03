@@ -7,6 +7,10 @@ class Operation_confirm extends AbsOperation {
         return false; // cannot auto-resolve this
     }
 
+    // public function noValidTargets(): bool{
+    //     return false;
+    // }
+
     function canResolveAutomatically() {
         $player_id = $this->getPlayerId();
         if ($this->getMnemonic() == 'confturn') {

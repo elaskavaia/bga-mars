@@ -54,4 +54,9 @@ class Operation_discard extends AbsOperation {
         $arg = $this->arg();
         return count($arg['target']) == 0;
     }
+
+    function canFail(){
+        if ($this->isOptional()) return false;
+        return true;
+    }
 }

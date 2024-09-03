@@ -12,7 +12,7 @@ class Operation_stan extends AbsOperation {
         if ($card_id != 'card_stanproj_1')
             $this->game->notifyEffect($color, "play_stan", $card_id);
         $this->game->putInEffectPool($color, $rules, $card_id);
-     
+
         return 1;
     }
 

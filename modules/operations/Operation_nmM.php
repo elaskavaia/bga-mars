@@ -156,8 +156,10 @@ class Operation_nmM extends AbsOperation {
 
     function canResolveAutomatically() {
         if ($this->getCount() <= 0) return true;
+        if ($this->isVoid()) return false;
         $possible = $this->getStateArg('target');
         if (count($possible) == 1) return false; // this is only Custom option
+
         $info = $this->getStateArg('info');
         if ($info['payment']['rescount']['m'] == 0) return false; // no money, force choice
         $alltypes = $this->getTypes();
@@ -168,10 +170,6 @@ class Operation_nmM extends AbsOperation {
         }
         if (count($possible) == 2 && $uniqueRes == 1) return true; // custom + a singe choice, means other resources are at 0
         return false;
-    }
-
-    function canFail() {
-        return true;
     }
 
     function effect(string $owner, int $inc): int {
@@ -290,7 +288,8 @@ class Operation_nmM extends AbsOperation {
         throw new BgaSystemException("Invalid resource type $type");
     }
 
-    public function isVoid(): bool {
+
+    function noValidTargets(): bool {
         $count = $this->getCount();
         $value = 0;
         foreach ($this->getTypes() as $type) {

@@ -7,6 +7,7 @@ class Operation_res extends AbsOperation {
         $card = $this->getContext();
         $this->game->systemAssertTrue("Context is not defined for operation", $card);
         $par = $this->game->getRulesFor($card, 'holds', '');
+        $this->game->systemAssertTrue("Invalid context for operation res", $par);
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
             $this->game->effect_moveResource($owner, $res, $card, 1, clienttranslate('${player_name} adds ${restype_name} to ${card_name}'), $card);
@@ -19,8 +20,11 @@ class Operation_res extends AbsOperation {
         return '';
     }
 
+    function canFail() {
+        return true;
+    }
 
-    function isVoid(): bool {
+    function noValidTargets(): bool {
         $card = $this->getContext();
         if (!$card) return true;
         $holds = $this->game->getRulesFor($card, 'holds', '');

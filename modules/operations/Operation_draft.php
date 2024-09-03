@@ -50,6 +50,11 @@ class Operation_draft extends AbsOperation {
         return parent::isOptional();
     }
 
+    function canSkipChoice() {
+        if ($this->noValidTargets()) return true;
+        return $this->isVoid();
+    }
+
 
     function noValidTargets(): bool {
         $arg = $this->arg();
@@ -71,7 +76,7 @@ class Operation_draft extends AbsOperation {
         $this->game->systemAssertTrue("unexpected total of draft", $total == 1);
 
         foreach ($selected_draft as $card_id => $card) {
-            $this->game->effect_moveCard($color,$card_id, "draft_$color", MA_CARD_STATE_NORMAL);
+            $this->game->effect_moveCard($color, $card_id, "draft_$color", MA_CARD_STATE_NORMAL);
         }
 
         $this->game->multiplayerpush($color, 'draft'); // add $total if can draft more than one

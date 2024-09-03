@@ -29,12 +29,6 @@ class Operation_buycard extends AbsOperation {
         return $this->getCount(); //remove reset of the counter
     }
 
-    function isVoid(): bool {
-        if ($this->isOptional()) return false;
-        if ($this->noValidTargets()) return true;
-        return $this->game->isVoidSingle("3nm", $this->color);
-    }
-
     function canSkipChoice() {
         return false;
     }

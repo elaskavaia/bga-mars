@@ -17,7 +17,7 @@ class Operation_npR extends AbsOperation {
         return substr($this->mnemonic, 1, 2);
     }
 
-    public function isVoid(): bool {
+    public function noValidTargets(): bool {
         $type = $this->getType();
         $min = $this->game->getRulesFor($this->game->getTrackerId($this->color, $type), 'min', 0);
         $value = $this->game->getTrackerValue($this->color, $type);
@@ -30,7 +30,7 @@ class Operation_npR extends AbsOperation {
         return '';
     }
 
-    function canFail(){
+    function canFail() {
         return true;
     }
 }

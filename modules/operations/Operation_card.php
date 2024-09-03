@@ -17,7 +17,7 @@ class Operation_card extends AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
         $location = $this->params('hand');
-        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main_","{$location}_{$color}"));
+        $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main_", "{$location}_{$color}"));
         return $this->game->filterPlayable($color, $keys);
     }
 
@@ -43,6 +43,10 @@ class Operation_card extends AbsOperation {
 
     function canSkipChoice() {
         return false;
+    }
+
+    function canFail() {
+        return true;
     }
 
     function getPrompt() {

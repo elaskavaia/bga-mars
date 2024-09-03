@@ -83,6 +83,16 @@ class ComplexOperation extends AbsOperation {
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+
+        if ($this->isOptional()) {
+            if ($this->noValidTargets()) {
+                // skip
+                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'),[
+                    "name" => $this->getOpName()
+                ], $this->getPlayerId());
+                return true;
+            }
+        }
         if (!$this->isFullyAutomated()) return false;
         $this->checkVoid();
 
@@ -112,8 +122,11 @@ class ComplexOperation extends AbsOperation {
     }
 
     function canResolveAutomatically() {
-        if ($this->getMinCount() == 0) return false;
-        if ($this->isOptional()) return false;
+        if ($this->getMinCount() == 0 || $this->isOptional()) {
+            if ($this->noValidTargets()) return true; // auto skip
+            return false;
+        }
+     
         if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->operation == '/') return false;
         if ($this->operation == '+') return false;
@@ -145,6 +158,7 @@ class ComplexOperation extends AbsOperation {
         return $subvalue;
     }
 
+
     function isVoid(): bool {
         if ($this->getMinCount() == 0) return false;
         $op = $this->operation;
@@ -163,6 +177,31 @@ class ComplexOperation extends AbsOperation {
                 case '+':
                     if ($subvoid == false && $sub->hasNoSideEffects()) continue 2;
                     return $subvoid; // we only can check first operation because the other may depend on it
+                case '!':
+                    break;
+            }
+        }
+        return $subvoid;
+    }
+
+    function noValidTargets(): bool {
+        $op = $this->operation;
+        $subvoid = false;
+        foreach ($this->delegates as $i => $sub) {
+            $subvoid = $sub->noValidTargets();
+            switch ($op) {
+                case '/':
+                    return false; // cannot evaluate it may depends on order of operations
+                case ':':
+                    // we only need to check first part of operator
+                    if ($subvoid == true) return true;
+                    else return false;
+                case ',':
+                case ';':
+                    if ($subvoid == true) return true;
+                    else return false;
+                case '+':
+                    return false; // cannot evaluate it may depends on order of operations
                 case '!':
                     break;
             }

@@ -63,6 +63,8 @@ class Operation_nR_Any extends AbsOperation {
         return false;
     }
 
+
+
     function isOptional() {
         return true;
     }

@@ -311,29 +311,34 @@ abstract class PGameMachine extends PGameTokens {
     function machineDistpatch() {
         $n = MA_GAME_DISPATCH_MAX; // <-- this is just a precasious for inf loop, it this goes over user get a prompt after
         for ($i = 0; $i <  $n; $i++) {
-            $operations = $this->getTopOperations();
-
-            $isMulti = $this->hasMultiPlayerOperations($operations);
-            //$this->debugLog("-DISPATCH $i: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
-
-            if ($isMulti) {
-                $this->gamestate->nextState("multiplayer");
-                return;
-            }
-
-            if (count($operations) == 0) {
-                $nextState = $this->machineExecuteDefault();
-            } else {
-                $nextState = $this->machineExecuteOperations($operations);
-            }
-
-            if ($nextState !== null) {
-                if ($nextState == ABORT_DISPATCH) return; // client did the transition
-                $this->gamestate->jumpToState($nextState);
-                return;
-            }
+            if ($this->machineDistpatchOneStep()) return;
         }
         $this->gamestate->nextState("confirm");
+    }
+
+    function machineDistpatchOneStep() {
+        $operations = $this->getTopOperations();
+
+        $isMulti = $this->hasMultiPlayerOperations($operations);
+        //$this->debugLog("-DISPATCH $i: machine top: isMulti=$isMulti " . $this->machine->getlistexpr($operations));
+
+        if ($isMulti) {
+            $this->gamestate->nextState("multiplayer");
+            return true;
+        }
+
+        if (count($operations) == 0) {
+            $nextState = $this->machineExecuteDefault();
+        } else {
+            $nextState = $this->machineExecuteOperations($operations);
+        }
+
+        if ($nextState !== null) {
+            if ($nextState == ABORT_DISPATCH) return true; // client did the transition
+            $this->gamestate->jumpToState($nextState);
+            return true;
+        }
+        return false; // continue dispatch
     }
 
 

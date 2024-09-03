@@ -103,6 +103,8 @@ abstract class AbsOperation {
      * When OR choice and action cannot be done it can be skipped, sometime its questionable so operation can opt-out from this
      */
     function canSkipChoice() {
+        if ($this->noValidTargets()) return true;
+        if ($this->isOptional()) return false;
         return $this->isVoid();
     }
 
@@ -163,6 +165,7 @@ Reason: tile placement may draw cards (information)
 
 
     function canFail() {
+        if ($this->getPrimaryArgType()) return true;
         return false;
     }
 
@@ -175,8 +178,8 @@ Reason: tile placement may draw cards (information)
 
 
     function canResolveAutomatically() {
+        if ($this->isOptional() && $this->noValidTargets()) return true;
         if ($this->requireConfirmation()) return false;
-
         if ($this->isOptional()) return false;
         if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->isFullyAutomated()) return true;
@@ -266,6 +269,7 @@ Reason: tile placement may draw cards (information)
         $result["args"] = $this->getVisargs();
         if ($this->isOptional()) {
             $result["skipname"] = $this->getSkipButtonName();
+            $result["nvt"] = $this->noValidTargets();
         }
         if ($this->requireConfirmation()) {
             $result["ack"] = 1; // prompt required
@@ -380,9 +384,19 @@ Reason: tile placement may draw cards (information)
     }
 
 
+
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
         if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        if ($this->isOptional()) {
+            if ($this->noValidTargets()) {
+                // skip
+                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'),[
+                    "name" => $this->getOpName()
+                ], $this->getPlayerId());
+                return true;
+            }
+        }
         $this->checkVoid();
         $count = $this->effect($owner, $count, null);
         return true;

@@ -12,11 +12,11 @@ class Operation_convh extends AbsOperation {
 
     function effect(string $color, int $inc): int {
         $this->game->effect_incCount($color, 'h', -8);
-        $this->game->push($this->color,'t');
+        $this->game->push($this->color, 't');
         return 1;
     }
 
-    function isVoid(): bool {
+    function noValidTargets(): bool {
         $heat = $this->game->getTrackerValue($this->color, 'h');
         if ($heat < 8) return true; // not enough
         return false;
