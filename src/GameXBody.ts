@@ -427,7 +427,7 @@ class GameXBody extends GameTokens {
       this.showGameScoringDialog();
     } else {
       let url = `/${this.game_name}/${this.game_name}/getRollingVp.html`;
-      this.ajaxcall(url, {lock: true}, this, (result) => {
+      this.ajaxcall(url, { lock: true }, this, (result) => {
         this.cachedScoringTable = result.data.contents;
         this.cachedScoreMoveNbr = move;
         this.showGameScoringDialog();
@@ -1095,7 +1095,7 @@ class GameXBody extends GameTokens {
   }
 
   notif_tokensUpdate(notif: Notif) {
-    console.log("Notif",notif);
+    console.log("Notif", notif);
     for (const opIdS in notif.args.operations) {
       const opInfo = notif.args.operations[opIdS];
       this.updateHandInformation(opInfo.args.info, opInfo.type);
@@ -2161,7 +2161,7 @@ awarded.`);
       action = opInfo.type; // ugly hack
     }
     // if (!handler) handler = (err) => {
-    //   if (err) return; 			
+    //   if (err) return;
     //   dojo.empty('generalactions');
     // }
     this.ajaxuseraction(
@@ -2201,9 +2201,9 @@ awarded.`);
   }
 
   // @Override
-  onNextMove( move_id: any ) {
+  onNextMove(move_id: any) {
     this.inherited(arguments);
-    $('ebd-body').dataset.move_nbr = move_id;
+    $("ebd-body").dataset.move_nbr = move_id;
   }
 
   getButtonNameForOperation(op: any) {
@@ -2445,6 +2445,14 @@ awarded.`);
           this.addActionButtonColor(`button_${opId}_0`, _(opArgs.skipname), () => this.sendActionResolveWithCount(opId, 0), "orange");
         } else {
           this.addActionButtonColor("button_skip", _(opArgs.skipname), () => this.sendActionSkip(opId), "orange");
+        }
+        if (opArgs.nvt) {
+          // no valid target, remove Confirm button
+          const buttonId = "button_" + opId;
+          if ($(buttonId)) {
+            $(buttonId).classList.add(this.classButtonDisabled);
+            $(buttonId).title = _("Cannot use this action because no valid targets for operation");
+          }
         }
       }
     }

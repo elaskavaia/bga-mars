@@ -106,17 +106,18 @@ class CardStack {
     // this is already set during notif
     //triggered when a card is added
     //or a resource (may expand card in synth view)
-    const insertListen = (event) => {
-      if (
-        (event.target.parentNode.id && event.target.parentNode.id == this.tableau_id) ||
-        (event.target.id && event.target.id.startsWith("resource_"))
-      ) {
-        if (this.current_view == View.Synthetic) {
-          this.recalSynthColumns();
-        }
-      }
-    };
-    $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+
+    // const callback = (mutationList, observer) => {
+    //   for (const mutation of mutationList) {
+    //     if (mutation.type === "childList") {
+    //       this.recalSynthColumns();
+    //     }
+    //   }
+    // };
+
+    // const observer = new MutationObserver(callback);
+    // // note this currently does not fire on added resources
+    // observer.observe( $(this.tableau_id), { subtree: false, childList: true });
 
     this.adjustFromView();
   }

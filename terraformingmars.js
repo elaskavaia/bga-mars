@@ -1523,15 +1523,16 @@ var CardStack = /** @class */ (function () {
         // this is already set during notif
         //triggered when a card is added
         //or a resource (may expand card in synth view)
-        var insertListen = function (event) {
-            if ((event.target.parentNode.id && event.target.parentNode.id == _this.tableau_id) ||
-                (event.target.id && event.target.id.startsWith("resource_"))) {
-                if (_this.current_view == View.Synthetic) {
-                    _this.recalSynthColumns();
-                }
-            }
-        };
-        $(this.tableau_id).addEventListener("DOMNodeInserted", insertListen);
+        // const callback = (mutationList, observer) => {
+        //   for (const mutation of mutationList) {
+        //     if (mutation.type === "childList") {
+        //       this.recalSynthColumns();
+        //     }
+        //   }
+        // };
+        // const observer = new MutationObserver(callback);
+        // // note this currently does not fire on added resources
+        // observer.observe( $(this.tableau_id), { subtree: false, childList: true });
         this.adjustFromView();
     };
     CardStack.prototype.getIconClass = function (layout) {
@@ -5462,7 +5463,7 @@ var GameXBody = /** @class */ (function (_super) {
             action = opInfo.type; // ugly hack
         }
         // if (!handler) handler = (err) => {
-        //   if (err) return; 			
+        //   if (err) return;
         //   dojo.empty('generalactions');
         // }
         this.ajaxuseraction(action, {
@@ -5499,7 +5500,7 @@ var GameXBody = /** @class */ (function (_super) {
     // @Override
     GameXBody.prototype.onNextMove = function (move_id) {
         this.inherited(arguments);
-        $('ebd-body').dataset.move_nbr = move_id;
+        $("ebd-body").dataset.move_nbr = move_id;
     };
     GameXBody.prototype.getButtonNameForOperation = function (op) {
         var _a, _b;
@@ -5739,6 +5740,14 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 else {
                     this.addActionButtonColor("button_skip", _(opArgs.skipname), function () { return _this.sendActionSkip(opId); }, "orange");
+                }
+                if (opArgs.nvt) {
+                    // no valid target, remove Confirm button
+                    var buttonId = "button_" + opId;
+                    if ($(buttonId)) {
+                        $(buttonId).classList.add(this.classButtonDisabled);
+                        $(buttonId).title = _("Cannot use this action because no valid targets for operation");
+                    }
                 }
             }
         }
