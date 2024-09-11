@@ -142,8 +142,10 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.checkAction(action)) {
             var gname = this.game_name;
             var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
+            dojo.empty("generalactions");
             this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
-            this, function (result) { }, handler);
+            this, function (result) {
+            }, handler);
         }
     };
     GameBasics.prototype.onCancel = function (event) {
@@ -3675,11 +3677,15 @@ var GameXBody = /** @class */ (function (_super) {
             var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
             var root = document.children[0]; // weird
             dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
+            this.interface_autoscale = this.isLayoutFull();
+            document.getElementById("page-content").classList.toggle("bga-game-zoom", this.interface_autoscale);
             this.defaultTooltipDelay = 800;
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;
             this.clearReverseIdMap();
             this.customAnimation = new CustomAnimation(this);
+            if (!this.gamedatas.undo_moves)
+                this.gamedatas.undo_moves = {};
             //layout
             this.previousLayout = "desktop";
             this.zoneWidth = 0;
@@ -4270,6 +4276,13 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.isLiveScoringDisabled = function () {
         var _a;
         if (((_a = this.gamedatas.table_options["105"]) === null || _a === void 0 ? void 0 : _a.value) === 2) {
+            return true;
+        }
+        return false;
+    };
+    GameXBody.prototype.isXUndoEnabled = function () {
+        var _a;
+        if (((_a = this.gamedatas.table_options["106"]) === null || _a === void 0 ? void 0 : _a.value) === 1) {
             return true;
         }
         return false;
@@ -5493,9 +5506,72 @@ var GameXBody = /** @class */ (function (_super) {
             oparr: op
         });
     };
-    GameXBody.prototype.sendActionUndo = function () {
+    GameXBody.prototype.addUndoMoveButton = function (prompt, moveinfo) {
+        var _this = this;
+        var _a;
+        var move_id = moveinfo === null || moveinfo === void 0 ? void 0 : moveinfo.move_id;
+        var currentMove = parseInt((_a = $("ebd-body")) === null || _a === void 0 ? void 0 : _a.dataset.move_nbr);
+        var message = this.format_string_recursive(prompt, {
+            label: _(moveinfo.label),
+            movenum: move_id
+        });
+        var tip = this.format_string_recursive(_("Undo up to move ${movenum} (${label})"), {
+            label: _(moveinfo.label),
+            movenum: move_id
+        });
+        var button = this.addActionButtonColor("button_undo_" + move_id, message, function () { return _this.sendActionUndo(move_id); });
+        button.title = tip;
+    };
+    GameXBody.prototype.sendActionUndo = function (undoMove) {
+        var _this = this;
+        var _a;
+        if (undoMove === void 0) { undoMove = 0; }
+        var num = Object.keys(this.gamedatas.undo_moves).length;
+        var currentMove = parseInt((_a = $("ebd-body")) === null || _a === void 0 ? void 0 : _a.dataset.move_nbr);
+        if (this.isXUndoEnabled()) {
+            if (undoMove === 0 && num > 0 && this.gamedatas.undo_move) {
+                this.setMainTitle(_("Select undo move"));
+                dojo.empty("generalactions");
+                var first = undefined;
+                var lastinfo = void 0;
+                for (var i in this.gamedatas.undo_moves) {
+                    var moveinfo = this.gamedatas.undo_moves[i];
+                    var move_id = moveinfo === null || moveinfo === void 0 ? void 0 : moveinfo.move_id;
+                    if (!move_id)
+                        continue;
+                    if (!first) {
+                        this.addUndoMoveButton(_("Undo All"), moveinfo);
+                        first = moveinfo;
+                    }
+                    else if (move_id >= currentMove) {
+                        // ignore
+                    }
+                    else if (moveinfo.last_move && moveinfo.last_move >= currentMove) {
+                        // ignore
+                    }
+                    else {
+                        lastinfo = moveinfo;
+                    }
+                }
+                if (lastinfo)
+                    this.addUndoMoveButton(_("Undo One Step (${label})"), lastinfo);
+                else if (first) {
+                    this.sendActionUndo(first === null || first === void 0 ? void 0 : first.move_id);
+                    return;
+                }
+                this.addCancelButton();
+                return;
+            }
+        }
         this.gameStatusCleanup();
-        this.ajaxcallwrapper_unchecked("undo");
+        var message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
+        this.setMainTitle(message);
+        dojo.empty("generalactions");
+        this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, function (err) {
+            if (err) {
+                _this.cancelLocalStateEffects();
+            }
+        });
     };
     // @Override
     GameXBody.prototype.onNextMove = function (move_id) {
@@ -6667,10 +6743,22 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = this;
         _super.prototype.onLoadingLogsComplete.call(this);
         var currentMove = parseInt(this.gamedatas.notifications.move_nbr);
+        var undoMove = parseInt(this.gamedatas.undo_move);
         this.cancelLogs(this.gamedatas.cancelledIds);
+        console.log("undo move", undoMove, currentMove);
         document.querySelectorAll(".undomarker").forEach(function (node) {
-            //if (parseInt(node.dataset.move) >= currentMove) node.classList.add("disabled");
-            node.parentElement.parentElement.classList.remove("log_replayable");
+            var lognode = node.parentElement.parentElement;
+            lognode.classList.remove("log_replayable");
+            lognode.classList.add("log_hidden");
+            lognode.style.removeProperty("display");
+            lognode.style.removeProperty("color");
+            if (parseInt(node.dataset.move) < undoMove) {
+                node.classList.add("disabled");
+            }
+            else {
+                lognode.classList.remove("log_hidden");
+                console.log("last move", node.dataset.move, lognode.id);
+            }
             _this.removeTooltip(node.parentElement.parentElement.id);
         });
     };

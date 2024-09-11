@@ -39,7 +39,7 @@ class Operation_passdraft extends AbsOperation {
             }
         }
 
-        $this->game->undoSavepointWithLabel("draft");
+        $this->game->undoSavepointWithLabel(clienttranslate("draft"), MA_UNDO_BARRIER);
         return 1;
     }
 }

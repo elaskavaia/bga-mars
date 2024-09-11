@@ -148,11 +148,13 @@ class GameBasics extends GameGui {
     if (this.checkAction(action)) {
       let gname = this.game_name;
       let url = `/${gname}/${gname}/userAction.html`;
+      dojo.empty("generalactions");
       this.ajaxcall(
         url,
         { call: action, lock: true, args: JSON.stringify(args ?? {}) }, //
         this,
-        (result) => {},
+        (result) => {
+        },
         handler
       );
     }

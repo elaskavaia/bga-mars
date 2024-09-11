@@ -81,6 +81,10 @@ if (!defined("MA_GAME")) {
   define("MA_ORDER_AUTO", 1 << 4);
   define("MA_ORDER_FAIL", 1 << 5);
   define("MA_ORDER_NOUNDO", 1 << 6);
+
+  // undo
+  define("MA_UNDO_BARRIER", 1);
+  define("MA_UNDO_NOBARRIER", 0);
 }
 
 $this->token_types = [

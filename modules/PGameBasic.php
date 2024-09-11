@@ -725,6 +725,7 @@ abstract class PGameBasic extends Table {
     }
 
     function dbInsertValues($table, $values) {
+        if (count($values)==0) return;
         $fields_list = $this->dbGetFieldList($table);
         $seqvalues = [];
         foreach ($values as $row) {
@@ -748,6 +749,14 @@ abstract class PGameBasic extends Table {
         $this->DbQuery($sql);
     }
 
+    public function isMultiActive(){
+        $state = $this->gamestate->state();
+        if ($state['type'] == 'multipleactiveplayer') {
+            return true;
+        }
+        return false;
+    }
+
     /*
      * @Override
      * - have to override to track second copy of var flag as original one is private
@@ -763,13 +772,17 @@ abstract class PGameBasic extends Table {
         $this->undoSaveOnMoveEndDup = $value;
     }
 
+    function isUndoSavepoint(){
+        return   $this->undoSaveOnMoveEndDup;
+    }
+
     /*
      * @Override
      * - I had to override this not fail in multiactive, it will just ignore it
      * - fixed resetting the save flag when its done
      */
     function doUndoSavePoint() {
-        //$this->statelog("*** doUndoSavePoint ***");
+        $this->statelog("*** doUndoSavePoint *** ".$this->undoSaveOnMoveEndDup);
         if (!$this->undoSaveOnMoveEndDup)
             return;
 
@@ -778,14 +791,12 @@ abstract class PGameBasic extends Table {
     }
 
     function doCustomUndoSavePoint() {
-        //$this->statelog("*** doUndoSavePoint ***");
-        $state = $this->gamestate->state();
-        if ($state['type'] == 'multipleactiveplayer') {
-            //$name = $state ['name'];
-            //$this->warn("using undo savepoint in multiactive state $name");
+        //$this->statelog("*** doCustomUndoSavePoint ***");
+        if ($this->isMultiActive()) {
             return;
         }
         $this->bgaUndoSavePoint();
+//        parent::doUndoSavePoint(); //   UNDOX possible use original?
     }
     /*
      * @Override
@@ -795,17 +806,24 @@ abstract class PGameBasic extends Table {
         //$next = $this->getNextMoveId();
         parent::sendNotifications();
         if ($this->undoSaveOnMoveEndDup) {
-            $this->doUndoSavePoint();
-            //$this->setGameStateValue('next_move_id', $next); // restore next move so it does not increase
-            //parent::sendNotifications(); // if any notif was produced by undo save point send them also
+            try {
+                $this->doUndoSavePoint();
+                // $this->setGameStateValue('next_move_id', $next); // restore next move so it does not increase
+                // parent::sendNotifications(); // if any notif was produced by undo save point send them also
+            } catch (Exception $e) {
+                $this->error($e->getTraceAsString());
+            }
         }
     }
 
-    // function undoRestorePoint() {
-    //     $this->bgaUndoRestorePoint();
-    // }
+    function undoRestorePoint() {
+        $this->bgaUndoRestorePoint();
+    }
 
     function bgaUndoRestorePoint() {
+        // self::notifyAllPlayers('undoRestorePoint', clienttranslate('${player_name} takes back his move'), [
+        //     'player_name' => self::getActivePlayerName(),
+        // ]);
         $this->notifyAllPlayers('undoRestorePoint', '', []);
 
 
@@ -855,12 +873,7 @@ abstract class PGameBasic extends Table {
                 if ($original == 'gamelog') {
                     // Particular case: keep private messages
                     $this->DbQuery("DELETE FROM $original WHERE gamelog_private!='1'");
-                    try {
-                        $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
-                    } catch (Exception $ex) {
-                        $fields_copy = str_replace(',`cancel`', '', $fields);
-                        $this->DbQuery("INSERT INTO $original ($fields_copy) SELECT $fields_copy FROM $copy WHERE gamelog_private!='1'");
-                    }
+                    $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
                 } else {
                     $this->DbQuery("DELETE FROM $original");
                     $this->DbQuery("INSERT INTO $original ($fields) SELECT $fields FROM $copy");
@@ -874,11 +887,10 @@ abstract class PGameBasic extends Table {
         // This may be paradoxal, but this way we ensure that the savepoint gets all the recent updates that was not concerned by the undo,
         // including the latest notifications "undoRestorePoint".
         // Also, it allows us to have a reliable undoIsCurrentlyOnSavepoint
-        self::undoSavepoint();
+        self::undoSavepoint(); // UNDOX remove
     }
 
     function bgaUndoSavePoint() {
-      
         $state = $this->gamestate->state();
         if ($state['type'] == 'multipleactiveplayer') {
             throw new feException('UNDO cannot be used for multiple active players game states');

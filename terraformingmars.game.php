@@ -95,38 +95,6 @@ class terraformingmars extends PGameXBody {
      *
      */
     function upgradeTableDb($from_version) {
-
-        if ($from_version <= 2408211710) { // where your CURRENT version in production has number YYMMDD-HHMM
-
-            // // You DB schema update request.
-            // // Note: all tables names should be prefixed by "DBPREFIX_" to be compatible with the applyDbUpgradeToAllDB method you should use below
-            // try {
-            //     $sql = "ALTER TABLE `DBPREFIX_gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
-
-            //     // The method below is applying your DB schema update request to all tables, including the BGA framework utility tables like "zz_replayXXXX" or "zz_savepointXXXX".
-            //     // You should really use this request, in conjunction with "DBPREFIX_" in your $sql, so ALL tables are updated. All utility tables MUST have the same schema than the main table, otherwise the game may be blocked.
-            //     self::applyDbUpgradeToAllDB($sql);
-            //     return;
-            // } catch (Exception $e) {
-            // }
-            try {
-                $result = $this->getCollectionFromDB("SHOW COLUMNS FROM `zz_savepoint_gamelog` LIKE 'cancel'");
-                $exists = (count($result) > 0) ? TRUE : FALSE;
-                if (!$exists) {
-                    $sql = "ALTER TABLE `zz_savepoint_gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
-                    $this->DbQuery($sql);
-                }
-            } catch (Exception $e) {
-            }
-            try {
-                $result = $this->getCollectionFromDB("SHOW COLUMNS FROM `gamelog` LIKE 'cancel'");
-                $exists = (count($result) > 0) ? TRUE : FALSE;
-                if (!$exists) {
-                    $sql =  "ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0";
-                    $this->DbQuery($sql);
-                }
-            } catch (Exception $e) {
-            }
-        }
+        parent::upgradeTableDb($from_version);
     }
 }

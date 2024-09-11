@@ -39,11 +39,15 @@ class GameXBody extends GameTokens {
       const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
       const root = document.children[0]; // weird
       dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
+
+      this.interface_autoscale = this.isLayoutFull();
+      document.getElementById("page-content").classList.toggle("bga-game-zoom", this.interface_autoscale);
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
       this.clearReverseIdMap();
       this.customAnimation = new CustomAnimation(this);
+      if (!this.gamedatas.undo_moves) this.gamedatas.undo_moves = {};
 
       //layout
       this.previousLayout = "desktop";
@@ -764,6 +768,12 @@ class GameXBody extends GameTokens {
 
   isLiveScoringDisabled() {
     if (this.gamedatas.table_options["105"]?.value === 2) {
+      return true;
+    }
+    return false;
+  }
+  isXUndoEnabled() {
+    if (this.gamedatas.table_options["106"]?.value === 1) {
       return true;
     }
     return false;
@@ -2195,9 +2205,67 @@ awarded.`);
     });
   }
 
-  sendActionUndo() {
+  addUndoMoveButton(prompt: string, moveinfo: any) {
+    const move_id = moveinfo?.move_id;
+    const currentMove = parseInt($("ebd-body")?.dataset.move_nbr);
+
+    const message = this.format_string_recursive(prompt, {
+      label: _(moveinfo.label),
+      movenum: move_id
+    });
+
+    const tip = this.format_string_recursive(_("Undo up to move ${movenum} (${label})"), {
+      label: _(moveinfo.label),
+      movenum: move_id
+    });
+    const button = this.addActionButtonColor("button_undo_" + move_id, message, () => this.sendActionUndo(move_id));
+    button.title = tip;
+  }
+
+  sendActionUndo(undoMove = 0) {
+    const num = Object.keys(this.gamedatas.undo_moves).length;
+    const currentMove = parseInt($("ebd-body")?.dataset.move_nbr);
+    if (this.isXUndoEnabled()) {
+      if (undoMove === 0 && num > 0 && this.gamedatas.undo_move) {
+        this.setMainTitle(_("Select undo move"));
+        dojo.empty("generalactions");
+
+        let first: any = undefined;
+        let lastinfo;
+        for (let i in this.gamedatas.undo_moves) {
+          const moveinfo = this.gamedatas.undo_moves[i];
+          const move_id = moveinfo?.move_id;
+          if (!move_id) continue;
+
+          if (!first) {
+            this.addUndoMoveButton(_("Undo All"), moveinfo);
+            first = moveinfo;
+          } else if (move_id >= currentMove) {
+            // ignore
+          } else if (moveinfo.last_move && moveinfo.last_move >= currentMove) {
+            // ignore
+          } else {
+            lastinfo = moveinfo;
+          }
+        }
+        if (lastinfo) this.addUndoMoveButton(_("Undo One Step (${label})"), lastinfo);
+        else if (first) {
+          this.sendActionUndo(first?.move_id);
+          return;
+        }
+        this.addCancelButton();
+        return;
+      }
+    }
     this.gameStatusCleanup();
-    this.ajaxcallwrapper_unchecked("undo");
+    const message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
+    this.setMainTitle(message);
+    dojo.empty("generalactions");
+    this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, (err) => {
+      if (err) {
+        this.cancelLocalStateEffects();
+      }
+    });
   }
 
   // @Override
@@ -3424,12 +3492,24 @@ awarded.`);
   onLoadingLogsComplete(): void {
     super.onLoadingLogsComplete();
     const currentMove = parseInt(this.gamedatas.notifications.move_nbr);
+    const undoMove = parseInt(this.gamedatas.undo_move);
 
     this.cancelLogs(this.gamedatas.cancelledIds);
 
+    console.log("undo move", undoMove, currentMove);
     document.querySelectorAll(".undomarker").forEach((node: HTMLElement) => {
-      //if (parseInt(node.dataset.move) >= currentMove) node.classList.add("disabled");
-      node.parentElement.parentElement.classList.remove("log_replayable");
+      const lognode = node.parentElement.parentElement;
+      lognode.classList.remove("log_replayable");
+      lognode.classList.add("log_hidden");
+      lognode.style.removeProperty("display");
+      lognode.style.removeProperty("color");
+      if (parseInt(node.dataset.move) < undoMove) {
+        node.classList.add("disabled");
+      } else {
+        lognode.classList.remove("log_hidden");
+        console.log("last move", node.dataset.move, lognode.id);
+      }
+
       this.removeTooltip(node.parentElement.parentElement.id);
     });
   }

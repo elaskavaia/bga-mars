@@ -35,7 +35,7 @@ class Operation_research extends AbsOperation {
         $player_id = $this->getPlayerId();
         $this->game->systemAssertTrue("bom p=$player_id c=$c", $this->game->isRealPlayer($player_id));
         $this->game->queuePlayersTurn($player_id);
-        $this->game->undoSavepointWithLabel(clienttranslate("research"));
+        $this->game->undoSavepointWithLabel(clienttranslate("research"), MA_UNDO_BARRIER);
     }
 
     function getPrimaryArgType() {

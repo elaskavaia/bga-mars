@@ -128,5 +128,22 @@
         },
         "level": "additional",
         "default": 1
+    },
+    "106": {
+        "name": "Multi-step undo support (Experimental)",
+        "values": {
+            "0": {
+                "name": "Disabled",
+                "description": "Original Undo"
+            },
+            "1": {
+                "name": "Enabled",
+                "description": "Player can undo a single step if able (up to non-undoable action). Experimental",
+                "tmdisplay": "Multi-step undo",
+                "alpha": true
+            }
+        },
+        "level": "additional",
+        "default": 0
     }
 }

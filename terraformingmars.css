@@ -10402,6 +10402,10 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   display: none;
 }
 
+.log_hidden {
+  display: none;
+}
+
 .undomarker {
   text-decoration: unset;
   position: relative;

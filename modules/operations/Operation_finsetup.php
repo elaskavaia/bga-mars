@@ -56,7 +56,12 @@ class Operation_finsetup extends AbsOperation {
             break;
         }
 
-        $this->game->undoSavepointWithLabel("setup");
+
+        if ($this->game->isSolo()) {
+            $this->game->undoSavepointWithLabel(clienttranslate("setup"), MA_UNDO_NOBARRIER);
+        } else {
+            $this->game->undoSavepointWithLabel(clienttranslate("setup"), MA_UNDO_BARRIER);
+        }
         
         return 1;
     }

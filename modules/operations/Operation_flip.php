@@ -8,7 +8,7 @@ class Operation_flip extends AbsOperation {
         $this->game->dbSetTokenState($card, MA_CARD_STATE_FACEDOWN, '');
         $this->game->clearEventListenerCache();
         $this->game->notifyTokensUpdate($this->getPlayerId());
-        $this->game->notifyWithName('message',"flipping $card");
+        //$this->game->notifyWithName('message',"flipping $card");
         return 1;
     }
     function getPrimaryArgType() {
