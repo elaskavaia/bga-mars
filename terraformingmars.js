@@ -3675,6 +3675,8 @@ var GameXBody = /** @class */ (function (_super) {
             var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
             var root = document.children[0]; // weird
             dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
+            this.interface_autoscale = this.isLayoutFull();
+            document.getElementById("page-content").classList.toggle("bga-game-zoom", this.interface_autoscale);
             this.defaultTooltipDelay = 800;
             this.vlayout = new VLayout(this);
             this.custom_pay = undefined;

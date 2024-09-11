@@ -39,6 +39,9 @@ class GameXBody extends GameTokens {
       const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
       const root = document.children[0]; // weird
       dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
+      
+      this.interface_autoscale = this.isLayoutFull();
+      document.getElementById("page-content").classList.toggle("bga-game-zoom", this.interface_autoscale);
       this.defaultTooltipDelay = 800;
       this.vlayout = new VLayout(this);
       this.custom_pay = undefined;
