@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /** 
- * Add resource specified by static parameter to any card on your tableau i.e. res(Animal).
+ * Add resource specified by static parameter to any card on your tableau i.e. ores(Animal).
  * This cannot fail - it can be skipped.
  */
 class Operation_ores extends  AbsOperation {

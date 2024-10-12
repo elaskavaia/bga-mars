@@ -946,7 +946,7 @@ abstract class PGameBasic extends Table {
         $subsql = "SELECT global_value FROM global WHERE global_id='$next_move_index' ";
         $dbres = $this->DbQuery($subsql);
         $row = mysql_fetch_assoc($dbres);
-        $move_id = (int) $row['global_value'];
+        $move_id = (int) array_get($row,'global_value',0);
         return $move_id;
     }
 

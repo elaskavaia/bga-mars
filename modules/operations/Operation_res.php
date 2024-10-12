@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/** 
+ * Add resource specified by static parameter to card on your tableau i.e. res.
+ * This cannot fail - it can be skipped.
+ */
+
 class Operation_res extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $card = $this->getContext();
@@ -12,18 +17,18 @@ class Operation_res extends AbsOperation {
             $res = $this->game->createPlayerResource($owner);
             $this->game->effect_moveResource($owner, $res, $card, 1, clienttranslate('${player_name} adds ${restype_name} to ${card_name}'), $card);
         }
-
+        
         return $inc;
     }
-
+    
     function getPrimaryArgType() {
         return '';
     }
-
+    
     function canFail() {
         return true;
     }
-
+    
     function noValidTargets(): bool {
         $card = $this->getContext();
         if (!$card) return true;
@@ -31,17 +36,17 @@ class Operation_res extends AbsOperation {
         if (!$holds) return true;
         return false;
     }
-
+    
     protected function getOpName() {
         $card = $this->getContext();
         $par = $this->game->getRulesFor($card, 'holds', '');
         return ['log' => clienttranslate('Add ${restype_name} to ${token_name}'),  "args" => [
-            "token_name" => $this->game->getTokenName($card),
-            'restype_name' => $this->game->getTokenName("tag$par"),
-            'i18n' => ['token_name', 'restype_name']
+                "token_name" => $this->game->getTokenName($card),
+                'restype_name' => $this->game->getTokenName("tag$par"),
+                'i18n' => ['token_name', 'restype_name']
         ]];
     }
-
+    
     protected function getPrompt() {
         return '${name}?';
     }
