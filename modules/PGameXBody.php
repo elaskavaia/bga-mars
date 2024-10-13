@@ -237,9 +237,11 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->isRealPlayer($current)) {
             $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
             $result['card_info'] = $this->getCardInfoInHand($current);
+            $result['tokensUpdate'] = $this->getTokensUpdate($current);
         } else
             $result['server_prefs'] = [];
         $result['scoringTable'] = $this->scoreAllTable();
+
         $result += $this->argUndo();
         $this->prof_point("getAllDatas", "end");
         return $result;
@@ -2505,7 +2507,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyScoringUpdate();
     }
 
-    function notifyTokensUpdate($player_id) {
+    function getTokensUpdate($player_id) {
         $ops = Operation_turn::getStandardActions($this->isSolo());
         $operations = [];
         foreach ($ops as $optype) {
@@ -2513,7 +2515,11 @@ abstract class PGameXBody extends PGameMachine {
             $oparr['flags'] = MACHINE_OP_RESOLVE_DEFAULT;
             $operations[] = $oparr;
         }
-        $this->notifyAllPlayers('tokensUpdate', '', $this->arg_operations($operations));
+        return $this->arg_operations($operations);
+    }
+
+    function notifyTokensUpdate($player_id) {
+        $this->notifyAllPlayers('tokensUpdate', '', $this->getTokensUpdate($player_id));
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {

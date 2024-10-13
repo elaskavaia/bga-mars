@@ -4604,7 +4604,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.notif_tokensUpdate = function (notif) {
-        console.log("Notif", notif);
+        console.log("notif_tokensUpdate", notif);
         for (var opIdS in notif.args.operations) {
             var opInfo = notif.args.operations[opIdS];
             this.updateHandInformation(opInfo.args.info, opInfo.type);
@@ -5848,13 +5848,15 @@ var GameXBody = /** @class */ (function (_super) {
         var cancelButtonId = "button_cancel";
         var onUpdate = function () {
             var count = document.querySelectorAll(".".concat(_this.classSelected)).length;
-            if ((count == 0 && skippable) || opInfo.mcount > count) {
-                $(buttonId).classList.add(_this.classButtonDisabled);
-                $(buttonId).title = _("Cannot use this action because insuffient amount of elements selected");
-            }
-            else {
-                $(buttonId).classList.remove(_this.classButtonDisabled);
-                $(buttonId).title = "";
+            if ($(buttonId)) {
+                if ((count == 0 && skippable) || opInfo.mcount > count) {
+                    $(buttonId).classList.add(_this.classButtonDisabled);
+                    $(buttonId).title = _("Cannot use this action because insuffient amount of elements selected");
+                }
+                else {
+                    $(buttonId).classList.remove(_this.classButtonDisabled);
+                    $(buttonId).title = "";
+                }
             }
             if (count > 0) {
                 _this.addActionButtonColor(cancelButtonId, _("Reset"), function () {
@@ -5869,7 +5871,9 @@ var GameXBody = /** @class */ (function (_super) {
                     dojo.destroy(cancelButtonId);
                 _this.addUndoButton();
             }
-            $(buttonId).innerHTML = buttonName + ": " + count;
+            if ($(buttonId)) {
+                $(buttonId).innerHTML = buttonName + ": " + count;
+            }
         };
         // Init
         this.clearReverseIdMap();

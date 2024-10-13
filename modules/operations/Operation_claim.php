@@ -19,17 +19,23 @@ class Operation_claim extends AbsOperation {
         $keys = array_keys($map);
         $claimed = $this->game->tokens->countTokensInLocation("milestone_%", null);
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $claimed) {
-            if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
-            if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
-            $cond = $this->game->getRulesFor($tokenId, "pre");
-            if ($cond) {
-                $valid = $this->game->evaluateExpression($cond, $color, $tokenId, ['wilds' => []]);
-                if (!$valid) return MA_ERR_PREREQ; // fail prereq check
-            }
-     
+            $var = $this->game->getRulesFor($tokenId, "r");
+            $min = $this->game->getRulesFor($tokenId, "min", 100);
+            $res = $this->game->evaluateExpression($var, $color, $tokenId, ['wilds' => []]);
+            $q = 0;
 
-            if (!$this->game->canAfford($color, $tokenId)) return MA_ERR_COST;
-            return MA_OK;
+            if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
+            else if ($map[$tokenId]['state'] > 0) $q = MA_ERR_OCCUPIED; // this already claimed
+
+            else if (!($res >= $min)) {
+                $q = MA_ERR_PREREQ; // fail prereq check
+            } else            if (!$this->game->canAfford($color, $tokenId))  $q = MA_ERR_PREREQ;
+            MA_ERR_COST;
+
+            return [
+                'q' => $q,
+                'c' => $res
+            ];
         });
     }
 

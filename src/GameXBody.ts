@@ -177,7 +177,7 @@ class GameXBody extends GameTokens {
         $("ebd-body").classList.add("twoplayers");
       }
       const map = this.getMapNumber();
-      $("ebd-body").classList.add("map_"+map);
+      $("ebd-body").classList.add("map_" + map);
 
       // debug buttons studio only
       var parent = document.querySelector(".debug_section");
@@ -783,9 +783,8 @@ class GameXBody extends GameTokens {
   }
 
   getMapNumber() {
-    return parseInt (this.gamedatas.table_options["107"]?.value ?? "0"); 
+    return parseInt(this.gamedatas.table_options["107"]?.value ?? "0");
   }
-
 
   isLiveScoringOn() {
     if (this.isLiveScoringDisabled()) return false;
@@ -1113,7 +1112,7 @@ class GameXBody extends GameTokens {
   }
 
   notif_tokensUpdate(notif: Notif) {
-    console.log("Notif", notif);
+    console.log("notif_tokensUpdate", notif);
     for (const opIdS in notif.args.operations) {
       const opInfo = notif.args.operations[opIdS];
       this.updateHandInformation(opInfo.args.info, opInfo.type);
@@ -2546,12 +2545,14 @@ awarded.`);
 
     const onUpdate = () => {
       const count = document.querySelectorAll(`.${this.classSelected}`).length;
-      if ((count == 0 && skippable) || opInfo.mcount > count) {
-        $(buttonId).classList.add(this.classButtonDisabled);
-        $(buttonId).title = _("Cannot use this action because insuffient amount of elements selected");
-      } else {
-        $(buttonId).classList.remove(this.classButtonDisabled);
-        $(buttonId).title = "";
+      if ($(buttonId)) {
+        if ((count == 0 && skippable) || opInfo.mcount > count) {
+          $(buttonId).classList.add(this.classButtonDisabled);
+          $(buttonId).title = _("Cannot use this action because insuffient amount of elements selected");
+        } else {
+          $(buttonId).classList.remove(this.classButtonDisabled);
+          $(buttonId).title = "";
+        }
       }
       if (count > 0) {
         this.addActionButtonColor(
@@ -2568,7 +2569,9 @@ awarded.`);
         if ($(cancelButtonId)) dojo.destroy(cancelButtonId);
         this.addUndoButton();
       }
-      $(buttonId).innerHTML = buttonName + ": " + count;
+      if ($(buttonId)) {
+        $(buttonId).innerHTML = buttonName + ": " + count;
+      }
     };
 
     // Init

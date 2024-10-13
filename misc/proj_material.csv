@@ -1,4 +1,4 @@
-num|name|t|r|cost|pre|text|php
+num|name|t|r|cost|text|min|php
 #
 #standard projects
 #
@@ -7,13 +7,13 @@ num|name|t|r|cost|pre|text|php
 #set location=display_main
 #set count=1
 #set create=1
-1|Sell patents|0|counter(chand,1),sell|0||Discard X card to gain X M€
-2|Power plant|0|pe|11||For 11 M€ you get to increase your energy production 1 step
-3|Asteroid|0|t|14||For 14 M€ you get to increase temperature 1 step (and your TR)
-4|Aquifer|0|w|18||For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)
-5|Greenery|0|forest|23||For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile
-6|City|0|city;pm|25||For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.
-7|Buffer Gas|0|tr|16||For 16 M€ you get to increase your TR 1 step
+1|Sell patents|0|counter(chand,1),sell|0|Discard X card to gain X M€
+2|Power plant|0|pe|11|For 11 M€ you get to increase your energy production 1 step
+3|Asteroid|0|t|14|For 14 M€ you get to increase temperature 1 step (and your TR)
+4|Aquifer|0|w|18|For 18 M€ you get to place an ocean tile (you also get 1 TR and collect any placement bonus for the tile)
+5|Greenery|0|forest|23|For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile
+6|City|0|city;pm|25|For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.
+7|Buffer Gas|0|tr|16|For 16 M€ you get to increase your TR 1 step
 
 #Milestones
 #set id=milestone_{num}
@@ -21,11 +21,12 @@ num|name|t|r|cost|pre|text|php
 #set location=display_milestones
 #set count=1
 #set create=1
-1|Terraformer|7||8|(tr>=35)|Having a terraform rating of at least 35|
-2|Mayor|7||8|(city>=3)|Owning at least 3 city tiles|
-3|Gardener|7||8|(forest>=3)|Owning at least 3 greenery tiles|
-4|Builder|7||8|(tagBuilding>=8)|Having at least 8 building tags in play|
-5|Planner|7||8|(chand>=16)|Having at least 16 cards in your hand when you claim this milestone|
+#set pre=({r}>={min})
+1|Terraformer|7|tr|8|Having a terraform rating of at least 35|35
+2|Mayor|7|city|8|Owning at least 3 city tiles|3
+3|Gardener|7|forest|8|Owning at least 3 greenery tiles|3
+4|Builder|7|tagBuilding|8|Having at least 8 building tags in play|8
+5|Planner|7|chand|8|Having at least 16 cards in your hand when you claim this milestone|16
 
 #Awards
 #set id=award_{num}
@@ -33,11 +34,11 @@ num|name|t|r|cost|pre|text|php
 #set location=display_awards
 #set count=1
 #set create=1
-1|Landlord|8|land|20||Owning the most tiles in play.
-2|Banker|8|pm|20||Having the highest M€ production.
-3|Scientist|8|tagScience|20||Having the most science tags in play.
-4|Thermalist|8|h|20||Having the most heat resource cubes.
-5|Miner|8|s+u|20||Having the most steel and titanium resource cubes.
+1|Landlord|8|land|20|Owning the most tiles in play.
+2|Banker|8|pm|20|Having the highest M€ production.
+3|Scientist|8|tagScience|20|Having the most science tags in play.
+4|Thermalist|8|h|20|Having the most heat resource cubes.
+5|Miner|8|s+u|20|Having the most steel and titanium resource cubes.
 
 
 
@@ -47,11 +48,12 @@ num|name|t|r|cost|pre|text|php
 #set location=display_milestones
 #set count=1
 #set create=1
-1|DIVERSIFIER|7||8|(uniquetags>=8)|Requires that you have 8 different tags in play|
-2|TACTICIAN|7||8|(cardreq>=5)|Requires that you have 5 cards with requirements in play|
-3|POLAR EXPLORER|7||8|(polartiles>=3)|Requires that you have 3 tiles on the two bottom rows|
-4|ENERGIZER|7||8|(pe>=6)|Requires that you have 6 energy production|
-5|RIM SETTLER|7||8|(tagJovian>=3)|Requires that you have 3 jovian tags|
+#set pre=({r}>={min})
+1|DIVERSIFIER|7|uniquetags|8|Requires that you have 8 different tags in play|8
+2|TACTICIAN|7|cardreq|8|Requires that you have 5 cards with requirements in play|5
+3|POLAR EXPLORER|7|polartiles|8|Requires that you have 3 tiles on the two bottom rows|3
+4|ENERGIZER|7|pe|8|Requires that you have 6 energy production|6
+5|RIM SETTLER|7|tagJovian|8|Requires that you have 3 jovian tags|3
 
 #Awards Hellas
 #set id=award_{num}@m2
@@ -59,8 +61,8 @@ num|name|t|r|cost|pre|text|php
 #set location=display_awards
 #set count=1
 #set create=1
-1|Cultivator|8|forest|20||Owning the most greenery tiles
-2|Magnate|8|card_green|20||Having most automated cards in play (green cards).
-3|Space Baron|8|tagSpace|20||Having the most space tags (event cards do not count).
-4|Eccentric|8|res|20||Having the most resources on cards.
-5|Contractor|8|tagBuilding|20||Having the most building tags (event cards do not count).
+1|Cultivator|8|forest|20|Owning the most greenery tiles
+2|Magnate|8|card_green|20|Having most automated cards in play (green cards).
+3|Space Baron|8|tagSpace|20|Having the most space tags (event cards do not count).
+4|Eccentric|8|res|20|Having the most resources on cards.
+5|Contractor|8|tagBuilding|20|Having the most building tags (event cards do not count).
