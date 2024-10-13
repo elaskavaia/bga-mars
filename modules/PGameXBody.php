@@ -1918,8 +1918,10 @@ abstract class PGameXBody extends PGameMachine {
             $this->setStat($score, 'game_vp_total', $player_id);
             $color = $player["player_color"];
             $corp = $this->tokens->getTokenOfTypeInLocation('card_corp', "tableau_$color");
-            $corp_id = (int) getPart($corp['key'], 2, true);
-            if ($corp_id) $this->setStat($corp_id, 'game_corp', $player_id);
+            if ($corp) {
+                $corp_id = (int) getPart($corp['key'], 2, true);
+                if ($corp_id) $this->setStat($corp_id, 'game_corp', $player_id);
+            }
 
             $theme = $this->dbUserPrefs->getPrefValue($player_id, 100);
             $this->setStat($theme, 'game_theme', $player_id);
@@ -2599,9 +2601,10 @@ abstract class PGameXBody extends PGameMachine {
 
     function doCustomUndoSavePoint() {
         //$this->statelog("*** doCustomUndoSavePoint X ***");
-        $state = $this->gamestate->state();
-        if ($state['type'] == 'multipleactiveplayer') {
-            $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta + ['barrier' => 1]);
+        if ($this->isMultiActive()) {
+            if ($this->isXUndo()) {
+                $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta + ['barrier' => 1]);
+            }
             return;
         }
         $this->dbMultiUndo->doSaveUndoSnapshot($this->undoSavepointMeta);

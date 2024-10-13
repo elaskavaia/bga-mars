@@ -725,7 +725,7 @@ abstract class PGameBasic extends Table {
     }
 
     function dbInsertValues($table, $values) {
-        if (count($values)==0) return;
+        if (count($values) == 0) return;
         $fields_list = $this->dbGetFieldList($table);
         $seqvalues = [];
         foreach ($values as $row) {
@@ -749,7 +749,7 @@ abstract class PGameBasic extends Table {
         $this->DbQuery($sql);
     }
 
-    public function isMultiActive(){
+    public function isMultiActive() {
         $state = $this->gamestate->state();
         if ($state['type'] == 'multipleactiveplayer') {
             return true;
@@ -772,7 +772,7 @@ abstract class PGameBasic extends Table {
         $this->undoSaveOnMoveEndDup = $value;
     }
 
-    function isUndoSavepoint(){
+    function isUndoSavepoint() {
         return   $this->undoSaveOnMoveEndDup;
     }
 
@@ -782,11 +782,16 @@ abstract class PGameBasic extends Table {
      * - fixed resetting the save flag when its done
      */
     function doUndoSavePoint() {
-        $this->statelog("*** doUndoSavePoint *** ".$this->undoSaveOnMoveEndDup);
+        $this->statelog("*** doUndoSavePoint *** " . $this->undoSaveOnMoveEndDup);
         if (!$this->undoSaveOnMoveEndDup)
             return;
 
-        $this->doCustomUndoSavePoint();
+        try {
+            $this->doCustomUndoSavePoint();
+        } catch (Exception $e) {
+            $this->error("undo save point failed ".($e->getMessage()));
+            $this->error($e->getTraceAsString());
+        }
         $this->setUndoSavepoint(false);
     }
 
@@ -796,7 +801,7 @@ abstract class PGameBasic extends Table {
             return;
         }
         $this->bgaUndoSavePoint();
-//        parent::doUndoSavePoint(); //   UNDOX possible use original?
+        //        parent::doUndoSavePoint(); //   UNDOX possible use original?
     }
     /*
      * @Override
@@ -883,7 +888,7 @@ abstract class PGameBasic extends Table {
             }
         }
 
-                // At the end of the undo, we must erase the old savepoint by the new one.
+        // At the end of the undo, we must erase the old savepoint by the new one.
         // This may be paradoxal, but this way we ensure that the savepoint gets all the recent updates that was not concerned by the undo,
         // including the latest notifications "undoRestorePoint".
         // Also, it allows us to have a reliable undoIsCurrentlyOnSavepoint
@@ -946,7 +951,7 @@ abstract class PGameBasic extends Table {
         $subsql = "SELECT global_value FROM global WHERE global_id='$next_move_index' ";
         $dbres = $this->DbQuery($subsql);
         $row = mysql_fetch_assoc($dbres);
-        $move_id = (int) array_get($row,'global_value',0);
+        $move_id = (int) array_get($row, 'global_value', 0);
         return $move_id;
     }
 
