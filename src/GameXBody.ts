@@ -176,7 +176,10 @@ class GameXBody extends GameTokens {
       if (Object.keys(gamedatas.players).length == 2) {
         $("ebd-body").classList.add("twoplayers");
       }
-      // debug buttons
+      const map = this.getMapNumber();
+      $("ebd-body").classList.add("map_"+map);
+
+      // debug buttons studio only
       var parent = document.querySelector(".debug_section");
       if (parent) {
         this.addActionButton(
@@ -779,6 +782,11 @@ class GameXBody extends GameTokens {
     return false;
   }
 
+  getMapNumber() {
+    return parseInt (this.gamedatas.table_options["107"]?.value ?? "0"); 
+  }
+
+
   isLiveScoringOn() {
     if (this.isLiveScoringDisabled()) return false;
     if (this.prefs[LIVESCORING_PREF_ID].value == 2) return false;
@@ -1323,7 +1331,7 @@ class GameXBody extends GameTokens {
       if (displayInfo.ocean == 1) txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
       else if (displayInfo.reserved == 1) txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
 
-      if (displayInfo.expr.r) {
+      if (displayInfo.expr?.r) {
         txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
       }
       return txt;
@@ -1424,7 +1432,7 @@ class GameXBody extends GameTokens {
 
     let type_name = this.getCardTypeById(type);
     let card_id = "";
-    if (type > 0 && type < 7) card_id += " " + _(displayInfo.deck) + " #" + displayInfo.num ?? "";
+    if (type > 0 && type < 7) card_id += " " + _(displayInfo.deck) + " #" + (displayInfo.num ?? "");
     let res = "";
 
     let tags = "";

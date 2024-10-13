@@ -22,6 +22,7 @@ define("BCOLOR", "0000ff");
 class GameUT extends terraformingmars {
     var $multimachine;
     var $xtable;
+    var $map_number = 0;
     function __construct() {
         parent::__construct();
         include "./material.inc.php";
@@ -35,10 +36,20 @@ class GameUT extends terraformingmars {
         $this->curid = 1;
     }
 
-    function init() {
+    function init(int $map = 0) {
+        $this->map_number = $map;
+        $this->adjustedMaterial();
         $this->createTokens();
         $this->gamestate->changeActivePlayer(PCOLOR);
         $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
+    }
+
+    function clean_cache() {
+        $this->map = null;
+    }
+
+    function getMapNumber() {
+        return $this->map_number;
     }
 
     function setListerts(array $l) {
@@ -83,8 +94,7 @@ class GameUT extends terraformingmars {
 
 
 final class GameTest extends TestCase {
-
-
+    var $game;
 
     public function testGameProgression() {
         $m = $this->game();
@@ -104,9 +114,10 @@ final class GameTest extends TestCase {
         $this->assertTrue($res);
     }
 
-    private function game() {
+    private function game(int $map = 0) {
         $m = new GameUT();
-        $m->init();
+        $m->init($map);
+        $this->game = $m;
         return $m;
     }
 
@@ -162,11 +173,11 @@ final class GameTest extends TestCase {
         $this->assertEquals(false, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P10'));
         // eccentric sponsor
         $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P11'));
-        
+
         $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Deimos Down'), null, $info, 'card_prelude_P11'));
         $this->assertEquals("6nm", $info['payop']);
 
-        $m->effect_playCard(PCOLOR, 'card_prelude_P11' );
+        $m->effect_playCard(PCOLOR, 'card_prelude_P11');
         $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Deimos Down'), null, $info, 'card_prelude_P11'));
         $this->assertEquals("6nm", $info['payop']);
     }
@@ -250,6 +261,160 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_OK, $builder['q']);
     }
 
+    function assertOperationTargetStatus(string $optype, string $target, int $status = MA_OK, string $color = PCOLOR) {
+        /** @var AbsOperation */
+        $op = $this->game->getOperationInstanceFromType($optype, $color);
+        $args = $op->argPrimaryDetails();
+        $ms = array_get($args, $target);
+        $this->assertNotNull($ms);
+        $this->assertEquals($status, $ms['q']);
+    }
+
+    public function testClaimMilestone_HellasRimSettler() {
+        //3|POLAR EXPLORER|7||8|(polartiles>=5)|Requires that you have 3 tiles on the two bottom rows|
+        $this->game(2);
+        $color = PCOLOR;
+        $this->game->tokens->setTokenState("tracker_tagJovian_{$color}", 7);
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals("RIM SETTLER", $this->game->getTokenName("milestone_5"));
+        $this->assertOperationTargetStatus("claim", "milestone_5");
+    }
+
+    public function testClaimMilestone_HellasENERGIZER() {
+        //4|ENERGIZER|7||8|(pe>=6)|Requires that you have 6 energy production|
+        $this->game(2);
+        $color = PCOLOR;
+        $this->game->tokens->setTokenState("tracker_pe_{$color}", 7);
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $milestone = "milestone_4";
+        $this->assertEquals("ENERGIZER", $this->game->getTokenName($milestone));
+        $this->assertOperationTargetStatus("claim", $milestone);
+    }
+
+
+    public function testClaimMilestone_HellasPolar() {
+        //    3|POLAR EXPLORER|7||8|(polartiles>=3)|Requires that you have 3 tiles on the two bottom rows|
+        $game = $this->game(2);
+        $color = PCOLOR;
+
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $milestone = "milestone_3";
+        $this->assertEquals("POLAR EXPLORER", $this->game->getTokenName($milestone));
+
+        $game->tokens->moveToken('tile_64', 'hex_4_9', 1);
+        $game->tokens->moveToken('tile_67', 'hex_7_8', 1);
+        $game->tokens->moveToken('tile_3_1', 'hex_6_8', 2);
+        $this->assertEquals(2, $this->game->getCountOfPolarTiles($color));
+        $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
+        $game->tokens->moveToken('tile_85', 'hex_5_9', 1);
+        $game->clean_cache();
+        $this->assertEquals(3, $this->game->getCountOfPolarTiles($color));
+        $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
+    }
+
+    public function testClaimMilestone_HellasTACTICIAN() {
+        //           2|TACTICIAN|7||8|(cardreq>=5)|Requires that you have 5 cards with requirements in play|
+        $game = $this->game(2);
+        $color = PCOLOR;
+
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $milestone = "milestone_2";
+        $this->assertEquals("TACTICIAN", $this->game->getTokenName($milestone));
+        $this->game->tokens->moveToken($game->mtFindByName('Lava Flows'), "tableau_{$color}", 1);
+
+        $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
+        $this->assertEquals(0, $this->game->getCountOfCardsWithPre($color));
+        $this->game->tokens->moveToken($game->mtFindByName('Advanced Ecosystems'), "tableau_{$color}", 1);
+        $this->assertEquals(1, $this->game->getCountOfCardsWithPre($color));
+        $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
+        //
+        $this->game->tokens->moveToken($game->mtFindByName('Zeppelins'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName('Worms'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName('Caretaker Contract'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName('Power Supply Consortium'), "tableau_{$color}", 1);
+        $this->assertEquals(5, $this->game->getCountOfCardsWithPre($color));
+        $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
+    }
+
+    public function testClaimMilestone_HellasDIVERSIFIER() {
+        // 1|DIVERSIFIER|7||8|(uniquetags>=8)|Requires that you have 8 different tags in play|
+        $this->game(2);
+        $color = PCOLOR;
+        $this->game->tokens->setTokenState("tracker_tagJovian_{$color}", 7);
+        $this->game->tokens->setTokenState("tracker_tagScience_{$color}", 7);
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $milestone = "milestone_1";
+        $this->assertEquals("DIVERSIFIER", $this->game->getTokenName($milestone));
+        $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
+        $this->game->tokens->setTokenState("tracker_tagSpace_{$color}", 1);
+        $this->game->tokens->setTokenState("tracker_tagEvent_{$color}", 1);
+        $this->game->tokens->setTokenState("tracker_tagWild_{$color}", 1);
+        $this->assertEquals(3, $this->game->getCountOfUniqueTags($color));
+        $this->game->tokens->setTokenState("tracker_tagMicrobe_{$color}", 1);
+        $this->game->tokens->setTokenState("tracker_tagPlant_{$color}", 1);
+        $this->game->tokens->setTokenState("tracker_tagAnimal_{$color}", 1);
+        $this->game->tokens->setTokenState("tracker_tagCity_{$color}", 1);
+        $this->game->tokens->setTokenState("tracker_tagEarth_{$color}", 1);
+        $this->assertEquals(8, $this->game->getCountOfUniqueTags($color));
+        $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
+    }
+
+    function assertMilestone(int $num, string $name, int $value = 1, string $color = PCOLOR) {
+        $token = "award_$num";
+        $this->assertEquals($name, $this->game->getTokenName($token));
+        $expr = $this->game->getRulesFor($token, 'r');
+        $res = $this->game->evaluateExpression($expr, $color);
+        $this->assertEquals($value, $res);
+    }
+
+    public function testAward_Hellas1() {
+        $this->game(2);
+        $this->game->setTrackerValue(PCOLOR, 'forest', 5);
+        //1|Cultivator|8|forest|20||Owning the most greenery tiles
+        $this->assertMilestone(1, "Cultivator", 5);
+    }
+
+    public function testAward_Hellas2() {
+        $game = $this->game(2);
+        $color = PCOLOR;
+        // 2|Magnate|8|card_green|20||Having most automated cards in play (green cards).
+
+        $this->game->tokens->moveToken($game->mtFindByName('Lava Flows'), "tableau_{$color}", 1);
+        $this->assertEquals(0, $this->game->getCountOfCardsGreen($color));
+        $this->game->tokens->moveToken($game->mtFindByName('Advanced Ecosystems'), "tableau_{$color}", 1);
+        $this->assertEquals(1, $this->game->getCountOfCardsGreen($color));
+
+        $this->assertMilestone(2, "Magnate", 1);
+    }
+
+    public function testAward_Hellas3() {
+        $this->game(2);
+        $this->game->setTrackerValue(PCOLOR, 'tagSpace', 5);
+        // 3|Space Baron|8|tagSpace|20||Having the most space tags (event cards do not count).
+        $this->assertMilestone(3, "Space Baron", 5);
+    }
+    public function testAward_Hellas4() {
+        $game = $this->game(2);
+        $color = PCOLOR;
+
+        $fish = $game->mtFind('name', 'Fish');
+
+        $game->effect_playCard($color, $fish);
+        $num = 5;
+        for ($i = 0; $i < $num; $i++) {
+            $game->dbSetTokenLocation("resource_{$color}_$i", $fish, 1); // add a fish
+        }
+
+        // 4|Eccentric|8|res|20||Having the most resources on cards.
+        $this->assertEquals($num, $this->game->getCountOfResOnCards($color));
+        $this->assertMilestone(4, "Eccentric", $num);
+    }
+    public function testAward_Hellas5() {
+        $this->game(2);
+        $this->game->setTrackerValue(PCOLOR, 'tagBuilding', 2);
+        // 5|Contractor|8|tagBuilding|20||Having the most building tags (event cards do not count).
+        $this->assertMilestone(5, "Contractor", 2);
+    }
 
     public function testCounterCall() {
         $m = $this->game();
@@ -795,7 +960,7 @@ final class GameTest extends TestCase {
         $this->subTestOperationIntegrity($op);
     }
 
-    public function test_res(){
+    public function test_res() {
         $m = $this->game();
         $optype = "p/res";
         $card = $m->mtFind('name',  'Arctic Algae');

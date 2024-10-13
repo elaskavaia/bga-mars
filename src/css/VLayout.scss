@@ -167,9 +167,7 @@
     --stan-fullheight: calc(var(--stan-width) * 1.604095);
   }
 
-  $ratio: 0.849;
-  $mainh: calc(var(--map-board-with) * $ratio);
-  $mainw: calc(var(--map-board-with));
+
 
   .card_effect {
     font-size: calc(var(--card-width) * 0.1);
@@ -185,12 +183,14 @@
     display: block;
   }
 
-
   #main_board {
     position: relative;
-    width: $mainw;
-    height: $mainh;
+    width: calc(var(--map-board-with));
+    height: calc(var(--map-board-with) * 0.849);
     box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
+  }
+  .map_2  #main_board {
+    height: calc(var(--map-board-with) * 0.86);
   }
 
   #main_area {
@@ -287,6 +287,10 @@
     display: block;
   }
 
+  .map_2  #standard_projects_area .display {
+    margin-top: 15%;
+  }
+
   .stanp_decor {
     display: none;
   }
@@ -356,6 +360,10 @@
     color: white;
   }
 
+  .map_2 #decks_area {
+    top: 15%;
+  }
+
   .carddeck,
   #discard_main,
   #deck_main {
@@ -398,6 +406,11 @@
     left: 58%;
     top: 13%;
     background-image: none;
+  }
+
+  .map_2 .hex_phobos {
+    left: 41%;
+    top: 23%;
   }
 
   #oceans_pile {
@@ -444,6 +457,11 @@
     background-image: url(img/full/TMgameboard.jpg);
     background-repeat: no-repeat;
     background-size: 100% auto;
+  }
+  .map_2 {
+    #main_board::before {
+      background-image: url(img/full/hellas.jpg);
+    }
   }
 
   .map_bg {

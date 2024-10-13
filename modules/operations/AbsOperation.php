@@ -279,7 +279,7 @@ Reason: tile placement may draw cards (information)
         return $result;
     }
 
-    protected function argPrimaryDetails() {
+    public function argPrimaryDetails() {
         return [];
     }
 

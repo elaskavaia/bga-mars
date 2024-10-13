@@ -43,6 +43,7 @@ abstract class PGameXBody extends PGameMachine {
             "var_prelude" => 104,
             "var_live_scoring" => 105,
             "var_xundo" => 106, // multi step undo
+            "var_map" => 107, // map number
         ]);
         $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;
@@ -222,6 +223,10 @@ abstract class PGameXBody extends PGameMachine {
 
     function isDraftVariant() {
         return $this->getGameStateValue('var_draft') == 1 && !$this->isSolo();
+    }
+
+    function getMapNumber() {
+        return $this->getGameStateValue('var_map', 0);
     }
 
     protected function getAllDatas() {
@@ -496,6 +501,15 @@ abstract class PGameXBody extends PGameMachine {
         return $this->getPlayersNumber() == 1;
     }
 
+    function getTags() {
+        $res = [];
+        foreach ($this->token_types as $key => $rules) {
+            if (startsWith($key, 'tag'))
+                $res[$key] = $rules;
+        }
+        return $res;
+    }
+
     function getPlanetMap($load = true) {
         if ($this->map)
             return $this->map;
@@ -564,6 +578,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->prof_point("adjust", "start");
         parent::adjustedMaterial();
 
+        $adj = $this->getMapNumber();
+        $num = $this->getPlayersNumber();
+        $this->doAdjustMaterial($num, $adj);
+
         $expr_keys = ['r', 'e', 'a'];
         foreach ($this->token_types as $key => &$info) {
             if (startsWith($key, "card_") || startsWith($key, "hex_")) {
@@ -592,6 +610,46 @@ abstract class PGameXBody extends PGameMachine {
         return $this->token_types;
     }
 
+    function doAdjustMaterial($num, $map) {
+        $table = &$this->token_types;
+        foreach ($table as $key => $info) {
+            $vars = explode('@', $key, 2);
+            if (count($vars) <= 1)
+                continue;
+            $primary = $vars[0];
+            $variant = $vars[1];
+            // if variant matches
+            $orig = $variant;
+            $variant = preg_replace("/p{$num}/", "", $variant, 1);
+            if ($orig != $variant) {
+                $variant = preg_replace("/p[0-9]/", "", $variant);
+            }
+
+            $orig = $variant;
+            $variant = preg_replace("/m{$map}/", "", $variant, 1);
+            if ($orig != $variant) {
+                $variant = preg_replace("/m[0-9]/", "", $variant);
+            }
+
+            if ($variant !== '') {
+                unset($table[$key]);
+                //$table["$primary@$variant"] = $table[$key]; // want not reduces, incompatible with this game
+            } else {
+                // override existing value
+                if (is_array($table[$key])) {
+                    $prev = array_get($table, $primary, []);
+                    if (!is_array($prev)) {
+                        $this->systemAssertTrue("Expecting array for $primary");
+                    }
+                    $table[$primary] = array_replace_recursive($prev, $table[$key]);
+                } else
+                    $table[$primary] = $table[$key];
+                if ($key != $primary)
+                    unset($table[$key]);
+            }
+        }
+    }
+
     /**
      * Checks if can afford payment, if 4th arg is passed sets field $info['payop'] to payment operation  
      */
@@ -614,7 +672,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($cond) {
             $valid = $this->evaluateExpression($cond, $owner, $tokenid, ['wilds' => []]);
             if (!$valid) {
-                $delta = $this->tokens->getTokenState("tracker_pdelta_${owner}") ?? 0;
+                $delta = $this->tokens->getTokenState("tracker_pdelta_{$owner}") ?? 0;
                 // there is one more stupid event card that has temp delta effect
                 $listeners = $this->collectListeners($owner, ['onPre_delta'], null, $extracontext);
 
@@ -707,42 +765,53 @@ abstract class PGameXBody extends PGameMachine {
             return $expr->evaluate($mapper);
         } catch (Exception $e) {
             $this->error($e);
-            throw new BgaSystemException("Cannot parse math expression '$cond'");
+            throw new BgaSystemException("Cannot evaluate math expression '$cond'");
         }
     }
 
     function evaluateTerm($x, $owner, $context = null, ?array $options = null) {
-        if ($x == 'chand') {
-            return $this->tokens->countTokensInLocation("hand_$owner");
-        }
+        switch ($x) {
+            case 'chand':
+                return $this->tokens->countTokensInLocation("hand_$owner");
+            case  'cityonmars':
+                return $this->getCountOfCitiesOnMars("$owner");
 
-        if ($x == 'cityonmars') {
-            return $this->getCountOfCitiesOnMars("$owner");
-        }
-        if ($x == 'all_cityonmars') {
-            return $this->getCountOfCitiesOnMars(null);
-        }
+            case  'all_cityonmars':
+                return $this->getCountOfCitiesOnMars(null);
 
-        if ($x == 'resCard') {
-            return $this->tokens->countTokensInLocation("$context"); // number of resources on the card
-        }
-        if ($x == 'cost') {
-            return $this->getRulesFor($context, 'cost');
-        }
+            case  'uniquetags':
+                //1|DIVERSIFIER|7||8|(uniquetags>=8)|Requires that you have 8 different tags in play|
+                return $this->getCountOfUniqueTags("$owner");
 
-        if ($x == 'vptag') {
-            $rules = $this->getRulesFor($context, 'vp', '');
-            if ($rules) {
-                if (is_numeric($rules) && $rules < 0) return 0;
-                return 1;
-            }
-            return 0;
+            case  'cardreq':
+                // 2|TACTICIAN|7||8|(cardreq>=5)|Requires that you have 5 cards with requirements in play|
+                return $this->getCountOfCardsWithPre("$owner");
+            case  'card_green':
+                return $this->getCountOfCardsGreen("$owner");
+            case 'polartiles':
+                // 3|POLAR EXPLORER|7||8|(polartiles>=5)|Requires that you have 3 tiles on the two bottom rows|
+                return $this->getCountOfPolarTiles("$owner");
+
+            case  'resCard':
+                return $this->tokens->countTokensInLocation("$context"); // number of resources on the card
+            case  'res':
+                if ($context) $this->tokens->countTokensInLocation("$context");
+                return $this->getCountOfResOnCards("$owner");
+
+            case  'cost':
+                return $this->getRulesFor($context, 'cost');
+
+            case  'vptag':
+                $rules = $this->getRulesFor($context, 'vp', '');
+                if ($rules) {
+                    if (is_numeric($rules) && $rules < 0) return 0;
+                    return 1;
+                }
+                return 0;
         }
-
-
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
-            $value = $this->tokens->getTokenState("tracker_${x}");
+            $value = $this->tokens->getTokenState("tracker_{$x}");
             if (!$options) return $value;
             $mods = array_get($options, 'mods', 0);
             if ($x == 't') $mods = $mods * 2;
@@ -774,7 +843,7 @@ abstract class PGameXBody extends PGameMachine {
         # TODO: special processing with _all
         if ($create == 4) {
             // per player counter XXX _all
-            $value = $this->tokens->getTokenState("tracker_${x}_${owner}");
+            $value = $this->tokens->getTokenState("tracker_{$x}_{$owner}");
             if (startsWith($x, 'tag')) {
                 $wilds = array_get($options, 'wilds', null);
 
@@ -785,12 +854,12 @@ abstract class PGameXBody extends PGameMachine {
                     $wilds = null;
                 }
                 if ($wilds !== null) {
-                    $valueWild = $this->tokens->getTokenState("tracker_tagWild_${owner}");
+                    $valueWild = $this->tokens->getTokenState("tracker_tagWild_{$owner}");
                     $value += $valueWild;
                 }
             }
         } else {
-            $value = $this->tokens->getTokenState("tracker_${x}");
+            $value = $this->tokens->getTokenState("tracker_{$x}");
         }
         return $value;
     }
@@ -1004,7 +1073,7 @@ abstract class PGameXBody extends PGameMachine {
         $card_id = $card['key'];
 
         $this->effect_moveCard($color, $card_id, "reveal", MA_CARD_STATE_SELECTED);
-        $this->undoSavepointWithLabel("draw",MA_UNDO_BARRIER);
+        $this->undoSavepointWithLabel("draw", MA_UNDO_BARRIER);
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $args = ['tag_name' => $tag_name];
         if ($showWarning)   $args += ['_notifType' => 'message_warning'];
@@ -1764,7 +1833,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->notifyMessage(clienttranslate('${player_name} reshuffles project card deck'), [], $player_id);
             $this->notifyCounterChanged($this->tokens->autoreshuffle_custom[$deck], ["nod" => true]);
         }
-        $this->undoSavepointWithLabel("draw",MA_UNDO_BARRIER);
+        $this->undoSavepointWithLabel("draw", MA_UNDO_BARRIER);
         return $tokens;
     }
 
@@ -2079,6 +2148,62 @@ abstract class PGameXBody extends PGameMachine {
         }
 
         return $cities;
+    }
+    function getCountOfPolarTiles($owner) {
+        $map = $this->getPlanetMap();
+        $count = 0;
+
+        foreach ($map as $hex => $info) {
+            $y = $this->getRulesFor($hex, 'y');
+            if ($y < 8) continue; // not polar
+            $hexowner = $info['owner'] ?? '';
+            if (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+            $count++;
+        }
+
+        return $count;
+    }
+
+    function getCountOfCardsWithPre($owner) {
+        $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
+        $count = 0;
+        foreach ($cards as $card => $cardrec) {
+            $pre = $this->getRulesFor($card, 'pre');
+            if ($pre) $count++;
+        }
+        return $count;
+    }
+
+    function getCountOfCardsGreen($owner) {
+        $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
+        $count = 0;
+        foreach ($cards as $card => $cardrec) {
+            $pre = $this->getRulesFor($card, 't');
+            if ($pre == MA_CARD_TYPE_GREEN) $count++;
+        }
+        return $count;
+    }
+
+    function getCountOfResOnCards($owner) {
+        $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%", 1);
+        return count($res);
+    }
+    
+
+    function getCountOfUniqueTags($owner) {
+        $tags = $this->getTags();
+        $trackers = [];
+        foreach ($tags as $tag => $rules) {
+            if (array_get($rules, 'nc', 0) == 1) continue; // not a real tag
+            $trackers[] = "tracker_{$tag}_{$owner}";
+        }
+        $count = 0;
+        foreach ($trackers as $tracker) {
+            if ($this->tokens->getTokenState($tracker) > 0) $count++;
+        }
+        return $count;
     }
 
     function scoreMap(string $owner, array &$table = null) {

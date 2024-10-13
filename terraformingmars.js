@@ -3786,7 +3786,9 @@ var GameXBody = /** @class */ (function (_super) {
             if (Object.keys(gamedatas.players).length == 2) {
                 $("ebd-body").classList.add("twoplayers");
             }
-            // debug buttons
+            var map = this.getMapNumber();
+            $("ebd-body").classList.add("map_" + map);
+            // debug buttons studio only
             var parent = document.querySelector(".debug_section");
             if (parent) {
                 this.addActionButton("button_debug_dump", "Dump Machine", function () {
@@ -4287,6 +4289,10 @@ var GameXBody = /** @class */ (function (_super) {
         }
         return false;
     };
+    GameXBody.prototype.getMapNumber = function () {
+        var _a, _b;
+        return parseInt((_b = (_a = this.gamedatas.table_options["107"]) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : "0");
+    };
     GameXBody.prototype.isLiveScoringOn = function () {
         if (this.isLiveScoringDisabled())
             return false;
@@ -4702,6 +4708,7 @@ var GameXBody = /** @class */ (function (_super) {
         return htm.replace("%adcl", adClass).replace("%adstyle", adStyle).replace("%c", fullitemhtm).replace("%t", fulltxt);
     };
     GameXBody.prototype.generateItemTooltip = function (displayInfo) {
+        var _a;
         if (!displayInfo)
             return "?";
         var txt = "";
@@ -4745,7 +4752,7 @@ var GameXBody = /** @class */ (function (_super) {
                 txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
             else if (displayInfo.reserved == 1)
                 txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
-            if (displayInfo.expr.r) {
+            if ((_a = displayInfo.expr) === null || _a === void 0 ? void 0 : _a.r) {
                 txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
             }
             return txt;
@@ -4820,7 +4827,7 @@ var GameXBody = /** @class */ (function (_super) {
         var type_name = this.getCardTypeById(type);
         var card_id = "";
         if (type > 0 && type < 7)
-            card_id += (_a = " " + _(displayInfo.deck) + " #" + displayInfo.num) !== null && _a !== void 0 ? _a : "";
+            card_id += " " + _(displayInfo.deck) + " #" + ((_a = displayInfo.num) !== null && _a !== void 0 ? _a : "");
         var res = "";
         var tags = "";
         if (displayInfo.tags) {

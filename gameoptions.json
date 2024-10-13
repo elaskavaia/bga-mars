@@ -145,5 +145,27 @@
         },
         "level": "additional",
         "default": 0
+    },
+    "107": {
+        "name": "Map",
+        "values": {
+            "0": {
+                "name": "Tharsis (Original)",
+                "description": "Original map"
+            },
+            "1": {
+                "name": "Elysium",
+                "description": "The other side of Mars. Experimental",
+                "tmdisplay": "Elysium",
+                "alpha": true
+            },
+            "2": {
+                "name": "Hellas",
+                "description": "The southern wild. Experimental",
+                "tmdisplay": "Hellas",
+                "alpha": true
+            }
+        },
+        "default": 0
     }
 }

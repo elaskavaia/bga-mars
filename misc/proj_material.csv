@@ -38,3 +38,29 @@ num|name|t|r|cost|pre|text|php
 3|Scientist|8|tagScience|20||Having the most science tags in play.
 4|Thermalist|8|h|20||Having the most heat resource cubes.
 5|Miner|8|s+u|20||Having the most steel and titanium resource cubes.
+
+
+
+#Milestones Hellas
+#set id=milestone_{num}@m2
+#set php='vp'=>5
+#set location=display_milestones
+#set count=1
+#set create=1
+1|DIVERSIFIER|7||8|(uniquetags>=8)|Requires that you have 8 different tags in play|
+2|TACTICIAN|7||8|(cardreq>=5)|Requires that you have 5 cards with requirements in play|
+3|POLAR EXPLORER|7||8|(polartiles>=3)|Requires that you have 3 tiles on the two bottom rows|
+4|ENERGIZER|7||8|(pe>=6)|Requires that you have 6 energy production|
+5|RIM SETTLER|7||8|(tagJovian>=3)|Requires that you have 3 jovian tags|
+
+#Awards Hellas
+#set id=award_{num}@m2
+#set php=
+#set location=display_awards
+#set count=1
+#set create=1
+1|Cultivator|8|forest|20||Owning the most greenery tiles
+2|Magnate|8|card_green|20||Having most automated cards in play (green cards).
+3|Space Baron|8|tagSpace|20||Having the most space tags (event cards do not count).
+4|Eccentric|8|res|20||Having the most resources on cards.
+5|Contractor|8|tagBuilding|20||Having the most building tags (event cards do not count).

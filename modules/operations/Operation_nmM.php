@@ -36,7 +36,7 @@ class Operation_nmM extends AbsOperation {
     }
 
 
-    protected function argPrimaryDetails() {
+     function argPrimaryDetails() {
         if ($this->isVoid()) return [];
         $info = [];
         $cost = $this->getCount();

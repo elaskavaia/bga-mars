@@ -49,6 +49,7 @@ tracker_gen|Generations|1|'min'=>1
 #tags
 #set create=0
 #set type=tag
+
 tagScience|Science
 tagBuilding|Building
 tagSpace|Space
@@ -60,9 +61,12 @@ tagEarth|Earth
 tagJovian|Jovian
 tagEnergy|Power
 tagVenus|Venus
+#tags below do not count as tags for purposes of awards and milestones
+#set nc=1
 tagEvent|Event
 #this is not a real tag but its used for translation
 tagFighter|Fighter
+#set nc=
 
 #set type=tracker badge 
 #set create=4

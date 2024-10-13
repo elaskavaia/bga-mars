@@ -86,6 +86,7 @@ declare class GameGui {
   metasiteurl: string;
   interface_status: string;
   next_log_id: number;
+  interface_autoscale: any;
 
 
   isCurrentPlayerActive(): boolean;
