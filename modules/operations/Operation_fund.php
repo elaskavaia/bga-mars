@@ -30,8 +30,9 @@ class Operation_fund extends AbsOperation {
 
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {
             $free = $this->params();
-            if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
-            else if ($map[$tokenId]['state'] > 0) $q = MA_ERR_OCCUPIED;
+   
+            if ($map[$tokenId]['state'] > 0) $q = MA_ERR_OCCUPIED;
+            else if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
             else if ($free == 'free') $q = MA_OK;
             else if (!$this->game->canAfford($color, $tokenId, $cost)) $q = MA_ERR_COST;
             else $q = MA_OK;

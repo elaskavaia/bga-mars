@@ -3933,40 +3933,30 @@
   --stan-fullheight: calc(var(--stan-width)*1.604095);
 }
 
-.mcompact #map_middle {
-  display: flex;
+#main_board {
+  display: block;
+  order: 1;
+  width: calc(var(--map-width) * 1.5);
+  position: relative;
+}
+
+#map_middle > * {
+  position: absolute;
+}
+
+#map_middle {
   width: calc(var(--map-width) * 1.45);
   position: relative;
-  flex-grow: 0;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 8%;
+  height: calc(var(--map-height) * 1.11);
 }
-.mcompact #main_board {
+
+#map_bottom {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 1.3vh;
-  order: 1;
-}
-.mcompact #map_top {
-  position: absolute;
   width: 100%;
-  height: 20%;
+  font-size: calc(var(--map-width) * 0.02);
 }
-.mcompact #map_right {
-  padding: 1%;
-  height: 96%;
-}
-.mcompact #map_left {
-  padding: 0.3%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 96%;
-  width: calc(var(--stan-width) * 0.8);
-}
-.mcompact #map_hexes {
+
+#map_hexes {
   position: absolute;
   width: 98.1%;
   height: 97.8%;
@@ -3975,7 +3965,8 @@
 }
 
 #map {
-  position: relative;
+  top: 10%;
+  left: 17%;
   width: var(--map-width);
   height: var(--map-height);
 }
@@ -4452,7 +4443,7 @@
 .hex_ganymede {
   position: absolute;
   left: 4%;
-  top: 40%;
+  top: 33%;
   background-image: url("img/ganymede.png");
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.125);
@@ -4549,32 +4540,26 @@
   left: 30%;
 }
 
-#map_bottom {
-  display: flex;
-  width: 100%;
-  font-size: calc(var(--map-width) * 0.02);
-}
-
 #main_awards,
 #main_milestones {
-  width: 48%;
-  display: flex;
+  width: 50%;
+  display: inline-flex;
   flex-direction: column;
   height: calc(var(--map-height) * 0.15);
-  /*background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
-    border: 0.4vh solid #938989;
-      border-radius: 30% 30% 0 0;
-       width: fit-content;
-   */
   padding: 0.3vh;
   background-image: url("img/awards_back.png");
+  font-size: calc(var(--map-width) * 0.02);
   background-size: cover;
-  position: relative;
+  bottom: 0%;
 }
 #main_awards .marker,
 #main_milestones .marker {
   top: 5%;
   left: 35%;
+}
+
+#main_awards {
+  left: 50%;
 }
 
 .map_milesawardscontent {
@@ -4650,7 +4635,7 @@
 }
 
 .award_label {
-  bottom: -4%;
+  bottom: 0;
   position: absolute;
   width: 89%;
   left: 6%;
@@ -4721,11 +4706,13 @@
 
 #temperature_map {
   position: relative;
-  height: 100%;
   width: calc(var(--map-width) * 0.157);
+  height: var(--map-height);
   background-image: url("img/temperature.png");
   background-size: cover;
   transform-origin: right;
+  left: 83%;
+  top: 10%;
 }
 
 .temperature_scale {
@@ -4835,7 +4822,7 @@
   background: linear-gradient(90deg, rgb(180, 105, 0) 0%, rgb(238, 223, 120) 75%, rgba(0,255,252,1) 100%);*/
   background-image: url("img/oxygen.png");
   background-size: cover;
-  top: -65%;
+  top: 0%;
   pointer-events: none;
   left: 16.5%;
   transform-origin: top;
@@ -5005,6 +4992,8 @@
   background-image: url("img/stanproj_hold.png");
   background-size: contain;
   position: absolute;
+  top: 48%;
+  left: 3%;
 }
 
 #display_main {
@@ -5267,8 +5256,9 @@
 }
 
 .outer_generation {
-  top: -55%;
-  right: 12%; /*8%*/
+  top: 0%;
+  right: 12%;
+  /*8%*/
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
@@ -5302,7 +5292,7 @@
 }
 
 .outer_scoretracker {
-  top: -55%;
+  top: 0%;
   right: 4%;
   position: absolute;
   width: calc(var(--map-width) * 0.1);
@@ -5333,10 +5323,6 @@
 }
 .outer_scoretracker .generation_bottom #scoretracker_text {
   font-size: calc(var(--map-width) * 0.03);
-}
-
-#discard_title {
-  /* cursor: pointer;*/
 }
 
 #card_dlg_content {
@@ -8712,6 +8698,9 @@
 .mfull .map_2 #main_board {
   height: calc(var(--map-board-with) * 0.86);
 }
+.mfull .map_1 #main_board {
+  height: calc(var(--map-board-with) * 0.86);
+}
 .mfull #main_area {
   margin-top: unset;
   display: flex;
@@ -8722,25 +8711,6 @@
 .mfull #main_board {
   order: 2;
 }
-.mfull #map_middle {
-  position: absolute;
-  width: 100%;
-  height: 90%;
-}
-.mfull #map_top {
-  position: absolute;
-  width: 58%;
-  height: 20%;
-  left: 23%;
-  top: 11%;
-}
-.mfull #map_bottom {
-  width: 100%;
-  position: absolute;
-  bottom: 6%;
-  left: 0%;
-  height: 10%;
-}
 .mfull .map_2 #map_bottom {
   bottom: 7%;
 }
@@ -8748,51 +8718,56 @@
   top: 0%;
   height: 35%;
 }
-.mfull #map_right {
-  padding: 0%;
-  position: absolute;
-  right: 8%;
-  top: 0%;
-  height: 100%;
-}
-.mfull #map_left {
-  padding: 0%;
-  height: 100%;
-  width: 10%;
-  left: 7%;
-  position: absolute;
-}
 .mfull #map {
   position: absolute;
   left: 20%;
-  top: 20%;
+  top: 21%;
   width: 60%;
-  height: 72%;
+  height: 78%;
+}
+.mfull #map_middle {
+  width: 100%;
+  position: relative;
+  height: 84%;
 }
 .mfull #map_hexes {
   position: absolute;
   width: 100%;
   height: 100%;
+  top: 0px;
+  left: 0px;
 }
 .mfull #oxygen_map {
   position: absolute;
   width: calc(var(--map-width) * 0.88);
   height: calc(var(--map-width) * 0.26);
   background: none;
-  top: 0px;
-  left: 0px;
+  top: 10%;
+  left: 23%;
 }
 .mfull #temperature_map {
-  position: relative;
-  top: 17%;
-  height: 72%;
+  position: absolute;
+  top: 19%;
+  left: 83%;
+  height: 77%;
   width: calc(var(--map-width) * 0.157);
   background: none;
+}
+.mfull .map_1 #temperature_map {
+  position: absolute;
+  top: 19%;
+  left: 6%;
+  width: calc(var(--map-width) * 0.1);
 }
 .mfull #standard_projects_area {
   display: block;
   background: unset;
-  top: 59%;
+  top: 64%;
+  left: 7%;
+}
+.mfull .map_1 #standard_projects_area {
+  top: 64%;
+  left: 79%;
 }
 .mfull #standard_projects_area .display {
   margin-top: 19%;
@@ -8855,6 +8830,7 @@
   display: block;
   position: absolute;
   top: 7%;
+  left: 6%;
   width: var(--stan-width);
   height: var(--stan-height);
   color: white;
@@ -8890,25 +8866,37 @@
   position: absolute;
 }
 .mfull .hex_ganymede {
-  left: 49%;
-  top: 41%;
+  left: 12%;
+  top: 44%;
   background-image: none;
 }
 .mfull .hex_phobos {
-  left: 58%;
-  top: 13%;
+  left: 13%;
+  top: 14%;
   background-image: none;
 }
 .mfull .map_2 .hex_phobos {
-  left: 41%;
+  left: 10%;
   top: 23%;
+}
+.mfull .map_1 .hex_phobos {
+  top: 28%;
+  left: 81%;
+}
+.mfull .map_1 .hex_ganymede {
+  top: 46%;
+  left: 84%;
 }
 .mfull #oceans_pile {
   position: absolute;
-  top: 10%;
+  top: 11%;
   left: 76%;
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
+}
+.mfull .map_1 #oceans_pile {
+  top: 8%;
+  left: 19%;
 }
 .mfull #outer_scoretracker {
   display: none;
@@ -8936,6 +8924,9 @@
 }
 .mfull .map_2 #main_board::before {
   background-image: url(img/full/hellas.jpg);
+}
+.mfull .map_1 #main_board::before {
+  background-image: url(img/full/elysium.jpg);
 }
 .mfull .map_bg {
   display: none;
@@ -9384,6 +9375,11 @@
   position: absolute;
   top: 25%;
   left: 10%;
+}
+.mfull .map_1 #main_board .res {
+  position: absolute;
+  top: 65%;
+  left: 7%;
 }
 .mfull .tooltipimage.production {
   outline: 4px solid #b7915e;
@@ -10101,10 +10097,11 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: flex-start;
-  height: 10%;
   position: absolute;
   top: 0%;
+  left: 3%;
   width: 22%;
+  height: 10%;
 }
 
 .tracker::after, .param::after {
@@ -10125,7 +10122,8 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   clip-path: revert;
   width: calc(var(--stan-width) * 0.309);
   height: calc(var(--stan-width) * 0.35);
-  right: 0;
+  left: 18%;
+  top: 1%;
   display: flex;
   justify-content: center;
   align-items: center;

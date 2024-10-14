@@ -26,9 +26,12 @@
 
     <div id="main_area">
       <div id="main_board">
-        <div id="map_middle">
-          <div id="map_top">
-            <div id="oxygen_map">
+        <div id="map_middle">      
+          <div class="hex outer" id="hex_0_1"></div>
+          <div class="hex_phobos"><div class="hex outer" id="hex_0_2"></div></div>
+          <div class="hex_ganymede"><div class="hex outer" id="hex_0_3"></div></div>
+   
+          <div id="oxygen_map">
               <div id="alt_tracker_o" class="tracker param tracker_o"></div>
               <div class="oxygen_scale">
                 <div class="oxygen_scale_item" data-val="0"></div>
@@ -47,22 +50,27 @@
                 <div class="oxygen_scale_item" data-val="13"></div>
                 <div class="oxygen_scale_item" data-val="14"></div>
               </div>
-            </div>
-            <div class="outer_generation" id="outer_generation">
+          </div>
+          <div class="outer_generation" id="outer_generation">
               <div id="alt_tracker_gen" class="tracker tracker_gen"></div>
               <div class="generation_bottom">
                 <div id="generation_text">Gen</div>
               </div>
-            </div>
-            <div class="outer_scoretracker" id="outer_scoretracker">
+          </div>
+          <div class="outer_scoretracker" id="outer_scoretracker">
               <i class="fa fa-table" aria-hidden="true"></i>
               <div class="generation_bottom">
                 <div id="scoretracker_text">Score</div>
               </div>
-            </div>
           </div>
-          <div id="map_left">
-            <div id="decks_area">
+          <div id="oceans_pile" class="tile tile_3">
+            <div id="alt_tracker_w" class="tracker param tracker_w"></div>
+          </div>
+
+          <!-- This area will show cards that has to be revealed from deck  -->
+          <div id="reveal" class="reveal"></div>
+          
+          <div id="decks_area">
               <div id="deck_holder" class="deck_line">
                 <div id="deck_main_title" class="deck_line_text">Draw:</div>
                 <div id="deck_main" class="carddeck"></div>
@@ -72,23 +80,15 @@
                 <div id="discard_main" class="carddeck"></div>
               </div>
 
-              <div id="oceans_pile" class="tile tile_3">
-                <div id="alt_tracker_w" class="tracker param tracker_w"></div>
-              </div>
 
-              <!-- This area will show cards that has to be revealed from deck  -->
-              <div id="reveal" class="reveal"></div>
-            </div>
-            <div id="standard_projects_area">
+          </div>
+          <div id="standard_projects_area">
               <div id="standard_projects_title_zone">
                 <div id="standard_projects_title" class="standard_projects_title">Standard projects</div>
               </div>
               <div id="display_main"></div>
-            </div>
-            <div class="hex outer" id="hex_0_1"></div>
-            <div class="hex_phobos"><div class="hex outer" id="hex_0_2"></div></div>
-            <div class="hex_ganymede"><div class="hex outer" id="hex_0_3"></div></div>
           </div>
+    
           <div id="map" class="map">
             <div class="map_bg"></div>
             <div id="map_hexes" class="map_hexes">
@@ -163,8 +163,8 @@
               <div class="hex" id="hex_7_9"></div>
             </div>
           </div>
-          <div id="map_right">
-            <div id="temperature_map">
+      
+          <div id="temperature_map">
               <div id="alt_tracker_t" class="tracker param tracker_t"></div>
               <div class="temperature_scale">
                 <div class="temperature_scale_item" data-val="-30"></div>
@@ -188,7 +188,6 @@
                 <div class="temperature_scale_item" data-val="6"></div>
                 <div class="temperature_scale_item" data-val="8"></div>
               </div>
-            </div>
           </div>
         </div>
 

@@ -237,7 +237,6 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->isRealPlayer($current)) {
             $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
             $result['card_info'] = $this->getCardInfoInHand($current);
-          
         } else
             $result['server_prefs'] = [];
         $result['scoringTable'] = $this->scoreAllTable();
@@ -286,7 +285,7 @@ abstract class PGameXBody extends PGameMachine {
         // ]);
     }
 
-    function debug_drawCard($fuzzy_card, $loc = null) {
+    function debug_drawCard(string $fuzzy_card, string $loc = null) {
         $token = $this->findCard($fuzzy_card);
         $color = $this->getCurrentPlayerColor();
         if (!$loc) $loc = "hand_$color";
@@ -331,29 +330,29 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function debug_money($x = 40) {
+    function debug_money(int $x = 40) {
         $color = $this->getCurrentPlayerColor();
         $this->effect_incCount($color, 'm', $x);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
-    function debug_inc($res = 'm', $count = 1) {
+    function debug_inc(string $res = 'm', int $count = 1) {
         $color = $this->getCurrentPlayerColor();
         $this->effect_incCount($color, $res, $count);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
-    function debug_incparam($res = 'o', $count = 1) {
+    function debug_incparam(string $res = 'o', int $count = 1) {
         $color = $this->getCurrentPlayerColor();
         $this->effect_increaseParam($color, $res, $count, $res == 't' ? 2 : 1);
     }
 
-    function debug_res($card) {
+    function debug_res(string $card) {
         $color = $this->getCurrentPlayerColor();
         $this->putInEffectPool($color, "res", $card);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
-    function debug_draft($draft = 1) {
+    function debug_draft(int $draft = 1) {
         $this->setGameStateValue('var_draft', $draft);
     }
 
@@ -464,8 +463,15 @@ abstract class PGameXBody extends PGameMachine {
             case 'has_su':
                 $pp = $this->getProductionPlacementBonus($ohex);
                 return !!$pp;
+
             default:
-                throw new BgaSystemException("Unknown adj rule $rule");
+                if ($this->getMapNumber() == 2) { // Hellas
+                    if (startsWith($rule, 'Ascraeus Mons') || $rule == 'Noctis City') {
+                        return true;
+                    }
+                }
+
+                throw new BgaSystemException("Unknown adj rule '$rule'");
         }
     }
 
@@ -841,7 +847,9 @@ abstract class PGameXBody extends PGameMachine {
         }
         $create = $this->getRulesFor("tracker_$x", "create", null);
         if ($create === null) {
-            throw new feException("Cannot evalute $x");
+            return 0;
+            //XXX uncomment 
+            //throw new feException("Cannot evalute $x");
         }
         # TODO: special processing with _all
         if ($create == 4) {

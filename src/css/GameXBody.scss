@@ -135,10 +135,11 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-items: flex-start;
-  height: 10%;
   position: absolute;
   top: 0%;
+  left: 3%;
   width: 22%;
+  height: 10%;
 }
 
 .tracker::after, .param::after  {
@@ -162,7 +163,8 @@
   clip-path: revert;
   width: calc(var(--stan-width) * 0.309);
   height: calc(var(--stan-width) * 0.35);
-  right: 0;
+  left: 18%;
+  top: 1%;
   display: flex;
   justify-content: center;
   align-items: center;

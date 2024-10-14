@@ -8,59 +8,45 @@
 
 }
 
-.mcompact {
-  #map_middle {
-    display: flex;
-    width: calc(var(--map-width)*1.45);
-    position: relative;
-    flex-grow: 0;
-    flex-shrink: 0;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 8%;
-  }
 
-  #main_board {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.3vh;
-    order: 1;
-  }
+#main_board {
+  display: block;
+  order: 1;
+  width: calc(var(--map-width)* 1.5);
+  // height: calc(var(--map-width) * 1.2);
+  //outline: 1px solid red;
+  position: relative;
+}
 
 
-  #map_top {
-    position: absolute;
-    width: 100%;
-    height: 20%;
 
-  }
+#map_middle > * {
+  position: absolute;
+}
 
-  #map_right {
-    padding: 1%;
-    height: 96%;
-  }
+#map_middle {
+  width: calc(var(--map-width)*1.45);
+  position: relative;
+  height: calc(var(--map-height)* 1.11);
+}
 
-  #map_left {
-    padding: 0.3%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 96%;
-    width: calc(var(--stan-width)* 0.8);
-  }
-  #map_hexes {
-    position: absolute;
-    width: 98.1%;
-    height: 97.8%;
-    top: 1.7%;
-    left: 0.75%;
-  }
+#map_bottom {
+  display: flex;
+  width: 100%;
+  font-size: calc(var(--map-width)*0.02);
+}
 
-
+#map_hexes {
+  position: absolute;
+  width: 98.1%;
+  height: 97.8%;
+  top: 1.7%;
+  left: 0.75%;
 }
 
 #map {
-  position: relative;
+  top: 10%;
+  left: 17%;
   width: var(--map-width);
   height: var(--map-height);
 }
@@ -72,6 +58,7 @@
   background-size: contain;
   position: absolute;
 }
+
 .map_2 .map_bg {
   background-image: url('img/maps/hellas_planet.png');
 }
@@ -80,12 +67,12 @@
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.122);
   border-radius: 30%;
- /* outline: 1px solid black;*/
+  /* outline: 1px solid black;*/
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   transition: 100ms ease-in-out;
 }
 
-.map .hex{
+.map .hex {
   position: absolute;
 }
 
@@ -140,7 +127,7 @@
 .hex_ganymede {
   position: absolute;
   left: 4%;
-  top: 40%;
+  top: 33%;
   background-image: url("img/ganymede.png");
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.125);
@@ -241,35 +228,29 @@
   left: 30%;
 }
 
-#map_bottom {
-  display: flex;
-  width: 100%;
-  font-size: calc(var(--map-width)*0.02);
-}
+
 
 
 #main_awards,
 #main_milestones {
-  width: 48%;
-  display: flex;
+  width: 50%;
+  display: inline-flex;
   flex-direction: column;
   height: calc(var(--map-height)*0.15);
-  /*background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
-    border: 0.4vh solid #938989;
-      border-radius: 30% 30% 0 0;
-       width: fit-content;
-   */
   padding: 0.3vh;
   background-image: url("img/awards_back.png");
-
+  font-size: calc(var(--map-width)*0.02);
   background-size: cover;
-  position: relative;
-
+  bottom: 0%;
   .marker {
     // same size as all markers on map defined in GameTokens.scss
     top: 5%;
     left: 35%;
   }
+}
+
+#main_awards {
+ left: 50%;
 }
 
 .map_milesawardscontent {
@@ -346,7 +327,7 @@
 }
 
 .award_label {
-  bottom: -4%;
+  bottom: 0;
   position: absolute;
   width: 89%;
   left: 6%;
@@ -398,8 +379,8 @@
     }
   }
 
-  .milesawardsprogress{
-  
+  .milesawardsprogress {
+
     position: absolute;
     width: calc(var(--map-width) * 0.04);
     height: calc(var(--map-width) * 0.04);
@@ -433,12 +414,15 @@
 
 #temperature_map {
   position: relative;
-  height: 100%;
   width: calc(var(--map-width) * 0.157);
+  height: var(--map-height);
   background-image: url("img/temperature.png");
   background-size: cover;
   transform-origin: right;
+  left: 83%;
+  top: 10%;
 }
+
 
 .temperature_scale {
   position: absolute;
@@ -463,103 +447,103 @@
 }
 
 #temperature_map {
-.tracker_t {
-  position: absolute;
-  height: 3%;
-  width: 29%;
-  box-shadow: #ffcb00 0px 0px 0px 3px;
-  left: 42%;
-  transition: 600ms all;
-  background-image: unset;
-}
+  .tracker_t {
+    position: absolute;
+    height: 3%;
+    width: 29%;
+    box-shadow: #ffcb00 0px 0px 0px 3px;
+    left: 42%;
+    transition: 600ms all;
+    background-image: unset;
+  }
 
-.tracker_t::after {
-  content: revert;
-}
+  .tracker_t::after {
+    content: revert;
+  }
 
-.tracker_t[data-state="-30"] {
-  bottom: 1%;
-  height: 12%;
-  width: 68%;
-  left: 24%;
-  border-radius: 50%;
-}
+  .tracker_t[data-state="-30"] {
+    bottom: 1%;
+    height: 12%;
+    width: 68%;
+    left: 24%;
+    border-radius: 50%;
+  }
 
-.tracker_t[data-state="-28"] {
-  bottom: 12.8%;
-}
+  .tracker_t[data-state="-28"] {
+    bottom: 12.8%;
+  }
 
-.tracker_t[data-state="-26"] {
-  bottom: 17.3%;
-}
+  .tracker_t[data-state="-26"] {
+    bottom: 17.3%;
+  }
 
-.tracker_t[data-state="-24"] {
-  bottom: 21.8%;
-}
+  .tracker_t[data-state="-24"] {
+    bottom: 21.8%;
+  }
 
-.tracker_t[data-state="-22"] {
-  bottom: 26.3%;
-}
+  .tracker_t[data-state="-22"] {
+    bottom: 26.3%;
+  }
 
-.tracker_t[data-state="-20"] {
-  bottom: 30.8%;
-}
+  .tracker_t[data-state="-20"] {
+    bottom: 30.8%;
+  }
 
-.tracker_t[data-state="-18"] {
-  bottom: 35.3%;
-}
+  .tracker_t[data-state="-18"] {
+    bottom: 35.3%;
+  }
 
-.tracker_t[data-state="-16"] {
-  bottom: 39.8%;
-}
+  .tracker_t[data-state="-16"] {
+    bottom: 39.8%;
+  }
 
-.tracker_t[data-state="-14"] {
-  bottom: 44.3%;
-}
+  .tracker_t[data-state="-14"] {
+    bottom: 44.3%;
+  }
 
-.tracker_t[data-state="-12"] {
-  bottom: 48.8%;
-}
+  .tracker_t[data-state="-12"] {
+    bottom: 48.8%;
+  }
 
-.tracker_t[data-state="-10"] {
-  bottom: 53.3%;
-}
+  .tracker_t[data-state="-10"] {
+    bottom: 53.3%;
+  }
 
-.tracker_t[data-state="-8"] {
-  bottom: 57.8%;
-}
+  .tracker_t[data-state="-8"] {
+    bottom: 57.8%;
+  }
 
-.tracker_t[data-state="-6"] {
-  bottom: 62.3%;
-}
+  .tracker_t[data-state="-6"] {
+    bottom: 62.3%;
+  }
 
-.tracker_t[data-state="-4"] {
-  bottom: 66.8%;
-}
+  .tracker_t[data-state="-4"] {
+    bottom: 66.8%;
+  }
 
-.tracker_t[data-state="-2"] {
-  bottom: 71.3%;
-}
+  .tracker_t[data-state="-2"] {
+    bottom: 71.3%;
+  }
 
-.tracker_t[data-state="0"] {
-  bottom: 75.8%;
-}
+  .tracker_t[data-state="0"] {
+    bottom: 75.8%;
+  }
 
-.tracker_t[data-state="2"] {
-  bottom: 80.3%;
-}
+  .tracker_t[data-state="2"] {
+    bottom: 80.3%;
+  }
 
-.tracker_t[data-state="4"] {
-  bottom: 84.8%;
-}
+  .tracker_t[data-state="4"] {
+    bottom: 84.8%;
+  }
 
-.tracker_t[data-state="6"] {
-  bottom: 89.3%;
-}
+  .tracker_t[data-state="6"] {
+    bottom: 89.3%;
+  }
 
-.tracker_t[data-state="8"] {
-  bottom: 93.8%;
-}
+  .tracker_t[data-state="8"] {
+    bottom: 93.8%;
+  }
 
 }
 
@@ -572,7 +556,7 @@
   background: linear-gradient(90deg, rgb(180, 105, 0) 0%, rgb(238, 223, 120) 75%, rgba(0,255,252,1) 100%);*/
   background-image: url("img/oxygen.png");
   background-size: cover;
-  top: -65%;
+  top: 0%;
   pointer-events: none;
   left: 16.5%;
   transform-origin: top;
@@ -691,82 +675,82 @@
     top: 63%
   }
 
-.tracker_o[data-state="0"] {
-  display: revert;
-  opacity: 1;
-  left: 6%;
-  top: 64%;
-}
+  .tracker_o[data-state="0"] {
+    display: revert;
+    opacity: 1;
+    left: 6%;
+    top: 64%;
+  }
 
-.tracker_o[data-state="1"] {
-  left: 10.5%;
-  top: 50%
-}
+  .tracker_o[data-state="1"] {
+    left: 10.5%;
+    top: 50%
+  }
 
-.tracker_o[data-state="2"] {
-  left: 16.5%;
-  top: 36%
-}
+  .tracker_o[data-state="2"] {
+    left: 16.5%;
+    top: 36%
+  }
 
-.tracker_o[data-state="3"] {
-  left: 22%;
-  top: 25%
-}
+  .tracker_o[data-state="3"] {
+    left: 22%;
+    top: 25%
+  }
 
-.tracker_o[data-state="4"] {
-  left: 28.5%;
-  top: 17%
-}
+  .tracker_o[data-state="4"] {
+    left: 28.5%;
+    top: 17%
+  }
 
-.tracker_o[data-state="5"] {
-  left: 34.5%;
-  top: 11%
-}
+  .tracker_o[data-state="5"] {
+    left: 34.5%;
+    top: 11%
+  }
 
-.tracker_o[data-state="6"] {
-  left: 40.7%;
-  top: 7%
-}
+  .tracker_o[data-state="6"] {
+    left: 40.7%;
+    top: 7%
+  }
 
-.tracker_o[data-state="7"] {
-  left: 47%;
-  top: 5.5%
-}
+  .tracker_o[data-state="7"] {
+    left: 47%;
+    top: 5.5%
+  }
 
-.tracker_o[data-state="8"] {
-  left: 53.5%;
-  top: 7%
-}
+  .tracker_o[data-state="8"] {
+    left: 53.5%;
+    top: 7%
+  }
 
-.tracker_o[data-state="9"] {
-  left: 60%;
-  top: 10%
-}
+  .tracker_o[data-state="9"] {
+    left: 60%;
+    top: 10%
+  }
 
-.tracker_o[data-state="10"] {
-  left: 66.5%;
-  top: 16%
-}
+  .tracker_o[data-state="10"] {
+    left: 66.5%;
+    top: 16%
+  }
 
-.tracker_o[data-state="11"] {
-  left: 72%;
-  top: 24%
-}
+  .tracker_o[data-state="11"] {
+    left: 72%;
+    top: 24%
+  }
 
-.tracker_o[data-state="12"] {
-  left: 78.3%;
-  top: 34%
-}
+  .tracker_o[data-state="12"] {
+    left: 78.3%;
+    top: 34%
+  }
 
-.tracker_o[data-state="13"] {
-  left: 84%;
-  top: 46%
-}
+  .tracker_o[data-state="13"] {
+    left: 84%;
+    top: 46%
+  }
 
-.tracker_o[data-state="14"] {
-  left: 89%;
-  top: 62%
-}
+  .tracker_o[data-state="14"] {
+    left: 89%;
+    top: 62%
+  }
 }
 
 /*standard projects*/
@@ -779,6 +763,8 @@
   background-image: url("img/stanproj_hold.png");
   background-size: contain;
   position: absolute;
+  top: 48%;
+  left: 3%;
 }
 
 #display_main {
@@ -922,35 +908,37 @@
     width: 29%;
   }
 }
+
 #card_stanproj_7 {
   top: 99%;
 
-  .bg_gray{
+  .bg_gray {
     width: 86%;
     background: linear-gradient(105deg, rgb(197, 197, 198) 0%, rgb(197, 197, 198) 55%, rgb(57, 58, 58) 100%);
     position: absolute;
     height: 100%;
     left: 0.5%;
   }
+
   .tracker_m {
     font-weight: normal;
     left: 3.5%;
   }
 
-  .tracker_tr{
+  .tracker_tr {
     position: absolute;
-    left:35%;
-    top:5%;
+    left: 35%;
+    top: 5%;
   }
 
-  .action_arrow{
+  .action_arrow {
     position: absolute;
     top: 2%;
     left: 21.5%;
     width: 13%;
   }
 
-  .standard_projects_title{
+  .standard_projects_title {
     right: -1%;
     overflow: hidden;
     white-space: nowrap;
@@ -961,10 +949,11 @@
     padding: 0.2% 2% 0.2% 2%;
     border: 1px solid #aaa;
   }
-  
+
 
 }
-#standard_projects_area .active_slot.card{
+
+#standard_projects_area .active_slot.card {
   box-shadow: 0px 0px 0px 3px #ff9800 !important;
 }
 
@@ -1007,6 +996,7 @@
   left: 5%;
   top: 12%;
 }
+
 .stanp_cost.discounted {
   color: #bef983;
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
@@ -1068,8 +1058,9 @@
 
 
 .outer_generation {
-  top: -55%;
-  right: 12%; /*8%*/
+  top: 0%;
+  right: 12%;
+  /*8%*/
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);
@@ -1107,7 +1098,7 @@
 }
 
 .outer_scoretracker {
-  top: -55%;
+  top: 0%;
   right: 4%;
   position: absolute;
   width: calc(var(--map-width) * 0.1);
@@ -1143,10 +1134,6 @@
   }
 }
 
-#discard_title {
- /* cursor: pointer;*/
-}
-
 #card_dlg_content {
   position: relative;
   justify-content: space-around;
@@ -1175,7 +1162,7 @@
 }
 
 .solo_game {
-   #standard_projects_area {
+  #standard_projects_area {
     bottom: 5%;
     left: 2%;
   }
@@ -1187,7 +1174,7 @@
   position: absolute;
   top: 0px;
   z-index: 30;
-  pointer-events:none;
+  pointer-events: none;
 }
 
 #decks_area .reveal .card {

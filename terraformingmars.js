@@ -4161,6 +4161,9 @@ var GameXBody = /** @class */ (function (_super) {
                 if (code == this.CON.MA_ERR_OCCUPIED) {
                     sponsored = _("Yes!");
                 }
+                else if (code == this.CON.MA_ERR_MAXREACHED) {
+                    sponsored = _("All Claimed");
+                }
                 lines += "<div id=\"scorecell_x_".concat(key, "\" \n        class=\"scorecell score\" \n        data-type=\"").concat(key, "\">\n        ").concat(sponsored, "\n        </div>\n        ");
             }
             lines += "</div>";
@@ -7296,7 +7299,7 @@ var VLayout = /** @class */ (function () {
         // for (const key of places) {
         //   dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
         // }
-        dojo.place("alt_tracker_gen", "map_left");
+        dojo.place("alt_tracker_gen", "map_middle");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
         dojo.place("discard_main", "decks_area");

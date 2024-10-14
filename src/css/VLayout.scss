@@ -189,7 +189,12 @@
     height: calc(var(--map-board-with) * 0.849);
     box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
   }
-  .map_2  #main_board {
+
+  .map_2 #main_board {
+    height: calc(var(--map-board-with) * 0.86);
+  }
+
+  .map_1 #main_board {
     height: calc(var(--map-board-with) * 0.86);
   }
 
@@ -207,28 +212,7 @@
   }
 
 
-  #map_middle {
-    position: absolute;
-    width: 100%;
-    height: 90%;
-  }
-
-  #map_top {
-    position: absolute;
-    width: 58%;
-    height: 20%;
-    left: 23%;
-    top: 11%;
-  }
-
-  #map_bottom {
-    width: 100%;
-    position: absolute;
-    bottom: 6%;
-    left: 0%;
-    height: 10%;
-  }
-  .map_2   #map_bottom {
+  .map_2 #map_bottom {
     bottom: 7%;
   }
 
@@ -237,35 +221,26 @@
     height: 35%;
   }
 
-
-  #map_right {
-    padding: 0%;
-    position: absolute;
-    right: 8%;
-    top: 0%;
-    height: 100%;
-  }
-
-  #map_left {
-    padding: 0%;
-    height: 100%;
-    width: 10%;
-    left: 7%;
-    position: absolute;
-  }
-
   #map {
     position: absolute;
     left: 20%;
-    top: 20%;
+    top: 21%;
     width: 60%;
-    height: 72%;
+    height: 78%;
+  }
+
+  #map_middle {
+    width: 100%;
+    position: relative;
+    height: 84%;
   }
 
   #map_hexes {
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0px;
+    left: 0px;
   }
 
   #oxygen_map {
@@ -273,22 +248,36 @@
     width: calc(var(--map-width) * 0.88);
     height: calc(var(--map-width) * 0.26);
     background: none;
-    top: 0px;
-    left: 0px;
+    top: 10%;
+    left: 23%;
   }
 
   #temperature_map {
-    position: relative;
-    top: 17%;
-    height: 72%;
+    position: absolute;
+    top: 19%;
+    left: 83%;
+    height: 77%;
     width: calc(var(--map-width) * 0.157);
     background: none;
+  }
+
+  .map_1 #temperature_map {
+    position: absolute;
+    top: 19%;
+    left: 6%;
+    width: calc(var(--map-width) * 0.1);
   }
 
   #standard_projects_area {
     display: block;
     background: unset;
-    top: 59%;
+    top: 64%;
+    left: 7%;
+  }
+
+  .map_1 #standard_projects_area {
+    top: 64%;
+    left: 79%;
   }
 
   #standard_projects_area .display {
@@ -296,7 +285,7 @@
     display: block;
   }
 
-  .map_2  #standard_projects_area .display {
+  .map_2 #standard_projects_area .display {
     margin-top: 15%;
   }
 
@@ -364,6 +353,7 @@
     display: block;
     position: absolute;
     top: 7%;
+    left: 6%;
     width: var(--stan-width);
     height: var(--stan-height);
     color: white;
@@ -406,29 +396,44 @@
   }
 
   .hex_ganymede {
-    left: 49%;
-    top: 41%;
+    left: 12%;
+    top: 44%;
     background-image: none;
   }
 
   .hex_phobos {
-    left: 58%;
-    top: 13%;
+    left: 13%;
+    top: 14%;
     background-image: none;
   }
 
   .map_2 .hex_phobos {
-    left: 41%;
+    left: 10%;
     top: 23%;
+  }
+
+  .map_1 .hex_phobos {
+    top: 28%;
+    left: 81%;
+  }
+
+  .map_1 .hex_ganymede {
+    top: 46%;
+    left: 84%;
   }
 
   #oceans_pile {
     position: absolute;
-    top: 10%;
+    top: 11%;
     left: 76%;
 
     width: calc(var(--stan-width) * 0.45);
     height: calc(var(--stan-width) * 0.54);
+  }
+
+  .map_1 #oceans_pile {
+    top: 8%;
+    left: 19%;
   }
 
   #outer_scoretracker {
@@ -467,9 +472,16 @@
     background-repeat: no-repeat;
     background-size: 100% auto;
   }
+
   .map_2 {
     #main_board::before {
       background-image: url(img/full/hellas.jpg);
+    }
+  }
+
+  .map_1 {
+    #main_board::before {
+      background-image: url(img/full/elysium.jpg);
     }
   }
 
@@ -785,6 +797,7 @@
   }
 
   .player_tags {
+
     .badge[data-state="0"],
     .tracker[data-state="0"],
     .tracker.tracker_eru[data-state="3"],
@@ -945,6 +958,12 @@
     position: absolute;
     top: 25%;
     left: 10%;
+  }
+
+  .map_1 #main_board .res {
+    position: absolute;
+    top: 65%;
+    left: 7%;
   }
 
   .tooltipimage.production {

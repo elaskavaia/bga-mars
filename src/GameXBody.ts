@@ -652,6 +652,8 @@ class GameXBody extends GameTokens {
         let sponsored = _("No");
         if (code == this.CON.MA_ERR_OCCUPIED) {
           sponsored = _("Yes!");
+        } else if (code == this.CON.MA_ERR_MAXREACHED) {
+          sponsored = _("All Claimed");
         }
         lines += `<div id="scorecell_x_${key}" 
         class="scorecell score" 

@@ -66,3 +66,29 @@ num|name|t|r|cost|text|min|php
 3|Space Baron|8|tagSpace|20|Having the most space tags (event cards do not count).
 4|Eccentric|8|res|20|Having the most resources on cards.
 5|Contractor|8|tagBuilding|20|Having the most building tags (event cards do not count).
+
+
+#Milestones Elysium
+#set id=milestone_{num}@m1
+#set php='vp'=>5
+#set location=display_milestones
+#set count=1
+#set create=1
+#set pre=({r}>={min})
+1|GENERALIST|7|generalist|8|requires that you have increased all 6 productions by at least 1 step (starting production from corporation cards count as increase).|6
+2|SPECIALIST|7|specialist|8|requires that you have at least 10 in production of any resource.|10
+3|ECOLOGIST|7|ecologist|8|requires that you have 4 bio tags (plant-, microbe- and animal tags count as bio tags).|4
+4|TYCOON|7|tycoon|8|requires that you have 15 project cards in play (blue and green cards).|15
+5|LEGEND|7|tagEvent|8|requires 5 played events (red cards).|5
+
+#Awards Elysium
+#set id=award_{num}@m1
+#set php=
+#set location=display_awards
+#set count=1
+#set create=1
+1|Celebrity|8|celebrity|20|Having most cards in play (not events) with a cost of at least 20 megacredits.
+2|Industrialist|8|s+e|20|Having most steel and energy resources.
+3|Desert Settler|8|desert|20|Owning most tiles south of the equator (the four bottom rows).
+4|Estate Dealer|8|estate|20|Owning most tiles adjacent to ocean tiles.
+5|Benefactor|8|tr|20|Having highest terraform rating. Count this award first!
