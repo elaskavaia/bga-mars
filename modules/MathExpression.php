@@ -219,7 +219,7 @@ class MathLexer extends OpLexer {
         } 
 
         if ($str[0]=='/') return $str;
-        return "/^${str}\$/";
+        return "/^{$str}\$/";
     }
 
     static function unquote(string $str) {

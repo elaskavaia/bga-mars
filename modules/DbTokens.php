@@ -142,7 +142,7 @@ class DbTokens extends APP_GameClass {
         $this->clear_cache();
         $allsuf = $this->getTokensOfTypeInLocation($type);
         $resnum = count($allsuf);
-        return $this->createToken("${type}_${resnum}", $location, $token_state);
+        return $this->createToken("{$type}_{$resnum}", $location, $token_state);
     }
 
     function createTokensPack($key, $location, $nbr = 1, $nbr_start = 1, $iterArr = null, $token_state = null) {
@@ -601,7 +601,7 @@ class DbTokens extends APP_GameClass {
         $extra = "";
         if ($like)
             $extra = "%";
-        if (preg_match("/^[A-Za-z${extra}][A-Za-z_0-9${extra}-]*$/", $location) == 0) {
+        if (preg_match("/^[A-Za-z{$extra}][A-Za-z_0-9{$extra}-]*$/", $location) == 0) {
             throw new feException("location must be alphanum and underscore non empty string");
         }
     }
@@ -649,7 +649,7 @@ class DbTokens extends APP_GameClass {
         $extra = "";
         if ($like)
             $extra = "%";
-        if (preg_match("/^[A-Za-z_0-9${extra}]+$/", $key) == 0) {
+        if (preg_match("/^[A-Za-z_0-9{$extra}]+$/", $key) == 0) {
             throw new feException("key must be alphanum and underscore non empty string '$key'");
         }
     }

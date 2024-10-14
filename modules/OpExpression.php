@@ -349,7 +349,7 @@ class OpLexer {
                         if ($cnext == '=') {
                             if ($c == '<' || $c == '>' || $c == '=') {
                                 $tname = "T_OP";
-                                return "${c}${cnext}";
+                                return "{$c}{$cnext}";
                             }
                         }
                         if ($c == '-') {

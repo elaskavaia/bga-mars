@@ -9,7 +9,7 @@ class Operation_cardpre extends AbsOperation {
             foreach ($infos as $card_id => $info) {
                  $this->game->effect_moveCard($color, $card_id, "limbo", 0, clienttranslate('${player_name} cannot play card ${token_name}, player discrds it and gains compensation (designer ruling)'));
                  $this->game->effect_incCount($color, 'm', 15);
-    
+
             }        
             return 1; // skip this
         }

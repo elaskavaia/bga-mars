@@ -155,7 +155,7 @@ final class GameTest extends TestCase {
         $m->effect_playCard(PCOLOR, $m->mtFindByName('Adaptation Technology'));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $this->assertEquals(2, $m->tokens->getTokenState("tracker_pdelta_${color}"));
+        $this->assertEquals(2, $m->tokens->getTokenState("tracker_pdelta_{$color}"));
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
         $m->tokens->setTokenState('tracker_o', 8);
         $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
@@ -213,34 +213,34 @@ final class GameTest extends TestCase {
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
 
-        $m->tokens->setTokenState("tracker_tagPlant_${color}", 1);
-        $m->tokens->setTokenState("tracker_tagAnimal_${color}", 1);
-        $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagPlant_{$color}", 1);
+        $m->tokens->setTokenState("tracker_tagAnimal_{$color}", 1);
+        $m->tokens->setTokenState("tracker_tagMicrobe_{$color}", 1);
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_OK, $q);
 
-        $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
+        $m->tokens->setTokenState("tracker_tagPlant_{$color}", 0);
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
 
-        $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagWild_{$color}", 1);
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_OK, $q);
 
-        $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
-        $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
-        $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
-        $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagWild_{$color}", 1);
+        $m->tokens->setTokenState("tracker_tagPlant_{$color}", 0);
+        $m->tokens->setTokenState("tracker_tagAnimal_{$color}", 0);
+        $m->tokens->setTokenState("tracker_tagMicrobe_{$color}", 1);
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
         $expr = "(((tagMicrobe>0) + (tagAnimal>0)) + (tagPlant>0)) + tagWild";
         $this->assertEquals(2, $m->evaluateExpression($expr, PCOLOR, null, []));
         $this->assertEquals(0, $m->evaluateExpression("($expr) >= 3", PCOLOR, null, []));
 
-        $m->tokens->setTokenState("tracker_tagWild_${color}", 3);
-        $m->tokens->setTokenState("tracker_tagPlant_${color}", 0);
-        $m->tokens->setTokenState("tracker_tagAnimal_${color}", 0);
-        $m->tokens->setTokenState("tracker_tagMicrobe_${color}", 0);
+        $m->tokens->setTokenState("tracker_tagWild_{$color}", 3);
+        $m->tokens->setTokenState("tracker_tagPlant_{$color}", 0);
+        $m->tokens->setTokenState("tracker_tagAnimal_{$color}", 0);
+        $m->tokens->setTokenState("tracker_tagMicrobe_{$color}", 0);
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_OK, $q);
         $this->assertEquals(1, $m->evaluateExpression("($expr) >= 3", PCOLOR, null, []));
@@ -249,8 +249,8 @@ final class GameTest extends TestCase {
     public function testClaimBuilderMilestoneWithWild() {
         $m = $this->game();
         $color = PCOLOR;
-        $m->tokens->setTokenState("tracker_tagBuilding_${color}", 7);
-        $m->tokens->setTokenState("tracker_tagWild_${color}", 1);
+        $m->tokens->setTokenState("tracker_tagBuilding_{$color}", 7);
+        $m->tokens->setTokenState("tracker_tagWild_{$color}", 1);
         $m->setTrackerValue(PCOLOR, 'm', 10);
 
         /** @var Operation_claim */
@@ -567,7 +567,7 @@ final class GameTest extends TestCase {
         $fish = $m->mtFind('name', 'Fish');
 
         $m->effect_playCard(BCOLOR, $fish);
-        $m->dbSetTokenLocation("resource_${p2}_1", $fish, 0); // add a fish
+        $m->dbSetTokenLocation("resource_{$p2}_1", $fish, 0); // add a fish
         /** @var Operation_nores */
         $op = $m->getOperationInstanceFromType("nores(Animal)", PCOLOR);
         $args = $op->argPrimaryDetails();
@@ -830,7 +830,7 @@ final class GameTest extends TestCase {
             $base = basename($file);
             if (!startsWith($base, 'Operation_')) continue;
             $mne = preg_replace("/Operation_(.*).php/", "\\1", $base);
-            $key = "op_${mne}";
+            $key = "op_{$mne}";
             if (array_key_exists($key, $tested)) continue;
             echo ("testing op $key\n");
             $this->subTestOp($m, $key,  ['type' => $mne]);
@@ -1125,7 +1125,7 @@ final class GameTest extends TestCase {
         $m->incTrackerValue(PCOLOR, 'm', 10);
         $psyc = $m->mtFindByName('Psychrophiles');
         $m->effect_playCard(PCOLOR, $psyc);
-        $m->dbSetTokenLocation("resource_${p}_1", $psyc, 0); // add a microbe
+        $m->dbSetTokenLocation("resource_{$p}_1", $psyc, 0); // add a microbe
 
 
         $card = $m->mtFindByName('Greenhouses');
@@ -1143,7 +1143,7 @@ final class GameTest extends TestCase {
 
         $this->assertEquals($targets[4], '6m');
 
-        $m->dbSetTokenLocation("resource_${p}_2", $psyc, 0); // add a microbe
+        $m->dbSetTokenLocation("resource_{$p}_2", $psyc, 0); // add a microbe
         $args = $m->debug_oparg($payment, $card);
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
@@ -1153,7 +1153,7 @@ final class GameTest extends TestCase {
         $this->assertEquals('1s2resMicrobe', $targets[3]);
 
         $m->setTrackerValue(PCOLOR, 'm', 2);
-        $m->dbSetTokenLocation("resource_${p}_2", $psyc, 0); // add a microbe
+        $m->dbSetTokenLocation("resource_{$p}_2", $psyc, 0); // add a microbe
         $payment = $m->getPayment($p, $card);
         $this->assertEquals($payment, '6nm');
         $args = $m->debug_oparg($payment, $card);

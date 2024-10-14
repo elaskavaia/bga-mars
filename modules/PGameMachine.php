@@ -189,7 +189,7 @@ abstract class PGameMachine extends PGameTokens {
             $info = $this->findOp($operation_id, $tops);
             //$this->error("error resolvig op $operation_id ".toJson($tops)." ".toJson($args));
             $this->systemAssertTrue("Illegal operation. Refresh and try again?", $info);
-      
+
 
 
             $color = $info["owner"];

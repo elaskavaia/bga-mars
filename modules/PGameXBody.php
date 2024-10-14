@@ -155,7 +155,7 @@ abstract class PGameXBody extends PGameMachine {
         for ($i = 1; $i <= 2; $i++) {
             $hex = array_shift($nonreserved);
 
-            $tile = $this->tokens->getTokenOfTypeInLocation("tile_${type}_", null, 0);
+            $tile = $this->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
             $this->systemAssertTrue("city tile not found", $tile);
             $this->dbSetTokenLocation($tile['key'], $hex, $num);
             $marker = $this->createPlayerMarker($botcolor);
@@ -481,14 +481,14 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function createPlayerMarker($color) {
-        $token = "marker_${color}";
-        $key = $this->tokens->createTokenAutoInc($token, "miniboard_${color}");
+        $token = "marker_{$color}";
+        $key = $this->tokens->createTokenAutoInc($token, "miniboard_{$color}");
         return $key;
     }
 
     function createPlayerResource($color) {
-        $token = "resource_${color}";
-        $key = $this->tokens->createTokenAutoInc($token, "miniboard_${color}");
+        $token = "resource_{$color}";
+        $key = $this->tokens->createTokenAutoInc($token, "miniboard_{$color}");
         return $key;
     }
 
@@ -659,7 +659,7 @@ abstract class PGameXBody extends PGameMachine {
     function canAfford($color, $tokenid, $cost = null, &$info = null, string $extracontext = null) {
         if ($info == null) $info = [];
         if ($cost !== null) {
-            $payment_op = "${cost}nm";
+            $payment_op = "{$cost}nm";
         } else
             $payment_op = $this->getPayment($color, $tokenid, $extracontext);
 
@@ -943,12 +943,12 @@ abstract class PGameXBody extends PGameMachine {
 
     function getTrackerId(string $color, string $type) {
         if ($color === '') {
-            $token_id = "tracker_${type}";
+            $token_id = "tracker_{$type}";
         } else {
             if (!$color) {
                 $color = $this->getActivePlayerColor();
             }
-            $token_id = "tracker_${type}_${color}";
+            $token_id = "tracker_{$type}_{$color}";
         }
         return $token_id;
     }
@@ -1320,7 +1320,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($costm == 0)
             return "nop"; // no-op
 
-        return "${costm}nm";
+        return "{$costm}nm";
     }
 
     function getCurrentStartingPlayer() {
@@ -1562,7 +1562,7 @@ abstract class PGameXBody extends PGameMachine {
         $c = count($oceans);
         if ($c) {
             $c = $c * 2;
-            $bonus = "${c}m"; // 2 MC per ocean
+            $bonus = "{$c}m"; // 2 MC per ocean
             //$this->putInEffectPool($color, $bonus, $object);
             $this->executeImmediately($color, $bonus); // not much reason to put in the pool
         }
@@ -1581,7 +1581,7 @@ abstract class PGameXBody extends PGameMachine {
 
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            $this->effect_draw($color, "deck_main", "${location}_$color", $numcards);
+            $this->effect_draw($color, "deck_main", "{$location}_$color", $numcards);
         }
         return $numcards;
     }
@@ -1621,7 +1621,7 @@ abstract class PGameXBody extends PGameMachine {
         // multiplayer buy
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            if ($numcards) $this->multiplayerqueue($color, "${numcards}?buycard");
+            if ($numcards) $this->multiplayerqueue($color, "{$numcards}?buycard");
         }
 
         foreach ($players as $player_id => $player) {
@@ -1677,17 +1677,17 @@ abstract class PGameXBody extends PGameMachine {
         $tagMap = [];
         if ($tags)
             foreach ($tagsarr as $tag) {
-                $events[] = "${prefix}tag$tag";
+                $events[] = "{$prefix}tag$tag";
                 $tagMap[$tag] = 1;
             }
         if (array_get($tagMap, 'Space') && array_get($tagMap, 'Event'))
-            $events[] = "${prefix}cardSpaceEvent";
+            $events[] = "{$prefix}cardSpaceEvent";
         $uniqueTags = array_keys($tagMap);
         sort($uniqueTags);
         foreach ($uniqueTags as $tag) {
-            $events[] = "${prefix}card$tag";
+            $events[] = "{$prefix}card$tag";
         }
-        if (startsWith($card_id, 'card_main'))  $events[] = "${prefix}card";
+        if (startsWith($card_id, 'card_main'))  $events[] = "{$prefix}card";
         return $events;
     }
 
@@ -1766,7 +1766,7 @@ abstract class PGameXBody extends PGameMachine {
         for ($i = $perstep; $i <= $inc; $i += $perstep) {
             $v = $current + $i;
             $nvalue = $v >= 0 ? $v : "n" . (-$v);
-            $bounus_name = "param_${type}_${nvalue}";
+            $bounus_name = "param_{$type}_{$nvalue}";
             $bonus = $this->getRulesFor($bounus_name, 'r');
             if ($bonus) {
                 //$this->debugLog("-param bonus $bonus");
@@ -1862,10 +1862,10 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($params as $p) {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
-                $prod = $this->tokens->getTokenState("tracker_p${p}_${color}");
+                $prod = $this->tokens->getTokenState("tracker_p{$p}_{$color}");
                 if ($p == 'e') {
                     // energy to heat
-                    $curr = $this->tokens->getTokenState("tracker_${p}_${color}");
+                    $curr = $this->tokens->getTokenState("tracker_{$p}_{$color}");
                     if ($curr > 0) {
                         $this->effect_incCount($color, 'h', $curr, [
                             'message' => clienttranslate('${player_name} gains ${token_div_count} due to heat transfer')
@@ -1873,7 +1873,7 @@ abstract class PGameXBody extends PGameMachine {
                         $this->effect_incCount($color, 'e', -$curr);
                     }
                 } elseif ($p == 'm') {
-                    $curr = $this->tokens->getTokenState("tracker_tr_${color}");
+                    $curr = $this->tokens->getTokenState("tracker_tr_{$color}");
                     $prod += $curr;
                 }
                 if ($prod)
@@ -1986,8 +1986,8 @@ abstract class PGameXBody extends PGameMachine {
         if ($table !== null) {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
-                $curr = $this->tokens->getTokenState("tracker_tr_${color}");
-                $this->scoreTableVp($table, $player_id, 'tr', "tracker_tr_${color}", $curr);
+                $curr = $this->tokens->getTokenState("tracker_tr_{$color}");
+                $this->scoreTableVp($table, $player_id, 'tr', "tracker_tr_{$color}", $curr);
 
                 if (!$this->isSolo()) {
                     $this->scoreTableVp($table, $player_id,  'awards');
@@ -2007,9 +2007,9 @@ abstract class PGameXBody extends PGameMachine {
                     $player_id
                 );
 
-                $curr = $this->tokens->getTokenState("tracker_tr_${color}");
+                $curr = $this->tokens->getTokenState("tracker_tr_{$color}");
                 $this->dbIncScoreValueAndNotify($player_id, $curr, clienttranslate('${player_name} scores ${inc} point/s for Terraforming Rating'), "", [
-                    'target' => "tracker_tr_${color}"
+                    'target' => "tracker_tr_{$color}"
                 ]);
                 $this->setStat($curr, "game_vp_tr", $player_id);
             }

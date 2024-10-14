@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once "AbsOperationTile.php";
 
 class Operation_tile extends AbsOperationTile {
-    
+
     /** This only checks placement not the occupancy */
     function checkPlacement($color, $ohex, $info, $map) {
         $tt = $this->getTileType();
@@ -26,6 +26,7 @@ class Operation_tile extends AbsOperationTile {
         if ($reservename) {
             $reshexes = $this->findReservedAreas($reservename);
             if (count($reshexes) == 0) {
+                // no tiles on the map with this name
                 if (isset($info['reserved'])) return MA_ERR_RESERVED;
                 if (!$this->checkAdjRulesPasses($ohex, $color, $reservename)) {
                     return MA_ERR_PLACEMENT;

@@ -119,10 +119,10 @@ abstract class PGameTokens extends PGameBasic {
                     // per player location
                     foreach ($players_basic as $player_info) {
                         $color = $player_info["player_color"];
-                        $this->setCounter($res, $this->counterNameOf("${key}_${color}"), 0);
+                        $this->setCounter($res, $this->counterNameOf("{$key}_{$color}"), 0);
                     }
                 } else {
-                    $this->setCounter($res, $this->counterNameOf("${key}"), 0);
+                    $this->setCounter($res, $this->counterNameOf("{$key}"), 0);
                 }
             }
         }
@@ -157,13 +157,13 @@ abstract class PGameTokens extends PGameBasic {
                     // per player location
                     foreach ($players_basic as $player_id => $player_info) {
                         $color = $player_info["player_color"];
-                        $info = $this->createCounterInfoForLocation("${key}_${color}");
+                        $info = $this->createCounterInfoForLocation("{$key}_{$color}");
                         if (!isset($this->token_types[$info["counter_name"]])) {
                             $this->token_types[$info["counter_name"]] = $info;
                         }
                     }
                 } else {
-                    $info = $this->createCounterInfoForLocation("${key}");
+                    $info = $this->createCounterInfoForLocation("{$key}");
                     if (!isset($this->token_types[$info["counter_name"]])) {
                         $this->token_types[$info["counter_name"]] = $info;
                     }
@@ -250,13 +250,13 @@ abstract class PGameTokens extends PGameBasic {
             if ($create_type === 1 || $create_type === "single") {
                 $token_id = $id;
             } elseif ($create_type === 2 || $create_type === "index") {
-                $token_id = "${id}_{INDEX}";
+                $token_id = "{$id}_{INDEX}";
             } elseif ($create_type === 3 || $create_type === "color_index") {
-                $token_id = "${id}_{COLOR}_{INDEX}";
+                $token_id = "{$id}_{COLOR}_{INDEX}";
             } elseif ($create_type === 4 || $create_type === "color") {
-                $token_id = "${id}_{COLOR}";
+                $token_id = "{$id}_{COLOR}";
             } elseif ($create_type === 5 || $create_type === "index_color") {
-                $token_id = "${id}_{INDEX}_{COLOR}";
+                $token_id = "{$id}_{INDEX}_{COLOR}";
             }
             if (strpos($token_id, "{INDEX}") === false) {
                 $count = 1;
