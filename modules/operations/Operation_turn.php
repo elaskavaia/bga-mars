@@ -68,7 +68,11 @@ class Operation_turn extends AbsOperation {
             if ($pref) {
                 $this->game->queue($owner, "confturn");
             }
+            if ($secondaction) {
+                $this->game->notifyTokensUpdate($player_id);
+            }
         } else {
+
             $this->game->queue($owner, "turn2");
         }
         if ($this->game->isSolo()) {

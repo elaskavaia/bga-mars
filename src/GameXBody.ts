@@ -18,6 +18,7 @@ class GameXBody extends GameTokens {
   //score cache
   private cachedScoreMoveNbr: string = "0";
   private cachedScoringTable: any;
+  private cachedProgressTable: any;
   // private parses:any;
   private currentOperation: any = {}; // bag of data to support operation engine
   private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
@@ -196,6 +197,7 @@ class GameXBody extends GameTokens {
 
       const move = gamedatas.notifications.move_nbr;
       this.cachedScoringTable = gamedatas.scoringTable;
+      this.cachedProgressTable = gamedatas.progressTable;
       this.cachedScoreMoveNbr = move;
       // call this to update cards vp data-vp attr
       this.createScoringTableHTML(this.cachedScoringTable);
@@ -507,166 +509,165 @@ class GameXBody extends GameTokens {
     return finalhtm;
   }
 
-  onShowMilestonesProgress() {
-    let finalhtm: string = "";
+  getOpInfoArgs(operations, optype: string) {
+    for (const opInfo of operations) {
+      if (opInfo.type == optype) {
+        return opInfo.args.info;
+      }
+    }
+    return undefined;
+  }
 
-    const tablehtm: string = `
+  onShowMilestonesProgress() {
+    const msinfo = {};
+    for (const key in this.gamedatas.token_types) {
+      const info = this.gamedatas.token_types[key];
+      if (key.startsWith("milestone")) {
+        msinfo[key] = info;
+      }
+    }
+    let namesRow = "";
+    for (const key in msinfo) {
+      const info = msinfo[key];
+      namesRow += `<div class="scorecell ">${_(info.name)}</div>`;
+    }
+
+    const tableHtml = `
              <div id="scoretable_pg_milestones" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Player Name")}</div>
                       <div class="scorecell header corp">${_("Corporation")}</div>
-                      <div class="scorecell ">${_("Terraformer")}</div>
-                      <div class="scorecell ">${_("Mayor")}</div>
-                      <div class="scorecell ">${_("Gardener")}</div>
-                      <div class="scorecell ">${_("Builder")}</div>
-                      <div class="scorecell ">${_("Planner")}</div>
+                      ${namesRow}
                 </div>
                 %lines%
               </div>`;
-    let lines: string = "";
+
+    let lines = "";
 
     for (let plid in this.gamedatas.players) {
-      const plcolor: any = this.getPlayerColor(parseInt(plid));
+      const plcolor = this.getPlayerColor(parseInt(plid));
+      const name = this.getPlayerName(parseInt(plid));
+      const progress = this.cachedProgressTable[plid];
+
+      const opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
+
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-
-      const pg: object = {
-        terraformer: parseInt($("tracker_tr_" + plcolor).dataset.state),
-        mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
-        gardener: parseInt($("tracker_forest_" + plcolor).dataset.state),
-        builder: parseInt($("tracker_tagBuilding_" + plcolor).dataset.state),
-        planner: parseInt($("counter_hand_" + plcolor).innerHTML)
-      };
-
-      const goals: object = {
-        terraformer: 35,
-        mayor: 3,
-        gardener: 3,
-        builder: 8,
-        planner: 16
-      };
-      lines =
-        lines +
-        `
+      lines += `
                     <div class=" scorecol">
-                          <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+                          <div class="scorecell header name" style="color:#${plcolor};">${name}</div>
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
-      let idx = 1;
-      for (const key in pg) {
-        let pc = Math.ceil((pg[key] / goals[key]) * 100);
+
+      for (const key in msinfo) {
+        const current = opInfoArgs[key].c;
+        const claimed = opInfoArgs[key].claimed;
+        const staticInfo = msinfo[key];
+        const goal = staticInfo.min;
+
+        let pc = Math.ceil((current / goal) * 100);
         if (pc > 100) pc = 100;
         let grade = "high";
         if (pc <= 34) grade = "low";
         else if (pc <= 67) grade = "mid";
-        let scoreval = pg[key];
 
+        let scoreval = `${current}/${goal}`;
+        const code = opInfoArgs[key].q;
         let adclass = "";
-        const cube = $("milestone_" + idx).querySelector(".marker_" + plcolor);
-        if (cube) {
-          scoreval = '<div class="card_vp">5</div>';
-          grade = "won";
-          adclass = "won";
+        let error = "";
+        switch (code) {
+          case this.CON.MA_ERR_OCCUPIED:
+            if (claimed) {
+              error = '<div class="card_vp">5</div>';
+            } else {
+              error = _("claimed");
+            }
+            break;
+          case this.CON.MA_ERR_MAXREACHED:
+            error = _("all claimed");
+            break;
+          case this.CON.MA_ERR_COST:
+          case this.CON.MA_OK:
+            break;
         }
+        //scoreval = '<div class="card_vp">5</div>';
 
-        lines =
-          lines +
-          `<div id="scorecell_${plcolor}_${key}" class="scorecell score ${adclass}" data-type="${key}" data-position="0"><div class="progress_hist"  data-grade="${grade}"  style="height:${pc}%;"></div><div class="score_val">${scoreval}</div><div class="scoregoal">/${goals[key]}</div></div>`;
-        idx++;
+        lines += `<div id="scorecell_${plcolor}_${key}" class="scorecell score ${adclass}" data-type="${key}" data-position="0">
+             <div class="progress_hist"  data-grade="${grade}"  style="height: ${pc}%;"></div>
+             <div class="score_val">${scoreval}</div>
+             <div class="scoregoal">${error}</div>
+          </div>`;
       }
-      lines = lines + `             </div>`;
+      lines = lines + "</div>";
     }
-    finalhtm = tablehtm.replace("%lines%", lines);
-    let dlg = new ebg.popindialog();
-    dlg.create("pg_dlg");
-    dlg.setTitle(_("Milestones Summary"));
-    dlg.setContent(finalhtm);
-    dlg.show();
+    const finalHtml = tableHtml.replace("%lines%", lines);
+    this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
   }
   onShowAwardsProgress() {
-    let finalhtm: string = "";
+    const msinfo = {};
+    for (const key in this.gamedatas.token_types) {
+      const info = this.gamedatas.token_types[key];
+      if (key.startsWith("award")) {
+        msinfo[key] = info;
+      }
+    }
+    let namesRow = "";
+    for (const key in msinfo) {
+      const info = msinfo[key];
+      namesRow += `<div id='scoreheader_${key}' class="scorecell">${_(info.name)}</div>`;
+    }
 
     const tablehtm: string = `
              <div id="scoretable_pg_awards" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Player Name")}</div>
                       <div class="scorecell header corp">${_("Corporation")}</div>
-                      <div id="scoreheader_1" class="scorecell ">${_("Landlord")}</div>
-                      <div id="scoreheader_2" class="scorecell ">${_("Banker")}</div>
-                      <div id="scoreheader_3" class="scorecell ">${_("Scientist")}</div>
-                      <div id="scoreheader_4" class="scorecell ">${_("Thermalist")}</div>
-                      <div id="scoreheader_5" class="scorecell ">${_("Miner")}</div>
+                      ${namesRow}
                 </div>
                 %lines%
               </div>`;
     let lines: string = "";
-    let pg = {
-      landlord: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 1 },
-      banker: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 2 },
-      scientist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 3 },
-      thermalist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 4 },
-      miner: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 5 }
-    };
 
     for (let plid in this.gamedatas.players) {
-      const plcolor: any = this.getPlayerColor(parseInt(plid));
+      const plcolor = this.getPlayerColor(parseInt(plid));
+      const name = this.getPlayerName(parseInt(plid));
+      const progress = this.cachedProgressTable[plid];
+      const opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
+      const corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
 
-      const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-
-      pg.landlord.values[plcolor] = parseInt($("tracker_land_" + plcolor).dataset.state);
-      pg.banker.values[plcolor] = parseInt($("tracker_pm_" + plcolor).dataset.state);
-      pg.scientist.values[plcolor] = parseInt($("tracker_tagScience_" + plcolor).dataset.state);
-      pg.thermalist.values[plcolor] = parseInt($("tracker_h_" + plcolor).dataset.state);
-      pg.miner.values[plcolor] = parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state);
-
-      lines =
-        lines +
-        `
-                    <div class=" scorecol">
-                          <div class="scorecell header name" style="color:#${plcolor};">${this.gamedatas.players[plid].name}</div>
+      lines += `<div class="scorecol">
+                          <div class="scorecell header name" style="color:#${plcolor};">${name}</div>
                           <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
                           `;
-      for (const key in pg) {
-        lines =
-          lines +
-          `<div id="scorecell_${plcolor}_${key}" class="scorecell score" data-type="${key}" data-value="${pg[key].values[plcolor]}" data-position="0">${pg[key].values[plcolor]}</div>`;
+      for (const key in msinfo) {
+        const current = opInfoArgs[key].counter;
+
+        const vp = opInfoArgs[key].vp;
+        const code = opInfoArgs[key].q;
+        const canClaim = code != this.CON.MA_ERR_MAXREACHED;
+        const place = canClaim ? opInfoArgs[key].place : 0;
+        let vp_icon = "";
+        if (vp && canClaim) vp_icon = `<div class="card_vp">${vp}</div>`;
+
+        lines += `<div id="scorecell_${plcolor}_${key}" 
+            class="scorecell score" 
+            data-type="${key}" 
+            data-value="${current}" 
+            data-position="${place}">
+            ${vp_icon}
+            ${current}
+            </div>
+            `;
       }
-      lines = lines + `             </div>`;
+      lines += `</div>`;
     }
-    finalhtm = tablehtm.replace("%lines%", lines);
-    let dlg = new ebg.popindialog();
-    dlg.create("pg_dlg");
-    dlg.setTitle(_("Awards Summary"));
-    dlg.setContent(finalhtm);
-    dlg.show();
+    const finalhtm = tablehtm.replace("%lines%", lines);
+    this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
 
-    for (const key in pg) {
-      for (const plid in this.gamedatas.players) {
-        const plcolor: any = this.getPlayerColor(parseInt(plid));
-        if (pg[key].values[plcolor] > pg[key].max_value) {
-          if (pg[key].max_pl != "") {
-            pg[key].ru_value = pg[key].max_value;
-            pg[key].ru_pl = pg[key].max_pl;
-          }
-          pg[key].max_value = pg[key].values[plcolor];
-          pg[key].max_pl = plcolor;
-        } else if (pg[key].values[plcolor] > pg[key].ru_value) {
-          pg[key].ru_value = pg[key].values[plcolor];
-          pg[key].ru_pl = plcolor;
-        }
-      }
-      if (pg[key].max_pl != "") $("scorecell_" + pg[key].max_pl + "_" + key).dataset.position = "1";
-      if (pg[key].ru_pl != "") $("scorecell_" + pg[key].ru_pl + "_" + key).dataset.position = "2";
-
-      //equals
-      for (let plid in this.gamedatas.players) {
-        const plcolor: any = this.getPlayerColor(parseInt(plid));
-        if (pg[key].values[plcolor] == pg[key].max_value) $("scorecell_" + plcolor + "_" + key).dataset.position = "1";
-      }
-
+    for (const key in msinfo) {
       //activated with a cube
-      const cube = $("award_" + pg[key].id).querySelector(".marker");
+      const cube = $(key)?.querySelector(".marker");
       if (cube) {
-        $("scoreheader_" + pg[key].id).insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
+        $("scoreheader_" + key)?.insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
       }
     }
   }
@@ -1117,6 +1118,7 @@ class GameXBody extends GameTokens {
       const opInfo = notif.args.operations[opIdS];
       this.updateHandInformation(opInfo.args.info, opInfo.type);
     }
+    this.cachedProgressTable[this.getActivePlayerId()] = notif.args;
   }
   notif_scoringTable(notif: Notif) {
     //console.log(notif);

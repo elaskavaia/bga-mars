@@ -237,10 +237,11 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->isRealPlayer($current)) {
             $result['server_prefs'] = $this->dbUserPrefs->getAllPrefs($current);
             $result['card_info'] = $this->getCardInfoInHand($current);
-            $result['tokensUpdate'] = $this->getTokensUpdate($current);
+          
         } else
             $result['server_prefs'] = [];
         $result['scoringTable'] = $this->scoreAllTable();
+        $result['progressTable'] = $this->getProgressTable();
 
         $result += $this->argUndo();
         $this->prof_point("getAllDatas", "end");
@@ -1970,6 +1971,16 @@ abstract class PGameXBody extends PGameMachine {
         return $table;
     }
 
+    function getProgressTable() {
+        $table = [];
+        $players = $this->loadPlayersBasicInfos();
+        foreach ($players as $player_id => $player) {
+            //$color = $player["player_color"];
+            $table[$player_id] =  $this->getTokensUpdate($player_id);
+        }
+        return $table;
+    }
+
     function scoreAll(array &$table = null) {
         $players = $this->loadPlayersBasicInfos();
         if ($table !== null) {
@@ -2194,7 +2205,7 @@ abstract class PGameXBody extends PGameMachine {
         $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%", 1);
         return count($res);
     }
-    
+
 
     function getCountOfUniqueTags($owner) {
         $tags = $this->getTags();

@@ -6913,6 +6913,9 @@
 .scoretable .scorecell[data-position="2"]::after {
   content: "🥈";
 }
+.scoretable .scorecell .card_vp {
+  position: inline-block;
+}
 .scoretable .scoregoal {
   position: absolute;
   right: 0;
@@ -8728,6 +8731,13 @@
   left: 0%;
   height: 10%;
 }
+.mfull .map_2 #map_bottom {
+  bottom: 7%;
+}
+.mfull .map_milesawardsheader {
+  top: 0%;
+  height: 35%;
+}
 .mfull #map_right {
   padding: 0%;
   position: absolute;
@@ -8797,10 +8807,15 @@
 .mfull #main_board .award {
   position: relative;
   background: none;
-  width: 17%;
+  width: 20%;
   height: 100%;
 }
-.mfull .map_milesawardsheader,
+.mfull #milestones_costs,
+.mfull #milestones_title,
+.mfull #milestones_gains,
+.mfull #awards_costs,
+.mfull #awards_title,
+.mfull #awards_gains,
 .mfull .award_label,
 .mfull .milestone_label {
   display: none;
@@ -8809,9 +8824,10 @@
 .mfull #main_milestones {
   padding: 0;
   border: none;
-  width: 50%;
+  width: 44%;
   background: none;
   position: relative;
+  left: 6%;
 }
 .mfull #main_awards .marker,
 .mfull #main_milestones .marker {
@@ -8819,14 +8835,11 @@
   left: 35%;
 }
 .mfull .map_milesawardscontent {
-  position: absolute;
-  top: 8%;
-  left: 2%;
+  position: relative;
+  top: unset;
+  left: unset;
   width: 100%;
   height: 100%;
-}
-.mfull #display_milestones {
-  left: 13%;
 }
 .mfull #decks_area {
   display: block;

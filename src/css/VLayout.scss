@@ -228,6 +228,15 @@
     left: 0%;
     height: 10%;
   }
+  .map_2   #map_bottom {
+    bottom: 7%;
+  }
+
+  .map_milesawardsheader {
+    top: 0%;
+    height: 35%;
+  }
+
 
   #map_right {
     padding: 0%;
@@ -307,17 +316,21 @@
   }
 
   #main_board {
-
     .milestone,
     .award {
       position: relative;
       background: none;
-      width: 17%;
+      width: 20%;
       height: 100%;
     }
   }
 
-  .map_milesawardsheader,
+  #milestones_costs,
+  #milestones_title,
+  #milestones_gains,
+  #awards_costs,
+  #awards_title,
+  #awards_gains,
   .award_label,
   .milestone_label {
     display: none;
@@ -327,10 +340,10 @@
   #main_milestones {
     padding: 0;
     border: none;
-    width: 50%;
+    width: 44%;
     background: none;
     position: relative;
-
+    left: 6%;
     .marker {
       // same size as all markers on map defined in GameTokens.scss
       top: 40%;
@@ -340,15 +353,11 @@
   }
 
   .map_milesawardscontent {
-    position: absolute;
-    top: 8%;
-    left: 2%;
+    position: relative;
+    top: unset;
+    left: unset;
     width: 100%;
     height: 100%;
-  }
-
-  #display_milestones {
-    left: 13%;
   }
 
   #decks_area {

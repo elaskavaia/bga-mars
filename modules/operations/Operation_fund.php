@@ -27,18 +27,26 @@ class Operation_fund extends AbsOperation {
         $costs = [8, 14, 20, 0, 0, 0];
         $cost = $costs[$claimed];
         $this->argresult['cost'] = $cost;
+
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $cost, $claimed) {
             $free = $this->params();
-            if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
-            if ($map[$tokenId]['state'] > 0) return MA_ERR_OCCUPIED;
-            if ($free == 'free') return MA_OK;
-            if (!$this->game->canAfford($color, $tokenId, $cost)) return MA_ERR_COST;
-            return MA_OK;
+            if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
+            else if ($map[$tokenId]['state'] > 0) $q = MA_ERR_OCCUPIED;
+            else if ($free == 'free') $q = MA_OK;
+            else if (!$this->game->canAfford($color, $tokenId, $cost)) $q = MA_ERR_COST;
+            else $q = MA_OK;
+
+            // add count, place and vp
+            $table = [];
+            $this->game->scoreAward($tokenId, $table);
+            $extra = $table[$this->getPlayerId()]['details']['awards'][$tokenId];
+            return [
+                'q' => $q
+            ] + $extra;
         });
     }
 
-    function getButtonName()
-    {
+    function getButtonName() {
         $free = $this->params();
         if ($free != 'free') {
             return parent::getButtonName();

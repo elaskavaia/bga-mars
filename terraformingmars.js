@@ -3798,6 +3798,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.updateStacks();
             var move = gamedatas.notifications.move_nbr;
             this.cachedScoringTable = gamedatas.scoringTable;
+            this.cachedProgressTable = gamedatas.progressTable;
             this.cachedScoreMoveNbr = move;
             // call this to update cards vp data-vp attr
             this.createScoringTableHTML(this.cachedScoringTable);
@@ -4059,33 +4060,43 @@ var GameXBody = /** @class */ (function (_super) {
         var finalhtm = tablehtm.replace("%lines%", lines);
         return finalhtm;
     };
+    GameXBody.prototype.getOpInfoArgs = function (operations, optype) {
+        for (var _i = 0, operations_1 = operations; _i < operations_1.length; _i++) {
+            var opInfo = operations_1[_i];
+            if (opInfo.type == optype) {
+                return opInfo.args.info;
+            }
+        }
+        return undefined;
+    };
     GameXBody.prototype.onShowMilestonesProgress = function () {
-        var finalhtm = "";
-        var tablehtm = "\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div class=\"scorecell \">").concat(_("Terraformer"), "</div>\n                      <div class=\"scorecell \">").concat(_("Mayor"), "</div>\n                      <div class=\"scorecell \">").concat(_("Gardener"), "</div>\n                      <div class=\"scorecell \">").concat(_("Builder"), "</div>\n                      <div class=\"scorecell \">").concat(_("Planner"), "</div>\n                </div>\n                %lines%\n              </div>");
+        var msinfo = {};
+        for (var key in this.gamedatas.token_types) {
+            var info = this.gamedatas.token_types[key];
+            if (key.startsWith("milestone")) {
+                msinfo[key] = info;
+            }
+        }
+        var namesRow = "";
+        for (var key in msinfo) {
+            var info = msinfo[key];
+            namesRow += "<div class=\"scorecell \">".concat(_(info.name), "</div>");
+        }
+        var tableHtml = "\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
+            var name_2 = this.getPlayerName(parseInt(plid));
+            var progress = this.cachedProgressTable[plid];
+            var opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            var pg = {
-                terraformer: parseInt($("tracker_tr_" + plcolor).dataset.state),
-                mayor: parseInt($("tracker_city_" + plcolor).dataset.state),
-                gardener: parseInt($("tracker_forest_" + plcolor).dataset.state),
-                builder: parseInt($("tracker_tagBuilding_" + plcolor).dataset.state),
-                planner: parseInt($("counter_hand_" + plcolor).innerHTML)
-            };
-            var goals = {
-                terraformer: 35,
-                mayor: 3,
-                gardener: 3,
-                builder: 8,
-                planner: 16
-            };
-            lines =
-                lines +
-                    "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
-            var idx = 1;
-            for (var key in pg) {
-                var pc = Math.ceil((pg[key] / goals[key]) * 100);
+            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(name_2, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            for (var key in msinfo) {
+                var current = opInfoArgs[key].c;
+                var claimed = opInfoArgs[key].claimed;
+                var staticInfo = msinfo[key];
+                var goal = staticInfo.min;
+                var pc = Math.ceil((current / goal) * 100);
                 if (pc > 100)
                     pc = 100;
                 var grade = "high";
@@ -4093,93 +4104,77 @@ var GameXBody = /** @class */ (function (_super) {
                     grade = "low";
                 else if (pc <= 67)
                     grade = "mid";
-                var scoreval = pg[key];
+                var scoreval = "".concat(current, "/").concat(goal);
+                var code = opInfoArgs[key].q;
                 var adclass = "";
-                var cube = $("milestone_" + idx).querySelector(".marker_" + plcolor);
-                if (cube) {
-                    scoreval = '<div class="card_vp">5</div>';
-                    grade = "won";
-                    adclass = "won";
+                var error = "";
+                switch (code) {
+                    case this.CON.MA_ERR_OCCUPIED:
+                        if (claimed) {
+                            error = '<div class="card_vp">5</div>';
+                        }
+                        else {
+                            error = _("claimed");
+                        }
+                        break;
+                    case this.CON.MA_ERR_MAXREACHED:
+                        error = _("all claimed");
+                        break;
+                    case this.CON.MA_ERR_COST:
+                    case this.CON.MA_OK:
+                        break;
                 }
-                lines =
-                    lines +
-                        "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score ").concat(adclass, "\" data-type=\"").concat(key, "\" data-position=\"0\"><div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height:").concat(pc, "%;\"></div><div class=\"score_val\">").concat(scoreval, "</div><div class=\"scoregoal\">/").concat(goals[key], "</div></div>");
-                idx++;
+                //scoreval = '<div class="card_vp">5</div>';
+                lines += "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score ").concat(adclass, "\" data-type=\"").concat(key, "\" data-position=\"0\">\n             <div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height: ").concat(pc, "%;\"></div>\n             <div class=\"score_val\">").concat(scoreval, "</div>\n             <div class=\"scoregoal\">").concat(error, "</div>\n          </div>");
             }
-            lines = lines + "             </div>";
+            lines = lines + "</div>";
         }
-        finalhtm = tablehtm.replace("%lines%", lines);
-        var dlg = new ebg.popindialog();
-        dlg.create("pg_dlg");
-        dlg.setTitle(_("Milestones Summary"));
-        dlg.setContent(finalhtm);
-        dlg.show();
+        var finalHtml = tableHtml.replace("%lines%", lines);
+        this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
     };
     GameXBody.prototype.onShowAwardsProgress = function () {
-        var finalhtm = "";
-        var tablehtm = "\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      <div id=\"scoreheader_1\" class=\"scorecell \">").concat(_("Landlord"), "</div>\n                      <div id=\"scoreheader_2\" class=\"scorecell \">").concat(_("Banker"), "</div>\n                      <div id=\"scoreheader_3\" class=\"scorecell \">").concat(_("Scientist"), "</div>\n                      <div id=\"scoreheader_4\" class=\"scorecell \">").concat(_("Thermalist"), "</div>\n                      <div id=\"scoreheader_5\" class=\"scorecell \">").concat(_("Miner"), "</div>\n                </div>\n                %lines%\n              </div>");
+        var _a, _b;
+        var msinfo = {};
+        for (var key in this.gamedatas.token_types) {
+            var info = this.gamedatas.token_types[key];
+            if (key.startsWith("award")) {
+                msinfo[key] = info;
+            }
+        }
+        var namesRow = "";
+        for (var key in msinfo) {
+            var info = msinfo[key];
+            namesRow += "<div id='scoreheader_".concat(key, "' class=\"scorecell\">").concat(_(info.name), "</div>");
+        }
+        var tablehtm = "\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
-        var pg = {
-            landlord: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 1 },
-            banker: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 2 },
-            scientist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 3 },
-            thermalist: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 4 },
-            miner: { values: [], max_value: 0, max_pl: "", ru_value: 0, ru_pl: "", id: 5 }
-        };
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
+            var name_3 = this.getPlayerName(parseInt(plid));
+            var progress = this.cachedProgressTable[plid];
+            var opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            pg.landlord.values[plcolor] = parseInt($("tracker_land_" + plcolor).dataset.state);
-            pg.banker.values[plcolor] = parseInt($("tracker_pm_" + plcolor).dataset.state);
-            pg.scientist.values[plcolor] = parseInt($("tracker_tagScience_" + plcolor).dataset.state);
-            pg.thermalist.values[plcolor] = parseInt($("tracker_h_" + plcolor).dataset.state);
-            pg.miner.values[plcolor] = parseInt($("tracker_s_" + plcolor).dataset.state) + parseInt($("tracker_u_" + plcolor).dataset.state);
-            lines =
-                lines +
-                    "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(this.gamedatas.players[plid].name, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
-            for (var key in pg) {
-                lines =
-                    lines +
-                        "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score\" data-type=\"").concat(key, "\" data-value=\"").concat(pg[key].values[plcolor], "\" data-position=\"0\">").concat(pg[key].values[plcolor], "</div>");
+            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(name_3, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            for (var key in msinfo) {
+                var current = opInfoArgs[key].counter;
+                var vp = opInfoArgs[key].vp;
+                var code = opInfoArgs[key].q;
+                var canClaim = code != this.CON.MA_ERR_MAXREACHED;
+                var place = canClaim ? opInfoArgs[key].place : 0;
+                var vp_icon = "";
+                if (vp && canClaim)
+                    vp_icon = "<div class=\"card_vp\">".concat(vp, "</div>");
+                lines += "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" \n            class=\"scorecell score\" \n            data-type=\"").concat(key, "\" \n            data-value=\"").concat(current, "\" \n            data-position=\"").concat(place, "\">\n            ").concat(vp_icon, "\n            ").concat(current, "\n            </div>\n            ");
             }
-            lines = lines + "             </div>";
+            lines += "</div>";
         }
-        finalhtm = tablehtm.replace("%lines%", lines);
-        var dlg = new ebg.popindialog();
-        dlg.create("pg_dlg");
-        dlg.setTitle(_("Awards Summary"));
-        dlg.setContent(finalhtm);
-        dlg.show();
-        for (var key in pg) {
-            for (var plid in this.gamedatas.players) {
-                var plcolor = this.getPlayerColor(parseInt(plid));
-                if (pg[key].values[plcolor] > pg[key].max_value) {
-                    if (pg[key].max_pl != "") {
-                        pg[key].ru_value = pg[key].max_value;
-                        pg[key].ru_pl = pg[key].max_pl;
-                    }
-                    pg[key].max_value = pg[key].values[plcolor];
-                    pg[key].max_pl = plcolor;
-                }
-                else if (pg[key].values[plcolor] > pg[key].ru_value) {
-                    pg[key].ru_value = pg[key].values[plcolor];
-                    pg[key].ru_pl = plcolor;
-                }
-            }
-            if (pg[key].max_pl != "")
-                $("scorecell_" + pg[key].max_pl + "_" + key).dataset.position = "1";
-            if (pg[key].ru_pl != "")
-                $("scorecell_" + pg[key].ru_pl + "_" + key).dataset.position = "2";
-            //equals
-            for (var plid in this.gamedatas.players) {
-                var plcolor = this.getPlayerColor(parseInt(plid));
-                if (pg[key].values[plcolor] == pg[key].max_value)
-                    $("scorecell_" + plcolor + "_" + key).dataset.position = "1";
-            }
+        var finalhtm = tablehtm.replace("%lines%", lines);
+        this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
+        for (var key in msinfo) {
             //activated with a cube
-            var cube = $("award_" + pg[key].id).querySelector(".marker");
+            var cube = (_a = $(key)) === null || _a === void 0 ? void 0 : _a.querySelector(".marker");
             if (cube) {
-                $("scoreheader_" + pg[key].id).insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
+                (_b = $("scoreheader_" + key)) === null || _b === void 0 ? void 0 : _b.insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
             }
         }
     };
@@ -4609,6 +4604,7 @@ var GameXBody = /** @class */ (function (_super) {
             var opInfo = notif.args.operations[opIdS];
             this.updateHandInformation(opInfo.args.info, opInfo.type);
         }
+        this.cachedProgressTable[this.getActivePlayerId()] = notif.args;
     };
     GameXBody.prototype.notif_scoringTable = function (notif) {
         //console.log(notif);
@@ -5732,8 +5728,8 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 else if (!hex) {
                     // people confused when buttons are not shown, add button with explanations
-                    var name_2 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-                    this.addActionButtonColor("button_x", name_2, function () {
+                    var name_4 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+                    this.addActionButtonColor("button_x", name_4, function () {
                         _this.removeTooltip("button_x");
                         dojo.destroy("button_x");
                         _this.addTargetButtons(opId, opTargets);
@@ -6220,7 +6216,7 @@ var GameXBody = /** @class */ (function (_super) {
             this_4.completeOpInfo(opId, opInfo, xop, sortedOps.length);
             numops.push(opId);
             var opArgs = opInfo.args;
-            var name_3 = this_4.getButtonNameForOperation(opInfo);
+            var name_5 = this_4.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
             this_4.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
@@ -6237,7 +6233,7 @@ var GameXBody = /** @class */ (function (_super) {
                 // temp hack
                 if (opInfo.type === "passauto")
                     return "continue";
-                this_4.addActionButtonColor("button_".concat(opId), name_3, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_4.addActionButtonColor("button_".concat(opId), name_5, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
                 }
@@ -6306,8 +6302,8 @@ var GameXBody = /** @class */ (function (_super) {
             var opArgs = opInfo.args;
             if (opArgs.void)
                 return "continue";
-            var name_4 = this_5.getButtonNameForOperation(opInfo);
-            this_5.addActionButtonColor("button_".concat(opId), name_4, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+            var name_6 = this_5.getButtonNameForOperation(opInfo);
+            this_5.addActionButtonColor("button_".concat(opId), name_6, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
         };
         var this_5 = this;
         for (var i = 0; i < sortedOps.length; i++) {
@@ -6657,10 +6653,10 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         var text = "";
         if (node.id.startsWith("card")) {
-            var name_5 = node.dataset.name;
+            var name_7 = node.dataset.name;
             var dcost = node.dataset.discount_cost;
             var cost = this.getRulesFor(node.id, "cost", 0);
-            text += "[".concat(name_5, "]");
+            text += "[".concat(name_7, "]");
             if (cost && (options === null || options === void 0 ? void 0 : options.showCost)) {
                 if (dcost !== undefined && cost != dcost) {
                     text += " ".concat(cost, "(").concat(dcost, ")ME");
@@ -6683,8 +6679,8 @@ var GameXBody = /** @class */ (function (_super) {
             var hexname = hex.dataset.name;
             var tile = node;
             text += "".concat(hexname, ": ");
-            var name_6 = tile.dataset.name;
-            text += "[".concat(name_6, "]");
+            var name_8 = tile.dataset.name;
+            text += "[".concat(name_8, "]");
             var state = tile.dataset.state;
             if (state && state != "0") {
                 var pid = this.getPlayerIdByNo(state);
@@ -6697,9 +6693,9 @@ var GameXBody = /** @class */ (function (_super) {
             return text;
         }
         if (node.id.startsWith("tracker")) {
-            var name_7 = node.dataset.name;
+            var name_9 = node.dataset.name;
             var state = node.dataset.state;
-            text = "".concat(name_7, " ").concat(state);
+            text = "".concat(name_9, " ").concat(state);
             return text;
         }
         return node.id;

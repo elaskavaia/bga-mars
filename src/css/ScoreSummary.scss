@@ -43,6 +43,9 @@
   .scorecell[data-position="2"]::after {
     content:"🥈";
   }
+  .scorecell .card_vp {
+    position: inline-block;
+  }
 
   .scoregoal{
     position: absolute;

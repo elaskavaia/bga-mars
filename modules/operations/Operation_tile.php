@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once "AbsOperationTile.php";
 
 class Operation_tile extends AbsOperationTile {
+    
+    /** This only checks placement not the occupancy */
     function checkPlacement($color, $ohex, $info, $map) {
         $tt = $this->getTileType();
 
