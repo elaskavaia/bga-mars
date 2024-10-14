@@ -72,6 +72,9 @@
   background-size: contain;
   position: absolute;
 }
+.map_2 .map_bg {
+  background-image: url('img/maps/hellas_planet.png');
+}
 
 .hex {
   width: calc(var(--map-width) * 0.109);
@@ -284,6 +287,11 @@
   background-image: url("img/milestones_awards.png");
   background-size: 500% 200%;
   position: relative;
+}
+
+.map_2 .milestone,
+.map_2 .award {
+  background-image: url("img/maps/hellas_awards.png");
 }
 
 .award_1 {
