@@ -31,8 +31,8 @@ class Operation_claim extends AbsOperation {
 
          
             if ($map[$tokenId]['state'] > 0) $q = MA_ERR_OCCUPIED; // this already claimed
-            else if (!($res >= $min))  $q = MA_ERR_PREREQ; // fail prereq check
             else if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
+            else if (!($res >= $min))  $q = MA_ERR_PREREQ; // fail prereq check
             else if (!$this->game->canAfford($color, $tokenId))  $q = MA_ERR_COST;
 
             // add count, place and vp

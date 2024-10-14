@@ -4082,15 +4082,34 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div class=\"scorecell \">".concat(_(info.name), "</div>");
         }
-        var tableHtml = "\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
+        var tableHtml = "\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Milestone"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
+        {
+            // first column to say its claimed or not
+            lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Claimed"), "</div>\n      ");
+            var firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
+            var progress = this.cachedProgressTable[firstPlayerId];
+            for (var key in msinfo) {
+                var opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
+                var code = opInfoArgs[key].q;
+                var sponsored = _("No");
+                if (code == this.CON.MA_ERR_OCCUPIED) {
+                    sponsored = _("Yes!");
+                }
+                else if (code == this.CON.MA_ERR_MAXREACHED) {
+                    sponsored = _("All Claimed");
+                }
+                lines += "<div id=\"scorecell_x_".concat(key, "\" \n        class=\"scorecell score\" \n        data-type=\"").concat(key, "\">\n        ").concat(sponsored, "\n        </div>\n        ");
+            }
+            lines += "</div>";
+        }
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
             var name_2 = this.getPlayerName(parseInt(plid));
             var progress = this.cachedProgressTable[plid];
             var opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(name_2, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_2, "\n                          <div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
                 var current = opInfoArgs[key].c;
                 var claimed = opInfoArgs[key].claimed;
@@ -4105,27 +4124,10 @@ var GameXBody = /** @class */ (function (_super) {
                 else if (pc <= 67)
                     grade = "mid";
                 var scoreval = "".concat(current, "/").concat(goal);
-                var code = opInfoArgs[key].q;
-                var adclass = "";
-                var error = "";
-                switch (code) {
-                    case this.CON.MA_ERR_OCCUPIED:
-                        if (claimed) {
-                            error = '<div class="card_vp">5</div>';
-                        }
-                        else {
-                            error = _("claimed");
-                        }
-                        break;
-                    case this.CON.MA_ERR_MAXREACHED:
-                        error = _("all claimed");
-                        break;
-                    case this.CON.MA_ERR_COST:
-                    case this.CON.MA_OK:
-                        break;
-                }
+                //const code = opInfoArgs[key].q;
+                var subtext = claimed ? '<div class="card_vp">5</div>' : "";
                 //scoreval = '<div class="card_vp">5</div>';
-                lines += "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score ").concat(adclass, "\" data-type=\"").concat(key, "\" data-position=\"0\">\n             <div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height: ").concat(pc, "%;\"></div>\n             <div class=\"score_val\">").concat(scoreval, "</div>\n             <div class=\"scoregoal\">").concat(error, "</div>\n          </div>");
+                lines += "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" class=\"scorecell score\" data-type=\"").concat(key, "\" data-position=\"0\">\n             <div class=\"progress_hist\"  data-grade=\"").concat(grade, "\"  style=\"height: ").concat(pc, "%;\"></div>\n             <div class=\"score_val\">").concat(scoreval, "</div>\n             <div class=\"scoregoal\">").concat(subtext, "</div>\n          </div>");
             }
             lines = lines + "</div>";
         }
@@ -4133,7 +4135,6 @@ var GameXBody = /** @class */ (function (_super) {
         this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
     };
     GameXBody.prototype.onShowAwardsProgress = function () {
-        var _a, _b;
         var msinfo = {};
         for (var key in this.gamedatas.token_types) {
             var info = this.gamedatas.token_types[key];
@@ -4146,15 +4147,31 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div id='scoreheader_".concat(key, "' class=\"scorecell\">").concat(_(info.name), "</div>");
         }
-        var tablehtm = "\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Player Name"), "</div>\n                      <div class=\"scorecell header corp\">").concat(_("Corporation"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
+        var tablehtm = "\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Award"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
+        {
+            // first column to say its claimed or not
+            lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Sponsered"), "</div>\n      ");
+            var firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
+            var progress = this.cachedProgressTable[firstPlayerId];
+            for (var key in msinfo) {
+                var opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
+                var code = opInfoArgs[key].q;
+                var sponsored = _("No");
+                if (code == this.CON.MA_ERR_OCCUPIED) {
+                    sponsored = _("Yes!");
+                }
+                lines += "<div id=\"scorecell_x_".concat(key, "\" \n        class=\"scorecell score\" \n        data-type=\"").concat(key, "\">\n        ").concat(sponsored, "\n        </div>\n        ");
+            }
+            lines += "</div>";
+        }
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
             var name_3 = this.getPlayerName(parseInt(plid));
             var progress = this.cachedProgressTable[plid];
             var opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">").concat(name_3, "</div>\n                          <div class=\"scorecell header corp\" ><div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div></div>\n                          ");
+            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_3, "<div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
                 var current = opInfoArgs[key].counter;
                 var vp = opInfoArgs[key].vp;
@@ -4170,13 +4187,6 @@ var GameXBody = /** @class */ (function (_super) {
         }
         var finalhtm = tablehtm.replace("%lines%", lines);
         this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
-        for (var key in msinfo) {
-            //activated with a cube
-            var cube = (_a = $(key)) === null || _a === void 0 ? void 0 : _a.querySelector(".marker");
-            if (cube) {
-                (_b = $("scoreheader_" + key)) === null || _b === void 0 ? void 0 : _b.insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
-            }
-        }
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ""; }

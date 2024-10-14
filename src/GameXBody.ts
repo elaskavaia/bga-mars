@@ -535,14 +535,40 @@ class GameXBody extends GameTokens {
     const tableHtml = `
              <div id="scoretable_pg_milestones" class="scoretable">
                 <div class="scoreheader scorecol">
-                      <div class="scorecell header">${_("Player Name")}</div>
-                      <div class="scorecell header corp">${_("Corporation")}</div>
+                      <div class="scorecell header">${_("Milestone")}</div>
                       ${namesRow}
                 </div>
                 %lines%
               </div>`;
 
     let lines = "";
+
+    {
+      // first column to say its claimed or not
+      lines += `<div class="scorecol">
+      <div class="scorecell header">${_("Claimed")}</div>
+      `;
+      const firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
+      const progress = this.cachedProgressTable[firstPlayerId];
+      for (const key in msinfo) {
+        const opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
+        const code = opInfoArgs[key].q;
+        let sponsored = _("No");
+        if (code == this.CON.MA_ERR_OCCUPIED) {
+          sponsored = _("Yes!");
+        } else if (code == this.CON.MA_ERR_MAXREACHED) {
+          sponsored = _("All Claimed");
+        }
+
+        lines += `<div id="scorecell_x_${key}" 
+        class="scorecell score" 
+        data-type="${key}">
+        ${sponsored}
+        </div>
+        `;
+      }
+      lines += `</div>`;
+    }
 
     for (let plid in this.gamedatas.players) {
       const plcolor = this.getPlayerColor(parseInt(plid));
@@ -554,8 +580,10 @@ class GameXBody extends GameTokens {
       const corp: string = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
       lines += `
                     <div class=" scorecol">
-                          <div class="scorecell header name" style="color:#${plcolor};">${name}</div>
-                          <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
+                          <div class="scorecell header name" style="color:#${plcolor};">
+                          ${name}
+                          <div class="corp_logo" data-corp="${corp}"></div>
+                          </div>
                           `;
 
       for (const key in msinfo) {
@@ -571,30 +599,15 @@ class GameXBody extends GameTokens {
         else if (pc <= 67) grade = "mid";
 
         let scoreval = `${current}/${goal}`;
-        const code = opInfoArgs[key].q;
-        let adclass = "";
-        let error = "";
-        switch (code) {
-          case this.CON.MA_ERR_OCCUPIED:
-            if (claimed) {
-              error = '<div class="card_vp">5</div>';
-            } else {
-              error = _("claimed");
-            }
-            break;
-          case this.CON.MA_ERR_MAXREACHED:
-            error = _("all claimed");
-            break;
-          case this.CON.MA_ERR_COST:
-          case this.CON.MA_OK:
-            break;
-        }
+        //const code = opInfoArgs[key].q;
+        const subtext = claimed ? '<div class="card_vp">5</div>' : "";
+
         //scoreval = '<div class="card_vp">5</div>';
 
-        lines += `<div id="scorecell_${plcolor}_${key}" class="scorecell score ${adclass}" data-type="${key}" data-position="0">
+        lines += `<div id="scorecell_${plcolor}_${key}" class="scorecell score" data-type="${key}" data-position="0">
              <div class="progress_hist"  data-grade="${grade}"  style="height: ${pc}%;"></div>
              <div class="score_val">${scoreval}</div>
-             <div class="scoregoal">${error}</div>
+             <div class="scoregoal">${subtext}</div>
           </div>`;
       }
       lines = lines + "</div>";
@@ -619,13 +632,36 @@ class GameXBody extends GameTokens {
     const tablehtm: string = `
              <div id="scoretable_pg_awards" class="scoretable">
                 <div class="scoreheader scorecol">
-                      <div class="scorecell header">${_("Player Name")}</div>
-                      <div class="scorecell header corp">${_("Corporation")}</div>
+                      <div class="scorecell header">${_("Award")}</div>
                       ${namesRow}
                 </div>
                 %lines%
               </div>`;
-    let lines: string = "";
+    let lines = "";
+
+    {
+      // first column to say its claimed or not
+      lines += `<div class="scorecol">
+      <div class="scorecell header">${_("Sponsered")}</div>
+      `;
+      const firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
+      const progress = this.cachedProgressTable[firstPlayerId];
+      for (const key in msinfo) {
+        const opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
+        const code = opInfoArgs[key].q;
+        let sponsored = _("No");
+        if (code == this.CON.MA_ERR_OCCUPIED) {
+          sponsored = _("Yes!");
+        }
+        lines += `<div id="scorecell_x_${key}" 
+        class="scorecell score" 
+        data-type="${key}">
+        ${sponsored}
+        </div>
+        `;
+      }
+      lines += `</div>`;
+    }
 
     for (let plid in this.gamedatas.players) {
       const plcolor = this.getPlayerColor(parseInt(plid));
@@ -635,8 +671,9 @@ class GameXBody extends GameTokens {
       const corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
 
       lines += `<div class="scorecol">
-                          <div class="scorecell header name" style="color:#${plcolor};">${name}</div>
-                          <div class="scorecell header corp" ><div class="corp_logo" data-corp="${corp}"></div></div>
+                          <div class="scorecell header name" style="color:#${plcolor};">
+                          ${name}<div class="corp_logo" data-corp="${corp}"></div>
+                          </div>
                           `;
       for (const key in msinfo) {
         const current = opInfoArgs[key].counter;
@@ -662,14 +699,6 @@ class GameXBody extends GameTokens {
     }
     const finalhtm = tablehtm.replace("%lines%", lines);
     this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
-
-    for (const key in msinfo) {
-      //activated with a cube
-      const cube = $(key)?.querySelector(".marker");
-      if (cube) {
-        $("scoreheader_" + key)?.insertAdjacentHTML("afterbegin", cube.outerHTML.replace('"id=marker_', 'id="marker_tmp_'));
-      }
-    }
   }
 
   getLocalSettingNamespace(extra: string | number = "") {
