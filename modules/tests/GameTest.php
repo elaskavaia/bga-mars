@@ -1095,12 +1095,18 @@ final class GameTest extends TestCase {
     public function testLavaTubeSettlement() {
         $m = $this->game();
         $p = PCOLOR;
-        $m->setTrackerValue(PCOLOR, 'pe', 1);
+
         $card = $m->mtFind('name', 'Lava Tube Settlement');
         $effect = $m->getRulesFor($card, 'r');
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
+        $m->setTrackerValue(PCOLOR, 'pe', 0);
+        $this->assertEquals(true, $op->isVoid());
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
+        $m->setTrackerValue(PCOLOR, 'pe', 1);
         $this->assertEquals(false, $op->isVoid());
+
         $m->putInEffectPool(PCOLOR, $effect);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
