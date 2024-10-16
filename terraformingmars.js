@@ -7299,7 +7299,7 @@ var VLayout = /** @class */ (function () {
         // for (const key of places) {
         //   dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
         // }
-        dojo.place("alt_tracker_gen", "map_middle");
+        dojo.place("alt_tracker_gen", "main_board");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
         dojo.place("discard_main", "decks_area");

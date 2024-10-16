@@ -9151,104 +9151,108 @@
   width: calc(var(--stan-width) * 0.2);
   height: calc(var(--stan-width) * 0.2);
 }
+.mfull #main_board .tracker_gen[data-state="0"] {
+  left: 0%;
+  top: 90%;
+}
 .mfull #main_board .tracker_gen[data-state="1"] {
-  left: -74%;
-  top: 100%;
+  left: 0%;
+  top: 86.4%;
 }
 .mfull #main_board .tracker_gen[data-state="2"] {
-  left: -74%;
-  top: 95.8333333333%;
+  left: 0%;
+  top: 82.8%;
 }
 .mfull #main_board .tracker_gen[data-state="3"] {
-  left: -74%;
-  top: 91.6666666667%;
+  left: 0%;
+  top: 79.2%;
 }
 .mfull #main_board .tracker_gen[data-state="4"] {
-  left: -74%;
-  top: 87.5%;
+  left: 0%;
+  top: 75.6%;
 }
 .mfull #main_board .tracker_gen[data-state="5"] {
-  left: -74%;
-  top: 83.3333333333%;
+  left: 0%;
+  top: 72%;
 }
 .mfull #main_board .tracker_gen[data-state="6"] {
-  left: -74%;
-  top: 79.1666666667%;
+  left: 0%;
+  top: 68.4%;
 }
 .mfull #main_board .tracker_gen[data-state="7"] {
-  left: -74%;
-  top: 75%;
+  left: 0%;
+  top: 64.8%;
 }
 .mfull #main_board .tracker_gen[data-state="8"] {
-  left: -74%;
-  top: 70.8333333333%;
+  left: 0%;
+  top: 61.2%;
 }
 .mfull #main_board .tracker_gen[data-state="9"] {
-  left: -74%;
-  top: 66.6666666667%;
+  left: 0%;
+  top: 57.6%;
 }
 .mfull #main_board .tracker_gen[data-state="10"] {
-  left: -74%;
-  top: 62.5%;
+  left: 0%;
+  top: 54%;
 }
 .mfull #main_board .tracker_gen[data-state="11"] {
-  left: -74%;
-  top: 58.3333333333%;
+  left: 0%;
+  top: 50.4%;
 }
 .mfull #main_board .tracker_gen[data-state="12"] {
-  left: -74%;
-  top: 54.1666666667%;
+  left: 0%;
+  top: 46.8%;
 }
 .mfull #main_board .tracker_gen[data-state="13"] {
-  left: -74%;
-  top: 50%;
+  left: 0%;
+  top: 43.2%;
 }
 .mfull #main_board .tracker_gen[data-state="14"] {
-  left: -74%;
-  top: 45.8333333333%;
+  left: 0%;
+  top: 39.6%;
 }
 .mfull #main_board .tracker_gen[data-state="15"] {
-  left: -74%;
-  top: 41.6666666667%;
+  left: 0%;
+  top: 36%;
 }
 .mfull #main_board .tracker_gen[data-state="16"] {
-  left: -74%;
-  top: 37.5%;
+  left: 0%;
+  top: 32.4%;
 }
 .mfull #main_board .tracker_gen[data-state="17"] {
-  left: -74%;
-  top: 33.3333333333%;
+  left: 0%;
+  top: 28.8%;
 }
 .mfull #main_board .tracker_gen[data-state="18"] {
-  left: -74%;
-  top: 29.1666666667%;
+  left: 0%;
+  top: 25.2%;
 }
 .mfull #main_board .tracker_gen[data-state="19"] {
-  left: -74%;
-  top: 25%;
+  left: 0%;
+  top: 21.6%;
 }
 .mfull #main_board .tracker_gen[data-state="20"] {
-  left: -74%;
-  top: 20.8333333333%;
+  left: 0%;
+  top: 18%;
 }
 .mfull #main_board .tracker_gen[data-state="21"] {
-  left: -74%;
-  top: 16.6666666667%;
+  left: 0%;
+  top: 14.4%;
 }
 .mfull #main_board .tracker_gen[data-state="22"] {
-  left: -74%;
-  top: 12.5%;
+  left: 0%;
+  top: 10.8%;
 }
 .mfull #main_board .tracker_gen[data-state="23"] {
-  left: -74%;
-  top: 8.3333333333%;
+  left: 0%;
+  top: 7.2%;
 }
 .mfull #main_board .tracker_gen[data-state="24"] {
-  left: -74%;
-  top: 4.1666666667%;
+  left: 0%;
+  top: 3.6%;
 }
 .mfull #main_board .tracker_gen[data-state="25"] {
-  left: -74%;
+  left: 0%;
   top: 0%;
 }
 .mfull .counters_holder {

@@ -783,12 +783,12 @@
     height: calc(var(--stan-width) * 0.2);
   }
 
-  @for $num from 1 through 25 {
-    $row: $num - 1;
+  @for $num from 0 through 25 {
+    $row: $num;
 
     #main_board .tracker_gen[data-state="#{$num}"] {
-      left: -74%;
-      top: calc(100% - $row * (100% / 24));
+      left: 0%;
+      top: calc((100% - $row * (100% / 25)) * 0.90);
     }
   }
 
