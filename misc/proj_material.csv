@@ -91,4 +91,4 @@ num|name|t|r|cost|text|min|php
 2|Industrialist|8|s+e|20|Having most steel and energy resources.
 3|Desert Settler|8|desert|20|Owning most tiles south of the equator (the four bottom rows).
 4|Estate Dealer|8|estate|20|Owning most tiles adjacent to ocean tiles.
-5|Benefactor|8|tr|20|Having highest terraform rating. Count this award first!
+5|Benefactor|8|tr|20|Having highest terraform rating. Count this award first!||'rank'=>1

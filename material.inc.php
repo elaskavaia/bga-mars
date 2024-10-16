@@ -4300,6 +4300,7 @@ $this->token_types = [
   'location' => 'display_awards',
   'count' => 1,
   'create' => 1,
+  'rank'=>1,
   'pre' => '(tr>=)',
   'num' => 5,
   'name' => clienttranslate('Benefactor'),

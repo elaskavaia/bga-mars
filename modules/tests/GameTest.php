@@ -416,6 +416,141 @@ final class GameTest extends TestCase {
         $this->assertMilestone(5, "Contractor", 2);
     }
 
+    // 1|GENERALIST|7|generalist|8|requires that you have increased all 6 productions by at least 1 step (starting production from corporation cards count as increase).|6
+
+    public function testClaimMilestone_Elysium1() {
+        $this->game(1);
+        $color = PCOLOR;
+        $num = 1;
+        $kind = 'milestone';
+        $token =  "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals("GENERALIST", $this->game->getTokenName($token));
+        $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
+        $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
+        foreach ($production as $key) {
+            $this->game->setTrackerValue(PCOLOR, $key, 2);
+        }
+        $count = $this->game->getGeneralistCount($color);
+        $this->assertEquals(6, $count);
+        $this->assertOperationTargetStatus("claim", $token);
+    }
+    public function testClaimMilestone_Elysium2() {
+        // 2|SPECIALIST|7|specialist|8|requires that you have at least 10 in production of any resource.|10
+        $this->game(1);
+        $color = PCOLOR;
+        $num = 2;
+        $kind = 'milestone';
+        $token =  "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals("SPECIALIST", $this->game->getTokenName($token));
+        $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
+        $this->game->setTrackerValue(PCOLOR, "pm", 2);
+        $this->game->setTrackerValue(PCOLOR, "pe", 11);
+        $count = $this->game->getSpecialistCount($color);
+        $this->assertEquals(11, $count);
+        $this->assertOperationTargetStatus("claim", $token);
+    }
+
+    public function testClaimMilestone_Elysium3() {
+        // 3|ECOLOGIST|7|ecologist|8|requires that you have 4 bio tags (plant-, microbe- and animal tags count as bio tags).|4
+        $this->game(1);
+        $color = PCOLOR;
+        $num = 3;
+        $kind = 'milestone';
+        $token =  "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals("ECOLOGIST", $this->game->getTokenName($token));
+        $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
+        $this->game->setTrackerValue(PCOLOR, 'tagAnimal', 1);
+        $this->game->setTrackerValue(PCOLOR, 'tagPlant', 2);
+        $this->game->setTrackerValue(PCOLOR, 'tagMicrobe', 1);
+        $count = $this->game->getEcologistCount($color);
+        $this->assertEquals(4, $count);
+        $this->assertOperationTargetStatus("claim", $token);
+    }
+    public function testClaimMilestone_Elysium4() {
+        // 4|TYCOON|7|tycoon|8|requires that you have 15 project cards in play (blue and green cards).|15
+        $game = $this->game(1);
+        $color = PCOLOR;
+        $num = 4;
+        $kind = 'milestone';
+        $token =  "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals("TYCOON", $this->game->getTokenName($token));
+        $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
+
+        $count = 0;
+        foreach ($game->token_types as $key => $info) {
+            if (!startsWith($key, 'card_main')) continue;
+            $t = array_get($info, 't');
+            if ($t!=MA_CARD_TYPE_BLUE && $t!=MA_CARD_TYPE_GREEN) continue;
+            $game->effect_playCard(PCOLOR, $key);
+            if ($count>=15) break;
+            $count++;
+        }
+
+        $count = $this->game->getTycoonCount($color);
+        $this->assertEquals(16, $count);
+        $this->assertOperationTargetStatus("claim", $token);
+    }
+
+    public function testClaimMilestone_Elysium5() {
+        // 5|LEGEND|7|tagEvent|8|requires 5 played events (red cards).|5
+        $this->game(1);
+        $color = PCOLOR;
+        $num = 5;
+        $kind = 'milestone';
+        $token =  "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->assertEquals("LEGEND", $this->game->getTokenName($token));
+        $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
+        $this->game->setTrackerValue(PCOLOR, 'tagEvent', 10);
+        $this->assertOperationTargetStatus("claim", $token);
+    }
+
+    public function testAward_Elysium1() {
+        $game = $this->game(1);
+        $color = PCOLOR;
+        $this->assertMilestone(1, "Celebrity", 0);
+        $card = $game->mtFindByName('Strip Mine');
+        $game->effect_playCard($color, $card);
+        // 1|Celebrity|8|celebrity|20|Having most cards in play (not events) with a cost of at least 20 megacredits.
+        $this->assertMilestone(1, "Celebrity", 1);
+    }
+
+    public function testAward_Elysium2() {
+        $this->game(1);
+        $this->game->setTrackerValue(PCOLOR, 's', 1);
+        $this->game->setTrackerValue(PCOLOR, 'e', 2);
+        // 2|Industrialist|8|s+e|20|Having most steel and energy resources.
+        $this->assertMilestone(2, "Industrialist", 3);
+    }
+
+    public function testAward_Elysium3() {
+        $game = $this->game(1);
+        $color = PCOLOR;
+        $game->tokens->moveToken('tile_67', 'hex_7_8', 1);
+        $game->tokens->moveToken('tile_44', 'hex_6_8', 1);
+        $this->assertEquals(2, $this->game->getCountOfDesertTiles($color));
+        // 3|Desert Settler|8|desert|20|Owning most tiles south of the equator (the four bottom rows).
+        $this->assertMilestone(3, "Desert Settler", 2);
+    }
+    public function testAward_Elysium4() {
+        $game = $this->game(1);
+        $game->tokens->moveToken('tile_67', 'hex_4_2', 1);
+        $game->tokens->moveToken('tile_44', 'hex_5_2', 1);
+        $game->tokens->moveToken('tile_2_1', 'hex_3_2', 1); // not adj
+        $game->tokens->moveToken('tile_3_1', 'hex_4_1', 0); // ocean
+        // 4|Estate Dealer|8|estate|20|Owning most tiles adjacent to ocean tiles.
+        $this->assertMilestone(4, "Estate Dealer", 2);
+    }
+    public function testAward_Elysium5() {
+        $game=$this->game(1);
+        $game->setTrackerValue(PCOLOR, 'tr', 20);
+        // 5|Benefactor|8|tr|20|Having highest terraform rating. Count this award first!
+        $this->assertMilestone(5, "Benefactor", 20);
+    }
     public function testCounterCall() {
         $m = $this->game();
         $m->incTrackerValue(PCOLOR, 'u', 8);

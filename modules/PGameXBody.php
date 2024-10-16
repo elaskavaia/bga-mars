@@ -817,6 +817,20 @@ abstract class PGameXBody extends PGameMachine {
                     return 1;
                 }
                 return 0;
+            case 'generalist':
+                return $this->getGeneralistCount($owner);
+            case 'specialist':
+                return $this->getSpecialistCount($owner);
+            case 'ecologist':
+                return $this->getEcologistCount($owner);
+            case 'tycoon':
+                return $this->getTycoonCount($owner);
+            case 'celebrity':
+                return $this->getCelebrity($owner);
+            case 'desert':
+                return $this->getCountOfDesertTiles($owner);
+            case 'estate':
+                return $this->getCountOfEstateTiles($owner);
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -846,10 +860,8 @@ abstract class PGameXBody extends PGameMachine {
             return $this->evaluateAdj($owner, $tileId, $x);
         }
         $create = $this->getRulesFor("tracker_$x", "create", null);
-        if ($create === null) {
-            return 0;
-            //XXX uncomment 
-            //throw new feException("Cannot evalute $x");
+        if ($create === null) {        
+            throw new feException("Cannot evalute $x");
         }
         # TODO: special processing with _all
         if ($create == 4) {
@@ -2025,9 +2037,14 @@ abstract class PGameXBody extends PGameMachine {
 
         if (!$this->isSolo()) {
             $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
+            // some awards has to be scored first
             foreach ($markers as $id => $rec) {
                 $loc = $rec['location']; // award_x
-                $this->scoreAward($loc, $table);
+                if ($this->getRulesFor($loc, 'rank', 10) == 1)  $this->scoreAward($loc, $table);
+            }
+            foreach ($markers as $id => $rec) {
+                $loc = $rec['location']; // award_x
+                if ($this->getRulesFor($loc, 'rank', 10) != 1) $this->scoreAward($loc, $table);
             }
             $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
             foreach ($markers as $id => $rec) {
@@ -2188,6 +2205,40 @@ abstract class PGameXBody extends PGameMachine {
 
         return $count;
     }
+    function getCountOfDesertTiles($owner) {
+        $map = $this->getPlanetMap();
+        $count = 0;
+
+        foreach ($map as $hex => $info) {
+            $y = $this->getRulesFor($hex, 'y');
+            if ($y < 6) continue; // not south
+            $hexowner = $info['owner'] ?? '';
+            if (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+            $count++;
+        }
+
+        return $count;
+    }
+    function getCountOfEstateTiles($owner) {
+        $map = $this->getPlanetMap();
+        $count = 0;
+
+        foreach ($map as $hex => $info) {
+            $hexowner = $info['owner'] ?? '';
+            if (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+            $oceans = $this->getAdjecentHexesOfType($hex, MA_TILE_OCEAN);
+            $c = count($oceans);
+            if ($c > 0) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
 
     function getCountOfCardsWithPre($owner) {
         $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
@@ -2200,11 +2251,18 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getCountOfCardsGreen($owner) {
+        return $this->getCountOfCardsType($owner, MA_CARD_TYPE_GREEN);
+    }
+    function getCountOfCardsBlue($owner) {
+        return $this->getCountOfCardsType($owner, MA_CARD_TYPE_BLUE);
+    }
+
+    function getCountOfCardsType($owner, $type) {
         $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
         $count = 0;
         foreach ($cards as $card => $cardrec) {
             $pre = $this->getRulesFor($card, 't');
-            if ($pre == MA_CARD_TYPE_GREEN) $count++;
+            if ($pre == $type) $count++;
         }
         return $count;
     }
@@ -2225,6 +2283,58 @@ abstract class PGameXBody extends PGameMachine {
         $count = 0;
         foreach ($trackers as $tracker) {
             if ($this->tokens->getTokenState($tracker) > 0) $count++;
+        }
+        return $count;
+    }
+
+    function getGeneralistCount($owner) {
+        $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
+        $count = 0;
+        $corpera = $this->isCorporateEraVariant() ? 0 : 1;
+        foreach ($production as $p) {
+            $trackerId = $this->getTrackerId($owner, $p);
+            $value = (int) $this->tokens->getTokenState($trackerId);
+            if ($value > $corpera) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+    function getSpecialistCount($owner) {
+        $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
+        $count = 0;
+        foreach ($production as $p) {
+            $trackerId = $this->getTrackerId($owner, $p);
+            $value = (int) $this->tokens->getTokenState($trackerId);
+            if ($value > $count) {
+                $count = $value;
+            }
+        }
+        return $count;
+    }
+    function getEcologistCount($owner) {
+        $tags = ['tagAnimal', 'tagPlant', 'tagMicrobe'];
+        $count = 0;
+        foreach ($tags as $p) {
+            $trackerId = $this->getTrackerId($owner, $p);
+            $value = (int) $this->tokens->getTokenState($trackerId);
+            $count += $value;
+        }
+        return $count;
+    }
+    function getTycoonCount($owner) {
+        return $this->getCountOfCardsGreen($owner) + $this->getCountOfCardsBlue($owner);
+    }
+
+    function getCelebrity($owner) {
+        $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
+        $count = 0;
+        foreach ($cards as $card => $cardrec) {
+            $pre = $this->getRulesFor($card, 't');
+            $cost = $this->getRulesFor($card, 'cost');
+            if ($pre == MA_CARD_TYPE_BLUE || $pre == MA_CARD_TYPE_GREEN) {
+                if ($cost > 20) $count++;
+            }
         }
         return $count;
     }
