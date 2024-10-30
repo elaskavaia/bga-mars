@@ -4151,7 +4151,7 @@ var GameXBody = /** @class */ (function (_super) {
         var lines = "";
         {
             // first column to say its claimed or not
-            lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Sponsered"), "</div>\n      ");
+            lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Sponsored"), "</div>\n      ");
             var firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
             var progress = this.cachedProgressTable[firstPlayerId];
             for (var key in msinfo) {

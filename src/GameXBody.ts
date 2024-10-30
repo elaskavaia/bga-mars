@@ -642,7 +642,7 @@ class GameXBody extends GameTokens {
     {
       // first column to say its claimed or not
       lines += `<div class="scorecol">
-      <div class="scorecell header">${_("Sponsered")}</div>
+      <div class="scorecell header">${_("Sponsored")}</div>
       `;
       const firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
       const progress = this.cachedProgressTable[firstPlayerId];
