@@ -62,6 +62,7 @@ abstract class PGameTokens extends PGameBasic {
     }
 
     protected function getAllDatas() {
+        $this->adjustedMaterial();
         $result = [];
         $current_player_id = self::getCurrentPlayerId(); // !! We must only return informations visible by this player !!
         // Get information about players

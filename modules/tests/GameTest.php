@@ -319,7 +319,7 @@ final class GameTest extends TestCase {
 
         $this->game->setTrackerValue(PCOLOR, 'm', 10);
         $milestone = "milestone_2";
-        $this->assertEquals("TACTICIAN", $this->game->getTokenName($milestone));
+
         $this->game->tokens->moveToken($game->mtFindByName('Lava Flows'), "tableau_{$color}", 1);
 
         $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
@@ -334,6 +334,7 @@ final class GameTest extends TestCase {
         $this->game->tokens->moveToken($game->mtFindByName('Power Supply Consortium'), "tableau_{$color}", 1);
         $this->assertEquals(5, $this->game->getCountOfCardsWithPre($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
+        $this->assertMilestone(2, "TACTICIAN", 5);
     }
 
     public function testClaimMilestone_HellasDIVERSIFIER() {
@@ -360,6 +361,13 @@ final class GameTest extends TestCase {
     }
 
     function assertMilestone(int $num, string $name, int $value = 1, string $color = PCOLOR) {
+        $token = "milestone_$num";
+        $this->assertEquals($name, $this->game->getTokenName($token));
+        $expr = $this->game->getRulesFor($token, 'r');
+        $res = $this->game->evaluateExpression($expr, $color);
+        $this->assertEquals($value, $res);
+    }
+    function assertAward(int $num, string $name, int $value = 1, string $color = PCOLOR) {
         $token = "award_$num";
         $this->assertEquals($name, $this->game->getTokenName($token));
         $expr = $this->game->getRulesFor($token, 'r');
@@ -371,7 +379,7 @@ final class GameTest extends TestCase {
         $this->game(2);
         $this->game->setTrackerValue(PCOLOR, 'forest', 5);
         //1|Cultivator|8|forest|20||Owning the most greenery tiles
-        $this->assertMilestone(1, "Cultivator", 5);
+        $this->assertAward(1, "Cultivator", 5);
     }
 
     public function testAward_Hellas2() {
@@ -384,14 +392,14 @@ final class GameTest extends TestCase {
         $this->game->tokens->moveToken($game->mtFindByName('Advanced Ecosystems'), "tableau_{$color}", 1);
         $this->assertEquals(1, $this->game->getCountOfCardsGreen($color));
 
-        $this->assertMilestone(2, "Magnate", 1);
+        $this->assertAward(2, "Magnate", 1);
     }
 
     public function testAward_Hellas3() {
         $this->game(2);
         $this->game->setTrackerValue(PCOLOR, 'tagSpace', 5);
         // 3|Space Baron|8|tagSpace|20||Having the most space tags (event cards do not count).
-        $this->assertMilestone(3, "Space Baron", 5);
+        $this->assertAward(3, "Space Baron", 5);
     }
     public function testAward_Hellas4() {
         $game = $this->game(2);
@@ -407,13 +415,13 @@ final class GameTest extends TestCase {
 
         // 4|Eccentric|8|res|20||Having the most resources on cards.
         $this->assertEquals($num, $this->game->getCountOfResOnCards($color));
-        $this->assertMilestone(4, "Eccentric", $num);
+        $this->assertAward(4, "Eccentric", $num);
     }
     public function testAward_Hellas5() {
         $this->game(2);
         $this->game->setTrackerValue(PCOLOR, 'tagBuilding', 2);
         // 5|Contractor|8|tagBuilding|20||Having the most building tags (event cards do not count).
-        $this->assertMilestone(5, "Contractor", 2);
+        $this->assertAward(5, "Contractor", 2);
     }
 
     // 1|GENERALIST|7|generalist|8|requires that you have increased all 6 productions by at least 1 step (starting production from corporation cards count as increase).|6
@@ -484,9 +492,9 @@ final class GameTest extends TestCase {
         foreach ($game->token_types as $key => $info) {
             if (!startsWith($key, 'card_main')) continue;
             $t = array_get($info, 't');
-            if ($t!=MA_CARD_TYPE_BLUE && $t!=MA_CARD_TYPE_GREEN) continue;
+            if ($t != MA_CARD_TYPE_BLUE && $t != MA_CARD_TYPE_GREEN) continue;
             $game->effect_playCard(PCOLOR, $key);
-            if ($count>=15) break;
+            if ($count >= 15) break;
             $count++;
         }
 
@@ -512,11 +520,11 @@ final class GameTest extends TestCase {
     public function testAward_Elysium1() {
         $game = $this->game(1);
         $color = PCOLOR;
-        $this->assertMilestone(1, "Celebrity", 0);
+        $this->assertAward(1, "Celebrity", 0);
         $card = $game->mtFindByName('Strip Mine');
         $game->effect_playCard($color, $card);
         // 1|Celebrity|8|celebrity|20|Having most cards in play (not events) with a cost of at least 20 megacredits.
-        $this->assertMilestone(1, "Celebrity", 1);
+        $this->assertAward(1, "Celebrity", 1);
     }
 
     public function testAward_Elysium2() {
@@ -524,7 +532,7 @@ final class GameTest extends TestCase {
         $this->game->setTrackerValue(PCOLOR, 's', 1);
         $this->game->setTrackerValue(PCOLOR, 'e', 2);
         // 2|Industrialist|8|s+e|20|Having most steel and energy resources.
-        $this->assertMilestone(2, "Industrialist", 3);
+        $this->assertAward(2, "Industrialist", 3);
     }
 
     public function testAward_Elysium3() {
@@ -534,7 +542,7 @@ final class GameTest extends TestCase {
         $game->tokens->moveToken('tile_44', 'hex_6_8', 1);
         $this->assertEquals(2, $this->game->getCountOfDesertTiles($color));
         // 3|Desert Settler|8|desert|20|Owning most tiles south of the equator (the four bottom rows).
-        $this->assertMilestone(3, "Desert Settler", 2);
+        $this->assertAward(3, "Desert Settler", 2);
     }
     public function testAward_Elysium4() {
         $game = $this->game(1);
@@ -543,14 +551,54 @@ final class GameTest extends TestCase {
         $game->tokens->moveToken('tile_2_1', 'hex_3_2', 1); // not adj
         $game->tokens->moveToken('tile_3_1', 'hex_4_1', 0); // ocean
         // 4|Estate Dealer|8|estate|20|Owning most tiles adjacent to ocean tiles.
-        $this->assertMilestone(4, "Estate Dealer", 2);
+        $this->assertAward(4, "Estate Dealer", 2);
     }
     public function testAward_Elysium5() {
-        $game=$this->game(1);
+        $game = $this->game(1);
         $game->setTrackerValue(PCOLOR, 'tr', 20);
         // 5|Benefactor|8|tr|20|Having highest terraform rating. Count this award first!
-        $this->assertMilestone(5, "Benefactor", 20);
+        $this->assertAward(5, "Benefactor", 20);
     }
+
+    public function testMilestone_Vastitas5_Farmer() {
+        $game = $this->game(3);
+        $color = PCOLOR;
+
+        $fish = $game->mtFind('name', 'Fish');
+
+        $game->effect_playCard($color, $fish);
+        $num = 5;
+        for ($i = 0; $i < $num; $i++) {
+            $game->dbSetTokenLocation("resource_{$color}_$i", $fish, 1); // add a fish
+        }
+
+        // 5|FARMER|7|farmer|8|requires to have 5 animal and microbe resources combined|5
+        $this->assertEquals($num, $this->game->getCountOfResOnCards($color, 'Animal'));
+        $this->assertEquals(0, $this->game->getCountOfResOnCards($color, 'Science'));
+        $this->assertMilestone(5, "FARMER", $num);
+    }
+
+    public function testVolcanic() {
+        $game = $this->game(3);
+        $volc = $game->mtFind('name', 'Hecates Tholus');
+        $this->assertEquals(1, $game->getRulesFor($volc, 'vol'));
+        $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
+        $this->assertOperationTargetStatus("city(vol)", "hex_4_1", MA_ERR_NOTRESERVED);
+    }
+
+
+    public function testNoctisCity() {
+        $this->game(3);
+        $this->assertOperationTargetStatus("city('Noctis City')", "hex_5_1");
+        $this->assertOperationTargetStatus("w", "hex_3_5");
+        $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
+        // on default map its 3_5
+        $this->game(0);
+        $this->assertOperationTargetStatus("city('Noctis City')", "hex_3_5");
+        $this->assertOperationTargetStatus("w", "hex_3_5", MA_ERR_NOTRESERVED);
+        $this->assertOperationTargetStatus("city", "hex_3_5", MA_ERR_RESERVED); // other city cannot be placed there
+    }
+
     public function testCounterCall() {
         $m = $this->game();
         $m->incTrackerValue(PCOLOR, 'u', 8);

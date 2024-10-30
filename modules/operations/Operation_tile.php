@@ -23,6 +23,11 @@ class Operation_tile extends AbsOperationTile {
         }
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
 
+        if ($reservename == 'vol') {
+            if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
+            $reservename = '';
+        }
+    
         if ($reservename) {
             $reshexes = $this->findReservedAreas($reservename);
             if (count($reshexes) == 0) {

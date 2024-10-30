@@ -117,6 +117,10 @@ abstract class AbsOperationTile extends AbsOperation {
     function checkCityPlacement($color, $ohex, $info, $map) {
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
         $reservename = $this->getReservedArea();
+        if ($reservename == 'vol') {
+            if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
+            $reservename = '';
+        }
         if (!$reservename) {
             if (isset($info['reserved'])) return MA_ERR_RESERVED;
             $others = count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));;
@@ -124,6 +128,7 @@ abstract class AbsOperationTile extends AbsOperation {
         } else {
             $reshexes = $this->findReservedAreas($reservename);
             if (count($reshexes) == 0) {
+                // if reserved area not on the map - generic rules apply
                 if (isset($info['reserved'])) return MA_ERR_RESERVED;
                 if ($this->checkAdjRulesPasses($ohex, $color, $reservename)) {
                     return MA_OK;

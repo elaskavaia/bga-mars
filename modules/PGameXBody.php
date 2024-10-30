@@ -356,6 +356,11 @@ abstract class PGameXBody extends PGameMachine {
         $this->setGameStateValue('var_draft', $draft);
     }
 
+    function debug_map(int $number) {
+        $this->setGameStateValue('var_map', $number);
+    }
+
+
 
     function debug_opcard($card_id) {
         $color = $this->getCurrentPlayerColor();
@@ -465,10 +470,9 @@ abstract class PGameXBody extends PGameMachine {
                 return !!$pp;
 
             default:
-                if ($this->getMapNumber() == 2) { // Hellas
-                    if (startsWith($rule, 'Ascraeus Mons') || $rule == 'Noctis City') {
-                        return true;
-                    }
+
+                if ($rule == 'Noctis City') {
+                    return true;
                 }
 
                 throw new BgaSystemException("Unknown adj rule '$rule'");
@@ -611,6 +615,14 @@ abstract class PGameXBody extends PGameMachine {
                 } catch (Exception $e) {
                     $this->error("error while parsing $field $r");
                     $this->error($e);
+                }
+            }
+            if (startsWith($key, "hex_")) {
+                $name = array_get($info, 'name');
+                if (!$name) {
+                    $info['name'] = clienttranslate('Hex');
+                } else if (endsWith($name, 'Mons') || endsWith($name, 'Tholus')) {
+                    $info['vol'] = 1;
                 }
             }
         }
@@ -831,6 +843,14 @@ abstract class PGameXBody extends PGameMachine {
                 return $this->getCountOfDesertTiles($owner);
             case 'estate':
                 return $this->getCountOfEstateTiles($owner);
+            case 'geologist':
+                return $this->getCountOfGeologistTiles($owner);
+            case 'farmer':
+                return $this->getCountOfResOnCards($owner, 'Animal') + $this->getCountOfResOnCards($owner, 'Microbe');
+            case 'highlander':
+                return $this->getCountOfHighlanderTiles($owner);
+            case 'landscaper':
+                return $this->getCountOfLandscapeTiles($owner);
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -860,7 +880,7 @@ abstract class PGameXBody extends PGameMachine {
             return $this->evaluateAdj($owner, $tileId, $x);
         }
         $create = $this->getRulesFor("tracker_$x", "create", null);
-        if ($create === null) {        
+        if ($create === null) {
             throw new feException("Cannot evalute $x");
         }
         # TODO: special processing with _all
@@ -1544,12 +1564,14 @@ abstract class PGameXBody extends PGameMachine {
         if ($otype == MA_TILE_OCEAN)
             $no = -1;
         $marker_info = $this->tokens->getTokenOnLocation($target);
+        $x = getPart($target, 1, true);
+        $y = getPart($target, 2, true);
         $this->dbSetTokenLocation(
             $object,
             $target,
             $no,
-            clienttranslate('${player_name} places tile ${token_name} into ${place_name}'), // XXX
-            [],
+            clienttranslate('${player_name} places ${token_name} on ${place_name} (${x},${y})'),
+            ['x' => $x, 'y' => $y],
             $player_id
         );
 
@@ -2240,6 +2262,35 @@ abstract class PGameXBody extends PGameMachine {
         return $count;
     }
 
+    function getCountOfHighlanderTiles($owner) {
+        $map = $this->getPlanetMap();
+        $count = 0;
+
+        foreach ($map as $hex => $info) {
+            $hexowner = $info['owner'] ?? '';
+            if (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+            $oceans = $this->getAdjecentHexesOfType($hex, MA_TILE_OCEAN);
+            $c = count($oceans);
+            if ($c == 0) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+    function getCountOfLandscapeTiles($owner) {
+        // XXX TODO
+        return 0;
+    }
+
+
+    function getCountOfGeologistTiles($owner) {
+        // XXX TODO
+        return 0;
+    }
+
     function getCountOfCardsWithPre($owner) {
         $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
         $count = 0;
@@ -2267,9 +2318,17 @@ abstract class PGameXBody extends PGameMachine {
         return $count;
     }
 
-    function getCountOfResOnCards($owner) {
+    function getCountOfResOnCards($owner, $type = '') {
         $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%", 1);
-        return count($res);
+        if (!$type)
+            return count($res);
+        $count = 0;
+        foreach ($res as $resinfo) {
+            $card = $resinfo['location'];
+            $holds = $this->getRulesFor($card, 'holds', '');
+            if ($holds == $type) $count++;
+        }
+        return $count;
     }
 
 

@@ -1,6 +1,6 @@
-x|y|r|name|ocean
+x|y|r|name|ocean|php
 #set id=hex_{x}_{y}@m0
-#set name=Hex at ({x},{y})
+#set name= 
 #set location=map_hexes
 #tharsis - can do variants later
 #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
@@ -78,7 +78,6 @@ x|y|r|name|ocean
 
 #Hellas
 #set id=hex_{x}_{y}@m2
-#set name=Hellas: Hex at ({x},{y})
 #set location=map_hexes
 #set reserved=1
 #set inspace=1
@@ -115,9 +114,9 @@ x|y|r|name|ocean
 4|4|s|
 5|4|2s|
 6|4|s|
-9|4|p|
 7|4|p||1
 8|4|p||1
+9|4|p|
 
 1|5|draw|
 2|5||
@@ -161,7 +160,7 @@ x|y|r|name|ocean
 
 #Elysium
 #set id=hex_{x}_{y}@m1
-#set name=Elysium: Hex at ({x},{y})
+#set name= 
 #set location=map_hexes
 #set reserved=1
 #set inspace=1
@@ -240,3 +239,86 @@ x|y|r|name|ocean
 5|9|draw|
 6|9|draw|
 7|9|2s|
+
+#Vastitas
+#set id=hex_{x}_{y}@m3
+#set name=
+#set location=map_hexes
+#set reserved=1
+#set inspace=1
+0|1||Stanford Torus
+0|2||Phobos Space Haven
+0|3||Ganymede Colony
+#set inspace=
+#set reserved=
+#set ocean=
+3|1|p
+4|1|
+5|1||Hecates Tholus||
+6|1|
+7|1|
+
+3|2|2p
+4|2|2p
+5|2|
+6|2|
+7|2|p
+8|2|draw|Elysium Mons||
+
+2|3|draw|
+3|3|2p||1
+4|3|2p||1
+5|3|2p
+6|3|p
+7|3|
+8|3|
+
+2|4|2s|Alba Mons||
+3|4|u|
+4|4|2p||1
+5|4|p|
+6|4||
+7|4|draw||
+8|4|p|
+9|4||Viking 2
+
+
+1|5||
+2|5||
+3|5|p||1
+4|5|2p|
+5|5|4nm,t|
+6|5|2p||1
+7|5|2p||1
+8|5|2p||1
+9|5|2draw|
+
+2|6|2draw|
+3|6||
+4|6|p|
+5|6|2h||1
+6|6|2hp||1
+7|6|draw||1
+8|6|p||
+9|6|2u|
+
+2|7|u|Uranius Tholus||
+3|7|s
+4|7|||1
+5|7|2h||1
+6|7|2p
+7|7|p
+8|7|
+
+3|8|p|
+4|8||
+5|8|p|
+6|8|s,p|
+7|8|s|
+8|8|p|
+
+3|9||Viking 1|
+4|9||
+5|9|draw|
+6|9|u|
+7|9|s|

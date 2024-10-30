@@ -8753,7 +8753,7 @@
   width: calc(var(--map-width) * 0.157);
   background: none;
 }
-.mfull .map_1 #temperature_map {
+.mfull .map_1 #temperature_map, .mfull .map_3 #temperature_map {
   position: absolute;
   top: 19%;
   left: 6%;
@@ -8765,7 +8765,7 @@
   top: 64%;
   left: 7%;
 }
-.mfull .map_1 #standard_projects_area {
+.mfull .map_1 #standard_projects_area, .mfull .map_3 #standard_projects_area {
   top: 64%;
   left: 79%;
 }
@@ -8879,11 +8879,11 @@
   left: 10%;
   top: 23%;
 }
-.mfull .map_1 .hex_phobos {
+.mfull .map_1 .hex_phobos, .mfull .map_3 .hex_phobos {
   top: 28%;
   left: 81%;
 }
-.mfull .map_1 .hex_ganymede {
+.mfull .map_1 .hex_ganymedem .map_3 .hex_ganymede {
   top: 46%;
   left: 84%;
 }
@@ -8894,7 +8894,7 @@
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
 }
-.mfull .map_1 #oceans_pile {
+.mfull .map_1 #oceans_pile, .mfull .map_3 #oceans_pile {
   top: 8%;
   left: 19%;
 }
@@ -8927,6 +8927,9 @@
 }
 .mfull .map_1 #main_board::before {
   background-image: url(img/full/elysium.jpg);
+}
+.mfull .map_3 #main_board::before {
+  background-image: url(img/full/vastitas.jpg);
 }
 .mfull .map_bg {
   display: none;
