@@ -92,7 +92,7 @@ abstract class AbsOperationTile extends AbsOperation {
             $nname = trim($name);
             if (!$nname) continue;
             foreach ($map as $hex => $hexinfo) {
-                if ($hexinfo['name'] === $nname) {
+                if (array_get($hexinfo,'name') === $nname) {
                     $res[] = $hex;
                     break;
                 }
