@@ -148,19 +148,19 @@ abstract class PGameMachine extends PGameTokens {
             if (is_numeric($args)) {
                 $operation_id = $args;
             } else if (is_array($args)) {
-                $operation_id = array_get($args,"op");
+                $operation_id = array_get($args,"op",-1);
             } else {
                 $this->userAssertTrue(totranslate("Illegal operation. Try again?"));
             }
           
             $info = $this->findOp($operation_id, $tops);
-            $this->userAssertTrue(totranslate("Illegal operation. Try again?"), $info);
+            $this->userAssertTrue(totranslate("Illegal operation. Try again?"), $info, "no operation for $operation_id in ".toJson($tops));
 
             $color = $info["owner"];
             if ($color === null) {
                 // ignore
             } else if ($color != $curPlayerColor) {
-                $this->userAssertTrue("Illegal operation owner. Try again?", $info); 
+                $this->userAssertTrue("Illegal operation owner. Try again?", $info, "$color != $curPlayerColor in ".toJson($ops)); 
             }
 
             $op_ids[] = $operation_id;
@@ -188,7 +188,7 @@ abstract class PGameMachine extends PGameTokens {
             $operation_id = $args["op"];
             $info = $this->findOp($operation_id, $tops);
             //$this->error("error resolvig op $operation_id ".toJson($tops)." ".toJson($args));
-            $this->systemAssertTrue("Illegal operation. Refresh and try again?", $info);
+            $this->userAssertTrue("Illegal operation. Refresh and try again?", $info,"no operation for $operation_id in ".toJson($tops));
 
 
 

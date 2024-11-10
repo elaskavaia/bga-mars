@@ -154,7 +154,8 @@ abstract class PGameBasic extends Table {
             return;
         }
         if ($log) {
-            $this->warn("$message $log|");
+            $move = $this->getGameStateValue("playerturn_nbr");
+            $this->warn("User Error during move $move: $message $log|");
         }
         throw new BgaUserException($this->_($message));
     }
