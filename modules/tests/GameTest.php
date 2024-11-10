@@ -1279,6 +1279,7 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $p = PCOLOR;
 
+        $m->effect_placeTile($p,'tile_2_1','hex_3_2');
         $card = $m->mtFind('name', 'Lava Tube Settlement');
         $effect = $m->getRulesFor($card, 'r');
         /** @var ComplexOperation */

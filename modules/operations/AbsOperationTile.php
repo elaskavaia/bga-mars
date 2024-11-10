@@ -119,7 +119,7 @@ abstract class AbsOperationTile extends AbsOperation {
         $reservename = $this->getReservedArea();
         if ($reservename == 'vol') {
             if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
-            $reservename = '';
+            return MA_OK;
         }
         if (!$reservename) {
             if (isset($info['reserved'])) return MA_ERR_RESERVED;
