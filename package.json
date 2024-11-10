@@ -9,10 +9,10 @@
     "build:scss": "sass --no-source-map src/css/GameXBody.scss terraformingmars.css",
     "watch:scss": "sass --watch  src/css/GameXBody.scss terraformingmars.css",
     "watch": "npm run watch:ts && npm run watch:scss",
-    "build": "npm run build:ts && npm run build:scss",
-    "test": "cd modules; APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ phpunit --bootstrap ./_autoload.php --colors=always tests",
-    "predeploy": "cd modules; APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ php7.4 _testpredeploy.php",
-    "build:material": "php7.4 ./misc/other/genmat.php misc/*.csv"
+    "build": "npm run build:ts && npm run build:scss && npm run build:material",
+    "test": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ phpunit --bootstrap modules/_autoload.php --colors=always modules/tests",
+    "predeploy": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ php8.2  modules/_testpredeploy.php",
+    "build:material": "php8.2 ./misc/other/genmat.php misc/*.csv"
   },
   "author": "VictoriaLa",
   "license": "EPL2.0",
