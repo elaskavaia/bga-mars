@@ -21,7 +21,7 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->arg();
     }
 
-    function action_resolve(array $args): int {
+    function action_resolve(array $args=[]): int {
         $this->user_args =  $args;
    
         if ($this->getUserCount() > 0 || !$this->isOptional()) {

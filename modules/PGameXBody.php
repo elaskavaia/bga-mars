@@ -392,6 +392,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->error("empty coords in getAdjecentHexes");
             return [];
         }
+        if ($coords == 'limbo') return [];
         $axis = explode("_", $coords);
         if (count($axis) < 3) {
             $this->error("bad $coords coords in getAdjecentHexes");
@@ -2631,7 +2632,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$this->isRealPlayer($this->getCurrentPlayerId())) return; // weird
         $color = $this->getCurrentPlayerColor();
         $opinst = $this->getOperationInstanceFromType('passauto', $color);
-        $opinst->action_resolve(['count' => 1]);
+        $opinst->action_resolve();
         $this->queueremove($color, 'passauto');
         $this->notifyGameStateArgsChange($this->getCurrentPlayerId());
     }

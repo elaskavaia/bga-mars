@@ -270,7 +270,7 @@ abstract class PGameMachine extends PGameTokens {
     ////////////
 
     public function isInMultiplayerMasterState() {
-        return $this->gamestate->isMutiactiveState();
+        return $this->isMultiActive();
     }
 
     function getTopOperationsState($owner) {

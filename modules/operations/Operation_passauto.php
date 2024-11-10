@@ -9,11 +9,19 @@ class Operation_passauto extends AbsOperation {
     function isVoid(): bool {
         $isMulti = $this->game->isInMultiplayerMasterState();
         if ($isMulti)  return true; // cannot do this
-        
+
         $color = $this->color;
         $state = $this->game->tokens->getTokenState("tracker_passed_$color");
         if ($state != 0) return true; // already passed
-        return false; 
+        return false;
+    }
+
+    function checkVoid() {
+        if ($this->isVoid()) {
+            $isMulti = $this->game->isInMultiplayerMasterState();
+            if ($isMulti)
+                $this->game->userAssertTrue("Pass operation is impossible in this state");
+        }
     }
 
     function canResolveAutomatically() {
@@ -25,24 +33,29 @@ class Operation_passauto extends AbsOperation {
     }
 
     function effect(string $color, int $inc, ?array $args = null): int {
+        $player_id = $this->getPlayerId();
+
+        if (!$this->game->isPlayerAlive($player_id)) {
+            throw new feException("Pass operation is impossible in this state");
+        }
         $isMulti = $this->game->isInMultiplayerMasterState();
 
         if ($isMulti) {
             throw new feException("Pass operation is impossible in this state");
         }
-        $stage = $this->game->getGameStateValue('gamestage'); 
+        $stage = $this->game->getGameStateValue('gamestage');
         if ($stage != MA_STAGE_GAME) {
             throw new feException("Pass operation is impossible in this state");
         }
-        
+
         $this->game->dbSetTokenState("tracker_passed_$color", 2, '');
-        $this->game->notifyPlayer($this->getPlayerId(),'message_warning',clienttranslate('Auto passing on next turn'),[]);
+        $this->game->notifyPlayer($this->getPlayerId(), 'message_warning', clienttranslate('Auto passing on next turn'), []);
         return 1;
     }
 
     function getPrompt() {
         $color = $this->color;
-        if ($this->game->getActivePlayerColor()!==$color) {
+        if ($this->game->getActivePlayerColor() !== $color) {
             return clienttranslate('${you} must confirm Pass for this GENERATION on your next turn, cannot be undone');
         } else {
             return clienttranslate('${you} must confirm Pass for this GENERATION on your next turn, you can finish your current turn normally');
@@ -50,7 +63,7 @@ class Operation_passauto extends AbsOperation {
     }
 
     protected function getVisargs() {
-        return array_merge(parent::getVisargs(),[
+        return array_merge(parent::getVisargs(), [
             'bcolor' => 'orange' // button color
         ]);
     }

@@ -20,28 +20,32 @@ class Operation_claim extends AbsOperation {
         $markers = $this->game->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
         foreach ($markers as $id => $rec) {
             $loc = $rec['location']; // milestone_x
-            $map[$loc]['marker'] = $id;
+            if (isset($map[$loc]))
+                $map[$loc]['marker'] = $id;
+            else
+                $this->game->error("unexpected milestone $loc");
         }
         $claimed = count($markers);
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($map, $claimed) {
             $var = $this->game->getRulesFor($tokenId, "r");
+            $this->game->systemAssertTrue("invalid milestone {$tokenId}.", $var);
             $min = $this->game->getRulesFor($tokenId, "min", 100);
             $res = $this->game->evaluateExpression($var, $color, $tokenId, ['wilds' => []]);
             $q = 0;
 
-         
+
             if ($map[$tokenId]['state'] > 0) $q = MA_ERR_OCCUPIED; // this already claimed
             else if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
             else if (!($res >= $min))  $q = MA_ERR_PREREQ; // fail prereq check
             else if (!$this->game->canAfford($color, $tokenId))  $q = MA_ERR_COST;
 
             // add count, place and vp
-            $marker =  array_get($map[$tokenId],'marker',null);
+            $marker =  array_get($map[$tokenId], 'marker', null);
             $extra = [];
-            if ($marker && getPart($marker,1)==$color) {
-                $extra = ["vp"=>5, "claimed"=>1];
+            if ($marker && getPart($marker, 1) == $color) {
+                $extra = ["vp" => 5, "claimed" => 1];
             }
-           
+
 
             return [
                 'q' => $q,

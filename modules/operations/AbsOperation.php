@@ -338,8 +338,7 @@ Reason: tile placement may draw cards (information)
         return $this->arg();
     }
 
-    function getUserCount(): ?int {
-        if (!$this->user_args) return null;
+    function getUserCount(): int {
         $userCount = array_get($this->user_args, "count", null);
         if ($userCount !== null) return (int) $userCount;
         return  (int) ($this->op_info["count"] ?? 1);
@@ -350,7 +349,7 @@ Reason: tile placement may draw cards (information)
     /**
      * This is user call, validate all parameters
      */
-    function action_resolve(array $args): int {
+    function action_resolve(array $args = []): int {
         $this->user_args =  $args;
         // the actual acting player
         $actor =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
@@ -375,7 +374,7 @@ Reason: tile placement may draw cards (information)
         if ($this->isVoid()) {
             $op = $this->mnemonic;
             $usertarget = $args['target'] ?? '';
-            $this->game->userAssertTrue(totranslate("This move is not allowed by the rules"),  $usertarget, "Operation is void $op");
+            $this->game->userAssertTrue(totranslate("This move is not allowed by the rules"),  $usertarget, "Operation $op");
             $info = $this->arg()['target'];
             $infotarget = array_get($info, $usertarget);
             $err = $infotarget['q'];

@@ -474,7 +474,7 @@ abstract class PGameBasic extends Table {
      *
      * @return integer player id based on hex $color
      */
-    function getPlayerIdByColor($color) {
+    function getPlayerIdByColor(?string $color) {
         if (!$color) return $this->getActivePlayerId();
         $players = $this->loadPlayersBasicInfos();
         if (!isset($this->player_colors)) {
@@ -548,8 +548,7 @@ abstract class PGameBasic extends Table {
     }
 
     function getMostlyActivePlayerId() {
-        $state = $this->gamestate->state();
-        if ($state && $state["type"] === "multipleactiveplayer") {
+        if ($this->isMultiActive()) {
             return $this->getCurrentPlayerId();
         } else {
             return $this->getActivePlayerId();
@@ -750,11 +749,9 @@ abstract class PGameBasic extends Table {
     }
 
     public function isMultiActive() {
-        $state = $this->gamestate->state();
-        if ($state['type'] == 'multipleactiveplayer') {
-            return true;
-        }
-        return false;
+        $gamestate = $this->gamestate;
+        $state = $gamestate->states[ $gamestate->state_id() ];
+        return ($state ['type'] == 'multipleactiveplayer');
     }
 
     /*
@@ -836,8 +833,7 @@ abstract class PGameBasic extends Table {
         if ($undo_moves_player != self::getActivePlayerId())
             throw new feException("The stored UNDO corresponds to another player's turn : you cannot restore it");
 
-        $state = $this->gamestate->state();
-        if ($state['type'] == 'multipleactiveplayer')
+        if ($this->isMultiActive())
             throw new feException("UNDO cannot be used for multiple active players game states");
 
 
@@ -896,8 +892,7 @@ abstract class PGameBasic extends Table {
     }
 
     function bgaUndoSavePoint() {
-        $state = $this->gamestate->state();
-        if ($state['type'] == 'multipleactiveplayer') {
+        if ($this->isMultiActive()) {
             throw new feException('UNDO cannot be used for multiple active players game states');
         }
 

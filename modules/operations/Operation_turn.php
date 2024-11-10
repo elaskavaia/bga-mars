@@ -45,9 +45,9 @@ class Operation_turn extends AbsOperation {
         $this->game->incStat(1, 'game_actions',  $player_id);
         if ($this->game->getTrackerValue($owner, 'passed') == 2) {
             // auto-pass
-            $this->game->queue($owner, 'pass');
+            $this->game->push($owner, 'pass');
             $pass = $this->game->getOperationInstanceFromType('pass', $owner);
-            $pass->action_resolve(['count' => 1]);
+            $pass->action_resolve(['count' => 1, 'auto'=> 1]);
             return 1;
         }
         $solo = $this->game->isSolo();
