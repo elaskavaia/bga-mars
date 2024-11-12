@@ -477,6 +477,7 @@ abstract class PGameBasic extends Table {
      */
     function getPlayerIdByColor(?string $color) {
         if (!$color) return $this->getActivePlayerId();
+        if ($color === '8000') $color = '0080000'; // weird stuff
         $players = $this->loadPlayersBasicInfos();
         if (!isset($this->player_colors)) {
             $this->player_colors = [];
@@ -751,8 +752,8 @@ abstract class PGameBasic extends Table {
 
     public function isMultiActive() {
         $gamestate = $this->gamestate;
-        $state = $gamestate->states[ $gamestate->state_id() ];
-        return ($state ['type'] == 'multipleactiveplayer');
+        $state = $gamestate->states[$gamestate->state_id()];
+        return ($state['type'] == 'multipleactiveplayer');
     }
 
     /*
@@ -787,7 +788,7 @@ abstract class PGameBasic extends Table {
         try {
             $this->doCustomUndoSavePoint();
         } catch (Exception $e) {
-            $this->error("undo save point failed ".($e->getMessage()));
+            $this->error("undo save point failed " . ($e->getMessage()));
             $this->error($e->getTraceAsString());
         }
         $this->setUndoSavepoint(false);

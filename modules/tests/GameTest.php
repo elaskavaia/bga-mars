@@ -16,7 +16,7 @@ require_once "TokensInMem.php";
 class GameStateInMem extends GameState {
 }
 
-define("PCOLOR", "ff0000");
+define("PCOLOR", "008000");
 define("BCOLOR", "0000ff");
 
 class GameUT extends terraformingmars {
@@ -895,6 +895,7 @@ final class GameTest extends TestCase {
 
     public function testLavaFlows() {
         $m = $this->game();
+        $color = PCOLOR;
         $m->tokens->setTokenState('tracker_t', +6);
         $card_id = $m->mtFindByName('Lava Flows');
         $m->putInEffectPool(PCOLOR, '2t', $card_id);
@@ -908,7 +909,7 @@ final class GameTest extends TestCase {
             $this->assertTrue(false, "Unexpected operation " . ($op['type']));
         }
         $this->assertEquals(8, $m->tokens->getTokenState("tracker_t"));
-        $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_ff0000"));
+        $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_$color"));
     }
 
     public function testHasTag() {
@@ -934,6 +935,7 @@ final class GameTest extends TestCase {
     public function testExtraOcean() {
         $m = $this->game();
         $m->gamestate->changeActivePlayer(PCOLOR);
+        $color = PCOLOR;
         $m->tokens->setTokenState('tracker_t', -2);
         $m->tokens->setTokenState('tracker_w', 9); // max oceans
         $card_id = $m->mtFindByName('Lava Flows');
@@ -947,7 +949,7 @@ final class GameTest extends TestCase {
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(2, $m->tokens->getTokenState("tracker_t"));
-        $this->assertEquals(22, $m->tokens->getTokenState("tracker_tr_ff0000"));
+        $this->assertEquals(22, $m->tokens->getTokenState("tracker_tr_$color"));
         $this->assertEquals(9, $m->tokens->getTokenState("tracker_w"));
         $top1 = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top1));

@@ -762,7 +762,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($info == null) $info = [];
 
         if (!$owner) {
-            $owner == $this->getActivePlayerColor();
+            $owner = $this->getActivePlayerColor();
         }
 
 
@@ -1767,7 +1767,7 @@ abstract class PGameXBody extends PGameMachine {
         if (is_numeric($owner)) $owner = (string) $owner;
         $this->systemAssertTrue("invalid owner", is_string($owner));
         if ($this->getPlayerIdByColor($owner) == 0) {
-            if ($owner == 'ffffff') return true;
+            if ($owner === 'ffffff') return true;
             $this->systemAssertTrue("invalid owner $owner");
         }
         return true;

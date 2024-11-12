@@ -40,6 +40,10 @@ class Operation_turn extends AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $player_id = $this->game->getPlayerIdByColor($owner);
+        if (!$owner || !$player_id) {
+            $this->game->error("Cannot determine player for turn operation c=$owner p=$player_id");
+            return 1;
+        }
         $this->game->gamestate->changeActivePlayer($player_id);
         $this->game->setGameStateValue('gamestage', MA_STAGE_GAME);
         $this->game->incStat(1, 'game_actions',  $player_id);
