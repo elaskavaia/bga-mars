@@ -450,6 +450,24 @@ abstract class PGameXBody extends PGameMachine {
         return $res;
     }
 
+    /**
+     * Recursively floods the map with $flood_area color, it cannot be 0, all area has to painted 0 before this
+     */
+    private function  hexFlood($flood_area, $what, &$flood_map, $map, $owner) {
+        if ($flood_map[$what] != 0) return;
+        $info = array_get($map, $what);
+        if (!$info) return;
+        $tileowner = array_get($info, 'owner');
+        if ($tileowner != $owner) return;
+        $flood_map[$what] = $flood_area;
+
+        $adj = $this->getAdjecentHexes($what, $map);
+        foreach ($adj as $hex) {
+            $this->hexFlood($flood_area, $hex, $flood_map, $map, $owner);
+        }
+    }
+
+
     function evaluateAdj($color, $ohex, $rule) {
         if (!$rule)
             return 0;
@@ -2281,15 +2299,60 @@ abstract class PGameXBody extends PGameMachine {
 
         return $count;
     }
-    function getCountOfLandscapeTiles($owner) {
-        // XXX TODO
-        return 0;
+    function getCountOfLandscapeTiles(string $owner) {
+        //Owning most connected tiles (player's largest group of tiles).
+        $map = $this->getPlanetMap();
+        $flood_map = [];
+        foreach ($map as $hex => $info) {
+            $flood_map[$hex] = 0;
+        }
+        $flood_area = 1;
+        foreach ($map as $hex => $info) {
+            $hexowner = array_get($info, 'owner', '');
+            if ($hexowner !== $owner)
+                continue;
+            if ($flood_map[$hex] == 0) {
+                $this->hexFlood($flood_area, $hex, $flood_map, $map, $owner);
+                $flood_area++;
+            }
+        }
+        $area = array_fill(0,$flood_area, 0);
+        foreach ($map as $hex => $info) {
+            $marker = $flood_map[$hex];
+            if ($marker==0) continue;
+            $area[$marker]++;
+        }
+        $max = max($area);
+        return $max;
     }
 
 
     function getCountOfGeologistTiles($owner) {
-        // XXX TODO
-        return 0;
+        //  Requires that you have 3 tiles on, or adjacent to, volcanic areas
+        $map = $this->getPlanetMap();
+        $count = 0;
+
+        foreach ($map as $hex => $info) {
+            $hexowner = $info['owner'] ?? '';
+            if (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+            $vol = $this->getRulesFor($hex, 'vol', 0);
+            if ($vol) {
+                $count++;
+                continue;
+            }
+            $nei = $this->getAdjecentHexes($hex, $map);
+            foreach ($nei as $subhex) {
+                $vol = $this->getRulesFor($subhex, 'vol', 0);
+                if ($vol) {
+                    $count++;
+                    continue 2;
+                }
+            }
+        }
+
+        return $count;
     }
 
     function getCountOfCardsWithPre($owner) {

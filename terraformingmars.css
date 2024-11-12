@@ -3983,6 +3983,14 @@
   background-image: url("img/maps/hellas_planet.png");
 }
 
+.map_1 .map_bg {
+  background-image: url("img/maps/elysium_planet.png");
+}
+
+.map_3 .map_bg {
+  background-image: url("img/maps/vastitas_planet.png");
+}
+
 .hex {
   width: calc(var(--map-width) * 0.109);
   height: calc(var(--map-width) * 0.122);
@@ -4579,16 +4587,33 @@
   position: relative;
 }
 
+.map_1 .milestone,
+.map_1 .award {
+  background-image: url("img/maps/elysium_awards.png");
+}
+
 .map_2 .milestone,
 .map_2 .award {
   background-image: url("img/maps/hellas_awards.png");
 }
 
+.map_3 .milestone,
+.map_3 .award {
+  background-image: url("img/maps/vastitas_awards.png");
+}
+
 .award_1 {
-  background-position: -200% 0;
+  background-position: 0% 0;
 }
 
 .award_2 {
+  background-position: -200% 0;
+}
+
+.map_0 .award_1 {
+  background-position: -200% 0;
+}
+.map_0 .award_2 {
   background-position: 0 0;
 }
 
@@ -8701,6 +8726,9 @@
 .mfull .map_1 #main_board {
   height: calc(var(--map-board-with) * 0.86);
 }
+.mfull .map_3 #main_board {
+  height: calc(var(--map-board-with) * 0.844);
+}
 .mfull #main_area {
   margin-top: unset;
   display: flex;
@@ -8724,6 +8752,12 @@
   top: 21%;
   width: 60%;
   height: 78%;
+}
+.mfull .map_3 #map {
+  height: 80%;
+  left: 19%;
+  top: 21%;
+  width: 62%;
 }
 .mfull #map_middle {
   width: 100%;
@@ -8753,7 +8787,8 @@
   width: calc(var(--map-width) * 0.157);
   background: none;
 }
-.mfull .map_1 #temperature_map, .mfull .map_3 #temperature_map {
+.mfull .map_1 #temperature_map,
+.mfull .map_3 #temperature_map {
   position: absolute;
   top: 19%;
   left: 6%;
@@ -8765,7 +8800,8 @@
   top: 64%;
   left: 7%;
 }
-.mfull .map_1 #standard_projects_area, .mfull .map_3 #standard_projects_area {
+.mfull .map_1 #standard_projects_area,
+.mfull .map_3 #standard_projects_area {
   top: 64%;
   left: 79%;
 }
@@ -8879,13 +8915,21 @@
   left: 10%;
   top: 23%;
 }
-.mfull .map_1 .hex_phobos, .mfull .map_3 .hex_phobos {
+.mfull .map_1 .hex_phobos {
   top: 28%;
   left: 81%;
 }
-.mfull .map_1 .hex_ganymedem .map_3 .hex_ganymede {
+.mfull .map_3 .hex_phobos {
+  top: 23%;
+  left: 82%;
+}
+.mfull .map_1 .hex_ganymede {
   top: 46%;
   left: 84%;
+}
+.mfull .map_3 .hex_ganymede {
+  top: 40%;
+  left: 83%;
 }
 .mfull #oceans_pile {
   position: absolute;
@@ -8894,8 +8938,12 @@
   width: calc(var(--stan-width) * 0.45);
   height: calc(var(--stan-width) * 0.54);
 }
-.mfull .map_1 #oceans_pile, .mfull .map_3 #oceans_pile {
+.mfull .map_1 #oceans_pile {
   top: 8%;
+  left: 19%;
+}
+.mfull .map_3 #oceans_pile {
+  top: 10%;
   left: 19%;
 }
 .mfull #outer_scoretracker {
@@ -9156,103 +9204,103 @@
 }
 .mfull #main_board .tracker_gen[data-state="0"] {
   left: 0%;
-  top: 90%;
+  top: 95%;
 }
 .mfull #main_board .tracker_gen[data-state="1"] {
   left: 0%;
-  top: 86.4%;
+  top: 91.2%;
 }
 .mfull #main_board .tracker_gen[data-state="2"] {
   left: 0%;
-  top: 82.8%;
+  top: 87.4%;
 }
 .mfull #main_board .tracker_gen[data-state="3"] {
   left: 0%;
-  top: 79.2%;
+  top: 83.6%;
 }
 .mfull #main_board .tracker_gen[data-state="4"] {
   left: 0%;
-  top: 75.6%;
+  top: 79.8%;
 }
 .mfull #main_board .tracker_gen[data-state="5"] {
   left: 0%;
-  top: 72%;
+  top: 76%;
 }
 .mfull #main_board .tracker_gen[data-state="6"] {
   left: 0%;
-  top: 68.4%;
+  top: 72.2%;
 }
 .mfull #main_board .tracker_gen[data-state="7"] {
   left: 0%;
-  top: 64.8%;
+  top: 68.4%;
 }
 .mfull #main_board .tracker_gen[data-state="8"] {
   left: 0%;
-  top: 61.2%;
+  top: 64.6%;
 }
 .mfull #main_board .tracker_gen[data-state="9"] {
   left: 0%;
-  top: 57.6%;
+  top: 60.8%;
 }
 .mfull #main_board .tracker_gen[data-state="10"] {
   left: 0%;
-  top: 54%;
+  top: 57%;
 }
 .mfull #main_board .tracker_gen[data-state="11"] {
   left: 0%;
-  top: 50.4%;
+  top: 53.2%;
 }
 .mfull #main_board .tracker_gen[data-state="12"] {
   left: 0%;
-  top: 46.8%;
+  top: 49.4%;
 }
 .mfull #main_board .tracker_gen[data-state="13"] {
   left: 0%;
-  top: 43.2%;
+  top: 45.6%;
 }
 .mfull #main_board .tracker_gen[data-state="14"] {
   left: 0%;
-  top: 39.6%;
+  top: 41.8%;
 }
 .mfull #main_board .tracker_gen[data-state="15"] {
   left: 0%;
-  top: 36%;
+  top: 38%;
 }
 .mfull #main_board .tracker_gen[data-state="16"] {
   left: 0%;
-  top: 32.4%;
+  top: 34.2%;
 }
 .mfull #main_board .tracker_gen[data-state="17"] {
   left: 0%;
-  top: 28.8%;
+  top: 30.4%;
 }
 .mfull #main_board .tracker_gen[data-state="18"] {
   left: 0%;
-  top: 25.2%;
+  top: 26.6%;
 }
 .mfull #main_board .tracker_gen[data-state="19"] {
   left: 0%;
-  top: 21.6%;
+  top: 22.8%;
 }
 .mfull #main_board .tracker_gen[data-state="20"] {
   left: 0%;
-  top: 18%;
+  top: 19%;
 }
 .mfull #main_board .tracker_gen[data-state="21"] {
   left: 0%;
-  top: 14.4%;
+  top: 15.2%;
 }
 .mfull #main_board .tracker_gen[data-state="22"] {
   left: 0%;
-  top: 10.8%;
+  top: 11.4%;
 }
 .mfull #main_board .tracker_gen[data-state="23"] {
   left: 0%;
-  top: 7.2%;
+  top: 7.6%;
 }
 .mfull #main_board .tracker_gen[data-state="24"] {
   left: 0%;
-  top: 3.6%;
+  top: 3.8%;
 }
 .mfull #main_board .tracker_gen[data-state="25"] {
   left: 0%;

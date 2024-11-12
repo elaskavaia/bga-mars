@@ -198,6 +198,10 @@
     height: calc(var(--map-board-with) * 0.86);
   }
 
+  .map_3 #main_board {
+    height: calc(var(--map-board-with) * 0.844); // vastitas
+  }
+
   #main_area {
     margin-top: unset;
     display: flex;
@@ -227,6 +231,13 @@
     top: 21%;
     width: 60%;
     height: 78%;
+  }
+
+  .map_3 #map {
+    height: 80%;
+    left: 19%;
+    top: 21%;
+    width: 62%;
   }
 
   #map_middle {
@@ -261,7 +272,8 @@
     background: none;
   }
 
-  .map_1 #temperature_map, .map_3 #temperature_map {
+  .map_1 #temperature_map,
+  .map_3 #temperature_map {
     position: absolute;
     top: 19%;
     left: 6%;
@@ -275,7 +287,8 @@
     left: 7%;
   }
 
-  .map_1 #standard_projects_area, .map_3 #standard_projects_area {
+  .map_1 #standard_projects_area,
+  .map_3 #standard_projects_area {
     top: 64%;
     left: 79%;
   }
@@ -305,6 +318,7 @@
   }
 
   #main_board {
+
     .milestone,
     .award {
       position: relative;
@@ -333,6 +347,7 @@
     background: none;
     position: relative;
     left: 6%;
+
     .marker {
       // same size as all markers on map defined in GameTokens.scss
       top: 40%;
@@ -412,14 +427,24 @@
     top: 23%;
   }
 
-  .map_1 .hex_phobos,  .map_3 .hex_phobos {
+  .map_1 .hex_phobos {
     top: 28%;
     left: 81%;
   }
 
-  .map_1 .hex_ganymedem  .map_3 .hex_ganymede {
+  .map_3 .hex_phobos {
+    top: 23%;
+    left: 82%;
+  }
+
+  .map_1 .hex_ganymede {
     top: 46%;
     left: 84%;
+  }
+
+  .map_3 .hex_ganymede {
+    top: 40%;
+    left: 83%;
   }
 
   #oceans_pile {
@@ -431,8 +456,13 @@
     height: calc(var(--stan-width) * 0.54);
   }
 
-  .map_1 #oceans_pile, .map_3 #oceans_pile {
+  .map_1 #oceans_pile {
     top: 8%;
+    left: 19%;
+  }
+
+  .map_3 #oceans_pile {
+    top: 10%;
     left: 19%;
   }
 
@@ -484,6 +514,7 @@
       background-image: url(img/full/elysium.jpg);
     }
   }
+
   .map_3 {
     #main_board::before {
       background-image: url(img/full/vastitas.jpg);
@@ -793,7 +824,7 @@
 
     #main_board .tracker_gen[data-state="#{$num}"] {
       left: 0%;
-      top: calc((100% - $row * (100% / 25)) * 0.90);
+      top: calc((100% - $row * (100% / 25)) * 0.95);
     }
   }
 

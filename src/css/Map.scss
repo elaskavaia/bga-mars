@@ -62,6 +62,14 @@
 .map_2 .map_bg {
   background-image: url('img/maps/hellas_planet.png');
 }
+.map_1 .map_bg {
+  background-image: url('img/maps/elysium_planet.png');
+}
+
+
+.map_3 .map_bg {
+  background-image: url('img/maps/vastitas_planet.png');
+}
 
 .hex {
   width: calc(var(--map-width) * 0.109);
@@ -270,17 +278,37 @@
   position: relative;
 }
 
+.map_1 .milestone,
+.map_1 .award {
+  background-image: url("img/maps/elysium_awards.png");
+}
+
 .map_2 .milestone,
 .map_2 .award {
   background-image: url("img/maps/hellas_awards.png");
 }
 
+.map_3 .milestone,
+.map_3 .award {
+  background-image: url("img/maps/vastitas_awards.png");
+}
+
+.award_1 {
+  background-position: 0% 0;
+}
+
+.award_2 {
+  background-position: -200% 0;
+}
+
+.map_0 {
 .award_1 {
   background-position: -200% 0;
 }
 
 .award_2 {
   background-position: 0 0;
+}
 }
 
 .award_3 {

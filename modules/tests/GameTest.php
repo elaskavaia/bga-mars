@@ -580,11 +580,29 @@ final class GameTest extends TestCase {
 
     public function testVolcanic() {
         $game = $this->game(3);
+        $color = PCOLOR;
         $volc = $game->mtFind('name', 'Hecates Tholus');
         $this->assertEquals(1, $game->getRulesFor($volc, 'vol'));
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
         $this->assertOperationTargetStatus("city(vol)", "hex_4_1", MA_ERR_NOTRESERVED);
+
+        $game->effect_placeTile($color,'tile_2_2','hex_4_1');
+        $this->assertEquals(1, $this->game->getCountOfGeologistTiles($color));
+        $game->effect_placeTile($color,'tile_2_1','hex_5_1');
+        $this->assertEquals(2, $this->game->getCountOfGeologistTiles($color));
     }
+
+    public function testConnected() {
+        $game = $this->game(3);
+        $color = PCOLOR;
+        $game->effect_placeTile($color,'tile_2_2','hex_4_1');
+        $this->assertEquals(1, $this->game->getCountOfLandscapeTiles($color));
+        $game->effect_placeTile($color,'tile_2_1','hex_5_1');
+        $this->assertEquals(2, $this->game->getCountOfLandscapeTiles($color));
+        $game->effect_placeTile($color,'tile_2_3','hex_5_6');
+        $this->assertEquals(2, $this->game->getCountOfLandscapeTiles($color));
+    }
+
 
 
     public function testNoctisCity() {
