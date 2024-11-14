@@ -447,7 +447,7 @@
   background-image: url("img/temperature.png");
   background-size: cover;
   transform-origin: right;
-  left: 83%;
+  left: 85%;
   top: 10%;
 }
 
@@ -792,7 +792,7 @@
   background-size: contain;
   position: absolute;
   top: 48%;
-  left: 3%;
+  left: 1%;
 }
 
 #display_main {
@@ -1127,7 +1127,7 @@
 
 .outer_scoretracker {
   top: 0%;
-  right: 4%;
+  right: 0%;
   position: absolute;
   width: calc(var(--map-width) * 0.1);
   height: calc(var(--map-width) * 0.1);

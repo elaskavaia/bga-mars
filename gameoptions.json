@@ -150,24 +150,24 @@
         "name": "Map",
         "values": {
             "0": {
-                "name": "Tharsis (Original)",
-                "description": "Tharsis"
+                "name": "Tharsis",
+                "description": "The original map"
             },
             "1": {
                 "name": "Elysium",
-                "description": "The other side of Mars. Experimental",
+                "description": "The other side of Mars",
                 "tmdisplay": "Elysium",
                 "alpha": true
             },
             "2": {
                 "name": "Hellas",
-                "description": "The southern wild. Experimental",
+                "description": "The southern wild",
                 "tmdisplay": "Hellas",
                 "alpha": true
             },
             "3": {
                 "name": "Vastitas Borealis",
-                "description": "The ancient sea. Experimental",
+                "description": "The ancient sea",
                 "tmdisplay": "Vastitas",
                 "alpha": true
             }
