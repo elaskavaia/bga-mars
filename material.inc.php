@@ -6801,6 +6801,7 @@ $this->token_types = [
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 1,
+  'r' => 's',
 ],
  'hex_6_1@m3' => [  //
   'location' => 'map_hexes',
@@ -7023,7 +7024,7 @@ $this->token_types = [
   'ocean' => 1,
   'x' => 6,
   'y' => 6,
-  'r' => '2hp',
+  'r' => 'h,h,p',
 ],
  'hex_7_6@m3' => [  //
   'location' => 'map_hexes',

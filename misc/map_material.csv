@@ -254,7 +254,7 @@ x|y|r|name|ocean|php
 #set ocean=
 3|1|p
 4|1|
-5|1||Hecates Tholus||
+5|1|s|Hecates Tholus||
 6|1|
 7|1|
 
@@ -297,7 +297,7 @@ x|y|r|name|ocean|php
 3|6||
 4|6|p|
 5|6|2h||1
-6|6|2hp||1
+6|6|h,h,p||1
 7|6|draw||1
 8|6|p||
 9|6|2u|
