@@ -10,7 +10,7 @@ class Operation_tile extends AbsOperationTile {
     function checkPlacement($color, $ohex, $info, $map) {
         $tt = $this->getTileType();
 
-        if ($tt == MA_TILE_CITY) { 
+        if ($tt == MA_TILE_CITY) {
             // there is at least one tile which is city
             return $this->checkCityPlacement($color, $ohex, $info, $map);
         }
@@ -24,10 +24,13 @@ class Operation_tile extends AbsOperationTile {
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
 
         if ($reservename == 'vol') {
-            if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
+            // HELLAS - 2 - has no volcanos
+            if ($this->game->getMapNumber() != 2) {
+                if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
+            }
             $reservename = '';
         }
-    
+
         if ($reservename) {
             $reshexes = $this->findReservedAreas($reservename);
             if (count($reshexes) == 0) {
@@ -78,15 +81,15 @@ class Operation_tile extends AbsOperationTile {
         if (!$tileid) throw new BgaSystemException("Cannot get context for tile placement operation $tileid");
         // DEBUG create tile on the fly
         $this->debugtilecretae();
-        
+
         $tile = $this->effect_placeTile();
-        $this->game->systemAssertTrue("Tile is missing in action $tileid",$tile);
-        $this->game->systemAssertTrue("Tile is not matching $tileid $tile",$tile==$tileid);
+        $this->game->systemAssertTrue("Tile is missing in action $tileid", $tile);
+        $this->game->systemAssertTrue("Tile is not matching $tileid $tile", $tile == $tileid);
 
         // special handling for mining tiles
         if ($this->getTileType() == MA_TILE_MINING) {
             $ohex = $this->game->tokens->getTokenLocation($tile);
-            $this->game->systemAssertTrue("Invalid location for tile $tile",$ohex);
+            $this->game->systemAssertTrue("Invalid location for tile $tile", $ohex);
             $pp = $this->game->getProductionPlacementBonus($ohex);
             if ($pp) $this->game->putInEffectPool($owner, $pp, $tile);
             else throw new BgaVisibleSystemException("Location does '$ohex' not have resource bonus '$pp' foe tile $tile");

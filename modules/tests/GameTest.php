@@ -586,20 +586,20 @@ final class GameTest extends TestCase {
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
         $this->assertOperationTargetStatus("city(vol)", "hex_4_1", MA_ERR_NOTRESERVED);
 
-        $game->effect_placeTile($color,'tile_2_2','hex_4_1');
+        $game->effect_placeTile($color, 'tile_2_2', 'hex_4_1');
         $this->assertEquals(1, $this->game->getCountOfGeologistTiles($color));
-        $game->effect_placeTile($color,'tile_2_1','hex_5_1');
+        $game->effect_placeTile($color, 'tile_2_1', 'hex_5_1');
         $this->assertEquals(2, $this->game->getCountOfGeologistTiles($color));
     }
 
     public function testConnected() {
         $game = $this->game(3);
         $color = PCOLOR;
-        $game->effect_placeTile($color,'tile_2_2','hex_4_1');
+        $game->effect_placeTile($color, 'tile_2_2', 'hex_4_1');
         $this->assertEquals(1, $this->game->getCountOfLandscapeTiles($color));
-        $game->effect_placeTile($color,'tile_2_1','hex_5_1');
+        $game->effect_placeTile($color, 'tile_2_1', 'hex_5_1');
         $this->assertEquals(2, $this->game->getCountOfLandscapeTiles($color));
-        $game->effect_placeTile($color,'tile_2_3','hex_5_6');
+        $game->effect_placeTile($color, 'tile_2_3', 'hex_5_6');
         $this->assertEquals(2, $this->game->getCountOfLandscapeTiles($color));
     }
 
@@ -910,6 +910,29 @@ final class GameTest extends TestCase {
         }
         $this->assertEquals(8, $m->tokens->getTokenState("tracker_t"));
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_$color"));
+    }
+
+    public function testLavaFlowsnHellas() {
+        $m = $this->game(2);
+        $color = PCOLOR;
+        $m->tokens->setTokenState('tracker_t', +6);
+        $card_id = $m->mtFindByName('Lava Flows');
+        $r = $m->getRulesFor($card_id);
+        $m->putInEffectPool(PCOLOR, $r, $card_id);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $tops = $m->machine->getTopOperations();
+        foreach ($tops as $op) {
+            if ($op['type'] == 'tile(vol)') continue;
+            if ($op['type'] == '2t') continue;
+            $this->assertTrue(false, "Unexpected operation " . ($op['type']));
+        }
+        $op = $m->getOperationInstanceFromType('tile(vol)', PCOLOR, 1,$card_id);
+        $this->assertEquals(true, !$op->isVoid());
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType($r, PCOLOR, 1,$card_id);
+        $this->assertEquals(true, !$op->isVoid());
+
     }
 
     public function testHasTag() {
@@ -1299,7 +1322,7 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $p = PCOLOR;
 
-        $m->effect_placeTile($p,'tile_2_1','hex_3_2');
+        $m->effect_placeTile($p, 'tile_2_1', 'hex_3_2');
         $card = $m->mtFind('name', 'Lava Tube Settlement');
         $effect = $m->getRulesFor($card, 'r');
         /** @var ComplexOperation */
