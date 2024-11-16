@@ -20,7 +20,7 @@
 
 
 
-#map_middle > * {
+#map_middle>* {
   position: absolute;
 }
 
@@ -62,6 +62,7 @@
 .map_2 .map_bg {
   background-image: url('img/maps/hellas_planet.png');
 }
+
 .map_1 .map_bg {
   background-image: url('img/maps/elysium_planet.png');
 }
@@ -250,6 +251,7 @@
   font-size: calc(var(--map-width)*0.02);
   background-size: cover;
   bottom: 0%;
+
   .marker {
     // same size as all markers on map defined in GameTokens.scss
     top: 5%;
@@ -258,7 +260,7 @@
 }
 
 #main_awards {
- left: 50%;
+  left: 50%;
 }
 
 .map_milesawardscontent {
@@ -298,21 +300,26 @@
 }
 
 .award_2 {
-  background-position: -200% 0;
+  background-position: -100% 0;
 }
 
 .map_0 {
-.award_1 {
-  background-position: -200% 0;
+  .award_1 {
+    background-position: -200% 0;
+  }
+
+  .award_2 {
+    background-position: 0 0;
+  }
+
+  .award_3 {
+    background-position: -100% 0;
+  }
 }
 
-.award_2 {
-  background-position: 0 0;
-}
-}
 
 .award_3 {
-  background-position: -100% 0;
+  background-position: -200% 0;
 }
 
 .award_4 {

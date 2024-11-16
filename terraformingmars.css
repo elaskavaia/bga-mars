@@ -4607,7 +4607,7 @@
 }
 
 .award_2 {
-  background-position: -200% 0;
+  background-position: -100% 0;
 }
 
 .map_0 .award_1 {
@@ -4616,9 +4616,12 @@
 .map_0 .award_2 {
   background-position: 0 0;
 }
+.map_0 .award_3 {
+  background-position: -100% 0;
+}
 
 .award_3 {
-  background-position: -100% 0;
+  background-position: -200% 0;
 }
 
 .award_4 {
