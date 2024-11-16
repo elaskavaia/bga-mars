@@ -2078,14 +2078,18 @@ abstract class PGameXBody extends PGameMachine {
 
         if (!$this->isSolo()) {
             $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
-            // some awards has to be scored first
-            foreach ($markers as $id => $rec) {
-                $loc = $rec['location']; // award_x
-                if ($this->getRulesFor($loc, 'rank', 10) == 1)  $this->scoreAward($loc, $table);
-            }
-            foreach ($markers as $id => $rec) {
-                $loc = $rec['location']; // award_x
-                if ($this->getRulesFor($loc, 'rank', 10) != 1) $this->scoreAward($loc, $table);
+            if (count($markers) == 0) {
+                $this->notifyMessage(clienttranslate("No sponsored awards"));
+            } else {
+                // some awards has to be scored first
+                foreach ($markers as $id => $rec) {
+                    $loc = $rec['location']; // award_x
+                    if ($this->getRulesFor($loc, 'rank', 10) == 1)  $this->scoreAward($loc, $table);
+                }
+                foreach ($markers as $id => $rec) {
+                    $loc = $rec['location']; // award_x
+                    if ($this->getRulesFor($loc, 'rank', 10) != 1) $this->scoreAward($loc, $table);
+                }
             }
             $markers = $this->tokens->getTokensOfTypeInLocation("marker", "milestone_%");
             foreach ($markers as $id => $rec) {
@@ -2316,10 +2320,10 @@ abstract class PGameXBody extends PGameMachine {
                 $flood_area++;
             }
         }
-        $area = array_fill(0,$flood_area, 0);
+        $area = array_fill(0, $flood_area, 0);
         foreach ($map as $hex => $info) {
             $marker = $flood_map[$hex];
-            if ($marker==0) continue;
+            if ($marker == 0) continue;
             $area[$marker]++;
         }
         $max = max($area);
