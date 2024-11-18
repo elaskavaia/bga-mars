@@ -2079,7 +2079,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$this->isSolo()) {
             $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
             if (count($markers) == 0) {
-                $this->notifyMessage(clienttranslate("No sponsored awards"));
+               if ($table == null) $this->notifyMessage(clienttranslate("No sponsored awards"));
             } else {
                 // some awards has to be scored first
                 foreach ($markers as $id => $rec) {
@@ -2460,7 +2460,7 @@ abstract class PGameXBody extends PGameMachine {
             $pre = $this->getRulesFor($card, 't');
             $cost = $this->getRulesFor($card, 'cost');
             if ($pre == MA_CARD_TYPE_BLUE || $pre == MA_CARD_TYPE_GREEN) {
-                if ($cost > 20) $count++;
+                if ($cost >= 20) $count++;
             }
         }
         return $count;

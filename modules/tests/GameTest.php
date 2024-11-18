@@ -912,7 +912,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_$color"));
     }
 
-    public function testLavaFlowsnHellas() {
+    public function testLavaFlowsHellas() {
         $m = $this->game(2);
         $color = PCOLOR;
         $m->tokens->setTokenState('tracker_t', +6);
@@ -933,6 +933,15 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType($r, PCOLOR, 1,$card_id);
         $this->assertEquals(true, !$op->isVoid());
 
+    }
+
+    public function testLavaTubeSettlementHellas() {
+        $m = $this->game(2);
+        $color = PCOLOR;
+        $m->setTrackerValue(PCOLOR, 'pe', 2);
+        $card = $m->mtFind('name', 'Lava Tube Settlement');
+        $op = $m->getOperationInstanceFromType('city(vol)', $color, 1, $card);
+        $this->assertEquals(true, !$op->isVoid());
     }
 
     public function testHasTag() {
