@@ -145,6 +145,7 @@ abstract class PGameXBody extends PGameMachine {
         foreach ($this->token_types as $key => $info) {
             if (startsWith($key, "hex_")) {
                 if (array_get($info, 'reserved')) continue;
+                if (array_get($info, 'ocean')) continue;
                 $nonreserved[] = $key;
             }
         }
@@ -154,7 +155,7 @@ abstract class PGameXBody extends PGameMachine {
         $botcolor = 'ffffff';
         for ($i = 1; $i <= 2; $i++) {
             $hex = array_shift($nonreserved);
-
+            unset($nonreserved[$hex]); 
             $tile = $this->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
             $this->systemAssertTrue("city tile not found", $tile);
             $this->dbSetTokenLocation($tile['key'], $hex, $num);
