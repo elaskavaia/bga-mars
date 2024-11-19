@@ -343,20 +343,23 @@ final class GameTest extends TestCase {
         $color = PCOLOR;
         $this->game->tokens->setTokenState("tracker_tagJovian_{$color}", 7);
         $this->game->tokens->setTokenState("tracker_tagScience_{$color}", 7);
+        $this->assertEquals(2, $this->game->getCountOfUniqueTags($color));
         $this->game->setTrackerValue(PCOLOR, 'm', 10);
         $milestone = "milestone_1";
         $this->assertEquals("DIVERSIFIER", $this->game->getTokenName($milestone));
         $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
         $this->game->tokens->setTokenState("tracker_tagSpace_{$color}", 1);
-        $this->game->tokens->setTokenState("tracker_tagEvent_{$color}", 1);
-        $this->game->tokens->setTokenState("tracker_tagWild_{$color}", 1);
         $this->assertEquals(3, $this->game->getCountOfUniqueTags($color));
+        $this->game->tokens->setTokenState("tracker_tagEvent_{$color}", 1);
+        $this->assertEquals(3, $this->game->getCountOfUniqueTags($color));
+        $this->game->tokens->setTokenState("tracker_tagWild_{$color}", 1);
+        $this->assertEquals(4, $this->game->getCountOfUniqueTags($color));
         $this->game->tokens->setTokenState("tracker_tagMicrobe_{$color}", 1);
         $this->game->tokens->setTokenState("tracker_tagPlant_{$color}", 1);
         $this->game->tokens->setTokenState("tracker_tagAnimal_{$color}", 1);
         $this->game->tokens->setTokenState("tracker_tagCity_{$color}", 1);
         $this->game->tokens->setTokenState("tracker_tagEarth_{$color}", 1);
-        $this->assertEquals(8, $this->game->getCountOfUniqueTags($color));
+        $this->assertEquals(9, $this->game->getCountOfUniqueTags($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
     }
 

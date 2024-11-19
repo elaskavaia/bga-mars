@@ -5314,6 +5314,12 @@ $this->token_types = [
   'location' => 'params',
   'name' => clienttranslate('Venus'),
 ],
+ 'tagWild' => [  //
+  'type' => 'tag',
+  'create' => 0,
+  'location' => 'params',
+  'name' => clienttranslate('Wild'),
+],
 // #tags below do not count as tags for purposes of awards and milestones
  'tagEvent' => [  //
   'type' => 'tag',
