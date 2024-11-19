@@ -2441,7 +2441,7 @@ abstract class PGameXBody extends PGameMachine {
         return $count;
     }
     function getEcologistCount($owner) {
-        $tags = ['tagAnimal', 'tagPlant', 'tagMicrobe'];
+        $tags = ['tagAnimal', 'tagPlant', 'tagMicrobe', 'tagWild'];
         $count = 0;
         foreach ($tags as $p) {
             $trackerId = $this->getTrackerId($owner, $p);

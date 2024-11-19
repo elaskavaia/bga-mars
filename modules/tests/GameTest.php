@@ -479,6 +479,9 @@ final class GameTest extends TestCase {
         $count = $this->game->getEcologistCount($color);
         $this->assertEquals(4, $count);
         $this->assertOperationTargetStatus("claim", $token);
+        $this->game->setTrackerValue(PCOLOR, 'tagWild', 1);
+        $count = $this->game->getEcologistCount($color);
+        $this->assertEquals(5, $count);
     }
     public function testClaimMilestone_Elysium4() {
         // 4|TYCOON|7|tycoon|8|requires that you have 15 project cards in play (blue and green cards).|15
