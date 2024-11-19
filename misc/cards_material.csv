@@ -269,6 +269,8 @@ P40|Research Coordination|1||||4||Wild|0|Prelude|After being played, when you pe
 P41|SF Memorial|1|draw|||7||Building|1|Prelude|Draw 1 card.||||
 P42|Space Hotels|1|4pm|||12|tagEarth>=2|Space Earth|0|Prelude|Requires 2 Earth tags. Increase your M€ production 4 steps.||||
 
+#set id=card_main_{num}@m2
+P37|Lava Tube Settlement|1|1npe,city(vol),2pm|||15||Building City|0|Prelude|Decrease your energy production 1 step. Increase your M€ production 2 steps. Place a city (HELLAS has no VOLCANIC areas)||||
 
 #corp cards
 #set id=card_corp_{num}

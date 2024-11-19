@@ -3528,6 +3528,20 @@ $this->token_types = [
   'deck' => 'Prelude',
   'text' => clienttranslate('Requires 2 Earth tags. Increase your M€ production 4 steps.'),
 ],
+ 'card_main_P37@m2' => [  //
+  'location' => 'deck_main',
+  'create' => 'single',
+  'type' => 'card main prelude_main',
+  'num' => 'P37',
+  'name' => clienttranslate('Lava Tube Settlement'),
+  't' => 1,
+  'r' => '1npe,city(vol),2pm',
+  'cost' => 15,
+  'tags' => 'Building City',
+  'vp' => 0,
+  'deck' => 'Prelude',
+  'text' => clienttranslate('Decrease your energy production 1 step. Increase your M€ production 2 steps. Place a city (HELLAS has no VOLCANIC areas)'),
+],
 // #corp cards
 // #num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
  'card_corp_1' => [  //
