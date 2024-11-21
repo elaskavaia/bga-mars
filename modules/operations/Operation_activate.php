@@ -5,6 +5,9 @@ declare(strict_types=1);
 
 class Operation_activate extends AbsOperation {
     function effect(string $color, int $inc): int {
+        if ($this->getUserCount() == 0) {
+            $this->game->userAssertTrue("Operation cannot be skipped");
+        }
         $tokenId = $this->getCheckedArg('target');
         $r = $this->game->getRulesFor($tokenId, 'a');
         $this->game->machine->push($r, 1, 1, $color, MACHINE_FLAG_UNIQUE, "$tokenId:a");

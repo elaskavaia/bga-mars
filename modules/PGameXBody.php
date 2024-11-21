@@ -155,7 +155,7 @@ abstract class PGameXBody extends PGameMachine {
         $botcolor = 'ffffff';
         for ($i = 1; $i <= 2; $i++) {
             $hex = array_shift($nonreserved);
-            unset($nonreserved[$hex]); 
+            unset($nonreserved[$hex]);
             $tile = $this->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
             $this->systemAssertTrue("city tile not found", $tile);
             $this->dbSetTokenLocation($tile['key'], $hex, $num);
@@ -1464,8 +1464,7 @@ abstract class PGameXBody extends PGameMachine {
     function action_undo(int $move_id = 0) {
         // unchecked action
 
-        $state = $this->gamestate->state();
-        if ($state['type'] == 'multipleactiveplayer') {
+        if ($this->isMultiActive()) {
             // special undo 
             $player_id = $this->getCurrentPlayerId();
             //for now there is only one case so not need to check oprations
@@ -2080,7 +2079,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$this->isSolo()) {
             $markers = $this->tokens->getTokensOfTypeInLocation("marker", "award_%");
             if (count($markers) == 0) {
-               if ($table == null) $this->notifyMessage(clienttranslate("No sponsored awards"));
+                if ($table == null) $this->notifyMessage(clienttranslate("No sponsored awards"));
             } else {
                 // some awards has to be scored first
                 foreach ($markers as $id => $rec) {
@@ -2876,7 +2875,10 @@ abstract class PGameXBody extends PGameMachine {
 
     function customUndoRestorePoint(int $move_id) {
         // special case - we need to memorize value of auto-pass for other players, as it should not be restored by other player Undo
-
+        $act_player_id = $this->getActivePlayerId();
+        if ($act_player_id != $this->getCurrentPlayerId()) {
+            $this->userAssertTrue(totranslate('Only active player can Undo'));
+        }
         $players = $this->loadPlayersBasicInfos();
         $pass_state = [];
         foreach ($players as $player_id => $player) {
@@ -2889,7 +2891,7 @@ abstract class PGameXBody extends PGameMachine {
 
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
-            $this->tokens->setTokenState("tracker_passed_$color", $pass_state[$player_id]);
+            if ($act_player_id != $player_id) $this->tokens->setTokenState("tracker_passed_$color", $pass_state[$player_id]);
         }
     }
 
