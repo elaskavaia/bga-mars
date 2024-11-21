@@ -1574,7 +1574,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function effect_placeTile($color, $object, $target) {
+    function effect_placeTile(string $color, $object, $target) {
         $this->systemAssertTrue("Invalid tile", $object);
         $this->systemAssertTrue("Invalid target", $target);
         $this->systemAssertTrue("Invalid tile, does not exists $object", $this->tokens->getTokenInfo($object));

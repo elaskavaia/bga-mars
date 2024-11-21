@@ -150,7 +150,7 @@ abstract class AbsOperationTile extends AbsOperation {
     function effect_placeTile() {
         $hex = $this->getCheckedArg('target');
         $object = $this->getStateArg('object');
-        $owner = $this->color;
+        $owner = $this->getOwner();
 
         $tile = $this->game->effect_placeTile($owner, $object, $hex);
         $tt = $this->game->getRulesFor($tile, 'tt');

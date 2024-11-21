@@ -477,7 +477,9 @@ abstract class PGameBasic extends Table {
      */
     function getPlayerIdByColor(?string $color) {
         if (!$color) return $this->getActivePlayerId();
-        if ($color === '8000') $color = '0080000'; // weird stuff
+        if ($color === 8000 || $color === '8000') {
+            $color = '0080000'; // weird stuff
+        }
         $players = $this->loadPlayersBasicInfos();
         if (!isset($this->player_colors)) {
             $this->player_colors = [];

@@ -22,7 +22,7 @@ class Operation_acard188 extends AbsOperation {
         }
 
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($found) {
-            if ($other_player_color == 'none') return MA_OK;
+            if ($other_player_color === 'none') return MA_OK;
             if (!array_get($found, $other_player_color)) return MA_ERR_NOTAPPLICABLE;
             //if (!$this->game->canAfford($other_player_color, null, 4)) return MA_ERR_COST;
             return MA_OK;

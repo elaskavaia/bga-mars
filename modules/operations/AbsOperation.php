@@ -46,7 +46,7 @@ abstract class AbsOperation {
         return $this->mnemonic;
     }
 
-    protected function getOwner() {
+    protected function  getOwner(): string  {
         return  $this->color;
     }
 

@@ -28,7 +28,7 @@ class Operation_nR_Any extends AbsOperation {
         $type = $this->getType();
         $protected = $this->game->protectedOwners($this->color, $type);
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($protected, $type) {
-            if ($other_player_color == 'none') return 0;
+            if ($other_player_color === 'none') return 0;
             if (array_get($protected, $other_player_color))  return ['q' => MA_ERR_PROTECTED, 'protected' => 1];
             $value = $this->game->getTrackerValue($other_player_color, $type);
             if ($value == 0) return ['q' => MA_ERR_NOTAPPLICABLE, 'max' => $value];
