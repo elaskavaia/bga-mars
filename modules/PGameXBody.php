@@ -477,6 +477,8 @@ abstract class PGameXBody extends PGameMachine {
                 return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));
             case 'adj_city_2':
                 return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY)) >= 2;
+            case 'adj_city_0':
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY)) == 0;
             case 'adj_forest':
                 return count($this->getAdjecentHexesOfType($ohex, MA_TILE_FOREST));
             case 'adj_ocean':
@@ -488,13 +490,9 @@ abstract class PGameXBody extends PGameMachine {
             case 'has_su':
                 $pp = $this->getProductionPlacementBonus($ohex);
                 return !!$pp;
-
+            case 'Noctis City': // this happen when time rule in map that has it
+                return count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY)) == 0;
             default:
-
-                if ($rule == 'Noctis City') {
-                    return true;
-                }
-
                 throw new BgaSystemException("Unknown adj rule '$rule'");
         }
     }
@@ -644,6 +642,9 @@ abstract class PGameXBody extends PGameMachine {
                 } else if (endsWith($name, 'Mons') || endsWith($name, 'Tholus')) {
                     $info['vol'] = 1;
                 }
+                if (array_get($info, 'ocean', 0) && !array_get($info, 'reserved', 0)) {
+                    $info['reserved'] = 1;
+                };
             }
         }
         $this->token_types_adjusted2 = true;
@@ -2584,7 +2585,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function arg_gameDispatch() {
         return [
-            '_no_notify' => true
+            //            '_no_notify' => true
         ];
     }
 
