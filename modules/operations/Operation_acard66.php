@@ -5,14 +5,13 @@ declare(strict_types=1);
 require_once "AbsOperationTile.php";
 
 class Operation_acard66 extends  AbsOperationTile {
-
     function getTileType(): int {
         return 0;
     }
 
-
     function checkPlacement($color, $location, $info, $map) {
         if (isset($info['reserved'])) return MA_ERR_RESERVED;
+        if (isset($info['ocean'])) return MA_ERR_RESERVED;
         return 0;
     }
 
