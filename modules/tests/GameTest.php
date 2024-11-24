@@ -616,6 +616,8 @@ final class GameTest extends TestCase {
         $this->assertOperationTargetStatus("city('Noctis City')", "hex_5_1");
         $this->assertOperationTargetStatus("w", "hex_3_5");
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
+        $this->game->effect_placeTile(PCOLOR, 'tile_2_1', 'hex_1_5');
+        $this->assertOperationTargetStatus("city('Noctis City')", "hex_2_5", MA_ERR_CITYPLACEMENT);
         // on default map its 3_5
         $this->game(0);
         $this->assertOperationTargetStatus("city('Noctis City')", "hex_3_5");
