@@ -142,7 +142,6 @@ var GameBasics = /** @class */ (function (_super) {
         if (this.checkAction(action)) {
             var gname = this.game_name;
             var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
-            dojo.empty("generalactions");
             this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
             this, function (result) {
             }, handler);
