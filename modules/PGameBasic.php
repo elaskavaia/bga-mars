@@ -382,7 +382,7 @@ abstract class PGameBasic extends Table {
     function getPlayerColorById($player_id) {
         $players = $this->loadPlayersBasicInfos();
         if (!isset($players[$player_id])) {
-            return 0;
+            return '0';
         }
         return $players[$player_id]["player_color"];
     }

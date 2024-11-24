@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 class Operation_discard extends AbsOperation {
     function effect(string $color, int $inc): int {
+        if ($this->autoSkip()) {
+            return $inc;
+        }
+
         $card_id = $this->getCheckedArg('target');
         if (!is_array($card_id)) {
             $cards_ids = [$card_id];

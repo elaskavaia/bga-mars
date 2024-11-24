@@ -46,7 +46,7 @@ abstract class AbsOperation {
         return $this->mnemonic;
     }
 
-    protected function  getOwner(): string  {
+    protected function  getOwner(): string {
         return  $this->color;
     }
 
@@ -296,6 +296,9 @@ Reason: tile placement may draw cards (information)
         $type = $this->mnemonic;
 
         $possible_targets = $this->getStateArg($key);
+        if ($strict && is_array($possible_targets) && count($possible_targets) == 0) {
+            $this->game->userAssertTrue(totranslate("No valid targets"));
+        }
         if ($args && array_key_exists($key, $args)) {
             $target = $args[$key];
             if ($target === $possible_targets) return $possible_targets;
@@ -360,9 +363,9 @@ Reason: tile placement may draw cards (information)
         }
         $this->argresult = null; // XXX not sure
         $this->color =  $owner;
-
+        $count = $this->getUserCount();
         $this->checkVoid();
-        return $this->effect($owner, $this->getUserCount(), $args);
+        return $this->effect($owner, $count, $args);
     }
 
     public function checkIntegrity() {
@@ -382,19 +385,24 @@ Reason: tile placement may draw cards (information)
         }
     }
 
-
-
-    function auto(string $owner, int &$count): bool {
-        $this->user_args = null;
-        if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+    function autoSkip() {
         if ($this->isOptional()) {
             if ($this->noValidTargets()) {
                 // skip
-                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'),[
+                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'), [
                     "name" => $this->getOpName()
                 ], $this->getPlayerId());
                 return true;
             }
+        }
+        return false;
+    }
+
+    function auto(string $owner, int &$count): bool {
+        $this->user_args = null;
+        if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        if ($this->autoSkip()) {
+            return true;
         }
         $this->checkVoid();
         $count = $this->effect($owner, $count, null);
