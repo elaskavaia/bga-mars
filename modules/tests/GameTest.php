@@ -625,6 +625,36 @@ final class GameTest extends TestCase {
         $this->assertOperationTargetStatus("city", "hex_3_5", MA_ERR_RESERVED); // other city cannot be placed there
     }
 
+    public function testSoloSetupRandom() {
+        for ($map = 0; $map <= 3; $map++) {
+            $game = $this->game($map);
+
+            for ($i = 0; $i < 100; $i++) {
+                $places = $game->getSoloMapPlacements();
+                $all = array_merge($places['city'], $places['forest']);
+                $this->assertEquals(4, count($all), "map $map: ".toJson($all));
+                foreach ($all as $hex) {
+                    $this->assertEquals(0, $game->getRulesFor($hex, 'ocean', 0));
+                    $this->assertEquals(0, $game->getRulesFor($hex, 'reserved', 0));
+                }
+                $this->assertEquals(4, count(array_unique($all)));
+
+                $adj = $game->getAdjecentHexes($places['city'][0]);
+                $index = array_search($places['city'][1], $adj);
+                $this->assertEquals(false, $index);
+            }
+        }
+    }
+
+    public function testSoloSetup() {
+        for ($map = 0; $map <= 3; $map++) {
+            $game = $this->game($map);
+            $game->setupSoloMap();
+            $this->assertEquals(2,$game->getCountOfCitiesOnMars('ffffff'));
+      
+        }
+    }
+
     public function testCounterCall() {
         $m = $this->game();
         $m->incTrackerValue(PCOLOR, 'u', 8);
@@ -935,12 +965,11 @@ final class GameTest extends TestCase {
             if ($op['type'] == '2t') continue;
             $this->assertTrue(false, "Unexpected operation " . ($op['type']));
         }
-        $op = $m->getOperationInstanceFromType('tile(vol)', PCOLOR, 1,$card_id);
+        $op = $m->getOperationInstanceFromType('tile(vol)', PCOLOR, 1, $card_id);
         $this->assertEquals(true, !$op->isVoid());
         /** @var ComplexOperation */
-        $op = $m->getOperationInstanceFromType($r, PCOLOR, 1,$card_id);
+        $op = $m->getOperationInstanceFromType($r, PCOLOR, 1, $card_id);
         $this->assertEquals(true, !$op->isVoid());
-
     }
 
     public function testLavaTubeSettlementHellas() {

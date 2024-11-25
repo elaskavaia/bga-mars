@@ -483,10 +483,10 @@ class DbTokens extends APP_GameClass {
         return reset($res);
     }
 
-    function getTokenState($token_id) {
+    function getTokenState($token_id, $def = null) {
         $res = $this->getTokenInfo($token_id);
         if ($res == null)
-            return null;
+            return $def;
         return $res ['state'];
     }
 

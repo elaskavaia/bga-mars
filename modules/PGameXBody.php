@@ -57,7 +57,7 @@ abstract class PGameXBody extends PGameMachine {
     protected function initTables() {
         try {
             $players = $this->loadPlayersBasicInfos();
-            $this->dbUserPrefs->setup($players, $this->player_preferences);
+            if ($this->player_preferences) $this->dbUserPrefs->setup($players, $this->player_preferences);
             $this->setGameStateValue('gamestage', MA_STAGE_SETUP);
             $this->token_types_adjusted2 = false; // clear cache
             if ($this->isSolo()) {
@@ -139,8 +139,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function setupSoloMap() {
-        // place 2 random cities with forest
+    function getNonReservedHexes() {
         $nonreserved = [];
         foreach ($this->token_types as $key => $info) {
             if (startsWith($key, "hex_")) {
@@ -149,15 +148,57 @@ abstract class PGameXBody extends PGameMachine {
                 $nonreserved[] = $key;
             }
         }
-        shuffle($nonreserved);
-        $type = MA_TILE_CITY;
+        return $nonreserved;
+    }
+
+    function getSoloMapPlacements() {
+        $res['city'] = [];
+        $res['forest'] = [];
+        $nonreserved = $this->getNonReservedHexes();
+        $len = count($nonreserved);
+        $part[0] = array_slice($nonreserved, 0, floor($len / 2) - 2);
+        $part[1] = array_slice($nonreserved, floor($len / 2) + 2);
+        shuffle($part[0]);
+        shuffle($part[1]);
+
+        for ($i = 0; $i < 2; $i++) {
+            while (true) {
+                $hex = array_shift($part[$i]);
+                if ($i == 0) break;
+                $adj = $this->getAdjecentHexes($hex);
+                $index = array_search($res['city'][0], $adj);
+                if ($index !== false) continue;
+                break;
+            }
+            unset($nonreserved[$hex]);
+            $res['city'][$i] = $hex;
+            $adj = $this->getAdjecentHexes($hex);
+            shuffle($adj);
+
+            while (true) {
+                $foresthex = array_shift($adj);
+                if (!$foresthex) break;
+                $index = array_search($foresthex, $nonreserved);
+                if ($index === false) {
+                    continue;
+                }
+                unset($nonreserved[$index]); // remove adjecent to city so 2nd city cannot be there
+                $res['forest'][$i] = $foresthex;
+                break;
+            }
+        }
+        return $res;
+    }
+
+    function setupSoloMap() {
+        // place 2 random cities with forest
+        $placements = $this->getSoloMapPlacements();
         $num = $this->getPlayersNumber() + 1;
         $botcolor = 'ffffff';
-        for ($i = 1; $i <= 2; $i++) {
-            $hex = array_shift($nonreserved);
-            unset($nonreserved[$hex]);
-            $tile = $this->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
-            $this->systemAssertTrue("city tile not found", $tile);
+        for ($i = 0; $i < 2; $i++) {
+            $hex =  $placements['city'][$i];
+            $tile = $this->tokens->getTokenOfTypeInLocation("tile_2_", null, 0); // city
+            $this->systemAssertTrue("tile not found", $tile);
             $this->dbSetTokenLocation($tile['key'], $hex, $num);
             $marker = $this->createPlayerMarker($botcolor);
             $this->tokens->moveToken($marker, $tile['key'], 0);
@@ -165,27 +206,15 @@ abstract class PGameXBody extends PGameMachine {
             $this->incTrackerValue($botcolor, 'cityonmars');
             $this->incTrackerValue($botcolor, 'land');
 
-            $adj = $this->getAdjecentHexes($hex);
-            shuffle($adj);
-
-            $forestfound = null;
-            while (true) {
-                $forhex = array_shift($adj);
-                if (!$forhex) break;
-                if (array_search($forhex, $nonreserved) === false) {
-                    continue;
-                }
-                $forestfound = $forhex;
-                unset($nonreserved[$forhex]); // remove adjecent to city so 2nd city cannot be there
-            }
-            if ($forestfound) {
-                $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
-                $this->dbSetTokenLocation($tile['key'], $forestfound, $num);
-                $marker = $this->createPlayerMarker($botcolor);
-                $this->tokens->moveToken($marker, $tile['key'], 0);
-                $this->incTrackerValue($botcolor, 'forest');
-                $this->incTrackerValue($botcolor, 'land');
-            }
+            $foresthex = $placements['forest'][$i];
+            if (!$foresthex) continue;
+            $tile = $this->tokens->getTokenOfTypeInLocation("tile_1_", null, 0); //forest
+            $this->systemAssertTrue("tile not found", $tile);
+            $this->dbSetTokenLocation($tile['key'], $foresthex, $num);
+            $marker = $this->createPlayerMarker($botcolor);
+            $this->tokens->moveToken($marker, $tile['key'], 0);
+            $this->incTrackerValue($botcolor, 'forest');
+            $this->incTrackerValue($botcolor, 'land');
         }
     }
 
@@ -2048,7 +2077,7 @@ abstract class PGameXBody extends PGameMachine {
         if ($table !== null) {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
-                $curr = $this->tokens->getTokenState("tracker_tr_{$color}");
+                $curr = $this->tokens->getTokenState("tracker_tr_{$color}", 0);
                 $this->scoreTableVp($table, $player_id, 'tr', "tracker_tr_{$color}", $curr);
 
                 if (!$this->isSolo()) {

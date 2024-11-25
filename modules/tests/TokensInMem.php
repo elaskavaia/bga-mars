@@ -40,6 +40,9 @@ class TokensInMem extends DbTokens {
     function setTokenState($token_key, $state) {
         self::checkState($state);
         self::checkKey($token_key);
+        if (!array_key_exists($token_key, $this->keyindex)) {
+            return;
+        }
         $this->keyindex[$token_key]["state"] = $state;
         return $state;
     }
@@ -47,6 +50,9 @@ class TokensInMem extends DbTokens {
     function incTokenState($token_key, $by) {
         self::checkState($by);
         self::checkKey($token_key);
+        if (!array_key_exists($token_key, $this->keyindex)) {
+            return;
+        }
         $this->keyindex[$token_key]["state"] =   $this->keyindex[$token_key]["state"] + $by;
         return;
     }

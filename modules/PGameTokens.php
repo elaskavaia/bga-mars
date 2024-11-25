@@ -176,6 +176,7 @@ abstract class PGameTokens extends PGameBasic {
 
     function debug_initTables() {
         $this->DbQuery("DELETE FROM token");
+        $this->player_preferences  = [];
         $this->initTables();
         $newGameDatas = $this->getAllTableDatas(); // this is framework function
         $this->notifyPlayer($this->getActivePlayerId(), "resetInterfaceWithAllDatas", "", $newGameDatas); // this is notification to reset all data
