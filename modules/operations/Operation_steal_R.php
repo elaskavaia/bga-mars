@@ -5,10 +5,12 @@ declare(strict_types=1);
 class Operation_steal_R extends AbsOperation {
     function argPrimaryDetails() {
         $keys = $this->game->getPlayerColors();
+        if ($this->game->isSolo())  $keys []= 'ffffff';
         $type = $this->getType();
         $protected = $this->game->protectedOwners($this->color, $type);
         return $this->game->createArgInfo($this->color, $keys, function ($color, $other_player_color) use ($type, $protected) {
             if ($color === $other_player_color) return MA_ERR_NOTAPPLICABLE;
+            if ($other_player_color === 'ffffff') return MA_OK;
             if (array_get($protected, $other_player_color))  return ['q' => MA_ERR_PROTECTED, 'protected' => 1];
             $value = $this->game->getTrackerValue($other_player_color, $type);
             if ($value == 0) return ['q' => MA_ERR_NOTAPPLICABLE, 'max' => $value];
