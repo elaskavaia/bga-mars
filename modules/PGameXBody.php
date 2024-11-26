@@ -297,8 +297,17 @@ abstract class PGameXBody extends PGameMachine {
     function debug_q() {
         //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
-        return $this->debug_oparg("nres,draw/res", "card_main_185:e:card_main_185");
+        $this->debug_incparam('o',13);
+        $this->debug_incparam('t',14);
+        
+        $players = $this->loadPlayersBasicInfos();
 
+
+        foreach ($players as $player_id => $player) {
+            $color = $player["player_color"];
+            $this->effect_incCount($color, 'pp', 8);
+            $this->effect_incCount($color, 'pm', 20);
+        }
         //$this->dbSetTokensLocation($cards, 'temp');
         //$this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";

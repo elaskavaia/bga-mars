@@ -19,9 +19,7 @@ class Operation_nolastforest extends AbsOperation {
         // when player denied placing last forest, remove the plants so it does not come and ask again
         $plants =  $this->game->getTrackerValue($color, 'p');
         $this->game->effect_incCount($color, 'p', -$plants, ['message' => '']);
-        $this->game->queueremove($color,'lastforest');
-        $this->game->queueremove($color,'nolastforest');
-        return 1;
+        return $inc;
     }
 
     function getOpName() {

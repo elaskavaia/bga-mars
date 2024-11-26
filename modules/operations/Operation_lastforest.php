@@ -28,6 +28,7 @@ class Operation_lastforest extends AbsOperation {
             }
             $this->game->machine->put("convp/nolastforest", 1, 1, $color, MACHINE_OP_SEQ);
             $this->game->machine->put("lastforest", 1, 1, $color, MACHINE_OP_SEQ);
+            break;
         }
         $this->game->notifyScoringUpdate();
 
