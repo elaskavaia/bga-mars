@@ -3495,23 +3495,24 @@ awarded.`);
   extractTextGameInfo() {
     let text = "";
     text += `Current player ${this.getPlayerName(this.player_id)} ${this.player_color}\n`;
+
     const move = this.gamedatas.notifications.move_nbr;
     text += `Current move ${move}\n`;
 
     const plcolor = this.player_color;
     text += this.extractPileText("HAND", `.hand_${plcolor} .card`, { showCost: true });
-    text += this.extractPileText("PLAYED", `.tableau_${plcolor} .card`, { showVp: true });
-    text += this.extractPileText("RESOURCES", `#playerboard_${plcolor} .tracker`);
 
+    const num = Object.keys(this.gamedatas.players).length;
+    text += `PLAYERS: ${num}\n`;
     for (let plid in this.gamedatas.players) {
       const plcolor = this.getPlayerColor(parseInt(plid));
-      if (plcolor != this.player_color) {
-        text += this.extractPileText("PLAYED", `.tableau_${plcolor} .card`, { showVp: true });
-        text += this.extractPileText("RESOURCES", `#playerboard_${plcolor} .tracker`);
-      }
+      const info = this.gamedatas.players[plid];
+      text += `PLAYER: ${info.name} ${info.color} ${info.zombie ? "ZOMBIE" : ""}\n`;
+      text += this.extractPileText("PLAYED", `.tableau_${plcolor} .card`, { showVp: true });
+      text += this.extractPileText("RESOURCES", `#playerboard_${plcolor} .tracker`);
     }
-    text += this.extractPileText("MAP", `.map .tile`, { showVp: true });
-
+    const map = this.getMapNumber();
+    text += this.extractPileText(`MAP #${map}`, `.map .tile`, { showVp: true });
     return text;
   }
 

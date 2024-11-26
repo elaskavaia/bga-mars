@@ -6727,16 +6727,17 @@ var GameXBody = /** @class */ (function (_super) {
         text += "Current move ".concat(move, "\n");
         var plcolor = this.player_color;
         text += this.extractPileText("HAND", ".hand_".concat(plcolor, " .card"), { showCost: true });
-        text += this.extractPileText("PLAYED", ".tableau_".concat(plcolor, " .card"), { showVp: true });
-        text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor, " .tracker"));
+        var num = Object.keys(this.gamedatas.players).length;
+        text += "PLAYERS: ".concat(num, "\n");
         for (var plid in this.gamedatas.players) {
             var plcolor_1 = this.getPlayerColor(parseInt(plid));
-            if (plcolor_1 != this.player_color) {
-                text += this.extractPileText("PLAYED", ".tableau_".concat(plcolor_1, " .card"), { showVp: true });
-                text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor_1, " .tracker"));
-            }
+            var info = this.gamedatas.players[plid];
+            text += "PLAYER: ".concat(info.name, " ").concat(info.color, " ").concat(info.zombie ? "ZOMBIE" : "", "\n");
+            text += this.extractPileText("PLAYED", ".tableau_".concat(plcolor_1, " .card"), { showVp: true });
+            text += this.extractPileText("RESOURCES", "#playerboard_".concat(plcolor_1, " .tracker"));
         }
-        text += this.extractPileText("MAP", ".map .tile", { showVp: true });
+        var map = this.getMapNumber();
+        text += this.extractPileText("MAP #".concat(map), ".map .tile", { showVp: true });
         return text;
     };
     GameXBody.prototype.checkTerraformingCompletion = function () {
