@@ -2169,10 +2169,7 @@ awarded.`);
       const tocolor = getPart(tokenInfo.location, 1);
       if (tocolor != this.player_color && tocolor != "area") {
         // this is hidden location
-        result.location = `counter_hand_${tocolor}`;
-        result.onEnd = (node) => {
-          dojo.destroy(node);
-        };
+        result.nop = true;
       }
     }
     if (!result.location)

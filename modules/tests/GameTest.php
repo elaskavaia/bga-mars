@@ -23,6 +23,7 @@ class GameUT extends terraformingmars {
     var $multimachine;
     var $xtable;
     var $map_number = 0;
+    var $_colors = [];
     function __construct() {
         parent::__construct();
         include "./material.inc.php";
@@ -34,11 +35,12 @@ class GameUT extends terraformingmars {
         $this->machine = new MachineInMem($this, 'machine', 'main', $this->xtable);
         $this->multimachine = new MachineInMem($this, 'machine', 'multi', $this->xtable);
         $this->curid = 1;
+        $this->_colors = array(PCOLOR, BCOLOR);
     }
 
     function init(int $map = 0) {
         $this->map_number = $map;
-        $this->adjustedMaterial();
+        $this->adjustedMaterial(true);
         $this->createTokens();
         $this->gamestate->changeActivePlayer(PCOLOR);
         $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
@@ -71,15 +73,8 @@ class GameUT extends terraformingmars {
         return $this->getPlayerColorById($this->curid);
     }
 
-    function loadPlayersBasicInfos() {
-        $default_colors = array(PCOLOR, BCOLOR);
-        $values = array();
-        $id = 1;
-        foreach ($default_colors as $color) {
-            $values[$id] = array('player_id' => $id, 'player_color' => $color, 'player_name' => "player$id", 'player_zombie' => 0, 'player_no' => $id, 'player_eliminated' => 0);
-            $id++;
-        }
-        return $values;
+    function _getColors() {
+        return $this->_colors;
     }
 
     function fakeUserAction($op, $target = null) {
@@ -1122,6 +1117,43 @@ final class GameTest extends TestCase {
 
         $ttype = $args['ttype'];
         $this->assertEquals('', $ttype);
+    }
+
+    public function testSteal() {
+        $game = $this->game();
+        $game->_colors = array(PCOLOR);
+        $this->assertTrue($game->isSolo());
+
+        $optype = 'steal_s';
+        $op = $game->getOperationInstanceFromType($optype, PCOLOR);
+        $this->assertFalse($op->canSkipChoice());
+        $this->subTestOperationIntegrity($op);
+        $args = $op->arg();
+
+
+        $card = $game->mtFindByName('Hired Raiders');
+        $optype = $game->getRulesFor($card,'r');
+        $op = $game->getOperationInstanceFromType($optype, PCOLOR);
+  
+
+        $this->subTestOperationIntegrity($op);
+        $args = $op->arg();
+     
+        $this->assertFalse($op->noValidTargets());
+        $this->assertFalse($op->isVoid());
+        $this->assertFalse($op->canResolveAutomatically());
+        $this->assertFalse($op->canSkipChoice());
+        $this->assertFalse($op->isFullyAutomated());
+        //$this->assertTrue($op->requireConfirmation());
+        $this->assertEquals($optype, $op->getMnemonic());
+
+        $game->putInEffectPool(PCOLOR, $optype, "$card");
+        $top = $this->dispatchOneStep($game);
+        $this->assertEquals(2, count($top)); // expanded into 2
+
+
+        $top = $this->dispatchOneStep($game, true);
+        $this->assertEquals(2, count($top)); 
     }
 
     public function testDraft() {

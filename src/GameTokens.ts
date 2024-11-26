@@ -307,7 +307,7 @@ class GameTokens extends GameBasics {
       const placeInfo = args.placeInfo ?? this.getPlaceRedirect(tokenInfo);
       const location = placeInfo.location;
 
-      // console.log(token + ": " + " -place-> " + place + " " + tokenInfo.state);
+      //console.log(token + ": " + " -place-> " + location + " " + tokenInfo.state);
 
       this.saveRestore(token);
 

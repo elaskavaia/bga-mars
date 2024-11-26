@@ -64,7 +64,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->setGameStateValue("var_corporate_era", 1); // solo can only be corp era
             }
 
-            $this->adjustedMaterial();
+            $this->adjustedMaterial(true);
             $this->createTokens();
             $this->tokens->shuffle("deck_main");
             $this->tokens->shuffle("deck_corp");
@@ -631,12 +631,12 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function adjustedMaterial() {
-        if ($this->token_types_adjusted2) {
+    function adjustedMaterial(bool $force = false) {
+        if ($this->token_types_adjusted2 && $force == false) {
             return $this->token_types;
         }
         $this->prof_point("adjust", "start");
-        parent::adjustedMaterial();
+        parent::adjustedMaterial($force);
 
         $adj = $this->getMapNumber();
         $num = $this->getPlayersNumber();

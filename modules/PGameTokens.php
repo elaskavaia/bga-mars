@@ -132,7 +132,7 @@ abstract class PGameTokens extends PGameBasic {
 
     function createCounterInfoForLocation($location) {
         $counter = $this->counterNameOf($location);
-        $location_name = $this->getRulesFor($location,'name');
+        $location_name = $this->getRulesFor($location, 'name');
         return [
             "counter_name" => $counter,
             "location" => $location,
@@ -144,8 +144,8 @@ abstract class PGameTokens extends PGameBasic {
     }
 
     // Material utilities
-    function adjustedMaterial() {
-        if ($this->token_types_adjusted) {
+    function adjustedMaterial(bool $force = false) {
+        if ($this->token_types_adjusted && $force == false) {
             return $this->token_types;
         }
         $this->token_types_adjusted = true;
@@ -297,7 +297,7 @@ abstract class PGameTokens extends PGameBasic {
                     // content allowed for everyboady
                     return true;
                 }
-                if ($content_type == "private") {
+                if ($content_type == "private" && $this->isRealPlayer($player_id)) {
                     // content allow only if location of same color
                     $color = $this->getPlayerColorById($player_id);
                     return endsWith($location, $color);
@@ -486,7 +486,7 @@ abstract class PGameTokens extends PGameBasic {
                 $num = 0;
                 $value = $min;
             } else if ($value < $min && $check) {
-                $this->userAssertTrue(clienttranslate("Not enough resources to pay")); 
+                $this->userAssertTrue(clienttranslate("Not enough resources to pay"));
             }
         }
         if (array_get($options, 'onlyCheck')) {

@@ -3221,7 +3221,7 @@ var GameTokens = /** @class */ (function (_super) {
             }
             var placeInfo = (_a = args.placeInfo) !== null && _a !== void 0 ? _a : this.getPlaceRedirect(tokenInfo);
             var location_1 = placeInfo.location;
-            // console.log(token + ": " + " -place-> " + place + " " + tokenInfo.state);
+            //console.log(token + ": " + " -place-> " + location + " " + tokenInfo.state);
             this.saveRestore(token);
             if (tokenNode == null) {
                 //debugger;
@@ -5449,10 +5449,7 @@ var GameXBody = /** @class */ (function (_super) {
             var tocolor = getPart(tokenInfo.location, 1);
             if (tocolor != this.player_color && tocolor != "area") {
                 // this is hidden location
-                result.location = "counter_hand_".concat(tocolor);
-                result.onEnd = function (node) {
-                    dojo.destroy(node);
-                };
+                result.nop = true;
             }
         }
         if (!result.location)
