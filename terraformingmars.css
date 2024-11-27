@@ -6932,12 +6932,14 @@
 }
 .scoretable .scorecell[data-position="1"]::after {
   content: "🥇";
+  float: right;
 }
 .scoretable .scorecell[data-position="2"]::after {
   content: "🥈";
+  float: right;
 }
 .scoretable .scorecell .card_vp {
-  position: inline-block;
+  display: inline-block;
 }
 .scoretable .scoregoal {
   position: absolute;

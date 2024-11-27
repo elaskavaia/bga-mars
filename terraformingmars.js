@@ -4068,7 +4068,22 @@ var GameXBody = /** @class */ (function (_super) {
         }
         return undefined;
     };
-    GameXBody.prototype.onShowMilestonesProgress = function () {
+    GameXBody.prototype.onShowMilestonesProgress = function (callServer) {
+        var _this = this;
+        if (callServer === void 0) { callServer = true; }
+        var num = Object.keys(this.gamedatas.players).length;
+        var solo = num == 1;
+        if (solo) {
+            this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+            return;
+        }
+        if (callServer) {
+            var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getUiProgressUpdate.html");
+            this.ajaxcall(url, {}, this, function (result) {
+                _this.cachedProgressTable = result.data.contents;
+                _this.onShowMilestonesProgress(false);
+            });
+        }
         var msinfo = {};
         for (var key in this.gamedatas.token_types) {
             var info = this.gamedatas.token_types[key];
@@ -4081,15 +4096,16 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div class=\"scorecell \">".concat(_(info.name), "</div>");
         }
-        var tableHtml = "\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Milestone"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
+        var progress = callServer ? 'Updating...' : '&nbsp;';
+        var tableHtml = "\n             <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">").concat(_("Milestone"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         {
             // first column to say its claimed or not
             lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Claimed"), "</div>\n      ");
             var firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
-            var progress = this.cachedProgressTable[firstPlayerId];
+            var progress_1 = this.cachedProgressTable[firstPlayerId];
             for (var key in msinfo) {
-                var opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
+                var opInfoArgs = this.getOpInfoArgs(progress_1.operations, "claim");
                 var code = opInfoArgs[key].q;
                 var sponsored = _("No");
                 if (code == this.CON.MA_ERR_OCCUPIED) {
@@ -4105,8 +4121,8 @@ var GameXBody = /** @class */ (function (_super) {
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
             var name_2 = this.getPlayerName(parseInt(plid));
-            var progress = this.cachedProgressTable[plid];
-            var opInfoArgs = this.getOpInfoArgs(progress.operations, "claim");
+            var progress_2 = this.cachedProgressTable[plid];
+            var opInfoArgs = this.getOpInfoArgs(progress_2.operations, "claim");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
             lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_2, "\n                          <div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
@@ -4131,9 +4147,27 @@ var GameXBody = /** @class */ (function (_super) {
             lines = lines + "</div>";
         }
         var finalHtml = tableHtml.replace("%lines%", lines);
-        this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
+        if ($('popin_pg_dialog_contents'))
+            $('popin_pg_dialog_contents').innerHTML = finalHtml;
+        else
+            this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
     };
-    GameXBody.prototype.onShowAwardsProgress = function () {
+    GameXBody.prototype.onShowAwardsProgress = function (callServer) {
+        var _this = this;
+        if (callServer === void 0) { callServer = true; }
+        var num = Object.keys(this.gamedatas.players).length;
+        var solo = num == 1;
+        if (solo) {
+            this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+            return;
+        }
+        if (callServer) {
+            var url = "/".concat(this.game_name, "/").concat(this.game_name, "/getUiProgressUpdate.html");
+            this.ajaxcall(url, {}, this, function (result) {
+                _this.cachedProgressTable = result.data.contents;
+                _this.onShowAwardsProgress(false);
+            });
+        }
         var msinfo = {};
         for (var key in this.gamedatas.token_types) {
             var info = this.gamedatas.token_types[key];
@@ -4146,15 +4180,18 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div id='scoreheader_".concat(key, "' class=\"scorecell\">").concat(_(info.name), "</div>");
         }
-        var tablehtm = "\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">".concat(_("Award"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
+        var progress = callServer ? 'Updating...' : '&nbsp;';
+        var tableHtml = "\n             <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">").concat(_("Award"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         {
             // first column to say its claimed or not
             lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Sponsored"), "</div>\n      ");
             var firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
-            var progress = this.cachedProgressTable[firstPlayerId];
+            var progress_3 = this.cachedProgressTable[firstPlayerId];
             for (var key in msinfo) {
-                var opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
+                var opInfoArgs = this.getOpInfoArgs(progress_3.operations, "fund");
+                if (!opInfoArgs)
+                    solo = true;
                 var code = opInfoArgs[key].q;
                 var sponsored = _("No");
                 if (code == this.CON.MA_ERR_OCCUPIED) {
@@ -4168,10 +4205,11 @@ var GameXBody = /** @class */ (function (_super) {
             lines += "</div>";
         }
         for (var plid in this.gamedatas.players) {
-            var plcolor = this.getPlayerColor(parseInt(plid));
-            var name_3 = this.getPlayerName(parseInt(plid));
-            var progress = this.cachedProgressTable[plid];
-            var opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
+            var info = this.gamedatas.players[plid];
+            var plcolor = info.color;
+            var name_3 = info.name;
+            var progress_4 = this.cachedProgressTable[plid];
+            var opInfoArgs = this.getOpInfoArgs(progress_4.operations, "fund");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
             lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_3, "<div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
@@ -4181,14 +4219,18 @@ var GameXBody = /** @class */ (function (_super) {
                 var canClaim = code != this.CON.MA_ERR_MAXREACHED;
                 var place = canClaim ? opInfoArgs[key].place : 0;
                 var vp_icon = "";
-                if (vp && canClaim)
+                var won = code == this.CON.MA_ERR_OCCUPIED;
+                if (vp && won)
                     vp_icon = "<div class=\"card_vp\">".concat(vp, "</div>");
                 lines += "<div id=\"scorecell_".concat(plcolor, "_").concat(key, "\" \n            class=\"scorecell score\" \n            data-type=\"").concat(key, "\" \n            data-value=\"").concat(current, "\" \n            data-position=\"").concat(place, "\">\n            ").concat(vp_icon, "\n            ").concat(current, "\n            </div>\n            ");
             }
             lines += "</div>";
         }
-        var finalhtm = tablehtm.replace("%lines%", lines);
-        this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
+        var finalhtm = tableHtml.replace("%lines%", lines);
+        if ($('popin_pg_dialog_contents'))
+            $('popin_pg_dialog_contents').innerHTML = finalhtm;
+        else
+            this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ""; }
@@ -4611,12 +4653,13 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.notif_tokensUpdate = function (notif) {
+        var _a;
         console.log("notif_tokensUpdate", notif);
         for (var opIdS in notif.args.operations) {
             var opInfo = notif.args.operations[opIdS];
             this.updateHandInformation(opInfo.args.info, opInfo.type);
         }
-        this.cachedProgressTable[this.getActivePlayerId()] = notif.args;
+        this.cachedProgressTable[(_a = notif.args.player_id) !== null && _a !== void 0 ? _a : this.getActivePlayerId()] = notif.args;
     };
     GameXBody.prototype.notif_scoringTable = function (notif) {
         //console.log(notif);

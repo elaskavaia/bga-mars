@@ -297,9 +297,9 @@ abstract class PGameXBody extends PGameMachine {
     function debug_q() {
         //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
-        $this->debug_incparam('o',13);
-        $this->debug_incparam('t',14);
-        
+        $this->debug_incparam('o', 13);
+        $this->debug_incparam('t', 14);
+
         $players = $this->loadPlayersBasicInfos();
 
 
@@ -2807,7 +2807,9 @@ abstract class PGameXBody extends PGameMachine {
     function getTokensUpdate($player_id) {
         $ops = Operation_turn::getStandardActions($this->isSolo());
         $operations = [];
+        $curr = $this->getCurrentPlayerId();
         foreach ($ops as $optype) {
+            if ($optype == 'card' && $player_id != $curr) continue;
             $oparr = $this->machine->createOperationSimple($optype, $this->getPlayerColorById($player_id));
             $oparr['flags'] = MACHINE_OP_RESOLVE_DEFAULT;
             $operations[] = $oparr;
@@ -2816,7 +2818,9 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function notifyTokensUpdate($player_id) {
-        $this->notifyAllPlayers('tokensUpdate', '', $this->getTokensUpdate($player_id));
+        $this->notifyAllPlayers('tokensUpdate', '', $this->getTokensUpdate($player_id) + [
+            'player_id' => $player_id
+        ]);
     }
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {

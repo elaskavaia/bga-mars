@@ -75,6 +75,13 @@ class action_terraformingmars extends APP_GameAction {
         self::ajaxResponseWithResult([ 'contents' => $res,'length' => count($res) ]);
     }
 
+    public function getUiProgressUpdate() {
+        self::setAjaxMode();
+        
+        $res = $this->game->getProgressTable();
+        self::ajaxResponseWithResult([ 'contents' => $res,'length' => count($res) ]);
+    }
+
     // UTILS
     private function invoke($action, $args) {
         $game = $this->game;

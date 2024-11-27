@@ -518,7 +518,22 @@ class GameXBody extends GameTokens {
     return undefined;
   }
 
-  onShowMilestonesProgress() {
+  onShowMilestonesProgress(callServer: boolean = true) {
+
+    const num = Object.keys(this.gamedatas.players).length;
+    let solo = num == 1;
+    if (solo) {
+      this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+      return;
+    }
+    if (callServer) {
+      let url = `/${this.game_name}/${this.game_name}/getUiProgressUpdate.html`;
+      this.ajaxcall(url, {  }, this, (result) => {
+        this.cachedProgressTable = result.data.contents;
+        this.onShowMilestonesProgress(false);
+      });
+    }
+
     const msinfo = {};
     for (const key in this.gamedatas.token_types) {
       const info = this.gamedatas.token_types[key];
@@ -532,7 +547,9 @@ class GameXBody extends GameTokens {
       namesRow += `<div class="scorecell ">${_(info.name)}</div>`;
     }
 
-    const tableHtml = `
+    const progress = callServer ? 'Updating...': '&nbsp;';
+    const tableHtml: string = `
+             <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
              <div id="scoretable_pg_milestones" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Milestone")}</div>
@@ -613,9 +630,25 @@ class GameXBody extends GameTokens {
       lines = lines + "</div>";
     }
     const finalHtml = tableHtml.replace("%lines%", lines);
-    this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
+    if ($('popin_pg_dialog_contents')) $('popin_pg_dialog_contents').innerHTML=finalHtml;
+    else this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
   }
-  onShowAwardsProgress() {
+  onShowAwardsProgress(callServer: boolean = true) {
+    const num = Object.keys(this.gamedatas.players).length;
+    let solo = num == 1;
+    if (solo) {
+      this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+      return;
+    }
+
+    if (callServer) {
+      let url = `/${this.game_name}/${this.game_name}/getUiProgressUpdate.html`;
+      this.ajaxcall(url, { }, this, (result) => {
+        this.cachedProgressTable = result.data.contents;
+        this.onShowAwardsProgress(false);
+      });
+    }
+
     const msinfo = {};
     for (const key in this.gamedatas.token_types) {
       const info = this.gamedatas.token_types[key];
@@ -629,7 +662,9 @@ class GameXBody extends GameTokens {
       namesRow += `<div id='scoreheader_${key}' class="scorecell">${_(info.name)}</div>`;
     }
 
-    const tablehtm: string = `
+    const progress = callServer ? 'Updating...': '&nbsp;';
+    const tableHtml: string = `
+             <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
              <div id="scoretable_pg_awards" class="scoretable">
                 <div class="scoreheader scorecol">
                       <div class="scorecell header">${_("Award")}</div>
@@ -646,8 +681,10 @@ class GameXBody extends GameTokens {
       `;
       const firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
       const progress = this.cachedProgressTable[firstPlayerId];
+
       for (const key in msinfo) {
         const opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
+        if (!opInfoArgs) solo = true;
         const code = opInfoArgs[key].q;
         let sponsored = _("No");
         if (code == this.CON.MA_ERR_OCCUPIED) {
@@ -666,8 +703,9 @@ class GameXBody extends GameTokens {
     }
 
     for (let plid in this.gamedatas.players) {
-      const plcolor = this.getPlayerColor(parseInt(plid));
-      const name = this.getPlayerName(parseInt(plid));
+      const info = this.gamedatas.players[plid];
+      const plcolor = info.color;
+      const name = info.name;
       const progress = this.cachedProgressTable[plid];
       const opInfoArgs = this.getOpInfoArgs(progress.operations, "fund");
       const corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
@@ -685,7 +723,8 @@ class GameXBody extends GameTokens {
         const canClaim = code != this.CON.MA_ERR_MAXREACHED;
         const place = canClaim ? opInfoArgs[key].place : 0;
         let vp_icon = "";
-        if (vp && canClaim) vp_icon = `<div class="card_vp">${vp}</div>`;
+        const won = code == this.CON.MA_ERR_OCCUPIED; 
+        if (vp && won) vp_icon = `<div class="card_vp">${vp}</div>`;
 
         lines += `<div id="scorecell_${plcolor}_${key}" 
             class="scorecell score" 
@@ -699,8 +738,9 @@ class GameXBody extends GameTokens {
       }
       lines += `</div>`;
     }
-    const finalhtm = tablehtm.replace("%lines%", lines);
-    this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
+    const finalhtm = tableHtml.replace("%lines%", lines);
+    if ($('popin_pg_dialog_contents')) $('popin_pg_dialog_contents').innerHTML=finalhtm;
+    else this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
   }
 
   getLocalSettingNamespace(extra: string | number = "") {
@@ -1149,7 +1189,7 @@ class GameXBody extends GameTokens {
       const opInfo = notif.args.operations[opIdS];
       this.updateHandInformation(opInfo.args.info, opInfo.type);
     }
-    this.cachedProgressTable[this.getActivePlayerId()] = notif.args;
+    this.cachedProgressTable[notif.args.player_id ?? this.getActivePlayerId()] = notif.args;
   }
   notif_scoringTable(notif: Notif) {
     //console.log(notif);

@@ -577,6 +577,8 @@ final class GameTest extends TestCase {
         $this->assertEquals($num, $this->game->getCountOfResOnCards($color, 'Animal'));
         $this->assertEquals(0, $this->game->getCountOfResOnCards($color, 'Science'));
         $this->assertMilestone(5, "FARMER", $num);
+        $this->game->setTrackerValue(PCOLOR, 'm', 20);
+        $this->assertOperationTargetStatus("claim", "milestone_5", MA_OK);
     }
 
     public function testVolcanic() {
@@ -586,6 +588,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $game->getRulesFor($volc, 'vol'));
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
         $this->assertOperationTargetStatus("city(vol)", "hex_4_1", MA_ERR_NOTRESERVED);
+        
 
         $game->effect_placeTile($color, 'tile_2_2', 'hex_4_1');
         $this->assertEquals(1, $this->game->getCountOfGeologistTiles($color));
