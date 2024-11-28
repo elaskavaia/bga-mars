@@ -5569,7 +5569,7 @@
   width: 100%;
 }
 
-.playerboard_own .tracker, .playerboard_produce .tracker, .groupline .tracker {
+.playerboard_own .tracker, .playerboard_produce .tracker {
   background-image: unset;
 }
 
