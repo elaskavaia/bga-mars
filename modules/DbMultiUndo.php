@@ -42,8 +42,8 @@ class DbMultiUndo extends APP_GameClass {
 
     function setMoveSnapshot(int $move_id, int $player_id, array $data, array $meta = []) {
         $meta  = $meta + ['version' => 1];
-        $json_data = $this->escapeStringForDB(fixedJsonEncode($data, JSON_NUMERIC_CHECK));
-        $json_meta = $this->escapeStringForDB(fixedJsonEncode($meta, JSON_NUMERIC_CHECK));
+        $json_data = $this->escapeStringForDB(fixedJsonEncode($data));
+        $json_meta = $this->escapeStringForDB(fixedJsonEncode($meta));
 
         $table = $this->table;
         $hasmove = $this->getUniqueValueFromDB("SELECT `move_id` FROM $table WHERE `move_id`='$move_id'");
@@ -189,6 +189,9 @@ class DbMultiUndo extends APP_GameClass {
                 $this->DbQuery("DELETE FROM $copy");
                 $this->game->dbInsertValues($copy, $saved_data);
                 //$this->warn("restore $table");
+                if ($table == 'machine') { // fix json encoding issue
+                     $this->DbQuery("UPDATE $copy SET owner = '008000' WHERE owner = '8000'");
+                }
             }
         }
         foreach ($tables as $table) {
