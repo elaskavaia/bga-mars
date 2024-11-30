@@ -3667,14 +3667,13 @@ var GameXBody = /** @class */ (function (_super) {
     }
     GameXBody.prototype.setup = function (gamedatas) {
         var _this = this;
-        var _a;
         try {
             this.isDoingSetup = true;
             this.lastMoveId = 0;
             this.CON = gamedatas.CON; // PHP contants for game
             this.stacks = [];
-            var theme = (_a = this.prefs[LAYOUT_PREF_ID].value) !== null && _a !== void 0 ? _a : 1;
-            var root = document.children[0]; // weird
+            var theme = this.isLayoutFull() ? 2 : 1;
+            var root = document.documentElement;
             dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
             this.interface_autoscale = this.isLayoutFull();
             document.getElementById("page-content").classList.toggle("bga-game-zoom", this.interface_autoscale);
@@ -3692,12 +3691,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.setupResourceFiltering();
             this.setupLocalSettings();
             _super.prototype.setup.call(this, gamedatas);
-            // hex tooltips
-            document.querySelectorAll(".hex").forEach(function (node) {
-                _this.updateTooltip(node.id);
-            });
-            // hexes are not moved so manually connect
-            this.connectClass("hex", "onclick", "onToken");
+            this.setupHexes(this.getMapNumber());
             //player controls
             //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
             //Give tooltips to alt trackers in player boards
@@ -3815,6 +3809,34 @@ var GameXBody = /** @class */ (function (_super) {
             this.isDoingSetup = false;
         }
         this.checkTerraformingCompletion();
+    };
+    GameXBody.prototype.setupHexes = function (mapnum) {
+        var _this = this;
+        var maphexes = $("map_hexes");
+        //<div class="hex" id="hex_3_1"></div>
+        //<div class="hex even" id="hex_3_2"></div>
+        // 3 3 2 2 1 2 2 3 3
+        var topSize = this.getRulesFor("map_size", "w", 5);
+        var maxy = topSize * 2 - 1;
+        for (var y = 1; y <= maxy; y++) {
+            var even = y % 2 == 0 ? "even" : "odd";
+            var cent = Math.abs(y - topSize);
+            var start = (cent / 2.0) + 1;
+            if (topSize % 2 == 0)
+                start = Math.floor(start);
+            else
+                start = Math.ceil(start);
+            var maxx = topSize + (y > topSize ? topSize * 2 - y - 1 : y - 1);
+            for (var x = start; x <= maxx + start - 1; x++) {
+                $("map_hexes").insertAdjacentHTML("beforeend", "<div class=\"hex ".concat(even, "\" id=\"hex_").concat(x, "_").concat(y, "\"></div>"));
+            }
+        }
+        // hex tooltips
+        document.querySelectorAll(".hex").forEach(function (node) {
+            _this.updateTooltip(node.id);
+        });
+        // hexes are not moved so manually connect
+        this.connectClass("hex", "onclick", "onToken");
     };
     GameXBody.prototype.setupPlayer = function (playerInfo) {
         var _this = this;
@@ -4074,7 +4096,7 @@ var GameXBody = /** @class */ (function (_super) {
         var num = Object.keys(this.gamedatas.players).length;
         var solo = num == 1;
         if (solo) {
-            this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+            this.showPopin(_("Not available in solo mode"), "pg_dialog", _("Error"));
             return;
         }
         if (callServer) {
@@ -4096,7 +4118,7 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div class=\"scorecell \">".concat(_(info.name), "</div>");
         }
-        var progress = callServer ? 'Updating...' : '&nbsp;';
+        var progress = callServer ? "Updating..." : "&nbsp;";
         var tableHtml = "\n             <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">").concat(_("Milestone"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         {
@@ -4147,8 +4169,8 @@ var GameXBody = /** @class */ (function (_super) {
             lines = lines + "</div>";
         }
         var finalHtml = tableHtml.replace("%lines%", lines);
-        if ($('popin_pg_dialog_contents'))
-            $('popin_pg_dialog_contents').innerHTML = finalHtml;
+        if ($("popin_pg_dialog_contents"))
+            $("popin_pg_dialog_contents").innerHTML = finalHtml;
         else
             this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
     };
@@ -4158,7 +4180,7 @@ var GameXBody = /** @class */ (function (_super) {
         var num = Object.keys(this.gamedatas.players).length;
         var solo = num == 1;
         if (solo) {
-            this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+            this.showPopin(_("Not available in solo mode"), "pg_dialog", _("Error"));
             return;
         }
         if (callServer) {
@@ -4180,7 +4202,7 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div id='scoreheader_".concat(key, "' class=\"scorecell\">").concat(_(info.name), "</div>");
         }
-        var progress = callServer ? 'Updating...' : '&nbsp;';
+        var progress = callServer ? "Updating..." : "&nbsp;";
         var tableHtml = "\n             <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">").concat(_("Award"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         {
@@ -4227,8 +4249,8 @@ var GameXBody = /** @class */ (function (_super) {
             lines += "</div>";
         }
         var finalhtm = tableHtml.replace("%lines%", lines);
-        if ($('popin_pg_dialog_contents'))
-            $('popin_pg_dialog_contents').innerHTML = finalhtm;
+        if ($("popin_pg_dialog_contents"))
+            $("popin_pg_dialog_contents").innerHTML = finalhtm;
         else
             this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
     };
@@ -4319,10 +4341,6 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         ls.writeProp("activated", "1");
         // no used
-    };
-    GameXBody.prototype.getThemeSelectorDialogHtml = function (id, title, desc) {
-        if (desc === void 0) { desc = ""; }
-        return "\n    <div class=\"".concat(id, "_title\">").concat(title, "</div>\n    <div class=\"").concat(id, "_desc\">").concat(desc, "</div>\n    <div id=\"").concat(id, "\" class=\"").concat(id, "\"></div>\n    ");
     };
     GameXBody.prototype.isLiveScoringDisabled = function () {
         var _a;
@@ -4572,6 +4590,9 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.onScreenWidthChange = function () {
         if (this.isLayoutFull()) {
             _super.prototype.onScreenWidthChange.call(this);
+            var root = document.documentElement;
+            dojo.removeClass(root, "mcompact");
+            dojo.addClass(root, "mfull");
         }
         else {
             var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -5512,7 +5533,7 @@ var GameXBody = /** @class */ (function (_super) {
         return this.prefs[LAYOUT_PREF_ID].value == num;
     };
     GameXBody.prototype.isLayoutFull = function () {
-        return this.isLayoutVariant(2);
+        return this.isLayoutVariant(2) || this.getMapNumber() == 4;
     };
     GameXBody.prototype.darhflog = function () {
         var args = [];

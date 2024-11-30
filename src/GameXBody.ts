@@ -37,8 +37,8 @@ class GameXBody extends GameTokens {
       this.lastMoveId = 0;
       this.CON = gamedatas.CON; // PHP contants for game
       this.stacks = [];
-      const theme = this.prefs[LAYOUT_PREF_ID].value ?? 1;
-      const root = document.children[0]; // weird
+      const theme = this.isLayoutFull()?2:1;
+      const root = document.documentElement; 
       dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
 
       this.interface_autoscale = this.isLayoutFull();
@@ -61,12 +61,7 @@ class GameXBody extends GameTokens {
 
       super.setup(gamedatas);
 
-      // hex tooltips
-      document.querySelectorAll(".hex").forEach((node) => {
-        this.updateTooltip(node.id);
-      });
-      // hexes are not moved so manually connect
-      this.connectClass("hex", "onclick", "onToken");
+      this.setupHexes(this.getMapNumber());
 
       //player controls
       //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
@@ -214,6 +209,34 @@ class GameXBody extends GameTokens {
     }
 
     this.checkTerraformingCompletion();
+  }
+
+  setupHexes(mapnum: number) {
+    const maphexes = $("map_hexes");
+    //<div class="hex" id="hex_3_1"></div>
+    //<div class="hex even" id="hex_3_2"></div>
+    // 3 3 2 2 1 2 2 3 3
+
+    const topSize = this.getRulesFor("map_size", "w", 5);
+    const maxy = topSize * 2 - 1;
+    for (let y = 1; y <= maxy; y++) {
+      const even = y % 2 == 0 ? "even" : "odd";
+      const cent  = Math.abs(y - topSize);
+      let start =  (cent / 2.0) + 1; 
+      if (topSize % 2 == 0) start = Math.floor(start);
+      else start = Math.ceil(start);
+      const maxx = topSize + ( y > topSize ? topSize*2 - y -1 : y - 1);
+      for (let x = start; x <= maxx + start - 1; x++) {
+        $("map_hexes").insertAdjacentHTML("beforeend",`<div class="hex ${even}" id="hex_${x}_${y}"></div>`);
+      }
+    }
+
+    // hex tooltips
+    document.querySelectorAll(".hex").forEach((node) => {
+      this.updateTooltip(node.id);
+    });
+    // hexes are not moved so manually connect
+    this.connectClass("hex", "onclick", "onToken");
   }
 
   setupPlayer(playerInfo: any) {
@@ -519,16 +542,15 @@ class GameXBody extends GameTokens {
   }
 
   onShowMilestonesProgress(callServer: boolean = true) {
-
     const num = Object.keys(this.gamedatas.players).length;
     let solo = num == 1;
     if (solo) {
-      this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+      this.showPopin(_("Not available in solo mode"), "pg_dialog", _("Error"));
       return;
     }
     if (callServer) {
       let url = `/${this.game_name}/${this.game_name}/getUiProgressUpdate.html`;
-      this.ajaxcall(url, {  }, this, (result) => {
+      this.ajaxcall(url, {}, this, (result) => {
         this.cachedProgressTable = result.data.contents;
         this.onShowMilestonesProgress(false);
       });
@@ -547,7 +569,7 @@ class GameXBody extends GameTokens {
       namesRow += `<div class="scorecell ">${_(info.name)}</div>`;
     }
 
-    const progress = callServer ? 'Updating...': '&nbsp;';
+    const progress = callServer ? "Updating..." : "&nbsp;";
     const tableHtml: string = `
              <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
              <div id="scoretable_pg_milestones" class="scoretable">
@@ -630,20 +652,20 @@ class GameXBody extends GameTokens {
       lines = lines + "</div>";
     }
     const finalHtml = tableHtml.replace("%lines%", lines);
-    if ($('popin_pg_dialog_contents')) $('popin_pg_dialog_contents').innerHTML=finalHtml;
+    if ($("popin_pg_dialog_contents")) $("popin_pg_dialog_contents").innerHTML = finalHtml;
     else this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
   }
   onShowAwardsProgress(callServer: boolean = true) {
     const num = Object.keys(this.gamedatas.players).length;
     let solo = num == 1;
     if (solo) {
-      this.showPopin(_('Not available in solo mode'), "pg_dialog", _("Error"));
+      this.showPopin(_("Not available in solo mode"), "pg_dialog", _("Error"));
       return;
     }
 
     if (callServer) {
       let url = `/${this.game_name}/${this.game_name}/getUiProgressUpdate.html`;
-      this.ajaxcall(url, { }, this, (result) => {
+      this.ajaxcall(url, {}, this, (result) => {
         this.cachedProgressTable = result.data.contents;
         this.onShowAwardsProgress(false);
       });
@@ -662,7 +684,7 @@ class GameXBody extends GameTokens {
       namesRow += `<div id='scoreheader_${key}' class="scorecell">${_(info.name)}</div>`;
     }
 
-    const progress = callServer ? 'Updating...': '&nbsp;';
+    const progress = callServer ? "Updating..." : "&nbsp;";
     const tableHtml: string = `
              <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
              <div id="scoretable_pg_awards" class="scoretable">
@@ -723,7 +745,7 @@ class GameXBody extends GameTokens {
         const canClaim = code != this.CON.MA_ERR_MAXREACHED;
         const place = canClaim ? opInfoArgs[key].place : 0;
         let vp_icon = "";
-        const won = code == this.CON.MA_ERR_OCCUPIED; 
+        const won = code == this.CON.MA_ERR_OCCUPIED;
         if (vp && won) vp_icon = `<div class="card_vp">${vp}</div>`;
 
         lines += `<div id="scorecell_${plcolor}_${key}" 
@@ -739,7 +761,7 @@ class GameXBody extends GameTokens {
       lines += `</div>`;
     }
     const finalhtm = tableHtml.replace("%lines%", lines);
-    if ($('popin_pg_dialog_contents')) $('popin_pg_dialog_contents').innerHTML=finalhtm;
+    if ($("popin_pg_dialog_contents")) $("popin_pg_dialog_contents").innerHTML = finalhtm;
     else this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
   }
 
@@ -833,13 +855,6 @@ class GameXBody extends GameTokens {
     // no used
   }
 
-  getThemeSelectorDialogHtml(id: string, title: string, desc: string = "") {
-    return `
-    <div class="${id}_title">${title}</div>
-    <div class="${id}_desc">${desc}</div>
-    <div id="${id}" class="${id}"></div>
-    `;
-  }
 
   isLiveScoringDisabled() {
     if (this.gamedatas.table_options["105"]?.value === 2) {
@@ -1094,6 +1109,10 @@ class GameXBody extends GameTokens {
   onScreenWidthChange() {
     if (this.isLayoutFull()) {
       super.onScreenWidthChange();
+      const root = document.documentElement;
+      dojo.removeClass(root, "mcompact");
+      dojo.addClass(root, "mfull");
+  
     } else {
       const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -2232,7 +2251,7 @@ awarded.`);
   }
 
   isLayoutFull() {
-    return this.isLayoutVariant(2);
+    return this.isLayoutVariant(2) || this.getMapNumber()==4;
   }
 
   darhflog(...args: any) {

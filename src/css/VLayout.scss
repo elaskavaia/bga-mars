@@ -239,6 +239,12 @@
     top: 21%;
     width: 62%;
   }
+  .map_4 #map {
+    left: 16%;
+    top: 8%;
+    width: 62%;
+    height: 80%;
+  }
 
   #map_middle {
     width: 100%;
@@ -378,6 +384,12 @@
     top: 15%;
   }
 
+  .map_4 #decks_area {
+    top: 89%;
+    left: 75%;
+  }
+
+
   .carddeck,
   #discard_main,
   #deck_main {
@@ -436,6 +448,10 @@
     top: 23%;
     left: 82%;
   }
+  .map_4 .hex_phobos {
+    top: 14%;
+    left: 8%;
+  }
 
   .map_1 .hex_ganymede {
     top: 46%;
@@ -445,6 +461,11 @@
   .map_3 .hex_ganymede {
     top: 40%;
     left: 83%;
+  }
+
+  .map_4  .hex_ganymede {
+    left: 5.5%;
+    top: 80.5%;
   }
 
   #oceans_pile {
@@ -464,6 +485,11 @@
   .map_3 #oceans_pile {
     top: 10%;
     left: 19%;
+  }
+
+  .map_4 #oceans_pile {
+    top: 10%;
+    left: 77%;
   }
 
   #outer_scoretracker {
@@ -519,6 +545,26 @@
     #main_board::before {
       background-image: url(img/full/vastitas.jpg);
     }
+  }
+  
+  .map_4 {
+    #main_board::before {
+      background-image: url(img/full/amazonis.jpg);
+    }
+
+    
+  }
+
+  .hex {
+    background-color: rgba(255, 255, 0, 0.4);
+  }
+  .hex::before {
+    content: attr(id);
+    position: absolute;
+    top: 30%;
+    width: 100%;
+    height: 100%;
+    text-align: center;
   }
 
   .map_bg {

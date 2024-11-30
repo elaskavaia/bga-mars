@@ -192,6 +192,7 @@ abstract class PGameXBody extends PGameMachine {
 
     function setupSoloMap() {
         // place 2 random cities with forest
+        $this->adjustedMaterial(true);
         $placements = $this->getSoloMapPlacements();
         $num = $this->getPlayersNumber() + 1;
         $botcolor = 'ffffff';
@@ -685,6 +686,14 @@ abstract class PGameXBody extends PGameMachine {
                 };
             }
         }
+        $this->token_types['map_size']['w'] = 5;
+        if ($this->getMapNumber() == 4) {
+            $this->token_types['tracker_o']['max'] = 18;
+            $this->token_types['tracker_w']['max'] = 11;
+            $this->token_types['tracker_t']['max'] = 14;
+            $this->token_types['map_size']['w'] = 6;
+        }
+
         $this->token_types_adjusted2 = true;
         $this->prof_point("adjust", "end");
         return $this->token_types;

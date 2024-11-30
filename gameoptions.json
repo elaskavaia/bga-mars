@@ -170,6 +170,12 @@
                 "description": "The ancient sea",
                 "tmdisplay": "Vastitas",
                 "alpha": true
+            },
+            "4": {
+                "name": "Amazonis Planitia",
+                "description": "The smooth plain",
+                "tmdisplay": "Amazonis",
+                "alpha": true
             }
         },
         "default": 0

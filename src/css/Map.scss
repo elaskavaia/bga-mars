@@ -6,6 +6,7 @@
   --stan-height: calc(var(--stan-width)*0.2);
   --stan-fullheight: calc(var(--stan-width)*1.604095);
 
+  --hex-width: calc(var(--map-width) * 0.109);
 }
 
 
@@ -73,8 +74,8 @@
 }
 
 .hex {
-  width: calc(var(--map-width) * 0.109);
-  height: calc(var(--map-width) * 0.122);
+  width: var(--hex-width);
+  height: calc(var(--hex-width) * 1.1193);
   border-radius: 30%;
   /* outline: 1px solid black;*/
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
@@ -85,11 +86,11 @@
   position: absolute;
 }
 
-@for $col from 1 through 9 {
-  @for $row from 1 through 9 {
+@for $col from 1 through 11 {
+  @for $row from 1 through 11 {
     .map_hexes #hex_#{$col}_#{$row} {
-      left: 1% + ($col - 1) * 10.9%;
-      top: 1% + ($row - 1) * 10.3%;
+      left: calc(var(--map-width) * 0.01 + ($col - 1) * var(--hex-width) * 1.025);
+      top: calc(var(--map-width) * 0.01 + ($row - 1) * var(--hex-width) * 0.89);
     }
   }
 }
