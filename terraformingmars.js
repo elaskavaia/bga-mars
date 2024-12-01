@@ -4387,6 +4387,9 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.isLiveScoringDisabled = function () {
         var _a;
+        if (this.gamedatas.gamestage == this.CON.MA_STAGE_ENDED) {
+            return false;
+        }
         if (((_a = this.gamedatas.table_options["105"]) === null || _a === void 0 ? void 0 : _a.value) === 2) {
             return true;
         }

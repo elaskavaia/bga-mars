@@ -126,7 +126,7 @@ $this->token_types = [
     'value' => -20
   ],
   'param_t_n12@m4' => [
-    'r' => 'p',
+    'r' => 'pp',
     'param' => 't',
     'value' => -12
   ],
@@ -7780,7 +7780,7 @@ $this->token_types = [
   'ocean' => 1,
   'x' => 2,
   'y' => 9,
-  'r' => 'su',
+  'r' => 's,u',
 ],
  'hex_3_9@m4' => [  //
   'location' => 'map_hexes',
@@ -7870,13 +7870,13 @@ $this->token_types = [
   'location' => 'map_hexes',
   'x' => 4,
   'y' => 11,
-  'r' => 'su',
+  'r' => 's,u',
 ],
  'hex_5_11@m4' => [  //
   'location' => 'map_hexes',
   'x' => 5,
   'y' => 11,
-  'r' => 'ss',
+  'r' => '2s',
 ],
  'hex_6_11@m4' => [  //
   'location' => 'map_hexes',

@@ -619,6 +619,19 @@ final class GameTest extends TestCase {
         $this->assertEquals(100, $this->game->getTerraformingProgression());
     }
 
+    public function test_getAmazonisMapBonuses() {
+        $game = $this->game(4);
+        $map = $game->getPlanetMap();
+
+        foreach ($map as $hex => $info) {
+            $rules = $game->getRulesFor($hex, 'r');
+            if (!$rules) continue;
+
+            $op = $game->getOperationInstanceFromType($rules, PCOLOR, 1, $hex);
+            $this->assertTrue(!!$op, "cannot instanciat $rules for $hex");
+        }
+    }
+
     public function testVolcanic() {
         $game = $this->game(3);
         $color = PCOLOR;
