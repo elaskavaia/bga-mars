@@ -83,26 +83,6 @@
           <div id="temperature_map">
               <div id="alt_tracker_t" class="tracker param tracker_t"></div>
               <div class="temperature_scale">
-                <div class="temperature_scale_item" data-val="-30"></div>
-                <div class="temperature_scale_item" data-val="-28"></div>
-                <div class="temperature_scale_item" data-val="-26"></div>
-                <div class="temperature_scale_item" data-val="-24"></div>
-                <div class="temperature_scale_item" data-val="-22"></div>
-                <div class="temperature_scale_item" data-val="-20"></div>
-                <div class="temperature_scale_item" data-val="-18"></div>
-                <div class="temperature_scale_item" data-val="-16"></div>
-                <div class="temperature_scale_item" data-val="-14"></div>
-                <div class="temperature_scale_item" data-val="-12"></div>
-                <div class="temperature_scale_item" data-val="-10"></div>
-                <div class="temperature_scale_item" data-val="-8"></div>
-                <div class="temperature_scale_item" data-val="-6"></div>
-                <div class="temperature_scale_item" data-val="-4"></div>
-                <div class="temperature_scale_item" data-val="-2"></div>
-                <div class="temperature_scale_item" data-val="0"></div>
-                <div class="temperature_scale_item" data-val="2"></div>
-                <div class="temperature_scale_item" data-val="4"></div>
-                <div class="temperature_scale_item" data-val="6"></div>
-                <div class="temperature_scale_item" data-val="8"></div>
               </div>
           </div>
         </div>

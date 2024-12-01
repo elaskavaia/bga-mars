@@ -520,20 +520,6 @@
   height: 100%;
 }
 
-.temperature_scale_item {
-  position: absolute;
-  height: 4%;
-  width: 100%;
-  justify-content: center;
-  display: none;
-  align-items: center;
-
-}
-
-.temperature_scale_item::after {
-  content: attr(data-val);
-}
-
 #temperature_map {
   .tracker_t {
     position: absolute;
@@ -557,82 +543,23 @@
     border-radius: 50%;
   }
 
-  .tracker_t[data-state="-28"] {
-    bottom: 12.8%;
+  @for $row from 0 through 23 {
+      $temp: ($row * 2) - 28;
+      .tracker_t[data-state="#{$temp}"] {
+        bottom: calc(12.8% + $row * 4.5%);
+      }
   }
+}
 
-  .tracker_t[data-state="-26"] {
-    bottom: 17.3%;
+.map_4 {
+  #temperature_map {
+  @for $row from 0 through 23 {
+    $temp: ($row * 2) - 28;
+    .tracker_t[data-state="#{$temp}"] {
+      bottom: calc(10% + $row * 4.1%);
+    }
   }
-
-  .tracker_t[data-state="-24"] {
-    bottom: 21.8%;
   }
-
-  .tracker_t[data-state="-22"] {
-    bottom: 26.3%;
-  }
-
-  .tracker_t[data-state="-20"] {
-    bottom: 30.8%;
-  }
-
-  .tracker_t[data-state="-18"] {
-    bottom: 35.3%;
-  }
-
-  .tracker_t[data-state="-16"] {
-    bottom: 39.8%;
-  }
-
-  .tracker_t[data-state="-14"] {
-    bottom: 44.3%;
-  }
-
-  .tracker_t[data-state="-12"] {
-    bottom: 48.8%;
-  }
-
-  .tracker_t[data-state="-10"] {
-    bottom: 53.3%;
-  }
-
-  .tracker_t[data-state="-8"] {
-    bottom: 57.8%;
-  }
-
-  .tracker_t[data-state="-6"] {
-    bottom: 62.3%;
-  }
-
-  .tracker_t[data-state="-4"] {
-    bottom: 66.8%;
-  }
-
-  .tracker_t[data-state="-2"] {
-    bottom: 71.3%;
-  }
-
-  .tracker_t[data-state="0"] {
-    bottom: 75.8%;
-  }
-
-  .tracker_t[data-state="2"] {
-    bottom: 80.3%;
-  }
-
-  .tracker_t[data-state="4"] {
-    bottom: 84.8%;
-  }
-
-  .tracker_t[data-state="6"] {
-    bottom: 89.3%;
-  }
-
-  .tracker_t[data-state="8"] {
-    bottom: 93.8%;
-  }
-
 }
 
 #oxygen_map {

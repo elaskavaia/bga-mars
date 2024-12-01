@@ -5334,19 +5334,6 @@
   height: 100%;
 }
 
-.temperature_scale_item {
-  position: absolute;
-  height: 4%;
-  width: 100%;
-  justify-content: center;
-  display: none;
-  align-items: center;
-}
-
-.temperature_scale_item::after {
-  content: attr(data-val);
-}
-
 #temperature_map .tracker_t {
   position: absolute;
   height: 3%;
@@ -5422,6 +5409,94 @@
 }
 #temperature_map .tracker_t[data-state="8"] {
   bottom: 93.8%;
+}
+#temperature_map .tracker_t[data-state="10"] {
+  bottom: 98.3%;
+}
+#temperature_map .tracker_t[data-state="12"] {
+  bottom: 102.8%;
+}
+#temperature_map .tracker_t[data-state="14"] {
+  bottom: 107.3%;
+}
+#temperature_map .tracker_t[data-state="16"] {
+  bottom: 111.8%;
+}
+#temperature_map .tracker_t[data-state="18"] {
+  bottom: 116.3%;
+}
+
+.map_4 #temperature_map .tracker_t[data-state="-28"] {
+  bottom: 10%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-26"] {
+  bottom: 14.1%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-24"] {
+  bottom: 18.2%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-22"] {
+  bottom: 22.3%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-20"] {
+  bottom: 26.4%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-18"] {
+  bottom: 30.5%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-16"] {
+  bottom: 34.6%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-14"] {
+  bottom: 38.7%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-12"] {
+  bottom: 42.8%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-10"] {
+  bottom: 46.9%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-8"] {
+  bottom: 51%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-6"] {
+  bottom: 55.1%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-4"] {
+  bottom: 59.2%;
+}
+.map_4 #temperature_map .tracker_t[data-state="-2"] {
+  bottom: 63.3%;
+}
+.map_4 #temperature_map .tracker_t[data-state="0"] {
+  bottom: 67.4%;
+}
+.map_4 #temperature_map .tracker_t[data-state="2"] {
+  bottom: 71.5%;
+}
+.map_4 #temperature_map .tracker_t[data-state="4"] {
+  bottom: 75.6%;
+}
+.map_4 #temperature_map .tracker_t[data-state="6"] {
+  bottom: 79.7%;
+}
+.map_4 #temperature_map .tracker_t[data-state="8"] {
+  bottom: 83.8%;
+}
+.map_4 #temperature_map .tracker_t[data-state="10"] {
+  bottom: 87.9%;
+}
+.map_4 #temperature_map .tracker_t[data-state="12"] {
+  bottom: 92%;
+}
+.map_4 #temperature_map .tracker_t[data-state="14"] {
+  bottom: 96.1%;
+}
+.map_4 #temperature_map .tracker_t[data-state="16"] {
+  bottom: 100.2%;
+}
+.map_4 #temperature_map .tracker_t[data-state="18"] {
+  bottom: 104.3%;
 }
 
 #oxygen_map {
@@ -9407,6 +9482,13 @@
   top: 19%;
   left: 6%;
   width: calc(var(--map-width) * 0.1);
+}
+.mfull .map_4 #temperature_map {
+  position: absolute;
+  top: 8%;
+  left: 86.5%;
+  width: calc(var(--map-width) * 0.1);
+  height: 87%;
 }
 .mfull #main_board #standard_projects_area {
   display: block;

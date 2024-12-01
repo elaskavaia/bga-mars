@@ -295,6 +295,13 @@
     left: 6%;
     width: calc(var(--map-width) * 0.1);
   }
+  .map_4 #temperature_map {
+    position: absolute;
+    top: 8%;
+    left: 86.5%;
+    width: calc(var(--map-width) * 0.1);
+    height: 87%;
+  }
 
   #main_board #standard_projects_area {
     display: block;

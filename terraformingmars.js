@@ -4360,7 +4360,7 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         ls.writeProp("activated", "1");
         // no used
-        if (this.isLayoutFull() && !this.isLayoutVariant(2)) {
+        if (this.getMapNumber() == 4 && !this.isLayoutVariant(2)) {
             this.showPopin('Amazonis map is only available in Cardboard theme for now', 'popx', 'Warning');
         }
     };
