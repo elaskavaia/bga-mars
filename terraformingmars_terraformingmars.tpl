@@ -88,45 +88,35 @@
         </div>
 
         <div id="map_bottom">
-          <div id="main_milestones">
-            <div class="map_milesawardsheader">
-              <div id="milestones_costs" class="milesawardscosts">
+          <div id="main_milestones" class="mileaw_main main_milestones">
+            <div class="mileaw_header">
+              <div id="milestones_costs" class="mileaw_costs">
                 <div id="milestone_cost_1" class="token_img tracker_m">8</div>
                 <div id="milestone_cost_2" class="token_img tracker_m">8</div>
                 <div id="milestone_cost_3" class="token_img tracker_m">8</div>
               </div>
-              <div id="milestones_title" class="map_title">Milestones</div>
-              <div id="milestones_gains" class="milesawardsgains"><div id="milestone_vp_gain" class="card_vp">5</div></div>
-              <div id="milestones_progress" class="milesawardsprogress" ><i class="fa fa-tasks" aria-hidden="true"></i></div>
+              <div id="milestones_title" class="mileaw_title">-Milestones-</div>
+              <div id="milestones_gains" class="mileaw_gains"><div id="milestone_vp_gain" class="card_vp">5</div></div>
+              <div id="milestones_progress" class="mileaw_progress" ><i class="fa fa-tasks" aria-hidden="true"></i></div>
             </div>
-            <div id="display_milestones" class="map_milesawardscontent">
-              <div id="milestone_1" class="milestone milestone_1"><div id="milestone_label_1" class="milestone_label">NA</div></div>
-              <div id="milestone_2" class="milestone milestone_2"><div id="milestone_label_2" class="milestone_label">NA</div></div>
-              <div id="milestone_3" class="milestone milestone_3"><div id="milestone_label_3" class="milestone_label">NA</div></div>
-              <div id="milestone_4" class="milestone milestone_4"><div id="milestone_label_4" class="milestone_label">NA</div></div>
-              <div id="milestone_5" class="milestone milestone_5"><div id="milestone_label_5" class="milestone_label">NA</div></div>
+            <div id="display_milestones" class="mileaw_display display_milestones">
             </div>
           </div>
-          <div id="main_awards">
-            <div class="map_milesawardsheader">
-              <div id="awards_costs" class="milesawardscosts">
+          <div id="main_awards" class="mileaw_main main_awards">
+            <div class="mileaw_header">
+              <div id="awards_costs" class="mileaw_costs">
                 <div id="award_cost_1" class="token_img tracker_m">8</div>
                 <div id="award_cost_2" class="token_img tracker_m">14</div>
                 <div id="award_cost_3" class="token_img tracker_m">20</div>
               </div>
-              <div id="awards_title" class="map_title">Awards</div>
-              <div id="awards_gains" class="milesawardsgains">
+              <div id="awards_title" class="mileaw_title">-Awards-</div>
+              <div id="awards_gains" class="mileaw_gains">
                 <div id="milestone_award_gain_1" class="card_vp">5</div>
                 <div id="milestone_award_gain_2" class="card_vp">2</div>
               </div>
-              <div id="awards_progress" class="milesawardsprogress" ><i class="fa fa-tasks" aria-hidden="true"></i></div>
+              <div id="awards_progress" class="mileaw_progress" ><i class="fa fa-tasks" aria-hidden="true"></i></div>
             </div>
-            <div id="display_awards" class="map_milesawardscontent">
-              <div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>
-              <div id="award_2" class="award award_2"><div id="award_label_2" class="award_label">NA</div></div>
-              <div id="award_3" class="award award_3"><div id="award_label_3" class="award_label">NA</div></div>
-              <div id="award_4" class="award award_4"><div id="award_label_4" class="award_label">NA</div></div>
-              <div id="award_5" class="award award_5"><div id="award_label_5" class="award_label">NA</div></div>
+            <div id="display_awards" class="mileaw_display display_awards">
             </div>
           </div>
         </div>

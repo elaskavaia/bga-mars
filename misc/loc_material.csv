@@ -8,5 +8,5 @@ hand|Hand|hand_area|player|public|private|
 draw|Draw|hand_area|player|hidden|private|
 draft|Draft|hand_area|player|hidden|private|
 tableau|Player Area|tableau_area|player|public|public|
-display_main|Display|main_area|global|public|public|
+display_main|Standard Projects|main_area|global|hidden|public|
 limbo|Limbo||global|hidden|hidden|

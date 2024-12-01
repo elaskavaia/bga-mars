@@ -164,7 +164,6 @@
 
     --stan-width: calc(var(--map-board-with) * 0.155);
     --stan-height: calc(var(--stan-width) * 0.2);
-    --stan-fullheight: calc(var(--stan-width) * 1.604095);
   }
 
 
@@ -220,7 +219,7 @@
     bottom: 7%;
   }
 
-  .map_milesawardsheader {
+  .mileaw_header {
     top: 0%;
     height: 35%;
   }
@@ -239,6 +238,7 @@
     top: 22%;
     width: 62%;
   }
+
   .map_4 #map {
     left: 13.5%;
     top: 9%;
@@ -259,7 +259,8 @@
     top: 0px;
     left: 0px;
   }
-  .map_4  #map_hexes {
+
+  .map_4 #map_hexes {
     left: 4%;
   }
 
@@ -295,6 +296,7 @@
     left: 6%;
     width: calc(var(--map-width) * 0.1);
   }
+
   .map_4 #temperature_map {
     position: absolute;
     top: 8%;
@@ -310,18 +312,18 @@
     left: 7%;
   }
 
-  .map_1  #main_board #standard_projects_area,
-  .map_3  #main_board #standard_projects_area {
+  .map_1 #main_board #standard_projects_area,
+  .map_3 #main_board #standard_projects_area {
     top: 64%;
     left: 79%;
   }
 
-  #main_board #standard_projects_area .display {
-    margin-top: 19%;
+  #main_board #standard_projects_area #display_main {
+    margin-top: 24%;
     display: block;
   }
 
-  .map_2  #main_board #standard_projects_area .display {
+  .map_2 #main_board #standard_projects_area #display_main {
     margin-top: 15%;
   }
 
@@ -337,28 +339,28 @@
     top: unset !important;
     display: block;
     position: relative;
-    margin-bottom: 0.2em;
   }
 
   .map_4 {
     #standard_projects_area {
-      background-position: 0 calc(var(--stan-fullheight) * -0.11);
-      background-size: auto calc(var(--stan-fullheight) * 0.98);;
+      background-position: 0 calc(var(--stan-height) * 7 * -0.11);
+      background-size: auto calc(var(--stan-height) * 7 * 0.98);
     }
-    #standard_projects_area .display {
+
+    #standard_projects_area #display_main {
       background-color: unset;
       border-radius: 5%;
       padding: unset;
     }
+
     .stanp_decor {
       display: unset;
     }
-  
+
   }
 
   #main_board {
-    .milestone,
-    .award {
+    .mileaw_item {
       position: relative;
       background: none;
       width: 20%;
@@ -366,19 +368,14 @@
     }
   }
 
-  #milestones_costs,
-  #milestones_title,
-  #milestones_gains,
-  #awards_costs,
-  #awards_title,
-  #awards_gains,
-  .award_label,
-  .milestone_label {
+  .mileaw_costs,
+  .mileaw_title,
+  .mileaw_gains,
+  .mileaw_label {
     display: none;
   }
 
-  #main_awards,
-  #main_milestones {
+  .mileaw_main {
     padding: 0;
     border: none;
     width: 44%;
@@ -394,7 +391,11 @@
 
   }
 
-  .map_milesawardscontent {
+  #main_awards {
+    left: 6%;
+  }
+
+  .mileaw_display {
     position: relative;
     top: unset;
     left: unset;
@@ -480,6 +481,7 @@
     top: 23%;
     left: 82%;
   }
+
   .map_4 .hex_phobos {
     top: 14%;
     left: 8%;
@@ -495,7 +497,7 @@
     left: 83%;
   }
 
-  .map_4  .hex_ganymede {
+  .map_4 .hex_ganymede {
     left: 5.5%;
     top: 80.5%;
   }
@@ -578,13 +580,13 @@
       background-image: url(img/full/vastitas.jpg);
     }
   }
-  
+
   .map_4 {
     #main_board::before {
       background-image: url(img/full/amazonis.jpg);
     }
 
-    
+
   }
 
 

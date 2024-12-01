@@ -359,6 +359,7 @@ final class GameTest extends TestCase {
     }
 
     function assertMilestone(int $num, string $name, int $value = 1, string $color = PCOLOR) {
+        $this->game->clean_cache();
         $token = "milestone_$num";
         $this->assertEquals($name, $this->game->getTokenName($token));
         $expr = $this->game->getRulesFor($token, 'r');
@@ -366,6 +367,7 @@ final class GameTest extends TestCase {
         $this->assertEquals($value, $res);
     }
     function assertAward(int $num, string $name, int $value = 1, string $color = PCOLOR) {
+        $this->game->clean_cache();
         $token = "award_$num";
         $this->assertEquals($name, $this->game->getTokenName($token));
         $expr = $this->game->getRulesFor($token, 'r');
@@ -581,6 +583,42 @@ final class GameTest extends TestCase {
         $this->assertOperationTargetStatus("claim", "milestone_5", MA_OK);
     }
 
+
+    public function testMilestone_Amazonis2_Landshaper() {
+        $game = $this->game(4);
+        $color = PCOLOR;
+        //2|LANDSHAPER|7|landshaper|8|Requires that you own 1 greenery tile, 1 special tile, and 1 city tile (do not need to be adjacent to each other)|3
+        $game->tokens->moveToken('tile_67', 'hex_4_2', 1);
+        $game->tokens->moveToken('tile_44', 'hex_5_2', 1);
+        $this->assertMilestone(2, "LANDSHAPER", 1);
+        $game->tokens->moveToken('tile_8', 'hex_5_5', 1);
+        $this->assertMilestone(2, "LANDSHAPER", 2);
+    }
+    public function testAward_Amazonis1_Collector() {
+        $game = $this->game(4);
+        $color = PCOLOR;
+
+        $fish = $game->mtFind('name', 'Fish');
+        $game->effect_playCard($color, $fish);
+        $num = 5;
+        for ($i = 0; $i < $num; $i++) {
+            $game->dbSetTokenLocation("resource_{$color}_$i", $fish, 1); // add a fish
+        }
+        $this->assertEquals(1, $this->game->getCountOfUniqueTypesOfResources($color));
+        $this->assertAward(1, "Collector", 1);
+        $this->game->setTrackerValue(PCOLOR, 'm', 20);
+        $this->assertEquals(2, $this->game->getCountOfUniqueTypesOfResources($color));
+    }
+
+    public function test_getTerraformingProgression_Amazonis() {
+        $game = $this->game(4);
+
+        $game->tokens->setTokenState('tracker_o', 18);
+        $game->tokens->setTokenState('tracker_t', 14);
+        $game->tokens->setTokenState('tracker_w', 11); // max oceans
+        $this->assertEquals(100, $this->game->getTerraformingProgression());
+    }
+
     public function testVolcanic() {
         $game = $this->game(3);
         $color = PCOLOR;
@@ -588,7 +626,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $game->getRulesFor($volc, 'vol'));
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
         $this->assertOperationTargetStatus("city(vol)", "hex_4_1", MA_ERR_NOTRESERVED);
-        
+
 
         $game->effect_placeTile($color, 'tile_2_2', 'hex_4_1');
         $this->assertEquals(1, $this->game->getCountOfGeologistTiles($color));
@@ -630,7 +668,7 @@ final class GameTest extends TestCase {
             for ($i = 0; $i < 100; $i++) {
                 $places = $game->getSoloMapPlacements();
                 $all = array_merge($places['city'], $places['forest']);
-                $this->assertEquals(4, count($all), "map $map: ".toJson($all));
+                $this->assertEquals(4, count($all), "map $map: " . toJson($all));
                 foreach ($all as $hex) {
                     $this->assertEquals(0, $game->getRulesFor($hex, 'ocean', 0));
                     $this->assertEquals(0, $game->getRulesFor($hex, 'reserved', 0));
@@ -648,8 +686,7 @@ final class GameTest extends TestCase {
         for ($map = 0; $map <= 3; $map++) {
             $game = $this->game($map);
             $game->setupSoloMap();
-            $this->assertEquals(2,$game->getCountOfCitiesOnMars('ffffff'));
-      
+            $this->assertEquals(2, $game->getCountOfCitiesOnMars('ffffff'));
         }
     }
 
@@ -1135,13 +1172,13 @@ final class GameTest extends TestCase {
 
 
         $card = $game->mtFindByName('Hired Raiders');
-        $optype = $game->getRulesFor($card,'r');
+        $optype = $game->getRulesFor($card, 'r');
         $op = $game->getOperationInstanceFromType($optype, PCOLOR);
-  
+
 
         $this->subTestOperationIntegrity($op);
         $args = $op->arg();
-     
+
         $this->assertFalse($op->noValidTargets());
         $this->assertFalse($op->isVoid());
         $this->assertFalse($op->canResolveAutomatically());
@@ -1156,7 +1193,7 @@ final class GameTest extends TestCase {
 
 
         $top = $this->dispatchOneStep($game, true);
-        $this->assertEquals(2, count($top)); 
+        $this->assertEquals(2, count($top));
     }
 
     public function testDraft() {

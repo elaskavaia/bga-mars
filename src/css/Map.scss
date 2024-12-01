@@ -4,8 +4,6 @@
 
   --stan-width: calc(var(--localsetting_mapsize)*0.145vh);
   --stan-height: calc(var(--stan-width)*0.2);
-  --stan-fullheight: calc(var(--stan-width)*1.604095);
-
   --hex-width: calc(var(--map-width) * 0.109);
 }
 
@@ -13,7 +11,6 @@
   // standard projects are not on the map
   --stan-width: calc(var(--localsetting_cardsize)*0.15vh);
   --stan-height: calc(var(--stan-width)*0.2);
-  --stan-fullheight: calc(var(--stan-width)*1.604095);
 }
 
 // //   // DEBUG hex
@@ -282,8 +279,7 @@
 
 
 
-#main_awards,
-#main_milestones {
+.mileaw_main {
   width: 50%;
   display: inline-flex;
   flex-direction: column;
@@ -305,7 +301,7 @@
   left: 50%;
 }
 
-.map_milesawardscontent {
+.mileaw_display {
   display: flex;
   flex-wrap: wrap;
   height: 62%;
@@ -313,8 +309,7 @@
   position: relative;
 }
 
-.milestone,
-.award {
+.mileaw_item {
   width: calc(var(--map-width) * 0.138);
   height: calc(var(--map-width) * 0.08);
   background-image: url("img/milestones_awards.png");
@@ -322,18 +317,15 @@
   position: relative;
 }
 
-.map_1 .milestone,
-.map_1 .award {
+.map_1 .mileaw_item {
   background-image: url("img/maps/elysium_awards.png");
 }
 
-.map_2 .milestone,
-.map_2 .award {
+.map_2  .mileaw_item {
   background-image: url("img/maps/hellas_awards.png");
 }
 
-.map_3 .milestone,
-.map_3 .award {
+.map_3 .mileaw_item {
   background-image: url("img/maps/vastitas_awards.png");
 }
 
@@ -415,14 +407,14 @@
 
 
 
-.map_milesawardsheader {
+.mileaw_header {
   display: flex;
   justify-content: space-evenly;
   position: relative;
   top: 7%;
 
 
-  .milesawardsgains {
+  .mileaw_gains {
     width: 25%;
     display: flex;
     justify-content: flex-start;
@@ -437,7 +429,7 @@
     }
   }
 
-  .milesawardscosts {
+  .mileaw_costs {
     width: 25%;
     display: flex;
     justify-content: flex-end;
@@ -456,7 +448,7 @@
     }
   }
 
-  .milesawardsprogress {
+  .mileaw_progress {
     position: absolute;
     width: calc(var(--map-width) * 0.04);
     height: calc(var(--map-width) * 0.03);
@@ -471,7 +463,7 @@
     z-index: 30;
   }
 
-  .milesawardsprogress:hover {
+  .mileaw_progress:hover {
     outline-style: outset;
     outline-color: gray;
     outline-width: 2px;
@@ -482,12 +474,12 @@
   }
 }
 
-.map_4 .map_milesawardsheader .milesawardsprogress {
+.map_4 .mileaw_header .mileaw_progress {
   top: 80%;
 }
 
 
-.map_title {
+.mileaw_title {
   /*background-color: #EE6F10;
 
   border: 0.4vh solid #938989;
@@ -782,7 +774,7 @@
 /*standard projects*/
 #standard_projects_area {
   width: calc(var(--stan-width));
-  height: var(--stan-fullheight);
+
   background-image: url("img/stanproj_hold.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -798,11 +790,9 @@
 #display_main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  /* background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
-  border:calc(var(--stan-width) * 0.01) solid #938989;*/
+  justify-content: flex-start;
   width: var(--stan-width);
-  height: var(--stan-fullheight);
+  height: calc(var(--stan-height)*7);
 }
 
 .standard_projects_title {
@@ -841,10 +831,6 @@
 }
 
 .card .standard_projects_title {
-  /*
-  background: gold;
-  */
-
   position: absolute;
   top: 22%;
   right: 1%;
@@ -853,13 +839,11 @@
   justify-content: center;
   white-space: nowrap;
   overflow: hidden;
-  /*
-  border-radius: calc(var(--stan-width) * 0.08);
-  padding: calc(var(--stan-width) * 0.01) calc(var(--stan-width) * 0.03);
-  border: calc(var(--stan-width) * 0.01) solid black;
-  */
 }
 
+.map_4 .card .standard_projects_title {
+  right: 8%;
+}
 
 
 #standard_projects_title_zone {

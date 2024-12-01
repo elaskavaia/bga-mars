@@ -3930,14 +3930,12 @@
   --map-height: calc(var(--map-width)*0.92);
   --stan-width: calc(var(--localsetting_mapsize)*0.145vh);
   --stan-height: calc(var(--stan-width)*0.2);
-  --stan-fullheight: calc(var(--stan-width)*1.604095);
   --hex-width: calc(var(--map-width) * 0.109);
 }
 
 .map_4 #ebd-body {
   --stan-width: calc(var(--localsetting_cardsize)*0.15vh);
   --stan-height: calc(var(--stan-width)*0.2);
-  --stan-fullheight: calc(var(--stan-width)*1.604095);
 }
 
 #main_board {
@@ -5120,8 +5118,7 @@
   left: 30%;
 }
 
-#main_awards,
-#main_milestones {
+.mileaw_main {
   width: 50%;
   display: inline-flex;
   flex-direction: column;
@@ -5132,8 +5129,7 @@
   background-size: cover;
   bottom: 0%;
 }
-#main_awards .marker,
-#main_milestones .marker {
+.mileaw_main .marker {
   top: 5%;
   left: 35%;
 }
@@ -5142,7 +5138,7 @@
   left: 50%;
 }
 
-.map_milesawardscontent {
+.mileaw_display {
   display: flex;
   flex-wrap: wrap;
   height: 62%;
@@ -5150,8 +5146,7 @@
   position: relative;
 }
 
-.milestone,
-.award {
+.mileaw_item {
   width: calc(var(--map-width) * 0.138);
   height: calc(var(--map-width) * 0.08);
   background-image: url("img/milestones_awards.png");
@@ -5159,18 +5154,15 @@
   position: relative;
 }
 
-.map_1 .milestone,
-.map_1 .award {
+.map_1 .mileaw_item {
   background-image: url("img/maps/elysium_awards.png");
 }
 
-.map_2 .milestone,
-.map_2 .award {
+.map_2 .mileaw_item {
   background-image: url("img/maps/hellas_awards.png");
 }
 
-.map_3 .milestone,
-.map_3 .award {
+.map_3 .mileaw_item {
   background-image: url("img/maps/vastitas_awards.png");
 }
 
@@ -5244,40 +5236,40 @@
   font-size: calc(var(--map-width) * 0.027);
 }
 
-.map_milesawardsheader {
+.mileaw_header {
   display: flex;
   justify-content: space-evenly;
   position: relative;
   top: 7%;
 }
-.map_milesawardsheader .milesawardsgains {
+.mileaw_header .mileaw_gains {
   width: 25%;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
-.map_milesawardsheader .milesawardsgains .card_vp {
+.mileaw_header .mileaw_gains .card_vp {
   position: relative;
   margin-left: 5%;
   width: calc(var(--map-width) * 0.04);
   height: calc(var(--map-width) * 0.04);
 }
-.map_milesawardsheader .milesawardscosts {
+.mileaw_header .mileaw_costs {
   width: 25%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
-.map_milesawardsheader .milesawardscosts .token_img {
+.mileaw_header .mileaw_costs .token_img {
   position: relative;
   --resourcesize: calc(var(--map-width) * 0.03);
   margin-right: 5%;
   font-weight: normal;
 }
-.map_milesawardsheader .milesawardscosts .token_img[data-striked="1"] {
+.mileaw_header .mileaw_costs .token_img[data-striked="1"] {
   filter: grayscale(1) opacity(0.7);
 }
-.map_milesawardsheader .milesawardsprogress {
+.mileaw_header .mileaw_progress {
   position: absolute;
   width: calc(var(--map-width) * 0.04);
   height: calc(var(--map-width) * 0.03);
@@ -5290,20 +5282,20 @@
   cursor: help;
   z-index: 30;
 }
-.map_milesawardsheader .milesawardsprogress:hover {
+.mileaw_header .mileaw_progress:hover {
   outline-style: outset;
   outline-color: gray;
   outline-width: 2px;
 }
-.map_milesawardsheader #awards_progress {
+.mileaw_header #awards_progress {
   left: 0%;
 }
 
-.map_4 .map_milesawardsheader .milesawardsprogress {
+.map_4 .mileaw_header .mileaw_progress {
   top: 80%;
 }
 
-.map_title {
+.mileaw_title {
   /*background-color: #EE6F10;
 
   border: 0.4vh solid #938989;
@@ -5677,7 +5669,6 @@
 /*standard projects*/
 #standard_projects_area {
   width: calc(var(--stan-width));
-  height: var(--stan-fullheight);
   background-image: url("img/stanproj_hold.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -5693,11 +5684,9 @@
 #display_main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  /* background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
-  border:calc(var(--stan-width) * 0.01) solid #938989;*/
+  justify-content: flex-start;
   width: var(--stan-width);
-  height: var(--stan-fullheight);
+  height: calc(var(--stan-height) * 7);
 }
 
 .standard_projects_title {
@@ -5735,9 +5724,6 @@
 }
 
 .card .standard_projects_title {
-  /*
-  background: gold;
-  */
   position: absolute;
   top: 22%;
   right: 1%;
@@ -5746,11 +5732,10 @@
   justify-content: center;
   white-space: nowrap;
   overflow: hidden;
-  /*
-  border-radius: calc(var(--stan-width) * 0.08);
-  padding: calc(var(--stan-width) * 0.01) calc(var(--stan-width) * 0.03);
-  border: calc(var(--stan-width) * 0.01) solid black;
-  */
+}
+
+.map_4 .card .standard_projects_title {
+  right: 8%;
 }
 
 #standard_projects_title_zone {
@@ -7597,7 +7582,13 @@
   border-top: 0.1em solid black;
   text-align: center;
   background-color: #F5E9DB;
-  height: 1.5em;
+  height: 2.5em;
+}
+.scoretable .tm_smalltext {
+  font-size: x-small;
+}
+.scoretable .mileaw_desc {
+  max-width: 20em;
 }
 .scoretable .scorecell[data-position="1"]::after {
   content: "🥇";
@@ -9376,7 +9367,6 @@
   --card-height: calc(var(--card-width) * 1.40658174);
   --stan-width: calc(var(--map-board-with) * 0.155);
   --stan-height: calc(var(--stan-width) * 0.2);
-  --stan-fullheight: calc(var(--stan-width) * 1.604095);
 }
 .mfull .card_effect {
   font-size: calc(var(--card-width) * 0.1);
@@ -9416,7 +9406,7 @@
 .mfull .map_2 #map_bottom {
   bottom: 7%;
 }
-.mfull .map_milesawardsheader {
+.mfull .mileaw_header {
   top: 0%;
   height: 35%;
 }
@@ -9501,11 +9491,11 @@
   top: 64%;
   left: 79%;
 }
-.mfull #main_board #standard_projects_area .display {
-  margin-top: 19%;
+.mfull #main_board #standard_projects_area #display_main {
+  margin-top: 24%;
   display: block;
 }
-.mfull .map_2 #main_board #standard_projects_area .display {
+.mfull .map_2 #main_board #standard_projects_area #display_main {
   margin-top: 15%;
 }
 .mfull .stanp_decor {
@@ -9518,13 +9508,12 @@
   top: unset !important;
   display: block;
   position: relative;
-  margin-bottom: 0.2em;
 }
 .mfull .map_4 #standard_projects_area {
-  background-position: 0 calc(var(--stan-fullheight) * -0.11);
-  background-size: auto calc(var(--stan-fullheight) * 0.98);
+  background-position: 0 calc(var(--stan-height) * 7 * -0.11);
+  background-size: auto calc(var(--stan-height) * 7 * 0.98);
 }
-.mfull .map_4 #standard_projects_area .display {
+.mfull .map_4 #standard_projects_area #display_main {
   background-color: unset;
   border-radius: 5%;
   padding: unset;
@@ -9532,25 +9521,19 @@
 .mfull .map_4 .stanp_decor {
   display: unset;
 }
-.mfull #main_board .milestone,
-.mfull #main_board .award {
+.mfull #main_board .mileaw_item {
   position: relative;
   background: none;
   width: 20%;
   height: 100%;
 }
-.mfull #milestones_costs,
-.mfull #milestones_title,
-.mfull #milestones_gains,
-.mfull #awards_costs,
-.mfull #awards_title,
-.mfull #awards_gains,
-.mfull .award_label,
-.mfull .milestone_label {
+.mfull .mileaw_costs,
+.mfull .mileaw_title,
+.mfull .mileaw_gains,
+.mfull .mileaw_label {
   display: none;
 }
-.mfull #main_awards,
-.mfull #main_milestones {
+.mfull .mileaw_main {
   padding: 0;
   border: none;
   width: 44%;
@@ -9558,12 +9541,14 @@
   position: relative;
   left: 6%;
 }
-.mfull #main_awards .marker,
-.mfull #main_milestones .marker {
+.mfull .mileaw_main .marker {
   top: 40%;
   left: 35%;
 }
-.mfull .map_milesawardscontent {
+.mfull #main_awards {
+  left: 6%;
+}
+.mfull .mileaw_display {
   position: relative;
   top: unset;
   left: unset;
@@ -10654,22 +10639,22 @@
   width: calc(var(--map-width) * 0.26);
   height: calc(var(--map-width) * 0.15);
 }
-.mcompact #ebd-body.mobile_portrait #main_awards .map_milesawardsheader, .mcompact #ebd-body.mobile_portrait #main_milestones .map_milesawardsheader {
+.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header {
   top: 10%;
 }
-.mcompact #ebd-body.mobile_portrait #main_awards .map_milesawardsheader .map_title, .mcompact #ebd-body.mobile_portrait #main_milestones .map_milesawardsheader .map_title {
+.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header .mileaw_title, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header .mileaw_title {
   font-size: calc(var(--map-width) * 0.04);
 }
-.mcompact #ebd-body.mobile_portrait #main_awards .map_milesawardsheader .milesawardscosts .token_img, .mcompact #ebd-body.mobile_portrait #main_milestones .map_milesawardsheader .milesawardscosts .token_img {
+.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header .mileaw_costs .token_img, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header .mileaw_costs .token_img {
   --resourcesize: calc(var(--map-width) * 0.06);
   font-size: calc(var(--map-width) * 0.04);
 }
-.mcompact #ebd-body.mobile_portrait #main_awards .map_milesawardsheader .milesawardsgains .card_vp, .mcompact #ebd-body.mobile_portrait #main_milestones .map_milesawardsheader .milesawardsgains .card_vp {
+.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header .mileaw_gains .card_vp, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header .mileaw_gains .card_vp {
   width: calc(var(--map-width) * 0.06);
   height: calc(var(--map-width) * 0.06);
   font-size: calc(var(--map-width) * 0.04);
 }
-.mcompact #ebd-body.mobile_portrait #main_awards .map_milesawardscontent, .mcompact #ebd-body.mobile_portrait #main_milestones .map_milesawardscontent {
+.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_display, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_display {
   justify-content: center;
 }
 .mcompact #ebd-body.mobile_portrait #scoretable {

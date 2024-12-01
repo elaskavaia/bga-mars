@@ -78,21 +78,21 @@
         height: calc(var(--map-width) * 0.15);
       }
 
-      .map_milesawardsheader {
+      .mileaw_header {
         top: 10%;
 
-        .map_title {
+        .mileaw_title {
           font-size: calc(var(--map-width) * 0.04);
         }
 
-        .milesawardscosts {
+        .mileaw_costs {
           .token_img {
             --resourcesize: calc(var(--map-width) * 0.06);
             font-size: calc(var(--map-width) * 0.04);
           }
         }
 
-        .milesawardsgains {
+        .mileaw_gains {
           .card_vp {
             width: calc(var(--map-width) * 0.06);
             height: calc(var(--map-width) * 0.06);
@@ -101,7 +101,7 @@
         }
       }
 
-      .map_milesawardscontent {
+      .mileaw_display {
         justify-content: center;
       }
     }

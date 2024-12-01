@@ -61,6 +61,7 @@ class GameXBody extends GameTokens {
 
       const mapnum = this.getMapNumber();
       this.setupHexes(mapnum);
+      this.setupMilestonesAndAwards(mapnum);
 
       super.setup(gamedatas);
 
@@ -217,6 +218,18 @@ class GameXBody extends GameTokens {
     }
 
     this.checkTerraformingCompletion();
+  }
+
+  setupMilestonesAndAwards(mapnum: number) {
+    const list  = ['milestone','award'];
+    for (const type of list) {
+      const mainnode = $(`display_${type}s`);
+      for (let x = 1; x <= 5; x++) {
+        mainnode.insertAdjacentHTML("beforeend", `<div id="${type}_${x}" class="${type} ${type}_${x} mileaw_item"><div id="${type}_label_${x}" class="${type}_label"></div></div>`);
+      }
+    }
+  //<div id="display_awards" class="mileaw_display">
+  //<div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>
   }
 
   setupHexes(mapnum: number) {
@@ -583,27 +596,27 @@ class GameXBody extends GameTokens {
         msinfo[key] = info;
       }
     }
-    let namesRow = "";
+    let namesColumn = "";
     for (const key in msinfo) {
       const info = msinfo[key];
-      namesRow += `<div class="scorecell ">${_(info.name)}</div>`;
+      namesColumn += `<div class="scorecell ">
+      ${_(info.name)}
+      </div>`;
+
+    }
+    let descColumn = "";
+    for (const key in msinfo) {
+      const info = msinfo[key];
+      descColumn += `<div class="scorecell mileaw_desc"><span class="tm_smalltext">${_(info.text)}</span></div>`;
     }
 
     const progress = callServer ? "Updating..." : "&nbsp;";
-    const tableHtml: string = `
-             <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
-             <div id="scoretable_pg_milestones" class="scoretable">
-                <div class="scoreheader scorecol">
-                      <div class="scorecell header">${_("Milestone")}</div>
-                      ${namesRow}
-                </div>
-                %lines%
-              </div>`;
+
 
     let lines = "";
 
     {
-      // first column to say its claimed or not
+      // Claimed column
       lines += `<div class="scorecol">
       <div class="scorecell header">${_("Claimed")}</div>
       `;
@@ -671,9 +684,21 @@ class GameXBody extends GameTokens {
       }
       lines = lines + "</div>";
     }
-    const finalHtml = tableHtml.replace("%lines%", lines);
-    if ($("popin_pg_dialog_contents")) $("popin_pg_dialog_contents").innerHTML = finalHtml;
-    else this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
+    const finalHtml: string = `
+    <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
+    <div id="scoretable_pg_milestones" class="scoretable">
+       <div class="scoreheader scorecol">
+             <div class="scorecell header">${_("Milestone")}</div>
+             ${namesColumn}
+       </div>
+       <div class="scoreheader scorecol">
+             <div class="scorecell header mileaw_desc">${_("Criteria")}</div>
+             ${descColumn}
+       </div>
+       ${lines}
+     </div>`;
+
+    this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"), true);
   }
   onShowAwardsProgress(callServer: boolean = true) {
     const num = Object.keys(this.gamedatas.players).length;
@@ -704,16 +729,15 @@ class GameXBody extends GameTokens {
       namesRow += `<div id='scoreheader_${key}' class="scorecell">${_(info.name)}</div>`;
     }
 
+    let descColumn = "";
+    for (const key in msinfo) {
+      const info = msinfo[key];
+      descColumn += `<div class="scorecell mileaw_desc"><span class="tm_smalltext">${_(info.text)}</span></div>`;
+    }
+
+
     const progress = callServer ? "Updating..." : "&nbsp;";
-    const tableHtml: string = `
-             <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
-             <div id="scoretable_pg_awards" class="scoretable">
-                <div class="scoreheader scorecol">
-                      <div class="scorecell header">${_("Award")}</div>
-                      ${namesRow}
-                </div>
-                %lines%
-              </div>`;
+
     let lines = "";
 
     {
@@ -780,9 +804,20 @@ class GameXBody extends GameTokens {
       }
       lines += `</div>`;
     }
-    const finalhtm = tableHtml.replace("%lines%", lines);
-    if ($("popin_pg_dialog_contents")) $("popin_pg_dialog_contents").innerHTML = finalhtm;
-    else this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
+    const finalHtml: string = `
+    <div id='scoretable_pg_progress' class="pg_progress">${progress}</div>
+    <div id="scoretable_pg_awards" class="scoretable">
+       <div class="scoreheader scorecol">
+             <div class="scorecell header">${_("Award")}</div>
+             ${namesRow}
+       </div>
+      <div class="scoreheader scorecol">
+             <div class="scorecell header mileaw_desc">${_("Criteria")}</div>
+             ${descColumn}
+       </div>
+       ${lines}
+     </div>`;
+     this.showPopin(finalHtml, "pg_dialog", _("Awards Summary"), true);
   }
 
   getLocalSettingNamespace(extra: string | number = "") {
@@ -1569,7 +1604,7 @@ class GameXBody extends GameTokens {
     if (!vp) vp = displayInfo.vp;
 
     res += this.generateTooltipSection(type_name, card_id);
-    if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD)
+    if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD && type != this.CON.MA_CARD_TYPE_MILESTONE)
       res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
     res += this.generateTooltipSection(_("Tags"), tags);
 
@@ -1584,17 +1619,17 @@ class GameXBody extends GameTokens {
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
     if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
-      const text = _(`If you meet the criteria of a milestone, you may
-claim it by paying 8 M€ and placing your player marker on
-it. A milestone may only be claimed by one player, and only
-3 of the 5 milestones may be claimed in total, so there is a
-race for these! Each claimed milestone is worth 5 VPs at the
-end of the game.`);
-
       res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
+      res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
       res += this.generateTooltipSection(_("Victory Points"), vp);
-      res += this.generateTooltipSection(_("Info"), text);
+      res += this.generateTooltipSection(_("Info"), _(`If you meet the criteria of a milestone, you may
+        claim it by paying 8 M€ and placing your player marker on
+        it. A milestone may only be claimed by one player, and only
+        3 of the 5 milestones may be claimed in total, so there is a
+        race for these! Each claimed milestone is worth 5 VPs at the
+        end of the game.`));
     } else if (type == this.CON.MA_CARD_TYPE_AWARD) {
+      res += this.generateTooltipSection(_("Condition"), _(displayInfo.text));
       res += this.generateTooltipSection(
         _("Cost"),
         _(`The first player to fund an award pays 8 M€ and
@@ -1603,7 +1638,6 @@ award pays 14 M€, the last pays 20 M€.`),
         true,
         "tt_cost"
       );
-      res += this.generateTooltipSection(_("Condition"), _(displayInfo.text));
       const text = _(` Only three awards
 may be funded. Each award can only be funded once.<p>
 In the final scoring, each award is checked, and 5

@@ -1,5 +1,7 @@
 <?php
 
+use PhpParser\Node\Stmt\Continue_;
+
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
@@ -217,6 +219,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->incTrackerValue($botcolor, 'forest');
             $this->incTrackerValue($botcolor, 'land');
         }
+        $this->map = null;
     }
 
     /*
@@ -232,7 +235,8 @@ abstract class PGameXBody extends PGameMachine {
     function getGameProgression() {
         if ($this->isSolo()) {
             $gen = $this->tokens->getTokenState("tracker_gen");
-            return 100 / 15 * $gen;
+            $max = $this->getLastGeneration() + 1;
+            return 100 / $max * $gen;
         }
         return $this->getTerraformingProgression();
     }
@@ -241,7 +245,10 @@ abstract class PGameXBody extends PGameMachine {
         $oxigen = $this->tokens->getTokenState("tracker_o");
         $oceans = $this->tokens->getTokenState("tracker_w");
         $temp = $this->tokens->getTokenState("tracker_t");
-        return (100 * ($oxigen / 14 + $oceans / 9 + ($temp + 30) / 38)) / 3;
+        $max_oceans = $this->getRulesFor('tracker_w', 'max');
+        $max_oxigen = $this->getRulesFor('tracker_o', 'max');
+        $max_temp = $this->getRulesFor('tracker_t', 'max');
+        return (100 * ($oxigen / $max_oxigen + $oceans / $max_oceans + ($temp + 30) / ($max_temp + 30))) / 3;
     }
 
     function isCorporateEraVariant() {
@@ -879,16 +886,15 @@ abstract class PGameXBody extends PGameMachine {
                 return $this->getCountOfCitiesOnMars(null);
 
             case  'uniquetags':
-                //1|DIVERSIFIER|7||8|(uniquetags>=8)|Requires that you have 8 different tags in play|
                 return $this->getCountOfUniqueTags("$owner");
 
             case  'cardreq':
-                // 2|TACTICIAN|7||8|(cardreq>=5)|Requires that you have 5 cards with requirements in play|
                 return $this->getCountOfCardsWithPre("$owner");
             case  'card_green':
                 return $this->getCountOfCardsGreen("$owner");
+            case  'card_blue':
+                return $this->getCountOfCardsBlue("$owner");
             case 'polartiles':
-                // 3|POLAR EXPLORER|7||8|(polartiles>=5)|Requires that you have 3 tiles on the two bottom rows|
                 return $this->getCountOfPolarTiles("$owner");
 
             case  'resCard':
@@ -929,6 +935,15 @@ abstract class PGameXBody extends PGameMachine {
                 return $this->getCountOfHighlanderTiles($owner);
             case 'landscaper':
                 return $this->getCountOfLandscapeTiles($owner);
+            case 'collector':
+                return $this->getCountOfUniqueTypesOfResources($owner);
+            case 'landshaper':
+                return $this->getCountOfUniqueTileTypes($owner);
+            case 'minstanres':
+                return $this->getMinOfStanardResources($owner);
+            case 'delegates':
+                return 0; // Turnoild expantion
+                
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -1466,7 +1481,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($gen >= $maxgen) {
                 return true;
             } else {
-                return false; // game ends after gen 14 even terraforming is complete before
+                return false; // game ends after generation X even terraforming is complete before
             }
         }
         return $this->getTerraformingProgression() >= 100;
@@ -1475,6 +1490,7 @@ abstract class PGameXBody extends PGameMachine {
     function getLastGeneration() {
         $maxgen = $this->getRulesFor('solo', 'gen');
         if ($this->isPreludeVariant()) $maxgen -= 2; // Prelude sole ends with 12 generations not 14
+        if ($this->getMapNumber()==4 && $this->getGameStateValue('var_solo_flavour') == 0) $maxgen +=2; // This map is not design for solo mode really
         return $maxgen;
     }
 
@@ -2388,6 +2404,26 @@ abstract class PGameXBody extends PGameMachine {
         return $max;
     }
 
+    function getCountOfUniqueTileTypes(string $owner) {
+        $map = $this->getPlanetMap();
+        $types = [];
+        foreach ($map as $hex => $info) {
+            $hexowner = array_get($info, 'owner', '');
+            if (!$hexowner) continue;
+            if ($owner && $hexowner !== $owner)
+                continue;
+            $tile = $info['tile'] ?? null;
+            if (!$tile) continue;
+
+            $tt = $this->getRulesFor($tile, 'tt');
+            if ($tt == MA_TILE_OCEAN) continue;
+            if ($tt == MA_TILE_MINING) $tt = MA_TILE_SPECIAL;
+            $types[$tt] = 1;
+            if (count($types) >= 3) break;
+        }
+        return count($types);
+    }
+
 
     function getCountOfGeologistTiles($owner) {
         //  Requires that you have 3 tiles on, or adjacent to, volcanic areas
@@ -2470,6 +2506,37 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->tokens->getTokenState($tracker) > 0) $count++;
         }
         return $count;
+    }
+
+    function getMinOfStanardResources($owner) {
+        $stanres = ['m', 's', 'u', 'p', 'e', 'h'];
+        $map = [];
+        foreach ($stanres as $p) {
+            $trackerId = $this->getTrackerId($owner, $p);
+            $value = (int) $this->tokens->getTokenState($trackerId);
+            $map[$p] = $value;
+        }
+
+        return min($map);
+    }
+
+    function getCountOfUniqueTypesOfResources($owner) {
+        $stanres = ['m', 's', 'u', 'p', 'e', 'h'];
+        $count = 0;
+        foreach ($stanres as $p) {
+            $trackerId = $this->getTrackerId($owner, $p);
+            $value = (int) $this->tokens->getTokenState($trackerId);
+            if ($value > 0) $count++;
+        }
+
+        $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%", 1);
+        $map = [];
+        foreach ($res as $resinfo) {
+            $card = $resinfo['location'];
+            $holds = $this->getRulesFor($card, 'holds', '');
+            $map[$holds] = 1;
+        }
+        return $count + count($map);
     }
 
     function getGeneralistCount($owner) {

@@ -117,3 +117,29 @@ num|name|t|r|cost|text|min|php
 3|Highlander|8|highlander|20|Owning most tiles not adjacent to ocean.
 4|Promoter|8|tagEvent|20|Having most event cards played.
 5|Blacksmith|8|ps+pu|20|Having highest production of steel and titanium combined.
+
+
+#Milestones Amazonis
+#set id=milestone_{num}@m4
+#set php='vp'=>5
+#set location=display_milestones
+#set count=1
+#set create=1
+#set pre=({r}>={min})
+1|TERRAN|7|tagEarth|8|Requires that you have  5 Earth tags|5
+2|LANDSHAPER|7|landshaper|8|Requires that you own 1 greenery tile, 1 special tile, and 1 city tile|3
+3|MERCHANT|7|minstanres|8|Requires that you have 3 of each standard resource|3
+4|SPONSOR|7|celebrity|8|Requires that you have 3 cards in play costing 20 M€ or more|3
+5|LOBBYIST|7|delegates|8|Requires that you have all 7 delegates in play. Requires Turmoil expansion.|7
+
+#Awards Amazonis
+#set id=award_{num}@m4
+#set php=
+#set location=display_awards
+#set count=1
+#set create=1
+1|Collector|8|collector|20|Having most types of resources, both on player board and cards (e.g. different kinds of microbes only count as 1 type of resource).
+2|Innovator|8|tagEvent+tycoon|20|Having most played cards (event cards also count!).
+3|Constructor|8|city|20|Owning most colonies and city tiles.
+4|Manufacturer|8|ps+ph|20|Having most steel production and heat production combined.
+5|Physicist|8|tagScience+tagSpace|20|Having most science and space tags.

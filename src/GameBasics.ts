@@ -1030,7 +1030,13 @@ class GameBasics extends GameGui {
   }
 
   /** Show pop in dialog. If you need div id of dialog its `popin_${id}` where id is second parameter here */
-  showPopin(html: string, id = "mr_dialog", title: string = undefined) {
+  showPopin(html: string, id = "mr_dialog", title: string = undefined, refresh: boolean = false) {
+    const content_id = `popin_${id}_contents`;
+    if (refresh && $(content_id)) {
+      $(content_id).innerHTML = html;
+      return undefined;
+    }
+    
     const dialog = new ebg.popindialog();
     dialog.create(id);
     if (title) dialog.setTitle(title);

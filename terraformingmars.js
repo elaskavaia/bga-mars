@@ -904,9 +904,15 @@ var GameBasics = /** @class */ (function (_super) {
         this.showPopin(html, "log_info", "Game Info for bug report");
     };
     /** Show pop in dialog. If you need div id of dialog its `popin_${id}` where id is second parameter here */
-    GameBasics.prototype.showPopin = function (html, id, title) {
+    GameBasics.prototype.showPopin = function (html, id, title, refresh) {
         if (id === void 0) { id = "mr_dialog"; }
         if (title === void 0) { title = undefined; }
+        if (refresh === void 0) { refresh = false; }
+        var content_id = "popin_".concat(id, "_contents");
+        if (refresh && $(content_id)) {
+            $(content_id).innerHTML = html;
+            return undefined;
+        }
         var dialog = new ebg.popindialog();
         dialog.create(id);
         if (title)
@@ -3693,6 +3699,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.setupLocalSettings();
             var mapnum = this.getMapNumber();
             this.setupHexes(mapnum);
+            this.setupMilestonesAndAwards(mapnum);
             _super.prototype.setup.call(this, gamedatas);
             if (mapnum == 4) {
                 $("hand_area").appendChild($("standard_projects_area"));
@@ -3816,6 +3823,18 @@ var GameXBody = /** @class */ (function (_super) {
             this.isDoingSetup = false;
         }
         this.checkTerraformingCompletion();
+    };
+    GameXBody.prototype.setupMilestonesAndAwards = function (mapnum) {
+        var list = ['milestone', 'award'];
+        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+            var type = list_1[_i];
+            var mainnode = $("display_".concat(type, "s"));
+            for (var x = 1; x <= 5; x++) {
+                mainnode.insertAdjacentHTML("beforeend", "<div id=\"".concat(type, "_").concat(x, "\" class=\"").concat(type, " ").concat(type, "_").concat(x, " mileaw_item\"><div id=\"").concat(type, "_label_").concat(x, "\" class=\"").concat(type, "_label\"></div></div>"));
+            }
+        }
+        //<div id="display_awards" class="mileaw_display">
+        //<div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>
     };
     GameXBody.prototype.setupHexes = function (mapnum) {
         var _this = this;
@@ -4132,16 +4151,20 @@ var GameXBody = /** @class */ (function (_super) {
                 msinfo[key] = info;
             }
         }
-        var namesRow = "";
+        var namesColumn = "";
         for (var key in msinfo) {
             var info = msinfo[key];
-            namesRow += "<div class=\"scorecell \">".concat(_(info.name), "</div>");
+            namesColumn += "<div class=\"scorecell \">\n      ".concat(_(info.name), "\n      </div>");
+        }
+        var descColumn = "";
+        for (var key in msinfo) {
+            var info = msinfo[key];
+            descColumn += "<div class=\"scorecell mileaw_desc\"><span class=\"tm_smalltext\">".concat(_(info.text), "</span></div>");
         }
         var progress = callServer ? "Updating..." : "&nbsp;";
-        var tableHtml = "\n             <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n             <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">").concat(_("Milestone"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         {
-            // first column to say its claimed or not
+            // Claimed column
             lines += "<div class=\"scorecol\">\n      <div class=\"scorecell header\">".concat(_("Claimed"), "</div>\n      ");
             var firstPlayerId = parseInt(Object.keys(this.gamedatas.players)[0]);
             var progress_1 = this.cachedProgressTable[firstPlayerId];
@@ -4187,11 +4210,8 @@ var GameXBody = /** @class */ (function (_super) {
             }
             lines = lines + "</div>";
         }
-        var finalHtml = tableHtml.replace("%lines%", lines);
-        if ($("popin_pg_dialog_contents"))
-            $("popin_pg_dialog_contents").innerHTML = finalHtml;
-        else
-            this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"));
+        var finalHtml = "\n    <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n    <div id=\"scoretable_pg_milestones\" class=\"scoretable\">\n       <div class=\"scoreheader scorecol\">\n             <div class=\"scorecell header\">").concat(_("Milestone"), "</div>\n             ").concat(namesColumn, "\n       </div>\n       <div class=\"scoreheader scorecol\">\n             <div class=\"scorecell header mileaw_desc\">").concat(_("Criteria"), "</div>\n             ").concat(descColumn, "\n       </div>\n       ").concat(lines, "\n     </div>");
+        this.showPopin(finalHtml, "pg_dialog", _("Milestones Summary"), true);
     };
     GameXBody.prototype.onShowAwardsProgress = function (callServer) {
         var _this = this;
@@ -4221,8 +4241,12 @@ var GameXBody = /** @class */ (function (_super) {
             var info = msinfo[key];
             namesRow += "<div id='scoreheader_".concat(key, "' class=\"scorecell\">").concat(_(info.name), "</div>");
         }
+        var descColumn = "";
+        for (var key in msinfo) {
+            var info = msinfo[key];
+            descColumn += "<div class=\"scorecell mileaw_desc\"><span class=\"tm_smalltext\">".concat(_(info.text), "</span></div>");
+        }
         var progress = callServer ? "Updating..." : "&nbsp;";
-        var tableHtml = "\n             <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n             <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n                <div class=\"scoreheader scorecol\">\n                      <div class=\"scorecell header\">").concat(_("Award"), "</div>\n                      ").concat(namesRow, "\n                </div>\n                %lines%\n              </div>");
         var lines = "";
         {
             // first column to say its claimed or not
@@ -4267,11 +4291,8 @@ var GameXBody = /** @class */ (function (_super) {
             }
             lines += "</div>";
         }
-        var finalhtm = tableHtml.replace("%lines%", lines);
-        if ($("popin_pg_dialog_contents"))
-            $("popin_pg_dialog_contents").innerHTML = finalhtm;
-        else
-            this.showPopin(finalhtm, "pg_dialog", _("Awards Summary"));
+        var finalHtml = "\n    <div id='scoretable_pg_progress' class=\"pg_progress\">".concat(progress, "</div>\n    <div id=\"scoretable_pg_awards\" class=\"scoretable\">\n       <div class=\"scoreheader scorecol\">\n             <div class=\"scorecell header\">").concat(_("Award"), "</div>\n             ").concat(namesRow, "\n       </div>\n      <div class=\"scoreheader scorecol\">\n             <div class=\"scorecell header mileaw_desc\">").concat(_("Criteria"), "</div>\n             ").concat(descColumn, "\n       </div>\n       ").concat(lines, "\n     </div>");
+        this.showPopin(finalHtml, "pg_dialog", _("Awards Summary"), true);
     };
     GameXBody.prototype.getLocalSettingNamespace = function (extra) {
         if (extra === void 0) { extra = ""; }
@@ -4938,7 +4959,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (!vp)
             vp = displayInfo.vp;
         res += this.generateTooltipSection(type_name, card_id);
-        if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD)
+        if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD && type != this.CON.MA_CARD_TYPE_MILESTONE)
             res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
         res += this.generateTooltipSection(_("Tags"), tags);
         var prereqText = "";
@@ -4950,14 +4971,14 @@ var GameXBody = /** @class */ (function (_super) {
             prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
         if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
-            var text = _("If you meet the criteria of a milestone, you may\nclaim it by paying 8 M\u20AC and placing your player marker on\nit. A milestone may only be claimed by one player, and only\n3 of the 5 milestones may be claimed in total, so there is a\nrace for these! Each claimed milestone is worth 5 VPs at the\nend of the game.");
             res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
+            res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
             res += this.generateTooltipSection(_("Victory Points"), vp);
-            res += this.generateTooltipSection(_("Info"), text);
+            res += this.generateTooltipSection(_("Info"), _("If you meet the criteria of a milestone, you may\n        claim it by paying 8 M\u20AC and placing your player marker on\n        it. A milestone may only be claimed by one player, and only\n        3 of the 5 milestones may be claimed in total, so there is a\n        race for these! Each claimed milestone is worth 5 VPs at the\n        end of the game."));
         }
         else if (type == this.CON.MA_CARD_TYPE_AWARD) {
-            res += this.generateTooltipSection(_("Cost"), _("The first player to fund an award pays 8 M\u20AC and\nplaces a player marker on it. The next player to fund an\naward pays 14 M\u20AC, the last pays 20 M\u20AC."), true, "tt_cost");
             res += this.generateTooltipSection(_("Condition"), _(displayInfo.text));
+            res += this.generateTooltipSection(_("Cost"), _("The first player to fund an award pays 8 M\u20AC and\nplaces a player marker on it. The next player to fund an\naward pays 14 M\u20AC, the last pays 20 M\u20AC."), true, "tt_cost");
             var text = _(" Only three awards\nmay be funded. Each award can only be funded once.<p>\nIn the final scoring, each award is checked, and 5\nVPs are awarded to the player who wins that category - it\ndoes not matter who funded the award! The second place\ngets 2 VPs (except in a 2-player game where second place\ndoes not give any VPs). Ties are friendly: more than one\nplayer may get the first or second place bonus.\nIf more than one player gets 1st place bonus, no 2nd place is\nawarded.");
             res += this.generateTooltipSection(_("Info"), text);
         }

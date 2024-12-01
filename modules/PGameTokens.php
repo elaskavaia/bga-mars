@@ -334,6 +334,7 @@ abstract class PGameTokens extends PGameBasic {
             $place_id = $place_from;
         }
         $this->tokens->moveToken($token_id, $place_id, $state);
+        
         $notifyArgs = [
             "token_id" => $token_id,
             "place_id" => $place_id,

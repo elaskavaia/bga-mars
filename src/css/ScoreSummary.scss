@@ -34,7 +34,15 @@
     border-top: 0.1em solid black;
     text-align: center;
     background-color: #F5E9DB;
-    height: 1.5em;
+    height: 2.5em;
+  }
+
+  .tm_smalltext {
+    font-size: x-small;
+  }
+
+  .mileaw_desc {
+    max-width: 20em;
   }
 
   .scorecell[data-position="1"]::after {
