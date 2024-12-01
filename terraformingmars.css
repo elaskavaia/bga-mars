@@ -3934,6 +3934,12 @@
   --hex-width: calc(var(--map-width) * 0.109);
 }
 
+.map_4 #ebd-body {
+  --stan-width: calc(var(--localsetting_cardsize)*0.15vh);
+  --stan-height: calc(var(--stan-width)*0.2);
+  --stan-fullheight: calc(var(--stan-width)*1.604095);
+}
+
 #main_board {
   display: block;
   order: 1;
@@ -3959,10 +3965,10 @@
 
 #map_hexes {
   position: absolute;
-  width: 98.1%;
-  height: 97.8%;
-  top: 1.7%;
-  left: 0.75%;
+  width: 96%;
+  height: 94%;
+  top: 2.5%;
+  left: 1.5%;
 }
 
 #map {
@@ -4005,609 +4011,974 @@
   position: absolute;
 }
 
-.map_hexes #hex_1_1 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_1_1 {
+  left: 0%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_1_2 {
+  left: 0%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_1_3 {
+  left: 0%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_1_4 {
+  left: 0%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_1_5 {
+  left: 0%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_1_6 {
+  left: 0%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_1_7 {
+  left: 0%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_1_8 {
+  left: 0%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_1_9 {
+  left: 0%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_1_10 {
+  left: 0%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_1_11 {
+  left: 0%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_2_1 {
+  left: 11.1%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_2_2 {
+  left: 11.1%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_2_3 {
+  left: 11.1%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_2_4 {
+  left: 11.1%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_2_5 {
+  left: 11.1%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_2_6 {
+  left: 11.1%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_2_7 {
+  left: 11.1%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_2_8 {
+  left: 11.1%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_2_9 {
+  left: 11.1%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_2_10 {
+  left: 11.1%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_2_11 {
+  left: 11.1%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_3_1 {
+  left: 22.2%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_3_2 {
+  left: 22.2%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_3_3 {
+  left: 22.2%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_3_4 {
+  left: 22.2%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_3_5 {
+  left: 22.2%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_3_6 {
+  left: 22.2%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_3_7 {
+  left: 22.2%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_3_8 {
+  left: 22.2%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_3_9 {
+  left: 22.2%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_3_10 {
+  left: 22.2%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_3_11 {
+  left: 22.2%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_4_1 {
+  left: 33.3%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_4_2 {
+  left: 33.3%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_4_3 {
+  left: 33.3%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_4_4 {
+  left: 33.3%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_4_5 {
+  left: 33.3%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_4_6 {
+  left: 33.3%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_4_7 {
+  left: 33.3%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_4_8 {
+  left: 33.3%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_4_9 {
+  left: 33.3%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_4_10 {
+  left: 33.3%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_4_11 {
+  left: 33.3%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_5_1 {
+  left: 44.4%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_5_2 {
+  left: 44.4%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_5_3 {
+  left: 44.4%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_5_4 {
+  left: 44.4%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_5_5 {
+  left: 44.4%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_5_6 {
+  left: 44.4%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_5_7 {
+  left: 44.4%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_5_8 {
+  left: 44.4%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_5_9 {
+  left: 44.4%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_5_10 {
+  left: 44.4%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_5_11 {
+  left: 44.4%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_6_1 {
+  left: 55.5%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_6_2 {
+  left: 55.5%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_6_3 {
+  left: 55.5%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_6_4 {
+  left: 55.5%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_6_5 {
+  left: 55.5%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_6_6 {
+  left: 55.5%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_6_7 {
+  left: 55.5%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_6_8 {
+  left: 55.5%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_6_9 {
+  left: 55.5%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_6_10 {
+  left: 55.5%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_6_11 {
+  left: 55.5%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_7_1 {
+  left: 66.6%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_7_2 {
+  left: 66.6%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_7_3 {
+  left: 66.6%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_7_4 {
+  left: 66.6%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_7_5 {
+  left: 66.6%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_7_6 {
+  left: 66.6%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_7_7 {
+  left: 66.6%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_7_8 {
+  left: 66.6%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_7_9 {
+  left: 66.6%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_7_10 {
+  left: 66.6%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_7_11 {
+  left: 66.6%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_8_1 {
+  left: 77.7%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_8_2 {
+  left: 77.7%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_8_3 {
+  left: 77.7%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_8_4 {
+  left: 77.7%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_8_5 {
+  left: 77.7%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_8_6 {
+  left: 77.7%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_8_7 {
+  left: 77.7%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_8_8 {
+  left: 77.7%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_8_9 {
+  left: 77.7%;
+  top: 85.6%;
+}
+.mcompact .map_hexes #hex_8_10 {
+  left: 77.7%;
+  top: 96.3%;
+}
+.mcompact .map_hexes #hex_8_11 {
+  left: 77.7%;
+  top: 107%;
+}
+.mcompact .map_hexes #hex_9_1 {
+  left: 88.8%;
+  top: 0%;
+}
+.mcompact .map_hexes #hex_9_2 {
+  left: 88.8%;
+  top: 10.7%;
+}
+.mcompact .map_hexes #hex_9_3 {
+  left: 88.8%;
+  top: 21.4%;
+}
+.mcompact .map_hexes #hex_9_4 {
+  left: 88.8%;
+  top: 32.1%;
+}
+.mcompact .map_hexes #hex_9_5 {
+  left: 88.8%;
+  top: 42.8%;
+}
+.mcompact .map_hexes #hex_9_6 {
+  left: 88.8%;
+  top: 53.5%;
+}
+.mcompact .map_hexes #hex_9_7 {
+  left: 88.8%;
+  top: 64.2%;
+}
+.mcompact .map_hexes #hex_9_8 {
+  left: 88.8%;
+  top: 74.9%;
+}
+.mcompact .map_hexes #hex_9_9 {
+  left: 88.8%;
+  top: 85.6%;
 }
-
-.map_hexes #hex_1_2 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_9_10 {
+  left: 88.8%;
+  top: 96.3%;
 }
-
-.map_hexes #hex_1_3 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_9_11 {
+  left: 88.8%;
+  top: 107%;
 }
-
-.map_hexes #hex_1_4 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_1 {
+  left: 99.9%;
+  top: 0%;
 }
-
-.map_hexes #hex_1_5 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_2 {
+  left: 99.9%;
+  top: 10.7%;
 }
-
-.map_hexes #hex_1_6 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_3 {
+  left: 99.9%;
+  top: 21.4%;
 }
-
-.map_hexes #hex_1_7 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_4 {
+  left: 99.9%;
+  top: 32.1%;
 }
-
-.map_hexes #hex_1_8 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_5 {
+  left: 99.9%;
+  top: 42.8%;
 }
-
-.map_hexes #hex_1_9 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_6 {
+  left: 99.9%;
+  top: 53.5%;
 }
-
-.map_hexes #hex_1_10 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_7 {
+  left: 99.9%;
+  top: 64.2%;
 }
-
-.map_hexes #hex_1_11 {
-  left: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_8 {
+  left: 99.9%;
+  top: 74.9%;
 }
-
-.map_hexes #hex_2_1 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_9 {
+  left: 99.9%;
+  top: 85.6%;
 }
-
-.map_hexes #hex_2_2 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_10 {
+  left: 99.9%;
+  top: 96.3%;
 }
-
-.map_hexes #hex_2_3 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_10_11 {
+  left: 99.9%;
+  top: 107%;
 }
-
-.map_hexes #hex_2_4 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_1 {
+  left: 111%;
+  top: 0%;
 }
-
-.map_hexes #hex_2_5 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_2 {
+  left: 111%;
+  top: 10.7%;
 }
-
-.map_hexes #hex_2_6 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_3 {
+  left: 111%;
+  top: 21.4%;
 }
-
-.map_hexes #hex_2_7 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_4 {
+  left: 111%;
+  top: 32.1%;
 }
-
-.map_hexes #hex_2_8 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_5 {
+  left: 111%;
+  top: 42.8%;
 }
-
-.map_hexes #hex_2_9 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_6 {
+  left: 111%;
+  top: 53.5%;
 }
-
-.map_hexes #hex_2_10 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_7 {
+  left: 111%;
+  top: 64.2%;
 }
-
-.map_hexes #hex_2_11 {
-  left: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_8 {
+  left: 111%;
+  top: 74.9%;
 }
-
-.map_hexes #hex_3_1 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_9 {
+  left: 111%;
+  top: 85.6%;
 }
-
-.map_hexes #hex_3_2 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_10 {
+  left: 111%;
+  top: 96.3%;
 }
-
-.map_hexes #hex_3_3 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mcompact .map_hexes #hex_11_11 {
+  left: 111%;
+  top: 107%;
 }
 
-.map_hexes #hex_3_4 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_1 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_5 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_2 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_6 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_3 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_7 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_4 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_8 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_5 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_9 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_6 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_10 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_7 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_3_11 {
-  left: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_8 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_1 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_9 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_2 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_10 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_3 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_1_11 {
+  left: calc(0 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_4 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_1 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_5 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_2 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_6 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_3 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_7 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_4 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_8 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_5 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_9 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_6 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_10 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_7 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_4_11 {
-  left: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_8 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_1 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_9 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_2 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_10 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_3 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_2_11 {
+  left: calc(1 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_4 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_1 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_5 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_2 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_6 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_3 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_7 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_4 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_8 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_5 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_9 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_6 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_10 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_7 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_5_11 {
-  left: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_8 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_1 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_9 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_2 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_10 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_3 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_3_11 {
+  left: calc(2 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_4 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_1 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_5 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_2 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_6 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_3 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_7 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_4 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_8 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_5 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_9 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_6 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_10 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_7 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_6_11 {
-  left: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_8 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_1 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_9 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_2 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_10 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_3 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_4_11 {
+  left: calc(3 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_4 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_1 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_5 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_2 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_6 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_3 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_7 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_4 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_8 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_5 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_9 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_6 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_10 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_7 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_7_11 {
-  left: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_8 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_1 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_9 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_2 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_10 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_3 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_5_11 {
+  left: calc(4 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_4 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_1 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_5 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_2 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_6 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_3 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_7 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_4 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_8 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_5 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_9 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_6 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_10 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_7 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_8_11 {
-  left: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_8 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_1 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_9 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_2 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_10 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_3 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_6_11 {
+  left: calc(5 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_4 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_1 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_5 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_2 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_6 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_3 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_7 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_4 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_8 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_5 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_9 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_6 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_10 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_7 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_9_11 {
-  left: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_8 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_1 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_9 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_2 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_10 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_3 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_7_11 {
+  left: calc(6 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_4 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_1 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_5 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_2 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_6 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_3 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_7 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_4 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_8 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_5 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_9 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_6 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_10 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_7 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_10_11 {
-  left: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_8 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_1 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 0 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_9 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_2 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 1 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_10 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_3 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 2 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_8_11 {
+  left: calc(7 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_4 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 3 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_1 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_5 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 4 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_2 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_6 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 5 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_3 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_7 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 6 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_4 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_8 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 7 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_5 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_9 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 8 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_6 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_10 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 9 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_7 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
 }
-
-.map_hexes #hex_11_11 {
-  left: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 1.025);
-  top: calc(var(--map-width) * 0.01 + 10 * var(--hex-width) * 0.89);
+.mfull .map_hexes #hex_9_8 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_9_9 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_9_10 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_9_11 {
+  left: calc(8 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_1 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_2 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_3 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_4 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_5 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_6 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_7 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_8 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_9 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_10 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_10_11 {
+  left: calc(9 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_1 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(0 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_2 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(1 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_3 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(2 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_4 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(3 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_5 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(4 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_6 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(5 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_7 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(6 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_8 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(7 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_9 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(8 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_10 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(9 * var(--hex-width) * 0.89);
+}
+.mfull .map_hexes #hex_11_11 {
+  left: calc(10 * var(--hex-width) * 1.025);
+  top: calc(10 * var(--hex-width) * 0.89);
 }
 
 .hex.even {
@@ -4909,16 +5280,27 @@
 .map_milesawardsheader .milesawardsprogress {
   position: absolute;
   width: calc(var(--map-width) * 0.04);
-  height: calc(var(--map-width) * 0.04);
-  background: orange;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: calc(var(--map-width) * 0.03);
+  background-color: rgba(128, 128, 128, 0.7725490196);
+  border-radius: 20%;
   font-size: calc(var(--map-width) * 0.03);
-  right: 0;
+  left: 95%;
+  top: 50%;
+  text-align: center;
   cursor: help;
-  border: calc(var(--map-width) * 0.001) solid black;
+  z-index: 30;
+}
+.map_milesawardsheader .milesawardsprogress:hover {
+  outline-style: outset;
+  outline-color: gray;
+  outline-width: 2px;
+}
+.map_milesawardsheader #awards_progress {
+  left: 0%;
+}
+
+.map_4 .map_milesawardsheader .milesawardsprogress {
+  top: 80%;
 }
 
 .map_title {
@@ -5065,15 +5447,6 @@
   height: 100%;
 }
 
-.oxygen_scale_item {
-  position: absolute;
-  width: 4%;
-  height: 14%;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-}
-
 #oxygen_map .tracker_o {
   position: absolute;
   width: 4%;
@@ -5088,69 +5461,7 @@
 #oxygen_map .tracker_o::after {
   content: revert;
 }
-#oxygen_map .oxygen_scale_item[data-val="0"] {
-  left: 6%;
-  top: 64%;
-}
-#oxygen_map .oxygen_scale_item[data-val="1"] {
-  left: 11%;
-  top: 51%;
-}
-#oxygen_map .oxygen_scale_item[data-val="2"] {
-  left: 16.5%;
-  top: 36%;
-}
-#oxygen_map .oxygen_scale_item[data-val="3"] {
-  left: 22%;
-  top: 26%;
-}
-#oxygen_map .oxygen_scale_item[data-val="4"] {
-  left: 29%;
-  top: 17%;
-}
-#oxygen_map .oxygen_scale_item[data-val="5"] {
-  left: 34.5%;
-  top: 11%;
-}
-#oxygen_map .oxygen_scale_item[data-val="6"] {
-  left: 41%;
-  top: 7%;
-}
-#oxygen_map .oxygen_scale_item[data-val="7"] {
-  left: 47.5%;
-  top: 6%;
-}
-#oxygen_map .oxygen_scale_item[data-val="8"] {
-  left: 54%;
-  top: 7%;
-}
-#oxygen_map .oxygen_scale_item[data-val="9"] {
-  left: 60%;
-  top: 11%;
-}
-#oxygen_map .oxygen_scale_item[data-val="10"] {
-  left: 67%;
-  top: 17%;
-}
-#oxygen_map .oxygen_scale_item[data-val="11"] {
-  left: 72.5%;
-  top: 24.5%;
-}
-#oxygen_map .oxygen_scale_item[data-val="12"] {
-  left: 78.5%;
-  top: 35%;
-}
-#oxygen_map .oxygen_scale_item[data-val="13"] {
-  left: 84%;
-  top: 48%;
-}
-#oxygen_map .oxygen_scale_item[data-val="14"] {
-  left: 89.5%;
-  top: 63%;
-}
 #oxygen_map .tracker_o[data-state="0"] {
-  display: revert;
-  opacity: 1;
   left: 6%;
   top: 64%;
 }
@@ -5211,20 +5522,99 @@
   top: 62%;
 }
 
-/*standard projects*/
-#standard_projects_area {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  width: calc(var(--stan-width));
-  background-image: url("img/stanproj_hold.png");
-  background-size: contain;
-  position: absolute;
+.map_4 #oxygen_map .tracker_o[data-state="0"] {
+  left: 77%;
+  top: 93%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="1"] {
+  left: 62;
+  top: 89%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="2"] {
+  left: 49%;
+  top: 84%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="3"] {
+  left: 36%;
+  top: 80%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="4"] {
+  left: 25%;
+  top: 75%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="5"] {
+  left: 17%;
+  top: 70%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="6"] {
+  left: 9%;
+  top: 65%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="7"] {
+  left: 3%;
+  top: 59%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="8"] {
+  left: 3%;
+  top: 54%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="9"] {
+  left: 2%;
   top: 48%;
-  left: 1%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="10"] {
+  left: 2%;
+  top: 44%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="11"] {
+  left: 3%;
+  top: 37%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="12"] {
+  left: 4%;
+  top: 32%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="13"] {
+  left: 12%;
+  top: 27%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="14"] {
+  left: 20%;
+  top: 21%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="15"] {
+  left: 31%;
+  top: 16%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="16"] {
+  left: 41%;
+  top: 11%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="17"] {
+  left: 54%;
+  top: 7%;
+}
+.map_4 #oxygen_map .tracker_o[data-state="18"] {
+  left: 70%;
+  top: 3%;
 }
 
+/*standard projects*/
+#standard_projects_area {
+  width: calc(var(--stan-width));
+  height: var(--stan-fullheight);
+  background-image: url("img/stanproj_hold.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#main_board #standard_projects_area {
+  top: 48%;
+  left: 1%;
+  position: absolute;
+}
+
+/* standard projects go there */
 #display_main {
   display: flex;
   flex-direction: column;
@@ -5578,7 +5968,7 @@
   display: none;
 }
 
-.solo_game #standard_projects_area {
+.solo_game #main_board #standard_projects_area {
   bottom: 5%;
   left: 2%;
 }
@@ -5915,6 +6305,9 @@
   width: var(--resourcesize);
   height: var(--resourcesize);
   position: relative;
+}
+#player_board_params .tracker {
+  background-image: none;
 }
 
 .miniboard_corp_logo {
@@ -8961,15 +9354,15 @@
 }
 .mfull .map_3 #map {
   height: 80%;
-  left: 19%;
-  top: 21%;
+  left: 20%;
+  top: 22%;
   width: 62%;
 }
 .mfull .map_4 #map {
-  left: 16%;
-  top: 8%;
-  width: 62%;
-  height: 80%;
+  left: 13.5%;
+  top: 9%;
+  width: 74%;
+  height: 93%;
 }
 .mfull #map_middle {
   width: 100%;
@@ -8983,6 +9376,9 @@
   top: 0px;
   left: 0px;
 }
+.mfull .map_4 #map_hexes {
+  left: 4%;
+}
 .mfull #oxygen_map {
   position: absolute;
   width: calc(var(--map-width) * 0.88);
@@ -8990,6 +9386,12 @@
   background: none;
   top: 10%;
   left: 23%;
+}
+.mfull .map_4 #oxygen_map {
+  width: calc(var(--map-width) * 0.3);
+  height: calc(var(--map-width) * 1.1);
+  top: 10%;
+  left: 9%;
 }
 .mfull #temperature_map {
   position: absolute;
@@ -9006,22 +9408,22 @@
   left: 6%;
   width: calc(var(--map-width) * 0.1);
 }
-.mfull #standard_projects_area {
+.mfull #main_board #standard_projects_area {
   display: block;
   background: unset;
   top: 64%;
   left: 7%;
 }
-.mfull .map_1 #standard_projects_area,
-.mfull .map_3 #standard_projects_area {
+.mfull .map_1 #main_board #standard_projects_area,
+.mfull .map_3 #main_board #standard_projects_area {
   top: 64%;
   left: 79%;
 }
-.mfull #standard_projects_area .display {
+.mfull #main_board #standard_projects_area .display {
   margin-top: 19%;
   display: block;
 }
-.mfull .map_2 #standard_projects_area .display {
+.mfull .map_2 #main_board #standard_projects_area .display {
   margin-top: 15%;
 }
 .mfull .stanp_decor {
@@ -9035,6 +9437,18 @@
   display: block;
   position: relative;
   margin-bottom: 0.2em;
+}
+.mfull .map_4 #standard_projects_area {
+  background-position: 0 calc(var(--stan-fullheight) * -0.11);
+  background-size: auto calc(var(--stan-fullheight) * 0.98);
+}
+.mfull .map_4 #standard_projects_area .display {
+  background-color: unset;
+  border-radius: 5%;
+  padding: unset;
+}
+.mfull .map_4 .stanp_decor {
+  display: unset;
 }
 .mfull #main_board .milestone,
 .mfull #main_board .award {
@@ -9209,17 +9623,6 @@
 }
 .mfull .map_4 #main_board::before {
   background-image: url(img/full/amazonis.jpg);
-}
-.mfull .hex {
-  background-color: rgba(255, 255, 0, 0.4);
-}
-.mfull .hex::before {
-  content: attr(id);
-  position: absolute;
-  top: 30%;
-  width: 100%;
-  height: 100%;
-  text-align: center;
 }
 .mfull .map_bg {
   display: none;
@@ -9413,36 +9816,21 @@
 .mfull #oxygen_map .tracker_o,
 .mfull #main_board .tracker_gen,
 .mfull #temperature_map .tracker_t {
-  width: 64px;
-  height: 64px;
+  width: calc(var(--map-width) * 0.05);
+  height: calc(var(--map-width) * 0.05);
   background-image: url(img/resources.png);
   background-position: 30.5% 62%;
   background-size: 5200%;
+  border-radius: unset;
+  padding: 0;
+  box-shadow: unset;
+  position: absolute;
 }
 .mfull #main_board .tracker_gen::after {
   display: none;
 }
-.mfull #oxygen_map .tracker_o {
-  position: absolute;
-  width: 8%;
-  height: 24%;
-  box-shadow: unset;
-  border-radius: unset;
-  padding: 0;
-}
 .mfull #temperature_map .tracker_t {
-  position: absolute;
-  height: 7%;
-  width: 39%;
   left: 74%;
-  box-shadow: unset;
-  border-radius: unset;
-  padding: 0;
-}
-.mfull #main_board .tracker_gen {
-  position: absolute;
-  width: calc(var(--stan-width) * 0.2);
-  height: calc(var(--stan-width) * 0.2);
 }
 .mfull #main_board .tracker_gen[data-state="0"] {
   left: 0%;
@@ -9671,7 +10059,7 @@
 .mfull #main_board .res {
   position: absolute;
   top: 25%;
-  left: 10%;
+  left: 8%;
 }
 .mfull .map_1 #main_board .res {
   position: absolute;
@@ -10846,6 +11234,14 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 .tracker_pdelta {
   background-image: url("img/p_delta.png");
   background-size: contain;
+}
+
+.tracker_q {
+  background-image: url("img/badges.png");
+  background-position: 100% 100%;
+  background-size: 1300% 100%;
+  background-color: white;
+  outline: 1px black solid;
 }
 
 .tracker_m {

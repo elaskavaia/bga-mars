@@ -9,6 +9,34 @@
   --hex-width: calc(var(--map-width) * 0.109);
 }
 
+.map_4 #ebd-body {
+  // standard projects are not on the map
+  --stan-width: calc(var(--localsetting_cardsize)*0.15vh);
+  --stan-height: calc(var(--stan-width)*0.2);
+  --stan-fullheight: calc(var(--stan-width)*1.604095);
+}
+
+// //   // DEBUG hex
+// .hex {
+
+//   background-color: rgba(255, 255, 0, 0.4);
+// }
+
+// #map,
+// #map_hexes {
+//   outline: 1px solid yellow;
+// }
+
+// .hex::before {
+//   content: attr(data-ocean);
+//   position: absolute;
+//   top: 30%;
+//   width: 100%;
+//   height: 100%;
+//   text-align: center;
+// }
+// //   // DEBUG hex end
+
 
 #main_board {
   display: block;
@@ -39,10 +67,10 @@
 
 #map_hexes {
   position: absolute;
-  width: 98.1%;
-  height: 97.8%;
-  top: 1.7%;
-  left: 0.75%;
+  width: 96%;
+  height: 94%;
+  top: 2.5%;
+  left: 1.5%;
 }
 
 #map {
@@ -86,11 +114,24 @@
   position: absolute;
 }
 
-@for $col from 1 through 11 {
-  @for $row from 1 through 11 {
-    .map_hexes #hex_#{$col}_#{$row} {
-      left: calc(var(--map-width) * 0.01 + ($col - 1) * var(--hex-width) * 1.025);
-      top: calc(var(--map-width) * 0.01 + ($row - 1) * var(--hex-width) * 0.89);
+.mcompact {
+  @for $col from 1 through 11 {
+    @for $row from 1 through 11 {
+      .map_hexes #hex_#{$col}_#{$row} {
+        left: calc(($col - 1) * 11.1%);
+        top: calc(($row - 1) * 10.7%);
+      }
+    }
+  }
+}
+
+.mfull {
+  @for $col from 1 through 11 {
+    @for $row from 1 through 11 {
+      .map_hexes #hex_#{$col}_#{$row} {
+        left: calc(($col - 1) * var(--hex-width) * 1.025);
+        top: calc(($row - 1) * var(--hex-width) * 0.89);
+      }
     }
   }
 }
@@ -416,23 +457,34 @@
   }
 
   .milesawardsprogress {
-
     position: absolute;
     width: calc(var(--map-width) * 0.04);
-    height: calc(var(--map-width) * 0.04);
-    background: orange;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    height: calc(var(--map-width) * 0.03);
+    background-color: #808080C5;
+    border-radius: 20%;
     font-size: calc(var(--map-width) * 0.03);
-    right: 0;
+    left: 95%;
+    top: 50%;
+    text-align: center;
     cursor: help;
-    border: calc(var(--map-width) * 0.001) solid black;
+    // border: 1px solid black;
+    z-index: 30;
+  }
 
+  .milesawardsprogress:hover {
+    outline-style: outset;
+    outline-color: gray;
+    outline-width: 2px;
+  }
+
+  #awards_progress {
+    left: 0%;
   }
 }
 
+.map_4 .map_milesawardsheader .milesawardsprogress {
+  top: 80%;
+}
 
 
 .map_title {
@@ -607,16 +659,6 @@
   height: 100%;
 }
 
-.oxygen_scale_item {
-  position: absolute;
-  width: 4%;
-  height: 14%;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-
-}
-
 
 #oxygen_map {
   .tracker_o {
@@ -635,85 +677,7 @@
     content: revert;
   }
 
-
-  .oxygen_scale_item[data-val="0"] {
-    left: 6%;
-    top: 64%;
-  }
-
-  .oxygen_scale_item[data-val="1"] {
-    left: 11%;
-    top: 51%
-  }
-
-  .oxygen_scale_item[data-val="2"] {
-    left: 16.5%;
-    top: 36%
-  }
-
-  .oxygen_scale_item[data-val="3"] {
-    left: 22%;
-    top: 26%
-  }
-
-  .oxygen_scale_item[data-val="4"] {
-    left: 29%;
-    top: 17%
-  }
-
-  .oxygen_scale_item[data-val="5"] {
-    left: 34.5%;
-    top: 11%
-  }
-
-  .oxygen_scale_item[data-val="6"] {
-    left: 41%;
-    top: 7%
-  }
-
-  .oxygen_scale_item[data-val="7"] {
-    left: 47.5%;
-    top: 6%
-  }
-
-  .oxygen_scale_item[data-val="8"] {
-    left: 54%;
-    top: 7%
-  }
-
-  .oxygen_scale_item[data-val="9"] {
-    left: 60%;
-    top: 11%
-  }
-
-  .oxygen_scale_item[data-val="10"] {
-    left: 67%;
-    top: 17%
-  }
-
-  .oxygen_scale_item[data-val="11"] {
-    left: 72.5%;
-    top: 24.5%
-  }
-
-  .oxygen_scale_item[data-val="12"] {
-    left: 78.5%;
-    top: 35%
-  }
-
-  .oxygen_scale_item[data-val="13"] {
-    left: 84%;
-    top: 48%
-  }
-
-  .oxygen_scale_item[data-val="14"] {
-    left: 89.5%;
-    top: 63%
-  }
-
   .tracker_o[data-state="0"] {
-    display: revert;
-    opacity: 1;
     left: 6%;
     top: 64%;
   }
@@ -789,20 +753,121 @@
   }
 }
 
-/*standard projects*/
-#standard_projects_area {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  width: calc(var(--stan-width));
-  background-image: url("img/stanproj_hold.png");
-  background-size: contain;
-  position: absolute;
-  top: 48%;
-  left: 1%;
+
+.map_4 #oxygen_map {
+  .tracker_o[data-state="0"] {
+    left: 77%;
+    top: 93%
+  }
+
+  .tracker_o[data-state="1"] {
+    left: 62;
+    top: 89%
+  }
+
+  .tracker_o[data-state="2"] {
+    left: 49%;
+    top: 84%
+  }
+
+  .tracker_o[data-state="3"] {
+    left: 36%;
+    top: 80%
+  }
+
+  .tracker_o[data-state="4"] {
+    left: 25%;
+    top: 75%
+  }
+
+  .tracker_o[data-state="5"] {
+    left: 17%;
+    top: 70%
+  }
+
+  .tracker_o[data-state="6"] {
+    left: 9%;
+    top: 65%
+  }
+
+  .tracker_o[data-state="7"] {
+    left: 3%;
+    top: 59%
+  }
+
+  .tracker_o[data-state="8"] {
+    left: 3%;
+    top: 54%
+  }
+
+  .tracker_o[data-state="9"] {
+    left: 2%;
+    top: 48%
+  }
+
+  .tracker_o[data-state="10"] {
+    left: 2%;
+    top: 44%
+  }
+
+  .tracker_o[data-state="11"] {
+    left: 3%;
+    top: 37%
+  }
+
+  .tracker_o[data-state="12"] {
+    left: 4%;
+    top: 32%
+  }
+
+  .tracker_o[data-state="13"] {
+    left: 12%;
+    top: 27%
+  }
+
+  .tracker_o[data-state="14"] {
+    left: 20%;
+    top: 21%
+  }
+
+  .tracker_o[data-state="15"] {
+    left: 31%;
+    top: 16%
+  }
+
+  .tracker_o[data-state="16"] {
+    left: 41%;
+    top: 11%
+  }
+
+  .tracker_o[data-state="17"] {
+    left: 54%;
+    top: 7%
+  }
+
+  .tracker_o[data-state="18"] {
+    left: 70%;
+    top: 3%
+  }
 }
 
+
+/*standard projects*/
+#standard_projects_area {
+  width: calc(var(--stan-width));
+  height: var(--stan-fullheight);
+  background-image: url("img/stanproj_hold.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#main_board #standard_projects_area {
+  top: 48%;
+  left: 1%;
+  position: absolute;
+}
+
+/* standard projects go there */
 #display_main {
   display: flex;
   flex-direction: column;
@@ -1198,7 +1263,7 @@
 }
 
 .solo_game {
-  #standard_projects_area {
+  #main_board #standard_projects_area {
     bottom: 5%;
     left: 2%;
   }

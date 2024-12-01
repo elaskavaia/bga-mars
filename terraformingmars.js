@@ -2949,6 +2949,7 @@ var CustomRenders = /** @class */ (function () {
         t: { classes: "token_img temperature_icon" },
         w: { classes: "token_img tracker_w" },
         o: { classes: "token_img oxygen_icon" },
+        q: { classes: "token_img tracker_q" },
         ":": { classes: "action_arrow" },
     };
     return CustomRenders;
@@ -3690,8 +3691,12 @@ var GameXBody = /** @class */ (function (_super) {
             this.zoneHeight = 0;
             this.setupResourceFiltering();
             this.setupLocalSettings();
+            var mapnum = this.getMapNumber();
+            this.setupHexes(mapnum);
             _super.prototype.setup.call(this, gamedatas);
-            this.setupHexes(this.getMapNumber());
+            if (mapnum == 4) {
+                $("hand_area").appendChild($("standard_projects_area"));
+            }
             //player controls
             //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
             //Give tooltips to alt trackers in player boards
@@ -3747,6 +3752,8 @@ var GameXBody = /** @class */ (function (_super) {
             $("deck_main_title").innerHTML = _("Draw:");
             $("discard_title").innerHTML = _("Discard:");
             $("standard_projects_title").innerHTML = _("Standard projects");
+            this.addTooltip("awards_progress", _("Awards Summary"), _("Click to show"));
+            this.addTooltip("milestones_progress", _("Milestones Summary"), _("Click to show"));
             //update prereq on cards
             this.updateHandInformation(this.gamedatas["card_info"], "card");
             // card reference
@@ -3798,7 +3805,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.vlayout.setupDone();
             //locale css management
             $("ebd-body").dataset["locale"] = _("$locale");
-            //this.setupOneTimePrompt();
+            this.setupOneTimePrompt();
         }
         catch (e) {
             console.error(e);
@@ -3816,21 +3823,33 @@ var GameXBody = /** @class */ (function (_super) {
         //<div class="hex" id="hex_3_1"></div>
         //<div class="hex even" id="hex_3_2"></div>
         // 3 3 2 2 1 2 2 3 3
-        var topSize = this.getRulesFor("map_size", "w", 5);
+        var topSize = this.getRulesFor("map", "w", 5);
         var maxy = topSize * 2 - 1;
+        var mapname = this.gamedatas.token_types.map.name;
         for (var y = 1; y <= maxy; y++) {
             var even = y % 2 == 0 ? "even" : "odd";
             var cent = Math.abs(y - topSize);
-            var start = (cent / 2.0) + 1;
+            var start = cent / 2.0 + 1;
             if (topSize % 2 == 0)
                 start = Math.floor(start);
             else
                 start = Math.ceil(start);
             var maxx = topSize + (y > topSize ? topSize * 2 - y - 1 : y - 1);
             for (var x = start; x <= maxx + start - 1; x++) {
-                $("map_hexes").insertAdjacentHTML("beforeend", "<div class=\"hex ".concat(even, "\" id=\"hex_").concat(x, "_").concat(y, "\"></div>"));
+                var hex = "hex_".concat(x, "_").concat(y);
+                maphexes.insertAdjacentHTML("beforeend", "<div id=\"".concat(hex, "\"  class=\"hex ").concat(even, "\"></div>"));
+                var info = this.gamedatas.token_types[hex];
+                if (info.name === undefined) {
+                    info.name = _(mapname) + " " + _("Hex") + " ".concat(x, ",").concat(y);
+                }
             }
         }
+        // oxygen map
+        // const mapoxi = $("oxygen_map_scale");
+        // const maxo  = this.getRulesFor("tracker_o", "max");
+        // for (let y = 0; y <= maxo; y++) {
+        //   mapoxi.insertAdjacentHTML("beforeend",`<div class="oxygen_scale_item" data-val="${y}"></div>`);
+        // }
         // hex tooltips
         document.querySelectorAll(".hex").forEach(function (node) {
             _this.updateTooltip(node.id);
@@ -4341,6 +4360,9 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         ls.writeProp("activated", "1");
         // no used
+        if (this.isLayoutFull() && !this.isLayoutVariant(2)) {
+            this.showPopin('Amazonis map is only available in Cardboard theme for now', 'popx', 'Warning');
+        }
     };
     GameXBody.prototype.isLiveScoringDisabled = function () {
         var _a;
@@ -4808,9 +4830,13 @@ var GameXBody = /** @class */ (function (_super) {
             case "tracker_gen":
                 return this.generateTooltipSection(_("Generations"), _("Because of the long time spans needed for the projects, this game is played in a series of generations. A generation is a game round."));
             case "tracker_w":
-                return this.generateTooltipSection(_(displayInfo.name), _("This global parameter starts with 9 Ocean tiles in a stack, to be placed on the board during the game."));
+                return this.generateTooltipSection(_(displayInfo.name), this.format_string_recursive(_("This global parameter starts with ${max} Ocean tiles in a stack, to be placed on the board during the game."), {
+                    max: this.getRulesFor("tracker_w", "max")
+                }));
             case "tracker_o":
-                return this.generateTooltipSection(_(displayInfo.name), _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)"));
+                return this.generateTooltipSection(_(displayInfo.name), this.format_string_recursive(_("This global parameter starts with 0% and ends with ${max}% (This percentage compares to Earth's 21% oxygen)"), {
+                    max: this.getRulesFor("tracker_o", "max")
+                }));
             case "tracker_t":
                 return this.generateTooltipSection(_(displayInfo.name), _("This global parameter (mean temperature at the equator) starts at -30 ˚C."));
             case "starting_player":
@@ -5341,7 +5367,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             //alt_tracker_w (on the map)
             if (node.id.startsWith("tracker_w")) {
-                $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();
+                $(nodeCopy.id).dataset.calc = (this.getRulesFor('tracker_w', 'max') - parseInt(newState)).toString();
             }
         }
         //check TM
@@ -7513,6 +7539,19 @@ var VLayout = /** @class */ (function () {
         // if (displayInfo.mainType == "marker") {
         //   this.convertInto3DCube(tokenNode, displayInfo.color);
         // }
+        if (tokenNode.id.startsWith("card_stanproj") && this.game.getMapNumber() == 4) {
+            //standard project formatting:
+            //cost -> action title
+            //except for sell patents
+            var decor = this.game.createDivNode(null, "stanp_decor", tokenNode.id);
+            //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+            if (tokenNode.id == "card_stanproj_7") {
+                decor.innerHTML = "\n           <div class=\"bg_gray\"></div>  \n           <div class='stanp_cost token_img tracker_m'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n           <div class=\"action_arrow\"></div>\n           <div class=\"token_img tracker_tr\"></div>\n           <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n        ");
+            }
+            else {
+                decor.innerHTML = "\n           <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n           <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n        ");
+            }
+        }
     };
     return VLayout;
 }());

@@ -33,22 +33,7 @@
    
           <div id="oxygen_map">
               <div id="alt_tracker_o" class="tracker param tracker_o"></div>
-              <div class="oxygen_scale">
-                <div class="oxygen_scale_item" data-val="0"></div>
-                <div class="oxygen_scale_item" data-val="1"></div>
-                <div class="oxygen_scale_item" data-val="2"></div>
-                <div class="oxygen_scale_item" data-val="3"></div>
-                <div class="oxygen_scale_item" data-val="4"></div>
-                <div class="oxygen_scale_item" data-val="5"></div>
-                <div class="oxygen_scale_item" data-val="6"></div>
-                <div class="oxygen_scale_item" data-val="7"></div>
-                <div class="oxygen_scale_item" data-val="8"></div>
-                <div class="oxygen_scale_item" data-val="9"></div>
-                <div class="oxygen_scale_item" data-val="10"></div>
-                <div class="oxygen_scale_item" data-val="11"></div>
-                <div class="oxygen_scale_item" data-val="12"></div>
-                <div class="oxygen_scale_item" data-val="13"></div>
-                <div class="oxygen_scale_item" data-val="14"></div>
+              <div id="oxygen_map_scale" class="oxygen_scale">
               </div>
           </div>
           <div class="outer_generation" id="outer_generation">

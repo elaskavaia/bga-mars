@@ -235,15 +235,15 @@
 
   .map_3 #map {
     height: 80%;
-    left: 19%;
-    top: 21%;
+    left: 20%;
+    top: 22%;
     width: 62%;
   }
   .map_4 #map {
-    left: 16%;
-    top: 8%;
-    width: 62%;
-    height: 80%;
+    left: 13.5%;
+    top: 9%;
+    width: 74%;
+    height: 93%;
   }
 
   #map_middle {
@@ -259,6 +259,9 @@
     top: 0px;
     left: 0px;
   }
+  .map_4  #map_hexes {
+    left: 4%;
+  }
 
   #oxygen_map {
     position: absolute;
@@ -267,6 +270,13 @@
     background: none;
     top: 10%;
     left: 23%;
+  }
+
+  .map_4 #oxygen_map {
+    width: calc(var(--map-width) * 0.3);
+    height: calc(var(--map-width) * 1.1);
+    top: 10%;
+    left: 9%;
   }
 
   #temperature_map {
@@ -286,25 +296,25 @@
     width: calc(var(--map-width) * 0.1);
   }
 
-  #standard_projects_area {
+  #main_board #standard_projects_area {
     display: block;
     background: unset;
     top: 64%;
     left: 7%;
   }
 
-  .map_1 #standard_projects_area,
-  .map_3 #standard_projects_area {
+  .map_1  #main_board #standard_projects_area,
+  .map_3  #main_board #standard_projects_area {
     top: 64%;
     left: 79%;
   }
 
-  #standard_projects_area .display {
+  #main_board #standard_projects_area .display {
     margin-top: 19%;
     display: block;
   }
 
-  .map_2 #standard_projects_area .display {
+  .map_2  #main_board #standard_projects_area .display {
     margin-top: 15%;
   }
 
@@ -323,8 +333,23 @@
     margin-bottom: 0.2em;
   }
 
-  #main_board {
+  .map_4 {
+    #standard_projects_area {
+      background-position: 0 calc(var(--stan-fullheight) * -0.11);
+      background-size: auto calc(var(--stan-fullheight) * 0.98);;
+    }
+    #standard_projects_area .display {
+      background-color: unset;
+      border-radius: 5%;
+      padding: unset;
+    }
+    .stanp_decor {
+      display: unset;
+    }
+  
+  }
 
+  #main_board {
     .milestone,
     .award {
       position: relative;
@@ -555,17 +580,6 @@
     
   }
 
-  .hex {
-    background-color: rgba(255, 255, 0, 0.4);
-  }
-  .hex::before {
-    content: attr(id);
-    position: absolute;
-    top: 30%;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-  }
 
   .map_bg {
     display: none;
@@ -829,40 +843,24 @@
   #oxygen_map .tracker_o,
   #main_board .tracker_gen,
   #temperature_map .tracker_t {
-    width: 64px;
-    height: 64px;
+    width: calc(var(--map-width) * 0.05);
+    height: calc(var(--map-width) * 0.05);
     background-image: url(img/resources.png);
     background-position: 30.5% 62%;
     background-size: calc(52 * 100%);
+    border-radius: unset;
+    padding: 0;
+    box-shadow: unset;
+    position: absolute;
   }
 
   #main_board .tracker_gen::after {
     display: none;
   }
 
-  #oxygen_map .tracker_o {
-    position: absolute;
-    width: 8%;
-    height: 24%;
-    box-shadow: unset;
-    border-radius: unset;
-    padding: 0;
-  }
 
   #temperature_map .tracker_t {
-    position: absolute;
-    height: 7%;
-    width: 39%;
     left: 74%;
-    box-shadow: unset;
-    border-radius: unset;
-    padding: 0;
-  }
-
-  #main_board .tracker_gen {
-    position: absolute;
-    width: calc(var(--stan-width) * 0.2);
-    height: calc(var(--stan-width) * 0.2);
   }
 
   @for $num from 0 through 25 {
@@ -1039,7 +1037,7 @@
   #main_board .res {
     position: absolute;
     top: 25%;
-    left: 10%;
+    left: 8%;
   }
 
   .map_1 #main_board .res {

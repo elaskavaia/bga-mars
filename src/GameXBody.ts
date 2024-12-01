@@ -37,8 +37,8 @@ class GameXBody extends GameTokens {
       this.lastMoveId = 0;
       this.CON = gamedatas.CON; // PHP contants for game
       this.stacks = [];
-      const theme = this.isLayoutFull()?2:1;
-      const root = document.documentElement; 
+      const theme = this.isLayoutFull() ? 2 : 1;
+      const root = document.documentElement;
       dojo.addClass(root, this.prefs[LAYOUT_PREF_ID].values[theme].cssPref);
 
       this.interface_autoscale = this.isLayoutFull();
@@ -59,9 +59,14 @@ class GameXBody extends GameTokens {
 
       this.setupLocalSettings();
 
+      const mapnum = this.getMapNumber();
+      this.setupHexes(mapnum);
+
       super.setup(gamedatas);
 
-      this.setupHexes(this.getMapNumber());
+      if (mapnum == 4) {
+        $("hand_area").appendChild($("standard_projects_area"));
+      }
 
       //player controls
       //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
@@ -133,6 +138,9 @@ class GameXBody extends GameTokens {
       $("discard_title").innerHTML = _("Discard:");
       $("standard_projects_title").innerHTML = _("Standard projects");
 
+      this.addTooltip("awards_progress", _("Awards Summary"), _("Click to show"));
+      this.addTooltip("milestones_progress", _("Milestones Summary"), _("Click to show"));
+
       //update prereq on cards
       this.updateHandInformation(this.gamedatas["card_info"], "card");
 
@@ -199,7 +207,7 @@ class GameXBody extends GameTokens {
       this.vlayout.setupDone();
       //locale css management
       $("ebd-body").dataset["locale"] = _("$locale");
-      //this.setupOneTimePrompt();
+      this.setupOneTimePrompt();
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
@@ -217,19 +225,31 @@ class GameXBody extends GameTokens {
     //<div class="hex even" id="hex_3_2"></div>
     // 3 3 2 2 1 2 2 3 3
 
-    const topSize = this.getRulesFor("map_size", "w", 5);
+    const topSize = this.getRulesFor("map", "w", 5);
     const maxy = topSize * 2 - 1;
+    const mapname = this.gamedatas.token_types.map.name;
     for (let y = 1; y <= maxy; y++) {
       const even = y % 2 == 0 ? "even" : "odd";
-      const cent  = Math.abs(y - topSize);
-      let start =  (cent / 2.0) + 1; 
+      const cent = Math.abs(y - topSize);
+      let start = cent / 2.0 + 1;
       if (topSize % 2 == 0) start = Math.floor(start);
       else start = Math.ceil(start);
-      const maxx = topSize + ( y > topSize ? topSize*2 - y -1 : y - 1);
+      const maxx = topSize + (y > topSize ? topSize * 2 - y - 1 : y - 1);
       for (let x = start; x <= maxx + start - 1; x++) {
-        $("map_hexes").insertAdjacentHTML("beforeend",`<div class="hex ${even}" id="hex_${x}_${y}"></div>`);
+        const hex = `hex_${x}_${y}`;
+        maphexes.insertAdjacentHTML("beforeend", `<div id="${hex}"  class="hex ${even}"></div>`);
+        var info = this.gamedatas.token_types[hex];
+        if (info.name === undefined) {
+          info.name = _(mapname) + " " + _("Hex") + ` ${x},${y}`;
+        }
       }
     }
+    // oxygen map
+    // const mapoxi = $("oxygen_map_scale");
+    // const maxo  = this.getRulesFor("tracker_o", "max");
+    // for (let y = 0; y <= maxo; y++) {
+    //   mapoxi.insertAdjacentHTML("beforeend",`<div class="oxygen_scale_item" data-val="${y}"></div>`);
+    // }
 
     // hex tooltips
     document.querySelectorAll(".hex").forEach((node) => {
@@ -853,8 +873,11 @@ class GameXBody extends GameTokens {
     if (ls.readProp("activated", undefined)) return;
     ls.writeProp("activated", "1");
     // no used
-  }
 
+    if (this.isLayoutFull() &&  !this.isLayoutVariant(2) ) {
+      this.showPopin('Amazonis map is only available in Cardboard theme for now','popx','Warning');
+    }
+  }
 
   isLiveScoringDisabled() {
     if (this.gamedatas.table_options["105"]?.value === 2) {
@@ -1112,7 +1135,6 @@ class GameXBody extends GameTokens {
       const root = document.documentElement;
       dojo.removeClass(root, "mcompact");
       dojo.addClass(root, "mfull");
-  
     } else {
       const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -1394,12 +1416,22 @@ class GameXBody extends GameTokens {
       case "tracker_w":
         return this.generateTooltipSection(
           _(displayInfo.name),
-          _("This global parameter starts with 9 Ocean tiles in a stack, to be placed on the board during the game.")
+          this.format_string_recursive(
+            _("This global parameter starts with ${max} Ocean tiles in a stack, to be placed on the board during the game."),
+            {
+              max: this.getRulesFor("tracker_w", "max")
+            }
+          )
         );
       case "tracker_o":
         return this.generateTooltipSection(
           _(displayInfo.name),
-          _("This global parameter starts with 0% and ends with 14% (This percentage compares to Earth's 21% oxygen)")
+          this.format_string_recursive(
+            _("This global parameter starts with 0% and ends with ${max}% (This percentage compares to Earth's 21% oxygen)"),
+            {
+              max: this.getRulesFor("tracker_o", "max")
+            }
+          )
         );
       case "tracker_t":
         return this.generateTooltipSection(
@@ -2049,7 +2081,7 @@ awarded.`);
 
       //alt_tracker_w (on the map)
       if (node.id.startsWith("tracker_w")) {
-        $(nodeCopy.id).dataset.calc = (9 - parseInt(newState)).toString();
+        $(nodeCopy.id).dataset.calc = (this.getRulesFor('tracker_w','max') - parseInt(newState)).toString();
       }
     }
 
@@ -2251,7 +2283,7 @@ awarded.`);
   }
 
   isLayoutFull() {
-    return this.isLayoutVariant(2) || this.getMapNumber()==4;
+    return this.isLayoutVariant(2) || this.getMapNumber() == 4;
   }
 
   darhflog(...args: any) {

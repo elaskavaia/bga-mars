@@ -203,5 +203,27 @@ class VLayout {
     // if (displayInfo.mainType == "marker") {
     //   this.convertInto3DCube(tokenNode, displayInfo.color);
     // }
+
+  if (tokenNode.id.startsWith("card_stanproj") && this.game.getMapNumber()==4) {
+    //standard project formatting:
+    //cost -> action title
+    //except for sell patents
+    const decor = this.game.createDivNode(null, "stanp_decor", tokenNode.id);
+    //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
+
+    if (tokenNode.id == "card_stanproj_7") {
+      decor.innerHTML = `
+           <div class="bg_gray"></div>  
+           <div class='stanp_cost token_img tracker_m'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
+           <div class="action_arrow"></div>
+           <div class="token_img tracker_tr"></div>
+           <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
+        `;
+    } else {
+      decor.innerHTML = `
+           <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
+           <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
+        `;
+    }
   }
 }

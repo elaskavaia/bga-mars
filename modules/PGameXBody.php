@@ -354,8 +354,9 @@ abstract class PGameXBody extends PGameMachine {
         $this->effect_moveCard($color, $card_id, "discard_main", 0);
     }
 
-    function debug_op($type) {
+    function debug_op(string $type) {
         $color = $this->getCurrentPlayerColor();
+        $this->machine->interrupt();
         $this->push($color, $type);
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
@@ -677,7 +678,7 @@ abstract class PGameXBody extends PGameMachine {
             if (startsWith($key, "hex_")) {
                 $name = array_get($info, 'name');
                 if (!$name) {
-                    $info['name'] = clienttranslate('Hex');
+                    //$info['name'] = clienttranslate('Hex');
                 } else if (endsWith($name, 'Mons') || endsWith($name, 'Tholus')) {
                     $info['vol'] = 1;
                 }
@@ -686,12 +687,21 @@ abstract class PGameXBody extends PGameMachine {
                 };
             }
         }
-        $this->token_types['map_size']['w'] = 5;
+        $this->token_types['map']['w'] = 5;
+        $this->token_types['map']['name'] = '';
         if ($this->getMapNumber() == 4) {
             $this->token_types['tracker_o']['max'] = 18;
             $this->token_types['tracker_w']['max'] = 11;
             $this->token_types['tracker_t']['max'] = 14;
-            $this->token_types['map_size']['w'] = 6;
+            $this->token_types['map']['w'] = 6;
+        }
+        switch ($this->getMapNumber()) {
+            case 0:
+                $this->token_types['map']['name'] = clienttranslate('Tharsis');
+                break;
+            case 4:
+                $this->token_types['map']['name'] = clienttranslate('Amazonis');
+                break;
         }
 
         $this->token_types_adjusted2 = true;

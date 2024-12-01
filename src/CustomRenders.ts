@@ -81,6 +81,7 @@
       t: { classes: "token_img temperature_icon" },
       w: { classes: "token_img tracker_w" },
       o: { classes: "token_img oxygen_icon" },
+      q: { classes: "token_img tracker_q" },
       ":": { classes: "action_arrow" },
     };
 

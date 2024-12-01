@@ -599,7 +599,13 @@
   background-size: contain;
 }
 
-
+.tracker_q {
+  background-image: url('img/badges.png');
+  background-position: 100% 100%;
+  background-size: 1300% 100%;
+  background-color: white;
+  outline: 1px black solid;
+}
 .tracker_m {
   background-position: -300% 0;
 }

@@ -81,6 +81,10 @@ e|Gain Energy
 h|Gain Heat
 u|Gain Titanium
 pdelta|Increase Global Parameter Requirements Delta
+
+#set class=Operation_q
+q|Gain Any Standard Resource|${you} must select a resource to gain
+
 #set class=Operation_nR
 ns|Pay Steel
 nu|Pay Titanium
@@ -114,6 +118,9 @@ npp_Any|Lose Plant Production (Any Player - Mandatory)
 npe_Any|Lose Energy Production (Any Player - Mandatory)
 nph_Any|Lose Heat Production (Any Player - Mandatory)
 #set opp=
+
+
+
 
 #set ack=
 #set class=Operation_R

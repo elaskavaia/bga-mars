@@ -406,6 +406,7 @@ class GameTokens extends GameBasics {
     if (tokenInfo.name) {
       attachNode.setAttribute("data-name", this.getTr(tokenInfo.name));
     }
+
     if (tokenInfo.showtooltip == false) {
       return;
     }
