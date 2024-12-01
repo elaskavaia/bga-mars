@@ -915,6 +915,9 @@ class GameXBody extends GameTokens {
   }
 
   isLiveScoringDisabled() {
+    if (this.gamedatas.gamestage == this.CON.MA_STAGE_ENDED) {
+      return false;
+    }
     if (this.gamedatas.table_options["105"]?.value === 2) {
       return true;
     }

@@ -279,6 +279,7 @@ abstract class PGameXBody extends PGameMachine {
             $result['server_prefs'] = [];
         $result['scoringTable'] = $this->scoreAllTable();
         $result['progressTable'] = $this->getProgressTable();
+        $result['gamestage'] = $this->getGameStateValue('gamestage');
 
         $result += $this->argUndo();
         $this->prof_point("getAllDatas", "end");
