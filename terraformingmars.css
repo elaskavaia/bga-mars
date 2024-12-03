@@ -9477,6 +9477,9 @@
   margin-top: 24%;
   display: block;
 }
+.mfull .map_1 #main_board #standard_projects_area #display_main {
+  margin-top: 20%;
+}
 .mfull .map_2 #main_board #standard_projects_area #display_main {
   margin-top: 15%;
 }
