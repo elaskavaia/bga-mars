@@ -548,6 +548,9 @@ abstract class PGameXBody extends PGameMachine {
     function getProductionPlacementBonus($ohex) {
         $bonus = $this->getRulesFor($ohex, 'r', '');
         if (strpos($bonus, 's') !== false) {
+            if (strpos($bonus, 'u') !== false) {
+                return 'ps/pu';
+            }
             return 'ps';
         }
         if (strpos($bonus, 'u') !== false) {
@@ -944,7 +947,7 @@ abstract class PGameXBody extends PGameMachine {
                 return $this->getMinOfStanardResources($owner);
             case 'delegates':
                 return 0; // Turnoild expantion
-                
+
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -1491,7 +1494,7 @@ abstract class PGameXBody extends PGameMachine {
     function getLastGeneration() {
         $maxgen = $this->getRulesFor('solo', 'gen');
         if ($this->isPreludeVariant()) $maxgen -= 2; // Prelude sole ends with 12 generations not 14
-        if ($this->getMapNumber()==4 && $this->getGameStateValue('var_solo_flavour') == 0) $maxgen +=2; // This map is not design for solo mode really
+        if ($this->getMapNumber() == 4 && $this->getGameStateValue('var_solo_flavour') == 0) $maxgen += 2; // This map is not design for solo mode really
         return $maxgen;
     }
 
