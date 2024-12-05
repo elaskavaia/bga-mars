@@ -85,9 +85,10 @@ abstract class PGameXBody extends PGameMachine {
                 $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
             }
             $corps = 2; //(int)(11 / $this->getPlayersNumber())
+            $begginerCorps = $this->getGameStateValue('var_begginers_corp') == 1;
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
-                if ($this->getGameStateValue('var_begginers_corp') == 1) {
+                if ($begginerCorps) {
                     $corp = $this->tokens->getTokenOfTypeInLocation("card_corp_1_", null, 0);
                     $this->effect_playCorporation($color, $corp['key'], false);
                     $this->tokens->pickTokensForLocation($initial_draw, "deck_main", "hand_$color");
@@ -110,7 +111,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->setStat($theme, 'game_theme', $player_id);
             }
 
-            if ($this->getGameStateValue('var_begginers_corp') != 1) {
+            if (!$begginerCorps) {
                 $this->effect_queueMultiDrawSetup($initial_draw, $corps, $prelude ? 4 : 0);
             }
 
@@ -119,12 +120,17 @@ abstract class PGameXBody extends PGameMachine {
                 $color = $player["player_color"];
                 $this->queue($color, "finsetup");
                 // give more time for setup
-                $this->giveExtraTime($player_id);
+                if (!$begginerCorps) {
+                    $this->giveExtraTime($player_id);
+                }
             }
+
             if ($prelude) {
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
                     $this->queue($color, "prelude");
+                    // give more time for setup prelude
+                    $this->giveExtraTime($player_id);
                 }
             }
 
