@@ -952,8 +952,13 @@ abstract class PGameXBody extends PGameMachine {
             case 'minstanres':
                 return $this->getMinOfStanardResources($owner);
             case 'delegates':
-                return 0; // Turnoild expantion
-
+                return 0; // Turmoil expantion
+            case 'cardsRed':
+                return $this->getCountOfCardsRed($owner);
+            case 'cardsGreen':
+                return $this->getCountOfCardsGreen($owner);
+            case 'cardsBlue':
+                return $this->getCountOfCardsBlue($owner);
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -2467,6 +2472,8 @@ abstract class PGameXBody extends PGameMachine {
         $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
         $count = 0;
         foreach ($cards as $card => $cardrec) {
+            $t = $this->getRulesFor($card, 't');
+            if ($t == MA_CARD_TYPE_EVENT) continue;
             $pre = $this->getRulesFor($card, 'pre');
             if ($pre) $count++;
         }
@@ -2478,6 +2485,9 @@ abstract class PGameXBody extends PGameMachine {
     }
     function getCountOfCardsBlue($owner) {
         return $this->getCountOfCardsType($owner, MA_CARD_TYPE_BLUE);
+    }
+    function getCountOfCardsRed($owner) {
+        return $this->getCountOfCardsType($owner, MA_CARD_TYPE_EVENT);
     }
 
     function getCountOfCardsType($owner, $type) {

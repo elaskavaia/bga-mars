@@ -327,6 +327,8 @@ final class GameTest extends TestCase {
         $this->game->tokens->moveToken($game->mtFindByName('Worms'), "tableau_{$color}", 1);
         $this->game->tokens->moveToken($game->mtFindByName('Caretaker Contract'), "tableau_{$color}", 1);
         $this->game->tokens->moveToken($game->mtFindByName('Power Supply Consortium'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName('Martian Survey'), "tableau_{$color}", 1); // event does not count
+        
         $this->assertEquals(5, $this->game->getCountOfCardsWithPre($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
         $this->assertMilestone(2, "TACTICIAN", 5);

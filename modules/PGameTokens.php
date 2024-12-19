@@ -189,7 +189,7 @@ abstract class PGameTokens extends PGameBasic {
      *
      *       @Override
      */
-    protected function initTable() {
+    protected function initTable(): void {
         // this fiddles with material file depending on the extension selected
         $this->adjustedMaterial();
     }

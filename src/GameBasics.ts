@@ -210,8 +210,8 @@ class GameBasics extends GameGui {
 
   updatePageTitle(state = null) {
     //debugger;
-    console.log("updatePageTitle",state);
-    if (state?.private_state) this.inherited(state.private_state)
+    console.log("updatePageTitle", state);
+    if (state?.private_state) this.inherited(state.private_state);
     return this.inherited(arguments);
   }
 
@@ -1036,7 +1036,7 @@ class GameBasics extends GameGui {
       $(content_id).innerHTML = html;
       return undefined;
     }
-    
+
     const dialog = new ebg.popindialog();
     dialog.create(id);
     if (title) dialog.setTitle(title);
@@ -1503,7 +1503,7 @@ class GameBasics extends GameGui {
     }
   }
 
-  cancelLogs(notifIds: any[] | undefined ) {
+  cancelLogs(notifIds: any[] | undefined) {
     if (!notifIds) return;
     notifIds.forEach((uid) => {
       if (this._notif_uid_to_log_id.hasOwnProperty(uid)) {

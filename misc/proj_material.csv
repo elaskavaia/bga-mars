@@ -34,12 +34,12 @@ num|name|t|r|cost|text|min|php
 #set location=display_awards
 #set count=1
 #set create=1
+#set pre=
 1|Landlord|8|land|20|Owning the most tiles in play.
 2|Banker|8|pm|20|Having the highest M€ production.
 3|Scientist|8|tagScience|20|Having the most science tags in play.
 4|Thermalist|8|h|20|Having the most heat resource cubes.
 5|Miner|8|s+u|20|Having the most steel and titanium resource cubes.
-
 
 
 #Milestones Hellas
@@ -61,6 +61,7 @@ num|name|t|r|cost|text|min|php
 #set location=display_awards
 #set count=1
 #set create=1
+#set pre=
 1|Cultivator|8|forest|20|Owning the most greenery tiles
 2|Magnate|8|card_green|20|Having most automated cards in play (green cards)
 3|Space Baron|8|tagSpace|20|Having the most space tags (event cards do not count)
@@ -87,6 +88,7 @@ num|name|t|r|cost|text|min|php
 #set location=display_awards
 #set count=1
 #set create=1
+#set pre=
 1|Celebrity|8|celebrity|20|Having most cards in play (not events) with a cost of at least 20 megacredits.
 2|Industrialist|8|s+e|20|Having most steel and energy resources.
 3|Desert Settler|8|desert|20|Owning most tiles south of the equator (the four bottom rows).
@@ -112,10 +114,11 @@ num|name|t|r|cost|text|min|php
 #set location=display_awards
 #set count=1
 #set create=1
+#set pre=
 1|Traveller|8|tagJovian+tagEarth|20|Having most Jovian and Earth tags.
 2|Landscaper|8|landscaper|20|Owning most connected tiles (player's largest group of tiles).
 3|Highlander|8|highlander|20|Owning most tiles not adjacent to ocean.
-4|Promoter|8|tagEvent|20|Having most event cards played.
+4|Promoter|8|cardsRed|20|Having most event cards played.
 5|Blacksmith|8|ps+pu|20|Having highest production of steel and titanium combined.
 
 
@@ -138,8 +141,9 @@ num|name|t|r|cost|text|min|php
 #set location=display_awards
 #set count=1
 #set create=1
+#set pre=
 1|Collector|8|collector|20|Having most types of resources, both on player board and cards (e.g. different kinds of microbes only count as 1 type of resource).
-2|Innovator|8|tagEvent+tycoon|20|Having most played cards (event cards also count!).
+2|Innovator|8|cardsRed+tycoon|20|Having most played cards (event cards also count!).
 3|Constructor|8|city|20|Owning most colonies and city tiles.
 4|Manufacturer|8|ps+ph|20|Having most steel production and heat production combined.
 5|Physicist|8|tagScience+tagSpace|20|Having most science and space tags.
