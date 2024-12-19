@@ -47,6 +47,10 @@
   min-height: 76px; // prevent jumping and resizing of header
 }
 
+#page-title.fixed-page-title {
+  width: calc(100% - 10px) !important;
+}
+
 
 @keyframes pulse {
   0% {
