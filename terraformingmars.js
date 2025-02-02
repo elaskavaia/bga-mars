@@ -5583,7 +5583,7 @@ var GameXBody = /** @class */ (function (_super) {
         return this.prefs[LAYOUT_PREF_ID].value == num;
     };
     GameXBody.prototype.isLayoutFull = function () {
-        return this.isLayoutVariant(2) || this.getMapNumber() == 4;
+        return this.isLayoutVariant(2);
     };
     GameXBody.prototype.darhflog = function () {
         var args = [];

@@ -157,19 +157,19 @@
                 "name": "Elysium",
                 "description": "The other side of Mars",
                 "tmdisplay": "Elysium",
-                "alpha": true
+                "beta": true
             },
             "2": {
                 "name": "Hellas",
                 "description": "The southern wild",
                 "tmdisplay": "Hellas",
-                "alpha": true
+                "beta": true
             },
             "3": {
                 "name": "Vastitas Borealis",
                 "description": "The ancient sea",
                 "tmdisplay": "Vastitas",
-                "alpha": true
+                "beta": true
             },
             "4": {
                 "name": "Amazonis Planitia",

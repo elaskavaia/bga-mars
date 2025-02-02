@@ -70,6 +70,8 @@
   left: 1.5%;
 }
 
+
+
 #map {
   top: 10%;
   left: 17%;
@@ -77,26 +79,219 @@
   height: var(--map-height);
 }
 
-.map_bg {
-  background-image: url('img/map.png');
-  width: var(--map-width);
-  height: var(--map-height);
-  background-size: contain;
-  position: absolute;
+.mcompact {
+
+  .map_bg {
+    background-image: url('img/map.png');
+    width: var(--map-width);
+    height: var(--map-height);
+    background-size: contain;
+    position: absolute;
+  }
+
+  .map_2 .map_bg {
+    background-image: url('img/maps/hellas_planet.png');
+  }
+
+  .map_1 .map_bg {
+    background-image: url('img/maps/elysium_planet.png');
+  }
+
+
+  .map_3 .map_bg {
+    background-image: url('img/maps/vastitas_planet.png');
+  }
+
+  .map_4 .map_bg {
+    background-image: unset;
+  }
+
+  .map_4 {
+
+    #main_board::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+    }
+
+    #main_board::before {
+      background-image: url("img/maps/amazonis_planet.jpg");
+    }
+
+
+    #main_board {
+      height: calc(var(--map-width) * 1.3);
+    }
+
+    #map_middle {
+      width: 100%;
+      height: 86%;
+    }
+
+    .hex_phobos {
+      left: 3%;
+      top: 9%;
+      background-image: unset;
+    }
+
+    .hex_ganymede {
+      left: 1%;
+      top: 80%;
+      background-image: unset;
+    }
+
+    #oceans_pile {
+      width: var(--hex-width);
+      height: calc(var(--hex-width) * 1.1193);
+      left: 80.5%;
+      top: 5%;
+    }
+
+    .outer_generation {
+      top: 22%;
+      right: unset;
+      left: 0%;
+    }
+
+    // conmtext .map_4
+
+    #temperature_map {
+      position: absolute;
+      width: 13%;
+      height: 92%;
+      background-image: unset;
+      left: unset;
+      right: 0%;
+      top: 2%;
+
+     .tracker_t[data-state="-30"] {
+        bottom: -2%;
+      }
+    }
+
+    #oxygen_map {
+      position: absolute;
+      width: 23%;
+      height: 99%;
+      background-image: unset;
+      top: 5%;
+      left: 5%;
+    }
+
+    #oxygen_map .tracker_o {
+      position: absolute;
+      width:  calc(var(--hex-width) * 0.3);
+      height: calc(var(--hex-width) * 0.3);
+    }
+
+    .outer_scoretracker {
+      top: 94%;
+      right: 20%;
+    }
+
+    #map {
+      top: 4%;
+      left: 10%;
+      width: 67.5%;
+      height: 81.5%;
+    }
+
+
+    // .hex {
+    //   background-color: #55111155;
+    // }
+
+    #map_hexes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0px;
+      left: 0px;
+    }
+
+    #map_hexes {
+      left: 4%;
+    }
+
+    .mileaw_display {
+      height: 54%;
+
+      .mileaw_item {
+        width: 20%;
+        height: 100%;
+        background-image: unset;
+      }
+
+    }
+
+
+    .mileaw_header {
+      display: block;
+      position: relative;
+      top: 7%;
+      width: 100%;
+      height: 29%;
+    }
+
+    .mileaw_header {
+      * {
+        position: absolute;
+        top: 0%;
+        left: unset;
+        right: unset;
+      }
+
+      .mileaw_title {
+        top: -120%;
+        right: 9%;
+      }
+
+      .mileaw_gains {
+        display: none;
+      }
+
+      // context: .map_4 .mileaw_header
+
+      #milestones_title {
+        left: 9%;
+        right: unset;
+      }
+
+      #milestones_costs {
+        top: 16%;
+        left: -7%;
+      }
+
+      #milestones_gains {
+        left: 24%;
+      }
+
+      #awards_costs {
+        right: 0%;
+        top: 10%;
+        left: unset;
+      }
+
+
+
+      .mileaw_progress {
+        top: 80%;
+      }
+
+      #milestones_progress {
+        right: 1%;
+        left: unset;
+      }
+
+
+    }
+  }
+
 }
 
-.map_2 .map_bg {
-  background-image: url('img/maps/hellas_planet.png');
-}
-
-.map_1 .map_bg {
-  background-image: url('img/maps/elysium_planet.png');
-}
-
-
-.map_3 .map_bg {
-  background-image: url('img/maps/vastitas_planet.png');
-}
 
 .hex {
   width: var(--hex-width);
@@ -329,6 +524,11 @@
   background-image: url("img/maps/vastitas_awards.png");
 }
 
+.map_4 .mileaw_item {
+  background-image: url("img/maps/amazonis_awards.png");
+}
+
+
 .award_1 {
   background-position: 0% 0;
 }
@@ -474,9 +674,7 @@
   }
 }
 
-.map_4 .mileaw_header .mileaw_progress {
-  top: 80%;
-}
+
 
 
 .mileaw_title {
@@ -686,7 +884,7 @@
   }
 
   .tracker_o[data-state="1"] {
-    left: 62;
+    left: 62%;
     top: 89%
   }
 

@@ -2320,7 +2320,7 @@ awarded.`);
   }
 
   isLayoutFull() {
-    return this.isLayoutVariant(2) || this.getMapNumber() == 4;
+    return this.isLayoutVariant(2);
   }
 
   darhflog(...args: any) {
