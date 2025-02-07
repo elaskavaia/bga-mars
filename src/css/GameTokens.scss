@@ -22,6 +22,10 @@
   padding: 10px 10px 10px calc(var(--card-width)*0.2);
 }
 
+#display_main {
+  background-color: unset;
+}
+
 .handy {
   min-height: var(--card-height);
   display: flex;

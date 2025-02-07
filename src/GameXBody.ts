@@ -909,9 +909,9 @@ class GameXBody extends GameTokens {
     ls.writeProp("activated", "1");
     // no used
 
-    if (this.getMapNumber() == 4 &&  !this.isLayoutVariant(2) ) {
-      this.showPopin('Amazonis map is only available in Cardboard theme for now','popx','Warning');
-    }
+    // if (this.getMapNumber() == 4 &&  !this.isLayoutVariant(2) ) {
+    //   this.showPopin('Amazonis map is only available in Cardboard theme for now','popx','Warning');
+    // }
   }
 
   isLiveScoringDisabled() {

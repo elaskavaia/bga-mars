@@ -167,7 +167,7 @@
       right: 0%;
       top: 2%;
 
-     .tracker_t[data-state="-30"] {
+      .tracker_t[data-state="-30"] {
         bottom: -2%;
       }
     }
@@ -183,7 +183,7 @@
 
     #oxygen_map .tracker_o {
       position: absolute;
-      width:  calc(var(--hex-width) * 0.3);
+      width: calc(var(--hex-width) * 0.3);
       height: calc(var(--hex-width) * 0.3);
     }
 
@@ -285,10 +285,21 @@
         right: 1%;
         left: unset;
       }
-
-
     }
+
+    // map_4
+    #standard_projects_title_zone {
+      display: none;
+    }
+
+    #decks_area {
+      top: 87%;
+      left: 80%;
+    }
+  
   }
+
+
 
 }
 

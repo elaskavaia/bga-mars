@@ -151,6 +151,10 @@
   padding: 10px 10px 10px calc(var(--card-width) * 0.2);
 }
 
+#display_main {
+  background-color: unset;
+}
+
 .handy {
   min-height: var(--card-height);
   display: flex;
@@ -4133,6 +4137,13 @@
 .mcompact .map_4 .mileaw_header #milestones_progress {
   right: 1%;
   left: unset;
+}
+.mcompact .map_4 #standard_projects_title_zone {
+  display: none;
+}
+.mcompact .map_4 #decks_area {
+  top: 87%;
+  left: 80%;
 }
 
 .hex {
