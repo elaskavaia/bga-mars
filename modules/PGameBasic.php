@@ -311,7 +311,7 @@ abstract class PGameBasic extends Table {
         if ($message) {
             // automaticaly add to i18n array all keys if they ends with _name or _tr, except reserved which are auto-translated on client side
             $i18n = array_get($args, "i18n", []);
-            foreach ($args as $arg) {
+            foreach ($args as $arg => $value) {
                 if (is_string($arg) && (endsWith($arg, "_tr") || (endsWith($arg, "_name") && $arg != "player_name" && $arg != "token_name" && $arg != "place_name"))) {
                     $i18n[] = $arg;
                 }
