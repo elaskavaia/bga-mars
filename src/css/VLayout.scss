@@ -319,8 +319,13 @@
   }
 
   #main_board #standard_projects_area #display_main {
+    top: unset;
     margin-top: 24%;
     display: block;
+
+    .card:not(#card_stanproj_7):after {
+      content: unset;
+    }
   }
 
   .map_1 #main_board #standard_projects_area #display_main {
@@ -339,12 +344,6 @@
     display: none;
   }
 
-  #standard_projects_area .card {
-    top: unset !important;
-    display: block;
-    position: relative;
-  }
-
   .map_4 {
     #standard_projects_area {
       background-position: 0 calc(var(--stan-height) * 7 * -0.11);
@@ -353,12 +352,7 @@
 
     #standard_projects_area #display_main {
       background-color: unset;
-      border-radius: 5%;
       padding: unset;
-    }
-
-    .stanp_decor {
-      display: unset;
     }
 
   }

@@ -4580,35 +4580,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.setupResourceFiltering = function () {
         g_img_preload = [];
-        var cradboard = [
-            "full/cards1.jpg",
-            "full/cards2.jpg",
-            "full/cards3.jpg",
-            "full/cardsC.jpg",
-            "full/pboard.jpg",
-            "full/TMgameboard.jpg",
-            "full/tooltipbg.jpg"
-        ];
-        var digital = [
-            "cards_illustrations.jpg",
-            "awards_back.png",
-            "cards_bg.png",
-            "cards_bg_2_blue_action_bottom.png",
-            "cards_bg_2_blue_action_texture.jpg",
-            "corporations.jpg",
-            "map.png",
-            "milestones_awards.png",
-            "oxygen.png",
-            "space.jpg",
-            "stanproj_hold.png",
-            "temperature.png"
-        ];
-        // leave this out for now - does not seems to do anything good, causing some loading errors for no reason
-        // if (this.isLayoutFull()) {
-        //   this.ensureSpecificGameImageLoading(cradboard);
-        // } else {
-        //   this.ensureSpecificGameImageLoading(digital);
-        // }
+        // leave this empty for now - does not seems to do anything good, causing some loading errors for no reason
     };
     GameXBody.prototype.showHiddenContent = function (id, title, selectedId) {
         var _this = this;
@@ -7378,27 +7350,6 @@ var VLayout = /** @class */ (function () {
         //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
         //dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
         dojo.place("player_area_name_".concat(color), "player_board_header_".concat(color), "first");
-        // const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
-        // //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-        // dojo.place(headerNode, `player_area_${color}`, "first");
-        // const settingNode = $(`player_board_header_${color}`);
-        // dojo.place(settingNode, `player_area_${color}`, "first");
-        // settingNode.style.display = "none";
-        // const gear = this.game.createDivNode(`playerboard_side_gear_${color}`, "playerboard_side_gear", headerNode);
-        // gear.addEventListener("click", () => {
-        //   if (settingNode.style.display == "none") {
-        //     settingNode.style.display = "flex";
-        //   } else {
-        //     settingNode.style.display = "none";
-        //   }
-        // });
-        //const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", `player_board_header_${color}`);
-        //namediv.setAttribute("data-player-name", name);
-        // // relocate tile trackers from tags
-        // const places = ["tracker_city", "tracker_forest", "tracker_land"];
-        // for (const key of places) {
-        //   dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
-        // }
         dojo.place("alt_tracker_gen", "main_board");
         dojo.destroy("outer_generation");
         dojo.place("deck_main", "decks_area");
@@ -7552,11 +7503,13 @@ var VLayout = /** @class */ (function () {
         // if (displayInfo.mainType == "marker") {
         //   this.convertInto3DCube(tokenNode, displayInfo.color);
         // }
-        if (tokenNode.id.startsWith("card_stanproj") && this.game.getMapNumber() == 4) {
+        if (tokenNode.id.startsWith("card_stanproj")) {
             //standard project formatting:
             //cost -> action title
             //except for sell patents
-            tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
+            tokenNode.classList.add('stanproj');
+            if (this.game.getMapNumber() == 4 || tokenNode.id == "card_stanproj_7")
+                tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
         }
     };
     return VLayout;

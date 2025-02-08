@@ -16,29 +16,6 @@ class VLayout {
     //dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     dojo.place(`player_area_name_${color}`, `player_board_header_${color}`, "first");
 
-    // const headerNode = this.game.createDivNode(`playerboard_side_${color}`, "playerboard_side");
-    // //dojo.place(`tableau_${color}_corp_logo`, headerNode, "first");
-    // dojo.place(headerNode, `player_area_${color}`, "first");
-    // const settingNode = $(`player_board_header_${color}`);
-    // dojo.place(settingNode, `player_area_${color}`, "first");
-    // settingNode.style.display = "none";
-    // const gear = this.game.createDivNode(`playerboard_side_gear_${color}`, "playerboard_side_gear", headerNode);
-    // gear.addEventListener("click", () => {
-    //   if (settingNode.style.display == "none") {
-    //     settingNode.style.display = "flex";
-    //   } else {
-    //     settingNode.style.display = "none";
-    //   }
-    // });
-
-    //const namediv = this.game.createDivNode(`playerboard_side_name_${color}`, "playerboard_side_name", `player_board_header_${color}`);
-    //namediv.setAttribute("data-player-name", name);
-
-    // // relocate tile trackers from tags
-    // const places = ["tracker_city", "tracker_forest", "tracker_land"];
-    // for (const key of places) {
-    //   dojo.place($(`alt_${key}_${color}`), `miniboardentry_${color}`);
-    // }
 
     dojo.place("alt_tracker_gen", "main_board");
     dojo.destroy("outer_generation");
@@ -201,11 +178,13 @@ class VLayout {
     //   this.convertInto3DCube(tokenNode, displayInfo.color);
     // }
 
-    if (tokenNode.id.startsWith("card_stanproj") && this.game.getMapNumber() == 4) {
+    if (tokenNode.id.startsWith("card_stanproj")) {
       //standard project formatting:
       //cost -> action title
       //except for sell patents
-      tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
+      tokenNode.classList.add('stanproj');
+      if (this.game.getMapNumber() == 4 || tokenNode.id == "card_stanproj_7")
+        tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
     }
   }
 }

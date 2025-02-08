@@ -1111,36 +1111,7 @@ class GameXBody extends GameTokens {
 
   setupResourceFiltering(): void {
     g_img_preload = [];
-    const cradboard: string[] = [
-      "full/cards1.jpg",
-      "full/cards2.jpg",
-      "full/cards3.jpg",
-      "full/cardsC.jpg",
-      "full/pboard.jpg",
-      "full/TMgameboard.jpg",
-      "full/tooltipbg.jpg"
-    ];
-    const digital: string[] = [
-      "cards_illustrations.jpg",
-      "awards_back.png",
-      "cards_bg.png",
-      "cards_bg_2_blue_action_bottom.png",
-      "cards_bg_2_blue_action_texture.jpg",
-      "corporations.jpg",
-      "map.png",
-      "milestones_awards.png",
-      "oxygen.png",
-      "space.jpg",
-      "stanproj_hold.png",
-      "temperature.png"
-    ];
-
-    // leave this out for now - does not seems to do anything good, causing some loading errors for no reason
-    // if (this.isLayoutFull()) {
-    //   this.ensureSpecificGameImageLoading(cradboard);
-    // } else {
-    //   this.ensureSpecificGameImageLoading(digital);
-    // }
+    // leave this empty for now - does not seems to do anything good, causing some loading errors for no reason
   }
 
   showHiddenContent(id: ElementOrId, title: string, selectedId?: string) {

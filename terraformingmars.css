@@ -9496,8 +9496,12 @@
   left: 79%;
 }
 .mfull #main_board #standard_projects_area #display_main {
+  top: unset;
   margin-top: 24%;
   display: block;
+}
+.mfull #main_board #standard_projects_area #display_main .card:not(#card_stanproj_7):after {
+  content: unset;
 }
 .mfull .map_1 #main_board #standard_projects_area #display_main {
   margin-top: 20%;
@@ -9511,22 +9515,13 @@
 .mfull #standard_projects_title_zone {
   display: none;
 }
-.mfull #standard_projects_area .card {
-  top: unset !important;
-  display: block;
-  position: relative;
-}
 .mfull .map_4 #standard_projects_area {
   background-position: 0 calc(var(--stan-height) * 7 * -0.11);
   background-size: auto calc(var(--stan-height) * 7 * 0.98);
 }
 .mfull .map_4 #standard_projects_area #display_main {
   background-color: unset;
-  border-radius: 5%;
   padding: unset;
-}
-.mfull .map_4 .stanp_decor {
-  display: unset;
 }
 .mfull #main_board .mileaw_item {
   position: relative;
