@@ -16,16 +16,6 @@
     --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width));
     --pb_cellsize: var(--default-pb_cellsize);
 
-    .milestone_label {
-      bottom: 6%;
-      font-size: calc(var(--map-width) * 0.03);
-    }
-
-    .award_label {
-      bottom: -2%;
-      font-size: calc(var(--map-width) * 0.05);
-    }
-
     .compact_card_tt {
       .milestone_label {
         bottom: 5%;
@@ -51,10 +41,6 @@
       flex-wrap: wrap;
     }
 
-    .player_controls {
-      /* justify-content: flex-start;
-       top: 6%;*/
-    }
 
     .hand, .draw, .draft {
       padding: 6px 6px 6px calc(var(--card-width) * 0.2);
@@ -64,47 +50,7 @@
       font-size: calc(var(--card-width) * 0.2);
     }
 
-    #map_bottom {
-      flex-direction: column;
-    }
 
-    #main_awards, #main_milestones {
-      width: 97%;
-      height: calc(var(--map-height) * 0.28);
-      left: 1%;
-
-      .milestone, .award {
-        width: calc(var(--map-width) * 0.260);
-        height: calc(var(--map-width) * 0.15);
-      }
-
-      .mileaw_header {
-        top: 10%;
-
-        .mileaw_title {
-          font-size: calc(var(--map-width) * 0.04);
-        }
-
-        .mileaw_costs {
-          .token_img {
-            --resourcesize: calc(var(--map-width) * 0.06);
-            font-size: calc(var(--map-width) * 0.04);
-          }
-        }
-
-        .mileaw_gains {
-          .card_vp {
-            width: calc(var(--map-width) * 0.06);
-            height: calc(var(--map-width) * 0.06);
-            font-size: calc(var(--map-width) * 0.04);
-          }
-        }
-      }
-
-      .mileaw_display {
-        justify-content: center;
-      }
-    }
 
     #scoretable {
       font-size: smaller;
@@ -125,9 +71,6 @@
     }
 
     // stack
-    .cardstack[data-currentview="2"] .stack_content {
-      /* --overlap: 0.88;*/
-    }
 
 
     // tiles

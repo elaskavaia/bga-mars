@@ -270,10 +270,16 @@
 
 
 //tiles for hq
-/*
-.cardstack[data-currentview="3"] .stack_content.cards_4 {
-  width: calc(var(--card-width) * 1.50 * var(--columns));
-}*/
+
+.cardstack[data-currentview="3"].cardstack_cards_4.corp {
+  .stack_content {
+    row-gap: calc(var(--card-height) * 0.01);
+    width: unset;
+    min-width: unset;
+    overflow: unset;
+    max-width: 99.2%;
+  }
+}
 
 
 .cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {

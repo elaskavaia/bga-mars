@@ -137,7 +137,7 @@ class GameXBody extends GameTokens {
       $("awards_title").innerHTML = _("Awards");
       $("deck_main_title").innerHTML = _("Draw:");
       $("discard_title").innerHTML = _("Discard:");
-      $("standard_projects_title").innerHTML = _("Standard projects");
+      $("standard_projects_title_zone").innerHTML = _("Standard projects");
 
       this.addTooltip("awards_progress", _("Awards Summary"), _("Click to show"));
       this.addTooltip("milestones_progress", _("Milestones Summary"), _("Click to show"));
@@ -1718,27 +1718,7 @@ awarded.`);
                   <div class="card_effect">${_(card_effect)}</div>
             `;
       } else if (tokenNode.id.startsWith("card_stanproj")) {
-        //standard project formatting:
-        //cost -> action title
-        //except for sell patents
-        const decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-        const parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
-        //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-
-        if (tokenNode.id == "card_stanproj_7") {
-          decor.innerHTML = `
-               <div class="bg_gray"></div>  
-               <div class='stanp_cost token_img tracker_m'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
-               <div class="action_arrow"></div>
-               <div class="token_img tracker_tr"></div>
-               <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
-            `;
-        } else {
-          decor.innerHTML = `
-               <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
-               <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
-            `;
-        }
+        tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
       } else {
         //tags
         let firsttag = "";
@@ -2000,7 +1980,7 @@ awarded.`);
     }
 
     //temperature & oxygen - compact only as full doesn't have individual rendered elements
-    if (!this.isLayoutFull()) {
+    if (!this.isLayoutFull() && this.getMapNumber() != 4) {
       if (key == "tracker_t") {
         return this.customAnimation.animateMapItemAwareness("temperature_map");
       } else if (key == "tracker_o") {

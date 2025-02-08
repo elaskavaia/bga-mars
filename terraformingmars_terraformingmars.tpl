@@ -68,9 +68,7 @@
 
           </div>
           <div id="standard_projects_area">
-              <div id="standard_projects_title_zone">
-                <div id="standard_projects_title" class="standard_projects_title">Standard projects</div>
-              </div>
+              <div id="standard_projects_title_zone">Standard projects</div>
               <div id="display_main"></div>
           </div>
     

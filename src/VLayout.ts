@@ -13,7 +13,6 @@ class VLayout {
     dojo.place(`tableau_${color}_corp`, `pboard_${color}`, "after");
     //dojo.place(`player_controls_${color}`, `player_board_header_${color}`, "first");
 
-   
     //dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     dojo.place(`player_area_name_${color}`, `player_board_header_${color}`, "first");
 
@@ -47,16 +46,14 @@ class VLayout {
     dojo.place("deck_main", "decks_area");
     dojo.place("discard_main", "decks_area");
     dojo.place("oceans_pile", "map_middle");
-    $("deck_holder").style.display="none";
-    $("discard_holder").style.display="none";
+    $("deck_holder").style.display = "none";
+    $("discard_holder").style.display = "none";
 
     // dojo.place(`player_controls_${color}`,`miniboardentry_${color}`);
 
     dojo.place(`fpholder_${color}`, `miniboardentry_${color}`);
 
     dojo.place(`counter_draw_${color}`, `limbo`);
-
-
 
     // var parent = document.querySelector(".debug_section"); // studio only
     // if (!parent)
@@ -73,8 +70,8 @@ class VLayout {
     // });
     // move player zones in the same order
     const div = $("main_area");
-    document.querySelectorAll("#players_area > .player_area").forEach(board => {
-       div.appendChild(board);
+    document.querySelectorAll("#players_area > .player_area").forEach((board) => {
+      div.appendChild(board);
     });
   }
 
@@ -204,26 +201,11 @@ class VLayout {
     //   this.convertInto3DCube(tokenNode, displayInfo.color);
     // }
 
-  if (tokenNode.id.startsWith("card_stanproj") && this.game.getMapNumber()==4) {
-    //standard project formatting:
-    //cost -> action title
-    //except for sell patents
-    const decor = this.game.createDivNode(null, "stanp_decor", tokenNode.id);
-    //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-
-    if (tokenNode.id == "card_stanproj_7") {
-      decor.innerHTML = `
-           <div class="bg_gray"></div>  
-           <div class='stanp_cost token_img tracker_m'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
-           <div class="action_arrow"></div>
-           <div class="token_img tracker_tr"></div>
-           <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
-        `;
-    } else {
-      decor.innerHTML = `
-           <div class='stanp_cost'>${displayInfo.cost != 0 ? displayInfo.cost : "X"}</div>
-           <div class='standard_projects_title'>${_(displayInfo.name)}</div>  
-        `;
+    if (tokenNode.id.startsWith("card_stanproj") && this.game.getMapNumber() == 4) {
+      //standard project formatting:
+      //cost -> action title
+      //except for sell patents
+      tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
     }
   }
 }

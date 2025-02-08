@@ -46,7 +46,7 @@ var GameBasics = /** @class */ (function (_super) {
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
-        dojo.destroy("debug_output"); // its too slow and useless
+        //dojo.destroy("debug_output"); // its too slow and useless
         this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
         this.setupNotifications();
@@ -3758,7 +3758,7 @@ var GameXBody = /** @class */ (function (_super) {
             $("awards_title").innerHTML = _("Awards");
             $("deck_main_title").innerHTML = _("Draw:");
             $("discard_title").innerHTML = _("Discard:");
-            $("standard_projects_title").innerHTML = _("Standard projects");
+            $("standard_projects_title_zone").innerHTML = _("Standard projects");
             this.addTooltip("awards_progress", _("Awards Summary"), _("Click to show"));
             this.addTooltip("milestones_progress", _("Milestones Summary"), _("Click to show"));
             //update prereq on cards
@@ -5042,18 +5042,7 @@ var GameXBody = /** @class */ (function (_super) {
                 decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(_(card_initial), "</div>\n                  <div class=\"card_effect\">").concat(_(card_effect), "</div>\n            ");
             }
             else if (tokenNode.id.startsWith("card_stanproj")) {
-                //standard project formatting:
-                //cost -> action title
-                //except for sell patents
-                var decor = this.createDivNode(null, "stanp_decor", tokenNode.id);
-                var parsedActions = CustomRenders.parseActionsToHTML(displayInfo.r);
-                //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-                if (tokenNode.id == "card_stanproj_7") {
-                    decor.innerHTML = "\n               <div class=\"bg_gray\"></div>  \n               <div class='stanp_cost token_img tracker_m'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class=\"action_arrow\"></div>\n               <div class=\"token_img tracker_tr\"></div>\n               <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n            ");
-                }
-                else {
-                    decor.innerHTML = "\n               <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n               <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n            ");
-                }
+                tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
             }
             else {
                 //tags
@@ -5277,7 +5266,7 @@ var GameXBody = /** @class */ (function (_super) {
             return this.customAnimation.animateTilePop(key);
         }
         //temperature & oxygen - compact only as full doesn't have individual rendered elements
-        if (!this.isLayoutFull()) {
+        if (!this.isLayoutFull() && this.getMapNumber() != 4) {
             if (key == "tracker_t") {
                 return this.customAnimation.animateMapItemAwareness("temperature_map");
             }
@@ -7567,14 +7556,7 @@ var VLayout = /** @class */ (function () {
             //standard project formatting:
             //cost -> action title
             //except for sell patents
-            var decor = this.game.createDivNode(null, "stanp_decor", tokenNode.id);
-            //const costhtm='<div class="stanp_cost">'+displayInfo.cost+'</div>';
-            if (tokenNode.id == "card_stanproj_7") {
-                decor.innerHTML = "\n           <div class=\"bg_gray\"></div>  \n           <div class='stanp_cost token_img tracker_m'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n           <div class=\"action_arrow\"></div>\n           <div class=\"token_img tracker_tr\"></div>\n           <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n        ");
-            }
-            else {
-                decor.innerHTML = "\n           <div class='stanp_cost'>".concat(displayInfo.cost != 0 ? displayInfo.cost : "X", "</div>\n           <div class='standard_projects_title'>").concat(_(displayInfo.name), "</div>  \n        ");
-            }
+            tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
         }
     };
     return VLayout;

@@ -11,7 +11,6 @@
  * GameBody.scss
  *
  */
-@import url(../../../css/csslayer.css);
 #ebd-body {
   --mars-font: "SpaceFont";
   --awards-font: "Tangerine";
@@ -649,13 +648,6 @@
 .tooltip-body .card_cost.discounted .discountarrow {
   display: block;
 }
-#display_main .token_cost {
-  border-radius: calc(var(--card-width) * 0.08);
-  background-image: url("img/resources.png");
-  background-size: 1000% 200%;
-  background-position: -300% 0;
-}
-
 .card_title {
   font-family: var(--mars-font);
   position: absolute;
@@ -3937,13 +3929,13 @@
   --map-width: calc(var(--localsetting_mapsize)*0.6vh);
   --map-height: calc(var(--map-width)*0.92);
   --stan-width: calc(var(--localsetting_mapsize)*0.145vh);
-  --stan-height: calc(var(--stan-width)*0.2);
+  --stan-height: calc(var(--stan-width)*0.227);
   --hex-width: calc(var(--map-width) * 0.109);
 }
 
-.map_4 #ebd-body {
-  --stan-width: calc(var(--localsetting_cardsize)*0.15vh);
-  --stan-height: calc(var(--stan-width)*0.2);
+#ebd-body.map_4 {
+  --stan-width: calc(var(--localsetting_cardsize) * 0.15vh);
+  --stan-height: calc(var(--stan-width) * 0.227);
 }
 
 #main_board {
@@ -4003,6 +3995,9 @@
 .mcompact .map_4 .map_bg {
   background-image: unset;
 }
+.mcompact .map_4 #main_board {
+  aspect-ratio: 1.177/1;
+}
 .mcompact .map_4 #main_board::before {
   content: "";
   position: absolute;
@@ -4010,15 +4005,11 @@
   height: 100%;
   background-repeat: no-repeat;
   background-size: 100% auto;
-}
-.mcompact .map_4 #main_board::before {
   background-image: url("img/maps/amazonis_planet.jpg");
-}
-.mcompact .map_4 #main_board {
-  height: calc(var(--map-width) * 1.3);
 }
 .mcompact .map_4 #map_middle {
   width: 100%;
+  position: absolute;
   height: 86%;
 }
 .mcompact .map_4 .hex_phobos {
@@ -4087,6 +4078,16 @@
 .mcompact .map_4 #map_hexes {
   left: 4%;
 }
+.mcompact .map_4 #map_bottom {
+  position: absolute;
+  top: unset;
+  bottom: 0.5%;
+  aspect-ratio: 1/0.1;
+  width: 100%;
+}
+.mcompact .map_4 .mileaw_main {
+  background-image: unset;
+}
 .mcompact .map_4 .mileaw_display {
   height: 54%;
 }
@@ -4137,9 +4138,6 @@
 .mcompact .map_4 .mileaw_header #milestones_progress {
   right: 1%;
   left: unset;
-}
-.mcompact .map_4 #standard_projects_title_zone {
-  display: none;
 }
 .mcompact .map_4 #decks_area {
   top: 87%;
@@ -5818,42 +5816,52 @@
 
 /*standard projects*/
 #standard_projects_area {
-  width: calc(var(--stan-width));
+  font-family: var(--mars-font);
   background-image: url("img/stanproj_hold.png");
   background-size: contain;
   background-repeat: no-repeat;
+  position: absolute;
+  font-size: calc(var(--stan-width) * 0.07);
+  width: calc(var(--stan-width));
 }
 
 #main_board #standard_projects_area {
   top: 48%;
   left: 1%;
-  position: absolute;
 }
 
 /* standard projects go there */
 #display_main {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  top: 10%;
   width: var(--stan-width);
   height: calc(var(--stan-height) * 7);
+  padding: unset;
+  background-color: unset;
 }
 
-.standard_projects_title {
-  font-family: var(--mars-font);
-  font-size: calc(var(--stan-width) * 0.06);
+.map_4 #standard_projects_area {
+  background-position: 0 calc(var(--stan-height) * 7 * -0.12);
+  background-size: auto calc(var(--stan-height) * 7 * 1);
+  position: relative;
+}
+.map_4 #standard_projects_title_zone {
+  display: none;
+}
+.map_4 #display_main {
+  top: 0%;
 }
 
 /* standard projects */
 #display_main .card {
-  width: var(--stan-width);
+  width: 100%;
   height: var(--stan-height);
   /* border: black solid 1px; */
   border-radius: 10em;
   box-shadow: revert;
-  background: revert;
-  font-size: calc(var(--stan-width) * 0.07);
-  position: absolute;
+  background-image: unset;
+  background-color: unset;
+  position: relative;
+  display: block;
 }
 #display_main .card .infobox {
   left: -0.6em;
@@ -5863,127 +5871,42 @@
   opacity: 0.4;
   color: white;
 }
-
-#display_main_info {
-  top: 0.2em;
-  left: -0.6em;
-  bottom: revert;
-  right: revert;
-  opacity: 0.4;
-  color: white;
-}
-
-.card .standard_projects_title {
+#display_main .card:after {
+  content: attr(data-name);
+  width: 50%;
+  height: 100%;
+  text-align: right;
   position: absolute;
-  top: 22%;
-  right: 8%;
-  width: 44%;
-  display: flex;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
+  top: 20%;
+  right: 3%;
+}
+#display_main .card:before {
+  content: attr(data-cost);
+  width: 100%;
+  height: 100%;
+  left: 10%;
+  position: absolute;
+  top: 20%;
 }
 
 #standard_projects_title_zone {
-  /*
-    background: linear-gradient(135deg, rgba(51,51,51,1) 0%, rgba(225,225,225,1) 24%, rgba(158,158,158,1) 82%, rgba(225,225,225,1) 100%);
-    width: calc(var(--stan-width) * 0.9);
-    border-radius: 30% 30% 0 0;
-    padding: calc(var(--stan-width) * 0.04);
-    */
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 3%;
+  top: 2%;
   left: 11%;
   width: 64%;
   height: 6%;
 }
-#standard_projects_title_zone .standard_projects_title {
-  display: flex;
-  justify-content: center;
+
+#display_main #card_stanproj_1::before {
+  left: 39%;
 }
 
-#card_stanproj_1 {
-  top: 13%;
-}
-#card_stanproj_1 .standard_projects_title {
-  width: 44%;
-}
-#card_stanproj_1 .stanp_cost {
-  left: 31%;
-}
-
-#card_stanproj_2 {
-  top: 27.4%;
-}
-#card_stanproj_2 .standard_projects_title {
-  width: 39%;
-}
-
-#card_stanproj_3 {
-  top: 41%;
-}
-#card_stanproj_3 .standard_projects_title {
-  width: 39%;
-}
-
-#card_stanproj_4 {
-  top: 55.2%;
-}
-#card_stanproj_4 .standard_projects_title {
-  width: 39%;
-}
-
-#card_stanproj_5 {
-  top: 69%;
-}
-#card_stanproj_5 .standard_projects_title {
-  width: 39%;
-}
-
-#card_stanproj_6 {
-  top: 83.5%;
-}
-#card_stanproj_6 .standard_projects_title {
-  width: 29%;
-}
-
-#card_stanproj_7 {
-  top: 99%;
-}
-#card_stanproj_7 .bg_gray {
-  width: 86%;
-  background: linear-gradient(105deg, rgb(197, 197, 198) 0%, rgb(197, 197, 198) 55%, rgb(57, 58, 58) 100%);
-  position: absolute;
-  height: 100%;
-  left: 0.5%;
-}
-#card_stanproj_7 .tracker_m {
-  font-weight: normal;
-  left: 3.5%;
-}
-#card_stanproj_7 .tracker_tr {
-  position: absolute;
-  left: 35%;
-  top: 5%;
-}
-#card_stanproj_7 .action_arrow {
-  position: absolute;
-  top: 2%;
-  left: 21.5%;
-  width: 13%;
-}
-#card_stanproj_7 .standard_projects_title {
-  right: -1%;
-  overflow: hidden;
-  white-space: nowrap;
-  width: fit-content;
-  background-color: #f3a929;
-  border-radius: 7.5em;
-  padding: 0.2% 2% 0.2% 2%;
-  border: 1px solid #aaa;
+#display_main #card_stanproj_7 {
+  background-image: url(img/buffer_gas.png);
+  background-size: cover;
 }
 
 #standard_projects_area .active_slot.card {
@@ -5996,12 +5919,6 @@
 
 #display_main .card_info_box {
   display: none;
-}
-
-.stanp_decor {
-  position: absolute;
-  width: 100%;
-  height: 100%;
 }
 
 .stanp_cost {
@@ -6019,51 +5936,6 @@
   text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
   outline: calc(var(--card-width) * 0.025) solid #bef983;
   border-radius: calc(var(--card-width) * 0.02);
-}
-
-.stanp_arrow {
-  position: relative;
-  background-image: url("img/icons.png");
-  background-size: 1400% 200%;
-  width: calc(var(--stan-width) * 0.2);
-  height: calc(var(--stan-width) * 0.2);
-  background-position: -300% 0;
-}
-
-.stanp_action {
-  height: calc(var(--stan-width) * 0.25);
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: calc(var(--stan-width) * 0.03);
-  width: calc(var(--stan-width) * 0.3);
-}
-
-.stanp_decor .outer_production {
-  width: calc(var(--stan-width) * 0.25);
-  height: calc(var(--stan-width) * 0.25);
-}
-
-.stanp_decor {
-  --resourcesize: calc(var(--stan-width) * 0.17);
-}
-.stanp_decor .token_img {
-  margin-right: revert;
-  font-family: var(--mars-font);
-  font-size: calc(var(--resourcesize) * 0.6);
-}
-.stanp_decor .tile {
-  width: calc(var(--stan-width) * 0.25);
-  height: calc(var(--stan-width) * 0.25);
-}
-.stanp_decor .tracker {
-  position: relative;
-  width: calc(var(--stan-width) * 0.25);
-  height: calc(var(--stan-width) * 0.25);
-  flex-shrink: 0;
-  background-image: url("img/icons.png");
-  background-size: 1400% 200%;
 }
 
 .outer_generation {
@@ -6552,7 +6424,7 @@
 }
 
 .mcompact .player_area {
-  border: 0.4vh solid var(--plcolor);
+  border: 1px solid var(--plcolor);
   position: relative;
   border-radius: 1vh;
   background: linear-gradient(-35deg, rgba(51, 51, 51, 0.7) 0%, rgba(225, 225, 225, 0.5) 24%, rgba(158, 158, 158, 0.5) 82%, rgba(225, 225, 225, 0.9) 100%);
@@ -10558,10 +10430,14 @@
   min-width: calc(var(--card-width) * 1.5 * var(--columns));
 }
 
-/*
-.cardstack[data-currentview="3"] .stack_content.cards_4 {
-  width: calc(var(--card-width) * 1.50 * var(--columns));
-}*/
+.cardstack[data-currentview="3"].cardstack_cards_4.corp .stack_content {
+  row-gap: calc(var(--card-height) * 0.01);
+  width: unset;
+  min-width: unset;
+  overflow: unset;
+  max-width: 99.2%;
+}
+
 .cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {
   display: block;
   width: calc(var(--card-width) * 1);
@@ -10725,14 +10601,6 @@
   --card-width: calc(var(--localsetting_cardsize) * var(--default-card-width));
   --pb_cellsize: var(--default-pb_cellsize);
 }
-.mcompact #ebd-body.mobile_portrait .milestone_label {
-  bottom: 6%;
-  font-size: calc(var(--map-width) * 0.03);
-}
-.mcompact #ebd-body.mobile_portrait .award_label {
-  bottom: -2%;
-  font-size: calc(var(--map-width) * 0.05);
-}
 .mcompact #ebd-body.mobile_portrait .compact_card_tt .milestone_label {
   bottom: 5%;
   font-size: calc(var(--map-width) * 0.017);
@@ -10752,45 +10620,11 @@
   --resourcesize: var(--default-resourcesize);
   flex-wrap: wrap;
 }
-.mcompact #ebd-body.mobile_portrait .player_controls {
-  /* justify-content: flex-start;
-   top: 6%;*/
-}
 .mcompact #ebd-body.mobile_portrait .hand, .mcompact #ebd-body.mobile_portrait .draw, .mcompact #ebd-body.mobile_portrait .draft {
   padding: 6px 6px 6px calc(var(--card-width) * 0.2);
 }
 .mcompact #ebd-body.mobile_portrait .hand::after, .mcompact #ebd-body.mobile_portrait .draw::after, .mcompact #ebd-body.mobile_portrait .draft::after {
   font-size: calc(var(--card-width) * 0.2);
-}
-.mcompact #ebd-body.mobile_portrait #map_bottom {
-  flex-direction: column;
-}
-.mcompact #ebd-body.mobile_portrait #main_awards, .mcompact #ebd-body.mobile_portrait #main_milestones {
-  width: 97%;
-  height: calc(var(--map-height) * 0.28);
-  left: 1%;
-}
-.mcompact #ebd-body.mobile_portrait #main_awards .milestone, .mcompact #ebd-body.mobile_portrait #main_awards .award, .mcompact #ebd-body.mobile_portrait #main_milestones .milestone, .mcompact #ebd-body.mobile_portrait #main_milestones .award {
-  width: calc(var(--map-width) * 0.26);
-  height: calc(var(--map-width) * 0.15);
-}
-.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header {
-  top: 10%;
-}
-.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header .mileaw_title, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header .mileaw_title {
-  font-size: calc(var(--map-width) * 0.04);
-}
-.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header .mileaw_costs .token_img, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header .mileaw_costs .token_img {
-  --resourcesize: calc(var(--map-width) * 0.06);
-  font-size: calc(var(--map-width) * 0.04);
-}
-.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_header .mileaw_gains .card_vp, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_header .mileaw_gains .card_vp {
-  width: calc(var(--map-width) * 0.06);
-  height: calc(var(--map-width) * 0.06);
-  font-size: calc(var(--map-width) * 0.04);
-}
-.mcompact #ebd-body.mobile_portrait #main_awards .mileaw_display, .mcompact #ebd-body.mobile_portrait #main_milestones .mileaw_display {
-  justify-content: center;
 }
 .mcompact #ebd-body.mobile_portrait #scoretable {
   font-size: smaller;
@@ -10804,9 +10638,6 @@
   display: flex;
   flex-direction: row;
   height: fit-content;
-}
-.mcompact #ebd-body.mobile_portrait .cardstack[data-currentview="2"] .stack_content {
-  /* --overlap: 0.88;*/
 }
 .mcompact #ebd-body.mobile_portrait .cardstack[data-currentview="3"] .stack_content {
   min-width: revert;
@@ -11064,18 +10895,6 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 
 .cards_2 > .card {
   display: inline-block;
-}
-
-#display_main .card .token_descr {
-  display: none;
-}
-
-#display_main .card .token_rules {
-  top: 55%;
-}
-
-#display_main .card .token_cost {
-  top: 20%;
 }
 
 /* decks */

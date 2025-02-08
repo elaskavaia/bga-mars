@@ -11,8 +11,6 @@
  *
  */
 
-@import url(../../../css/csslayer.css);
-
 #ebd-body {
   --mars-font: 'SpaceFont';
   --awards-font: 'Tangerine';
@@ -219,17 +217,6 @@
 }
 .cards_2 > .card {
   display: inline-block;
-}
-
-#display_main .card .token_descr {
-  display: none;
-}
-
-#display_main .card .token_rules {
-  top: 55%;
-}
-#display_main .card .token_cost {
-  top: 20%;
 }
 
 /* decks */

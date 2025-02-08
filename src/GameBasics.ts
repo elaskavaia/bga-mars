@@ -41,7 +41,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
-    dojo.destroy("debug_output"); // its too slow and useless
+    //dojo.destroy("debug_output"); // its too slow and useless
     this.gamedatas_server = dojo.clone(this.gamedatas);
     this.setupInfoPanel();
     this.setupNotifications();
