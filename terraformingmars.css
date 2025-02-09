@@ -4010,7 +4010,7 @@
 .mcompact .map_4 #map_middle {
   width: 100%;
   position: absolute;
-  height: 86%;
+  height: 88%;
 }
 .mcompact .map_4 .hex_phobos {
   left: 3%;
@@ -7095,24 +7095,12 @@
   max-width: none;
 }
 
-.tooltipimage {
-  vertical-align: top;
-  display: inline-block;
-}
-
-.tooltiptext {
-  display: inline-block;
-  vertical-align: top;
-  padding: 10px;
-  max-width: 40em;
-}
-
 .tooltiptitle {
+  position: relative;
   font-weight: bold;
-  font-size: large;
   text-transform: uppercase;
-  width: 100%;
-  background-color: rgba(250, 235, 215, 0.3215686275);
+  background: rgba(211, 103, 41, 0.4666666667);
+  padding-left: 0.2em;
 }
 
 .tundra .dijitTooltipContainer,
@@ -7122,8 +7110,17 @@
 }
 
 .tooltip-body {
+  position: relative;
   width: 100%;
-  padding: 10px;
+  display: flex;
+}
+
+.tooltipimage {
+  flex: none;
+}
+
+.tooltiptext {
+  max-width: 40em;
 }
 
 .prereq_notmet {
@@ -7150,7 +7147,8 @@
   background-size: 1000% 200%;
 }
 
-.tooltipimage.tracker.tracker_eru, .tooltipimage.tracker.tracker_ers {
+.tooltipimage.tracker.tracker_eru,
+.tooltipimage.tracker.tracker_ers {
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
 }
@@ -7160,137 +7158,37 @@
   background-size: contain;
 }
 
-.mcompact .tooltipimage.tracker.tracker_tr {
-  display: none;
-}
-.mcompact .tooltipimage.tracker.tracker_gen {
-  display: none;
-}
-.mcompact .tooltipimage.tracker.tracker_passed {
-  display: none;
-}
-.mcompact .tooltipimage.hex {
-  display: none;
+.mcompact .tooltipcontainer {
+  --card-width: 20vh;
+  --card-height: calc(var(--card-width) * 1.40658174);
+  --map-width: 92vh;
+  max-width: 60vh;
+  font-size: large;
 }
 .mcompact .compact_card_tt {
   display: flex;
-  --card-width: 25vh;
-  --card-height: calc(var(--card-width)*1.40658174);
 }
-.mcompact .compact_card_tt.standard_project .card_tooltipimagecontainer {
+.mcompact .card_tooltipcontainer {
+  max-width: calc(var(--card-width) * 2.5);
+}
+.mcompact .card_tt_tooltipimagecontainer {
+  padding: 0.2em;
+}
+.mcompact .stanproj_tooltipcontainer .card_tt_tooltipimagecontainer {
   display: none;
-}
-.mcompact .tooltiptitle {
-  /*font-size:initial ;*/
-  font-size: 1.6vh;
-}
-.mcompact .card_tooltipcontainer,
-.mcompact .award_tooltipcontainer,
-.mcompact .milestone_tooltipcontainer,
-.mcompact .card_stanproj_1_tooltipcontainer,
-.mcompact .card_stanproj_2_tooltipcontainer,
-.mcompact .card_stanproj_3_tooltipcontainer,
-.mcompact .card_stanproj_4_tooltipcontainer,
-.mcompact .card_stanproj_5_tooltipcontainer,
-.mcompact .card_stanproj_6_tooltipcontainer {
-  font-family: Georgia;
-  font-size: 1.6vh;
-  padding-left: 1vh;
-  max-width: 60vh;
-  --map-width: 92vh;
-}
-.mcompact .card_tooltipcontainer .tooltip-body,
-.mcompact .award_tooltipcontainer .tooltip-body,
-.mcompact .milestone_tooltipcontainer .tooltip-body,
-.mcompact .card_stanproj_1_tooltipcontainer .tooltip-body,
-.mcompact .card_stanproj_2_tooltipcontainer .tooltip-body,
-.mcompact .card_stanproj_3_tooltipcontainer .tooltip-body,
-.mcompact .card_stanproj_4_tooltipcontainer .tooltip-body,
-.mcompact .card_stanproj_5_tooltipcontainer .tooltip-body,
-.mcompact .card_stanproj_6_tooltipcontainer .tooltip-body {
-  padding: 0;
-}
-.mcompact .card_tooltipcontainer .tooltiptitle,
-.mcompact .award_tooltipcontainer .tooltiptitle,
-.mcompact .milestone_tooltipcontainer .tooltiptitle,
-.mcompact .card_stanproj_1_tooltipcontainer .tooltiptitle,
-.mcompact .card_stanproj_2_tooltipcontainer .tooltiptitle,
-.mcompact .card_stanproj_3_tooltipcontainer .tooltiptitle,
-.mcompact .card_stanproj_4_tooltipcontainer .tooltiptitle,
-.mcompact .card_stanproj_5_tooltipcontainer .tooltiptitle,
-.mcompact .card_stanproj_6_tooltipcontainer .tooltiptitle {
-  display: flex;
-  justify-content: center;
-  font-family: var(--mars-font);
-  font-size: 2vh;
-  background-color: rgba(87, 87, 87, 0.32);
-}
-.mcompact .card_tooltipcontainer .tooltipimage,
-.mcompact .award_tooltipcontainer .tooltipimage,
-.mcompact .milestone_tooltipcontainer .tooltipimage,
-.mcompact .card_stanproj_1_tooltipcontainer .tooltipimage,
-.mcompact .card_stanproj_2_tooltipcontainer .tooltipimage,
-.mcompact .card_stanproj_3_tooltipcontainer .tooltipimage,
-.mcompact .card_stanproj_4_tooltipcontainer .tooltipimage,
-.mcompact .card_stanproj_5_tooltipcontainer .tooltipimage,
-.mcompact .card_stanproj_6_tooltipcontainer .tooltipimage {
-  display: none;
-}
-.mcompact .card_tooltipcontainer .infobox,
-.mcompact .award_tooltipcontainer .infobox,
-.mcompact .milestone_tooltipcontainer .infobox,
-.mcompact .card_stanproj_1_tooltipcontainer .infobox,
-.mcompact .card_stanproj_2_tooltipcontainer .infobox,
-.mcompact .card_stanproj_3_tooltipcontainer .infobox,
-.mcompact .card_stanproj_4_tooltipcontainer .infobox,
-.mcompact .card_stanproj_5_tooltipcontainer .infobox,
-.mcompact .card_stanproj_6_tooltipcontainer .infobox {
-  display: none;
-}
-.mcompact .award_tooltipcontainer,
-.mcompact .milestone_tooltipcontainer,
-.mcompact .card_stanproj_1_tooltipcontainer,
-.mcompact .card_stanproj_2_tooltipcontainer,
-.mcompact .card_stanproj_3_tooltipcontainer,
-.mcompact .card_stanproj_4_tooltipcontainer,
-.mcompact .card_stanproj_5_tooltipcontainer,
-.mcompact .card_stanproj_6_tooltipcontainer {
-  max-width: 40vh;
 }
 .mcompact .tt_intertitle {
-  text-transform: uppercase;
-  font-size: 1.7vh;
-  font-family: var(--mars-font);
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  font-size: calc(var(--card-width) * 0.07);
-  font-family: var(--mars-font);
-  background: #ffe9a8;
-}
-.mcompact .card_tooltipcontainer[data-card-type="1"] .tt_intertitle {
-  background: #d0f0bd;
-}
-.mcompact .card_tooltipcontainer[data-card-type="2"] .tt_intertitle {
-  background: #bdd8f0;
-}
-.mcompact .card_tooltipcontainer[data-card-type="3"] .tt_intertitle {
-  background: #f0c3bd;
-}
-.mcompact .card_tooltipcontainer[data-card-type="4"] .tt_intertitle {
-  background: #e9bdf0;
+  background: rgba(211, 103, 41, 0.2666666667);
 }
 .mcompact .tooltipcontainer .tile {
   position: relative;
   width: calc(var(--map-width) * 0.217);
   height: calc(var(--map-width) * 0.24);
 }
-.mcompact .card_tooltipimagecontainer .tracker.badge {
+.mcompact .card_tt_tooltipimagecontainer .tracker.badge {
   position: relative;
-  /* width: 7vh;
-   height: 7vh;*/
 }
-.mcompact .card_tooltipimagecontainer .tracker.badge::after {
+.mcompact .card_tt_tooltipimagecontainer .tracker.badge::after {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -7322,13 +7220,14 @@
   font-weight: bold;
 }
 
+.tooltipcontainer {
+  background-image: url(img/full/tooltipbg.jpg);
+  background-size: cover;
+}
+
 .mfull #ebd-body {
   --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);
   --tt-height: calc(var(--tt-width) * 0.688);
-}
-.mfull #ebd-body .tooltipcontainer {
-  background-image: url(img/full/tooltipbg.jpg);
-  background-size: calc(var(--tt-width) * 1.2) auto;
 }
 .mfull #ebd-body .card_tooltipcontainer {
   --card-width: calc(var(--tt-width) * 0.4);
@@ -7341,28 +7240,30 @@
   max-width: calc(var(--tt-width) * 0.6 - 25px);
   padding: 10px;
 }
-.mfull .tt_section > * {
+
+.tt_section > * {
   display: block;
 }
-.mfull .card_tt_effect {
+
+.card_tt_effect {
   margin-left: 10px;
 }
-.mfull .tt_intertitle {
-  text-transform: uppercase;
+
+.tt_intertitle {
   font-weight: bold;
+  text-transform: uppercase;
+  padding-left: 0.2em;
 }
-.mfull .tooltiptitle {
-  padding: 6px;
-  padding-left: 10px;
-}
-.mfull .tooltipcontainer,
-.mfull .tundra .dijitTooltipContainer {
+
+.tooltipcontainer,
+.tundra .dijitTooltipContainer {
   border: unset;
   border-radius: unset;
   padding: unset;
   margin: 0;
 }
-.mfull .tooltipcontainer .discounted .tt_section.tt_cost .card_tt_effect:after {
+
+.tooltipcontainer .discounted .tt_section.tt_cost .card_tt_effect:after {
   color: black;
 }
 
@@ -9385,17 +9286,17 @@
 .mfull #main_board {
   position: relative;
   width: calc(var(--map-board-with));
-  height: calc(var(--map-board-with) * 0.849);
+  aspect-ratio: 1/0.849;
   box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
 }
 .mfull .map_2 #main_board {
-  height: calc(var(--map-board-with) * 0.86);
+  aspect-ratio: 1/0.86;
 }
 .mfull .map_1 #main_board {
-  height: calc(var(--map-board-with) * 0.86);
+  aspect-ratio: 1/0.86;
 }
 .mfull .map_3 #main_board {
-  height: calc(var(--map-board-with) * 0.844);
+  aspect-ratio: 1/0.844;
 }
 .mfull #main_area {
   margin-top: unset;
@@ -10140,6 +10041,9 @@
   background-color: #b7915e;
   margin-left: 3px;
   margin-right: 3px;
+}
+.mfull .tooltipimage.stanproj {
+  display: none;
 }
 .mfull .card[data-state="3"]::before {
   content: "";

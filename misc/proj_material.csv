@@ -7,6 +7,7 @@ num|name|t|r|cost|text|min|php
 #set location=display_main
 #set count=1
 #set create=1
+#set type=stanproj
 1|Sell patents|0|counter(chand,1),sell|0|Discard X card to gain X M€
 2|Power plant|0|pe|11|For 11 M€ you get to increase your energy production 1 step
 3|Asteroid|0|t|14|For 14 M€ you get to increase temperature 1 step (and your TR)
@@ -14,6 +15,7 @@ num|name|t|r|cost|text|min|php
 5|Greenery|0|forest|23|For 23 M€ you get to place a greenery tile, which increases oxygen level (and your TR) 1 step, and collect any placement bonus for the tile. Put a player marker on the tile
 6|City|0|city;pm|25|For 25 M€ you get to place a city tile (collect any placement bonus for the tile, and place a player marker on it). You also get to increase your M€ production 1 step.
 7|Buffer Gas|0|tr|16|For 16 M€ you get to increase your TR 1 step
+#set type=
 
 #Milestones
 #set id=milestone_{num}

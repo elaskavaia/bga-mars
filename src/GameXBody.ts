@@ -1284,7 +1284,7 @@ class GameXBody extends GameTokens {
     const type = displayInfo.t;
 
     let htm =
-      '<div class="compact_card_tt %adcl" style="%adstyle"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' +
+      '<div class="compact_card_tt %adcl" style="%adstyle"><div class="card_tt_tooltipimagecontainer">%c</div><div class="card_tt_tooltipcontainer" data-card-type="' +
       type +
       '">%t</div></div>';
 
@@ -1301,11 +1301,13 @@ class GameXBody extends GameTokens {
 
     if (type !== undefined) {
       fulltxt = this.generateCardTooltip(displayInfo);
-
+      const div = this.cloneAndFixIds(elemId, "_tt", true);
+      div.classList.remove('active_slot');
+      fullitemhtm = div.outerHTML;
       if ([1, 2, 3, 5].includes(type)) {
         //main cards + prelude
-        const div = this.cloneAndFixIds(elemId, "_tt", true);
-        fullitemhtm = div.outerHTML;
+
+ 
         if (div.getAttribute("data-invalid_prereq") == "1") {
           adClass += " invalid_prereq";
         }
@@ -1318,13 +1320,10 @@ class GameXBody extends GameTokens {
             adClass += " " + item;
           }
         });
-      } else if (type == this.CON.MA_CARD_TYPE_CORP) {
-        fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
-      } else if (type == this.CON.MA_CARD_TYPE_MILESTONE || type == this.CON.MA_CARD_TYPE_AWARD) {
-        fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
       } else if (type == this.CON.MA_CARD_TYPE_STAN) {
-        adClass += "standard_project";
+        fullitemhtm =  "";
       }
+      displayInfo.imageTypes += ' _override';
     } else {
       if ($(displayInfo.key)) {
         if (displayInfo.key.startsWith("tracker_tr_")) {
@@ -2092,6 +2091,7 @@ awarded.`);
       tokenDisplayInfo.tooltip = this.generateTokenTooltip_Full(tokenDisplayInfo);
     } else {
       tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
+     
     }
 
     // if (this.isLocationByType(tokenDisplayInfo.key)) {

@@ -46,7 +46,7 @@ var GameBasics = /** @class */ (function (_super) {
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
-        //dojo.destroy("debug_output"); // its too slow and useless
+        dojo.destroy("debug_output"); // its too slow and useless
         this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
         this.setupNotifications();
@@ -143,8 +143,7 @@ var GameBasics = /** @class */ (function (_super) {
             var gname = this.game_name;
             var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
             this.ajaxcall(url, { call: action, lock: true, args: JSON.stringify(args !== null && args !== void 0 ? args : {}) }, //
-            this, function (result) {
-            }, handler);
+            this, function (result) { }, handler);
         }
     };
     GameBasics.prototype.onCancel = function (event) {
@@ -496,9 +495,16 @@ var GameBasics = /** @class */ (function (_super) {
             }
         }
         var name_tr = this.getTr(name);
-        var message_tr = this.getTr(message);
         var actionLine = action ? this.getActionLine(action) : "";
-        return "<div class='".concat(containerType, "'>\n        <div class='tooltiptitle'>").concat(name_tr, "</div>\n        <div class='tooltip-body-separator'></div>\n        <div class='tooltip-body'>\n           ").concat(divImg, "\n           <div class='tooltipmessage tooltiptext'>").concat(message_tr, "</div>\n           <div class='tooltipdynamic'></div>\n        </div>\n        ").concat(actionLine, "\n    </div>");
+        var body = "";
+        if (imgTypes.includes("_override")) {
+            body = message;
+        }
+        else {
+            var message_tr = this.getTr(message);
+            body = "\n          ".concat(divImg, "\n           <div class='tooltipmessage tooltiptext'>").concat(message_tr, "</div>\n    ");
+        }
+        return "<div class='".concat(containerType, "'>\n        <div class='tooltiptitle'>").concat(name_tr, "</div>\n        <div class='tooltip-body-separator'></div>\n        <div class='tooltip-body'>").concat(body, "</div>\n        ").concat(actionLine, "\n    </div>");
     };
     GameBasics.prototype.getTr = function (name) {
         if (name === undefined)
@@ -4741,7 +4747,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.generateCardTooltip_Compact = function (displayInfo) {
         var type = displayInfo.t;
-        var htm = '<div class="compact_card_tt %adcl" style="%adstyle"><div class="card_tooltipimagecontainer">%c</div><div class="card_tooltipcontainer" data-card-type="' +
+        var htm = '<div class="compact_card_tt %adcl" style="%adstyle"><div class="card_tt_tooltipimagecontainer">%c</div><div class="card_tt_tooltipcontainer" data-card-type="' +
             type +
             '">%t</div></div>';
         var fullitemhtm = "";
@@ -4755,10 +4761,11 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if (type !== undefined) {
             fulltxt = this.generateCardTooltip(displayInfo);
+            var div_2 = this.cloneAndFixIds(elemId, "_tt", true);
+            div_2.classList.remove('active_slot');
+            fullitemhtm = div_2.outerHTML;
             if ([1, 2, 3, 5].includes(type)) {
                 //main cards + prelude
-                var div_2 = this.cloneAndFixIds(elemId, "_tt", true);
-                fullitemhtm = div_2.outerHTML;
                 if (div_2.getAttribute("data-invalid_prereq") == "1") {
                     adClass += " invalid_prereq";
                 }
@@ -4772,15 +4779,10 @@ var GameXBody = /** @class */ (function (_super) {
                     }
                 });
             }
-            else if (type == this.CON.MA_CARD_TYPE_CORP) {
-                fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
-            }
-            else if (type == this.CON.MA_CARD_TYPE_MILESTONE || type == this.CON.MA_CARD_TYPE_AWARD) {
-                fullitemhtm = this.cloneAndFixIds(elemId, "_tt", true).outerHTML;
-            }
             else if (type == this.CON.MA_CARD_TYPE_STAN) {
-                adClass += "standard_project";
+                fullitemhtm = "";
             }
+            displayInfo.imageTypes += ' _override';
         }
         else {
             if ($(displayInfo.key)) {
@@ -7507,7 +7509,6 @@ var VLayout = /** @class */ (function () {
             //standard project formatting:
             //cost -> action title
             //except for sell patents
-            tokenNode.classList.add('stanproj');
             if (this.game.getMapNumber() == 4 || tokenNode.id == "card_stanproj_7")
                 tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
         }

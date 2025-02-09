@@ -41,7 +41,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
-    //dojo.destroy("debug_output"); // its too slow and useless
+    dojo.destroy("debug_output"); // its too slow and useless
     this.gamedatas_server = dojo.clone(this.gamedatas);
     this.setupInfoPanel();
     this.setupNotifications();
@@ -153,8 +153,7 @@ class GameBasics extends GameGui {
         url,
         { call: action, lock: true, args: JSON.stringify(args ?? {}) }, //
         this,
-        (result) => {
-        },
+        (result) => {},
         handler
       );
     }
@@ -570,17 +569,22 @@ class GameBasics extends GameGui {
       }
     }
     const name_tr = this.getTr(name);
-    const message_tr = this.getTr(message);
     const actionLine = action ? this.getActionLine(action) : "";
+    let body = "";
+    if (imgTypes.includes("_override")) {
+      body = message;
+    } else {
+      const message_tr = this.getTr(message);
+      body = `
+          ${divImg}
+           <div class='tooltipmessage tooltiptext'>${message_tr}</div>
+    `;
+    }
 
     return `<div class='${containerType}'>
         <div class='tooltiptitle'>${name_tr}</div>
         <div class='tooltip-body-separator'></div>
-        <div class='tooltip-body'>
-           ${divImg}
-           <div class='tooltipmessage tooltiptext'>${message_tr}</div>
-           <div class='tooltipdynamic'></div>
-        </div>
+        <div class='tooltip-body'>${body}</div>
         ${actionLine}
     </div>`;
   }

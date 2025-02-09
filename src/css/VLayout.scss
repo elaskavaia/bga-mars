@@ -185,20 +185,20 @@
   #main_board {
     position: relative;
     width: calc(var(--map-board-with));
-    height: calc(var(--map-board-with) * 0.849);
+    aspect-ratio: 1 / 0.849;
     box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 3px 1px;
   }
 
   .map_2 #main_board {
-    height: calc(var(--map-board-with) * 0.86);
+    aspect-ratio: 1 / 0.86;
   }
 
   .map_1 #main_board {
-    height: calc(var(--map-board-with) * 0.86);
+    aspect-ratio: 1 / 0.86;
   }
 
   .map_3 #main_board {
-    height: calc(var(--map-board-with) * 0.844); // vastitas
+    aspect-ratio: 1 / 0.844; // vastitas
   }
 
   #main_area {
@@ -1056,6 +1056,10 @@
     background-color: #b7915e;
     margin-left: 3px;
     margin-right: 3px;
+  }
+
+  .tooltipimage.stanproj {
+    display: none;
   }
 
 

@@ -182,7 +182,6 @@ class VLayout {
       //standard project formatting:
       //cost -> action title
       //except for sell patents
-      tokenNode.classList.add('stanproj');
       if (this.game.getMapNumber() == 4 || tokenNode.id == "card_stanproj_7")
         tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
     }

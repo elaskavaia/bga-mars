@@ -3,25 +3,14 @@
   max-width: none;
 }
 
-.tooltipimage {
-  vertical-align: top;
-  display: inline-block;
-}
-
-.tooltiptext {
-  display: inline-block;
-  vertical-align: top;
-  padding: 10px;
-  max-width: 40em;
-}
-
 .tooltiptitle {
+  position: relative;
   font-weight: bold;
-  font-size: large;
   text-transform: uppercase;
-  width: 100%;
-  background-color: #faebd752;
+  background: #d3672977;
+  padding-left: 0.2em;
 }
+
 
 .tundra .dijitTooltipContainer,
 .tooltipcontainer {
@@ -30,8 +19,17 @@
 }
 
 .tooltip-body {
+  position: relative;
   width: 100%;
-  padding: 10px;
+  display: flex;
+}
+
+.tooltipimage {
+  flex: none;
+}
+
+.tooltiptext {
+  max-width: 40em;
 }
 
 .prereq_notmet {
@@ -48,8 +46,9 @@
 .mcompact {
   --resourcesize: 6vh;
 }
+
 .mfull {
-  --resourcesize:  32px;
+  --resourcesize: 32px;
 }
 
 .tooltipimage.tracker {
@@ -60,7 +59,8 @@
 
 }
 
-.tooltipimage.tracker.tracker_eru,.tooltipimage.tracker.tracker_ers {
+.tooltipimage.tracker.tracker_eru,
+.tooltipimage.tracker.tracker_ers {
   background-image: url("img/icons.png");
   background-size: 1400% 200%;
 }
@@ -71,123 +71,34 @@
 }
 
 .mcompact {
-
-  .tooltipimage.tracker.tracker_tr {
-    display: none;
-  }
-
-  .tooltipimage.tracker.tracker_gen {
-    display: none;
-  }
-
-  .tooltipimage.tracker.tracker_passed {
-    display: none;
-  }
-
-  .tooltipimage.hex {
-    display: none;
+  .tooltipcontainer {
+    --card-width: 20vh;
+    --card-height: calc(var(--card-width) * 1.40658174);
+    --map-width: 92vh;
+    max-width: 60vh;
+    font-size: large;
   }
 
   .compact_card_tt {
     display: flex;
-    --card-width: 25vh;
-    --card-height: calc(var(--card-width)*1.40658174);
   }
 
-  .compact_card_tt.standard_project {
-    .card_tooltipimagecontainer {
+  .card_tooltipcontainer {
+    max-width: calc(var(--card-width) * 2.5);
+  }
+
+  .card_tt_tooltipimagecontainer {
+    padding: 0.2em;
+  }
+
+  .stanproj_tooltipcontainer {
+    .card_tt_tooltipimagecontainer {
       display: none;
     }
-  }
-
-  .tooltiptitle {
-    /*font-size:initial ;*/
-    font-size: 1.6vh;
-  }
-
-  .card_tooltipcontainer,
-  .award_tooltipcontainer,
-  .milestone_tooltipcontainer,
-  .card_stanproj_1_tooltipcontainer,
-  .card_stanproj_2_tooltipcontainer,
-  .card_stanproj_3_tooltipcontainer,
-  .card_stanproj_4_tooltipcontainer,
-  .card_stanproj_5_tooltipcontainer,
-  .card_stanproj_6_tooltipcontainer {
-
-    font-family: Georgia;
-    font-size: 1.6vh;
-    padding-left: 1vh;
-
-    max-width: 60vh;
-    --map-width: 92vh;
-
-    .tooltip-body {
-      padding: 0;
-    }
-
-    .tooltiptitle {
-      display: flex;
-      justify-content: center;
-      font-family: var(--mars-font);
-      font-size: 2vh;
-      background-color: rgba(87, 87, 87, 0.32);
-
-    }
-
-    .tooltipimage {
-      display: none;
-    }
-
-
-    .infobox {
-      display: none;
-    }
-
-
-
-
-
-  }
-
-  .award_tooltipcontainer,
-  .milestone_tooltipcontainer,
-  .card_stanproj_1_tooltipcontainer,
-  .card_stanproj_2_tooltipcontainer,
-  .card_stanproj_3_tooltipcontainer,
-  .card_stanproj_4_tooltipcontainer,
-  .card_stanproj_5_tooltipcontainer,
-  .card_stanproj_6_tooltipcontainer {
-    max-width: 40vh;
   }
 
   .tt_intertitle {
-    text-transform: uppercase;
-    font-size: 1.7vh;
-    font-family: var(--mars-font);
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    font-size: calc(var(--card-width) * 0.07);
-    font-family: var(--mars-font);
-    background: #ffe9a8;
-  }
-
-
-  .card_tooltipcontainer[data-card-type="1"] .tt_intertitle {
-    background: #d0f0bd;
-  }
-
-  .card_tooltipcontainer[data-card-type="2"] .tt_intertitle {
-    background: #bdd8f0;
-  }
-
-  .card_tooltipcontainer[data-card-type="3"] .tt_intertitle {
-    background: #f0c3bd;
-  }
-
-  .card_tooltipcontainer[data-card-type="4"] .tt_intertitle {
-    background: #e9bdf0;
+    background: #d3672944;
   }
 
   .tooltipcontainer {
@@ -198,11 +109,9 @@
     }
   }
 
-  .card_tooltipimagecontainer {
+  .card_tt_tooltipimagecontainer {
     .tracker.badge {
       position: relative;
-     /* width: 7vh;
-      height: 7vh;*/
     }
 
     .tracker.badge::after {
@@ -256,69 +165,65 @@
 
 }
 
+.tooltipcontainer {
+  background-image: url(img/full/tooltipbg.jpg);
+  background-size: cover;
+}
+
 // .bgabutton.disabled {
 //   pointer-events: unset; // to allow tooltips
 // }
 
-.mfull {
-  #ebd-body {
-      --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);
-      --tt-height: calc(var(--tt-width) * 0.688);
-  
+.mfull #ebd-body {
+  --tt-width: calc(var(--localsetting_cardsize) / 100 * 600px);
+  --tt-height: calc(var(--tt-width) * 0.688);
 
-      .tooltipcontainer {
-        background-image: url(img/full/tooltipbg.jpg);
-        background-size: calc(var(--tt-width) * 1.2) auto;
-      }
-  
-      .card_tooltipcontainer {
-        --card-width: calc(var(--tt-width) * 0.4);
-        --card-height: calc(var(--card-width)*1.40658174);
-        min-width: var(--tt-width);
-        min-height: var(--tt-height);
-        font-size: calc(var(--localsetting_cardsize) * 1.2%);
-  
-        .tooltiptext {
-          max-width: calc(var(--tt-width) * 0.6 - 25px);
-          padding: 10px;
-        }
-      }
+  .card_tooltipcontainer {
+    --card-width: calc(var(--tt-width) * 0.4);
+    --card-height: calc(var(--card-width)*1.40658174);
+    min-width: var(--tt-width);
+    min-height: var(--tt-height);
+    font-size: calc(var(--localsetting_cardsize) * 1.2%);
+
+    .tooltiptext {
+      max-width: calc(var(--tt-width) * 0.6 - 25px);
+      padding: 10px;
     }
-
-
-  .tt_section>* {
-    display: block;
-  }
-
-  .card_tt_effect {
-    margin-left: 10px;
-  }
-
-  .tt_intertitle {
-    text-transform: uppercase;
-    font-weight: bold;
-  }
-
-  .tooltiptitle {
-    padding: 6px;
-    padding-left: 10px;
-  }
-
-  .tooltipcontainer,
-  .tundra .dijitTooltipContainer {
-    border: unset;
-    border-radius: unset;
-    padding: unset;
-    margin: 0;
-  }
-
-
-  .tooltipcontainer .discounted .tt_section.tt_cost {
-      .card_tt_effect:after {
-        color: black;
-      }
   }
 }
+
+
+.tt_section>* {
+  display: block;
+}
+
+.card_tt_effect {
+  margin-left: 10px;
+}
+
+
+.tt_intertitle {
+  font-weight: bold;
+  text-transform: uppercase;
+  padding-left: 0.2em;
+}
+
+
+.tooltipcontainer,
+.tundra .dijitTooltipContainer {
+  border: unset;
+  border-radius: unset;
+  padding: unset;
+  margin: 0;
+}
+
+
+.tooltipcontainer .discounted .tt_section.tt_cost {
+  .card_tt_effect:after {
+    color: black;
+  }
+}
+
 
 .tt_2cols {
   display: grid;
