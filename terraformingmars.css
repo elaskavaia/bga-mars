@@ -5832,11 +5832,12 @@
 
 /* standard projects go there */
 #display_main {
-  top: 10%;
+  margin-top: 20%;
   width: var(--stan-width);
   height: calc(var(--stan-height) * 7);
   padding: unset;
   background-color: unset;
+  position: relative;
 }
 
 .map_4 #standard_projects_area {
