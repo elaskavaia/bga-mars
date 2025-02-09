@@ -493,24 +493,31 @@ final class GameTest extends TestCase {
         $this->assertEquals("TYCOON", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
 
+        $this->playProjectCards(MA_CARD_TYPE_GREEN, 2);
+        $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
+        $this->playProjectCards(MA_CARD_TYPE_BLUE, 18);
+
+        $count = $this->game->getTycoonCount($color);
+        $this->assertEquals(20, $count);
+        $this->assertOperationTargetStatus("claim", $token);
+    }
+
+    function playProjectCards(int $ptype, int $max) {
         $count = 0;
+        $game = $this->game;
         foreach ($game->token_types as $key => $info) {
             if (!startsWith($key, 'card_main')) continue;
             $t = array_get($info, 't');
-            if ($t != MA_CARD_TYPE_BLUE && $t != MA_CARD_TYPE_GREEN) continue;
+            if ($t != $ptype) continue;
             $game->effect_playCard(PCOLOR, $key);
-            if ($count >= 15) break;
             $count++;
+            if ($count >= $max) break;
         }
-
-        $count = $this->game->getTycoonCount($color);
-        $this->assertEquals(16, $count);
-        $this->assertOperationTargetStatus("claim", $token);
     }
 
     public function testClaimMilestone_Elysium5() {
         // 5|LEGEND|7|tagEvent|8|requires 5 played events (red cards).|5
-        $this->game(1);
+        $game=$this->game(1);
         $color = PCOLOR;
         $num = 5;
         $kind = 'milestone';
@@ -518,8 +525,9 @@ final class GameTest extends TestCase {
         $this->game->setTrackerValue(PCOLOR, 'm', 10);
         $this->assertEquals("LEGEND", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
-        $this->game->setTrackerValue(PCOLOR, 'tagEvent', 10);
-        $this->assertOperationTargetStatus("claim", $token);
+        $this->playProjectCards(MA_CARD_TYPE_EVENT, 10);
+        $this->assertEquals(10, $game->getCountOfCardsRed($color));
+        $this->assertOperationTargetStatus("claim", $token, MA_OK);
     }
 
     public function testAward_Elysium1() {

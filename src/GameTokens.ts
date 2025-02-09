@@ -475,7 +475,7 @@ class GameTokens extends GameBasics {
   }
 
   getTooptipHtmlForTokenInfo(tokenInfo: TokenDisplayInfo) {
-    return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
+    return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action, tokenInfo.tooltipOverride);
   }
 
   getTokenName(tokenId: string): string {

@@ -3401,7 +3401,7 @@ var GameTokens = /** @class */ (function (_super) {
         return this.getTooptipHtmlForTokenInfo(tokenInfo);
     };
     GameTokens.prototype.getTooptipHtmlForTokenInfo = function (tokenInfo) {
-        return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
+        return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action, tokenInfo.tooltipOverride);
     };
     GameTokens.prototype.getTokenName = function (tokenId) {
         var tokenInfo = this.getTokenDisplayInfo(tokenId);

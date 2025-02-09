@@ -82,7 +82,7 @@ num|name|t|r|cost|text|min|php
 2|SPECIALIST|7|specialist|8|Requires that you have at least 10 in production of any resource.|10
 3|ECOLOGIST|7|ecologist|8|Requires that you have 4 bio tags (plant-, microbe- and animal tags count as bio tags).|4
 4|TYCOON|7|tycoon|8|Requires that you have 15 project cards in play (blue and green cards).|15
-5|LEGEND|7|tagEvent|8|Requires 5 played events (red cards).|5
+5|LEGEND|7|cardsRed|8|Requires 5 played events (red cards).|5
 
 #Awards Elysium
 #set id=award_{num}@m1
