@@ -97,12 +97,10 @@
       width: calc(var(--card-width)*0.15);
       height: calc(var(--card-width)*0.18);
       border-radius: 20%;
-      outline: 1px solid black;
       display: flex;
       justify-content: center;
       align-items: center;
       background-color: var(--hlcolor);
-      box-shadow: black 1px 1px 0px 1px;
     }
 
     .stack_label {
@@ -124,11 +122,11 @@
       width: calc(var(--card-width) * 0.16);
       height: calc(var(--card-width) * 0.16);
       font-size: calc(var(--card-width) * 0.1);
-      border-radius: 20%;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      color: gray;
     }
 
     .stack_dd_buttons{

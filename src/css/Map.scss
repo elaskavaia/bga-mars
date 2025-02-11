@@ -1001,7 +1001,7 @@
   background-size: contain;
   background-repeat: no-repeat;
   position: absolute;
-  font-size: calc(var(--stan-width) * 0.07);
+  font-size: calc(var(--stan-width) * 0.06);
   width: calc(var(--stan-width));
 }
 
@@ -1033,7 +1033,8 @@
   }
 
   #display_main {
-    top: 0%;
+    top: unset;
+    margin-top: unset;
   }
 }
 
@@ -1046,17 +1047,8 @@
   box-shadow: revert;
   background-image: unset;
   background-color: unset;
-  position: relative;
+  position: absolute;
   display: block;
-
-  .infobox {
-    left: -.6em;
-    top: 0.2em;
-    bottom: revert;
-    right: revert;
-    opacity: 0.4;
-    color: white;
-  }
 
   &:after {
     content: attr(data-name);
@@ -1067,14 +1059,47 @@
     top: 20%;
     right: 3%;
   }
+  &.discounted:before {
+    color: #bef983;
+    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  }
 
   &:before {
     content: attr(data-cost);
     width: 100%;
     height: 100%;
-    left: 10%;
+    left: 9%;
     position: absolute;
     top: 20%;
+  }
+
+  &#card_stanproj_1::before {
+    left: 40%;
+  }
+  &#card_stanproj_1 {
+    top: 0.5%;
+  }
+  &#card_stanproj_2 {
+    top: 15%;
+  }
+  &#card_stanproj_3 {
+    top: 29%;
+  }
+  &#card_stanproj_4 {
+    top: 43%;
+  }
+  // greenery
+  &#card_stanproj_5 {
+    top: 56.5%;
+  }
+  &#card_stanproj_6 {
+    top: 72%;
+  }
+  &#card_stanproj_7 {
+    top: 83%;
+  }
+  &#card_stanproj_7::before, &#card_stanproj_7::after {
+    top: 30%;
   }
 }
 
@@ -1090,9 +1115,7 @@
 }
 
 
-#display_main #card_stanproj_1::before {
-  left: 39%;
-}
+
 
 
 #display_main #card_stanproj_7 {

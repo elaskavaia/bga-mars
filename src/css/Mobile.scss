@@ -77,7 +77,7 @@
     .cardstack[data-currentview="3"] .stack_content {
       min-width: revert;
       width: 100%;
-      overflow: scroll;
+      overflow: auto;
       flex-direction: row;
       max-height: revert;
     }

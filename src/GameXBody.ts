@@ -1139,6 +1139,7 @@ class GameXBody extends GameTokens {
   }
 
   onScreenWidthChange() {
+    console.log("onScreenWidthChange");
     if (this.isLayoutFull()) {
       super.onScreenWidthChange();
       const root = document.documentElement;
