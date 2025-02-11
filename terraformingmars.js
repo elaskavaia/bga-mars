@@ -2168,8 +2168,8 @@ var CustomAnimation = /** @class */ (function () {
     return CustomAnimation;
 }());
 /* Module for rendering  card effects, powers , etc
-*
-*/
+ *
+ */
 var CustomRenders = /** @class */ (function () {
     function CustomRenders() {
     }
@@ -2177,10 +2177,12 @@ var CustomRenders = /** @class */ (function () {
         switch (key) {
             case "card_corp_12":
                 //add discount to stanproj_2 ui;
-                if ($('card_stanproj_2')) {
-                    var node = $('card_stanproj_2').querySelector('.stanp_cost');
-                    node.innerHTML = "8";
-                    node.classList.add("discounted");
+                if ($("card_stanproj_2")) {
+                    var node = $("card_stanproj_2");
+                    if (node) {
+                        node.dataset.cost = "8";
+                        node.classList.add("discounted");
+                    }
                 }
                 break;
         }
@@ -2188,22 +2190,22 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.parseExprToHtml = function (expr, card_num, action_mode, effect_mode) {
         if (action_mode === void 0) { action_mode = false; }
         if (effect_mode === void 0) { effect_mode = false; }
-        var rethtm = '';
+        var rethtm = "";
         if (!expr || expr.length < 1)
-            return '';
+            return "";
         if (!action_mode && !effect_mode) {
-            if (card_num && this['customcard_rules_' + card_num]) {
-                return this['customcard_rules_' + card_num]();
+            if (card_num && this["customcard_rules_" + card_num]) {
+                return this["customcard_rules_" + card_num]();
             }
         }
         else if (action_mode == true) {
-            if (card_num && this['customcard_action_' + card_num]) {
-                return this['customcard_action_' + card_num]();
+            if (card_num && this["customcard_action_" + card_num]) {
+                return this["customcard_action_" + card_num]();
             }
         }
         else if (effect_mode == true) {
-            if (card_num && this['customcard_effect_' + card_num]) {
-                return this['customcard_effect_' + card_num]();
+            if (card_num && this["customcard_effect_" + card_num]) {
+                return this["customcard_effect_" + card_num]();
             }
         }
         //patch
@@ -2256,14 +2258,14 @@ var CustomRenders = /** @class */ (function () {
         if (action_mode == true || effect_mode == true) {
             rethtm += '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains">';
             rethtm += this.parseRulesToHtmlBlock(losses);
-            rethtm += '</div></div>';
+            rethtm += "</div></div>";
             if (action_mode == true)
                 rethtm += '<div class="action_arrow"></div>';
             else
                 rethtm += '<div class="effect_separator">:</div>';
             rethtm += '<div class="card_icono icono_gains cnt_gains"><div class="outer_gains">';
             rethtm += this.parseRulesToHtmlBlock(gains);
-            rethtm += '</div></div>';
+            rethtm += "</div></div>";
         }
         else {
             //rules mode
@@ -2272,7 +2274,7 @@ var CustomRenders = /** @class */ (function () {
             if (losses.length > 0) {
                 rethtm += '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="plusminus">-</div>';
                 rethtm += this.parseRulesToHtmlBlock(losses);
-                rethtm += '</div></div>';
+                rethtm += "</div></div>";
                 blocks++;
             }
             if (prodgains.length > 0 || prodlosses.length > 0) {
@@ -2280,16 +2282,16 @@ var CustomRenders = /** @class */ (function () {
                 if (prodlosses.length > 0) {
                     rethtm += '<div class="production_line cnt_losses"><div class="plusminus">-</div>';
                     rethtm += this.parseRulesToHtmlBlock(prodlosses);
-                    rethtm += '</div>';
+                    rethtm += "</div>";
                 }
                 if (prodgains.length > 0) {
                     rethtm += '<div class="production_line cnt_gains">';
                     if (prodlosses.length > 0 && !action_mode)
                         rethtm += '<div class="plusminus">+</div>';
                     rethtm += this.parseRulesToHtmlBlock(prodgains);
-                    rethtm += '</div>';
+                    rethtm += "</div>";
                 }
-                rethtm += '</div></div>';
+                rethtm += "</div></div>";
                 blocks++;
             }
             if (gains.length > 0) {
@@ -2297,7 +2299,7 @@ var CustomRenders = /** @class */ (function () {
                 if (losses.length > 0)
                     rethtm += '<div class="plusminus">+</div>';
                 rethtm += this.parseRulesToHtmlBlock(gains);
-                rethtm += '</div></div>';
+                rethtm += "</div></div>";
                 blocks++;
             }
         }
@@ -2311,27 +2313,27 @@ var CustomRenders = /** @class */ (function () {
         }
         var items = [];
         var op = expr[0];
-        var min = (expr.length > 1) ? expr[1] : "";
-        var max = (expr.length > 2) ? expr[2] : "";
-        var arg1 = (expr.length > 3) ? expr[3] : "";
+        var min = expr.length > 1 ? expr[1] : "";
+        var max = expr.length > 2 ? expr[2] : "";
+        var arg1 = expr.length > 3 ? expr[3] : "";
         //simple op, one resource gain
         if (expr.length == 1) {
             //special patch
             if (op == "play_cardSpaceEvent") {
-                items.push(this.getParse('tagSpace', depth));
-                items.push(this.getParse('tagEvent', depth));
+                items.push(this.getParse("tagSpace", depth));
+                items.push(this.getParse("tagEvent", depth));
             }
             else if (op == "acard5") {
-                items.push(this.getParse('tagMicrobe', depth));
-                items.push(this.getParse('star', depth));
-                items.push(this.getParse('twopoints', depth));
-                items.push(this.getParse('res_Science', depth));
+                items.push(this.getParse("tagMicrobe", depth));
+                items.push(this.getParse("star", depth));
+                items.push(this.getParse("twopoints", depth));
+                items.push(this.getParse("res_Science", depth));
             }
             else {
                 items.push(this.getParse(op, depth));
             }
         }
-        else if (op == '!') {
+        else if (op == "!") {
             if (arg1 != "") {
                 var item = this.getParse(arg1, depth);
                 if (item != null) {
@@ -2340,7 +2342,7 @@ var CustomRenders = /** @class */ (function () {
                 }
             }
         }
-        else if ((op == ',' || op == '+') && arg1.includes('counter(')) {
+        else if ((op == "," || op == "+") && arg1.includes("counter(")) {
             var retSrcs = this.parseExprItem(expr[3], depth + 1);
             var retGains = this.parseExprItem(expr[4], depth + 1);
             var isProd = false;
@@ -2358,7 +2360,7 @@ var CustomRenders = /** @class */ (function () {
                 items.push(retSrc);
             }
         }
-        else if (op == "," || op == ";" || op == '+') {
+        else if (op == "," || op == ";" || op == "+") {
             for (var i = 3; i < expr.length; i++) {
                 for (var _b = 0, _c = this.parseExprItem(expr[i], depth + 1); _b < _c.length; _b++) {
                     var ret = _c[_b];
@@ -2397,44 +2399,44 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.getParse = function (item, depth) {
         if (depth === void 0) { depth = 0; }
         var parse = null;
-        if (item.includes('counter(')) {
-            item = item.replace('counter(', '').replace(')', '');
+        if (item.includes("counter(")) {
+            item = item.replace("counter(", "").replace(")", "");
         }
-        item = item.replace('ores(Microbe)', 'ores_Microbe');
-        item = item.replace('ores(Animal)', 'ores_Animal');
-        item = item.replace("counter('(tagPlant>=3)*4')", 'special_tagplant_sup3');
-        item = item.replace("tagMicrobe/2", 'special_tagmicrobe_half');
-        item = item.replace("ph,0", 'ph');
-        item = item.replace(/\([^)]*\)/g, '(*)');
+        item = item.replace("ores(Microbe)", "ores_Microbe");
+        item = item.replace("ores(Animal)", "ores_Animal");
+        item = item.replace("counter('(tagPlant>=3)*4')", "special_tagplant_sup3");
+        item = item.replace("tagMicrobe/2", "special_tagmicrobe_half");
+        item = item.replace("ph,0", "ph");
+        item = item.replace(/\([^)]*\)/g, "(*)");
         if (this.parses[item]) {
             parse = Object.assign({}, this.parses[item]);
         }
-        else if (this.parses[item.replace('_Any', '')]) {
-            parse = Object.assign({}, this.parses[item.replace('_Any', '')]);
+        else if (this.parses[item.replace("_Any", "")]) {
+            parse = Object.assign({}, this.parses[item.replace("_Any", "")]);
             parse.redborder = "resource";
         }
-        else if (this.parses[item.replace('play_', '')]) {
-            parse = Object.assign({}, this.parses[item.replace('play_', '')]);
+        else if (this.parses[item.replace("play_", "")]) {
+            parse = Object.assign({}, this.parses[item.replace("play_", "")]);
         }
-        else if (this.parses[item.replace('place_', '')]) {
-            parse = Object.assign({}, this.parses[item.replace('place_', '')]);
+        else if (this.parses[item.replace("place_", "")]) {
+            parse = Object.assign({}, this.parses[item.replace("place_", "")]);
             if (!item.includes("forest"))
-                parse.redborder = 'hex';
+                parse.redborder = "hex";
         }
-        else if (this.parses[item.replace('(*)', '')]) {
-            parse = Object.assign({}, this.parses[item.replace('(*)', '')]);
-            parse.after = '*';
+        else if (this.parses[item.replace("(*)", "")]) {
+            parse = Object.assign({}, this.parses[item.replace("(*)", "")]);
+            parse.after = "*";
         }
         else {
             //unknown parse
             //this.darhflog('UNKNOWN PARSE :',item);
-            parse = { class: 'unknown', content: item };
+            parse = { class: "unknown", content: item };
         }
         parse.depth = depth;
         return parse;
     };
     CustomRenders.parseRulesToHtmlBlock = function (items) {
-        var rethtm = '';
+        var rethtm = "";
         var foundor = false;
         for (var _i = 0, items_2 = items; _i < items_2.length; _i++) {
             var n = items_2[_i];
@@ -2444,12 +2446,12 @@ var CustomRenders = /** @class */ (function () {
                     //  rethtm+='<div class="breaker"></div>';
                 }
                 else {
-                    rethtm += _('OR') + '&nbsp;';
+                    rethtm += _("OR") + "&nbsp;";
                 }
             }
             //if (n.qty>1) rethtm+=n.qty+'&nbsp;';
             if (n.item.group && n.item.group == "FOREACH" && items[0] != n)
-                rethtm += '&nbsp;/&nbsp;';
+                rethtm += "&nbsp;/&nbsp;";
             rethtm += this.parseSingleItemToHTML(n.item, n.qty);
         }
         return rethtm;
@@ -2462,44 +2464,49 @@ var CustomRenders = /** @class */ (function () {
         if (content == "1" && qty != null) {
             content = qty;
             if (qty == -99)
-                content = 'X';
+                content = "X";
         }
         else if (qty != null && (qty > 3 || item.norepeat == true)) {
-            ret = qty + '&nbsp;';
+            ret = qty + "&nbsp;";
         }
         else if (qty == -99) {
-            ret = ret + 'X&nbsp;';
+            ret = ret + "X&nbsp;";
         }
-        var before = item.before != undefined ? '<div class="before">' + item.before + '</div>&nbsp;' : "";
+        var before = item.before != undefined ? '<div class="before">' + item.before + "</div>&nbsp;" : "";
         var after = item.after != undefined ? item.after : "";
         //little resource for nmu & nms
         if (item.exp) {
             after = '<div class="resource_exponent"><div class="' + item.exp + '"></div></div>';
         }
-        var resicon = '<div class="cnt_media ' + item.classes + ' depth_' + item.depth + '">' + content + '</div>';
+        var resicon = '<div class="cnt_media ' + item.classes + " depth_" + item.depth + '">' + content + "</div>";
         if (item.redborder) {
-            var redborderclass = item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') || item.classes.includes('tracker_w') ? 'hex' : 'resource';
-            after = '<div class="after">' + after + '</div>';
-            resicon = before + '<div class="outer_redborder redborder_' + redborderclass + '">' + resicon + after + '</div>';
+            var redborderclass = item.classes.includes("tile") ||
+                item.classes.includes("city") ||
+                item.classes.includes("forest") ||
+                item.classes.includes("tracker_w")
+                ? "hex"
+                : "resource";
+            after = '<div class="after">' + after + "</div>";
+            resicon = before + '<div class="outer_redborder redborder_' + redborderclass + '">' + resicon + after + "</div>";
         }
         else {
             resicon = before + resicon + after;
         }
         if (item.production === true) {
-            resicon = '<div class="outer_production">' + resicon + '</div>';
+            resicon = '<div class="outer_production">' + resicon + "</div>";
         }
         ret = ret + resicon;
         /*
-        if (item.production === true) {
-           ret =ret+ '<div class="outer_production"><div class="cnt_media ' + item.classes + '">' + content + "</div>"+after+"</div>";
-        } else if (item.redborder) {
-          const redborderclass=item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') ? 'hex' : 'resource';
-          ret =ret+  '<div class="outer_redborder redborder_'+redborderclass+'"><div class="cnt_media ' + item.classes + '">' + content + "</div>"+after+"</div>";
-        } else {
-          ret =ret+  '<div class="cnt_media ' + item.classes + '">'+content+'</div>'+after;
-        }
-  
-         */
+          if (item.production === true) {
+             ret =ret+ '<div class="outer_production"><div class="cnt_media ' + item.classes + '">' + content + "</div>"+after+"</div>";
+          } else if (item.redborder) {
+            const redborderclass=item.classes.includes('tile') || item.classes.includes('city') || item.classes.includes('forest') ? 'hex' : 'resource';
+            ret =ret+  '<div class="outer_redborder redborder_'+redborderclass+'"><div class="cnt_media ' + item.classes + '">' + content + "</div>"+after+"</div>";
+          } else {
+            ret =ret+  '<div class="cnt_media ' + item.classes + '">'+content+'</div>'+after;
+          }
+    
+           */
         if (qty != null && qty > 1 && qty <= 3 && item.content != "1" && !item.norepeat) {
             ret = ret.repeat(qty);
         }
@@ -2521,10 +2528,19 @@ var CustomRenders = /** @class */ (function () {
                     finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
                 }
                 else if (item.redborder) {
-                    finds[idx] = '<div class="outer_redborder redborder_' + item.redborder + '"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
+                    finds[idx] =
+                        '<div class="outer_redborder redborder_' +
+                            item.redborder +
+                            '"><div class="' +
+                            item.classes +
+                            '">' +
+                            content +
+                            "</div>" +
+                            after +
+                            "</div>";
                 }
                 else {
-                    finds[idx] = '<div class="' + item.classes + '">' + content + '</div>' + after;
+                    finds[idx] = '<div class="' + item.classes + '">' + content + "</div>" + after;
                 }
                 idx++;
             }
@@ -2596,7 +2612,7 @@ var CustomRenders = /** @class */ (function () {
         qtys = qty.toString();
         if (qty == 0 && what != "o" && what != "t")
             qtys = "";
-        var htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qtys + suffix + icon + '</div></div>';
+        var htm = '<div class="prereq_content mode_' + mode + '">' + prefix + qtys + suffix + icon + "</div></div>";
         return htm;
     };
     CustomRenders.parsePrereqToText = function (pre, game) {
@@ -2633,7 +2649,7 @@ var CustomRenders = /** @class */ (function () {
         if (op == "<=") {
             mode = "max";
         }
-        var ret = '';
+        var ret = "";
         switch (what) {
             case "o":
                 ret = mode == "min" ? _("Requires $v% Oxygen.") : _("Oxygen must be $v% or less.");
@@ -2674,27 +2690,30 @@ var CustomRenders = /** @class */ (function () {
                 }
                 break;
         }
-        ret = ret.replace('$v', String(qty));
+        ret = ret.replace("$v", String(qty));
         return ret;
     };
     //custom card stuff
     CustomRenders.customcard_vp_5 = function () {
-        return this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1) + '<div class="vp_qty">*:3</div>';
+        return this.parseSingleItemToHTML(this.getParse("res_Science", 0), 1) + '<div class="vp_qty">*:3</div>';
     };
     CustomRenders.customcard_action_6 = function () {
-        return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + _('ACTION:LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT') + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse(":", 0), 1) +
+            _("ACTION:LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT") +
+            "</div>");
     };
     CustomRenders.customcard_action_7 = function () {
         return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="cnt_media token_img tracker_e depth_1"></div></div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_2">1</div> / <div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>*</div></div>';
     };
     CustomRenders.customcard_vp_8 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('w', 0), 1) + '<div class="vp_qty">*</div>';
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("w", 0), 1) + '<div class="vp_qty">*</div>';
     };
     CustomRenders.customcard_vp_12 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('tagJovian', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("tagJovian", 0), 1);
     };
     CustomRenders.customcard_vp_24 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_effect_25 = function () {
         return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="cnt_media tracker badge tracker_tagSpace depth_1"></div></div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_1">-2</div></div></div>';
@@ -2703,170 +2722,277 @@ var CustomRenders = /** @class */ (function () {
         return '<div class="vp_qty">1/</div><div class="cnt_media token_img tracker_resFighter depth_1"></div>';
     };
     CustomRenders.customcard_action_33 = function () {
-        return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':'), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe'), 1) + '</div>'
-            + '<div class="groupline">OR&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe'), 2) + this.parseSingleItemToHTML(this.getParse(':'), 1) + this.parseSingleItemToHTML(this.getParse('o'), 1) + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse(":"), 1) +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe"), 1) +
+            "</div>" +
+            '<div class="groupline">OR&nbsp;' +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe"), 2) +
+            this.parseSingleItemToHTML(this.getParse(":"), 1) +
+            this.parseSingleItemToHTML(this.getParse("o"), 1) +
+            "</div>");
     };
     CustomRenders.customcard_action_34 = function () {
-        return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>'
-            + '<div class="groupline">OR&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 1), 2) + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('t', 0), 1) + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse(":", 0), 1) +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            "</div>" +
+            '<div class="groupline">OR&nbsp;' +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 1), 2) +
+            this.parseSingleItemToHTML(this.getParse(":", 0), 1) +
+            this.parseSingleItemToHTML(this.getParse("t", 0), 1) +
+            "</div>");
     };
     CustomRenders.customcard_vp_35 = function () {
-        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1);
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1);
     };
     CustomRenders.customcard_rules_37 = function () {
-        return '<div class="card_icono icono_prod">' +
-            '<div class="outer_production">'
-            + '<div class="groupline">'
-            + this.parseSingleItemToHTML(this.getParse('pp'), 1) + '&nbsp;OR'
-            + '</div>'
-            + '<div class="groupline">'
-            + '3&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagPlant'), 1) + ':' + this.parseSingleItemToHTML(this.getParse('pp', 0), 4)
-            + '</div>'
-            + '</div>'
-            + '</div>'
-            + '<div class="card_icono icono_gains cnt_gains">'
-            + '<div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('tr', 0), 2) + this.parseSingleItemToHTML(this.getParse('t', 0), 1)
-            + '</div>'
-            + '</div>';
+        return ('<div class="card_icono icono_prod">' +
+            '<div class="outer_production">' +
+            '<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse("pp"), 1) +
+            "&nbsp;OR" +
+            "</div>" +
+            '<div class="groupline">' +
+            "3&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("tagPlant"), 1) +
+            ":" +
+            this.parseSingleItemToHTML(this.getParse("pp", 0), 4) +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            '<div class="card_icono icono_gains cnt_gains">' +
+            '<div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("tr", 0), 2) +
+            this.parseSingleItemToHTML(this.getParse("t", 0), 1) +
+            "</div>" +
+            "</div>");
     };
     CustomRenders.customcard_vp_49 = function () {
-        return '<div class="vp_qty">1/4</div>' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1);
+        return '<div class="vp_qty">1/4</div>' + this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1);
     };
     CustomRenders.customcard_rules_50 = function () {
-        return '<div class="card_icono icono_gains cnt_gains">' +
+        return ('<div class="card_icono icono_gains cnt_gains">' +
             '<div class="outer_gains">' +
             '              <div class="plusminus">-</div>' +
             '              2&nbsp;<div class="outer_redborder redborder_resource">' +
             '                        <div class="cnt_media token_img tracker_resAnimal depth_1"></div>' +
-            '                     </div>' +
-            '&nbsp;0R&nbsp;' +
+            "                     </div>" +
+            "&nbsp;0R&nbsp;" +
             '            <div class="plusminus">-</div>' +
-            '            5&nbsp;' +
+            "            5&nbsp;" +
             '            <div class="outer_redborder redborder_resource">' +
             '                <div class="cnt_media token_img tracker_p depth_1"></div>' +
-            '            </div>' +
-            '          </div>' +
-            '     </div>';
+            "            </div>" +
+            "          </div>" +
+            "     </div>");
         //  '<div class="card_tt">'+_('Remove up to 2 animals or 5 plants from any player.')+'</div>';
     };
     CustomRenders.customcard_vp_52 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_vp_54 = function () {
-        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_action_69 = function () {
-        return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '</div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('m', 0), 7) + '</div></div></div>';
+        return ('<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("p", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("s", 0), 1) +
+            '</div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("m", 0), 7) +
+            "</div></div></div>");
     };
     CustomRenders.customcard_action_71 = function () {
-        return '<div class="card_action_line card_action_icono"><div class="card_icono">' +
-            '<div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('u', 0), 1) + '&nbsp;:&nbsp;+' + this.parseSingleItemToHTML(this.getParse('m', 0), 1) + '</div>' +
-            '<div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '&nbsp;:&nbsp;+' + this.parseSingleItemToHTML(this.getParse('m', 0), 1) + '</div>' +
-            '</div></div>';
+        return ('<div class="card_action_line card_action_icono"><div class="card_icono">' +
+            '<div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("u", 0), 1) +
+            "&nbsp;:&nbsp;+" +
+            this.parseSingleItemToHTML(this.getParse("m", 0), 1) +
+            "</div>" +
+            '<div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("s", 0), 1) +
+            "&nbsp;:&nbsp;+" +
+            this.parseSingleItemToHTML(this.getParse("m", 0), 1) +
+            "</div>" +
+            "</div></div>");
     };
     CustomRenders.customcard_vp_72 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_effect_74 = function () {
-        return '<div class="groupline">'
-            + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '/' + this.parseSingleItemToHTML(this.getParse('tagMicrobe', 0), 1) + '/' + this.parseSingleItemToHTML(this.getParse('tagAnimal', 0), 1)
-            + '&nbsp;:&nbsp;'
-            + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + '/' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '<div class="resource_exponent">*</div>/' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1) + '<div class="resource_exponent">*</div>'
-            + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse("tagPlant", 0), 1) +
+            "/" +
+            this.parseSingleItemToHTML(this.getParse("tagMicrobe", 0), 1) +
+            "/" +
+            this.parseSingleItemToHTML(this.getParse("tagAnimal", 0), 1) +
+            "&nbsp;:&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("p", 0), 1) +
+            "/" +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            '<div class="resource_exponent">*</div>/' +
+            this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1) +
+            '<div class="resource_exponent">*</div>' +
+            "</div>");
     };
     CustomRenders.customcard_vp_81 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('tagJovian', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("tagJovian", 0), 1);
     };
     CustomRenders.customcard_vp_85 = function () {
-        return '<div class="vp_qty">1/</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>' + '<div class="vp_qty">*</div>';
+        return ('<div class="vp_qty">1/</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>' +
+            '<div class="vp_qty">*</div>');
     };
     CustomRenders.customcard_rules_86 = function () {
-        return '<div class="groupline">' + _('COPY A %i').replace('%i', '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="badge tag_Building"></div></div></div></div></div>')
-            + '</div>';
+        return ('<div class="groupline">' +
+            _("COPY A %i").replace("%i", '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="badge tag_Building"></div></div></div></div></div>') +
+            "</div>");
     };
     CustomRenders.customcard_vp_92 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('tagJovian', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("tagJovian", 0), 1);
     };
     CustomRenders.customcard_vp_95 = function () {
-        return '<div class="vp_qty">2/</div>' + this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1);
+        return '<div class="vp_qty">2/</div>' + this.parseSingleItemToHTML(this.getParse("res_Science", 0), 1);
     };
     CustomRenders.customcard_rules_102 = function () {
-        return '<div class="groupline"><div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production">' + this.parseSingleItemToHTML(this.getParse('e', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagEnergy', 0), 1) + '</div></div></div></div></div>';
+        return ('<div class="groupline"><div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production">' +
+            this.parseSingleItemToHTML(this.getParse("e", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("tagEnergy", 0), 1) +
+            "</div></div></div></div></div>");
     };
     CustomRenders.customcard_action_110 = function () {
-        return '<div class="action_arrow"></div><div class="outer_gains">' +
-            _('ACTION : LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT') +
-            '</div>';
+        return ('<div class="action_arrow"></div><div class="outer_gains">' +
+            _("ACTION : LOOK AT THE TOP CARD AND EITHER BUY IT OR DISCARD IT") +
+            "</div>");
     };
     CustomRenders.customcard_rules_121 = function () {
-        return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="plusminus">-</div>3<div class="outer_redborder redborder_resource">' + this.parseSingleItemToHTML(this.getParse('u', 0), 1) + '</div>&nbsp;OR&nbsp;4&nbsp;<div class="outer_redborder redborder_resource">' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '</div>OR&nbsp;<div class="plusminus">-</div><div class="outer_redborder redborder_resource">' + this.parseSingleItemToHTML(this.getParse('m', 0), 7) + '</div></div></div><div class="card_icono icono_gains cnt_gains"></div>';
+        return ('<div class="card_icono icono_losses cnt_losses"><div class="outer_gains"><div class="plusminus">-</div>3<div class="outer_redborder redborder_resource">' +
+            this.parseSingleItemToHTML(this.getParse("u", 0), 1) +
+            '</div>&nbsp;OR&nbsp;4&nbsp;<div class="outer_redborder redborder_resource">' +
+            this.parseSingleItemToHTML(this.getParse("s", 0), 1) +
+            '</div>OR&nbsp;<div class="plusminus">-</div><div class="outer_redborder redborder_resource">' +
+            this.parseSingleItemToHTML(this.getParse("m", 0), 7) +
+            '</div></div></div><div class="card_icono icono_gains cnt_gains"></div>');
     };
     CustomRenders.customcard_rules_124 = function () {
-        return '<div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' + _('STEAL') + '&nbsp;2&nbsp;<div class="outer_redborder redborder_resource">' + this.parseSingleItemToHTML(this.getParse('s', 0), 1) + '</div></div><div class="outer_gains">' + _('OR STEAL ') + '&nbsp;<div class="outer_redborder redborder_resource">' + this.parseSingleItemToHTML(this.getParse('m', 0), 3) + '</div></div></div>';
+        return ('<div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' +
+            _("STEAL") +
+            '&nbsp;2&nbsp;<div class="outer_redborder redborder_resource">' +
+            this.parseSingleItemToHTML(this.getParse("s", 0), 1) +
+            '</div></div><div class="outer_gains">' +
+            _("OR STEAL ") +
+            '&nbsp;<div class="outer_redborder redborder_resource">' +
+            this.parseSingleItemToHTML(this.getParse("m", 0), 3) +
+            "</div></div></div>");
     };
     CustomRenders.customcard_effect_128 = function () {
-        return '<div class="groupline">'
-            + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagAnimal', 0), 1)
-            + '&nbsp;:&nbsp;'
-            + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1)
-            + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse("tagPlant", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("tagAnimal", 0), 1) +
+            "&nbsp;:&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1) +
+            "</div>");
     };
     CustomRenders.customcard_vp_128 = function () {
-        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_effect_131 = function () {
-        return '<div class="groupline">'
-            + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagAnimal', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('tagMicrobe', 0), 1)
-            + '&nbsp;:&nbsp;'
-            + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1)
-            + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse("tagPlant", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("tagAnimal", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("tagMicrobe", 0), 1) +
+            "&nbsp;:&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            "</div>");
     };
     CustomRenders.customcard_vp_131 = function () {
-        return '<div class="vp_qty">1/3</div>' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1);
+        return '<div class="vp_qty">1/3</div>' + this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1);
     };
     CustomRenders.customcard_rules_143 = function () {
-        return '<div class="card_icono icono_gains cnt_gains">'
-            + this.parseSingleItemToHTML(this.getParse('w'), 1)
-            + this.parseSingleItemToHTML(this.getParse('draw'), 2)
-            + '&nbsp;&nbsp;'
-            + this.parseSingleItemToHTML(this.getParse('p', 0), 5) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 4) + '*'
-            + '</div>';
+        return ('<div class="card_icono icono_gains cnt_gains">' +
+            this.parseSingleItemToHTML(this.getParse("w"), 1) +
+            this.parseSingleItemToHTML(this.getParse("draw"), 2) +
+            "&nbsp;&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("p", 0), 5) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 4) +
+            "*" +
+            "</div>");
     };
     CustomRenders.customcard_vp_147 = function () {
-        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_rules_152 = function () {
-        return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div>X&nbsp;<div class="outer_production">' + this.parseSingleItemToHTML(this.getParse('h', 0), 1) + '</div><div class="plusminus">+</div><div class="outer_production"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div></div>';
+        return ('<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div>X&nbsp;<div class="outer_production">' +
+            this.parseSingleItemToHTML(this.getParse("h", 0), 1) +
+            '</div><div class="plusminus">+</div><div class="outer_production"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div></div>');
     };
     CustomRenders.customcard_rules_153 = function () {
-        return '<div class="groupline">'
-            + '<div class="prereq_content mode_min">'
-            + this.parseSingleItemToHTML(this.getParse('o', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('w', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('t', 0), 1)
-            + '</div>'
-            + '&nbsp;:&nbsp;'
-            + '+/-2'
-            + '</div>';
+        return ('<div class="groupline">' +
+            '<div class="prereq_content mode_min">' +
+            this.parseSingleItemToHTML(this.getParse("o", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("w", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("t", 0), 1) +
+            "</div>" +
+            "&nbsp;:&nbsp;" +
+            "+/-2" +
+            "</div>");
     };
     CustomRenders.customcard_action_157 = function () {
-        return '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>'
-            + '<div class="groupline">OR&nbsp;3&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 1), 1) + this.parseSingleItemToHTML(this.getParse(':', 0), 1) + this.parseSingleItemToHTML(this.getParse('tr', 0), 1) + '</div>';
+        return ('<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse(":", 0), 1) +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            "</div>" +
+            '<div class="groupline">OR&nbsp;3&nbsp;' +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 1), 1) +
+            this.parseSingleItemToHTML(this.getParse(":", 0), 1) +
+            this.parseSingleItemToHTML(this.getParse("tr", 0), 1) +
+            "</div>");
     };
     CustomRenders.customcard_rules_163 = function () {
-        return '<div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="groupline">' + this.parseSingleItemToHTML(this.getParse('tr', 0), 1) + '&nbsp;&nbsp;' + this.parseSingleItemToHTML(this.getParse('p', 0), 4) + '</div>'
-            + '<div class="groupline">3&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '&nbsp;&nbsp;' + '2&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1) + '</div></div></div>';
+        return ('<div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse("tr", 0), 1) +
+            "&nbsp;&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("p", 0), 4) +
+            "</div>" +
+            '<div class="groupline">3&nbsp;' +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            "&nbsp;&nbsp;" +
+            "2&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1) +
+            "</div></div></div>");
     };
     CustomRenders.customcard_vp_172 = function () {
-        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/2</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_effect_173 = function () {
-        return '<div class="groupline">' + _('OPPONENTS MAY NOT REMOVE YOUR') + '</div>'
-            + '<div class="groupline">' + this.parseSingleItemToHTML(this.getParse('p', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1) + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '</div>';
+        return ('<div class="groupline">' +
+            _("OPPONENTS MAY NOT REMOVE YOUR") +
+            "</div>" +
+            '<div class="groupline">' +
+            this.parseSingleItemToHTML(this.getParse("p", 0), 1) +
+            this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1) +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            "</div>");
     };
     CustomRenders.customcard_vp_184 = function () {
-        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse('res_Animal', 0), 1);
+        return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("res_Animal", 0), 1);
     };
     CustomRenders.customcard_effect_185 = function () {
-        return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('tagScience', 0), 1) + '</div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">' + this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1) + ('OR') + '-' + this.parseSingleItemToHTML(this.getParse('res_Science', 0), 1) + '&nbsp;+<div class=" cnt_media token_img cardback depth_3"></div></div></div></div>';
+        return ('<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("tagScience", 0), 1) +
+            '</div></div><div class="effect_separator">:</div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains">' +
+            this.parseSingleItemToHTML(this.getParse("res_Science", 0), 1) +
+            "OR" +
+            "-" +
+            this.parseSingleItemToHTML(this.getParse("res_Science", 0), 1) +
+            '&nbsp;+<div class=" cnt_media token_img cardback depth_3"></div></div></div></div>');
     };
     CustomRenders.customcard_vp_198 = function () {
         return '<div class="vp_qty">1/3</div><div class="outer_redborder redborder_hex"><div class="cnt_media tracker tracker_city depth_2"></div></div>';
@@ -2875,33 +3001,47 @@ var CustomRenders = /** @class */ (function () {
         return '<div class="card_action_line card_action_icono"><div class="card_icono icono_losses cnt_losses"><div class="outer_gains">X<div class="cnt_media token_img tracker_e depth_2"></div></div></div><div class="action_arrow"></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media token_img tracker_m depth_2">X</div></div></div></div>';
     };
     CustomRenders.customcard_rules_200 = function () {
-        return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div><div class="outer_production"><div class="cnt_media token_img tracker_e depth_1"></div></div></div><div class="production_line cnt_gains"><div class="plusminus">-</div>' + this.parseSingleItemToHTML(this.getParse('m', 0), 2) + '</div></div></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media tracker micon tracker_city depth_1"></div>*</div></div>';
+        return ('<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_losses"><div class="plusminus">-</div><div class="outer_production"><div class="cnt_media token_img tracker_e depth_1"></div></div></div><div class="production_line cnt_gains"><div class="plusminus">-</div>' +
+            this.parseSingleItemToHTML(this.getParse("m", 0), 2) +
+            '</div></div></div><div class="card_icono icono_gains cnt_gains"><div class="outer_gains"><div class="cnt_media tracker micon tracker_city depth_1"></div>*</div></div>');
     };
     CustomRenders.customcard_effect_206 = function () {
-        return '<div class="groupline">'
-            + '<div class="prereq_content mode_min">'
-            + this.parseSingleItemToHTML(this.getParse('o', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('w', 0), 1) + '&nbsp;/&nbsp;' + this.parseSingleItemToHTML(this.getParse('t', 0), 1)
-            + '</div>'
-            + '&nbsp;:&nbsp;'
-            + '+/-2'
-            + '</div>';
+        return ('<div class="groupline">' +
+            '<div class="prereq_content mode_min">' +
+            this.parseSingleItemToHTML(this.getParse("o", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("w", 0), 1) +
+            "&nbsp;/&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("t", 0), 1) +
+            "</div>" +
+            "&nbsp;:&nbsp;" +
+            "+/-2" +
+            "</div>");
     };
     CustomRenders.customcard_rules_207 = function () {
-        return '<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2' + this.parseSingleItemToHTML(this.getParse('tagBuilding', 0), 1) + '</div></div></div></div>';
+        return ('<div class="card_icono icono_prod"><div class="outer_production"><div class="production_line cnt_gains"><div class="outer_production"><div class="cnt_media token_img tracker_m depth_1">1</div></div>&nbsp;/&nbsp;<div class="outer_production">2' +
+            this.parseSingleItemToHTML(this.getParse("tagBuilding", 0), 1) +
+            "</div></div></div></div>");
     };
     CustomRenders.customcard_effect_P39 = function (action) {
-        return '<div class="card_action_line card_action_icono">' + action + '</div><div class="card_action_line card_action_icono card_icono">' + this.parseSingleItemToHTML(this.getParse('tagPlant', 0), 1) + '&nbsp;:&nbsp;' + this.parseSingleItemToHTML(this.getParse('res_Microbe', 0), 1) + '&nbsp;=&nbsp;<div class="cnt_media token_img tracker_m depth_1">2</div></div>';
+        return ('<div class="card_action_line card_action_icono">' +
+            action +
+            '</div><div class="card_action_line card_action_icono card_icono">' +
+            this.parseSingleItemToHTML(this.getParse("tagPlant", 0), 1) +
+            "&nbsp;:&nbsp;" +
+            this.parseSingleItemToHTML(this.getParse("res_Microbe", 0), 1) +
+            '&nbsp;=&nbsp;<div class="cnt_media token_img tracker_m depth_1">2</div></div>');
     };
     CustomRenders.parses = {
         forest: { classes: "tracker tracker_forest" },
-        all_city: { classes: "tracker tracker_city", redborder: 'hex' },
-        all_cityonmars: { classes: "tracker tracker_city", redborder: 'hex', after: '*' },
-        all_tagEvent: { classes: "tracker badge tracker_tagEvent", after: '*' },
+        all_city: { classes: "tracker tracker_city", redborder: "hex" },
+        all_cityonmars: { classes: "tracker tracker_city", redborder: "hex", after: "*" },
+        all_tagEvent: { classes: "tracker badge tracker_tagEvent", after: "*" },
         play_cardEvent: { classes: "tracker badge tracker_tagEvent" },
         city: { classes: "tracker micon tracker_city" },
         ocean: { classes: "token_img tracker_w" },
-        discard: { classes: "token_img cardback", before: '-' },
-        draw: { classes: "token_img cardback", before: '+' },
+        discard: { classes: "token_img cardback", before: "-" },
+        draw: { classes: "token_img cardback", before: "+" },
         tile: { classes: "tracker micon tile_%card_number%" },
         tagScience: { classes: "tracker badge tracker_tagScience" },
         tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
@@ -2910,7 +3050,7 @@ var CustomRenders = /** @class */ (function () {
         tagAnimal: { classes: "tracker badge tracker_tagAnimal" },
         tagJovian: { classes: "tracker badge tracker_tagJovian" },
         tagBuilding: { classes: "tracker badge tracker_tagBuilding" },
-        opp_tagSpace: { classes: "tracker badge tracker_tagSpace", redborder: 'resource' },
+        opp_tagSpace: { classes: "tracker badge tracker_tagSpace", redborder: "resource" },
         tagSpace: { classes: "tracker badge tracker_tagSpace" },
         tagEvent: { classes: "tracker badge tracker_tagEvent" },
         onPay_tagEarth: { classes: "tracker badge tracker_tagEarth" },
@@ -2918,16 +3058,16 @@ var CustomRenders = /** @class */ (function () {
         "[1,](sell)": { classes: "" },
         onPay_cardSpace: { classes: "tracker badge tracker_tagSpace" },
         onPay_card: { classes: "empty" },
-        twopoints: { classes: "txtcontent", content: ':' },
-        play_stan: { classes: "txtcontent", content: 'Standard projects' },
-        star: { classes: "txtcontent", content: '*' },
+        twopoints: { classes: "txtcontent", content: ":" },
+        play_stan: { classes: "txtcontent", content: "Standard projects" },
+        star: { classes: "txtcontent", content: "*" },
         res_Science: { classes: "token_img tracker_resScience" },
         res_Animal: { classes: "token_img tracker_resAnimal" },
         res_Microbe: { classes: "token_img tracker_resMicrobe" },
-        nores_Animal: { classes: "token_img tracker_resAnimal", redborder: 'resource', norepeat: true },
-        nores_Microbe: { classes: "token_img tracker_resMicrobe", redborder: 'resource', norepeat: true },
-        ores_Microbe: { classes: "token_img tracker_resMicrobe", after: '*', norepeat: true },
-        ores_Animal: { classes: "token_img tracker_resAnimal", after: '*', norepeat: true },
+        nores_Animal: { classes: "token_img tracker_resAnimal", redborder: "resource", norepeat: true },
+        nores_Microbe: { classes: "token_img tracker_resMicrobe", redborder: "resource", norepeat: true },
+        ores_Microbe: { classes: "token_img tracker_resMicrobe", after: "*", norepeat: true },
+        ores_Animal: { classes: "token_img tracker_resAnimal", after: "*", norepeat: true },
         special_tagmicrobe_half: { classes: "tracker badge tracker_tagMicrobe", content: "2", norepeat: true },
         res: { classes: "token_img tracker_res%res%", norepeat: true },
         nres: { classes: "token_img tracker_res%res%", norepeat: true },
@@ -2962,7 +3102,7 @@ var CustomRenders = /** @class */ (function () {
         w: { classes: "token_img tracker_w" },
         o: { classes: "token_img oxygen_icon" },
         q: { classes: "token_img tracker_q" },
-        ":": { classes: "action_arrow" },
+        ":": { classes: "action_arrow" }
     };
     return CustomRenders;
 }());
@@ -4612,6 +4752,7 @@ var GameXBody = /** @class */ (function (_super) {
         return dlg;
     };
     GameXBody.prototype.onScreenWidthChange = function () {
+        console.log("onScreenWidthChange");
         if (this.isLayoutFull()) {
             _super.prototype.onScreenWidthChange.call(this);
             var root = document.documentElement;
