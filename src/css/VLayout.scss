@@ -166,6 +166,13 @@
     --stan-height: calc(var(--stan-width) * 0.2);
   }
 
+  #ebd-body.map_4 {
+    // standard projects are not on the map
+    --stan-width: calc(var(--localsetting_cardsize) / 100 * 160px);
+    --stan-height: calc(var(--stan-width) * 0.227);
+  }
+  
+
 
 
   .card_effect {

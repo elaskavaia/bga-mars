@@ -306,7 +306,7 @@ class GameXBody extends GameTokens {
       //So I attached it to the hand area block.
       this.addSortButtonsToHandy($("hand_area"));
 
-      this.enableManualReorder("thething");
+      this.enableManualReorder("hand_area");
 
       this.connectClass("hs_button", "onclick", (evt: Event) => {
         dojo.stopEvent(evt);
@@ -342,7 +342,7 @@ class GameXBody extends GameTokens {
     }
   }
 
-  switchHandSort(btn: HTMLElement, newtype: string): void {
+  switchHandSort(button: HTMLElement, newtype: string): void {
     let fa = "";
     let msg = "";
     let newdir = "increase";
@@ -371,21 +371,21 @@ class GameXBody extends GameTokens {
         break;
     }
 
-    btn.dataset.type = newtype;
-    btn.dataset.direction = newdir;
-    btn.querySelector("i").removeAttribute("class");
-    btn.querySelector("i").classList.add("fa", fa);
+    button.dataset.type = newtype;
+    button.dataset.direction = newdir;
+    button.querySelector("i").removeAttribute("class");
+    button.querySelector("i").classList.add("fa", fa);
 
-    const hand_block: string = btn.dataset.target;
+    const hand_block: string = button.dataset.target;
     $(hand_block).dataset.sort_type = newtype;
     $(hand_block).dataset.sort_direction = newdir;
 
     const fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace("%s", msg);
-    this.addTooltip(btn.id, fullmsg, _("Click to select next sorting mode"));
+    this.addTooltip(button.id, fullmsg, _("Click to select next sorting mode"));
 
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
     localColorSetting.writeProp("sort_direction", newdir);
-    localColorSetting.writeProp("sort_type", btn.dataset.type);
+    localColorSetting.writeProp("sort_type", button.dataset.type);
 
     this.applySortOrder();
   }

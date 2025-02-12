@@ -9294,6 +9294,10 @@
   --stan-width: calc(var(--map-board-with) * 0.155);
   --stan-height: calc(var(--stan-width) * 0.2);
 }
+.mfull #ebd-body.map_4 {
+  --stan-width: calc(var(--localsetting_cardsize) / 100 * 160px);
+  --stan-height: calc(var(--stan-width) * 0.227);
+}
 .mfull .card_effect {
   font-size: calc(var(--card-width) * 0.1);
 }
@@ -10710,6 +10714,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   flex-direction: row;
   margin-top: 2vh;
   justify-content: center;
+  align-items: flex-start;
 }
 
 #ebd-body #main_board {
@@ -10740,7 +10745,8 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   height: 10%;
 }
 
-.tracker::after, .param::after {
+.tracker::after,
+.param::after {
   content: attr(data-state);
   pointer-events: none;
 }
@@ -11032,7 +11038,8 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 #ebd-body[data-localsetting_handplace=floating] #hand_area_buttons .icon_hand {
   display: flex;
 }
-#ebd-body[data-localsetting_handplace=floating] #hand_area_buttons .icon_hand, #ebd-body[data-localsetting_handplace=floating] #hand_area_buttons .icon_close {
+#ebd-body[data-localsetting_handplace=floating] #hand_area_buttons .icon_hand,
+#ebd-body[data-localsetting_handplace=floating] #hand_area_buttons .icon_close {
   align-items: center;
   font-size: 32px;
   height: 40px;
@@ -11165,7 +11172,14 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   background-position: -600% 0;
 }
 
-.tracker_m, .tracker_s, .tracker_gen, .tracker_u, .tracker_p, .tracker_e, .tracker_h, .tracker_tr {
+.tracker_m,
+.tracker_s,
+.tracker_gen,
+.tracker_u,
+.tracker_p,
+.tracker_e,
+.tracker_h,
+.tracker_tr {
   background-image: url("img/resources.png");
   background-size: 1000% 200%;
 }
@@ -11328,7 +11342,12 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   line-height: 24px;
 }
 
-.log .tracker_pm, .log .tracker_ps, .log .tracker_pu, .log .tracker_pp, .log .tracker_pe, .log .tracker_ph {
+.log .tracker_pm,
+.log .tracker_ps,
+.log .tracker_pu,
+.log .tracker_pp,
+.log .tracker_pe,
+.log .tracker_ph {
   outline: 4px solid #b7915e;
   background-color: #b7915e;
   margin-left: 3px;
@@ -11343,7 +11362,8 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   background-color: gray;
 }
 
-#page-title .token_img, .head_infomsg_item .token_img {
+#page-title .token_img,
+.head_infomsg_item .token_img {
   width: 30px;
   height: 30px;
   display: inline-block;
@@ -11507,27 +11527,27 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   display: none;
 }
 
-.hand_area[data-sort_type=cost][data-sort_direction=increase] .handy .card {
+.hand_area[data-sort_type=cost][data-sort_direction=increase] .hand .card, .hand_area[data-sort_type=cost][data-sort_direction=increase] .draw .card {
   order: var(--sort_cost);
 }
 
-.hand_area[data-sort_type=cost][data-sort_direction=decrease] .card {
+.hand_area[data-sort_type=cost][data-sort_direction=decrease] .hand .card, .hand_area[data-sort_type=cost][data-sort_direction=decrease] .draw .card {
   order: calc(var(--sort_cost) * -1);
 }
 
-.hand_area[data-sort_type=vp][data-sort_direction=increase] .card {
+.hand_area[data-sort_type=vp][data-sort_direction=increase] .hand .card, .hand_area[data-sort_type=vp][data-sort_direction=increase] .draw .card {
   order: var(--sort_vp);
 }
 
-.hand_area[data-sort_type=vp][data-sort_direction=decrease] .card {
+.hand_area[data-sort_type=vp][data-sort_direction=decrease] .hand .card, .hand_area[data-sort_type=vp][data-sort_direction=decrease] .draw .card {
   order: calc(var(--sort_vp) * -1);
 }
 
-.hand_area[data-sort_type=playable][data-sort_direction=increase] .card {
+.hand_area[data-sort_type=playable][data-sort_direction=increase] .hand .card, .hand_area[data-sort_type=playable][data-sort_direction=increase] .draw .card {
   order: var(--sort_playable);
 }
 
-.hand_area[data-sort_type=playable][data-sort_direction=decrease] .card {
+.hand_area[data-sort_type=playable][data-sort_direction=decrease] .hand .card, .hand_area[data-sort_type=playable][data-sort_direction=decrease] .draw .card {
   order: calc(var(--sort_playable) * -1);
 }
 

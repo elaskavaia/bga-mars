@@ -4046,7 +4046,7 @@ var GameXBody = /** @class */ (function (_super) {
             //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
             //So I attached it to the hand area block.
             this.addSortButtonsToHandy($("hand_area"));
-            this.enableManualReorder("thething");
+            this.enableManualReorder("hand_area");
             this.connectClass("hs_button", "onclick", function (evt) {
                 dojo.stopEvent(evt);
                 var btn = evt.currentTarget;
@@ -4078,7 +4078,7 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.addClass(board, "thisplayer_zone");
         }
     };
-    GameXBody.prototype.switchHandSort = function (btn, newtype) {
+    GameXBody.prototype.switchHandSort = function (button, newtype) {
         var fa = "";
         var msg = "";
         var newdir = "increase";
@@ -4105,18 +4105,18 @@ var GameXBody = /** @class */ (function (_super) {
                 msg = _("None");
                 break;
         }
-        btn.dataset.type = newtype;
-        btn.dataset.direction = newdir;
-        btn.querySelector("i").removeAttribute("class");
-        btn.querySelector("i").classList.add("fa", fa);
-        var hand_block = btn.dataset.target;
+        button.dataset.type = newtype;
+        button.dataset.direction = newdir;
+        button.querySelector("i").removeAttribute("class");
+        button.querySelector("i").classList.add("fa", fa);
+        var hand_block = button.dataset.target;
         $(hand_block).dataset.sort_type = newtype;
         $(hand_block).dataset.sort_direction = newdir;
         var fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace("%s", msg);
-        this.addTooltip(btn.id, fullmsg, _("Click to select next sorting mode"));
+        this.addTooltip(button.id, fullmsg, _("Click to select next sorting mode"));
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
         localColorSetting.writeProp("sort_direction", newdir);
-        localColorSetting.writeProp("sort_type", btn.dataset.type);
+        localColorSetting.writeProp("sort_type", button.dataset.type);
         this.applySortOrder();
     };
     GameXBody.prototype.setupPlayerStacks = function (playerColor) {
