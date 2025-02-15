@@ -25,9 +25,9 @@ class GameUT extends terraformingmars {
     var $map_number = 0;
     var $_colors = [];
     function __construct() {
-        parent::__construct();
         include "./material.inc.php";
         include "./states.inc.php";
+        parent::__construct();
         $this->gamestate = new GameStateInMem($machinestates);
 
         $this->tokens = new TokensInMem();
@@ -64,7 +64,7 @@ class GameUT extends terraformingmars {
 
     public $curid;
 
-    public function getCurrentPlayerId($bReturnNullIfNotLogged = false) {
+    public function getCurrentPlayerId($bReturnNullIfNotLogged = false): string|int {
         return $this->curid;
     }
 
@@ -328,7 +328,7 @@ final class GameTest extends TestCase {
         $this->game->tokens->moveToken($game->mtFindByName('Caretaker Contract'), "tableau_{$color}", 1);
         $this->game->tokens->moveToken($game->mtFindByName('Power Supply Consortium'), "tableau_{$color}", 1);
         $this->game->tokens->moveToken($game->mtFindByName('Martian Survey'), "tableau_{$color}", 1); // event does not count
-        
+
         $this->assertEquals(5, $this->game->getCountOfCardsWithPre($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
         $this->assertMilestone(2, "TACTICIAN", 5);
@@ -517,7 +517,7 @@ final class GameTest extends TestCase {
 
     public function testClaimMilestone_Elysium5() {
         // 5|LEGEND|7|tagEvent|8|requires 5 played events (red cards).|5
-        $game=$this->game(1);
+        $game = $this->game(1);
         $color = PCOLOR;
         $num = 5;
         $kind = 'milestone';
@@ -686,7 +686,11 @@ final class GameTest extends TestCase {
 
     public function testSoloSetupRandom() {
         for ($map = 0; $map <= 3; $map++) {
-            $game = $this->game($map);
+            $game = new GameUT();
+            $game->map_number = 0;
+            $game->adjustedMaterial(true);
+            $game->init($map);
+            $this->game = $game;
 
             for ($i = 0; $i < 100; $i++) {
                 $places = $game->getSoloMapPlacements();
@@ -712,6 +716,7 @@ final class GameTest extends TestCase {
             $this->assertEquals(2, $game->getCountOfCitiesOnMars('ffffff'));
         }
     }
+
 
     public function testCounterCall() {
         $m = $this->game();

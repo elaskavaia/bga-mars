@@ -1,7 +1,5 @@
 <?php
 
-use PhpParser\Node\Stmt\Continue_;
-
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
@@ -122,17 +120,22 @@ abstract class PGameXBody extends PGameMachine {
                 // give more time for setup
                 if (!$begginerCorps) {
                     $this->giveExtraTime($player_id);
+                    $this->giveExtraTime($player_id);
                 }
             }
 
             if ($prelude) {
+                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name'=>'Prelude']);
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
                     $this->queue($color, "prelude");
                     // give more time for setup prelude
                     $this->giveExtraTime($player_id);
+                    $this->giveExtraTime($player_id);
                 }
             }
+            $adj = $this->getMapNumber();
+            $this->notifyWithName('message', clienttranslate('Map: ${map_name}'), [ 'map_name'=> $this->getTokenName("map_$adj")]);
 
             if ($this->isSolo()) {
                 $this->setupSoloMap();
@@ -200,7 +203,6 @@ abstract class PGameXBody extends PGameMachine {
 
     function setupSoloMap() {
         // place 2 random cities with forest
-        $this->adjustedMaterial(true);
         $placements = $this->getSoloMapPlacements();
         $num = $this->getPlayersNumber() + 1;
         $botcolor = 'ffffff';
@@ -273,7 +275,7 @@ abstract class PGameXBody extends PGameMachine {
         return $this->getGameStateValue('var_map', 0);
     }
 
-    protected function getAllDatas() {
+    protected function getAllDatas(): array {
         $this->prof_point("getAllDatas", "start");
         $result = parent::getAllDatas();
         $result['CON'] = $this->getPhpConstants("MA_");
@@ -664,12 +666,13 @@ abstract class PGameXBody extends PGameMachine {
             return $this->token_types;
         }
         $this->prof_point("adjust", "start");
+        $this->token_types = $this->token_types_orignal;
         parent::adjustedMaterial($force);
 
         $adj = $this->getMapNumber();
         $num = $this->getPlayersNumber();
         $this->doAdjustMaterial($num, $adj);
-
+        
         $expr_keys = ['r', 'e', 'a'];
         foreach ($this->token_types as $key => &$info) {
             if (startsWith($key, "card_") || startsWith($key, "hex_")) {
@@ -727,6 +730,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function doAdjustMaterial($num, $map) {
+        //$this->debugConsole("adjust-variants p{$num}m{$map}");
         $table = &$this->token_types;
         foreach ($table as $key => $info) {
             $vars = explode('@', $key, 2);
@@ -3000,7 +3004,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function undoSavepoint() {
+    function undoSavepoint():void {
         $this->systemAssertTrue("ERR:Game:02");
     }
 
@@ -3017,7 +3021,7 @@ abstract class PGameXBody extends PGameMachine {
 
 
 
-    function undoRestorePoint() { //UNDOX
+    function undoRestorePoint(): void { //UNDOX
         // cannot use this function, we have custom undo system
         $this->systemAssertTrue("ERR:Game:01");
     }
@@ -3044,7 +3048,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function zombieTurn($state, $active_player) {
+    function zombieTurn($state, $active_player): void {
         $owner = $this->getPlayerColorById($active_player);
         $tops = $this->machine->getOperations($owner);
 

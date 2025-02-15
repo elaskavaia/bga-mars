@@ -181,7 +181,7 @@ abstract class PGameBasic extends Table {
     /**
      * This to make it public
      */
-    public function _($text) {
+    public function _($text): string {
         return parent::_($text);
     }
 

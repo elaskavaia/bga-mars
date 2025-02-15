@@ -20,11 +20,13 @@ require_once "DbTokens.php";
 abstract class PGameTokens extends PGameBasic {
     public $tokens;
     public $token_types;
+    public $token_types_orignal;
     private $token_types_adjusted;
 
     public function __construct() {
         parent::__construct();
         $this->tokens = new DbTokens();
+        $this->token_types_orignal = $this->token_types;
     }
 
     protected function setCounter(&$array, $key, $value) {
@@ -61,7 +63,7 @@ abstract class PGameTokens extends PGameBasic {
         return $this->getRulesFor($token_id, "name", $token_id);
     }
 
-    protected function getAllDatas() {
+    protected function getAllDatas(): array {
         $this->adjustedMaterial();
         $result = [];
         $current_player_id = self::getCurrentPlayerId(); // !! We must only return informations visible by this player !!
