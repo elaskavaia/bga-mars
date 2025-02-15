@@ -5778,97 +5778,97 @@ $this->token_types = [
  'hex_4_1@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 4,
   'y' => 1,
   'r' => '2s',
+  'ocean' => 1,
 ],
  'hex_6_1@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 6,
   'y' => 1,
   'r' => 'draw',
+  'ocean' => 1,
 ],
  'hex_8_2@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 8,
   'y' => 2,
   'r' => '2draw',
+  'ocean' => 1,
 ],
  'hex_9_4@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 9,
   'y' => 4,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_4_5@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 4,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_5_5@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 5,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_6_5@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 6,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_7_6@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 7,
   'y' => 6,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_8_6@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 8,
   'y' => 6,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_9_6@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 9,
   'y' => 6,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_7_9@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 7,
   'y' => 9,
   'r' => '2u',
+  'ocean' => 1,
 ],
  'hex_7_1@m0' => [  //
   'location' => 'map_hexes',
   'reserved' => 1,
-  'ocean' => 1,
   'x' => 7,
   'y' => 1,
+  'ocean' => 1,
 ],
  'hex_3_1@m0' => [  //
   'location' => 'map_hexes',
@@ -6169,10 +6169,10 @@ $this->token_types = [
 ],
  'hex_3_1@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 1,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_4_1@m2' => [  //
   'location' => 'map_hexes',
@@ -6200,10 +6200,10 @@ $this->token_types = [
 ],
  'hex_3_2@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 2,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_4_2@m2' => [  //
   'location' => 'map_hexes',
@@ -6237,10 +6237,10 @@ $this->token_types = [
 ],
  'hex_2_3@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 2,
   'y' => 3,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_3_3@m2' => [  //
   'location' => 'map_hexes',
@@ -6279,10 +6279,10 @@ $this->token_types = [
 ],
  'hex_2_4@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 2,
   'y' => 4,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_3_4@m2' => [  //
   'location' => 'map_hexes',
@@ -6310,17 +6310,17 @@ $this->token_types = [
 ],
  'hex_7_4@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 4,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_8_4@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 8,
   'y' => 4,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_9_4@m2' => [  //
   'location' => 'map_hexes',
@@ -6357,23 +6357,23 @@ $this->token_types = [
 ],
  'hex_6_5@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 5,
   'r' => 'draw',
+  'ocean' => 1,
 ],
  'hex_7_5@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 5,
   'r' => '3h',
+  'ocean' => 1,
 ],
  'hex_8_5@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 8,
   'y' => 5,
+  'ocean' => 1,
 ],
  'hex_9_5@m2' => [  //
   'location' => 'map_hexes',
@@ -6410,16 +6410,16 @@ $this->token_types = [
 ],
  'hex_7_6@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 6,
+  'ocean' => 1,
 ],
  'hex_8_6@m2' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 8,
   'y' => 6,
   'r' => 's',
+  'ocean' => 1,
 ],
  'hex_9_6@m2' => [  //
   'location' => 'map_hexes',
@@ -6429,10 +6429,10 @@ $this->token_types = [
  'hex_2_7@m2' => [  //
   'name' => clienttranslate('Argyre Planitia'),
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 2,
   'y' => 7,
   'r' => '2u',
+  'ocean' => 1,
 ],
  'hex_3_7@m2' => [  //
   'location' => 'map_hexes',
@@ -6558,30 +6558,30 @@ $this->token_types = [
 ],
  'hex_3_1@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 1,
+  'ocean' => 1,
 ],
  'hex_4_1@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 4,
   'y' => 1,
   'r' => 'u',
+  'ocean' => 1,
 ],
  'hex_5_1@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 5,
   'y' => 1,
   'r' => 'draw',
+  'ocean' => 1,
 ],
  'hex_6_1@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 1,
   'r' => 's',
+  'ocean' => 1,
 ],
  'hex_7_1@m1' => [  //
   'location' => 'map_hexes',
@@ -6608,15 +6608,15 @@ $this->token_types = [
 ],
  'hex_6_2@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 2,
+  'ocean' => 1,
 ],
  'hex_7_2@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 2,
+  'ocean' => 1,
 ],
  'hex_8_2@m1' => [  //
   'location' => 'map_hexes',
@@ -6649,16 +6649,16 @@ $this->token_types = [
 ],
  'hex_6_3@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 3,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_7_3@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 3,
+  'ocean' => 1,
 ],
  'hex_8_3@m1' => [  //
   'name' => clienttranslate('Olympus Mons'),
@@ -6687,10 +6687,10 @@ $this->token_types = [
 ],
  'hex_5_4@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 5,
   'y' => 4,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_6_4@m1' => [  //
   'location' => 'map_hexes',
@@ -6700,17 +6700,17 @@ $this->token_types = [
 ],
  'hex_7_4@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 4,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_8_4@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 8,
   'y' => 4,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_9_4@m1' => [  //
   'location' => 'map_hexes',
@@ -6738,10 +6738,10 @@ $this->token_types = [
 ],
  'hex_4_5@m1' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 4,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_5_5@m1' => [  //
   'location' => 'map_hexes',
@@ -7016,17 +7016,17 @@ $this->token_types = [
 ],
  'hex_3_3@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 3,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_4_3@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 4,
   'y' => 3,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_5_3@m3' => [  //
   'location' => 'map_hexes',
@@ -7065,10 +7065,10 @@ $this->token_types = [
 ],
  'hex_4_4@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 4,
   'y' => 4,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_5_4@m3' => [  //
   'location' => 'map_hexes',
@@ -7111,10 +7111,10 @@ $this->token_types = [
 ],
  'hex_3_5@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 5,
   'r' => 'p',
+  'ocean' => 1,
 ],
  'hex_4_5@m3' => [  //
   'location' => 'map_hexes',
@@ -7130,24 +7130,24 @@ $this->token_types = [
 ],
  'hex_6_5@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_7_5@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_8_5@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 8,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_9_5@m3' => [  //
   'location' => 'map_hexes',
@@ -7174,24 +7174,24 @@ $this->token_types = [
 ],
  'hex_5_6@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 5,
   'y' => 6,
   'r' => '2h',
+  'ocean' => 1,
 ],
  'hex_6_6@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 6,
   'r' => 'h,h,p',
+  'ocean' => 1,
 ],
  'hex_7_6@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 6,
   'r' => 'draw',
+  'ocean' => 1,
 ],
  'hex_8_6@m3' => [  //
   'location' => 'map_hexes',
@@ -7220,16 +7220,16 @@ $this->token_types = [
 ],
  'hex_4_7@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 4,
   'y' => 7,
+  'ocean' => 1,
 ],
  'hex_5_7@m3' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 5,
   'y' => 7,
   'r' => '2h',
+  'ocean' => 1,
 ],
  'hex_6_7@m3' => [  //
   'location' => 'map_hexes',
@@ -7374,9 +7374,9 @@ $this->token_types = [
 ],
  'hex_3_2@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 2,
+  'ocean' => 1,
 ],
  'hex_4_2@m4' => [  //
   'name' => clienttranslate('Viking'),
@@ -7403,24 +7403,24 @@ $this->token_types = [
 ],
  'hex_8_2@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 8,
   'y' => 2,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_9_2@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 9,
   'y' => 2,
   'r' => '2u',
+  'ocean' => 1,
 ],
  'hex_2_3@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 2,
   'y' => 3,
   'r' => '2s',
+  'ocean' => 1,
 ],
  'hex_3_3@m4' => [  //
   'location' => 'map_hexes',
@@ -7446,9 +7446,9 @@ $this->token_types = [
 ],
  'hex_7_3@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 7,
   'y' => 3,
+  'ocean' => 1,
 ],
  'hex_8_3@m4' => [  //
   'location' => 'map_hexes',
@@ -7468,9 +7468,9 @@ $this->token_types = [
 ],
  'hex_3_4@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 4,
+  'ocean' => 1,
 ],
  'hex_4_4@m4' => [  //
   'location' => 'map_hexes',
@@ -7539,10 +7539,10 @@ $this->token_types = [
 ],
  'hex_5_5@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 5,
   'y' => 5,
   'r' => 'draw',
+  'ocean' => 1,
 ],
  'hex_6_5@m4' => [  //
   'location' => 'map_hexes',
@@ -7570,10 +7570,10 @@ $this->token_types = [
 ],
  'hex_10_5@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 10,
   'y' => 5,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_1_6@m4' => [  //
   'location' => 'map_hexes',
@@ -7601,17 +7601,17 @@ $this->token_types = [
 ],
  'hex_5_6@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 5,
   'y' => 6,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_6_6@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 6,
   'y' => 6,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_7_6@m4' => [  //
   'location' => 'map_hexes',
@@ -7638,10 +7638,10 @@ $this->token_types = [
 ],
  'hex_11_6@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 11,
   'y' => 6,
   'r' => 'draw',
+  'ocean' => 1,
 ],
  'hex_1_7@m4' => [  //
   'location' => 'map_hexes',
@@ -7657,10 +7657,10 @@ $this->token_types = [
 ],
  'hex_3_7@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 7,
   'r' => '2p',
+  'ocean' => 1,
 ],
  'hex_4_7@m4' => [  //
   'location' => 'map_hexes',
@@ -7710,10 +7710,10 @@ $this->token_types = [
 ],
  'hex_3_8@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 8,
   'r' => '2draw',
+  'ocean' => 1,
 ],
  'hex_4_8@m4' => [  //
   'location' => 'map_hexes',
@@ -7759,10 +7759,10 @@ $this->token_types = [
 ],
  'hex_2_9@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 2,
   'y' => 9,
   'r' => 's,u',
+  'ocean' => 1,
 ],
  'hex_3_9@m4' => [  //
   'location' => 'map_hexes',
@@ -7805,9 +7805,9 @@ $this->token_types = [
 ],
  'hex_3_10@m4' => [  //
   'location' => 'map_hexes',
-  'ocean' => 1,
   'x' => 3,
   'y' => 10,
+  'ocean' => 1,
 ],
  'hex_4_10@m4' => [  //
   'location' => 'map_hexes',
@@ -7838,6 +7838,7 @@ $this->token_types = [
   'r' => '2p',
 ],
  'hex_9_10@m4' => [  //
+  'name' => clienttranslate('Arsia Mons'),
   'location' => 'map_hexes',
   'x' => 9,
   'y' => 10,

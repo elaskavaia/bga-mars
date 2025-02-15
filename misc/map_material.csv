@@ -12,21 +12,19 @@ x|y|r|name|ocean|php
 0|3||Ganymede Colony
 #set inspace=
 3|5|2p|Noctis City
-#set ocean=1
-4|1|2s|
-6|1|draw|
-8|2|2draw|
-9|4|2p|
-4|5|2p|
-5|5|2p|
-6|5|2p|
-7|6|p|
-8|6|p|
-9|6|p|
-7|9|2u|
-7|1||
+4|1|2s||1
+6|1|draw||1
+8|2|2draw||1
+9|4|2p||1
+4|5|2p||1
+5|5|2p||1
+6|5|2p||1
+7|6|p||1
+8|6|p||1
+9|6|p||1
+7|9|2u||1
+7|1|||1
 #set reserved=
-#set ocean=
 3|1|2s|
 5|1||
 3|2||
@@ -86,7 +84,6 @@ x|y|r|name|ocean|php
 0|3||Ganymede Colony
 #set inspace=
 #set reserved=
-#set ocean=
 3|1|2p||1
 4|1|2p
 5|1|2p
@@ -169,7 +166,6 @@ x|y|r|name|ocean|php
 0|3||Ganymede Colony
 #set inspace=
 #set reserved=
-#set ocean=
 3|1|||1
 4|1|u||1
 5|1|draw||1
@@ -251,7 +247,6 @@ x|y|r|name|ocean|php
 0|3||Ganymede Colony
 #set inspace=
 #set reserved=
-#set ocean=
 3|1|p
 4|1|
 5|1|s|Hecates Tholus||
@@ -337,7 +332,6 @@ x|y|r|name|ocean|php
 0|3||Ganymede Colony
 #set inspace=
 #set reserved=
-#set ocean=
 3|1|s
 4|1|2s
 5|1|s
@@ -433,7 +427,7 @@ x|y|r|name|ocean|php
 6|10||
 7|10|3p|
 8|10|2p|
-9|10|2s|
+9|10|2s|Arsia Mons
 
 3|11||
 4|11|s,u|
