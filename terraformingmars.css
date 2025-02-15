@@ -9384,9 +9384,9 @@
   left: 23%;
 }
 .mfull .map_4 #oxygen_map {
-  width: calc(var(--map-width) * 0.3);
-  height: calc(var(--map-width) * 1.1);
-  top: 10%;
+  width: calc(var(--map-width) * 0.35);
+  height: calc(var(--map-width) * 1.14);
+  top: 8%;
   left: 9%;
 }
 .mfull #temperature_map {
