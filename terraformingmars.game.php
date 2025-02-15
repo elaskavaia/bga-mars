@@ -48,7 +48,7 @@ class terraformingmars extends PGameXBody {
      * _ when the game starts
      * _ when a player refreshes the game page (F5)
      */
-    protected function getAllDatas() {
+    protected function getAllDatas(): array {
         $result = parent::getAllDatas();
         return $result;
     }
@@ -77,7 +77,7 @@ class terraformingmars extends PGameXBody {
      * You can do whatever you want in order to make sure the turn of this player ends appropriately
      * (ex: pass).
      */
-    function zombieTurn($state, $active_player) {
+    function zombieTurn($state, $active_player): void {
         parent::zombieTurn($state, $active_player);
     }
 
