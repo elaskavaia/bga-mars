@@ -64,6 +64,7 @@ class GameXBody extends GameTokens {
       this.setupMilestonesAndAwards(mapnum);
 
       super.setup(gamedatas);
+      this.removeTooltip('map_hexes');
 
       if (mapnum == 4) {
         $("hand_area").appendChild($("standard_projects_area"));
@@ -209,6 +210,14 @@ class GameXBody extends GameTokens {
       //locale css management
       $("ebd-body").dataset["locale"] = _("$locale");
       this.setupOneTimePrompt();
+
+      // debug
+      // for (let i=1;i<=18;i++) {
+      //   const nodeid = 'alt_tracker_o';
+      //   const div = this.cloneAndFixIds(nodeid, "_tt_"+i);
+      //   div.dataset.state = String(i);
+      //   $(nodeid).parentNode.appendChild(div);
+      // }
     } catch (e) {
       console.error(e);
       console.log("Ending game setup");
