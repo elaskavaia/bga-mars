@@ -4140,8 +4140,8 @@
   left: unset;
 }
 .mcompact .map_4 #decks_area {
-  top: 87%;
-  left: 80%;
+  top: 84%;
+  left: 78%;
 }
 
 .hex {
@@ -5453,6 +5453,7 @@
   padding: 0.3vh;
   font-family: var(--mars-font);
   text-transform: uppercase;
+  cursor: default;
 }
 
 #temperature_map {
@@ -5738,27 +5739,27 @@
 }
 
 .map_4 #oxygen_map .tracker_o[data-state="0"] {
-  left: 77%;
-  top: 93%;
+  left: 69%;
+  top: 92.5%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="1"] {
-  left: 62%;
+  left: 56%;
   top: 89%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="2"] {
-  left: 49%;
-  top: 84%;
+  left: 43%;
+  top: 85%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="3"] {
-  left: 36%;
+  left: 32%;
   top: 80%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="4"] {
-  left: 25%;
+  left: 22%;
   top: 75%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="5"] {
-  left: 17%;
+  left: 15%;
   top: 70%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="6"] {
@@ -5767,51 +5768,51 @@
 }
 .map_4 #oxygen_map .tracker_o[data-state="7"] {
   left: 3%;
-  top: 59%;
+  top: 60%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="8"] {
-  left: 3%;
+  left: 1%;
   top: 54%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="9"] {
-  left: 2%;
-  top: 48%;
+  left: 0%;
+  top: 49%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="10"] {
-  left: 2%;
-  top: 44%;
+  left: 0%;
+  top: 43%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="11"] {
-  left: 3%;
-  top: 37%;
+  left: 1%;
+  top: 38%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="12"] {
-  left: 4%;
+  left: 5%;
   top: 32%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="13"] {
-  left: 12%;
+  left: 11%;
   top: 27%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="14"] {
-  left: 20%;
-  top: 21%;
+  left: 18%;
+  top: 22%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="15"] {
-  left: 31%;
-  top: 16%;
+  left: 26%;
+  top: 17%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="16"] {
-  left: 41%;
-  top: 11%;
+  left: 36%;
+  top: 12%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="17"] {
-  left: 54%;
-  top: 7%;
+  left: 47%;
+  top: 8%;
 }
 .map_4 #oxygen_map .tracker_o[data-state="18"] {
-  left: 70%;
-  top: 3%;
+  left: 61%;
+  top: 4%;
 }
 
 /*standard projects*/
