@@ -175,7 +175,7 @@
                 "name": "Amazonis Planitia",
                 "description": "The smooth plain",
                 "tmdisplay": "Amazonis",
-                "alpha": true
+                "beta": true
             }
         },
         "default": 0
