@@ -193,8 +193,7 @@
   display: none;
 }
 
-.draw:empty:after,
-.draft:empty:after {
+.draw:has(.hand_sorter:only-child) {
   display: none;
 }
 
@@ -211,12 +210,6 @@
 
 .spectatorMode .hand {
   display: none;
-}
-
-.carddeck > .counter {
-  position: absolute;
-  top: 90%;
-  left: calc(50% - 0.5em);
 }
 
 .active_slot {
@@ -9512,9 +9505,14 @@
   outline: 1px solid #9E9E9E;
   border-radius: 20%;
 }
+.mfull .carddeck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .mfull .carddeck > .counter {
-  position: absolute;
-  top: 10%;
+  position: relative;
+  top: unset;
 }
 .mfull .carddeck > .card {
   pointer-events: none;
@@ -10112,9 +10110,6 @@
   color: var(--outlinecolor);
   background-color: black;
 }
-.mfull .hs_direction {
-  display: none;
-}
 .mfull #main_board .marker_tr ~ .marker_tr {
   translate: 50%;
 }
@@ -10510,7 +10505,7 @@
 }
 
 .mcompact {
-  --dpiratio:1;
+  --dpiratio: 1;
 }
 .mcompact #ebd-body.mobile_portrait {
   /*1x defaults */
@@ -10543,10 +10538,14 @@
   --resourcesize: var(--default-resourcesize);
   flex-wrap: wrap;
 }
-.mcompact #ebd-body.mobile_portrait .hand, .mcompact #ebd-body.mobile_portrait .draw, .mcompact #ebd-body.mobile_portrait .draft {
+.mcompact #ebd-body.mobile_portrait .hand,
+.mcompact #ebd-body.mobile_portrait .draw,
+.mcompact #ebd-body.mobile_portrait .draft {
   padding: 6px 6px 6px calc(var(--card-width) * 0.2);
 }
-.mcompact #ebd-body.mobile_portrait .hand::after, .mcompact #ebd-body.mobile_portrait .draw::after, .mcompact #ebd-body.mobile_portrait .draft::after {
+.mcompact #ebd-body.mobile_portrait .hand::after,
+.mcompact #ebd-body.mobile_portrait .draw::after,
+.mcompact #ebd-body.mobile_portrait .draft::after {
   font-size: calc(var(--card-width) * 0.2);
 }
 .mcompact #ebd-body.mobile_portrait #scoretable {
@@ -10868,22 +10867,6 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 }
 
 .carddeck .counter {
-  /*
-  position: absolute;
-  top: -18%;
-  left: -30%;
-  border: 1px solid white;
-  background: black;
-  color: white;
-  width: calc(var(--stan-width) * 0.15);
-  height: calc(var(--stan-width) * 0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  padding: 1%;
-
-   */
   position: relative;
 }
 
@@ -11018,10 +11001,6 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   transition: transform 0.8s;
   z-index: 1000;
   max-height: 82vh;
-}
-#ebd-body[data-localsetting_handplace=floating] #hand_area .hand_sorter {
-  left: 30%;
-  top: -13%;
 }
 #ebd-body[data-localsetting_handplace=floating] #hand_area_buttons {
   display: flex;
@@ -11466,29 +11445,25 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 .hand_sorter {
   position: absolute;
   /* top: calc(var(--card-width) * -0.3);*/
-  top: 0.5%;
+  top: 3%;
   left: 0.5%;
-  display: flex;
-  flex-direction: row;
-  background-color: rgba(151, 145, 145, 0.6);
-  border-radius: 1vh;
-  padding: 0.3vh;
+  display: block;
+  padding: 0;
   z-index: 1;
   /* width: calc(var(--card-width) * 0.8);*/
   width: calc(var(--card-width) * 0.2);
   height: calc(var(--card-width) * 0.2);
-  justify-content: space-evenly;
-  align-items: center;
 }
 .hand_sorter .hs_button {
-  border: 1px solid black;
-  font-size: calc(var(--card-width) * 0.11);
+  font-size: calc(var(--card-width) * 0.13);
   width: calc(var(--card-width) * 0.15);
-  height: calc(var(--card-width) * 0.18);
+  aspect-ratio: 1/1;
   overflow: hidden;
   cursor: pointer;
   position: relative;
-  border-radius: 5px;
+  border-radius: 20%;
+  background-color: rgba(201, 196, 182, 0.8509803922);
+  color: gray;
 }
 .hand_sorter .hs_picto {
   position: absolute;
@@ -11496,68 +11471,29 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   width: 100%;
   text-align: center;
 }
-.hand_sorter .hs_direction {
-  width: 100%;
-  text-align: center;
-  bottom: -20%;
-  position: absolute;
-}
-.hand_sorter .hs_button[data-direction=""] .hs_direction::before {
-  content: "";
-}
-.hand_sorter .hs_button[data-direction=increase] {
-  background-color: rgba(238, 209, 122, 0.8509803922);
-}
-.hand_sorter .hs_button[data-direction=increase] .hs_direction::before {
-  content: "⮕";
-}
-.hand_sorter .hs_button[data-direction=decrease] {
-  background-color: rgba(238, 209, 122, 0.8509803922);
-}
-.hand_sorter .hs_button[data-direction=decrease] .hs_direction::before {
-  content: "⬅";
-}
-.hand_sorter .hs_button[data-type=manual] .hs_direction::before {
-  content: "";
-}
-.hand_sorter .hs_button[data-type=none] .hs_direction::before {
-  content: "";
+
+.hand_sorter:only-child {
+  display: none;
 }
 
 #ebd-body.mobile_version.touch-device #hs_button_hand_area_manual {
   display: none;
 }
 
-.hand_area[data-sort_type=cost][data-sort_direction=increase] .hand .card, .hand_area[data-sort_type=cost][data-sort_direction=increase] .draw .card {
-  order: var(--sort_cost);
+.tm_sortable[data-sort_type] .card {
+  order: var(--sort-order);
 }
 
-.hand_area[data-sort_type=cost][data-sort_direction=decrease] .hand .card, .hand_area[data-sort_type=cost][data-sort_direction=decrease] .draw .card {
-  order: calc(var(--sort_cost) * -1);
+.tm_sortable[data-sort_type=none] .card {
+  order: unset;
 }
 
-.hand_area[data-sort_type=vp][data-sort_direction=increase] .hand .card, .hand_area[data-sort_type=vp][data-sort_direction=increase] .draw .card {
-  order: var(--sort_vp);
+.tm_sortable[data-sort_type=manual] .card {
+  order: unset;
 }
 
-.hand_area[data-sort_type=vp][data-sort_direction=decrease] .hand .card, .hand_area[data-sort_type=vp][data-sort_direction=decrease] .draw .card {
-  order: calc(var(--sort_vp) * -1);
-}
-
-.hand_area[data-sort_type=playable][data-sort_direction=increase] .hand .card, .hand_area[data-sort_type=playable][data-sort_direction=increase] .draw .card {
-  order: var(--sort_playable);
-}
-
-.hand_area[data-sort_type=playable][data-sort_direction=decrease] .hand .card, .hand_area[data-sort_type=playable][data-sort_direction=decrease] .draw .card {
-  order: calc(var(--sort_playable) * -1);
-}
-
-.hand_area[data-sort_direction=increase] .card.corp {
+.hand_area .card.corp {
   order: -100000;
-}
-
-.hand_area[data-sort_direction=decrease] .card.corp {
-  order: 100000;
 }
 
 .dragzone {
@@ -11628,44 +11564,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   box-sizing: border-box;
   /* flex-wrap: nowrap;*/
 }
-.drag_inpg #hand_area {
-  /* flex-wrap: nowrap;*/
-}
 
 .defhidden {
   display: none;
 }
-
-/*
-.handy.spaced {
-  .card{
-    margin-left:15%;
-    margin-right: 15%;
-    .dragleft{
-      display: block;
-      left: -15%;
-      position: absolute;
-      outline: 2px solid black;
-      width: 15%;
-      height: 100%;
-    }
-    .dragright{
-      display: block;
-      right: -15%;
-      position: absolute;
-      outline: 2px solid black;
-      width: 15%;
-      height: 100%;
-    }
-    .drag-active {
-      margin-left:0;
-      margin-right:0;
-      .dragright{
-        display: none;
-      }
-      .dragleft{
-        display: none;
-      }
-    }
-
-}*/

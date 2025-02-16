@@ -125,7 +125,7 @@ abstract class PGameXBody extends PGameMachine {
             }
 
             if ($prelude) {
-                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name'=>'Prelude']);
+                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Prelude']);
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
                     $this->queue($color, "prelude");
@@ -135,7 +135,7 @@ abstract class PGameXBody extends PGameMachine {
                 }
             }
             $adj = $this->getMapNumber();
-            $this->notifyWithName('message', clienttranslate('Map: ${map_name}'), [ 'map_name'=> $this->getTokenName("map_$adj")]);
+            $this->notifyWithName('message', clienttranslate('Map: ${map_name}'), ['map_name' => $this->getTokenName("map_$adj")]);
 
             if ($this->isSolo()) {
                 $this->setupSoloMap();
@@ -342,11 +342,17 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function debug_drawCard(string $fuzzy_card, string $loc = null) {
-        $token = $this->findCard($fuzzy_card);
         $color = $this->getCurrentPlayerColor();
+
+
         if (!$loc) $loc = "hand_$color";
         if ($loc == 'draw') $loc = "draw_$color";
         if ($loc == 'tableau') $loc = "tableau_$color";
+        if (!$fuzzy_card) {
+            $this->effect_draw($color, 'deck_main', $loc, 1);
+            return;
+        }
+        $token = $this->findCard($fuzzy_card);
         $this->dbSetTokenLocation($token, $loc, 0);
     }
     function findCard($num) {
@@ -672,7 +678,7 @@ abstract class PGameXBody extends PGameMachine {
         $adj = $this->getMapNumber();
         $num = $this->getPlayersNumber();
         $this->doAdjustMaterial($num, $adj);
-        
+
         $expr_keys = ['r', 'e', 'a'];
         foreach ($this->token_types as $key => &$info) {
             if (startsWith($key, "card_") || startsWith($key, "hex_")) {
@@ -3004,7 +3010,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function undoSavepoint():void {
+    function undoSavepoint(): void {
         $this->systemAssertTrue("ERR:Game:02");
     }
 

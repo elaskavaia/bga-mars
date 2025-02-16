@@ -1139,21 +1139,24 @@ class GameBasics extends GameGui {
     if (b) this.activateHelpMode();
     else this.deactivateHelpMode();
   }
-
+  
+  helpModeHandler = this.onClickForHelp.bind(this);
+  closeHelpHandler = this.closeCurrentTooltip.bind(this);
+  
   activateHelpMode() {
     let chk = $("help-mode-switch");
     dojo.setAttr(chk, "bchecked", true);
     this._helpMode = true;
     dojo.addClass("ebd-body", "help-mode");
     this._displayedTooltip = null;
-    document.body.addEventListener("click", this.closeCurrentTooltip.bind(this));
+    document.body.addEventListener("click", this.closeHelpHandler);
     this.setDescriptionOnMyTurn(_("HELP MODE Activated. Click on game elements to get tooltips"));
     dojo.empty("generalactions");
     this.addCancelButton(undefined, () => this.deactivateHelpMode());
 
-    let handler = this.onClickForHelp.bind(this);
+
     document.querySelectorAll(".withtooltip").forEach((node) => {
-      node.addEventListener("click", handler, false);
+      node.addEventListener("click", this.helpModeHandler, false);
     });
   }
 
@@ -1163,12 +1166,11 @@ class GameBasics extends GameGui {
     this.closeCurrentTooltip();
     this._helpMode = false;
     dojo.removeClass("ebd-body", "help-mode");
-    document.body.removeEventListener("click", this.closeCurrentTooltip.bind(this));
-    let handler = this.onClickForHelp.bind(this);
+    document.body.removeEventListener("click", this.closeHelpHandler);
     document.querySelectorAll(".withtooltip").forEach((node) => {
-      node.removeEventListener("click", handler, false);
+      node.removeEventListener("click", this.helpModeHandler, false);
     });
-
+    this.on_client_state = true;
     this.cancelLocalStateEffects();
   }
 

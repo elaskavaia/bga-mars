@@ -36,6 +36,8 @@ var GameBasics = /** @class */ (function (_super) {
         _this._notif_uid_to_mobile_log_id = {};
         _this._last_notif = null;
         _this.zoom = 1.0;
+        _this.helpModeHandler = _this.onClickForHelp.bind(_this);
+        _this.closeHelpHandler = _this.closeCurrentTooltip.bind(_this);
         console.log("game constructor");
         _this.laststate = null;
         _this.pendingUpdate = false;
@@ -1022,26 +1024,26 @@ var GameBasics = /** @class */ (function (_super) {
         this._helpMode = true;
         dojo.addClass("ebd-body", "help-mode");
         this._displayedTooltip = null;
-        document.body.addEventListener("click", this.closeCurrentTooltip.bind(this));
+        document.body.addEventListener("click", this.closeHelpHandler);
         this.setDescriptionOnMyTurn(_("HELP MODE Activated. Click on game elements to get tooltips"));
         dojo.empty("generalactions");
         this.addCancelButton(undefined, function () { return _this.deactivateHelpMode(); });
-        var handler = this.onClickForHelp.bind(this);
         document.querySelectorAll(".withtooltip").forEach(function (node) {
-            node.addEventListener("click", handler, false);
+            node.addEventListener("click", _this.helpModeHandler, false);
         });
     };
     GameBasics.prototype.deactivateHelpMode = function () {
+        var _this = this;
         var chk = $("help-mode-switch");
         dojo.setAttr(chk, "bchecked", false);
         this.closeCurrentTooltip();
         this._helpMode = false;
         dojo.removeClass("ebd-body", "help-mode");
-        document.body.removeEventListener("click", this.closeCurrentTooltip.bind(this));
-        var handler = this.onClickForHelp.bind(this);
+        document.body.removeEventListener("click", this.closeHelpHandler);
         document.querySelectorAll(".withtooltip").forEach(function (node) {
-            node.removeEventListener("click", handler, false);
+            node.removeEventListener("click", _this.helpModeHandler, false);
         });
+        this.on_client_state = true;
         this.cancelLocalStateEffects();
     };
     GameBasics.prototype.closeCurrentTooltip = function () {
@@ -1457,12 +1459,357 @@ function setStyleAttributes(element, attrs) {
         });
     }
 }
-var Card = /** @class */ (function () {
-    function Card() {
+var ALL_SORT_TYPES = ["none", "playable", "cost", "vp", "manual"];
+/** Hand of cards (also Draw, Draft, etc) */
+var CardHand = /** @class */ (function () {
+    function CardHand(game // game reference
+    ) {
+        this.game = game;
     }
-    return Card;
+    CardHand.prototype.hookSort = function () {
+        var _this = this;
+        try {
+            //generate buttons
+            //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
+            //So I attached it to the hand area block.
+            document.querySelectorAll(".tm_sortable").forEach(function (node) { return _this.addSortButtonsToHandy(node); });
+            this.enableManualReorder("hand_area");
+            this.game.connectClass("hs_button", "onclick", function (event) { return _this.onClickHandSort(event); });
+        }
+        catch (e) {
+            this.game.showError("error during sorting setup, card sorting is disabled");
+        }
+    };
+    CardHand.prototype.onClickHandSort = function (event) {
+        dojo.stopEvent(event);
+        if (this.game._helpMode)
+            return;
+        var btn = event.currentTarget;
+        var prevType = btn.dataset.type;
+        var newtype;
+        switch (prevType) {
+            case "none":
+                newtype = "playable";
+                break;
+            case "playable":
+                newtype = "cost";
+                break;
+            case "cost":
+                newtype = "vp";
+                break;
+            case "vp":
+                newtype = "manual";
+                break;
+            case "manual":
+                newtype = "none";
+                break;
+        }
+        this.switchHandSort(btn, newtype);
+    };
+    CardHand.prototype.switchHandSort = function (button, newtype) {
+        var sortInfo = this.game.getRulesFor("sort_".concat(newtype), "*", undefined);
+        if (!sortInfo) {
+            return;
+        }
+        button.dataset.type = newtype;
+        button.querySelector("i").removeAttribute("class");
+        button.querySelector("i").classList.add("fa", sortInfo.icon);
+        var handId = button.dataset.target;
+        $(handId).dataset.sort_type = newtype;
+        this.updateButtonTooltip(button, sortInfo);
+        var localColorSetting = new LocalSettings(this.game.getLocalSettingNamespace("card_sort_".concat(handId)));
+        localColorSetting.writeProp("sort_type", newtype);
+        this.applySortOrder($(handId));
+    };
+    CardHand.prototype.updateButtonTooltip = function (button, sortInfo) {
+        var fullmsg = _("Click to select next sorting mode");
+        fullmsg += ".<br>";
+        fullmsg += _("The selected sort mode is stored in local browser storage, not in the game database.");
+        for (var _i = 0, ALL_SORT_TYPES_1 = ALL_SORT_TYPES; _i < ALL_SORT_TYPES_1.length; _i++) {
+            var otherSort = ALL_SORT_TYPES_1[_i];
+            var oInfo = this.game.getRulesFor("sort_".concat(otherSort), "*", undefined);
+            var name_1 = this.game.getTokenName(otherSort);
+            fullmsg += this.game.generateTooltipSection(name_1, "<i class=\"fa ".concat(oInfo.icon, "\"></i> ") + _(oInfo.tooltip));
+        }
+        var title = _("Sort Order: ") + "<i class=\"fa ".concat(sortInfo.icon, "\"></i> ") + _(sortInfo.name);
+        var html = this.game.getTooptipHtml(title, fullmsg, "");
+        this.game.addTooltipHtml(button.id, html);
+        button.classList.add("withtooltip");
+    };
+    CardHand.prototype.addSortButtonsToHandy = function (attachNode) {
+        var id = attachNode.id;
+        var buttonId = "hs_button_" + id + "_switch";
+        var htm = "<div id=\"".concat(buttonId, "\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"none\"><div class=\"hs_picto hs_cost\"><i id=\"hs_button_").concat(id, "_picto\" class=\"fa fa-times\" aria-hidden=\"true\"></i></div></div>       ");
+        var node = this.game.createDivNode("", "hand_sorter", attachNode.id);
+        node.innerHTML = htm;
+        var localColorSetting = new LocalSettings(this.game.getLocalSettingNamespace("card_sort_".concat(id)));
+        var sortType = localColorSetting.readProp("sort_type", "manual");
+        this.switchHandSort($(buttonId), sortType);
+    };
+    /* Manual reordering of cards via drag'n'drop */
+    CardHand.prototype.enableManualReorder = function (idContainer) {
+        $(idContainer).addEventListener("drop", namedEventPreventDefaultAndStopHandler);
+        $(idContainer).addEventListener("dragover", namedEventPreventDefaultHandler);
+        $(idContainer).addEventListener("dragenter", namedEventPreventDefaultHandler);
+    };
+    CardHand.prototype.enableDragOnCard = function (node) {
+        if (node.draggable)
+            return;
+        //disable on mobile for now
+        if ($("ebd-body").classList.contains("mobile_version"))
+            return;
+        //console.log("enable drag on ", node.id);
+        node.querySelectorAll("*").forEach(function (sub) {
+            sub.draggable = false;
+        });
+        node.draggable = true;
+        node.addEventListener("dragstart", onDragStart);
+        node.addEventListener("dragend", onDragEnd);
+    };
+    CardHand.prototype.disableDragOnCard = function (node) {
+        if (!node.draggable)
+            return;
+        //console.log("disable drag on ", node.id);
+        node.draggable = false;
+        node.removeEventListener("dragstart", onDragStart);
+        node.removeEventListener("dragend", onDragEnd);
+    };
+    CardHand.prototype.maybeEnabledDragOnCard = function (tokenNode) {
+        if (dojo.hasClass(tokenNode.parentElement, "tm_sortable")) {
+            if (this.isManualSortOrderEnabled(tokenNode.parentElement)) {
+                this.enableDragOnCard(tokenNode);
+                return;
+            }
+        }
+        this.disableDragOnCard(tokenNode);
+    };
+    CardHand.prototype.isManualSortOrderEnabled = function (tokenNode) {
+        var _a;
+        if (((_a = tokenNode === null || tokenNode === void 0 ? void 0 : tokenNode.dataset) === null || _a === void 0 ? void 0 : _a.sort_type) == "manual") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    CardHand.prototype.applySortOrder = function (node) {
+        var _this = this;
+        if (node === undefined) {
+            document.querySelectorAll(".tm_sortable").forEach(function (node) { return _this.applySortOrder(node); });
+            return;
+        }
+        var containerNode = node;
+        var sortType = containerNode.dataset.sort_type;
+        if (this.isManualSortOrderEnabled(containerNode)) {
+            this.loadLocalManualOrder(containerNode);
+            containerNode.querySelectorAll(".card").forEach(function (card) {
+                _this.enableDragOnCard(card);
+                card.style.removeProperty("--sort-order");
+            });
+        }
+        else {
+            // disable on all cards in case it was moved
+            document.querySelectorAll(".card").forEach(function (card) {
+                if (!_this.isManualSortOrderEnabled(card.parentElement))
+                    _this.disableDragOnCard(card);
+            });
+            containerNode.querySelectorAll(".card").forEach(function (card) {
+                var _a;
+                var weight = 0;
+                switch (sortType) {
+                    case "cost":
+                        weight = parseInt((_a = card.dataset.discount_cost) !== null && _a !== void 0 ? _a : card.dataset.cost);
+                        break;
+                    case "playable":
+                        weight = _this.getSortWeightPlayability(card);
+                        break;
+                    case "vp":
+                        weight = _this.getSortWeightVp(card);
+                        break;
+                    default:
+                        card.style.removeProperty("--sort-order");
+                        return;
+                }
+                // card num is last sort disambiguator
+                var num = parseInt(getPart(card.id, 2));
+                card.style.setProperty("--sort-order", String(weight * 1000 + num));
+            });
+        }
+    };
+    CardHand.prototype.getSortWeightVp = function (card) {
+        var vpattr = this.game.getRulesFor(card.id, "vp", undefined);
+        var vp = 0;
+        if (vpattr) {
+            vp = Number(vpattr);
+            if (isNaN(vp)) {
+                var sp = vpattr.split("/");
+                if (sp.length == 2)
+                    vp = 5 - parseInt(sp[1]);
+                else
+                    vp = 5;
+            }
+        }
+        return vp;
+    };
+    CardHand.prototype.getSortWeightPlayability = function (card) {
+        var _a;
+        var cost = parseInt((_a = card.dataset.discount_cost) !== null && _a !== void 0 ? _a : card.dataset.cost);
+        var sort_playable = 0;
+        if (card.dataset.invalid_prereq != "0")
+            sort_playable += 1;
+        sort_playable = sort_playable * 2;
+        if (card.dataset.cannot_resolve != "0")
+            sort_playable += 1;
+        sort_playable = sort_playable * 2;
+        if (card.dataset.cannot_pay != "0")
+            sort_playable += 1;
+        return sort_playable * 50 + cost;
+    };
+    CardHand.prototype.loadLocalManualOrder = function (containerNode) {
+        if (!containerNode)
+            return;
+        var sortOrder = getDivLocalSetting(containerNode.id).readProp("custom_order", "");
+        if (!sortOrder)
+            return;
+        var cards = sortOrder.split(",");
+        cards.reverse().forEach(function (card_id) {
+            var node = $(card_id);
+            if ((node === null || node === void 0 ? void 0 : node.parentElement) === containerNode) {
+                containerNode.prepend(node);
+            }
+        });
+    };
+    return CardHand;
 }());
-;
+function getDivLocalSetting(divId) {
+    var game = gameui;
+    var localOrderSetting = new LocalSettings(getGamePlayerNamespace(game.table_id, divId));
+    return localOrderSetting;
+}
+function getGamePlayerNamespace(a, b) {
+    if (a === void 0) { a = ""; }
+    if (b === void 0) { b = ""; }
+    var game = gameui;
+    if (b)
+        return "".concat(game.game_name, "-").concat(game.player_id, "-").concat(a, "_").concat(b);
+    return "".concat(game.game_name, "-").concat(game.player_id, "-").concat(a);
+}
+function saveLocalManualOrder(containerNode) {
+    var game = gameui;
+    var sortOrder = "";
+    //query should return in the same order as the DOM
+    dojo.query("#" + containerNode.id + " .card").forEach(function (card) {
+        sortOrder += "".concat(card.id, ",");
+    });
+    sortOrder = sortOrder.substring(0, sortOrder.length - 1);
+    getDivLocalSetting(containerNode.id).writeProp("custom_order", sortOrder);
+}
+function onDragEnd(event) {
+    // no prevent defaults
+    var selectedItem = event.target;
+    console.log("onDragEnd", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
+    var x = event.clientX;
+    var y = event.clientY;
+    var containerNode = selectedItem.parentElement;
+    var pointsTo = document.elementFromPoint(x, y);
+    if (pointsTo === selectedItem || pointsTo === null) {
+        // do nothing
+    }
+    else if (containerNode === pointsTo) {
+        //dropped in empty space on container
+        containerNode.append(selectedItem);
+    }
+    else if (pointsTo.parentElement !== undefined &&
+        pointsTo.parentElement.parentElement !== undefined &&
+        pointsTo.parentElement.parentElement == selectedItem.parentElement &&
+        pointsTo.classList.contains("dragzone_inside")) {
+        containerNode.insertBefore(selectedItem, pointsTo.parentElement);
+    }
+    else if (containerNode === pointsTo.parentNode) {
+        containerNode.insertBefore(pointsTo, selectedItem);
+    }
+    else {
+        console.error("Cannot determine target for drop", pointsTo.id);
+    }
+    selectedItem.classList.remove("drag-active");
+    $("ebd-body").classList.remove("drag_inpg");
+    containerNode.style.removeProperty("width");
+    containerNode.style.removeProperty("height");
+    document.querySelectorAll(".dragzone").forEach(dojo.destroy);
+    console.log("onDragEnd commit");
+    try {
+        saveLocalManualOrder(containerNode);
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
+function onDragStart(event) {
+    var selectedItem = event.currentTarget;
+    console.log("onDragStart", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
+    var cardParent = selectedItem.parentElement;
+    // no prevent defaults
+    if (!cardParent.classList.contains("handy") || !selectedItem.id) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("onDragStart - no");
+        return;
+    }
+    // no checks, handler should not be installed if on mobile and such
+    //prevent container from changing size
+    var rect = cardParent.getBoundingClientRect();
+    cardParent.style.setProperty("width", String(rect.width) + "px");
+    cardParent.style.setProperty("height", String(rect.height) + "px");
+    $("ebd-body").classList.add("drag_inpg");
+    selectedItem.classList.add("drag-active");
+    selectedItem.style.setProperty("user-select", "none");
+    // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
+    // event.dataTransfer.effectAllowed = "move";
+    // event.dataTransfer.dropEffect = "move";
+    // selectedItem.classList.add("hide"); not in css?
+    // without timeout the dom changes cancel the start drag in a lot of cases because the new element under the mouse
+    setTimeout(function () {
+        cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
+        cardParent.querySelectorAll(".card").forEach(function (card) {
+            //prevent
+            if (card.id == selectedItem.id)
+                return;
+            if (card.nextElementSibling == null) {
+                var dragNodeId = "dragright_" + card.id;
+                var righthtm = "<div class=\"dragzone outsideright\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragright\"></div></div>");
+                card.insertAdjacentHTML("afterend", righthtm);
+                var dragNode = $(dragNodeId);
+                dragNode.parentElement.addEventListener("dragover", dragOverHandler);
+                dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
+            }
+            if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
+                card.previousElementSibling == null) {
+                var dragNodeId = "dragleft_" + card.id;
+                var lefthtm = "<div class=\"dragzone\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragleft\"></div></div>");
+                card.insertAdjacentHTML("beforebegin", lefthtm);
+                var dragNode = $(dragNodeId);
+                dragNode.parentElement.addEventListener("dragover", dragOverHandler);
+                dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
+            }
+        });
+    }, 1);
+    console.log("onDragStart commit");
+}
+function namedEventPreventDefaultHandler(event) {
+    event.preventDefault();
+}
+function namedEventPreventDefaultAndStopHandler(event) {
+    event.preventDefault();
+    event.stopPropagation();
+}
+function dragOverHandler(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add("over");
+}
+function dragLeaveHandler(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove("over");
+}
 var View;
 (function (View) {
     View[View["Hidden"] = 0] = "Hidden";
@@ -3541,7 +3888,7 @@ var GameTokens = /** @class */ (function (_super) {
         return this.getTooptipHtmlForTokenInfo(tokenInfo);
     };
     GameTokens.prototype.getTooptipHtmlForTokenInfo = function (tokenInfo) {
-        return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action, tokenInfo.tooltipOverride);
+        return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
     };
     GameTokens.prototype.getTokenName = function (tokenId) {
         var tokenInfo = this.getTokenDisplayInfo(tokenId);
@@ -3747,35 +4094,35 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.notif_counter = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
-            var name_1, value, counter_inc, counters;
+            var name_2, value, counter_inc, counters;
             return __generator(this, function (_a) {
                 try {
                     this.onNotif(notif);
-                    name_1 = notif.args.counter_name;
+                    name_2 = notif.args.counter_name;
                     value = void 0;
                     if (notif.args.counter_value !== undefined) {
                         value = notif.args.counter_value;
                     }
                     else {
                         counter_inc = notif.args.counter_inc;
-                        value = notif.args.counter_value = this.gamedatas.counters[name_1].counter_value + counter_inc;
+                        value = notif.args.counter_value = this.gamedatas.counters[name_2].counter_value + counter_inc;
                     }
-                    if (this.gamedatas.counters[name_1]) {
+                    if (this.gamedatas.counters[name_2]) {
                         counters = {};
-                        counters[name_1] = {
-                            counter_name: name_1,
+                        counters[name_2] = {
+                            counter_name: name_2,
                             counter_value: value
                         };
-                        if (this.gamedatas_server && this.gamedatas_server.counters[name_1])
-                            this.gamedatas_server.counters[name_1].counter_value = value;
+                        if (this.gamedatas_server && this.gamedatas_server.counters[name_2])
+                            this.gamedatas_server.counters[name_2].counter_value = value;
                         this.updateCountersSafe(counters);
                     }
-                    else if ($(name_1) && this.gamedatas.tokens[name_1]) {
+                    else if ($(name_2) && this.gamedatas.tokens[name_2]) {
                         notif.args.nop = true; // no move animation
-                        return [2 /*return*/, this.placeTokenServer(name_1, this.gamedatas.tokens[name_1].location, value, notif.args)];
+                        return [2 /*return*/, this.placeTokenServer(name_2, this.gamedatas.tokens[name_2].location, value, notif.args)];
                     }
-                    else if ($(name_1)) {
-                        this.setDomTokenState(name_1, value);
+                    else if ($(name_2)) {
+                        this.setDomTokenState(name_2, value);
                     }
                     //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
                 }
@@ -3823,6 +4170,7 @@ var GameXBody = /** @class */ (function (_super) {
         try {
             this.isDoingSetup = true;
             this.lastMoveId = 0;
+            this.handman = new CardHand(this);
             this.CON = gamedatas.CON; // PHP contants for game
             this.stacks = [];
             var theme = this.isLayoutFull() ? 2 : 1;
@@ -3847,7 +4195,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.setupHexes(mapnum);
             this.setupMilestonesAndAwards(mapnum);
             _super.prototype.setup.call(this, gamedatas);
-            this.removeTooltip('map_hexes');
+            this.removeTooltip("map_hexes");
             if (mapnum == 4) {
                 $("hand_area").appendChild($("standard_projects_area"));
             }
@@ -3925,7 +4273,7 @@ var GameXBody = /** @class */ (function (_super) {
                 _this.localSettings.doAction(cs, "plus");
             });
             if (!this.isSpectator) {
-                this.applySortOrder();
+                this.handman.applySortOrder();
             }
             $("outer_scoretracker").addEventListener("click", function () {
                 _this.onShowScoringTable();
@@ -3979,7 +4327,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.checkTerraformingCompletion();
     };
     GameXBody.prototype.setupMilestonesAndAwards = function (mapnum) {
-        var list = ['milestone', 'award'];
+        var list = ["milestone", "award"];
         for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
             var type = list_1[_i];
             var mainnode = $("display_".concat(type, "s"));
@@ -4051,33 +4399,7 @@ var GameXBody = /** @class */ (function (_super) {
         //attach sort buttons
         if (playerInfo.id == this.player_id) {
             //generate buttons
-            //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
-            //So I attached it to the hand area block.
-            this.addSortButtonsToHandy($("hand_area"));
-            this.enableManualReorder("hand_area");
-            this.connectClass("hs_button", "onclick", function (evt) {
-                dojo.stopEvent(evt);
-                var btn = evt.currentTarget;
-                var newtype = "";
-                switch (btn.dataset.type) {
-                    case "none":
-                        newtype = "playable";
-                        break;
-                    case "playable":
-                        newtype = "cost";
-                        break;
-                    case "cost":
-                        newtype = "vp";
-                        break;
-                    case "vp":
-                        newtype = "manual";
-                        break;
-                    case "manual":
-                        newtype = "none";
-                        break;
-                }
-                _this.switchHandSort(btn, newtype);
-            });
+            this.handman.hookSort();
         }
         //move own player board in main zone
         if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
@@ -4085,47 +4407,6 @@ var GameXBody = /** @class */ (function (_super) {
             dojo.place(board, "main_board", "after");
             dojo.addClass(board, "thisplayer_zone");
         }
-    };
-    GameXBody.prototype.switchHandSort = function (button, newtype) {
-        var fa = "";
-        var msg = "";
-        var newdir = "increase";
-        switch (newtype) {
-            case "playable":
-                fa = "fa-arrow-down";
-                msg = _("Playability");
-                break;
-            case "cost":
-                fa = "fa-eur";
-                msg = _("Cost");
-                break;
-            case "vp":
-                fa = "fa-star";
-                newdir = "decrease";
-                msg = _("VP");
-                break;
-            case "manual":
-                fa = "fa-hand-paper-o";
-                msg = _("Manual Drag and Drop");
-                break;
-            case "none":
-                fa = "fa-times";
-                msg = _("None");
-                break;
-        }
-        button.dataset.type = newtype;
-        button.dataset.direction = newdir;
-        button.querySelector("i").removeAttribute("class");
-        button.querySelector("i").classList.add("fa", fa);
-        var hand_block = button.dataset.target;
-        $(hand_block).dataset.sort_type = newtype;
-        $(hand_block).dataset.sort_direction = newdir;
-        var fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace("%s", msg);
-        this.addTooltip(button.id, fullmsg, _("Click to select next sorting mode"));
-        var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-        localColorSetting.writeProp("sort_direction", newdir);
-        localColorSetting.writeProp("sort_type", button.dataset.type);
-        this.applySortOrder();
     };
     GameXBody.prototype.setupPlayerStacks = function (playerColor) {
         var localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
@@ -4338,11 +4619,11 @@ var GameXBody = /** @class */ (function (_super) {
         }
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
-            var name_2 = this.getPlayerName(parseInt(plid));
+            var name_3 = this.getPlayerName(parseInt(plid));
             var progress_2 = this.cachedProgressTable[plid];
             var opInfoArgs = this.getOpInfoArgs(progress_2.operations, "claim");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_2, "\n                          <div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
+            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_3, "\n                          <div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
                 var current = opInfoArgs[key].c;
                 var claimed = opInfoArgs[key].claimed;
@@ -4426,11 +4707,11 @@ var GameXBody = /** @class */ (function (_super) {
         for (var plid in this.gamedatas.players) {
             var info = this.gamedatas.players[plid];
             var plcolor = info.color;
-            var name_3 = info.name;
+            var name_4 = info.name;
             var progress_4 = this.cachedProgressTable[plid];
             var opInfoArgs = this.getOpInfoArgs(progress_4.operations, "fund");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_3, "<div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
+            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_4, "<div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
                 var current = opInfoArgs[key].counter;
                 var vp = opInfoArgs[key].vp;
@@ -4786,8 +5067,8 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
         //disable hand sort on mobile
-        if (dojo.hasClass("ebd-body", "mobile_version") && dojo.hasClass("ebd-body", "touch-device")) {
-        }
+        // if (dojo.hasClass("ebd-body", "mobile_version") && dojo.hasClass("ebd-body", "touch-device")) {
+        // }
     };
     GameXBody.prototype.onToggleAllCards = function (event) {
         dojo.stopEvent(event);
@@ -4911,7 +5192,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (type !== undefined) {
             fulltxt = this.generateCardTooltip(displayInfo);
             var div_2 = this.cloneAndFixIds(elemId, "_tt", true);
-            div_2.classList.remove('active_slot');
+            div_2.classList.remove("active_slot");
             fullitemhtm = div_2.outerHTML;
             if ([1, 2, 3, 5].includes(type)) {
                 //main cards + prelude
@@ -4931,7 +5212,7 @@ var GameXBody = /** @class */ (function (_super) {
             else if (type == this.CON.MA_CARD_TYPE_STAN) {
                 fullitemhtm = "";
             }
-            displayInfo.imageTypes += ' _override';
+            displayInfo.imageTypes += " _override";
         }
         else {
             if ($(displayInfo.key)) {
@@ -5193,18 +5474,15 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 var decor = this.createDivNode(null, "card_decor", tokenNode.id);
                 var vp = "";
-                var sort_vp = "0";
                 if (displayInfo.vp) {
                     if (CustomRenders["customcard_vp_" + displayInfo.num]) {
                         vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
-                        sort_vp = "1";
                         tokenNode.setAttribute("data-show_calc_vp", "1");
                     }
                     else {
                         vp = parseInt(displayInfo.vp)
                             ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
                             : '<div class="card_vp"><div class="number_inside">*</div></div>';
-                        sort_vp = parseInt(displayInfo.vp) ? displayInfo.vp : "1";
                     }
                 }
                 else {
@@ -5286,8 +5564,6 @@ var GameXBody = /** @class */ (function (_super) {
                     tokenNode.id.replace("card_main_", "") +
                     '" class="resource_counter"  data-resource_counter="0"></div></div>';
                 decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(_(displayInfo.name), "</div></div>\n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(_(card_action_text), "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(_(displayInfo.text) || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div>\n                  <div id='discountedcost_").concat(tokenNode.id, "' class='card_cost minidiscount token_img tracker_m'></div> \n                  <div class=\"discountarrow fa fa-arrow-circle-down\"></div>\n                  </div> \n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
-                tokenNode.style.setProperty("--sort_cost", displayInfo.cost);
-                tokenNode.style.setProperty("--sort_vp", sort_vp);
             }
             // const div = this.createDivNode(null, "card_info_box", tokenNode.id);
             // div.innerHTML = `
@@ -5347,7 +5623,7 @@ var GameXBody = /** @class */ (function (_super) {
         var prevState = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.state;
         var inc = tokenInfo.state - prevState;
         if (key.startsWith("card_")) {
-            this.maybeEnabledDragOnCard(tokenNode);
+            this.handman.maybeEnabledDragOnCard(tokenNode);
         }
         // update resource holder counters
         if (key.startsWith("resource_")) {
@@ -5503,7 +5779,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             //alt_tracker_w (on the map)
             if (node.id.startsWith("tracker_w")) {
-                $(nodeCopy.id).dataset.calc = (this.getRulesFor('tracker_w', 'max') - parseInt(newState)).toString();
+                $(nodeCopy.id).dataset.calc = (this.getRulesFor("tracker_w", "max") - parseInt(newState)).toString();
             }
         }
         //check TM
@@ -5584,22 +5860,6 @@ var GameXBody = /** @class */ (function (_super) {
                     costDiv.classList.remove("discounted");
                 }
             }
-            // card num is last sort disambiguator
-            var num = parseInt(this.gamedatas.token_types[cardId].num);
-            var sort_cost = discount_cost * 1000 + num;
-            node.style.setProperty("--sort_cost", String(sort_cost));
-            var sort_playable = 0;
-            if (node.dataset.invalid_prereq !== "0")
-                sort_playable += 1;
-            sort_playable = sort_playable * 2;
-            if (node.dataset.cannot_resolve !== "0")
-                sort_playable += 1;
-            sort_playable = sort_playable * 2;
-            if (node.dataset.cannot_pay !== "0")
-                sort_playable += 1;
-            sort_playable = sort_playable * 100 + discount_cost;
-            sort_playable = sort_playable * 1000 + num;
-            node.style.setProperty("--sort_playable", String(sort_playable));
             //update TT too
             this.updateTooltip(node.id);
         }
@@ -5963,8 +6223,8 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 else if (!hex) {
                     // people confused when buttons are not shown, add button with explanations
-                    var name_4 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-                    this.addActionButtonColor("button_x", name_4, function () {
+                    var name_5 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+                    this.addActionButtonColor("button_x", name_5, function () {
                         _this.removeTooltip("button_x");
                         dojo.destroy("button_x");
                         _this.addTargetButtons(opId, opTargets);
@@ -6451,7 +6711,7 @@ var GameXBody = /** @class */ (function (_super) {
             this_4.completeOpInfo(opId, opInfo, xop, sortedOps.length);
             numops.push(opId);
             var opArgs = opInfo.args;
-            var name_5 = this_4.getButtonNameForOperation(opInfo);
+            var name_6 = this_4.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
             this_4.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
@@ -6468,7 +6728,7 @@ var GameXBody = /** @class */ (function (_super) {
                 // temp hack
                 if (opInfo.type === "passauto")
                     return "continue";
-                this_4.addActionButtonColor("button_".concat(opId), name_5, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_4.addActionButtonColor("button_".concat(opId), name_6, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
                 }
@@ -6537,8 +6797,8 @@ var GameXBody = /** @class */ (function (_super) {
             var opArgs = opInfo.args;
             if (opArgs.void)
                 return "continue";
-            var name_6 = this_5.getButtonNameForOperation(opInfo);
-            this_5.addActionButtonColor("button_".concat(opId), name_6, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+            var name_7 = this_5.getButtonNameForOperation(opInfo);
+            this_5.addActionButtonColor("button_".concat(opId), name_7, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
         };
         var this_5 = this;
         for (var i = 0; i < sortedOps.length; i++) {
@@ -6691,128 +6951,6 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
     };
-    GameXBody.prototype.addSortButtonsToHandy = function (attachNode) {
-        var id = attachNode.id;
-        /*
-        const htm = `
-            <div id="hs_button_${id}_cost" class="hs_button" data-target="${id}" data-type="cost" data-direction=""><div class="hs_picto hs_cost"><i class="fa fa-eur" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
-            <div id="hs_button_${id}_playable" class="hs_button" data-target="${id}" data-type="playable" data-direction=""><div class="hs_picto hs_playable"><i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
-            <div id="hs_button_${id}_vp" class="hs_button" data-target="${id}" data-type="vp" data-direction=""><div class="hs_picto hs_vp">VP</div><div class="hs_direction"></div></div>
-            <div id="hs_button_${id}_manual" class="hs_button" data-target="${id}" data-type="manual" data-direction=""><div class="hs_picto hs_manual"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div></div>
-           `;*/
-        var htm = "\n        <div id=\"hs_button_".concat(id, "_switch\" class=\"hs_button\" data-target=\"").concat(id, "\" data-type=\"none\" data-direction=\"\"><div class=\"hs_picto hs_cost\"><i id=\"hs_button_").concat(id, "_picto\" class=\"fa fa-times\" aria-hidden=\"true\"></i></div><div class=\"hs_direction\"></div></div>\n       ");
-        var node = this.createDivNode("", "hand_sorter", attachNode.id);
-        node.innerHTML = htm;
-        var localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-        var sort_dir = localColorSetting.readProp("sort_direction", "");
-        var sort_type = localColorSetting.readProp("sort_type", "");
-        if (sort_type == "") {
-            sort_type = "manual";
-            sort_dir = "";
-        }
-        /*
-        let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
-        if (bnode) bnode.dataset.direction = sort_dir;
-        $(id).dataset.sort_direction = sort_dir;
-        $(id).dataset.sort_type = sort_type;*/
-        this.switchHandSort($("hs_button_" + id + "_switch"), sort_type);
-        /*
-        this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
-        this.addTooltip(`hs_button_${id}_playable`, _("Card Sort"), msg.replace("%s", _("playability")));
-        this.addTooltip(`hs_button_${id}_vp`, _("Card Sort"), msg.replace("%s", _("VP")));
-        this.addTooltip(`hs_button_${id}_manual`, _("Card Sort"), _("Manual sorting (drag n drop)"));
-    
-    
-        const msg = _("Switch card sort method (actual:%s)");
-        this.addTooltip('hs_button_'+id+'_switch',msg.replace('%s','none'),'');
-    
-         */
-    };
-    /* Manual reordering of cards via drag'n'drop */
-    GameXBody.prototype.enableManualReorder = function (idContainer) {
-        $(idContainer).addEventListener("drop", namedEventPreventDefaultAndStopHandler);
-        $(idContainer).addEventListener("dragover", namedEventPreventDefaultHandler);
-        $(idContainer).addEventListener("dragenter", namedEventPreventDefaultHandler);
-    };
-    GameXBody.prototype.enableDragOnCard = function (node) {
-        if (node.draggable)
-            return;
-        //disable on mobile for now
-        if ($("ebd-body").classList.contains("mobile_version"))
-            return;
-        //console.log("enable drag on ", node.id);
-        node.querySelectorAll("*").forEach(function (sub) {
-            sub.draggable = false;
-        });
-        node.draggable = true;
-        node.addEventListener("dragstart", onDragStart);
-        node.addEventListener("dragend", onDragEnd);
-    };
-    GameXBody.prototype.disableDragOnCard = function (node) {
-        if (!node.draggable)
-            return;
-        //console.log("disable drag on ", node.id);
-        node.draggable = false;
-        node.removeEventListener("dragstart", onDragStart);
-        node.removeEventListener("dragend", onDragEnd);
-    };
-    GameXBody.prototype.maybeEnabledDragOnCard = function (tokenNode) {
-        if (dojo.hasClass(tokenNode.parentElement, "handy")) {
-            if (this.isManualSortOrderEnabled()) {
-                this.enableDragOnCard(tokenNode);
-                return;
-            }
-        }
-        this.disableDragOnCard(tokenNode);
-    };
-    GameXBody.prototype.isManualSortOrderEnabled = function () {
-        if ($("hand_area").dataset.sort_type == "manual" && $("hand_area").dataset.sort_direction == "increase") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    };
-    GameXBody.prototype.applySortOrder = function () {
-        var _this = this;
-        if (this.isManualSortOrderEnabled()) {
-            this.loadLocalManualOrder($("hand_".concat(this.player_color)));
-            this.loadLocalManualOrder($("draw_".concat(this.player_color)));
-            document.querySelectorAll(".handy .card").forEach(function (card) {
-                _this.enableDragOnCard(card);
-            });
-        }
-        else {
-            // disable on all cards in case it was moved
-            document.querySelectorAll(".card").forEach(function (card) {
-                _this.disableDragOnCard(card);
-            });
-        }
-    };
-    GameXBody.prototype.saveLocalManualOrder = function (containerNode) {
-        var svOrder = "";
-        //query should return in the same order as the DOM
-        dojo.query("#" + containerNode.id + " .card").forEach(function (card) {
-            svOrder += card.id + ",";
-        });
-        svOrder = svOrder.substring(0, svOrder.length - 1);
-        var localOrderSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
-        localOrderSetting.writeProp("custo_order", svOrder);
-    };
-    GameXBody.prototype.loadLocalManualOrder = function (containerNode) {
-        if (!containerNode)
-            return;
-        var localOrderSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
-        var svOrder = localOrderSetting.readProp("custo_order", "");
-        if (svOrder == "")
-            return;
-        var cards = svOrder.split(",");
-        cards.reverse().forEach(function (card_id) {
-            if ($(card_id) && $(card_id).parentElement == containerNode) {
-                containerNode.insertAdjacentElement("afterbegin", $(card_id));
-            }
-        });
-    };
     // notifications
     GameXBody.prototype.setupNotifications = function () {
         _super.prototype.setupNotifications.call(this);
@@ -6888,10 +7026,10 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         var text = "";
         if (node.id.startsWith("card")) {
-            var name_7 = node.dataset.name;
+            var name_8 = node.dataset.name;
             var dcost = node.dataset.discount_cost;
             var cost = this.getRulesFor(node.id, "cost", 0);
-            text += "[".concat(name_7, "]");
+            text += "[".concat(name_8, "]");
             if (cost && (options === null || options === void 0 ? void 0 : options.showCost)) {
                 if (dcost !== undefined && cost != dcost) {
                     text += " ".concat(cost, "(").concat(dcost, ")ME");
@@ -6914,8 +7052,8 @@ var GameXBody = /** @class */ (function (_super) {
             var hexname = hex.dataset.name;
             var tile = node;
             text += "".concat(hexname, ": ");
-            var name_8 = tile.dataset.name;
-            text += "[".concat(name_8, "]");
+            var name_9 = tile.dataset.name;
+            text += "[".concat(name_9, "]");
             var state = tile.dataset.state;
             if (state && state != "0") {
                 var pid = this.getPlayerIdByNo(state);
@@ -6928,9 +7066,9 @@ var GameXBody = /** @class */ (function (_super) {
             return text;
         }
         if (node.id.startsWith("tracker")) {
-            var name_9 = node.dataset.name;
+            var name_10 = node.dataset.name;
             var state = node.dataset.state;
-            text = "".concat(name_9, " ").concat(state);
+            text = "".concat(name_10, " ").concat(state);
             return text;
         }
         return node.id;
@@ -7012,107 +7150,6 @@ var Operation = /** @class */ (function () {
     }
     return Operation;
 }());
-function onDragStart(event) {
-    var selectedItem = event.currentTarget;
-    console.log("onDragStart", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
-    var cardParent = selectedItem.parentElement;
-    // no prevent defaults
-    if (!cardParent.classList.contains("handy") || !selectedItem.id) {
-        event.preventDefault();
-        event.stopPropagation();
-        console.log("onDragStart - no");
-        return;
-    }
-    // no checks, handler should not be installed if on mobile and such
-    //prevent container from changing size
-    var rect = cardParent.getBoundingClientRect();
-    cardParent.style.setProperty("width", String(rect.width) + "px");
-    cardParent.style.setProperty("height", String(rect.height) + "px");
-    $("ebd-body").classList.add("drag_inpg");
-    selectedItem.classList.add("drag-active");
-    selectedItem.style.setProperty("user-select", "none");
-    // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
-    // event.dataTransfer.effectAllowed = "move";
-    // event.dataTransfer.dropEffect = "move";
-    // selectedItem.classList.add("hide"); not in css?
-    // without timeout the dom changes cancel the start drag in a lot of cases because the new element under the mouse
-    setTimeout(function () {
-        cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
-        cardParent.querySelectorAll(".card").forEach(function (card) {
-            //prevent
-            if (card.id == selectedItem.id)
-                return;
-            if (card.nextElementSibling == null) {
-                var dragNodeId = "dragright_" + card.id;
-                var righthtm = "<div class=\"dragzone outsideright\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragright\"></div></div>");
-                card.insertAdjacentHTML("afterend", righthtm);
-                var dragNode = $(dragNodeId);
-                dragNode.parentElement.addEventListener("dragover", dragOverHandler);
-                dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
-            }
-            if ((card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
-                card.previousElementSibling == null) {
-                var dragNodeId = "dragleft_" + card.id;
-                var lefthtm = "<div class=\"dragzone\"><div id=\"".concat(dragNodeId, "\" class=\"dragzone_inside dragleft\"></div></div>");
-                card.insertAdjacentHTML("beforebegin", lefthtm);
-                var dragNode = $(dragNodeId);
-                dragNode.parentElement.addEventListener("dragover", dragOverHandler);
-                dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
-            }
-        });
-    }, 1);
-    console.log("onDragStart commit");
-}
-function onDragEnd(event) {
-    // no prevent defaults
-    var selectedItem = event.target;
-    console.log("onDragEnd", selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.id);
-    var x = event.clientX;
-    var y = event.clientY;
-    var containerNode = selectedItem.parentElement;
-    var pointsTo = document.elementFromPoint(x, y);
-    if (pointsTo === selectedItem || pointsTo === null) {
-        // do nothing
-    }
-    else if (containerNode === pointsTo) {
-        //dropped in empty space on container
-        containerNode.append(selectedItem);
-    }
-    else if (pointsTo.parentElement !== undefined &&
-        pointsTo.parentElement.parentElement !== undefined &&
-        pointsTo.parentElement.parentElement == selectedItem.parentElement &&
-        pointsTo.classList.contains("dragzone_inside")) {
-        containerNode.insertBefore(selectedItem, pointsTo.parentElement);
-    }
-    else if (containerNode === pointsTo.parentNode) {
-        containerNode.insertBefore(pointsTo, selectedItem);
-    }
-    else {
-        console.error("Cannot determine target for drop", pointsTo.id);
-    }
-    selectedItem.classList.remove("drag-active");
-    $("ebd-body").classList.remove("drag_inpg");
-    containerNode.style.removeProperty("width");
-    containerNode.style.removeProperty("height");
-    document.querySelectorAll(".dragzone").forEach(dojo.destroy);
-    gameui.saveLocalManualOrder(containerNode);
-    console.log("onDragEnd commit");
-}
-function namedEventPreventDefaultHandler(event) {
-    event.preventDefault();
-}
-function namedEventPreventDefaultAndStopHandler(event) {
-    event.preventDefault();
-    event.stopPropagation();
-}
-function dragOverHandler(event) {
-    event.preventDefault();
-    event.currentTarget.classList.add("over");
-}
-function dragLeaveHandler(event) {
-    event.preventDefault();
-    event.currentTarget.classList.remove("over");
-}
 var LocalSettings = /** @class */ (function () {
     function LocalSettings(gameName, props) {
         if (props === void 0) { props = []; }

@@ -7981,4 +7981,36 @@ $this->token_types = [
     'code' => 14, 'type' => 'err',
     'name' => clienttranslate("Protected"),
   ],
+  // sort modes
+  'sort_none' => [
+    'icon' => "fa-sort",
+    'name' => "None",
+    'tooltip' => 'Do not sort cards, they will be presented in order they were gained',
+    'o' => 0,
+  ],
+  'sort_playable' => [
+    'icon' => "fa-arrow-down",
+    'name' => "Playability",
+    'tooltip' => 'Sort by playability, staring with the cards that can be played, then cards that require more funds, etc',
+    'o' => 1,
+  ],
+  'sort_cost' => [
+    'icon' => "fa-eur",
+    'name' => "Cost",
+    'tooltip' => 'Sort by discounted cost',
+    'o' => 2,
+  ],
+  'sort_vp' => [
+    'icon' => "fa-circle-thin",
+    'name' => "VP",
+    'tooltip' => 'Sort by victory points value, starting from negative vp, then neutral, then cards with points',
+    'o' => 3,
+  ],
+
+  'sort_manual' => [
+    'icon' => "fa-hand-paper-o",
+    'name' => "Manual",
+    'tooltip' => 'Sort cards manually by drag and drop. Does not work on some mobile platforms',
+    'o' => 4
+  ]
 ];

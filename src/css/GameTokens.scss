@@ -67,10 +67,14 @@
   display: none;
 }
 
-.draw:empty:after,
-.draft:empty:after {
+.draw:has(.hand_sorter:only-child) {
   display: none;
 }
+
+// .draw:empty:after,
+// .draft:empty:after {
+//   display: none;
+// }
 
 .location>* {
   display: inline-block;
@@ -85,12 +89,6 @@
 
 .spectatorMode .hand {
   display: none;
-}
-
-.carddeck>.counter {
-  position: absolute;
-  top: 90%;
-  left: calc(50% - 0.5em);
 }
 
 .active_slot {

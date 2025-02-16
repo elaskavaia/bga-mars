@@ -441,10 +441,15 @@
     outline: 1px solid #9E9E9E;
     border-radius: 20%;
   }
+  .carddeck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   .carddeck>.counter {
-    position: absolute;
-    top: 10%;
+    position: relative;
+    top: unset;
   }
 
   .carddeck>.card {
@@ -1120,11 +1125,6 @@
     color: var(--outlinecolor);
     background-color: black;
   }
-
-  .hs_direction {
-    display: none;
-  }
-
 
   #main_board {
     .marker_tr~.marker_tr {

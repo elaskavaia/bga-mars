@@ -11,8 +11,8 @@
 -->
 <div id="hand_area" class="hand_area" data-open="0">
   <!-- hand area has to be outside of zoom-wrapper to float properly -->
-  <div class="hand location handy" id="hand_{CURRENT_PLAYER_COLOR}"></div>
-  <div class="draw location handy" id="draw_{CURRENT_PLAYER_COLOR}"></div>
+  <div class="hand location handy tm_sortable" id="hand_{CURRENT_PLAYER_COLOR}"></div>
+  <div class="draw location handy tm_sortable" id="draw_{CURRENT_PLAYER_COLOR}"></div>
   <div class="draft location handy" id="draft_{CURRENT_PLAYER_COLOR}"></div>
   <div id="hand_area_buttons">
     <div id="hand_area_button_pop">

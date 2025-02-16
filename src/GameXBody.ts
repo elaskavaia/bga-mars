@@ -24,6 +24,7 @@ class GameXBody extends GameTokens {
   private classSelected: string = "mr_selected"; // for the purpose of multi-select operations
   private prevLogId = 0;
   private lastMoveId = 0;
+  private handman: CardHand;
 
   private stacks: CardStack[];
   constructor() {
@@ -35,6 +36,7 @@ class GameXBody extends GameTokens {
     try {
       this.isDoingSetup = true;
       this.lastMoveId = 0;
+      this.handman = new CardHand(this);
       this.CON = gamedatas.CON; // PHP contants for game
       this.stacks = [];
       const theme = this.isLayoutFull() ? 2 : 1;
@@ -64,7 +66,7 @@ class GameXBody extends GameTokens {
       this.setupMilestonesAndAwards(mapnum);
 
       super.setup(gamedatas);
-      this.removeTooltip('map_hexes');
+      this.removeTooltip("map_hexes");
 
       if (mapnum == 4) {
         $("hand_area").appendChild($("standard_projects_area"));
@@ -163,7 +165,7 @@ class GameXBody extends GameTokens {
       });
 
       if (!this.isSpectator) {
-        this.applySortOrder();
+        this.handman.applySortOrder();
       }
 
       $(`outer_scoretracker`).addEventListener("click", () => {
@@ -230,15 +232,18 @@ class GameXBody extends GameTokens {
   }
 
   setupMilestonesAndAwards(mapnum: number) {
-    const list  = ['milestone','award'];
+    const list = ["milestone", "award"];
     for (const type of list) {
       const mainnode = $(`display_${type}s`);
       for (let x = 1; x <= 5; x++) {
-        mainnode.insertAdjacentHTML("beforeend", `<div id="${type}_${x}" class="${type} ${type}_${x} mileaw_item"><div id="${type}_label_${x}" class="${type}_label"></div></div>`);
+        mainnode.insertAdjacentHTML(
+          "beforeend",
+          `<div id="${type}_${x}" class="${type} ${type}_${x} mileaw_item"><div id="${type}_label_${x}" class="${type}_label"></div></div>`
+        );
       }
     }
-  //<div id="display_awards" class="mileaw_display">
-  //<div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>
+    //<div id="display_awards" class="mileaw_display">
+    //<div id="award_1" class="award award_1"><div id="award_label_1" class="award_label">NA</div></div>
   }
 
   setupHexes(mapnum: number) {
@@ -311,38 +316,8 @@ class GameXBody extends GameTokens {
     //attach sort buttons
     if (playerInfo.id == this.player_id) {
       //generate buttons
-      //I wanted first to attach them to every handy area, but it prevents areas to hide (there is no way in css to evaluate the number of children of a node)
-      //So I attached it to the hand area block.
-      this.addSortButtonsToHandy($("hand_area"));
-
-      this.enableManualReorder("hand_area");
-
-      this.connectClass("hs_button", "onclick", (evt: Event) => {
-        dojo.stopEvent(evt);
-        let btn = evt.currentTarget as HTMLElement;
-        let newtype = "";
-
-        switch (btn.dataset.type) {
-          case "none":
-            newtype = "playable";
-            break;
-          case "playable":
-            newtype = "cost";
-            break;
-          case "cost":
-            newtype = "vp";
-            break;
-          case "vp":
-            newtype = "manual";
-            break;
-          case "manual":
-            newtype = "none";
-            break;
-        }
-        this.switchHandSort(btn, newtype);
-      });
+      this.handman.hookSort();
     }
-
     //move own player board in main zone
     if (playerInfo.id == this.player_id || (!this.isLayoutFull() && this.isSpectator && !document.querySelector(".thisplayer_zone"))) {
       const board = $(`player_area_${playerInfo.color}`);
@@ -350,55 +325,6 @@ class GameXBody extends GameTokens {
       dojo.addClass(board, "thisplayer_zone");
     }
   }
-
-  switchHandSort(button: HTMLElement, newtype: string): void {
-    let fa = "";
-    let msg = "";
-    let newdir = "increase";
-
-    switch (newtype) {
-      case "playable":
-        fa = "fa-arrow-down";
-        msg = _("Playability");
-        break;
-      case "cost":
-        fa = "fa-eur";
-        msg = _("Cost");
-        break;
-      case "vp":
-        fa = "fa-star";
-        newdir = "decrease";
-        msg = _("VP");
-        break;
-      case "manual":
-        fa = "fa-hand-paper-o";
-        msg = _("Manual Drag and Drop");
-        break;
-      case "none":
-        fa = "fa-times";
-        msg = _("None");
-        break;
-    }
-
-    button.dataset.type = newtype;
-    button.dataset.direction = newdir;
-    button.querySelector("i").removeAttribute("class");
-    button.querySelector("i").classList.add("fa", fa);
-
-    const hand_block: string = button.dataset.target;
-    $(hand_block).dataset.sort_type = newtype;
-    $(hand_block).dataset.sort_direction = newdir;
-
-    const fullmsg = _("Hand Sort. Current: %s. Available modes: Playability, Cost, VP, Manual, None.").replace("%s", msg);
-    this.addTooltip(button.id, fullmsg, _("Click to select next sorting mode"));
-
-    const localColorSetting = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-    localColorSetting.writeProp("sort_direction", newdir);
-    localColorSetting.writeProp("sort_type", button.dataset.type);
-
-    this.applySortOrder();
-  }
-
   setupPlayerStacks(playerColor: string): void {
     const localColorSetting = new LocalSettings(this.getLocalSettingNamespace(this.table_id));
 
@@ -611,7 +537,6 @@ class GameXBody extends GameTokens {
       namesColumn += `<div class="scorecell ">
       ${_(info.name)}
       </div>`;
-
     }
     let descColumn = "";
     for (const key in msinfo) {
@@ -620,7 +545,6 @@ class GameXBody extends GameTokens {
     }
 
     const progress = callServer ? "Updating..." : "&nbsp;";
-
 
     let lines = "";
 
@@ -744,7 +668,6 @@ class GameXBody extends GameTokens {
       descColumn += `<div class="scorecell mileaw_desc"><span class="tm_smalltext">${_(info.text)}</span></div>`;
     }
 
-
     const progress = callServer ? "Updating..." : "&nbsp;";
 
     let lines = "";
@@ -826,7 +749,7 @@ class GameXBody extends GameTokens {
        </div>
        ${lines}
      </div>`;
-     this.showPopin(finalHtml, "pg_dialog", _("Awards Summary"), true);
+    this.showPopin(finalHtml, "pg_dialog", _("Awards Summary"), true);
   }
 
   getLocalSettingNamespace(extra: string | number = "") {
@@ -1176,8 +1099,8 @@ class GameXBody extends GameTokens {
       }
     }
     //disable hand sort on mobile
-    if (dojo.hasClass("ebd-body", "mobile_version") && dojo.hasClass("ebd-body", "touch-device")) {
-    }
+    // if (dojo.hasClass("ebd-body", "mobile_version") && dojo.hasClass("ebd-body", "touch-device")) {
+    // }
   }
 
   onToggleAllCards(event: any) {
@@ -1312,12 +1235,11 @@ class GameXBody extends GameTokens {
     if (type !== undefined) {
       fulltxt = this.generateCardTooltip(displayInfo);
       const div = this.cloneAndFixIds(elemId, "_tt", true);
-      div.classList.remove('active_slot');
+      div.classList.remove("active_slot");
       fullitemhtm = div.outerHTML;
       if ([1, 2, 3, 5].includes(type)) {
         //main cards + prelude
 
- 
         if (div.getAttribute("data-invalid_prereq") == "1") {
           adClass += " invalid_prereq";
         }
@@ -1331,9 +1253,9 @@ class GameXBody extends GameTokens {
           }
         });
       } else if (type == this.CON.MA_CARD_TYPE_STAN) {
-        fullitemhtm =  "";
+        fullitemhtm = "";
       }
-      displayInfo.imageTypes += ' _override';
+      displayInfo.imageTypes += " _override";
     } else {
       if ($(displayInfo.key)) {
         if (displayInfo.key.startsWith("tracker_tr_")) {
@@ -1605,12 +1527,15 @@ class GameXBody extends GameTokens {
       res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
       res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
       res += this.generateTooltipSection(_("Victory Points"), vp);
-      res += this.generateTooltipSection(_("Info"), _(`If you meet the criteria of a milestone, you may
+      res += this.generateTooltipSection(
+        _("Info"),
+        _(`If you meet the criteria of a milestone, you may
         claim it by paying 8 M€ and placing your player marker on
         it. A milestone may only be claimed by one player, and only
         3 of the 5 milestones may be claimed in total, so there is a
         race for these! Each claimed milestone is worth 5 VPs at the
-        end of the game.`));
+        end of the game.`)
+      );
     } else if (type == this.CON.MA_CARD_TYPE_AWARD) {
       res += this.generateTooltipSection(_("Condition"), _(displayInfo.text));
       res += this.generateTooltipSection(
@@ -1725,19 +1650,17 @@ awarded.`);
         const decor = this.createDivNode(null, "card_decor", tokenNode.id);
         let vp = "";
 
-        let sort_vp: string = "0";
 
         if (displayInfo.vp) {
           if (CustomRenders["customcard_vp_" + displayInfo.num]) {
             vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
-            sort_vp = "1";
             tokenNode.setAttribute("data-show_calc_vp", "1");
           } else {
             vp = parseInt(displayInfo.vp)
               ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
               : '<div class="card_vp"><div class="number_inside">*</div></div>';
 
-            sort_vp = parseInt(displayInfo.vp) ? displayInfo.vp : "1";
+
           }
         } else {
           vp = "";
@@ -1850,9 +1773,6 @@ awarded.`);
                   }" data-resource_counter="0">${htm_holds}</div>
                   ${vp}
             `;
-
-        tokenNode.style.setProperty("--sort_cost", displayInfo.cost);
-        tokenNode.style.setProperty("--sort_vp", sort_vp);
       }
 
       // const div = this.createDivNode(null, "card_info_box", tokenNode.id);
@@ -1919,7 +1839,7 @@ awarded.`);
     const inc = tokenInfo.state - prevState;
 
     if (key.startsWith("card_")) {
-      this.maybeEnabledDragOnCard(tokenNode);
+      this.handman.maybeEnabledDragOnCard(tokenNode);
     }
 
     // update resource holder counters
@@ -2078,7 +1998,7 @@ awarded.`);
 
       //alt_tracker_w (on the map)
       if (node.id.startsWith("tracker_w")) {
-        $(nodeCopy.id).dataset.calc = (this.getRulesFor('tracker_w','max') - parseInt(newState)).toString();
+        $(nodeCopy.id).dataset.calc = (this.getRulesFor("tracker_w", "max") - parseInt(newState)).toString();
       }
     }
 
@@ -2101,7 +2021,6 @@ awarded.`);
       tokenDisplayInfo.tooltip = this.generateTokenTooltip_Full(tokenDisplayInfo);
     } else {
       tokenDisplayInfo.tooltip = this.generateCardTooltip_Compact(tokenDisplayInfo);
-     
     }
 
     // if (this.isLocationByType(tokenDisplayInfo.key)) {
@@ -2168,23 +2087,6 @@ awarded.`);
         }
       }
 
-      // card num is last sort disambiguator
-      const num = parseInt(this.gamedatas.token_types[cardId].num);
-
-      const sort_cost = discount_cost * 1000 + num;
-
-      node.style.setProperty("--sort_cost", String(sort_cost));
-
-      let sort_playable: number = 0;
-      if (node.dataset.invalid_prereq !== "0") sort_playable += 1;
-      sort_playable = sort_playable * 2;
-      if (node.dataset.cannot_resolve !== "0") sort_playable += 1;
-      sort_playable = sort_playable * 2;
-      if (node.dataset.cannot_pay !== "0") sort_playable += 1;
-      sort_playable = sort_playable * 100 + discount_cost;
-      sort_playable = sort_playable * 1000 + num;
-
-      node.style.setProperty("--sort_playable", String(sort_playable));
 
       //update TT too
       this.updateTooltip(node.id);
@@ -3307,135 +3209,6 @@ awarded.`);
     }
   }
 
-  addSortButtonsToHandy(attachNode: Element): void {
-    const id = attachNode.id;
-    /*
-    const htm = `
-        <div id="hs_button_${id}_cost" class="hs_button" data-target="${id}" data-type="cost" data-direction=""><div class="hs_picto hs_cost"><i class="fa fa-eur" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
-        <div id="hs_button_${id}_playable" class="hs_button" data-target="${id}" data-type="playable" data-direction=""><div class="hs_picto hs_playable"><i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
-        <div id="hs_button_${id}_vp" class="hs_button" data-target="${id}" data-type="vp" data-direction=""><div class="hs_picto hs_vp">VP</div><div class="hs_direction"></div></div>
-        <div id="hs_button_${id}_manual" class="hs_button" data-target="${id}" data-type="manual" data-direction=""><div class="hs_picto hs_manual"><i class="fa fa-hand-paper-o" aria-hidden="true"></i></div></div>
-       `;*/
-    const htm = `
-        <div id="hs_button_${id}_switch" class="hs_button" data-target="${id}" data-type="none" data-direction=""><div class="hs_picto hs_cost"><i id="hs_button_${id}_picto" class="fa fa-times" aria-hidden="true"></i></div><div class="hs_direction"></div></div>
-       `;
-    const node = this.createDivNode("", "hand_sorter", attachNode.id);
-    node.innerHTML = htm;
-
-    const localColorSetting: LocalSettings = new LocalSettings(this.getLocalSettingNamespace("card_sort"));
-
-    let sort_dir: string = localColorSetting.readProp("sort_direction", "");
-    let sort_type: string = localColorSetting.readProp("sort_type", "");
-
-    if (sort_type == "") {
-      sort_type = "manual";
-      sort_dir = "";
-    }
-    /*
-    let bnode = node.querySelector(".hs_button[data-type='" + sort_type + "']") as HTMLElement;
-    if (bnode) bnode.dataset.direction = sort_dir;
-    $(id).dataset.sort_direction = sort_dir;
-    $(id).dataset.sort_type = sort_type;*/
-
-    this.switchHandSort($("hs_button_" + id + "_switch"), sort_type);
-
-    /*
-    this.addTooltip(`hs_button_${id}_cost`, _("Card Sort"), msg.replace("%s", _("cost")));
-    this.addTooltip(`hs_button_${id}_playable`, _("Card Sort"), msg.replace("%s", _("playability")));
-    this.addTooltip(`hs_button_${id}_vp`, _("Card Sort"), msg.replace("%s", _("VP")));
-    this.addTooltip(`hs_button_${id}_manual`, _("Card Sort"), _("Manual sorting (drag n drop)"));
-
-
-    const msg = _("Switch card sort method (actual:%s)");
-    this.addTooltip('hs_button_'+id+'_switch',msg.replace('%s','none'),'');
-
-     */
-  }
-
-  /* Manual reordering of cards via drag'n'drop */
-  enableManualReorder(idContainer: string) {
-    $(idContainer).addEventListener("drop", namedEventPreventDefaultAndStopHandler);
-    $(idContainer).addEventListener("dragover", namedEventPreventDefaultHandler);
-    $(idContainer).addEventListener("dragenter", namedEventPreventDefaultHandler);
-  }
-  enableDragOnCard(node: HTMLElement) {
-    if (node.draggable) return;
-    //disable on mobile for now
-    if ($("ebd-body").classList.contains("mobile_version")) return;
-    //console.log("enable drag on ", node.id);
-    node.querySelectorAll("*").forEach((sub: HTMLElement) => {
-      sub.draggable = false;
-    });
-    node.draggable = true;
-    node.addEventListener("dragstart", onDragStart);
-    node.addEventListener("dragend", onDragEnd);
-  }
-  disableDragOnCard(node: HTMLElement) {
-    if (!node.draggable) return;
-    //console.log("disable drag on ", node.id);
-    node.draggable = false;
-    node.removeEventListener("dragstart", onDragStart);
-    node.removeEventListener("dragend", onDragEnd);
-  }
-  maybeEnabledDragOnCard(tokenNode: HTMLElement) {
-    if (dojo.hasClass(tokenNode.parentElement, "handy")) {
-      if (this.isManualSortOrderEnabled()) {
-        this.enableDragOnCard(tokenNode);
-        return;
-      }
-    }
-    this.disableDragOnCard(tokenNode);
-  }
-
-  isManualSortOrderEnabled() {
-    if ($("hand_area").dataset.sort_type == "manual" && $("hand_area").dataset.sort_direction == "increase") {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  applySortOrder() {
-    if (this.isManualSortOrderEnabled()) {
-      this.loadLocalManualOrder($(`hand_${this.player_color}`));
-      this.loadLocalManualOrder($(`draw_${this.player_color}`));
-
-      document.querySelectorAll(".handy .card").forEach((card: HTMLElement) => {
-        this.enableDragOnCard(card);
-      });
-    } else {
-      // disable on all cards in case it was moved
-      document.querySelectorAll(".card").forEach((card: HTMLElement) => {
-        this.disableDragOnCard(card);
-      });
-    }
-  }
-
-  saveLocalManualOrder(containerNode: HTMLElement) {
-    let svOrder: string = "";
-    //query should return in the same order as the DOM
-    dojo.query("#" + containerNode.id + " .card").forEach((card) => {
-      svOrder += card.id + ",";
-    });
-    svOrder = svOrder.substring(0, svOrder.length - 1);
-    const localOrderSetting: LocalSettings = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
-    localOrderSetting.writeProp("custo_order", svOrder);
-  }
-
-  loadLocalManualOrder(containerNode: HTMLElement | undefined) {
-    if (!containerNode) return;
-    const localOrderSetting: LocalSettings = new LocalSettings(this.getLocalSettingNamespace(this.table_id + "_" + containerNode.id));
-    const svOrder = localOrderSetting.readProp("custo_order", "");
-    if (svOrder == "") return;
-
-    const cards: string[] = svOrder.split(",");
-    cards.reverse().forEach((card_id) => {
-      if ($(card_id) && $(card_id).parentElement == containerNode) {
-        containerNode.insertAdjacentElement("afterbegin", $(card_id));
-      }
-    });
-  }
-
   // notifications
   setupNotifications(): void {
     super.setupNotifications();
@@ -3648,122 +3421,4 @@ awarded.`);
 
 class Operation {
   type: string;
-}
-
-function onDragStart(event: DragEvent) {
-  const selectedItem = event.currentTarget as HTMLElement;
-  console.log("onDragStart", selectedItem?.id);
-  const cardParent = selectedItem.parentElement;
-  // no prevent defaults
-  if (!cardParent.classList.contains("handy") || !selectedItem.id) {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("onDragStart - no");
-    return;
-  }
-
-  // no checks, handler should not be installed if on mobile and such
-
-  //prevent container from changing size
-  const rect = cardParent.getBoundingClientRect();
-  cardParent.style.setProperty("width", String(rect.width) + "px");
-  cardParent.style.setProperty("height", String(rect.height) + "px");
-
-  $("ebd-body").classList.add("drag_inpg");
-  selectedItem.classList.add("drag-active");
-  selectedItem.style.setProperty("user-select", "none");
-
-  // event.dataTransfer.setData("text/plain", "card"); // not sure if needed
-  // event.dataTransfer.effectAllowed = "move";
-  // event.dataTransfer.dropEffect = "move";
-
-  // selectedItem.classList.add("hide"); not in css?
-
-  // without timeout the dom changes cancel the start drag in a lot of cases because the new element under the mouse
-  setTimeout(() => {
-    cardParent.querySelectorAll(".dragzone").forEach(dojo.destroy);
-    cardParent.querySelectorAll(".card").forEach((card) => {
-      //prevent
-      if (card.id == selectedItem.id) return;
-
-      if (card.nextElementSibling == null) {
-        const dragNodeId = "dragright_" + card.id;
-        const righthtm: string = `<div class="dragzone outsideright"><div id="${dragNodeId}" class="dragzone_inside dragright"></div></div>`;
-        card.insertAdjacentHTML("afterend", righthtm);
-        const dragNode = $(dragNodeId);
-        dragNode.parentElement.addEventListener("dragover", dragOverHandler);
-        dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
-      }
-      if (
-        (card.previousElementSibling != null && card.previousElementSibling.id != selectedItem.id) ||
-        card.previousElementSibling == null
-      ) {
-        const dragNodeId = "dragleft_" + card.id;
-        const lefthtm: string = `<div class="dragzone"><div id="${dragNodeId}" class="dragzone_inside dragleft"></div></div>`;
-        card.insertAdjacentHTML("beforebegin", lefthtm);
-        const dragNode = $(dragNodeId);
-        dragNode.parentElement.addEventListener("dragover", dragOverHandler);
-        dragNode.parentElement.addEventListener("dragleave", dragLeaveHandler);
-      }
-    });
-  }, 1);
-  console.log("onDragStart commit");
-}
-
-function onDragEnd(event: DragEvent) {
-  // no prevent defaults
-  const selectedItem = event.target as HTMLElement;
-  console.log("onDragEnd", selectedItem?.id);
-
-  let x = event.clientX;
-  let y = event.clientY;
-
-  const containerNode: HTMLElement = selectedItem.parentElement;
-  const pointsTo = document.elementFromPoint(x, y);
-
-  if (pointsTo === selectedItem || pointsTo === null) {
-    // do nothing
-  } else if (containerNode === pointsTo) {
-    //dropped in empty space on container
-    containerNode.append(selectedItem);
-  } else if (
-    pointsTo.parentElement !== undefined &&
-    pointsTo.parentElement.parentElement !== undefined &&
-    pointsTo.parentElement.parentElement == selectedItem.parentElement &&
-    pointsTo.classList.contains("dragzone_inside")
-  ) {
-    containerNode.insertBefore(selectedItem, pointsTo.parentElement);
-  } else if (containerNode === pointsTo.parentNode) {
-    containerNode.insertBefore(pointsTo, selectedItem);
-  } else {
-    console.error("Cannot determine target for drop", pointsTo.id);
-  }
-
-  selectedItem.classList.remove("drag-active");
-  $("ebd-body").classList.remove("drag_inpg");
-  containerNode.style.removeProperty("width");
-  containerNode.style.removeProperty("height");
-
-  document.querySelectorAll(".dragzone").forEach(dojo.destroy);
-  (gameui as GameXBody).saveLocalManualOrder(containerNode);
-
-  console.log("onDragEnd commit");
-}
-
-function namedEventPreventDefaultHandler(event) {
-  event.preventDefault();
-}
-function namedEventPreventDefaultAndStopHandler(event) {
-  event.preventDefault();
-  event.stopPropagation();
-}
-
-function dragOverHandler(event: Event) {
-  event.preventDefault();
-  (event.currentTarget as HTMLElement).classList.add("over");
-}
-
-function dragLeaveHandler(event: Event) {
-  event.preventDefault();
-  (event.currentTarget as HTMLElement).classList.remove("over");
 }

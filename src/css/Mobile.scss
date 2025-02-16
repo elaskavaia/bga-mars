@@ -1,5 +1,5 @@
 .mcompact {
-  --dpiratio:1;
+  --dpiratio: 1;
 
   #ebd-body.mobile_portrait {
 
@@ -42,11 +42,15 @@
     }
 
 
-    .hand, .draw, .draft {
+    .hand,
+    .draw,
+    .draft {
       padding: 6px 6px 6px calc(var(--card-width) * 0.2);
     }
 
-    .hand::after, .draw::after, .draft::after {
+    .hand::after,
+    .draw::after,
+    .draft::after {
       font-size: calc(var(--card-width) * 0.2);
     }
 
@@ -118,8 +122,6 @@
 
     #ebd-body[data-localsetting_handplace='floating'] {
       #hand_area {
-
-
         .hand_sorter {
           left: 12%;
           top: -6%;
@@ -134,10 +136,6 @@
         }
       }
     }
-
-
-
-
 
   }
 
