@@ -116,7 +116,7 @@ class GameBasics extends GameGui {
     return undefined;
   }
 
-  ajaxcallwrapper_unchecked(action: string, args?: any, handler?: (err: any, res?: any) => void) {
+  tmAjaxCallWrapperUnchecked(action: string, args?: any, handler?: (err: any, res?: any) => void) {
     if (!args) {
       args = {};
     }
@@ -131,9 +131,9 @@ class GameBasics extends GameGui {
     this.ajaxcall(url, args, this, (result) => {}, handler);
   }
 
-  ajaxcallwrapper(action: string, args?: any, handler?: (err: any, res?: any) => void) {
+  tmAjaxCallWrapper(action: string, args?: any, handler?: (err: any, res?: any) => void) {
     if (this.checkAction(action)) {
-      this.ajaxcallwrapper_unchecked(action, args, handler);
+      this.tmAjaxCallWrapperUnchecked(action, args, handler);
     }
   }
 
@@ -474,6 +474,7 @@ class GameBasics extends GameGui {
     if (!duration) duration = this.defaultAnimationDuration;
     if (!duration || duration < 0) duration = 0;
     const noanimation = duration <= 0 || !mobileNode.parentNode;
+    const oldParent = mobileNode.parentElement;
     var clone = null;
     if (!noanimation) {
       // do animation
@@ -497,7 +498,8 @@ class GameBasics extends GameGui {
     if (noanimation) {
       return;
     }
-
+    newparent.classList.add("move_target");
+    oldParent?.classList.add("move_source");
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
     try {
       //setStyleAttributes(desti, mobileStyle);
@@ -510,17 +512,19 @@ class GameBasics extends GameGui {
       clone.style.top = desti.style.top;
       clone.style.transform = desti.style.transform;
       // now we don't need destination anymore
-      desti.parentNode.removeChild(desti);
+      desti.parentNode?.removeChild(desti);
       setTimeout(() => {
+        newparent.classList.remove("move_target");
+        oldParent?.classList.remove("move_source");
         mobileNode.style.removeProperty("opacity"); // restore visibility of original
-        if (clone.parentNode) clone.parentNode.removeChild(clone); // destroy clone
+        clone.parentNode?.removeChild(clone); // destroy clone
         if (onEnd) onEnd(mobileNode);
       }, duration);
     } catch (e) {
       // if bad thing happen we have to clean up clones
       console.error(e);
-      dojo.destroy(clone);
-      dojo.destroy(desti);
+      desti.parentNode?.removeChild(desti);
+      clone.parentNode?.removeChild(clone); // destroy clone
     }
   }
 
@@ -1071,10 +1075,10 @@ class GameBasics extends GameGui {
     }
     if (!prefId) return; // error?
     const prefValue = +(target.value ?? target.getAttribute("value"));
-    this.ajaxCallChangePreferenceCustom(prefId, prefValue);
+    this.tmAjaxCallChangePreferenceCustom(prefId, prefValue);
   }
 
-  ajaxCallChangePreferenceCustom(pref_id: number, value: any) {
+  tmAjaxCallChangePreferenceCustom(pref_id: number, value: any) {
     console.log("ajaxCallChangePreference", pref_id, value);
     value = parseInt(value);
     this.prefs[pref_id].value = value;
@@ -1095,7 +1099,7 @@ class GameBasics extends GameGui {
         this.gamedatas.server_prefs[pref_id] = value;
         if (pref_id >= 100 && pref_id < 200) {
           var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
-          this.ajaxcallwrapper_unchecked("changePreference", args, (err, res) => {
+          this.tmAjaxCallWrapperUnchecked("changePreference", args, (err, res) => {
             if (err) console.error("changePreference callback failed " + res);
             else {
               console.log("changePreference sent " + pref_id + "=" + value);

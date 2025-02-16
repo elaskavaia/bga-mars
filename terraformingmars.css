@@ -188,13 +188,16 @@
   bottom: 1.3em;
 }
 
-.draw:empty,
 .draft:empty {
   display: none;
 }
 
 .draw:has(.hand_sorter:only-child) {
   display: none;
+}
+
+.handy.move_target, .handy.move_source {
+  display: revert !important;
 }
 
 .location > * {
@@ -641,6 +644,7 @@
 .tooltip-body .card_cost.discounted .discountarrow {
   display: block;
 }
+
 .card_title {
   font-family: var(--mars-font);
   position: absolute;
@@ -1121,11 +1125,6 @@
 
 .card > * {
   pointer-events: none;
-}
-
-.card .prereq_content > * {
-  /*display: inline-block;
-  vertical-align: middle;*/
 }
 
 .card .prereq_content > .outer_production {

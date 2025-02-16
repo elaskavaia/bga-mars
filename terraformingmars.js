@@ -114,7 +114,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         return undefined;
     };
-    GameBasics.prototype.ajaxcallwrapper_unchecked = function (action, args, handler) {
+    GameBasics.prototype.tmAjaxCallWrapperUnchecked = function (action, args, handler) {
         if (!args) {
             args = {};
         }
@@ -128,9 +128,9 @@ var GameBasics = /** @class */ (function (_super) {
         var url = "/".concat(gname, "/").concat(gname, "/").concat(action, ".html");
         this.ajaxcall(url, args, this, function (result) { }, handler);
     };
-    GameBasics.prototype.ajaxcallwrapper = function (action, args, handler) {
+    GameBasics.prototype.tmAjaxCallWrapper = function (action, args, handler) {
         if (this.checkAction(action)) {
-            this.ajaxcallwrapper_unchecked(action, args, handler);
+            this.tmAjaxCallWrapperUnchecked(action, args, handler);
         }
     };
     /**
@@ -389,6 +389,7 @@ var GameBasics = /** @class */ (function (_super) {
         return clone;
     };
     GameBasics.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
+        var _a, _b, _c;
         var mobileNode = $(mobileId);
         if (!mobileNode)
             throw new Error("Does not exists ".concat(mobileId));
@@ -400,6 +401,7 @@ var GameBasics = /** @class */ (function (_super) {
         if (!duration || duration < 0)
             duration = 0;
         var noanimation = duration <= 0 || !mobileNode.parentNode;
+        var oldParent = mobileNode.parentElement;
         var clone = null;
         if (!noanimation) {
             // do animation
@@ -421,6 +423,8 @@ var GameBasics = /** @class */ (function (_super) {
         if (noanimation) {
             return;
         }
+        newparent.classList.add("move_target");
+        oldParent === null || oldParent === void 0 ? void 0 : oldParent.classList.add("move_source");
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
         try {
             //setStyleAttributes(desti, mobileStyle);
@@ -433,11 +437,13 @@ var GameBasics = /** @class */ (function (_super) {
             clone.style.top = desti.style.top;
             clone.style.transform = desti.style.transform;
             // now we don't need destination anymore
-            desti.parentNode.removeChild(desti);
+            (_a = desti.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(desti);
             setTimeout(function () {
+                var _a;
+                newparent.classList.remove("move_target");
+                oldParent === null || oldParent === void 0 ? void 0 : oldParent.classList.remove("move_source");
                 mobileNode.style.removeProperty("opacity"); // restore visibility of original
-                if (clone.parentNode)
-                    clone.parentNode.removeChild(clone); // destroy clone
+                (_a = clone.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(clone); // destroy clone
                 if (onEnd)
                     onEnd(mobileNode);
             }, duration);
@@ -445,8 +451,8 @@ var GameBasics = /** @class */ (function (_super) {
         catch (e) {
             // if bad thing happen we have to clean up clones
             console.error(e);
-            dojo.destroy(clone);
-            dojo.destroy(desti);
+            (_b = desti.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(desti);
+            (_c = clone.parentNode) === null || _c === void 0 ? void 0 : _c.removeChild(clone); // destroy clone
         }
     };
     // HTML MANIPULATIONS
@@ -954,9 +960,9 @@ var GameBasics = /** @class */ (function (_super) {
         if (!prefId)
             return; // error?
         var prefValue = +((_a = target.value) !== null && _a !== void 0 ? _a : target.getAttribute("value"));
-        this.ajaxCallChangePreferenceCustom(prefId, prefValue);
+        this.tmAjaxCallChangePreferenceCustom(prefId, prefValue);
     };
-    GameBasics.prototype.ajaxCallChangePreferenceCustom = function (pref_id, value) {
+    GameBasics.prototype.tmAjaxCallChangePreferenceCustom = function (pref_id, value) {
         console.log("ajaxCallChangePreference", pref_id, value);
         value = parseInt(value);
         this.prefs[pref_id].value = value;
@@ -973,7 +979,7 @@ var GameBasics = /** @class */ (function (_super) {
             this.gamedatas.server_prefs[pref_id] = value;
             if (pref_id >= 100 && pref_id < 200) {
                 var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
-                this.ajaxcallwrapper_unchecked("changePreference", args, function (err, res) {
+                this.tmAjaxCallWrapperUnchecked("changePreference", args, function (err, res) {
                     if (err)
                         console.error("changePreference callback failed " + res);
                     else {
@@ -4294,7 +4300,7 @@ var GameXBody = /** @class */ (function (_super) {
             var parent = document.querySelector(".debug_section");
             if (parent) {
                 this.addActionButton("button_debug_dump", "Dump Machine", function () {
-                    _this.ajaxcallwrapper_unchecked("say", { msg: "debug_dumpMachineDb()" });
+                    _this.tmAjaxCallWrapperUnchecked("say", { msg: "debug_dumpMachineDb()" });
                 }, parent); // NOI18N
             }
             this.updateStacks();
@@ -5100,7 +5106,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.gameStatusCleanup();
         console.log("sending ".concat(action), args);
         if (action === "passauto") {
-            return this.ajaxcallwrapper_unchecked(action, {}, handler);
+            return this.tmAjaxCallWrapperUnchecked(action, {}, handler);
         }
         _super.prototype.ajaxuseraction.call(this, action, args, handler);
     };
@@ -5706,6 +5712,12 @@ var GameXBody = /** @class */ (function (_super) {
             tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
             tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
         }
+        if (key.startsWith("card_") && tokenNode.parentElement.classList.contains("handy")) {
+            var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+            tokenNode.parentElement.dataset.subcount = sub;
+            tokenNode.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
+            tokenNode.parentElement.style.setProperty("--subcount-n", sub);
+        }
         //move animation on main player board counters
         if (key.startsWith("tracker_")) {
             if (!this.isLayoutFull() && inc) {
@@ -6065,7 +6077,7 @@ var GameXBody = /** @class */ (function (_super) {
         var message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
         this.setMainTitle(message);
         dojo.empty("generalactions");
-        this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, function (err) {
+        this.tmAjaxCallWrapperUnchecked("undo", { move_id: undoMove }, function (err) {
             if (err) {
                 _this.cancelLocalStateEffects();
             }

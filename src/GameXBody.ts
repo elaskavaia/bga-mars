@@ -194,7 +194,7 @@ class GameXBody extends GameTokens {
           "button_debug_dump",
           "Dump Machine",
           () => {
-            this.ajaxcallwrapper_unchecked("say", { msg: "debug_dumpMachineDb()" });
+            this.tmAjaxCallWrapperUnchecked("say", { msg: "debug_dumpMachineDb()" });
           },
           parent
         ); // NOI18N
@@ -1136,7 +1136,7 @@ class GameXBody extends GameTokens {
     this.gameStatusCleanup();
     console.log(`sending ${action}`, args);
     if (action === "passauto") {
-      return this.ajaxcallwrapper_unchecked(action, {}, handler);
+      return this.tmAjaxCallWrapperUnchecked(action, {}, handler);
     }
     super.ajaxuseraction(action, args, handler);
   }
@@ -1921,6 +1921,12 @@ awarded.`);
       tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
       tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
     }
+    if (key.startsWith("card_") && tokenNode.parentElement.classList.contains("handy")) {
+      const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+      tokenNode.parentElement.dataset.subcount = sub;
+      tokenNode.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
+      tokenNode.parentElement.style.setProperty("--subcount-n", sub);
+    }
 
     //move animation on main player board counters
     if (key.startsWith("tracker_")) {
@@ -2289,7 +2295,7 @@ awarded.`);
     const message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
     this.setMainTitle(message);
     dojo.empty("generalactions");
-    this.ajaxcallwrapper_unchecked("undo", { move_id: undoMove }, (err) => {
+    this.tmAjaxCallWrapperUnchecked("undo", { move_id: undoMove }, (err) => {
       if (err) {
         this.cancelLocalStateEffects();
       }

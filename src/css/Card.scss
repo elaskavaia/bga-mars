@@ -126,10 +126,6 @@
     // text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
     // outline: calc(var(--card-width) * 0.025) solid #bef983;
 
-    .number_inside {
-      //   display: none;
-    }
-
     .minidiscount {
       display: flex;
     }
@@ -139,9 +135,6 @@
     }
   }
 
-  .card_cost.discounted:after {
-    // content:attr(data-discounted_cost);
-  }
 
 
 }
@@ -691,12 +684,6 @@
 
 .card>* {
   pointer-events: none;
-}
-
-
-.card .prereq_content>* {
-  /*display: inline-block;
-  vertical-align: middle;*/
 }
 
 .card .prereq_content>.outer_production {
