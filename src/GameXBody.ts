@@ -1650,7 +1650,6 @@ awarded.`);
         const decor = this.createDivNode(null, "card_decor", tokenNode.id);
         let vp = "";
 
-
         if (displayInfo.vp) {
           if (CustomRenders["customcard_vp_" + displayInfo.num]) {
             vp = '<div class="card_vp vp_custom">' + CustomRenders["customcard_vp_" + displayInfo.num]() + "</div></div>";
@@ -1659,8 +1658,6 @@ awarded.`);
             vp = parseInt(displayInfo.vp)
               ? '<div class="card_vp"><div class="number_inside">' + displayInfo.vp + "</div></div>"
               : '<div class="card_vp"><div class="number_inside">*</div></div>';
-
-
           }
         } else {
           vp = "";
@@ -1921,12 +1918,6 @@ awarded.`);
       tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
       tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
     }
-    if (key.startsWith("card_") && tokenNode.parentElement.classList.contains("handy")) {
-      const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
-      tokenNode.parentElement.dataset.subcount = sub;
-      tokenNode.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
-      tokenNode.parentElement.style.setProperty("--subcount-n", sub);
-    }
 
     //move animation on main player board counters
     if (key.startsWith("tracker_")) {
@@ -2093,9 +2084,9 @@ awarded.`);
         }
       }
 
-
       //update TT too
       this.updateTooltip(node.id);
+      this.handman.updateSortOrderOnCard(node);
     }
   }
 

@@ -147,7 +147,7 @@ class CardHand {
       return;
     }
     const containerNode = node;
-    const sortType = containerNode.dataset.sort_type;
+  
 
     if (this.isManualSortOrderEnabled(containerNode)) {
       this.loadLocalManualOrder(containerNode);
@@ -161,27 +161,31 @@ class CardHand {
         if (!this.isManualSortOrderEnabled(card.parentElement)) this.disableDragOnCard(card);
       });
 
-      containerNode.querySelectorAll(".card").forEach((card: HTMLElement) => {
-        let weight = 0;
-        switch (sortType) {
-          case "cost":
-            weight = parseInt(card.dataset.discount_cost ?? card.dataset.cost);
-            break;
-          case "playable":
-            weight = this.getSortWeightPlayability(card);
-            break;
-          case "vp":
-            weight = this.getSortWeightVp(card);
-            break;
-          default:
-            card.style.removeProperty("--sort-order");
-            return;
-        }
-        // card num is last sort disambiguator
-        const num = parseInt(getPart(card.id, 2));
-        card.style.setProperty("--sort-order", String(weight * 1000 + num));
-      });
+      containerNode.querySelectorAll(".card").forEach((card: HTMLElement) => this.updateSortOrderOnCard(card));
     }
+  }
+
+  updateSortOrderOnCard(card: HTMLElement) {
+    this.maybeEnabledDragOnCard(card);
+    const sortType = card.parentElement.dataset.sort_type;
+    let weight = 0;
+    switch (sortType) {
+      case "cost":
+        weight = parseInt(card.dataset.discount_cost ?? card.dataset.cost ?? "0");
+        break;
+      case "playable":
+        weight = this.getSortWeightPlayability(card);
+        break;
+      case "vp":
+        weight = this.getSortWeightVp(card);
+        break;
+      default:
+        card.style.removeProperty("--sort-order");
+        return;
+    }
+    // card num is last sort disambiguator
+    const num = parseInt(getPart(card.id, 2));
+    card.style.setProperty("--sort-order", String(weight * 1000 + num));
   }
 
   getSortWeightVp(card: HTMLElement): number {

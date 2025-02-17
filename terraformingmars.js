@@ -1605,7 +1605,6 @@ var CardHand = /** @class */ (function () {
             return;
         }
         var containerNode = node;
-        var sortType = containerNode.dataset.sort_type;
         if (this.isManualSortOrderEnabled(containerNode)) {
             this.loadLocalManualOrder(containerNode);
             containerNode.querySelectorAll(".card").forEach(function (card) {
@@ -1619,28 +1618,31 @@ var CardHand = /** @class */ (function () {
                 if (!_this.isManualSortOrderEnabled(card.parentElement))
                     _this.disableDragOnCard(card);
             });
-            containerNode.querySelectorAll(".card").forEach(function (card) {
-                var _a;
-                var weight = 0;
-                switch (sortType) {
-                    case "cost":
-                        weight = parseInt((_a = card.dataset.discount_cost) !== null && _a !== void 0 ? _a : card.dataset.cost);
-                        break;
-                    case "playable":
-                        weight = _this.getSortWeightPlayability(card);
-                        break;
-                    case "vp":
-                        weight = _this.getSortWeightVp(card);
-                        break;
-                    default:
-                        card.style.removeProperty("--sort-order");
-                        return;
-                }
-                // card num is last sort disambiguator
-                var num = parseInt(getPart(card.id, 2));
-                card.style.setProperty("--sort-order", String(weight * 1000 + num));
-            });
+            containerNode.querySelectorAll(".card").forEach(function (card) { return _this.updateSortOrderOnCard(card); });
         }
+    };
+    CardHand.prototype.updateSortOrderOnCard = function (card) {
+        var _a, _b;
+        this.maybeEnabledDragOnCard(card);
+        var sortType = card.parentElement.dataset.sort_type;
+        var weight = 0;
+        switch (sortType) {
+            case "cost":
+                weight = parseInt((_b = (_a = card.dataset.discount_cost) !== null && _a !== void 0 ? _a : card.dataset.cost) !== null && _b !== void 0 ? _b : "0");
+                break;
+            case "playable":
+                weight = this.getSortWeightPlayability(card);
+                break;
+            case "vp":
+                weight = this.getSortWeightVp(card);
+                break;
+            default:
+                card.style.removeProperty("--sort-order");
+                return;
+        }
+        // card num is last sort disambiguator
+        var num = parseInt(getPart(card.id, 2));
+        card.style.setProperty("--sort-order", String(weight * 1000 + num));
     };
     CardHand.prototype.getSortWeightVp = function (card) {
         var vpattr = this.game.getRulesFor(card.id, "vp", undefined);
@@ -5712,12 +5714,6 @@ var GameXBody = /** @class */ (function (_super) {
             tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
             tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
         }
-        if (key.startsWith("card_") && tokenNode.parentElement.classList.contains("handy")) {
-            var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
-            tokenNode.parentElement.dataset.subcount = sub;
-            tokenNode.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
-            tokenNode.parentElement.style.setProperty("--subcount-n", sub);
-        }
         //move animation on main player board counters
         if (key.startsWith("tracker_")) {
             if (!this.isLayoutFull() && inc) {
@@ -5874,6 +5870,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             //update TT too
             this.updateTooltip(node.id);
+            this.handman.updateSortOrderOnCard(node);
         }
     };
     GameXBody.prototype.updateVisualsFromOp = function (opInfo, opId) {
