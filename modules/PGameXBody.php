@@ -570,6 +570,9 @@ abstract class PGameXBody extends PGameMachine {
         if (strpos($bonus, 'u') !== false) {
             return 'pu';
         }
+        if (strpos($bonus, 'q') !== false) { // any resource
+            return 'ps/pu';
+        }
         return '';
     }
 

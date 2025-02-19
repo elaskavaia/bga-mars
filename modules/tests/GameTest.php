@@ -1563,4 +1563,11 @@ final class GameTest extends TestCase {
         $this->assertEquals('1s1u22m', $targets[3]);
         $this->assertEquals('26m1h', $targets[4]);
     }
+
+
+    public function test_getProductionPlacementBonus() {
+        $game = $this->game(4);
+        $bo=$game->getProductionPlacementBonus('hex_3_5');
+        $this->assertEquals('ps/pu', $bo);
+    }
 }
