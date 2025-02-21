@@ -1719,6 +1719,9 @@ abstract class PGameXBody extends PGameMachine {
             if (strpos($bonus, 'u') !== false) {
                 $this->notifyEffect($color, 'place_bonus_u', $tile);
             }
+            if (strpos($bonus, 'q') !== false) {
+                $this->notifyEffect($color, 'place_bonus_q', $tile);
+            }
         }
         // ocean bonus
         $oceans = $this->getAdjecentHexesOfType($target, MA_TILE_OCEAN);

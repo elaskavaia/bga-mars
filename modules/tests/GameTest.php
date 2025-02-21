@@ -1570,4 +1570,23 @@ final class GameTest extends TestCase {
         $bo=$game->getProductionPlacementBonus('hex_3_5');
         $this->assertEquals('ps/pu', $bo);
     }
+
+    public function test_getMiningGuild() {
+        $game = $this->game(4);
+        $p = PCOLOR;
+
+        $corp = $game->mtFindByName('Mining Guild');
+        $game->effect_playCorporation(PCOLOR, $corp, false);
+        $game->effect_playCorporation(PCOLOR, $corp, true);
+        $game->st_gameDispatch();
+        $this->assertEquals(1,  $game->getTrackerValue(PCOLOR, 'ps'));
+        $game->effect_placeTile($p, 'tile_2_2', 'hex_3_5');
+        $game->st_gameDispatch();
+        // asks what resource to gain
+        $tops = $game->machine->getTopOperations(PCOLOR);
+        $op =  array_shift($tops);
+        $this->assertEquals("q", $op['type']);
+        $op =  array_shift($tops);
+        $this->assertEquals("ps", $op['type']); // gain steel
+    }
 }
