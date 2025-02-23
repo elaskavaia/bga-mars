@@ -129,9 +129,6 @@ abstract class PGameXBody extends PGameMachine {
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
                     $this->queue($color, "prelude");
-                    // give more time for setup prelude
-                    $this->giveExtraTime($player_id);
-                    $this->giveExtraTime($player_id);
                 }
             }
             $adj = $this->getMapNumber();
@@ -1241,14 +1238,14 @@ abstract class PGameXBody extends PGameMachine {
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $args = ['tag_name' => $tag_name];
         if ($showWarning)   $args += ['_notifType' => 'message_warning'];
-        $this->giveExtraTime($this->getPlayerIdByColor($color), 2); // compensate for reveal time
+        $this->giveExtraTime($this->getPlayerIdByColor($color)); // compensate for reveal time
         if (strstr($tags, $tag_name)) {
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} reveals ${token_name}: it has a ${tag_name} tag'), $card_id, $color, $args);
             $this->notifyAnimate(1000); // delay to show the card
             return $card_id;
         } else {
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} reveals ${token_name}: it does not have a ${tag_name} tag'), $card_id, $color, $args);
-            $this->notifyAnimate(1000); // delay to show the card
+            $this->notifyAnimate(600); // delay to show the card
             $this->effect_moveCard($color, $card_id, "discard_main", 0);
             return false;
         }

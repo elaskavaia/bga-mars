@@ -17,10 +17,13 @@ class Operation_prelude extends AbsOperation {
         $this->game->setGameStateValue('gamestage', MA_STAGE_PRELUDE);
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_{$color}");
         foreach ($rest as $card_id => $card) {
-                $this->game->push($color, 'cardpre');
-                //$this->game->effect_playCard($color, $card_id);
+            $this->game->push($color, 'cardpre');
+            //$this->game->effect_playCard($color, $card_id);
+            // give more time for setup prelude
+            $this->game->giveExtraTime($player_id);
+            $this->game->giveExtraTime($player_id);
         }
-        
+
         return 1;
     }
 }
