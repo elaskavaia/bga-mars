@@ -933,11 +933,17 @@ final class GameTest extends TestCase {
         $m->dbSetTokenLocation('tile_64', 'hex_7_9', 1);
         $m->dbSetTokenLocation('tile_67', 'hex_4_1', 1);
 
-        $subrules = $bu->getProductionOnlyRules('', 'card_main_64');
+        $color = PCOLOR;
+        $card_id = $m->mtFindByName('Mining Area');
+        $subrules = $bu->getProductionOnlyRules('', $card_id);
         $this->assertEquals("pu", $subrules);
+
+        $m->dbSetTokenLocation($card_id, "tableau_$color", 1);
+        $this->assertFalse($bu->isVoid());
+  
     }
 
-    public function testRoboticWorkforce() {
+    public function testRoboticWorkforceWithResearchNetwork() {
         $m = $this->game();
         $card_id = $m->mtFindByName('Research Network');
         //$card2 = $m->mtFindByName('Robotic Workforce');
