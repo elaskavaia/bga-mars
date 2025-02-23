@@ -100,7 +100,7 @@ class DbMultiUndo extends APP_GameClass {
 
         $this->game->notifyWithName(
             'undoMove',
-            '${player_name} ${label_tr} ${undo_button} ${barrier_tr}',
+            '',//'${player_name} ${label_tr} ${undo_button} ${barrier_tr}',
             $meta + ['undo_button' => $move_id, 'barrier_tr' => $barrier_message, 'label_tr' => $label],
             $player_id
         );
