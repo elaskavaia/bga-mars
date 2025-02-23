@@ -937,6 +937,19 @@ final class GameTest extends TestCase {
         $this->assertEquals("pu", $subrules);
     }
 
+    public function testRoboticWorkforce() {
+        $m = $this->game();
+        $card_id = $m->mtFindByName('Research Network');
+        //$card2 = $m->mtFindByName('Robotic Workforce');
+        $color = PCOLOR;
+        $m->dbSetTokenLocation($card_id, "tableau_$color", 1);
+    
+        /** @var Operation_copybu */
+        $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
+        $this->assertNotNull($bu);
+        $this->assertFalse($bu->isVoid());
+    }
+
     public function testProductionBuildCards() {
         $m = $this->game();
         $count = 0;

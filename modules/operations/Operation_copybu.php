@@ -10,7 +10,7 @@ class Operation_copybu extends AbsOperation {
         $keys = array_keys($map);
         return $this->game->createArgInfo($color, $keys, function ($color, $card_id) {
             $tags = $this->game->getRulesFor($card_id, 'tags', '');
-            if (!strstr($tags, 'Building')) return MA_ERR_PREREQ;
+            if (!strstr($tags, 'Building') && !strstr($tags, 'Wild')) return MA_ERR_PREREQ;
             $r = $this->game->getRulesFor($card_id, 'r', '');
             $subr = self::getProductionOnlyRules($r, $card_id);
             if (!$subr) return MA_ERR_NOTAPPLICABLE;
