@@ -1549,6 +1549,13 @@ class GameBasics extends GameGui {
     this.upldateColorMapping(".playername");
     this.upldateColorMapping(".player-name *");
   }
+
+
+  // /** @override to fix bug */
+  // ntf_newPrivateState(notif) {
+  //   this.inherited(arguments);
+  //   this.last_server_state.private_state = dojo.clone(notif.args);
+  // }
 }
 
 function joinId(first, second) {
