@@ -1710,14 +1710,8 @@ abstract class PGameXBody extends PGameMachine {
             //$this->debugLog("-placement bonus $bonus");
             $this->putInEffectPool($color, $bonus, $object);
 
-            if (strpos($bonus, 's') !== false) {
-                $this->notifyEffect($color, 'place_bonus_s', $tile);
-            }
-            if (strpos($bonus, 'u') !== false) {
-                $this->notifyEffect($color, 'place_bonus_u', $tile);
-            }
-            if (strpos($bonus, 'q') !== false) {
-                $this->notifyEffect($color, 'place_bonus_q', $tile);
+            if (strpos($bonus, 's') !== false || strpos($bonus, 'u') ||   strpos($bonus, 'q') !== false) {
+                $this->notifyEffect($color, 'place_bonus_su', $tile);
             }
         }
         // ocean bonus

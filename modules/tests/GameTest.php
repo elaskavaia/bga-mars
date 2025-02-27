@@ -1603,8 +1603,28 @@ final class GameTest extends TestCase {
         $game->st_gameDispatch();
         // asks what resource to gain
         $tops = $game->machine->getTopOperations(PCOLOR);
+        $this->assertEquals(2, count(($tops)));
         $op =  array_shift($tops);
         $this->assertEquals("q", $op['type']);
+        $op =  array_shift($tops);
+        $this->assertEquals("ps", $op['type']); // gain steel
+    }
+    public function test_getMiningGuild2() {
+        $game = $this->game(4);
+        $p = PCOLOR;
+
+        $corp = $game->mtFindByName('Mining Guild');
+        $game->effect_playCorporation(PCOLOR, $corp, false);
+        $game->effect_playCorporation(PCOLOR, $corp, true);
+        $game->st_gameDispatch();
+        $this->assertEquals(1,  $game->getTrackerValue(PCOLOR, 'ps'));
+        $game->effect_placeTile($p, 'tile_2_2', 'hex_2_9');
+        $game->st_gameDispatch();
+        // asks what resource to gain
+        $tops = $game->machine->getTopOperations(PCOLOR);
+        $this->assertEquals(2, count(($tops)));
+        $op =  array_shift($tops);
+        $this->assertEquals("s,u", $op['type']);
         $op =  array_shift($tops);
         $this->assertEquals("ps", $op['type']); // gain steel
     }
