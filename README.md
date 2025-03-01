@@ -4,7 +4,7 @@ Only usable when you develop games for https://boardgamearena.com
 
 Warning: Not for begginers!
 
-It uses typescript and possible to use scss
+It uses typescript and  scss
 
 To use you need tsc (typescript), which will be installed by npm, which is part of nodejs
 * Install nodejs (search web on how to install for your platform), i.e. sudo apt-get install nodejs
@@ -41,4 +41,6 @@ Structures of project:
 The following files are GENERATED
 terraformingmars.js - main game file generated from typescript from src dir
 terraformingmars.css - generated from scss files
-material.inc.php - content generated from csv files in misc directory
+material.inc.php - content generated from csv files in misc directory (some sections, others manually written)
+
+For the game design see DESIGN.md
