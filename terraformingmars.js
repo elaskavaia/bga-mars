@@ -7119,7 +7119,10 @@ var GameXBody = /** @class */ (function (_super) {
         var o = parseInt($("tracker_o").dataset.state);
         var t = parseInt($("tracker_t").dataset.state);
         var w = parseInt($("tracker_w").dataset.state);
-        if (o == 14 && t == 8 && w == 9) {
+        var o_max = this.getRulesFor("tracker_o", "max");
+        var t_max = this.getRulesFor("tracker_t", "max");
+        var w_max = this.getRulesFor("tracker_w", "max");
+        if (o >= o_max && t >= t_max && w >= w_max) {
             var htm = '<div id="terraforming_complete" class="terraforming_complete">⚠️' + _("The terraforming is complete") + "</div>";
             if (!$("terraforming_complete"))
                 $("game_play_area").insertAdjacentHTML("afterbegin", htm);

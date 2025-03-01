@@ -3382,7 +3382,11 @@ awarded.`);
     const t: number = parseInt($("tracker_t").dataset.state);
     const w: number = parseInt($("tracker_w").dataset.state);
 
-    if (o == 14 && t == 8 && w == 9) {
+    const o_max = this.getRulesFor("tracker_o", "max");
+    const t_max = this.getRulesFor("tracker_t", "max");
+    const w_max = this.getRulesFor("tracker_w", "max");
+
+    if (o >= o_max && t >= t_max && w >= w_max) {
       const htm = '<div id="terraforming_complete" class="terraforming_complete">⚠️' + _("The terraforming is complete") + "</div>";
       if (!$("terraforming_complete")) $("game_play_area").insertAdjacentHTML("afterbegin", htm);
     } else {
