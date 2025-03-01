@@ -2529,10 +2529,18 @@ abstract class PGameXBody extends PGameMachine {
             $trackers[] = "tracker_{$tag}_{$owner}";
         }
         $count = 0;
+        $wild = 0;
         foreach ($trackers as $tracker) {
-            if ($this->tokens->getTokenState($tracker) > 0) $count++;
+            $num = $this->tokens->getTokenState($tracker);
+            if ($num > 0) {
+                if (startsWith($tracker, 'tracker_tagWild')) {
+                    $wild = $num;
+                } else {
+                    $count += 1;
+                }
+            }
         }
-        return $count;
+        return min($count + $wild, count($trackers) - 1);
     }
 
     function getMinOfStanardResources($owner) {

@@ -358,6 +358,8 @@ final class GameTest extends TestCase {
         $this->game->tokens->setTokenState("tracker_tagEarth_{$color}", 1);
         $this->assertEquals(9, $this->game->getCountOfUniqueTags($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
+        $this->game->tokens->setTokenState("tracker_tagWild_{$color}", 2);
+        $this->assertEquals(10, $this->game->getCountOfUniqueTags($color));
     }
 
     function assertMilestone(int $num, string $name, int $value = 1, string $color = PCOLOR) {
