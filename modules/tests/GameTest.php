@@ -580,13 +580,20 @@ final class GameTest extends TestCase {
         $fish = $game->mtFind('name', 'Fish');
 
         $game->effect_playCard($color, $fish);
-        $num = 5;
-        for ($i = 0; $i < $num; $i++) {
+    
+        for ($i = 0; $i < 2; $i++) {
             $game->dbSetTokenLocation("resource_{$color}_$i", $fish, 1); // add a fish
         }
 
+        $tard = $game->mtFind('name', 'Tardigrades');
+        $num = 5;
+        for (; $i < $num; $i++) {
+            $game->dbSetTokenLocation("resource_{$color}_$i", $tard, 1); // add a microbe
+        }
+        
+
         // 5|FARMER|7|farmer|8|requires to have 5 animal and microbe resources combined|5
-        $this->assertEquals($num, $this->game->getCountOfResOnCards($color, 'Animal'));
+        $this->assertEquals(2, $this->game->getCountOfResOnCards($color, 'Animal'));
         $this->assertEquals(0, $this->game->getCountOfResOnCards($color, 'Science'));
         $this->assertMilestone(5, "FARMER", $num);
         $this->game->setTrackerValue(PCOLOR, 'm', 20);
@@ -1625,6 +1632,26 @@ final class GameTest extends TestCase {
         $this->assertEquals(2, count(($tops)));
         $op =  array_shift($tops);
         $this->assertEquals("s,u", $op['type']);
+        $op =  array_shift($tops);
+        $this->assertEquals("ps", $op['type']); // gain steel
+    }
+
+    public function test_getMiningGuild3() {
+        $game = $this->game(1);
+        $p = PCOLOR;
+
+        $corp = $game->mtFindByName('Mining Guild');
+        $game->effect_playCorporation(PCOLOR, $corp, false);
+        $game->effect_playCorporation(PCOLOR, $corp, true);
+        $game->st_gameDispatch();
+        $this->assertEquals(1,  $game->getTrackerValue(PCOLOR, 'ps'));
+        $game->effect_placeTile($p, 'tile_2_2', 'hex_2_7');
+        $game->st_gameDispatch();
+        // asks what resource to gain
+        $tops = $game->machine->getTopOperations(PCOLOR);
+        $this->assertEquals(2, count(($tops)));
+        $op =  array_shift($tops);
+        $this->assertEquals("u", $op['type']);
         $op =  array_shift($tops);
         $this->assertEquals("ps", $op['type']); // gain steel
     }
