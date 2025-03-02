@@ -3,14 +3,14 @@
         "name": "Beginners Corporations",
         "$varname": "begginers_corp",
         "values": {
-            "0": {
-                "name": "No",
-                "nobeginner": true
-            },
             "1": {
                 "name": "Yes",
                 "tmdisplay": "Beginners Corporations",
                 "firstgameonly": true
+            },
+            "0": {
+                "name": "No",
+                "nobeginner": true
             }
         },
         "level": "additional",
@@ -20,16 +20,16 @@
         "name": "Corporate Era",
         "$varname": "corporate_era",
         "values": {
-            "0": {
-                "name": "Off",
-                "description": "Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1",
-                "tmdisplay": "Standard Game"
-            },
             "1": {
                 "name": "On",
                 "description": "Corporate Era variant includes Corporate Era deck cards and all productions starts at 0",
                 "tmdisplay": "Corporate Era",
                 "nobeginner": true
+            },
+            "0": {
+                "name": "Off",
+                "description": "Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1",
+                "tmdisplay": "Standard Game"
             }
         },
         "displaycondition": [
@@ -46,6 +46,40 @@
         "notdisplayedmessage": "Corporate Era is On",
         "level": "additional",
         "default": 1
+    },
+    "104": {
+        "name": "Expansion: Prelude",
+        "$varname": "prelude",
+        "values": {
+            "1": {
+                "name": "On",
+                "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
+                "tmdisplay": "Prelude",
+                "nobeginner": true
+            },
+            "0": {
+                "name": "Off",
+                "description": "Not including Prelude"
+            }
+        },
+        "default": 0
+    },
+    "108": {
+        "name": "Expansion: Colonies",
+        "$varname": "colonies",
+        "values": {
+            "1": {
+                "name": "On",
+                "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
+                "tmdisplay": "Colonies",
+                "nobeginner": true
+            },
+            "0": {
+                "name": "Off",
+                "description": "Not including Colonies"
+            }
+        },
+        "default": 0
     },
     "102": {
         "name": "Solo variant",
@@ -71,18 +105,19 @@
         "level": "additional",
         "default": 0
     },
+
     "103": {
         "name": "Draft",
         "$varname": "draft",
         "values": {
-            "0": {
-                "name": "No"
-            },
             "1": {
                 "name": "Yes",
                 "description": "Draft 4 cards during Research phase, 1st generation is NOT included",
                 "tmdisplay": "Draft",
                 "nobeginner": true
+            },
+            "0": {
+                "name": "No"
             }
         },
         "displaycondition": [
@@ -99,23 +134,7 @@
         "notdisplayedmessage": "Draft is Off",
         "default": 0
     },
-    "104": {
-        "name": "Expansion: Prelude",
-        "$varname": "prelude",
-        "values": {
-            "0": {
-                "name": "Off",
-                "description": "Not including Prelude"
-            },
-            "1": {
-                "name": "On",
-                "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
-                "tmdisplay": "Prelude",
-                "nobeginner": true
-            }
-        },
-        "default": 0
-    },
+
     "105": {
         "name": "Live Scoring",
         "$varname": "live_scoring",

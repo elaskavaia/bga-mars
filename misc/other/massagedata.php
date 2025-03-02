@@ -55,7 +55,7 @@ function tomyformat($fields, $raw_fields) {
 
     $deck = $fields['Deck'];
     #if (!is_numeric($num)) return;
-    if ($deck != 'Prelude') return;
+
 
     $t = 0;
     $type = $fields['Card Type'];
@@ -75,12 +75,14 @@ function tomyformat($fields, $raw_fields) {
         case 'Prelude':
             $t = 5;
             break;
+        case 'Colonies':
+            $t = 9;
+            break;
         default:
             break;
     }
 
-    #if ($t > 3) return;
-    if ($t == 4) return;
+
 
     $num = $fields['Card #'];
 
@@ -123,15 +125,12 @@ function tomyformat($fields, $raw_fields) {
     $rules = str_replace('’', "'", $rules);
     $rules = implode(',', explode(' ', $rules));
 
-    $tooltip = $fields['One time Effect Text'];
-    $actext = $fields['Action or On-going Effect text'];
-    if ($actext && $tooltip) $tooltip = trim($tooltip . "; " . $actext);
-    else if ($actext) $tooltip = $actext;
-    $tooltip = trim($tooltip);
+
     $php = [];
     $vp =  $fields['VP'];
 
     $hold = $fields['Holds Resources'];
+    if (str_ends_with($hold, 's')) $hold = substr($hold, 0, strlen($hold) - 1);
     if ($hold && $hold != 'No') $php['holds'] = $hold;
     $eff = $fields['# Actions and/or Effect'];
     $action = "";
@@ -159,41 +158,72 @@ function tomyformat($fields, $raw_fields) {
         $phpstr = preg_replace("/\)\s*$/", "", $phpstr);
         $phpstr = preg_replace("/,\s*$/", "", $phpstr);
     }
-
-    if ($t != 5) return;
+    $tooltip = $fields['One time Effect Text'];
+    $actext = $fields['Action or On-going Effect text'];
+    $tooltip = trim($tooltip);
+    $actext = trim($actext);
+    $effect_text = "";
+    if (str_starts_with($actext, "Action: ")) $actext = str_replace("Action: ", "", $actext);
+    if (str_starts_with($actext, "Effect: ")) {
+        $effect_text = str_replace("Effect: ", "", $actext);
+        $actext = "";
+    }
+    $matches = [];
+    $preman = "";
+    if (preg_match("/Requires (\d+) (\w+) tag/", $tooltip, $matches)) {
+        $count = $matches[1];
+        $tag = ucfirst($matches[2]);
+        $preman = "tag$tag>=$count";
+    } elseif (!$pre && preg_match("/Requires (\d+) colon/", $tooltip, $matches)) {
+        $count = $matches[1];
+        $preman = "colony>=$count";
+    } elseif (!$pre && preg_match("/Requires /", $tooltip, $matches)) {
+        $preman = "CUSTOM";
+    }
+    if ($pre && $preman)
+        $pre .= " && $preman";
+    else
+        $pre = $preman;
 
     //$num = substr($num,1);
     $cost =  (int) $fields['Cost'];
 
-    $line = implode('|', [
-        $num, $raw_fields[0], $t, $rules, $action, $effect, $cost, $pre, implode(' ', $tags), $vp, $deck, $tooltip,
-        '', '', '',
+    $fields = [
+        $num,
+        $raw_fields[0],
+        $t,
+        $rules,
+        $action,
+        $effect,
+        $cost,
+        $pre,
+        implode(' ', $tags),
+        $vp,
+        $deck,
+        $tooltip,
+        $actext,
+        $effect_text,
+        '',
         $phpstr
-    ]);
-    print($line."\n");
+    ];
+
     //if ((int)$num > 18) return false;
-    return true;
+    return $fields;
 }
 
 $g_field_names = null;
 //$g_header = 'num|name|t|r|a|e|cost|pre|tags|vp|text|php';
 $g_header = 'num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php';
 $g_separator = "|";
-$incsv = $argv[1] ?? "./data.csv";
+$incsv = $argv[1] ?? "./data.txt";
 $ins = fopen($incsv, "r") or die("Unable to open file! $ins");
 // new format
 
 #t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
-print($g_header);
-print('
-#project cards
-#set _tr=ac
-#set _tr=text
-#set id=card_prelude_{num}
-#set location=deck_prelude
-#set create=single
-'
-);
+print($g_header."\n");
+
+$prev_t = 0;
+$prev_deck = 0;
 while (($line = fgets($ins)) !== false) {
     $line = trim($line);
     if (empty($line))
@@ -214,5 +244,34 @@ while (($line = fgets($ins)) !== false) {
             $fields[$key] = null;
         $f++;
     }
-    if (tomyformat($fields, $raw_fields) === false) break;
+    $fields = tomyformat($fields, $raw_fields);
+    if ($fields === false) break;
+    if ($fields === null) continue;
+    $t = $fields[2];
+    $deck = $fields[10];
+    if ($deck != 'Colonies') continue; // XXX change to filter
+
+    if ($prev_t != $t) {
+        switch ($t) {
+            case 1:
+            case 2:
+            case 3:
+                if ($prev_t <=3 && $t<= 3 && $prev_t>0) break;
+                print("#set id=card_main_{num}\n#set location=deck_main\n");
+                break;
+            case 4:
+                print("#set id=card_corp_{num}\n#set location=deck_corp\n");
+                break;
+            case 5:
+                print("#set id=card_prelude_{num}\n#set location=deck_prelude\n");
+                break;
+            case 9:
+                print("#set id=card_colo_{num}\n#set location=deck_colo\n");
+                break;
+        }
+    }
+    $line = implode("|", $fields);
+    print($line . "\n");
+    $prev_t = $t;
+    $prev_deck = $deck;
 }

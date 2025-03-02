@@ -44,6 +44,7 @@ abstract class PGameXBody extends PGameMachine {
             "var_live_scoring" => 105,
             "var_xundo" => 106, // multi step undo
             "var_map" => 107, // map number
+            "var_colonies" => 108, 
         ]);
         $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;
@@ -715,17 +716,17 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->token_types['map']['w'] = 5;
         $this->token_types['map']['name'] = '';
-        if ($this->getMapNumber() == 4) {
+        if ($this->getMapNumber() == MA_OPTVALUE_MAP_AMAZONIS_PLANITIA) {
             $this->token_types['tracker_o']['max'] = 18;
             $this->token_types['tracker_w']['max'] = 11;
             $this->token_types['tracker_t']['max'] = 14;
             $this->token_types['map']['w'] = 6;
         }
         switch ($this->getMapNumber()) {
-            case 0:
+            case MA_OPTVALUE_MAP_THARSIS:
                 $this->token_types['map']['name'] = clienttranslate('Tharsis');
                 break;
-            case 4:
+            case MA_OPTVALUE_MAP_AMAZONIS_PLANITIA:
                 $this->token_types['map']['name'] = clienttranslate('Amazonis');
                 break;
         }
@@ -922,7 +923,8 @@ abstract class PGameXBody extends PGameMachine {
             case  'res':
                 if ($context) $this->tokens->countTokensInLocation("$context");
                 return $this->getCountOfResOnCards("$owner");
-
+            case  'resFloater':
+                return $this->getCountOfResOnCards("$owner",'Floater');
             case  'cost':
                 return $this->getRulesFor($context, 'cost');
 
@@ -1515,7 +1517,7 @@ abstract class PGameXBody extends PGameMachine {
     function getLastGeneration() {
         $maxgen = $this->getRulesFor('solo', 'gen');
         if ($this->isPreludeVariant()) $maxgen -= 2; // Prelude sole ends with 12 generations not 14
-        if ($this->getMapNumber() == 4 && $this->getGameStateValue('var_solo_flavour') == 0) $maxgen += 2; // This map is not design for solo mode really
+        if ($this->getMapNumber() == MA_OPTVALUE_MAP_AMAZONIS_PLANITIA && $this->getGameStateValue('var_solo_flavour') == 0) $maxgen += 2; // This map is not design for solo mode really
         return $maxgen;
     }
 

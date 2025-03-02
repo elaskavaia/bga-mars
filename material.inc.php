@@ -35,6 +35,7 @@ if (!defined("MA_GAME")) {
   define("MA_CARD_TYPE_PRELUDE", 5);
   define("MA_CARD_TYPE_MILESTONE", 7);
   define("MA_CARD_TYPE_AWARD", 8);
+  define("MA_CARD_TYPE_COLONY", 9);
 
   // error codes
   define("MA_OK", 0);
@@ -85,6 +86,38 @@ if (!defined("MA_GAME")) {
   // undo
   define("MA_UNDO_BARRIER", 1);
   define("MA_UNDO_NOBARRIER", 0);
+
+  // options
+  define("MA_OPT_BEGGINERS_CORP", 100);
+  define("MA_OPTVALUE_BEGGINERS_CORP_NO", 0);
+  define("MA_OPTVALUE_BEGGINERS_CORP_YES", 1);
+  define("MA_OPT_CORPORATE_ERA", 101);
+  define("MA_OPTVALUE_CORPORATE_ERA_OFF", 0);
+  define("MA_OPTVALUE_CORPORATE_ERA_ON", 1);
+  define("MA_OPT_SOLO_FLAVOUR", 102);
+  define("MA_OPTVALUE_SOLO_FLAVOUR_STANDARD", 0);
+  define("MA_OPTVALUE_SOLO_FLAVOUR_TR63", 1);
+  define("MA_OPT_DRAFT", 103);
+  define("MA_OPTVALUE_DRAFT_NO", 0);
+  define("MA_OPTVALUE_DRAFT_YES", 1);
+  define("MA_OPT_PRELUDE", 104);
+  define("MA_OPTVALUE_PRELUDE_OFF", 0);
+  define("MA_OPTVALUE_PRELUDE_ON", 1);
+  define("MA_OPT_LIVE_SCORING", 105);
+  define("MA_OPTVALUE_LIVE_SCORING_ENABLED", 1);
+  define("MA_OPTVALUE_LIVE_SCORING_DISABLED", 2);
+  define("MA_OPT_XUNDO", 106);
+  define("MA_OPTVALUE_XUNDO_DISABLED", 0);
+  define("MA_OPTVALUE_XUNDO_ENABLED", 1);
+  define("MA_OPT_MAP", 107);
+  define("MA_OPTVALUE_MAP_THARSIS", 0);
+  define("MA_OPTVALUE_MAP_ELYSIUM", 1);
+  define("MA_OPTVALUE_MAP_HELLAS", 2);
+  define("MA_OPTVALUE_MAP_VASTITAS_BOREALIS", 3);
+  define("MA_OPTVALUE_MAP_AMAZONIS_PLANITIA", 4);
+  define("MA_OPT_COLONIES", 108);
+  define("MA_OPTVALUE_COLONIES_OFF", 0);
+  define("MA_OPTVALUE_COLONIES_ON", 1);
 }
 
 $this->token_types = [
@@ -3864,8 +3897,13 @@ $this->token_types = [
   'text_effect' => clienttranslate('When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.'),
   'a1'=>'fund(free)',
 ],
-/* --- gen php end cards_material --- */
-/* --- gen php begin proj_material --- */
+  /* --- gen php end cards_material --- */
+
+  /* --- gen php begin colo_material --- */
+  /* --- gen php end colo_material --- */
+
+
+  /* --- gen php begin proj_material --- */
 // #
 // #standard projects
 // #
@@ -7902,22 +7940,22 @@ $this->token_types = [
   'solo' => [  //
     'gen' => 14,
   ],
-  'exp_0' => [ 
+  'exp_0' => [
     'name' => clienttranslate('Basic')
   ],
-  'exp_1' => [ 
+  'exp_1' => [
     'name' => clienttranslate('Corporate')
   ],
   // Maps
-  'map_0' => [ 
+  'map_0' => [
     'name' => clienttranslate('Thesaris')
   ],
-  'map_1' => [ 
+  'map_1' => [
     'name' => clienttranslate('Elysium')
-  ],       
-  'map_2' => [ 
+  ],
+  'map_2' => [
     'name' => clienttranslate('Hellas')
-  ],      
+  ],
   // #error codes - MANUAL ENTRY
   'err_0' => [  //
     'code' => MA_OK,
@@ -7930,55 +7968,68 @@ $this->token_types = [
     'name' => clienttranslate("Insufficient Funds"),
   ],
   'err_2' => [  //
-    'code' => MA_ERR_PREREQ, 'type' => 'err',
+    'code' => MA_ERR_PREREQ,
+    'type' => 'err',
     'name' => clienttranslate("Prerequisites are not fullfilled"),
   ],
   'err_3' => [  //
-    'code' => MA_ERR_MANDATORYEFFECT, 'type' => 'err',
+    'code' => MA_ERR_MANDATORYEFFECT,
+    'type' => 'err',
     'name' => clienttranslate("Immediate effect cannot be resolved"),
   ],
   'err_4' => [  //
-    'code' => MA_ERR_ACTIONCOST, 'type' => 'err',
+    'code' => MA_ERR_ACTIONCOST,
+    'type' => 'err',
     'name' => clienttranslate("Cannot pay action cost"),
   ],
   'err_5' => [  //
-    'code' => 5, 'type' => 'err',
+    'code' => 5,
+    'type' => 'err',
     'name' => clienttranslate("Hex is not reserved"),
   ],
   'err_6' => [  //
-    'code' => 6, 'type' => 'err',
+    'code' => 6,
+    'type' => 'err',
     'name' => clienttranslate("Hex is reserved"),
   ],
   'err_7' => [  //
-    'code' => 7, 'type' => 'err',
+    'code' => 7,
+    'type' => 'err',
     'name' => clienttranslate("Hex is occupied"),
   ],
   'err_8' => [  //
-    'code' => 8, 'type' => 'err',
+    'code' => 8,
+    'type' => 'err',
     'name' => clienttranslate("City placement restrictions"),
   ],
   'err_9' => [  //
-    'code' => 9, 'type' => 'err',
+    'code' => 9,
+    'type' => 'err',
     'name' => clienttranslate("Greenery placement restrictions"),
   ],
   'err_10' => [  //
-    'code' => 10, 'type' => 'err',
+    'code' => 10,
+    'type' => 'err',
     'name' => clienttranslate("Max is reached"),
   ],
   'err_11' => [  //
-    'code' => 11, 'type' => 'err',
+    'code' => 11,
+    'type' => 'err',
     'name' => clienttranslate("Not applicable"),
   ],
   'err_12' => [  //
-    'code' => 12, 'type' => 'err',
+    'code' => 12,
+    'type' => 'err',
     'name' => clienttranslate("Already used"),
   ],
   'err_13' => [  //
-    'code' => 13, 'type' => 'err',
+    'code' => 13,
+    'type' => 'err',
     'name' => clienttranslate("Placement restrictions"),
   ],
   'err_14' => [  //
-    'code' => 14, 'type' => 'err',
+    'code' => 14,
+    'type' => 'err',
     'name' => clienttranslate("Protected"),
   ],
   // sort modes

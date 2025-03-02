@@ -4,6 +4,7 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "PHP: Listen for Xdebug",
       "type": "php",
@@ -51,6 +52,25 @@
 
         "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/"
       },
-    }
+    },
+    {
+      "name": "gen options all",
+      "program": "${workspaceFolder}/misc/other/genoptions.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
+      "name": "gen options remove 108",
+      "program": "${workspaceFolder}/misc/other/genoptions.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "args": ["-remove","108"],
+      "type": "node"
+    },
   ]
 }

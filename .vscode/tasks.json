@@ -19,31 +19,6 @@
                 "kind": "build",
                 "isDefault": true
             }
-        },
-        {
-            "label": "update cards",
-            "type": "shell",
-            "command": "php7.4 ./massagedata.php > ../cards_material_new.csv",
-            "options": {
-                "cwd": "${workspaceFolder}/misc/other"
-            },
-            "problemMatcher": ["$phpunit"],
-            "group": {
-                "kind": "none",
-                "isDefault": false
-            }
-        },
-        {
-            "label": "update cards mat",
-            "type": "shell",
-            "command": "php7.4 misc/other/genmat.php misc/cards_material.csv",
-            "dependsOn": ["update cards"],
-     
-            "problemMatcher": ["$phpunit"],
-            "group": {
-                "kind": "none",
-                "isDefault": false
-            }
         }
     ]
 }

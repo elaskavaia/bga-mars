@@ -118,7 +118,7 @@ abstract class AbsOperationTile extends AbsOperation {
         if (isset($info['ocean'])) return MA_ERR_RESERVED;
         $reservename = $this->getReservedArea();
         if ($reservename == 'vol') {
-            if ($this->game->getMapNumber() != 2) {
+            if ($this->game->getMapNumber() != MA_OPTVALUE_MAP_HELLAS) {
                 if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
                 else  return MA_OK;
             }

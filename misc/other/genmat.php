@@ -293,8 +293,12 @@ function varsub($line, $keymap) {
 // MAIN
 $args = array_values($argv);
 array_shift($args);
+$skipoption = false;
 foreach ($args as $incsv) {
-
+    if ($incsv == '-skip') {
+        $skipoption = true;
+        continue;
+    }
     reset_globals();
     $basename = basename($incsv, '.csv');
     if ($basename == 'material')
@@ -328,7 +332,7 @@ foreach ($args as $incsv) {
         exit(2);
     }
     // generate data
-    genbody($incsv);
+    if (!$skipoption) genbody($incsv);
     // skip all lines until end markup
     while (($line = fgets($in)) !== false) {
         if (strpos($line, $markup_end) !== false) {

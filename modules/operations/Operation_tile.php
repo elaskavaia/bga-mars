@@ -25,7 +25,7 @@ class Operation_tile extends AbsOperationTile {
 
         if ($reservename == 'vol') {
             // HELLAS - 2 - has no volcanos
-            if ($this->game->getMapNumber() != 2) {
+            if ($this->game->getMapNumber() != MA_OPTVALUE_MAP_HELLAS) {
                 if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
             }
             $reservename = '';
