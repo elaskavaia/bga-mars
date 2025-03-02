@@ -164,7 +164,7 @@ class GameTokens extends GameBasics {
       this.gamedatas.tokens[token] = {
         key: token,
         state: 0,
-        location: 'limbo'
+        location: "limbo"
       };
     }
 
@@ -185,7 +185,7 @@ class GameTokens extends GameBasics {
   }
 
   hideCard(tokenId: ElementOrId) {
-    $('limbo')?.appendChild($(tokenId));
+    $("limbo")?.appendChild($(tokenId));
   }
 
   getPlaceRedirect(tokenInfo: Token): TokenMoveInfo {
@@ -255,7 +255,7 @@ class GameTokens extends GameBasics {
     }
   }
 
-   onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token): Promise<any> | Element {
+  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token): Promise<any> | Element {
     if (dojo.hasClass(tokenNode, "infonode")) {
       this.placeInfoBox(tokenNode);
     }
@@ -349,7 +349,7 @@ class GameTokens extends GameBasics {
         };
       }
 
-      this.preSlideAnimation(tokenNode,tokenInfo,location);
+      this.preSlideAnimation(tokenNode, tokenInfo, location);
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
       return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
     } catch (e) {
@@ -359,9 +359,7 @@ class GameTokens extends GameBasics {
     return tokenNode;
   }
 
-  preSlideAnimation(tokenNode:HTMLElement,tokenInfo:Token,location:string) {
-
-  }
+  preSlideAnimation(tokenNode: HTMLElement, tokenInfo: Token, location: string) {}
   async placeTokenWithTips(token: string, tokenInfo?: Token, args?: any) {
     if (!tokenInfo) {
       tokenInfo = this.gamedatas.tokens[token];

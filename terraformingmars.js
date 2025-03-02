@@ -3589,7 +3589,7 @@ var GameTokens = /** @class */ (function (_super) {
             this.gamedatas.tokens[token] = {
                 key: token,
                 state: 0,
-                location: 'limbo'
+                location: "limbo"
             };
         }
         if (args) {
@@ -3609,7 +3609,7 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.hideCard = function (tokenId) {
         var _a;
-        (_a = $('limbo')) === null || _a === void 0 ? void 0 : _a.appendChild($(tokenId));
+        (_a = $("limbo")) === null || _a === void 0 ? void 0 : _a.appendChild($(tokenId));
     };
     GameTokens.prototype.getPlaceRedirect = function (tokenInfo) {
         var _this = this;
@@ -3779,8 +3779,7 @@ var GameTokens = /** @class */ (function (_super) {
         }
         return tokenNode;
     };
-    GameTokens.prototype.preSlideAnimation = function (tokenNode, tokenInfo, location) {
-    };
+    GameTokens.prototype.preSlideAnimation = function (tokenNode, tokenInfo, location) { };
     GameTokens.prototype.placeTokenWithTips = function (token, tokenInfo, args) {
         return __awaiter(this, void 0, void 0, function () {
             var node;
