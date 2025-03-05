@@ -3284,7 +3284,7 @@ awarded.`);
     onEnd?: (node?: HTMLElement) => void
   ) {
     if (!this.customAnimation.areAnimationsPlayed()) {
-      return super.phantomMove(mobileId, newparentId, -1, mobileStyle, onEnd);
+      return super.phantomMove(mobileId, newparentId, 0, mobileStyle, onEnd);
     } else {
       return super.phantomMove(mobileId, newparentId, duration, mobileStyle, onEnd);
     }

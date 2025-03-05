@@ -2085,63 +2085,71 @@ var CustomAnimation = /** @class */ (function () {
         this.game = game;
         this.animations = {};
         this.slide_duration = 800;
-        this.animations['grow_appear'] =
-            {
-                name: 'grow_appear', duration: 500, easing: 'ease-in',
-                keyframes: "   \n                         0% {\n                               transform:scale(0);\n                            }\n                         80% {\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               transform:scale(1);\n\n                            }\n                    "
-            };
-        this.animations['small_tingle'] =
-            {
-                name: 'small_tingle', duration: 500, easing: 'ease-in',
-                keyframes: "   \n                         0% {\n                               color:white;            \n                               transform:scale(1);\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               color:white;\n                               transform:scale(1);\n\n                            }\n                    "
-            };
-        this.animations['great_tingle'] =
-            {
-                name: 'great_tingle', duration: 500, easing: 'ease-in',
-                keyframes: "   \n                         0% {\n                               transform:scale(1);\n                               color:white;\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(2);\n                            }\n                         100% {\n                              color:white;\n                               transform:scale(1);\n\n                            }\n                    "
-            };
-        this.animations['pop'] =
-            {
-                name: 'pop', duration: 300, easing: 'ease-in',
-                keyframes: "   \n                         0% {\n                               transform:scale(1);\n                            }\n                         100% {\n                               transform:scale(1.2);\n                               \n                            }\n                    "
-            };
-        this.animations['depop'] =
-            {
-                name: 'depop', duration: 300, easing: 'ease-in',
-                keyframes: "   \n                         0% {\n                               transform:scale(1.2);\n                            }\n                         100% {\n                               transform:scale(1);\n                               \n                            }\n                    "
-            };
-        this.animations['fadein_and_drop'] =
-            {
-                name: 'fadein_and_drop', duration: 800, easing: 'ease-out',
-                keyframes: "   \n                         0% {\n                                 transform: translateY(-1000%);\n                                 opacity:0;\n                            }\n                        50% {\n                                 opacity:1;\n                            }\n                         100% {\n                                 transform: translateY(0);\n                                 opacity:1;\n                            }\n                    "
-            };
-        this.animations['award_pop'] =
-            {
-                name: 'award_pop', duration: 800, easing: 'ease-in',
-                keyframes: "   \n                         0% {\n                                transform: translateY(0) scale(1) rotateY(360deg);\n                            }\n                        100% {\n                                transform: translateY(-200%) scale(1.2) rotateY(0deg);\n                            }\n                    "
-            };
-        this.animations['award_depop'] =
-            {
-                name: 'award_depop', duration: 800, easing: 'ease-in',
-                keyframes: "   \n                        0% {\n                                transform: translateY(-200%) scale(1.2)  rotateY(0deg);\n                            }\n                        100% {\n                                transform: translateY(0) scale(1) rotateY(360deg);\n                            }\n                    "
-            };
+        this.animations["grow_appear"] = {
+            name: "grow_appear",
+            duration: 500,
+            easing: "ease-in",
+            keyframes: "   \n                         0% {\n                               transform:scale(0);\n                            }\n                         80% {\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               transform:scale(1);\n\n                            }\n                    "
+        };
+        this.animations["small_tingle"] = {
+            name: "small_tingle",
+            duration: 500,
+            easing: "ease-in",
+            keyframes: "   \n                         0% {\n                               color:white;            \n                               transform:scale(1);\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(1.1);\n                            }\n                         100% {\n                               color:white;\n                               transform:scale(1);\n\n                            }\n                    "
+        };
+        this.animations["great_tingle"] = {
+            name: "great_tingle",
+            duration: 500,
+            easing: "ease-in",
+            keyframes: "   \n                         0% {\n                               transform:scale(1);\n                               color:white;\n                            }\n                         80% {\n                               color:red;\n                               transform:scale(2);\n                            }\n                         100% {\n                              color:white;\n                               transform:scale(1);\n\n                            }\n                    "
+        };
+        this.animations["pop"] = {
+            name: "pop",
+            duration: 300,
+            easing: "ease-in",
+            keyframes: "   \n                         0% {\n                               transform:scale(1);\n                            }\n                         100% {\n                               transform:scale(1.2);\n                               \n                            }\n                    "
+        };
+        this.animations["depop"] = {
+            name: "depop",
+            duration: 300,
+            easing: "ease-in",
+            keyframes: "   \n                         0% {\n                               transform:scale(1.2);\n                            }\n                         100% {\n                               transform:scale(1);\n                               \n                            }\n                    "
+        };
+        this.animations["fadein_and_drop"] = {
+            name: "fadein_and_drop",
+            duration: 800,
+            easing: "ease-out",
+            keyframes: "   \n                         0% {\n                                 transform: translateY(-1000%);\n                                 opacity:0;\n                            }\n                        50% {\n                                 opacity:1;\n                            }\n                         100% {\n                                 transform: translateY(0);\n                                 opacity:1;\n                            }\n                    "
+        };
+        this.animations["award_pop"] = {
+            name: "award_pop",
+            duration: 800,
+            easing: "ease-in",
+            keyframes: "   \n                         0% {\n                                transform: translateY(0) scale(1) rotateY(360deg);\n                            }\n                        100% {\n                                transform: translateY(-200%) scale(1.2) rotateY(0deg);\n                            }\n                    "
+        };
+        this.animations["award_depop"] = {
+            name: "award_depop",
+            duration: 800,
+            easing: "ease-in",
+            keyframes: "   \n                        0% {\n                                transform: translateY(-200%) scale(1.2)  rotateY(0deg);\n                            }\n                        100% {\n                                transform: translateY(0) scale(1) rotateY(360deg);\n                            }\n                    "
+        };
         this.addAnimationsToDocument(this.animations);
     }
     CustomAnimation.prototype.getSlideDuration = function () {
         if (!this.areAnimationsPlayed())
             return 0;
-        var ret = this.slide_duration * parseInt(this.game.getSetting('animationspeed')) / 100;
-        console.log('anim is ', ret);
+        var ret = (this.slide_duration * parseInt(this.game.getSetting("animationspeed"))) / 100;
+        console.log("anim is ", ret);
     };
     CustomAnimation.prototype.getWaitDuration = function (wait) {
         var ret = 0;
         if (!this.areAnimationsPlayed())
             return 0;
-        ret = wait * parseInt(this.game.getSetting('animationspeed')) / 100;
+        ret = (wait * parseInt(this.game.getSetting("animationspeed"))) / 100;
         return ret;
     };
     CustomAnimation.prototype.getAnimationAmount = function () {
-        return parseInt(this.game.getSetting('animationamount'));
+        return parseInt(this.game.getSetting("animationamount"));
     };
     CustomAnimation.prototype.setOriginalStackView = function (tableau_elem, value) {
         if (this.areAnimationsPlayed()) {
@@ -2156,14 +2164,14 @@ var CustomAnimation = /** @class */ (function () {
     CustomAnimation.prototype.animateTilePop = function (token_id) {
         if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
             return this.getImmediatePromise();
-        return this.playCssAnimation(token_id, 'grow_appear', null, null);
+        return this.playCssAnimation(token_id, "grow_appear", null, null);
     };
     CustomAnimation.prototype.animatetingle = function (counter_id) {
         if (!this.areAnimationsPlayed())
             return this.getImmediatePromise();
-        if (this.nodeExists('alt_' + counter_id))
-            this.playCssAnimation('alt_' + counter_id, 'small_tingle', null, null);
-        return this.playCssAnimation(counter_id, 'small_tingle', null, null);
+        if (this.nodeExists("alt_" + counter_id))
+            this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
+        return this.playCssAnimation(counter_id, "small_tingle", null, null);
     };
     CustomAnimation.prototype.animatePlaceResourceOnCard = function (resource_id, place_id) {
         return __awaiter(this, void 0, void 0, function () {
@@ -2173,23 +2181,23 @@ var CustomAnimation = /** @class */ (function () {
                 if (!this.areAnimationsPlayed())
                     return [2 /*return*/, this.getImmediatePromise()];
                 animate_token = resource_id;
-                if (!this.game.isLayoutFull() && place_id.startsWith('card_main_'))
-                    animate_token = place_id.replace('card_main_', 'resource_holder_');
+                if (!this.game.isLayoutFull() && place_id.startsWith("card_main_"))
+                    animate_token = place_id.replace("card_main_", "resource_holder_");
                 if (this.getAnimationAmount() == 2) {
                     anim_1 = this.getImmediatePromise();
                 }
                 else {
-                    anim_1 = this.playCssAnimation(place_id, 'pop', function () {
-                        dojo.style(place_id, 'filter', 'grayscale(0)');
+                    anim_1 = this.playCssAnimation(place_id, "pop", function () {
+                        dojo.style(place_id, "filter", "grayscale(0)");
                     }, function () {
-                        dojo.style(place_id, 'transform', 'scale(1.2)');
+                        dojo.style(place_id, "transform", "scale(1.2)");
                     });
                 }
                 anim_2 = anim_1.then(function () {
-                    return _this.playCssAnimation(animate_token, 'great_tingle', function () {
-                        dojo.style(animate_token, 'z-index', '10');
+                    return _this.playCssAnimation(animate_token, "great_tingle", function () {
+                        dojo.style(animate_token, "z-index", "10");
                     }, function () {
-                        dojo.style(animate_token, 'z-index', '');
+                        dojo.style(animate_token, "z-index", "");
                     });
                 });
                 if (this.getAnimationAmount() == 2) {
@@ -2197,10 +2205,10 @@ var CustomAnimation = /** @class */ (function () {
                 }
                 else {
                     return [2 /*return*/, anim_2.then(function () {
-                            return _this.playCssAnimation(place_id, 'depop', function () {
-                                dojo.style(place_id, 'transform', '');
+                            return _this.playCssAnimation(place_id, "depop", function () {
+                                dojo.style(place_id, "transform", "");
                             }, function () {
-                                dojo.style(place_id, 'filter', '');
+                                dojo.style(place_id, "filter", "");
                             });
                         })];
                 }
@@ -2219,10 +2227,10 @@ var CustomAnimation = /** @class */ (function () {
                     //too late, resource is not on card anymore
                     return [2 /*return*/, this.getImmediatePromise()];
                 }
-                return [2 /*return*/, this.playCssAnimation(animate_token, 'great_tingle', function () {
-                        dojo.style(animate_token, 'z-index', '10');
+                return [2 /*return*/, this.playCssAnimation(animate_token, "great_tingle", function () {
+                        dojo.style(animate_token, "z-index", "10");
                     }, function () {
-                        dojo.style(animate_token, 'z-index', '');
+                        dojo.style(animate_token, "z-index", "");
                     })];
             });
         });
@@ -2235,44 +2243,47 @@ var CustomAnimation = /** @class */ (function () {
                 if (!this.areAnimationsPlayed())
                     return [2 /*return*/, this.getImmediatePromise()];
                 unclip = [];
-                if (place_id.startsWith('tile')) {
+                if (place_id.startsWith("tile")) {
                     unclip.push(place_id);
                     unclip.push($(place_id).parentElement.id);
                 }
-                if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
-                    p_start = this.playCssAnimation(place_id, 'award_pop', function () {
-                        dojo.style(marker_id, 'opacity', '0');
-                        $(place_id).setAttribute('style', 'box-shadow: none !important;');
+                if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) &&
+                    !this.game.isLayoutFull() &&
+                    this.getAnimationAmount() == 3) {
+                    p_start = this.playCssAnimation(place_id, "award_pop", function () {
+                        dojo.style(marker_id, "opacity", "0");
+                        $(place_id).setAttribute("style", "box-shadow: none !important;");
                     }, function () {
-                        $(place_id).setAttribute('style', 'transform: translateY(-200%) scale(1.2); box-shadow: none !important;');
+                        $(place_id).setAttribute("style", "transform: translateY(-200%) scale(1.2); box-shadow: none !important;");
                     });
                 }
                 else {
                     p_start = this.getImmediatePromise();
                 }
-                p_mid = p_start
-                    .then(function () {
-                    return _this.playCssAnimation(marker_id, 'fadein_and_drop', function () {
-                        dojo.style(marker_id, 'z-index', '10');
-                        dojo.style(marker_id, 'opacity', '');
+                p_mid = p_start.then(function () {
+                    return _this.playCssAnimation(marker_id, "fadein_and_drop", function () {
+                        dojo.style(marker_id, "z-index", "10");
+                        dojo.style(marker_id, "opacity", "");
                         for (var _i = 0, unclip_1 = unclip; _i < unclip_1.length; _i++) {
                             var item = unclip_1[_i];
-                            $(item).setAttribute('style', 'clip-path: none; outline: none; box-shadow: none !important; background-color: revert;');
+                            $(item).setAttribute("style", "clip-path: none; outline: none; box-shadow: none !important; background-color: revert;");
                         }
                     }, function () {
-                        dojo.style(marker_id, 'z-index', '');
+                        dojo.style(marker_id, "z-index", "");
                         for (var _i = 0, unclip_2 = unclip; _i < unclip_2.length; _i++) {
                             var item = unclip_2[_i];
-                            $(item).setAttribute('style', '');
+                            $(item).setAttribute("style", "");
                         }
                     });
                 });
-                if ((place_id.startsWith('award_') || place_id.startsWith('milestone')) && !this.game.isLayoutFull() && this.getAnimationAmount() == 3) {
+                if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) &&
+                    !this.game.isLayoutFull() &&
+                    this.getAnimationAmount() == 3) {
                     return [2 /*return*/, p_mid.then(function () {
-                            return _this.playCssAnimation(place_id, 'award_depop', function () {
-                                $(place_id).setAttribute('style', 'box-shadow: none !important;');
+                            return _this.playCssAnimation(place_id, "award_depop", function () {
+                                $(place_id).setAttribute("style", "box-shadow: none !important;");
                             }, function () {
-                                $(place_id).setAttribute('style', '');
+                                $(place_id).setAttribute("style", "");
                             });
                         })];
                 }
@@ -2292,16 +2303,20 @@ var CustomAnimation = /** @class */ (function () {
                     return [2 /*return*/, this.getImmediatePromise()];
                 if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
                     return [2 /*return*/, this.getImmediatePromise()];
-                anim_1 = this.playCssAnimation(item_id, 'pop', function () {
-                    dojo.style(item_id, 'z-index', '10000');
+                anim_1 = this.playCssAnimation(item_id, "pop", function () {
+                    dojo.style(item_id, "z-index", "10000");
                 }, function () {
-                    dojo.style(item_id, 'transform', 'scale(1.2)');
+                    dojo.style(item_id, "transform", "scale(1.2)");
                 });
-                return [2 /*return*/, anim_1.then(function () { return _this.wait(_this.getWaitDuration(800)); }).then(function () {
-                        return _this.playCssAnimation(item_id, 'depop', function () {
-                            dojo.style(item_id, 'transform', '');
+                return [2 /*return*/, anim_1
+                        .then(function () {
+                        return _this.wait(_this.getWaitDuration(800));
+                    })
+                        .then(function () {
+                        return _this.playCssAnimation(item_id, "depop", function () {
+                            dojo.style(item_id, "transform", "");
                         }, function () {
-                            dojo.style(item_id, 'z-index', '');
+                            dojo.style(item_id, "z-index", "");
                         });
                     })];
             });
@@ -2316,46 +2331,46 @@ var CustomAnimation = /** @class */ (function () {
                     return [2 /*return*/, this.getImmediatePromise()];
                 if (qty == undefined || qty == 0)
                     return [2 /*return*/, this.getImmediatePromise()];
-                trk_item = tracker.replace('tracker_', '').split('_')[0];
+                trk_item = tracker.replace("tracker_", "").split("_")[0];
                 delay = 0;
                 mark = "";
                 if (Math.abs(qty) > 3) {
                     mark = String(Math.abs(qty));
                     qty = -1;
                 }
-                htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + '</div>';
+                htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + "</div>";
                 _loop_2 = function (i) {
-                    var tmpid = 'tmp_' + String(Math.random() * 1000000000);
+                    var tmpid = "tmp_" + String(Math.random() * 1000000000);
                     var visiblenode = "";
-                    if (dojo.style('gameaction_status_wrap', "display") != "none") {
-                        visiblenode = 'gameaction_status';
+                    if (dojo.style("gameaction_status_wrap", "display") != "none") {
+                        visiblenode = "gameaction_status";
                     }
-                    else if (dojo.style('pagemaintitle_wrap', "display") != "none") {
-                        visiblenode = 'pagemaintitletext';
+                    else if (dojo.style("pagemaintitle_wrap", "display") != "none") {
+                        visiblenode = "pagemaintitletext";
                     }
-                    var fnode = visiblenode != "" ? $(visiblenode).querySelector('.token_img.tracker_' + trk_item) : null;
+                    var fnode = visiblenode != "" ? $(visiblenode).querySelector(".token_img.tracker_" + trk_item) : null;
                     if (fnode) {
                         dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', fnode);
                     }
                     else {
-                        dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+                        dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
                     }
-                    var origin_1 = qty > 0 ? 'move_from_' + tmpid : tracker.replace('tracker_', 'alt_tracker_');
-                    var destination = qty > 0 ? tracker.replace('tracker_', 'alt_tracker_') : 'move_from_' + tmpid;
-                    if (!this_2.nodeExists(origin_1) && origin_1.startsWith('alt_'))
+                    var origin_1 = qty > 0 ? "move_from_" + tmpid : tracker.replace("tracker_", "alt_tracker_");
+                    var destination = qty > 0 ? tracker.replace("tracker_", "alt_tracker_") : "move_from_" + tmpid;
+                    if (!this_2.nodeExists(origin_1) && origin_1.startsWith("alt_"))
                         origin_1 = tracker;
-                    if (!this_2.nodeExists(destination) && destination.startsWith('alt_'))
+                    if (!this_2.nodeExists(destination) && destination.startsWith("alt_"))
                         destination = tracker;
-                    dojo.place(htm.replace('%t', tmpid), origin_1);
+                    dojo.place(htm.replace("%t", tmpid), origin_1);
                     this_2.wait(delay).then(function () {
-                        if (destination.startsWith('move_from_') && !dojo.byId(destination)) {
-                            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', 'thething');
+                        if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
+                            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
                         }
                         _this.game.slideAndPlace(tmpid, destination, _this.getWaitDuration(500), undefined, function () {
                             if (dojo.byId(tmpid))
                                 dojo.destroy(tmpid);
-                            if (dojo.byId('move_from_' + tmpid))
-                                dojo.destroy('move_from_' + tmpid);
+                            if (dojo.byId("move_from_" + tmpid))
+                                dojo.destroy("move_from_" + tmpid);
                         });
                     });
                     /*
@@ -2374,23 +2389,31 @@ var CustomAnimation = /** @class */ (function () {
         });
     };
     CustomAnimation.prototype.addAnimationsToDocument = function (animations) {
-        if ($('css_animations'))
+        if ($("css_animations"))
             return;
-        var head = document.getElementsByTagName('head')[0];
-        var s = document.createElement('style');
-        s.setAttribute('type', 'text/css');
-        s.setAttribute('id', 'css_animations');
+        var head = document.getElementsByTagName("head")[0];
+        var s = document.createElement("style");
+        s.setAttribute("type", "text/css");
+        s.setAttribute("id", "css_animations");
         var css = "";
         for (var _i = 0, _a = Object.keys(animations); _i < _a.length; _i++) {
             var idx = _a[_i];
             var anim = animations[idx];
-            css = css + '.anim_' + anim.name + ' {\n';
+            css = css + ".anim_" + anim.name + " {\n";
             //  css = css + ' animation: key_anim_' + anim.name + ' ' + anim.duration + 'ms ' + anim.easing + ';\n'
-            css = css + ' animation: key_anim_' + anim.name + ' calc(var(--localsetting_animationspeed) * ' + anim.duration / 100 + 'ms) ' + anim.easing + ';\n';
-            css = css + '}\n';
-            css = css + '@keyframes key_anim_' + anim.name + ' {\n';
+            css =
+                css +
+                    " animation: key_anim_" +
+                    anim.name +
+                    " calc(var(--localsetting_animationspeed) * " +
+                    anim.duration / 100 +
+                    "ms) " +
+                    anim.easing +
+                    ";\n";
+            css = css + "}\n";
+            css = css + "@keyframes key_anim_" + anim.name + " {\n";
             css = css + anim.keyframes;
-            css = css + '}\n';
+            css = css + "}\n";
         }
         s.innerHTML = css;
         head.appendChild(s);
@@ -2399,15 +2422,15 @@ var CustomAnimation = /** @class */ (function () {
         //if(this.game.animated) return true;
         if (this.game.instantaneousMode)
             return false;
-        if (this.getAnimationAmount() == 1)
+        if (this.getAnimationAmount() <= 1)
             return false;
-        if (document.hidden || document.visibilityState === 'hidden')
+        if (document.hidden || document.visibilityState === "hidden")
             return false;
         return true;
     };
     //"fake" promise, made to use as functional empty default
     CustomAnimation.prototype.getImmediatePromise = function () {
-        return Promise.resolve('');
+        return Promise.resolve("");
     };
     //return a timed promise
     CustomAnimation.prototype.wait = function (ms) {
@@ -2426,16 +2449,16 @@ var CustomAnimation = /** @class */ (function () {
                     return [2 /*return*/, this.getImmediatePromise()];
                 animation = this.animations[animationname];
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var cssClass = 'anim_' + animation.name;
+                        var cssClass = "anim_" + animation.name;
                         var timeoutId = null;
                         var resolvedOK = false;
                         var localCssAnimationCallback = function (e) {
-                            if (e.animationName != 'key_' + cssClass) {
+                            if (e.animationName != "key_" + cssClass) {
                                 //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
                                 return;
                             }
                             resolvedOK = true;
-                            $(targetId).removeEventListener('animationend', localCssAnimationCallback);
+                            $(targetId).removeEventListener("animationend", localCssAnimationCallback);
                             $(targetId).classList.remove(cssClass);
                             if (onEnd)
                                 onEnd();
@@ -2444,7 +2467,7 @@ var CustomAnimation = /** @class */ (function () {
                         };
                         if (onStart)
                             onStart();
-                        $(targetId).addEventListener('animationend', localCssAnimationCallback);
+                        $(targetId).addEventListener("animationend", localCssAnimationCallback);
                         dojo.addClass(targetId, cssClass);
                         // this.MAIN.log('+anim',animationname,'starting playing');
                         //timeout security
@@ -2452,7 +2475,7 @@ var CustomAnimation = /** @class */ (function () {
                             if (resolvedOK)
                                 return;
                             if (_this.nodeExists(targetId)) {
-                                $(targetId).removeEventListener('animationend', localCssAnimationCallback);
+                                $(targetId).removeEventListener("animationend", localCssAnimationCallback);
                                 $(targetId).classList.remove(cssClass);
                             }
                             if (onEnd)
@@ -2477,7 +2500,7 @@ var CustomAnimation = /** @class */ (function () {
         }
         return new Promise(function (resolve) {
             var originalZIndex = Number(object.style.zIndex);
-            object.style.zIndex = '25';
+            object.style.zIndex = "25";
             var objectCR = object.getBoundingClientRect();
             var destinationCR = destination.getBoundingClientRect();
             var deltaX = destinationCR.left - objectCR.left + (posX !== null && posX !== void 0 ? posX : 0) * zoom;
@@ -2486,34 +2509,34 @@ var CustomAnimation = /** @class */ (function () {
             var attachToNewParent = function () {
                 object.style.top = posY !== undefined ? "".concat(posY, "px") : null;
                 object.style.left = posX !== undefined ? "".concat(posX, "px") : null;
-                object.style.position = (posX !== undefined || posY !== undefined) ? 'absolute' : null;
-                object.style.zIndex = originalZIndex ? '' + originalZIndex : null;
+                object.style.position = posX !== undefined || posY !== undefined ? "absolute" : null;
+                object.style.zIndex = originalZIndex ? "" + originalZIndex : null;
                 object.style.transform = rotation ? "rotate(".concat(rotation, "deg)") : null;
                 object.style.transition = null;
                 destination.appendChild(object);
             };
-            object.style.transition = 'transform ' + _this.slide_duration + 'ms ease-in';
+            object.style.transition = "transform " + _this.slide_duration + "ms ease-in";
             object.style.transform = "translate(".concat(deltaX / zoom, "px, ").concat(deltaY / zoom, "px) rotate(").concat(rotation, "deg)");
             if (object.style.position != "absolute")
-                object.style.position = 'relative';
+                object.style.position = "relative";
             var securityTimeoutId = null;
             var transitionend = function () {
                 attachToNewParent();
-                object.removeEventListener('transitionend', transitionend);
-                object.removeEventListener('transitioncancel', transitionend);
+                object.removeEventListener("transitionend", transitionend);
+                object.removeEventListener("transitioncancel", transitionend);
                 resolve(true);
                 if (securityTimeoutId) {
                     clearTimeout(securityTimeoutId);
                 }
             };
-            object.addEventListener('transitionend', transitionend);
-            object.addEventListener('transitioncancel', transitionend);
+            object.addEventListener("transitionend", transitionend);
+            object.addEventListener("transitioncancel", transitionend);
             // security check : if transition fails, we force tile to destination
             securityTimeoutId = setTimeout(function () {
                 if (!destination.contains(object)) {
                     attachToNewParent();
-                    object.removeEventListener('transitionend', transitionend);
-                    object.removeEventListener('transitioncancel', transitionend);
+                    object.removeEventListener("transitionend", transitionend);
+                    object.removeEventListener("transitioncancel", transitionend);
                     resolve(true);
                 }
             }, _this.slide_duration * 1.2);
@@ -7030,7 +7053,7 @@ var GameXBody = /** @class */ (function (_super) {
     //Prevent moving parts when animations are set to none
     GameXBody.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
         if (!this.customAnimation.areAnimationsPlayed()) {
-            return _super.prototype.phantomMove.call(this, mobileId, newparentId, -1, mobileStyle, onEnd);
+            return _super.prototype.phantomMove.call(this, mobileId, newparentId, 0, mobileStyle, onEnd);
         }
         else {
             return _super.prototype.phantomMove.call(this, mobileId, newparentId, duration, mobileStyle, onEnd);
