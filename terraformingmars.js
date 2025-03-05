@@ -2162,16 +2162,25 @@ var CustomAnimation = /** @class */ (function () {
         }
     };
     CustomAnimation.prototype.animateTilePop = function (token_id) {
-        if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
-            return this.getImmediatePromise();
-        return this.playCssAnimation(token_id, "grow_appear", null, null);
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
+                    return [2 /*return*/];
+                return [2 /*return*/, this.playCssAnimation(token_id, "grow_appear", null, null)];
+            });
+        });
     };
-    CustomAnimation.prototype.animatetingle = function (counter_id) {
-        if (!this.areAnimationsPlayed())
-            return this.getImmediatePromise();
-        if (this.nodeExists("alt_" + counter_id))
-            this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
-        return this.playCssAnimation(counter_id, "small_tingle", null, null);
+    CustomAnimation.prototype.animateTingle = function (counter_id) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (!this.areAnimationsPlayed())
+                    return [2 /*return*/];
+                if (this.nodeExists("alt_" + counter_id)) {
+                    void this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
+                }
+                return [2 /*return*/, this.playCssAnimation(counter_id, "small_tingle", null, null)];
+            });
+        });
     };
     CustomAnimation.prototype.animatePlaceResourceOnCard = function (resource_id, place_id) {
         return __awaiter(this, void 0, void 0, function () {
@@ -2179,7 +2188,7 @@ var CustomAnimation = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 animate_token = resource_id;
                 if (!this.game.isLayoutFull() && place_id.startsWith("card_main_"))
                     animate_token = place_id.replace("card_main_", "resource_holder_");
@@ -2221,11 +2230,11 @@ var CustomAnimation = /** @class */ (function () {
             var animate_token;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 animate_token = card_id !== null && card_id !== void 0 ? card_id : $(resource_id).parentElement.id;
                 if (animate_token.includes("tableau")) {
                     //too late, resource is not on card anymore
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 }
                 return [2 /*return*/, this.playCssAnimation(animate_token, "great_tingle", function () {
                         dojo.style(animate_token, "z-index", "10");
@@ -2241,7 +2250,7 @@ var CustomAnimation = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 unclip = [];
                 if (place_id.startsWith("tile")) {
                     unclip.push(place_id);
@@ -2287,9 +2296,6 @@ var CustomAnimation = /** @class */ (function () {
                             });
                         })];
                 }
-                else {
-                    return [2 /*return*/, this.getImmediatePromise()];
-                }
                 return [2 /*return*/];
             });
         });
@@ -2300,9 +2306,9 @@ var CustomAnimation = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!$(item_id))
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 anim_1 = this.playCssAnimation(item_id, "pop", function () {
                     dojo.style(item_id, "z-index", "10000");
                 }, function () {
@@ -2310,7 +2316,7 @@ var CustomAnimation = /** @class */ (function () {
                 });
                 return [2 /*return*/, anim_1
                         .then(function () {
-                        return _this.wait(_this.getWaitDuration(800));
+                        return _this.wait(_this.getWaitDuration(500));
                     })
                         .then(function () {
                         return _this.playCssAnimation(item_id, "depop", function () {
@@ -2324,13 +2330,13 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.moveResources = function (tracker, qty) {
         return __awaiter(this, void 0, void 0, function () {
-            var trk_item, delay, mark, htm, _loop_2, this_2, i;
+            var trk_item, delay, mark, htm, singleDur, sequenceDur, _loop_2, this_2, i;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 if (qty == undefined || qty == 0)
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 trk_item = tracker.replace("tracker_", "").split("_")[0];
                 delay = 0;
                 mark = "";
@@ -2339,6 +2345,8 @@ var CustomAnimation = /** @class */ (function () {
                     qty = -1;
                 }
                 htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + "</div>";
+                singleDur = this.getWaitDuration(500);
+                sequenceDur = this.getWaitDuration(200);
                 _loop_2 = function (i) {
                     var tmpid = "tmp_" + String(Math.random() * 1000000000);
                     var visiblenode = "";
@@ -2366,25 +2374,18 @@ var CustomAnimation = /** @class */ (function () {
                         if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
                             dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
                         }
-                        _this.game.slideAndPlace(tmpid, destination, _this.getWaitDuration(500), undefined, function () {
-                            if (dojo.byId(tmpid))
-                                dojo.destroy(tmpid);
-                            if (dojo.byId("move_from_" + tmpid))
-                                dojo.destroy("move_from_" + tmpid);
+                        _this.game.slideAndPlace(tmpid, destination, singleDur, undefined, function () {
+                            dojo.destroy(tmpid);
+                            dojo.destroy("move_from_" + tmpid);
                         });
                     });
-                    /*
-                    this.wait(delay).then(()=>{return this.slideToObjectAndAttach(tmpid,destination);}).then(()=>{
-                        dojo.destroy(tmpid);
-                      }
-                    );*/
-                    delay += this_2.getWaitDuration(200);
+                    delay += sequenceDur;
                 };
                 this_2 = this;
                 for (i = 0; i < Math.abs(qty); i++) {
                     _loop_2(i);
                 }
-                return [2 /*return*/, this.wait(delay + this.getWaitDuration(500))];
+                return [2 /*return*/, this.wait(Math.max(delay + singleDur, 900))]; // no more than 900ms to not cause timeout
             });
         });
     };
@@ -2446,7 +2447,7 @@ var CustomAnimation = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!$(targetId))
-                    return [2 /*return*/, this.getImmediatePromise()];
+                    return [2 /*return*/];
                 animation = this.animations[animationname];
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var cssClass = "anim_" + animation.name;
@@ -4809,7 +4810,7 @@ var GameXBody = /** @class */ (function (_super) {
                 ui: "checkbox"
             },
             { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
+            { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 100, inc: 5 }, default: 50, ui: "slider" }
         ]);
         this.localSettings.setup();
         //this.localSettings.renderButton('player_config_row');
@@ -5750,11 +5751,11 @@ var GameXBody = /** @class */ (function (_super) {
                 var type = getPart(key, 1);
                 if (this.resourceTrackers.includes(type) || type == "tr") {
                     // cardboard layout animating cubes on playerboard instead
-                    this.customAnimation.animatetingle(key);
+                    this.customAnimation.animateTingle(key);
                     return this.customAnimation.moveResources(key, inc);
                 }
                 if ($(key)) {
-                    return this.customAnimation.animatetingle(key);
+                    return this.customAnimation.animateTingle(key);
                 }
             }
             return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));

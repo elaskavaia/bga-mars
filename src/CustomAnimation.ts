@@ -163,19 +163,21 @@ class CustomAnimation {
     }
   }
 
-  animateTilePop(token_id: string) {
-    if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2) return this.getImmediatePromise();
+  async animateTilePop(token_id: string) {
+    if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2) return;
     return this.playCssAnimation(token_id, "grow_appear", null, null);
   }
 
-  animatetingle(counter_id: string) {
-    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
-    if (this.nodeExists("alt_" + counter_id)) this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
+  async animateTingle(counter_id: string) {
+    if (!this.areAnimationsPlayed()) return;
+    if (this.nodeExists("alt_" + counter_id)) {
+      void this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
+    }
     return this.playCssAnimation(counter_id, "small_tingle", null, null);
   }
 
   async animatePlaceResourceOnCard(resource_id: string, place_id: string): Promise<any> {
-    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+    if (!this.areAnimationsPlayed()) return;
 
     let animate_token = resource_id;
     if (!this.game.isLayoutFull() && place_id.startsWith("card_main_")) animate_token = place_id.replace("card_main_", "resource_holder_");
@@ -196,7 +198,7 @@ class CustomAnimation {
       );
     }
 
-    const anim_2: Promise<any> = anim_1.then(() => {
+    const anim_2 = anim_1.then(() => {
       return this.playCssAnimation(
         animate_token,
         "great_tingle",
@@ -228,11 +230,11 @@ class CustomAnimation {
   }
 
   async animateRemoveResourceFromCard(resource_id: string, card_id?: string): Promise<any> {
-    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+    if (!this.areAnimationsPlayed()) return;
     const animate_token = card_id ?? $(resource_id).parentElement.id;
     if (animate_token.includes("tableau")) {
       //too late, resource is not on card anymore
-      return this.getImmediatePromise();
+      return;
     }
     return this.playCssAnimation(
       animate_token,
@@ -246,8 +248,8 @@ class CustomAnimation {
     );
   }
 
-  async animatePlaceMarker(marker_id: string, place_id: string): Promise<any> {
-    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
+  async animatePlaceMarker(marker_id: string, place_id: string): Promise<void> {
+    if (!this.areAnimationsPlayed()) return;
 
     let unclip: string[] = [];
     if (place_id.startsWith("tile")) {
@@ -312,14 +314,12 @@ class CustomAnimation {
           }
         );
       });
-    } else {
-      return this.getImmediatePromise();
     }
   }
 
-  async animateMapItemAwareness(item_id: string): Promise<any> {
-    if (!$(item_id)) return this.getImmediatePromise();
-    if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2) return this.getImmediatePromise();
+  async animateMapItemAwareness(item_id: string): Promise<void> {
+    if (!$(item_id)) return;
+    if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2) return;
 
     const anim_1 = this.playCssAnimation(
       item_id,
@@ -334,7 +334,7 @@ class CustomAnimation {
 
     return anim_1
       .then(() => {
-        return this.wait(this.getWaitDuration(800));
+        return this.wait(this.getWaitDuration(500));
       })
       .then(() => {
         return this.playCssAnimation(
@@ -351,8 +351,8 @@ class CustomAnimation {
   }
 
   async moveResources(tracker: string, qty: number): Promise<any> {
-    if (!this.areAnimationsPlayed()) return this.getImmediatePromise();
-    if (qty == undefined || qty == 0) return this.getImmediatePromise();
+    if (!this.areAnimationsPlayed()) return;
+    if (qty == undefined || qty == 0) return;
 
     const trk_item = tracker.replace("tracker_", "").split("_")[0];
 
@@ -363,6 +363,8 @@ class CustomAnimation {
       qty = -1;
     }
     const htm = '<div id="%t" class="resmover">' + CustomRenders.parseActionsToHTML(trk_item, mark) + "</div>";
+    const singleDur = this.getWaitDuration(500);
+    const sequenceDur = this.getWaitDuration(200);
 
     for (let i = 0; i < Math.abs(qty); i++) {
       let tmpid = "tmp_" + String(Math.random() * 1000000000);
@@ -393,20 +395,15 @@ class CustomAnimation {
         if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
           dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
         }
-        this.game.slideAndPlace(tmpid, destination, this.getWaitDuration(500), undefined, () => {
-          if (dojo.byId(tmpid)) dojo.destroy(tmpid);
-          if (dojo.byId("move_from_" + tmpid)) dojo.destroy("move_from_" + tmpid);
+        this.game.slideAndPlace(tmpid, destination, singleDur, undefined, () => {
+          dojo.destroy(tmpid);
+          dojo.destroy("move_from_" + tmpid);
         });
       });
 
-      /*
-      this.wait(delay).then(()=>{return this.slideToObjectAndAttach(tmpid,destination);}).then(()=>{
-          dojo.destroy(tmpid);
-        }
-      );*/
-      delay += this.getWaitDuration(200);
+      delay += sequenceDur;
     }
-    return this.wait(delay + this.getWaitDuration(500));
+    return this.wait(Math.max(delay + singleDur, 900)); // no more than 900ms to not cause timeout
   }
 
   addAnimationsToDocument(animations: any): void {
@@ -463,7 +460,7 @@ class CustomAnimation {
   //Adds css class on element, plays it, executes onEnd and removes css class
   //a promise is returned for easy chaining
   async playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any): Promise<any> {
-    if (!$(targetId)) return this.getImmediatePromise();
+    if (!$(targetId)) return;
     const animation = this.animations[animationname];
 
     return new Promise((resolve, reject) => {

@@ -793,7 +793,7 @@ class GameXBody extends GameTokens {
         ui: "checkbox"
       },
       { key: "animationamount", label: _("Animations amount"), range: { min: 1, max: 3, inc: 1 }, default: 3, ui: "slider" },
-      { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 200, inc: 5 }, default: 100, ui: "slider" }
+      { key: "animationspeed", label: _("Animation time"), range: { min: 25, max: 100, inc: 5 }, default: 50, ui: "slider" }
     ]);
     this.localSettings.setup();
     //this.localSettings.renderButton('player_config_row');
@@ -1925,11 +1925,11 @@ awarded.`);
         const type = getPart(key, 1);
         if (this.resourceTrackers.includes(type) || type == "tr") {
           // cardboard layout animating cubes on playerboard instead
-          this.customAnimation.animatetingle(key);
+          this.customAnimation.animateTingle(key);
           return this.customAnimation.moveResources(key, inc);
         }
         if ($(key)) {
-          return this.customAnimation.animatetingle(key);
+          return this.customAnimation.animateTingle(key);
         }
       }
       return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));

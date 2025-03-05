@@ -7948,7 +7948,7 @@ $this->token_types = [
   ],
   // Maps
   'map_0' => [
-    'name' => clienttranslate('Thesaris')
+    'name' => clienttranslate('Tharsis')
   ],
   'map_1' => [
     'name' => clienttranslate('Elysium')
