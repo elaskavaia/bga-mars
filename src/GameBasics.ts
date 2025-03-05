@@ -493,13 +493,23 @@ class GameBasics extends GameGui {
     }
 
     setStyleAttributes(mobileNode, mobileStyle);
+    newparent.classList.add("move_target");
+    oldParent?.classList.add("move_source");
     mobileNode.offsetHeight; // recalc
 
     if (noanimation) {
+      setTimeout(() => {
+        newparent.offsetHeight;
+        newparent.classList.remove("move_target");
+        oldParent?.classList.remove("move_source");
+        if (onEnd) onEnd(mobileNode);
+      }, 0);
       return;
     }
-    newparent.classList.add("move_target");
-    oldParent?.classList.add("move_source");
+
+
+
+
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
     try {
       //setStyleAttributes(desti, mobileStyle);
@@ -522,9 +532,10 @@ class GameBasics extends GameGui {
       }, duration);
     } catch (e) {
       // if bad thing happen we have to clean up clones
-      console.error(e);
+      console.error("ERR:C01:animation error",e);
       desti.parentNode?.removeChild(desti);
       clone.parentNode?.removeChild(clone); // destroy clone
+      //if (onEnd) onEnd(mobileNode);
     }
   }
 

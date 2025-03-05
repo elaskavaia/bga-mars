@@ -1086,26 +1086,6 @@
     background-color: var(--plcolor);
   }
 
-  .hand_sorter {
-    position: absolute;
-    top: unset;
-    bottom: 5px;
-    left: 5px;
-    display: flex;
-    flex-direction: column;
-    row-gap: 3px;
-    background-color: unset;
-    color: rgba(0, 0, 0, 0.34);
-    border-color: rgba(0, 0, 0, 0.34);
-    border-radius: 1vh;
-    padding: unset;
-    z-index: 30;
-    width: unset;
-    height: unset;
-    justify-content: center;
-    align-items: center;
-  }
-
   .stack_dd_buttons.open .stack_btn .stack_ddl_label {
     text-align: unset;
     padding-left: 5%;

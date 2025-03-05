@@ -27,7 +27,6 @@
 }
 
 .handy {
-  min-height: var(--card-height);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -35,15 +34,11 @@
   position: relative;
 }
 
-.draw,
-.draft {
-  min-height: unset;
-}
-
 .handy::after {
   content: attr(data-name);
   position: absolute;
-  top: 0.7em;
+  top: unset;
+  bottom: 1.3em;
   left: 0;
   font-size: calc(var(--card-width)*0.2);
   font-family: var(--mars-font);
@@ -55,21 +50,16 @@
   height: calc(var(--card-width) * 0.2);
 }
 
-.mcompact {
-  .handy::after {
-    top:revert;
-    bottom:1.3em;
-  }
-}
 .draft:empty {
   display: none;
 }
 
-.draw:has(.hand_sorter:only-child) {
+.handy:has(.hand_sorter:only-child) {
   display: none;
 }
 .handy.move_target, .handy.move_source {
-  display: revert !important;
+  display: flex !important;
+  min-height: var(--card-height);
 }
 
 // .draw:empty:after,

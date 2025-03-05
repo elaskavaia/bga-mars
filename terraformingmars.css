@@ -155,7 +155,6 @@
 }
 
 .handy {
-  min-height: var(--card-height);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -163,15 +162,11 @@
   position: relative;
 }
 
-.draw,
-.draft {
-  min-height: unset;
-}
-
 .handy::after {
   content: attr(data-name);
   position: absolute;
-  top: 0.7em;
+  top: unset;
+  bottom: 1.3em;
   left: 0;
   font-size: calc(var(--card-width) * 0.2);
   font-family: var(--mars-font);
@@ -183,21 +178,17 @@
   height: calc(var(--card-width) * 0.2);
 }
 
-.mcompact .handy::after {
-  top: revert;
-  bottom: 1.3em;
-}
-
 .draft:empty {
   display: none;
 }
 
-.draw:has(.hand_sorter:only-child) {
+.handy:has(.hand_sorter:only-child) {
   display: none;
 }
 
 .handy.move_target, .handy.move_source {
-  display: revert !important;
+  display: flex !important;
+  min-height: var(--card-height);
 }
 
 .location > * {
@@ -10075,25 +10066,6 @@
   width: 8px;
   height: 8px;
   background-color: var(--plcolor);
-}
-.mfull .hand_sorter {
-  position: absolute;
-  top: unset;
-  bottom: 5px;
-  left: 5px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 3px;
-  background-color: unset;
-  color: rgba(0, 0, 0, 0.34);
-  border-color: rgba(0, 0, 0, 0.34);
-  border-radius: 1vh;
-  padding: unset;
-  z-index: 30;
-  width: unset;
-  height: unset;
-  justify-content: center;
-  align-items: center;
 }
 .mfull .stack_dd_buttons.open .stack_btn .stack_ddl_label {
   text-align: unset;

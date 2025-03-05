@@ -419,12 +419,19 @@ var GameBasics = /** @class */ (function (_super) {
             newparent.appendChild(mobileNode); // move original
         }
         setStyleAttributes(mobileNode, mobileStyle);
-        mobileNode.offsetHeight; // recalc
-        if (noanimation) {
-            return;
-        }
         newparent.classList.add("move_target");
         oldParent === null || oldParent === void 0 ? void 0 : oldParent.classList.add("move_source");
+        mobileNode.offsetHeight; // recalc
+        if (noanimation) {
+            setTimeout(function () {
+                newparent.offsetHeight;
+                newparent.classList.remove("move_target");
+                oldParent === null || oldParent === void 0 ? void 0 : oldParent.classList.remove("move_source");
+                if (onEnd)
+                    onEnd(mobileNode);
+            }, 0);
+            return;
+        }
         var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
         try {
             //setStyleAttributes(desti, mobileStyle);
@@ -450,9 +457,10 @@ var GameBasics = /** @class */ (function (_super) {
         }
         catch (e) {
             // if bad thing happen we have to clean up clones
-            console.error(e);
+            console.error("ERR:C01:animation error", e);
             (_b = desti.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(desti);
             (_c = clone.parentNode) === null || _c === void 0 ? void 0 : _c.removeChild(clone); // destroy clone
+            //if (onEnd) onEnd(mobileNode);
         }
     };
     // HTML MANIPULATIONS
