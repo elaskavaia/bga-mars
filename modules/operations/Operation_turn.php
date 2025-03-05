@@ -8,17 +8,21 @@ class Operation_turn extends AbsOperation {
         return '';
     }
 
-    static function getStandardActions($solo, $skipsec = false) {
+    static function getStandardActions($solo, $skipsec = false, $colonies = false) {
         $actions = ['card', 'stan', 'activate', 'convh', 'convp'];
         if (!$solo) {
             $actions[] = 'claim';
             $actions[] = 'fund';
+        }
+        if ($colonies) {
+            $actions[] = 'trade';
         }
         if ($skipsec) {
             $actions[] = 'skipsec';
         } else {
             $actions[] = 'pass';
         }
+
         return $actions;
     }
 
@@ -60,10 +64,10 @@ class Operation_turn extends AbsOperation {
         // first action of the game, some corp has some rules
         $a1 = $this->getSpecialAction($owner);
         if ($a1) {
-            $this->game->notifyMessage(clienttranslate('${player_name} has a mandatory action to perform as a first action'), [], $player_id);
+            $this->game->notifyWithName('message_warning',clienttranslate('${player_name} has a mandatory action to perform as a first action'), [], $player_id);
             $this->game->queue($owner, implode("/", [$a1, 'pass']));
         } else {
-            $this->game->queue($owner, implode("/", $this->getStandardActions($solo, $secondaction)));
+            $this->game->queue($owner, implode("/", $this->getStandardActions($solo, $secondaction, $this->game->isColoniesVariant())));
         }
 
 

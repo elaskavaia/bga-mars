@@ -8,6 +8,7 @@ require_once "operations/AbsOperation.php";
 require_once "operations/ComplexOperation.php";
 require_once "operations/DelegatedOperation.php";
 require_once "operations/Operation_turn.php";
+require_once "operations/Operation_trade.php";
 
 define("MA_STAGE_SETUP", 1);
 define("MA_STAGE_PRELUDE", 2);
@@ -44,7 +45,7 @@ abstract class PGameXBody extends PGameMachine {
             "var_live_scoring" => 105,
             "var_xundo" => 106, // multi step undo
             "var_map" => 107, // map number
-            "var_colonies" => 108, 
+            "var_colonies" => 108,
         ]);
         $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;
@@ -60,9 +61,8 @@ abstract class PGameXBody extends PGameMachine {
             $players = $this->loadPlayersBasicInfos();
             if ($this->player_preferences) $this->dbUserPrefs->setup($players, $this->player_preferences);
             $this->setGameStateValue('gamestage', MA_STAGE_SETUP);
-            $this->token_types_adjusted2 = false; // clear cache
-            if ($this->isSolo()) {
-                $this->setGameStateValue("var_corporate_era", 1); // solo can only be corp era
+            if ($this->isSolo() && $this->isBasicVariant()) {
+                $this->setGameStateValue("var_corporate_era", 1); // cannot be basic for solo
             }
 
             $this->adjustedMaterial(true);
@@ -70,19 +70,36 @@ abstract class PGameXBody extends PGameMachine {
             $this->tokens->shuffle("deck_main");
             $this->tokens->shuffle("deck_corp");
             $prelude  = $this->isPreludeVariant();
+            $colonies  = $this->isColoniesVariant();
             if ($prelude) {
                 $this->tokens->shuffle("deck_prelude");
             }
-            $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
 
             $initial_draw = 10;
             $tr_value = 20;
             if ($this->isSolo()) {
                 $tr_value = 14;
             }
-            if (!$this->isCorporateEraVariant()) {
+            if ($this->isBasicVariant()) {
                 $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
             }
+
+            if ($colonies) {
+                $this->tokens->shuffle("deck_colo");
+                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Colonies']);
+                $numPlayers = count($players);
+
+                if ($numPlayers == 2) $coloniesNum = 5;
+                else if ($numPlayers == 1) $coloniesNum = 4; // will discard one later
+                else $coloniesNum = $numPlayers + 2;
+                $this->tokens->pickTokensForLocation($coloniesNum, 'deck_colo', 'display_colonies', 1);
+                $colonies = $this->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
+                foreach ($colonies as $colo => $info) {
+                    $prod = $this->getRulesFor($colo, 'prod', '');
+                    if ($prod) $this->tokens->setTokenState($colo, -1);// inactive
+                }
+            }
+
             $corps = 2; //(int)(11 / $this->getPlayersNumber())
             $begginerCorps = $this->getGameStateValue('var_begginers_corp') == 1;
             foreach ($players as $player_id => $player) {
@@ -93,7 +110,8 @@ abstract class PGameXBody extends PGameMachine {
                     $this->tokens->pickTokensForLocation($initial_draw, "deck_main", "hand_$color");
                 }
 
-                if (!$this->isCorporateEraVariant()) {
+                if ($this->isBasicVariant()) {
+                    $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
                     foreach ($production as $prodtype) {
                         $this->effect_incProduction($color, $prodtype, 1);
                     }
@@ -258,11 +276,22 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function isCorporateEraVariant() {
-        return $this->getGameStateValue('var_corporate_era') == 1 || $this->isSolo();
+        return $this->getGameStateValue('var_corporate_era') == 1;
+    }
+
+    function isBasicVariant() {
+        if ($this->isCorporateEraVariant()) return false;
+        if ($this->isPreludeVariant()) return false;
+        if ($this->isColoniesVariant()) return false;
+        return true;
     }
 
     function isPreludeVariant() {
         return $this->getGameStateValue('var_prelude') == 1;
+    }
+
+    function isColoniesVariant() {
+        return $this->getGameStateValue('var_colonies') == 1;
     }
 
     function isDraftVariant() {
@@ -644,6 +673,7 @@ abstract class PGameXBody extends PGameMachine {
     protected function createTokens() {
         $corp_era  = $this->isCorporateEraVariant();
         $prelude  = $this->isPreludeVariant();
+        $colonies  = $this->isColoniesVariant();
         foreach ($this->token_types as $id => $info) {
             if (startsWith($id, "card_")) {
                 $deck = array_get($info, 'deck');
@@ -654,6 +684,11 @@ abstract class PGameXBody extends PGameMachine {
                 }
                 if (!$prelude) {
                     if ($deck == 'Prelude') {
+                        continue;
+                    }
+                }
+                if (!$colonies) {
+                    if ($deck == 'Colonies') {
                         continue;
                     }
                 }
@@ -924,7 +959,7 @@ abstract class PGameXBody extends PGameMachine {
                 if ($context) $this->tokens->countTokensInLocation("$context");
                 return $this->getCountOfResOnCards("$owner");
             case  'resFloater':
-                return $this->getCountOfResOnCards("$owner",'Floater');
+                return $this->getCountOfResOnCards("$owner", 'Floater');
             case  'cost':
                 return $this->getRulesFor($context, 'cost');
 
@@ -1636,6 +1671,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $events = $this->getPlayCardEvents($card_id, 'play_');
         $this->notifyEffect($color, $events, $card_id);
+        $this->activateColonies($card_id);
         $this->notifyScoringUpdate();
     }
 
@@ -1665,6 +1701,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->executeImmediately($color, $rules, 1, $card_id);
         $events = $this->getPlayCardEvents($card_id, 'play_');
         $this->notifyEffect($color, $events, $card_id);
+        $this->activateColonies($card_id);
 
         // special case for Tharsis Republic it gains income for 2 placed cities in solo game
         if ($this->isSolo()) {
@@ -1826,6 +1863,10 @@ abstract class PGameXBody extends PGameMachine {
                 throw new BgaUserException(self::_("Nothing to undo"));
         }
         $this->systemAssertTrue("Cannot undo $optype");
+    }
+
+    function  activateColonies($card_id) {
+        Operation_trade::activateColoniesOnPlayCard($card_id, $this);
     }
 
     function getPlayCardEvents($card_id, $prefix = ''): array {
@@ -2579,7 +2620,7 @@ abstract class PGameXBody extends PGameMachine {
     function getGeneralistCount($owner) {
         $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
         $count = 0;
-        $corpera = $this->isCorporateEraVariant() ? 0 : 1;
+        $corpera = $this->isBasicVariant() ? 1 : 0;
         foreach ($production as $p) {
             $trackerId = $this->getTrackerId($owner, $p);
             $value = (int) $this->tokens->getTokenState($trackerId);
@@ -2928,7 +2969,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getTokensUpdate($player_id) {
-        $ops = Operation_turn::getStandardActions($this->isSolo());
+        $ops = Operation_turn::getStandardActions($this->isSolo(), false, $this->isColoniesVariant());
         $operations = [];
         $curr = $this->getCurrentPlayerId();
         foreach ($ops as $optype) {

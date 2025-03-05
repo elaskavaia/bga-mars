@@ -23,6 +23,7 @@ class GameUT extends terraformingmars {
     var $multimachine;
     var $xtable;
     var $map_number = 0;
+    var $var_colonies = 0;
     var $_colors = [];
     function __construct() {
         include "./material.inc.php";
@@ -52,6 +53,10 @@ class GameUT extends terraformingmars {
 
     function getMapNumber() {
         return $this->map_number;
+    }
+
+    function isColoniesVariant() {
+        return $this->var_colonies;
     }
 
     function setListerts(array $l) {
@@ -582,7 +587,7 @@ final class GameTest extends TestCase {
         $fish = $game->mtFind('name', 'Fish');
 
         $game->effect_playCard($color, $fish);
-    
+
         for ($i = 0; $i < 2; $i++) {
             $game->dbSetTokenLocation("resource_{$color}_$i", $fish, 1); // add a fish
         }
@@ -592,7 +597,7 @@ final class GameTest extends TestCase {
         for (; $i < $num; $i++) {
             $game->dbSetTokenLocation("resource_{$color}_$i", $tard, 1); // add a microbe
         }
-        
+
 
         // 5|FARMER|7|farmer|8|requires to have 5 animal and microbe resources combined|5
         $this->assertEquals(2, $this->game->getCountOfResOnCards($color, 'Animal'));
@@ -949,7 +954,6 @@ final class GameTest extends TestCase {
 
         $m->dbSetTokenLocation($card_id, "tableau_$color", 1);
         $this->assertFalse($bu->isVoid());
-  
     }
 
     public function testRoboticWorkforceWithResearchNetwork() {
@@ -958,7 +962,7 @@ final class GameTest extends TestCase {
         //$card2 = $m->mtFindByName('Robotic Workforce');
         $color = PCOLOR;
         $m->dbSetTokenLocation($card_id, "tableau_$color", 1);
-    
+
         /** @var Operation_copybu */
         $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
         $this->assertNotNull($bu);
@@ -967,18 +971,23 @@ final class GameTest extends TestCase {
 
     public function testProductionBuildCards() {
         $m = $this->game();
-        $count = 0;
+
         /** @var Operation_copybu */
         $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
+        $tt = [];
         foreach ($m->token_types as $key => $info) {
             if (!startsWith($key, 'card_main')) continue;
+            $deck = array_get($info, 'deck');
+            if (!array_get($tt, $deck)) $tt[$deck] = 0;
             if (!strstr(array_get($info, 'tags', ''), 'Building')) continue;
             $r = array_get($info, 'r', '');
             $subrules = $bu->getProductionOnlyRules($r, $key);
             //if ($r) $this->assertTrue(!!$subrules,"rules $r");    
-            if ($subrules) $count += 1;
+            if ($subrules) $tt[$deck] += 1;
         }
-        $this->assertEquals(48, $count);
+        $this->assertEquals(35, $tt['Basic']);
+        $this->assertEquals(11, $tt['Corporate']);
+        $this->assertEquals(2, $tt['Prelude']);
     }
 
 
@@ -1595,7 +1604,7 @@ final class GameTest extends TestCase {
 
     public function test_getProductionPlacementBonus() {
         $game = $this->game(4);
-        $bo=$game->getProductionPlacementBonus('hex_3_5');
+        $bo = $game->getProductionPlacementBonus('hex_3_5');
         $this->assertEquals('ps/pu', $bo);
     }
 
@@ -1656,5 +1665,16 @@ final class GameTest extends TestCase {
         $this->assertEquals("u", $op['type']);
         $op =  array_shift($tops);
         $this->assertEquals("ps", $op['type']); // gain steel
+    }
+
+    public function testColony() {
+        $m = new GameUT();
+        $m->var_colonies = 1;
+        $m->init(0);
+        $this->assertFalse($m->isBasicVariant());
+        $this->game = $m;
+        $op = $m->getOperationInstanceFromType("colony", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertFalse($op->isVoid());
     }
 }

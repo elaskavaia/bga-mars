@@ -1038,6 +1038,10 @@ function uRShift($a, $b = 1) {
     return ($a >> $b) & ~((1 << 8 * PHP_INT_SIZE - 1) >> $b - 1);
 }
 
+function c_lienttranslate($str) {
+    return $str;
+}
+
 if (!function_exists("array_key_first")) {
     function array_key_first(array $arr) {
         foreach ($arr as $key => $unused) {
