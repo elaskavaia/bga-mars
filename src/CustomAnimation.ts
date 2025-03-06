@@ -463,43 +463,39 @@ class CustomAnimation {
     if (!$(targetId)) return;
     const animation = this.animations[animationname];
 
-    return new Promise((resolve, reject) => {
-      let cssClass = "anim_" + animation.name;
-      let timeoutId = null;
-      let resolvedOK = false;
-      let localCssAnimationCallback = (e) => {
-        if (e.animationName != "key_" + cssClass) {
-          //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
-          return;
-        }
-        resolvedOK = true;
+    let cssClass = "anim_" + animation.name;
+    let timeoutId = null;
+    let resolvedOK = false;
+    let localCssAnimationCallback = (e) => {
+      if (e.animationName != "key_" + cssClass) {
+        //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
+        return;
+      }
+      resolvedOK = true;
+      $(targetId).removeEventListener("animationend", localCssAnimationCallback);
+      $(targetId).classList.remove(cssClass);
+      if (onEnd) onEnd();
+      //   this.log('+anim',animationname,'resolved with callback');
+    };
+
+    if (onStart) onStart();
+    $(targetId).addEventListener("animationend", localCssAnimationCallback);
+    dojo.addClass(targetId, cssClass);
+
+    // this.MAIN.log('+anim',animationname,'starting playing');
+
+    //timeout security
+
+    timeoutId = setTimeout(() => {
+      if (resolvedOK) return;
+      if (this.nodeExists(targetId)) {
         $(targetId).removeEventListener("animationend", localCssAnimationCallback);
         $(targetId).classList.remove(cssClass);
-        if (onEnd) onEnd();
-        //   this.log('+anim',animationname,'resolved with callback');
-        resolve("");
-      };
+      }
 
-      if (onStart) onStart();
-      $(targetId).addEventListener("animationend", localCssAnimationCallback);
-      dojo.addClass(targetId, cssClass);
-
-      // this.MAIN.log('+anim',animationname,'starting playing');
-
-      //timeout security
-
-      timeoutId = setTimeout(() => {
-        if (resolvedOK) return;
-        if (this.nodeExists(targetId)) {
-          $(targetId).removeEventListener("animationend", localCssAnimationCallback);
-          $(targetId).classList.remove(cssClass);
-        }
-
-        if (onEnd) onEnd();
-        //this.MAIN.log('+anim',animationname,'resolved with timeout');
-        resolve("");
-      }, animation.duration * 1.5);
-    });
+      if (onEnd) onEnd();
+      //this.MAIN.log('+anim',animationname,'resolved with timeout');
+    }, animation.duration * 1.5);
   }
 
   slideToObjectAndAttach(

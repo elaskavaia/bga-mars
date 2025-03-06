@@ -1262,27 +1262,22 @@ class GameBasics extends GameGui {
     dojo.subscribe("log", this, "notif_log");
   }
 
-  subscribeNotification(notifName: string, duration: number = 0, funcName: string = ""): void {
-    if (funcName == "") funcName = notifName;
+  subscribeNotification(notifName: string, duration: number = 0, funcName?: string): void {
+    if (funcName ===undefined) funcName = notifName;
     if (!(typeof this["notif_" + funcName] === "function")) {
-      console.error("Notification notif_" + funcName + " isn't set !");
+      this.showError("ERR:C02:Notification notif_" + funcName + " isn't set !");
+      return;
     }
 
     dojo.subscribe(notifName, this, (notif) => this.playnotif(funcName, notif, duration));
     if (duration == 0) {
       //variable duration
       //don't forget to call this.notifqueue.setSynchronousDuration(duration);
-      this.notifqueue.setSynchronous(notifName);
+      this.notifqueue.setSynchronous(notifName, 5000); // max fallback to prevent haning
     } else if (duration == 1) {
       //Notif has no animation, thus no delay
-      this.notifqueue.setSynchronous(notifName, duration);
-    } else if (duration == -1) {
-      //Notif has to be ignored for active player
-      //something about this has been updated in the bga framework, don't know if the big delay is still necessary
-      this.notifqueue.setSynchronous(notifName, 10000);
-      this.notifqueue.setIgnoreNotificationCheck(notifName, (notif: Notif) => notif.args.player_id == this.player_id);
+      //this.notifqueue.setSynchronous(notifName, duration);
     } else {
-      //real fixed duration
       this.notifqueue.setSynchronous(notifName, duration);
     }
   }
@@ -1326,9 +1321,6 @@ class GameBasics extends GameGui {
       } else {
         //  this.animated=true;
         p.then(() => {
-          // console.log(notifname+' : waiting 50ms after returns');
-          return this.wait(50);
-        }).then(() => {
           this.notifqueue.setSynchronousDuration(10);
           //const executionTime = Date.now() - startTime;
           //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
@@ -1338,12 +1330,6 @@ class GameBasics extends GameGui {
     }
   }
 
-  //return a timed promise
-  wait(ms: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(), ms);
-    });
-  }
   notif_log(notif: Notif) {
     if (notif.log) {
       console.log(notif.log, notif.args);

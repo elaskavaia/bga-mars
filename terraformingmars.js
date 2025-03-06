@@ -1128,30 +1128,23 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.subscribeNotification = function (notifName, duration, funcName) {
         var _this = this;
         if (duration === void 0) { duration = 0; }
-        if (funcName === void 0) { funcName = ""; }
-        if (funcName == "")
+        if (funcName === undefined)
             funcName = notifName;
         if (!(typeof this["notif_" + funcName] === "function")) {
-            console.error("Notification notif_" + funcName + " isn't set !");
+            this.showError("ERR:C02:Notification notif_" + funcName + " isn't set !");
+            return;
         }
         dojo.subscribe(notifName, this, function (notif) { return _this.playnotif(funcName, notif, duration); });
         if (duration == 0) {
             //variable duration
             //don't forget to call this.notifqueue.setSynchronousDuration(duration);
-            this.notifqueue.setSynchronous(notifName);
+            this.notifqueue.setSynchronous(notifName, 5000); // max fallback to prevent haning
         }
         else if (duration == 1) {
             //Notif has no animation, thus no delay
-            this.notifqueue.setSynchronous(notifName, duration);
-        }
-        else if (duration == -1) {
-            //Notif has to be ignored for active player
-            //something about this has been updated in the bga framework, don't know if the big delay is still necessary
-            this.notifqueue.setSynchronous(notifName, 10000);
-            this.notifqueue.setIgnoreNotificationCheck(notifName, function (notif) { return notif.args.player_id == _this.player_id; });
+            //this.notifqueue.setSynchronous(notifName, duration);
         }
         else {
-            //real fixed duration
             this.notifqueue.setSynchronous(notifName, duration);
         }
     };
@@ -1194,9 +1187,6 @@ var GameBasics = /** @class */ (function (_super) {
             else {
                 //  this.animated=true;
                 p.then(function () {
-                    // console.log(notifname+' : waiting 50ms after returns');
-                    return _this.wait(50);
-                }).then(function () {
                     _this.notifqueue.setSynchronousDuration(10);
                     //const executionTime = Date.now() - startTime;
                     //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
@@ -1204,12 +1194,6 @@ var GameBasics = /** @class */ (function (_super) {
                 });
             }
         }
-    };
-    //return a timed promise
-    GameBasics.prototype.wait = function (ms) {
-        return new Promise(function (resolve, reject) {
-            setTimeout(function () { return resolve(); }, ms);
-        });
     };
     GameBasics.prototype.notif_log = function (notif) {
         if (notif.log) {
@@ -2443,48 +2427,45 @@ var CustomAnimation = /** @class */ (function () {
     //a promise is returned for easy chaining
     CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd) {
         return __awaiter(this, void 0, void 0, function () {
-            var animation;
+            var animation, cssClass, timeoutId, resolvedOK, localCssAnimationCallback;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!$(targetId))
                     return [2 /*return*/];
                 animation = this.animations[animationname];
-                return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var cssClass = "anim_" + animation.name;
-                        var timeoutId = null;
-                        var resolvedOK = false;
-                        var localCssAnimationCallback = function (e) {
-                            if (e.animationName != "key_" + cssClass) {
-                                //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
-                                return;
-                            }
-                            resolvedOK = true;
-                            $(targetId).removeEventListener("animationend", localCssAnimationCallback);
-                            $(targetId).classList.remove(cssClass);
-                            if (onEnd)
-                                onEnd();
-                            //   this.log('+anim',animationname,'resolved with callback');
-                            resolve("");
-                        };
-                        if (onStart)
-                            onStart();
-                        $(targetId).addEventListener("animationend", localCssAnimationCallback);
-                        dojo.addClass(targetId, cssClass);
-                        // this.MAIN.log('+anim',animationname,'starting playing');
-                        //timeout security
-                        timeoutId = setTimeout(function () {
-                            if (resolvedOK)
-                                return;
-                            if (_this.nodeExists(targetId)) {
-                                $(targetId).removeEventListener("animationend", localCssAnimationCallback);
-                                $(targetId).classList.remove(cssClass);
-                            }
-                            if (onEnd)
-                                onEnd();
-                            //this.MAIN.log('+anim',animationname,'resolved with timeout');
-                            resolve("");
-                        }, animation.duration * 1.5);
-                    })];
+                cssClass = "anim_" + animation.name;
+                timeoutId = null;
+                resolvedOK = false;
+                localCssAnimationCallback = function (e) {
+                    if (e.animationName != "key_" + cssClass) {
+                        //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
+                        return;
+                    }
+                    resolvedOK = true;
+                    $(targetId).removeEventListener("animationend", localCssAnimationCallback);
+                    $(targetId).classList.remove(cssClass);
+                    if (onEnd)
+                        onEnd();
+                    //   this.log('+anim',animationname,'resolved with callback');
+                };
+                if (onStart)
+                    onStart();
+                $(targetId).addEventListener("animationend", localCssAnimationCallback);
+                dojo.addClass(targetId, cssClass);
+                // this.MAIN.log('+anim',animationname,'starting playing');
+                //timeout security
+                timeoutId = setTimeout(function () {
+                    if (resolvedOK)
+                        return;
+                    if (_this.nodeExists(targetId)) {
+                        $(targetId).removeEventListener("animationend", localCssAnimationCallback);
+                        $(targetId).classList.remove(cssClass);
+                    }
+                    if (onEnd)
+                        onEnd();
+                    //this.MAIN.log('+anim',animationname,'resolved with timeout');
+                }, animation.duration * 1.5);
+                return [2 /*return*/];
             });
         });
     };
