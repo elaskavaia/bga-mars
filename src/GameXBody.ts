@@ -166,8 +166,13 @@ class GameXBody extends GameTokens {
 
       if (!this.isSpectator) {
         this.handman.applySortOrder();
+        let color = this.getPlayerColor(this.player_id);
+        $(`draw_${color}`).dataset.name = _("Draw");
+        $(`draft_${color}`).dataset.name = _("Draft");
+        $(`hand_${color}`).dataset.name = _("Hand");
+        $(`hand_${color}`).dataset.nameempty = _("Hand: Empty");
+        $(`draw_${color}`).dataset.nameempty = _("Draw: Empty");
       }
-
       $(`outer_scoretracker`).addEventListener("click", () => {
         this.onShowScoringTable();
       });
@@ -186,6 +191,10 @@ class GameXBody extends GameTokens {
       }
       const map = this.getMapNumber();
       $("ebd-body").classList.add("map_" + map);
+
+      if (this.isColoniesExpansionEnabled()) {
+        $("ebd-body").classList.add("exp-colonies");
+      }
 
       // debug buttons studio only
       var parent = document.querySelector(".debug_section");
@@ -863,7 +872,11 @@ class GameXBody extends GameTokens {
   }
 
   getMapNumber() {
-    return parseInt(this.gamedatas.table_options["107"]?.value ?? "0");
+    return Number(this.gamedatas.table_options["107"]?.value ?? 0);
+  }
+
+  isColoniesExpansionEnabled() {
+    return (this.gamedatas.table_options["108"]?.value ?? 0) >= 0;
   }
 
   isLiveScoringOn() {
@@ -1604,18 +1617,6 @@ awarded.`);
         const card_effect = displayInfo.text_effect || displayInfo.text_action || "";
         const card_title = displayInfo.name || "";
 
-        /*
-        let corp_a = "";
-        let corp_e= "";
-        if (displayInfo.a) {
-          corp_a = CustomRenders.parseExprToHtml(displayInfo.expr.a, displayInfo.num || null, true);
-        }
-        if (displayInfo.e) {
-          corp_e = CustomRenders.parseExprToHtml(displayInfo.expr.e, displayInfo.num || null, false, true);
-        }*/
-
-        //   if (texts.length>0) card_initial = texts[0];
-        //  if (texts.length>1) card_effect= texts[1];
         decor.innerHTML = `
                   <div class="card_bg"></div>
                   <div class="card_title">${_(card_title)}</div>
@@ -1624,6 +1625,30 @@ awarded.`);
             `;
       } else if (tokenNode.id.startsWith("card_stanproj")) {
         tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
+      } else if (tokenNode.id.startsWith("card_colo_")) {
+        //Corp formatting
+        const decor = this.createDivNode(null, "card_decor", tokenNode.id);
+        // const texts = displayInfo.text.split(';');
+        const card_title = displayInfo.name || "";
+        const card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
+        const card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
+        decor.innerHTML = `
+                  <div class="card_bg"></div>
+                  <div class="card_title">${_(card_title)}</div>
+                  <div class="card_initial">${card_a}<span>Colony Bonus</span></div>
+                  <div class="card_effect">${card_a}<span>Trade Income</span></div>  
+                  <div class="colony-colony-line"></div>  
+                  <div class="colony-trade-line"></div>  
+            `;
+        const line = tokenNode.querySelector(".colony-colony-line");
+        const line2 = tokenNode.querySelector(".colony-trade-line");
+        for (let i = 0; i < 7; i++) {
+          let x = card_r;
+          if (i > 2) x = "";
+          const trnum = displayInfo.slots[i];
+          placeHtml(`<div id='coloslot_${i}' class='coloslot'>${x}</div>`, line);
+          placeHtml(`<div class='tradeslot'>${trnum}</div>`, line2);
+        }
       } else {
         //tags
         let firsttag = "";

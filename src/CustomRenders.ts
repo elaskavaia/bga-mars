@@ -35,12 +35,14 @@ class CustomRenders {
     res_Science: { classes: "token_img tracker_resScience" },
     res_Animal: { classes: "token_img tracker_resAnimal" },
     res_Microbe: { classes: "token_img tracker_resMicrobe" },
+    res_Floater: { classes: "token_img tracker_resAnimal" },
 
     nores_Animal: { classes: "token_img tracker_resAnimal", redborder: "resource", norepeat: true },
     nores_Microbe: { classes: "token_img tracker_resMicrobe", redborder: "resource", norepeat: true },
 
     ores_Microbe: { classes: "token_img tracker_resMicrobe", after: "*", norepeat: true },
     ores_Animal: { classes: "token_img tracker_resAnimal", after: "*", norepeat: true },
+    ores_Floater: { classes: "token_img tracker_resAnimal", after: "*", norepeat: true },
 
     special_tagmicrobe_half: { classes: "tracker badge tracker_tagMicrobe", content: "2", norepeat: true },
 
@@ -99,6 +101,7 @@ class CustomRenders {
   }
 
   public static parseExprToHtml(expr: any, card_num?: number, action_mode: boolean = false, effect_mode: boolean = false): string {
+
     let rethtm = "";
 
     if (!expr || expr.length < 1) return "";
@@ -294,6 +297,7 @@ class CustomRenders {
 
     item = item.replace("ores(Microbe)", "ores_Microbe");
     item = item.replace("ores(Animal)", "ores_Animal");
+    item = item.replace("ores(Floater)", "ores_Animal");
 
     item = item.replace("counter('(tagPlant>=3)*4')", "special_tagplant_sup3");
     item = item.replace("tagMicrobe/2", "special_tagmicrobe_half");

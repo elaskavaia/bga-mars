@@ -171,10 +171,9 @@
   font-size: calc(var(--card-width) * 0.2);
   font-family: var(--mars-font);
   color: rgba(0, 0, 0, 0.34);
-  transform: rotate(-90deg) translateX(-30px) translateY(-8px);
+  transform: rotate(-90deg) translateX(-1em) translateY(-0.3em);
   transform-origin: 0.5em center 0;
-  margin-right: -140px;
-  overflow-wrap: break-word;
+  text-wrap: nowrap;
   height: calc(var(--card-width) * 0.2);
 }
 
@@ -186,6 +185,15 @@
   display: none;
 }
 
+@supports (-moz-appearance: none) {
+  .handy:has(.hand_sorter:only-child) {
+    display: flex;
+    min-height: var(--card-height);
+  }
+  .handy:has(.hand_sorter:only-child)::after {
+    content: attr(data-nameempty);
+  }
+}
 .handy.move_target, .handy.move_source {
   display: flex !important;
   min-height: var(--card-height);
@@ -3560,6 +3568,78 @@
   background-position: -1300% 0;
   right: 6%;
   bottom: 14%;
+}
+
+.card.colocard {
+  width: var(--card-height);
+  height: var(--card-width);
+}
+.card.colocard .card_title {
+  position: absolute;
+  top: 2%;
+  background: linear-gradient(to right, #c2e0f6, black);
+  height: 2em;
+  justify-content: flex-start;
+  left: 1%;
+  text-transform: uppercase;
+}
+.card.colocard .card_bg {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid salmon;
+}
+.card.colocard span {
+  text-transform: uppercase;
+}
+.card.colocard .card_initial {
+  background: linear-gradient(to right, #c2e0f6, black);
+  position: absolute;
+  padding: unset;
+  height: 2em;
+  top: 20%;
+  left: 4%;
+  width: 80%;
+  display: flex;
+}
+.card.colocard .card_effect {
+  background: linear-gradient(to right, #c2e0f6, black);
+  position: absolute;
+  padding: unset;
+  height: 2em;
+  top: 40%;
+  left: 10%;
+  width: 80%;
+  display: flex;
+}
+.card.colocard .colony-colony-line {
+  position: absolute;
+  width: 100%;
+  top: 60%;
+  left: 0%;
+}
+.card.colocard .colony-colony-line .coloslot {
+  outline: 1px solid white;
+  display: inline-block;
+  aspect-ratio: 1/1;
+  width: 14.2857142857%;
+  vertical-align: top;
+  overflow: hidden;
+}
+.card.colocard .colony-trade-line {
+  position: absolute;
+  width: 100%;
+  top: 80%;
+  left: 0%;
+}
+.card.colocard .colony-trade-line .tradeslot {
+  display: inline-block;
+  aspect-ratio: 1/1;
+  width: 14.2857142857%;
+  vertical-align: top;
+  overflow: hidden;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 @keyframes showme {
@@ -11443,10 +11523,6 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   text-align: center;
 }
 
-.hand_sorter:only-child {
-  display: none;
-}
-
 #ebd-body.mobile_version.touch-device #hs_button_hand_area_manual {
   display: none;
 }
@@ -11538,4 +11614,9 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 
 .defhidden {
   display: none;
+}
+
+.exp-colonies .display_colonies {
+  display: flex;
+  flex-direction: row;
 }

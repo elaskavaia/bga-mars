@@ -1606,3 +1606,9 @@ function setStyleAttributes(element: HTMLElement, attrs: { [key: string]: string
     });
   }
 }
+
+/** This is essentically dojo.place but without dojo */
+function placeHtml( html: string, parent: ElementOrId, how: InsertPosition = 'beforeend') {
+  return $(parent).insertAdjacentHTML(how, html);
+}
+

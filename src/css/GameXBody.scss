@@ -928,10 +928,6 @@
   }
 }
 
-.hand_sorter:only-child {
-  display: none;
-}
-
 #ebd-body.mobile_version.touch-device #hs_button_hand_area_manual {
   display: none;
 }
@@ -1046,3 +1042,9 @@
   display: none;
 }
 
+.exp-colonies {
+  .display_colonies {
+    display: flex;
+    flex-direction: row;
+  }
+}

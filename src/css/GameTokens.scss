@@ -43,10 +43,9 @@
   font-size: calc(var(--card-width)*0.2);
   font-family: var(--mars-font);
   color: rgba(0, 0, 0, 0.34);
-  transform: rotate(-90deg) translateX(-30px) translateY(-8px);
+  transform: rotate(-90deg) translateX(-1em) translateY(-0.3em);
   transform-origin: .5em center 0;
-  margin-right: -140px;
-  overflow-wrap: break-word;
+  text-wrap: nowrap;
   height: calc(var(--card-width) * 0.2);
 }
 
@@ -57,6 +56,18 @@
 .handy:has(.hand_sorter:only-child) {
   display: none;
 }
+
+@supports (-moz-appearance:none) {
+  .handy:has(.hand_sorter:only-child) {
+    display: flex;
+    min-height: var(--card-height);
+    &::after {
+      content: attr(data-nameempty);
+
+    }
+  }
+}
+
 .handy.move_target, .handy.move_source {
   display: flex !important;
   min-height: var(--card-height);
