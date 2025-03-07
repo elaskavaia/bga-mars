@@ -396,7 +396,7 @@ var GameBasics = /** @class */ (function (_super) {
         var newparent = $(newparentId);
         if (!newparent)
             throw new Error("Does not exists ".concat(newparentId));
-        if (!duration)
+        if (duration === undefined)
             duration = this.defaultAnimationDuration;
         if (!duration || duration < 0)
             duration = 0;
@@ -1459,7 +1459,7 @@ function setStyleAttributes(element, attrs) {
 }
 /** This is essentically dojo.place but without dojo */
 function placeHtml(html, parent, how) {
-    if (how === void 0) { how = 'beforeend'; }
+    if (how === void 0) { how = "beforeend"; }
     return $(parent).insertAdjacentHTML(how, html);
 }
 var ALL_SORT_TYPES = ["none", "playable", "cost", "vp", "manual"];

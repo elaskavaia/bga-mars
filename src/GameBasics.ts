@@ -471,7 +471,7 @@ class GameBasics extends GameGui {
     if (!mobileNode) throw new Error(`Does not exists ${mobileId}`);
     var newparent = $(newparentId);
     if (!newparent) throw new Error(`Does not exists ${newparentId}`);
-    if (!duration) duration = this.defaultAnimationDuration;
+    if (duration === undefined) duration = this.defaultAnimationDuration;
     if (!duration || duration < 0) duration = 0;
     const noanimation = duration <= 0 || !mobileNode.parentNode;
     const oldParent = mobileNode.parentElement;
@@ -507,9 +507,6 @@ class GameBasics extends GameGui {
       return;
     }
 
-
-
-
     var desti = this.projectOnto(mobileNode, "_temp2"); // invisible destination on top of new parent
     try {
       //setStyleAttributes(desti, mobileStyle);
@@ -532,7 +529,7 @@ class GameBasics extends GameGui {
       }, duration);
     } catch (e) {
       // if bad thing happen we have to clean up clones
-      console.error("ERR:C01:animation error",e);
+      console.error("ERR:C01:animation error", e);
       desti.parentNode?.removeChild(desti);
       clone.parentNode?.removeChild(clone); // destroy clone
       //if (onEnd) onEnd(mobileNode);
@@ -1154,10 +1151,10 @@ class GameBasics extends GameGui {
     if (b) this.activateHelpMode();
     else this.deactivateHelpMode();
   }
-  
+
   helpModeHandler = this.onClickForHelp.bind(this);
   closeHelpHandler = this.closeCurrentTooltip.bind(this);
-  
+
   activateHelpMode() {
     let chk = $("help-mode-switch");
     dojo.setAttr(chk, "bchecked", true);
@@ -1168,7 +1165,6 @@ class GameBasics extends GameGui {
     this.setDescriptionOnMyTurn(_("HELP MODE Activated. Click on game elements to get tooltips"));
     dojo.empty("generalactions");
     this.addCancelButton(undefined, () => this.deactivateHelpMode());
-
 
     document.querySelectorAll(".withtooltip").forEach((node) => {
       node.addEventListener("click", this.helpModeHandler, false);
@@ -1263,7 +1259,7 @@ class GameBasics extends GameGui {
   }
 
   subscribeNotification(notifName: string, duration: number = 0, funcName?: string): void {
-    if (funcName ===undefined) funcName = notifName;
+    if (funcName === undefined) funcName = notifName;
     if (!(typeof this["notif_" + funcName] === "function")) {
       this.showError("ERR:C02:Notification notif_" + funcName + " isn't set !");
       return;
@@ -1547,7 +1543,6 @@ class GameBasics extends GameGui {
     this.upldateColorMapping(".player-name *");
   }
 
-
   // /** @override to fix bug */
   // ntf_newPrivateState(notif) {
   //   this.inherited(arguments);
@@ -1608,7 +1603,6 @@ function setStyleAttributes(element: HTMLElement, attrs: { [key: string]: string
 }
 
 /** This is essentically dojo.place but without dojo */
-function placeHtml( html: string, parent: ElementOrId, how: InsertPosition = 'beforeend') {
+function placeHtml(html: string, parent: ElementOrId, how: InsertPosition = "beforeend") {
   return $(parent).insertAdjacentHTML(how, html);
 }
-
