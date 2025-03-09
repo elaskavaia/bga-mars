@@ -119,6 +119,7 @@
           </div>
         </div>
       </div>
+      <div id="display_colonies" class="display_colonies"></div>
     </div>
 
     <div id="players_area">

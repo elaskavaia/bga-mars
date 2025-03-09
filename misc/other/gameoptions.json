@@ -72,7 +72,8 @@
                 "name": "On",
                 "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
                 "tmdisplay": "Colonies",
-                "nobeginner": true
+                "nobeginner": true,
+                "alpha": true
             },
             "0": {
                 "name": "Off",

@@ -79,17 +79,17 @@ C49|Warp Drive|2||||14|tagScience>=5|Science|2|Colonies|Requires 5 science tags.
 #set create=single
 #set location=deck_colo
 #set type=card colocard
-1|Europa|9|w|m|||||||||||'i'=>'','spots'=>['pm','pm','pe','pe','pp','pp','pp']
-2|Triton|9|3u|u|||||||||||'i'=>'u','spots'=>[0,1,1,2,3,4,5]
-3|Callisto|9|pe|3e|||||||||||'i'=>'e','spots'=>[0,2,3,5,7,10,13]
-4|Ceres|9|ps|2s|||||||||||'i'=>'s','spots'=>[1,2,3,4,6,8,10]
-5|Enceladus|9|3ores(Microbe)|ores(Microbe)|||||||||||'i'=>'ores(Microbe)','spots'=>[0,1,2,3,4,4,5],'prod'=>'Microbe'
-6|Titan|9|3ores(Floater)|ores(Floater)|||||||||||'i'=>'ores(Floater)','spots'=>[0,1,1,2,3,3,4],'prod'=>'Floater'
-7|Miranda|9|ores(Animal)|draw|||||||||||'i'=>'ores(Animal)','spots'=>[0,1,1,2,2,3,3],'prod'=>'Animal'
-8|Ganymede|9|pp|p|||||||||||'i'=>'p','spots'=>[0,1,2,3,4,5,6]
-9|Luna|9|2pm|2m|||||||||||'i'=>'m','spots'=>[1,2,4,7,10,13,17]
-10|Io|9|ph|2h|||||||||||'i'=>'h','spots'=>[2,3,4,6,8,10,13]
-11|Pluto|9|2draw|discard:draw|||||||||||'i'=>'draw','spots'=>[0,1,2,2,3,3,4]
+1|Europa|9|w|m|||||||||||'i'=>'','slots'=>['pm','pm','pe','pe','pp','pp','pp']
+2|Triton|9|3u|u|||||||||||'i'=>'u','slots'=>[0,1,1,2,3,4,5]
+3|Callisto|9|pe|3e|||||||||||'i'=>'e','slots'=>[0,2,3,5,7,10,13]
+4|Ceres|9|ps|2s|||||||||||'i'=>'s','slots'=>[1,2,3,4,6,8,10]
+5|Enceladus|9|3ores(Microbe)|ores(Microbe)|||||||||||'i'=>'ores(Microbe)','slots'=>[0,1,2,3,4,4,5],'prod'=>'Microbe'
+6|Titan|9|3ores(Floater)|ores(Floater)|||||||||||'i'=>'ores(Floater)','slots'=>[0,1,1,2,3,3,4],'prod'=>'Floater'
+7|Miranda|9|ores(Animal)|draw|||||||||||'i'=>'ores(Animal)','slots'=>[0,1,1,2,2,3,3],'prod'=>'Animal'
+8|Ganymede|9|pp|p|||||||||||'i'=>'p','slots'=>[0,1,2,3,4,5,6]
+9|Luna|9|2pm|2m|||||||||||'i'=>'m','slots'=>[1,2,4,7,10,13,17]
+10|Io|9|ph|2h|||||||||||'i'=>'h','slots'=>[2,3,4,6,8,10,13]
+11|Pluto|9|2draw|discard:draw|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
 
 #standard project
 #set id=card_stanproj_{num}

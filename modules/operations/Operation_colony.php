@@ -17,13 +17,13 @@ class Operation_colony extends  AbsOperation {
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             if ($tokenId == 'none') return MA_OK;
             $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $tokenId);
-            $n=0;
+            $n = 0;
             foreach ($markers as $id => $rec) {
                 if ($id == "marker_$color") $n++;
             }
             $claimed = count($markers);
             if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
-            if ($n>0) return MA_ERR_OCCUPIED;
+            if ($n > 0) return MA_ERR_OCCUPIED;
             return MA_OK;
         });
     }
@@ -46,7 +46,19 @@ class Operation_colony extends  AbsOperation {
         if ($card === 'none') return $inc; // skipped, this is ok for resources
 
         $res = $this->game->createPlayerMarker($owner);
-        $this->game->dbSetTokenLocation($res,  $card, 1, c_lienttranslate('${player_name} builds a colony on ${card_name}'), [
+        $step = $this->game->tokens->getTokenState($card);
+        $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $card);
+        $colonies = count($markers);
+        $new_col_spot = $colonies + 1;
+        $new_spot = $new_col_spot + 1;
+        if ($step <= $new_spot) {
+            $this->game->dbSetTokenLocation($card, 'display_colonies', $new_spot, c_lienttranslate('Trading power of ${card_name} resets to ${step}'), [
+                'card_name' => $this->game->getTokenName($card),
+                'step' => $new_spot
+            ]);
+        }
+
+        $this->game->dbSetTokenLocation($res,  $card, $new_col_spot, c_lienttranslate('${player_name} builds a colony on ${card_name}'), [
             'card_name' => $this->game->getTokenName($card)
         ], $this->getPlayerId());
 
