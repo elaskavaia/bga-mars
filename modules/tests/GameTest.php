@@ -1547,7 +1547,7 @@ final class GameTest extends TestCase {
         $card = $m->mtFindByName('Greenhouses');
         $payment = $m->getPayment($p, $card);
         $this->assertEquals($payment, '6nm');
-        $args = $m->debug_oparg($payment, $card);
+        $args = $m->debug_opInfo($payment, $card);
 
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
@@ -1560,7 +1560,7 @@ final class GameTest extends TestCase {
         $this->assertEquals($targets[4], '6m');
 
         $m->dbSetTokenLocation("resource_{$p}_2", $psyc, 0); // add a microbe
-        $args = $m->debug_oparg($payment, $card);
+        $args = $m->debug_opInfo($payment, $card);
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
         $this->assertEquals('payment', $targets[0]);
@@ -1572,7 +1572,7 @@ final class GameTest extends TestCase {
         $m->dbSetTokenLocation("resource_{$p}_2", $psyc, 0); // add a microbe
         $payment = $m->getPayment($p, $card);
         $this->assertEquals($payment, '6nm');
-        $args = $m->debug_oparg($payment, $card);
+        $args = $m->debug_opInfo($payment, $card);
         $this->assertEquals(false, array_get($args['args'], 'void', false));
         $targets = $args['args']['target'];
         $this->assertEquals(4, count($targets));
@@ -1591,7 +1591,7 @@ final class GameTest extends TestCase {
         $card = $m->mtFindByName('Space Elevator');
         $payment = $m->getPayment($p, $card);
         $this->assertEquals($payment, '27nm');
-        $args = $m->debug_oparg($payment, $card);
+        $args = $m->debug_opInfo($payment, $card);
         $targets = $args['args']['target'];
         $this->assertEquals(count($targets), 5);
         $this->assertEquals('payment', $targets[0]);
@@ -1671,7 +1671,7 @@ final class GameTest extends TestCase {
         $m = new GameUT();
         $m->var_colonies = 1;
         $m->init(0);
-        $this->assertFalse($m->isBasicVariant());
+        $this->assertTrue($m->isColoniesVariant()===1);
         $this->game = $m;
         $op = $m->getOperationInstanceFromType("colony", PCOLOR);
         $this->assertNotNull($op);

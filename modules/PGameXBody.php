@@ -83,7 +83,8 @@ abstract class PGameXBody extends PGameMachine {
             }
             if ($this->isBasicVariant()) {
                 $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
-            } else if ($this->isCorporateEraVariant()) {
+            }
+            if ($this->isCorporateEraVariant()) {
                 $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Corporate Era']);
             } else if ($prelude) {
                 $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Prelude']);
@@ -285,8 +286,8 @@ abstract class PGameXBody extends PGameMachine {
 
     function isBasicVariant() {
         if ($this->isCorporateEraVariant()) return false;
-        if ($this->isPreludeVariant()) return false;
-        if ($this->isColoniesVariant()) return false;
+        // if ($this->isPreludeVariant()) return false;
+        // if ($this->isColoniesVariant()) return false;
         return true;
     }
 
@@ -359,7 +360,7 @@ abstract class PGameXBody extends PGameMachine {
         //$this->dbSetTokensLocation($cards, 'temp');
         //$this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
-        //return $this->debug_oparg("counter(all_city),m", $card);
+        //return $this->debug_opInfo("counter(all_city),m", $card);
         //$this->gamestate->nextState("next");
 
         // $player_id = $this->getFirstPlayer();

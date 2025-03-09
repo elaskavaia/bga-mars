@@ -1317,7 +1317,7 @@ class GameBasics extends GameGui {
         //this.notifqueue.setSynchronousDuration(1);
       } else {
         //  this.animated=true;
-        p.then(() => {
+        p.finally(() => {
           this.notifqueue.setSynchronousDuration(10);
           //const executionTime = Date.now() - startTime;
           //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");

@@ -1188,7 +1188,7 @@ var GameBasics = /** @class */ (function (_super) {
             }
             else {
                 //  this.animated=true;
-                p.then(function () {
+                p.finally(function () {
                     _this.notifqueue.setSynchronousDuration(10);
                     //const executionTime = Date.now() - startTime;
                     //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
