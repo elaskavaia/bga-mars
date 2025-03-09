@@ -255,7 +255,7 @@ class GameTokens extends GameBasics {
     }
   }
 
-  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token): Promise<any> | Element {
+  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token, animationDuration: number = 0): Promise<any> | Element {
     if (dojo.hasClass(tokenNode, "infonode")) {
       this.placeInfoBox(tokenNode);
     }
@@ -321,7 +321,7 @@ class GameTokens extends GameBasics {
 
       if (placeInfo.nop) {
         // no movement
-        return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+        return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, 0);
       }
       if (!$(location)) {
         if (location) console.error("Unknown place '" + location + "' for '" + tokenInfo.key + "' " + token);
@@ -351,7 +351,7 @@ class GameTokens extends GameBasics {
 
       this.preSlideAnimation(tokenNode, tokenInfo, location);
       this.slideAndPlace(tokenNode, location, animtime, mobileStyle, placeInfo.onEnd);
-      return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+      return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animtime);
     } catch (e) {
       console.error("Exception thrown", e, e.stack);
       // this.showMessage(token + " -> FAILED -> " + place + "\n" + e, "error");
@@ -360,6 +360,7 @@ class GameTokens extends GameBasics {
   }
 
   preSlideAnimation(tokenNode: HTMLElement, tokenInfo: Token, location: string) {}
+
   async placeTokenWithTips(token: string, tokenInfo?: Token, args?: any) {
     if (!tokenInfo) {
       tokenInfo = this.gamedatas.tokens[token];
@@ -648,12 +649,18 @@ class GameTokens extends GameBasics {
     this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
     this.subscribeNotification("tokenMoved");
     this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
+    this.subscribeNotification("animate")
     /*
     dojo.subscribe("tokenMoved", this, "notif_tokenMoved");
     this.notifqueue.setSynchronous("tokenMoved", 500);
     dojo.subscribe("tokenMovedAsync", this, "notif_tokenMoved"); // same as tokenMoved but no delay
 
      */
+  }
+
+  notif_animate(notif: Notif) {
+    console.log(notif);
+    this.notifqueue.setSynchronousDuration(notif.args.time);
   }
 
   async notif_tokenMoved(notif: Notif) {

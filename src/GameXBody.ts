@@ -1850,8 +1850,10 @@ awarded.`);
     }
   }
 
-  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined): Promise<any> | Element {
-    super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined,
+    animationDuration: number = 0
+  ): Promise<any> | Element {
+    super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
 
     const key = tokenInfo.key;
     const location = tokenInfo.location; // db location
@@ -1960,7 +1962,7 @@ awarded.`);
       return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
     }
 
-    return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
+    return this.customAnimation.wait(animationDuration); // default move animation
   }
 
   preSlideAnimation(tokenNode: HTMLElement, tokenInfo: Token, location: string) {
@@ -2188,6 +2190,7 @@ awarded.`);
     if (!result.location)
       // if failed to find revert to server one
       result.location = tokenInfo.location;
+    result.animtime = this.customAnimation.getWaitDuration(this.defaultAnimationDuration);
     return result;
   }
 
@@ -3245,6 +3248,10 @@ awarded.`);
     dojo.subscribe("undoRestore", this, "notif_undoRestore");
   }
 
+  notif_animate(notif: Notif) {
+    this.notifqueue.setSynchronousDuration(this.customAnimation.getWaitDuration(notif.args.time));
+  }
+
   notif_undoMove(notif) {
     console.log("undoMove", notif);
     this.setUndoMove(notif.args, notif.move_id);
@@ -3254,6 +3261,12 @@ awarded.`);
     console.log("undoRestore", notif);
     this.cancelLogs(notif.args.cancelledIds);
   }
+
+  onLeavingState(stateName: string): void {
+    super.onLeavingState(stateName);
+    this.handman?.saveSort();
+  }
+
 
   setUndoMove(undoMeta: any, currentMove: number) {
     if (!undoMeta) return;

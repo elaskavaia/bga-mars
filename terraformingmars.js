@@ -334,7 +334,10 @@ var GameBasics = /** @class */ (function (_super) {
         }
     };
     GameBasics.prototype.slideAndPlace = function (token, finalPlace, tlen, mobileStyle, onEnd) {
-        if ($(token).parentNode == $(finalPlace))
+        var _a;
+        if (!$(token))
+            console.error("token not found for ".concat(token));
+        if (((_a = $(token)) === null || _a === void 0 ? void 0 : _a.parentNode) == $(finalPlace))
             return;
         this.phantomMove(token, finalPlace, tlen, mobileStyle, onEnd);
     };
@@ -1135,12 +1138,12 @@ var GameBasics = /** @class */ (function (_super) {
             return;
         }
         dojo.subscribe(notifName, this, function (notif) { return _this.playnotif(funcName, notif, duration); });
-        if (duration == 0) {
+        if (!duration) {
             //variable duration
             //don't forget to call this.notifqueue.setSynchronousDuration(duration);
-            this.notifqueue.setSynchronous(notifName, 5000); // max fallback to prevent haning
+            this.notifqueue.setSynchronous(notifName);
         }
-        else if (duration == 1) {
+        else if (duration === 1) {
             //Notif has no animation, thus no delay
             //this.notifqueue.setSynchronous(notifName, duration);
         }
@@ -1176,13 +1179,12 @@ var GameBasics = /** @class */ (function (_super) {
             //const startTime = Date.now();
             //  this.onNotif(notif);//should be moved here
             var p = this[notiffunc](notif);
-            if (setDelay == 1) {
-                //nothing to do here
-            }
-            else if (!(p instanceof Promise)) {
+            if (setDelay > 0)
+                return; //nothing to do here
+            if (!(p instanceof Promise)) {
                 //no promise returned: no animation played
                 // console.log(notifname+' : no return, sync set to 1');
-                this.notifqueue.setSynchronousDuration(1);
+                //this.notifqueue.setSynchronousDuration(1);
             }
             else {
                 //  this.animated=true;
@@ -1483,6 +1485,9 @@ var CardHand = /** @class */ (function () {
             this.game.showError("error during sorting setup, card sorting is disabled");
         }
     };
+    CardHand.prototype.saveSort = function () {
+        document.querySelectorAll(".tm_sortable").forEach(function (node) { return saveLocalManualOrder(node); });
+    };
     CardHand.prototype.onClickHandSort = function (event) {
         dojo.stopEvent(event);
         if (this.game._helpMode)
@@ -1579,21 +1584,12 @@ var CardHand = /** @class */ (function () {
     };
     CardHand.prototype.maybeEnabledDragOnCard = function (tokenNode) {
         if (dojo.hasClass(tokenNode.parentElement, "tm_sortable")) {
-            if (this.isManualSortOrderEnabled(tokenNode.parentElement)) {
+            if (isManualSortOrderEnabled(tokenNode.parentElement)) {
                 this.enableDragOnCard(tokenNode);
                 return;
             }
         }
         this.disableDragOnCard(tokenNode);
-    };
-    CardHand.prototype.isManualSortOrderEnabled = function (tokenNode) {
-        var _a;
-        if (((_a = tokenNode === null || tokenNode === void 0 ? void 0 : tokenNode.dataset) === null || _a === void 0 ? void 0 : _a.sort_type) == "manual") {
-            return true;
-        }
-        else {
-            return false;
-        }
     };
     CardHand.prototype.applySortOrder = function (node) {
         var _this = this;
@@ -1602,7 +1598,7 @@ var CardHand = /** @class */ (function () {
             return;
         }
         var containerNode = node;
-        if (this.isManualSortOrderEnabled(containerNode)) {
+        if (isManualSortOrderEnabled(containerNode)) {
             this.loadLocalManualOrder(containerNode);
             containerNode.querySelectorAll(".card").forEach(function (card) {
                 _this.enableDragOnCard(card);
@@ -1612,7 +1608,7 @@ var CardHand = /** @class */ (function () {
         else {
             // disable on all cards in case it was moved
             document.querySelectorAll(".card").forEach(function (card) {
-                if (!_this.isManualSortOrderEnabled(card.parentElement))
+                if (!isManualSortOrderEnabled(card.parentElement))
                     _this.disableDragOnCard(card);
             });
             containerNode.querySelectorAll(".card").forEach(function (card) { return _this.updateSortOrderOnCard(card); });
@@ -1699,7 +1695,18 @@ function getGamePlayerNamespace(a, b) {
         return "".concat(game.game_name, "-").concat(game.player_id, "-").concat(a, "_").concat(b);
     return "".concat(game.game_name, "-").concat(game.player_id, "-").concat(a);
 }
+function isManualSortOrderEnabled(tokenNode) {
+    var _a;
+    if (((_a = tokenNode === null || tokenNode === void 0 ? void 0 : tokenNode.dataset) === null || _a === void 0 ? void 0 : _a.sort_type) == "manual") {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 function saveLocalManualOrder(containerNode) {
+    if (!isManualSortOrderEnabled(containerNode))
+        return;
     var game = gameui;
     var sortOrder = "";
     //query should return in the same order as the DOM
@@ -3694,7 +3701,8 @@ var GameTokens = /** @class */ (function (_super) {
             tokenNode.setAttribute("data-info", "1");
         }
     };
-    GameTokens.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore) {
+    GameTokens.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore, animationDuration) {
+        if (animationDuration === void 0) { animationDuration = 0; }
         if (dojo.hasClass(tokenNode, "infonode")) {
             this.placeInfoBox(tokenNode);
         }
@@ -3762,7 +3770,7 @@ var GameTokens = /** @class */ (function (_super) {
             this.setDomTokenState(tokenNode, tokenInfo.state);
             if (placeInfo.nop) {
                 // no movement
-                return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+                return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, 0);
             }
             if (!$(location_1)) {
                 if (location_1)
@@ -3792,7 +3800,7 @@ var GameTokens = /** @class */ (function (_super) {
             }
             this.preSlideAnimation(tokenNode, tokenInfo, location_1);
             this.slideAndPlace(tokenNode, location_1, animtime, mobileStyle, placeInfo.onEnd);
-            return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore);
+            return this.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animtime);
         }
         catch (e) {
             console.error("Exception thrown", e, e.stack);
@@ -4086,12 +4094,17 @@ var GameTokens = /** @class */ (function (_super) {
         this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
         this.subscribeNotification("tokenMoved");
         this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
+        this.subscribeNotification("animate");
         /*
         dojo.subscribe("tokenMoved", this, "notif_tokenMoved");
         this.notifqueue.setSynchronous("tokenMoved", 500);
         dojo.subscribe("tokenMovedAsync", this, "notif_tokenMoved"); // same as tokenMoved but no delay
     
          */
+    };
+    GameTokens.prototype.notif_animate = function (notif) {
+        console.log(notif);
+        this.notifqueue.setSynchronousDuration(notif.args.time);
     };
     GameTokens.prototype.notif_tokenMoved = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
@@ -5662,9 +5675,10 @@ var GameXBody = /** @class */ (function (_super) {
             }
         }
     };
-    GameXBody.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore) {
+    GameXBody.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore, animationDuration) {
         var _a;
-        _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore);
+        if (animationDuration === void 0) { animationDuration = 0; }
+        _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
         var key = tokenInfo.key;
         var location = tokenInfo.location; // db location
         var place_id = (_a = tokenNode.parentElement) === null || _a === void 0 ? void 0 : _a.id; // where is object in dom
@@ -5770,7 +5784,7 @@ var GameXBody = /** @class */ (function (_super) {
             }
             return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
         }
-        return this.customAnimation.wait(this.customAnimation.getWaitDuration(500)); // default move animation
+        return this.customAnimation.wait(animationDuration); // default move animation
     };
     GameXBody.prototype.preSlideAnimation = function (tokenNode, tokenInfo, location) {
         _super.prototype.preSlideAnimation.call(this, tokenNode, tokenInfo, location);
@@ -5991,6 +6005,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (!result.location)
             // if failed to find revert to server one
             result.location = tokenInfo.location;
+        result.animtime = this.customAnimation.getWaitDuration(this.defaultAnimationDuration);
         return result;
     };
     GameXBody.prototype.strikeNextAwardMilestoneCost = function (kind) {
@@ -7011,6 +7026,9 @@ var GameXBody = /** @class */ (function (_super) {
         dojo.subscribe("undoMove", this, "notif_undoMove");
         dojo.subscribe("undoRestore", this, "notif_undoRestore");
     };
+    GameXBody.prototype.notif_animate = function (notif) {
+        this.notifqueue.setSynchronousDuration(this.customAnimation.getWaitDuration(notif.args.time));
+    };
     GameXBody.prototype.notif_undoMove = function (notif) {
         console.log("undoMove", notif);
         this.setUndoMove(notif.args, notif.move_id);
@@ -7018,6 +7036,11 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.notif_undoRestore = function (notif) {
         console.log("undoRestore", notif);
         this.cancelLogs(notif.args.cancelledIds);
+    };
+    GameXBody.prototype.onLeavingState = function (stateName) {
+        var _a;
+        _super.prototype.onLeavingState.call(this, stateName);
+        (_a = this.handman) === null || _a === void 0 ? void 0 : _a.saveSort();
     };
     GameXBody.prototype.setUndoMove = function (undoMeta, currentMove) {
         var _this = this;

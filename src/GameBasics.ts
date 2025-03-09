@@ -394,7 +394,8 @@ class GameBasics extends GameGui {
     mobileStyle?: StringProperties,
     onEnd?: (node?: HTMLElement) => void
   ) {
-    if ($(token).parentNode == $(finalPlace)) return;
+    if (!$(token)) console.error(`token not found for ${token}`);
+    if ($(token)?.parentNode == $(finalPlace)) return;
 
     this.phantomMove(token, finalPlace, tlen, mobileStyle, onEnd);
   }
@@ -1266,11 +1267,11 @@ class GameBasics extends GameGui {
     }
 
     dojo.subscribe(notifName, this, (notif) => this.playnotif(funcName, notif, duration));
-    if (duration == 0) {
+    if (!duration) {
       //variable duration
       //don't forget to call this.notifqueue.setSynchronousDuration(duration);
-      this.notifqueue.setSynchronous(notifName, 5000); // max fallback to prevent haning
-    } else if (duration == 1) {
+      this.notifqueue.setSynchronous(notifName); 
+    } else if (duration === 1) {
       //Notif has no animation, thus no delay
       //this.notifqueue.setSynchronous(notifName, duration);
     } else {
@@ -1308,12 +1309,12 @@ class GameBasics extends GameGui {
       //const startTime = Date.now();
       //  this.onNotif(notif);//should be moved here
       let p = this[notiffunc](notif);
-      if (setDelay == 1) {
-        //nothing to do here
-      } else if (!(p instanceof Promise)) {
+      if (setDelay>0) return;  //nothing to do here
+       
+      if (!(p instanceof Promise)) {
         //no promise returned: no animation played
         // console.log(notifname+' : no return, sync set to 1');
-        this.notifqueue.setSynchronousDuration(1);
+        //this.notifqueue.setSynchronousDuration(1);
       } else {
         //  this.animated=true;
         p.then(() => {
