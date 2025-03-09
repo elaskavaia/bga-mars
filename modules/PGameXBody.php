@@ -61,7 +61,8 @@ abstract class PGameXBody extends PGameMachine {
             $players = $this->loadPlayersBasicInfos();
             if ($this->player_preferences) $this->dbUserPrefs->setup($players, $this->player_preferences);
             $this->setGameStateValue('gamestage', MA_STAGE_SETUP);
-            if ($this->isSolo() && $this->isBasicVariant()) {
+            if ($this->isSolo() && !$this->isCorporateEraVariant()) {
+                // for now it has to be set automatically
                 $this->setGameStateValue("var_corporate_era", 1); // cannot be basic for solo
             }
 
@@ -82,6 +83,10 @@ abstract class PGameXBody extends PGameMachine {
             }
             if ($this->isBasicVariant()) {
                 $this->notifyAllPlayers('message', clienttranslate('Basic mode - everybody starts with 1 resource income'), []);
+            } else if ($this->isCorporateEraVariant()) {
+                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Corporate Era']);
+            } else if ($prelude) {
+                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Prelude']);
             }
 
             if ($colonies) {
@@ -144,7 +149,6 @@ abstract class PGameXBody extends PGameMachine {
             }
 
             if ($prelude) {
-                $this->notifyWithName('message', clienttranslate('Module: ${op_name}'), ['op_name' => 'Prelude']);
                 foreach ($players as $player_id => $player) {
                     $color = $player["player_color"];
                     $this->queue($color, "prelude");
