@@ -21,6 +21,10 @@ class CardHand {
     }
   }
 
+  saveSort() {
+    document.querySelectorAll(".tm_sortable").forEach((node) => saveLocalManualOrder(node as any));
+  }
+
   onClickHandSort(event: Event) {
     dojo.stopEvent(event);
     if (this.game._helpMode) return;
@@ -125,7 +129,7 @@ class CardHand {
   }
   maybeEnabledDragOnCard(tokenNode: HTMLElement) {
     if (dojo.hasClass(tokenNode.parentElement, "tm_sortable")) {
-      if (this.isManualSortOrderEnabled(tokenNode.parentElement)) {
+      if (isManualSortOrderEnabled(tokenNode.parentElement)) {
         this.enableDragOnCard(tokenNode);
         return;
       }
@@ -133,13 +137,6 @@ class CardHand {
     this.disableDragOnCard(tokenNode);
   }
 
-  isManualSortOrderEnabled(tokenNode: HTMLElement) {
-    if (tokenNode?.dataset?.sort_type == "manual") {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   applySortOrder(node?: HTMLElement | undefined) {
     if (node === undefined) {
@@ -147,9 +144,8 @@ class CardHand {
       return;
     }
     const containerNode = node;
-  
 
-    if (this.isManualSortOrderEnabled(containerNode)) {
+    if (isManualSortOrderEnabled(containerNode)) {
       this.loadLocalManualOrder(containerNode);
       containerNode.querySelectorAll(".card").forEach((card: HTMLElement) => {
         this.enableDragOnCard(card);
@@ -158,7 +154,7 @@ class CardHand {
     } else {
       // disable on all cards in case it was moved
       document.querySelectorAll(".card").forEach((card: HTMLElement) => {
-        if (!this.isManualSortOrderEnabled(card.parentElement)) this.disableDragOnCard(card);
+        if (!isManualSortOrderEnabled(card.parentElement)) this.disableDragOnCard(card);
       });
 
       containerNode.querySelectorAll(".card").forEach((card: HTMLElement) => this.updateSortOrderOnCard(card));
@@ -238,7 +234,17 @@ function getGamePlayerNamespace(a: string | number = "", b: string | number = ""
   return `${game.game_name}-${game.player_id}-${a}`;
 }
 
+
+function isManualSortOrderEnabled(tokenNode: HTMLElement) {
+  if (tokenNode?.dataset?.sort_type == "manual") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function saveLocalManualOrder(containerNode: HTMLElement) {
+  if (!isManualSortOrderEnabled(containerNode)) return;
   const game = gameui as GameXBody;
   let sortOrder: string = "";
   //query should return in the same order as the DOM
