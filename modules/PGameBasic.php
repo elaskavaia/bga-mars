@@ -362,7 +362,7 @@ abstract class PGameBasic extends Table {
         if (!$delay) {
             $delay = 1000;
         }
-        $this->notifyAllPlayers("simplePause", "", ["time" => $delay]);
+        $this->notifyAllPlayers("animate", "", ["time" => $delay]);
     }
 
     // ------ PLAYERS ----------
