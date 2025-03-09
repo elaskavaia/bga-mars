@@ -330,7 +330,7 @@ abstract class PGameXBody extends PGameMachine {
     /*
      * In this space, you can put any utility methods useful for your game logic
      */
-    function debug_createCounterToken($token) {
+    function createCounterToken($token) {
         $info = $this->tokens->getTokenInfo($token);
         if ($info != null) {
             return $info;
@@ -446,28 +446,33 @@ abstract class PGameXBody extends PGameMachine {
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
-    function debug_draft(int $draft = 1) {
+    function debug_optionDraft(int $draft = 1) {
         $this->setGameStateValue('var_draft', $draft);
     }
 
-    function debug_map(int $number) {
+    function debug_optionMap(int $number) {
         $this->setGameStateValue('var_map', $number);
+    }
+    function debug_optionPrelude(int $number) {
+        $this->setGameStateValue('var_prelude', $number);
+    }
+    function debug_optionColonies(int $number) {
+        $this->setGameStateValue('var_colonies', $number);
     }
 
 
-
-    function debug_opcard($card_id) {
+    function debug_cardInfo($card_id) {
         $color = $this->getCurrentPlayerColor();
         $payment = $this->getPayment($color, $card_id);
         return [
-            "r" => $this->debug_oparg($this->getRulesFor($card_id), $card_id),
+            "r" => $this->debug_opInfo($this->getRulesFor($card_id), $card_id),
             "canAfford" => $this->canAfford($color, $card_id),
             "payment" => $payment,
-            "paymentop" => $this->debug_oparg($payment, $card_id),
+            "paymentop" => $this->debug_opInfo($payment, $card_id),
         ];
     }
 
-    function debug_oparg($type, $data = '') {
+    function debug_opInfo($type, $data = '') {
         if (!$type) return [];
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
@@ -1272,10 +1277,11 @@ abstract class PGameXBody extends PGameMachine {
             $this->notifyMessage(clienttranslate('no more cards'), ['_notifType' => 'message_warning']);
             return null;
         }
+        $this->setUndoSavepoint(true);
         $card_id = $card['key'];
 
         $this->effect_moveCard($color, $card_id, "reveal", MA_CARD_STATE_SELECTED);
-        $this->undoSavepointWithLabel("draw", MA_UNDO_BARRIER);
+
         $tags = $this->getRulesFor($card_id, 'tags', '');
         $args = ['tag_name' => $tag_name];
         if ($showWarning)   $args += ['_notifType' => 'message_warning'];
@@ -1286,7 +1292,7 @@ abstract class PGameXBody extends PGameMachine {
             return $card_id;
         } else {
             $this->notifyMessageWithTokenName(clienttranslate('${player_name} reveals ${token_name}: it does not have a ${tag_name} tag'), $card_id, $color, $args);
-            $this->notifyAnimate(600); // delay to show the card
+            $this->notifyAnimate(500); // delay to show the card
             $this->effect_moveCard($color, $card_id, "discard_main", 0);
             return false;
         }
@@ -1899,7 +1905,7 @@ abstract class PGameXBody extends PGameMachine {
         $message = array_get($options, 'message', '*');
         unset($options['message']);
         $token_id = $this->getTrackerId($color, $type);
-        $this->debug_createCounterToken($token_id);
+        $this->createCounterToken($token_id);
         $this->dbResourceInc($token_id, $inc, $message, [], $this->getPlayerIdByColor($color), $options);
     }
 
