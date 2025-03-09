@@ -16,16 +16,24 @@ class Operation_draw extends AbsOperation {
                 $card_id = $this->game->effect_drawAndRevealTag($color, $tag_name, false);
                 $draw++;
 
-                if ($card_id === null) return $inc; // no more cards
+                if ($card_id === null) {
+                    $this->game->undoSavepointWithLabel("draw", MA_UNDO_BARRIER);
+                    return $inc; // no more cards
+                }
                 if ($card_id !== false) {
                     // not private since we revealed it
                     $this->game->effect_moveCard($color, $card_id, "hand_$color", 0, "", ["_private" => false]);
                     $took++;
                 }
-
-                if ($draw >= 10 || $took > 0) {
-                    $this->game->giveExtraTime($this->getPlayerId());
+                if ($took > 0) {
+                    $this->game->undoSavepointWithLabel("draw", MA_UNDO_BARRIER);
                     return $took;
+                }
+
+                if ($draw >= 20) {
+                    $this->game->giveExtraTime($this->getPlayerId());
+                    $this->game->sendNotifications();
+                    $draw = 0;
                 }
             }
         } else {

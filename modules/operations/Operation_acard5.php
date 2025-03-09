@@ -11,6 +11,7 @@ class Operation_acard5 extends AbsOperation {
         $tag_name = 'Microbe';
         $rc = $this->game->effect_drawAndRevealTag($color, $tag_name, true);
         if ($rc === null) return 1; // no more cards
+        $this->game->undoSavepointWithLabel("draw", MA_UNDO_BARRIER);
         if ($rc !== false) {
             $this->game->effect_moveCard($color, $rc, "discard_main", 0);
             $this->game->putInEffectPool($color, "res", $this->getContext());
