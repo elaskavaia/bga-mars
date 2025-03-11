@@ -2622,6 +2622,7 @@ awarded.`);
 
     // Init
     this.clearReverseIdMap();
+    this.removeAllClasses(this.classSelected);
     this.setActiveSlots(opTargets);
     this.addActionButtonColor(
       buttonId,

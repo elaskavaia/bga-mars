@@ -6433,6 +6433,7 @@ var GameXBody = /** @class */ (function (_super) {
         };
         // Init
         this.clearReverseIdMap();
+        this.removeAllClasses(this.classSelected);
         this.setActiveSlots(opTargets);
         this.addActionButtonColor(buttonId, buttonName, function () {
             var target = _this.queryIds(".".concat(_this.classSelected));
