@@ -31,6 +31,7 @@ class Operation_lastforest extends AbsOperation {
             break;
         }
         $this->game->notifyScoringUpdate();
+        $this->game->undoSavepointWithLabel("lastforest", $this->game->isSolo() ? 0 : 1);
 
         return 1;
     }

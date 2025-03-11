@@ -347,7 +347,10 @@ abstract class PGameXBody extends PGameMachine {
         //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
         $this->debug_incparam('o', 13);
-        $this->debug_incparam('t', 14);
+        $this->debug_incparam('t', 18);
+        $this->debug_incparam('w', 11);
+        $this->debug_incparam('gen', 10);
+        $this->debug_optionUndo(1);
 
         $players = $this->loadPlayersBasicInfos();
 
@@ -459,6 +462,9 @@ abstract class PGameXBody extends PGameMachine {
     }
     function debug_optionColonies(int $number) {
         $this->setGameStateValue('var_colonies', $number);
+    }
+    function debug_optionUndo(int $number = 1) {
+        $this->setGameStateValue('var_xundo', $number);
     }
 
 
