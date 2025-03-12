@@ -178,6 +178,8 @@ abstract class PGameTokens extends PGameBasic {
 
     function debug_initTables() {
         $this->DbQuery("DELETE FROM token");
+        $this->DbQuery("DELETE FROM machine");
+        $this->DbQuery("DELETE FROM multiundo");
         $this->player_preferences  = [];
         $this->initTables();
         $newGameDatas = $this->getAllTableDatas(); // this is framework function
