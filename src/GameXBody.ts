@@ -2622,7 +2622,7 @@ awarded.`);
 
     // Init
     this.clearReverseIdMap();
-    this.removeAllClasses(this.classSelected);
+    // this.removeAllClasses(this.classSelected); - this causing issue when other player does undo
     this.setActiveSlots(opTargets);
     this.addActionButtonColor(
       buttonId,
