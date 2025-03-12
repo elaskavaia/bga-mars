@@ -162,26 +162,22 @@
             "1": {
                 "name": "Elysium",
                 "description": "The other side of Mars",
-                "tmdisplay": "Elysium",
-                "beta": true
+                "tmdisplay": "Elysium"
             },
             "2": {
                 "name": "Hellas",
                 "description": "The southern wild",
-                "tmdisplay": "Hellas",
-                "beta": true
+                "tmdisplay": "Hellas"
             },
             "3": {
                 "name": "Vastitas Borealis",
                 "description": "The ancient sea",
-                "tmdisplay": "Vastitas",
-                "beta": true
+                "tmdisplay": "Vastitas"
             },
             "4": {
                 "name": "Amazonis Planitia",
                 "description": "The smooth plain",
-                "tmdisplay": "Amazonis",
-                "beta": true
+                "tmdisplay": "Amazonis"
             }
         },
         "default": 0

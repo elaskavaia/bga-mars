@@ -307,13 +307,13 @@ Reason: tile placement may draw cards (information)
                 $res = [];
                 foreach ($multi as $target) {
                     $index = array_search($target, $possible_targets);
-                    $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
+                    $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false, "Unchecked $key " . toJson($target));
                     $res[] = $possible_targets[$index];
                 }
                 return $res;
             } else {
                 $index = array_search($target, $possible_targets);
-                $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false);
+                $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false, "Unchecked $key " . toJson($target));
                 return $possible_targets[$index];
             }
         } else if ($this->isOneChoice()) {
