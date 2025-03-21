@@ -429,6 +429,21 @@
           <div id="allcards_prelude_content" class="expandablecontent_cards"></div>
         </div>
       </div>
+      <div id="allcards_colo" class="allcards_colo expandable">
+        <div class="expandabletitle">	
+          <a href="#" id="allcards_colo_toggle" class="expandabletoggle expandablearrow">
+            <div class="icon20 icon20_expand"></div>
+            <span id="allcards_colo_title"></span>
+          </a>
+        </div>
+        <div class="expandablecontent">
+          <div id="filter-allcards_colo_content" class="cards-filter">
+            <input type="text" placeholder="Search..." id="filter-allcards_colo_content-fuzzy" class="filter-text" size="30"></input>
+            <i class="fa fa-remove filter-text-clear"></i>
+          </div>
+          <div id="allcards_colo_content" class="expandablecontent_cards"></div>
+        </div>
+      </div>
     </div>
     <div id="limbo">
       <div id="starting_player"></div>

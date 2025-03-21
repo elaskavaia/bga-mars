@@ -1,5 +1,7 @@
 <?php
 
+require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
+
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";
@@ -98,12 +100,8 @@ abstract class PGameXBody extends PGameMachine {
                 if ($numPlayers == 2) $coloniesNum = 5;
                 else if ($numPlayers == 1) $coloniesNum = 4; // will discard one later
                 else $coloniesNum = $numPlayers + 2;
-                $this->tokens->pickTokensForLocation($coloniesNum, 'deck_colo', 'display_colonies', 1);
-                $colonies = $this->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
-                foreach ($colonies as $colo => $info) {
-                    $prod = $this->getRulesFor($colo, 'prod', '');
-                    if ($prod) $this->tokens->setTokenState($colo, -1);// inactive
-                }
+                $this->tokens->pickTokensForLocation($coloniesNum, 'deck_colo', 'display_colonies', -1);
+                $this->activateColonies('');
             }
 
             $corps = 2; //(int)(11 / $this->getPlayersNumber())
@@ -707,11 +705,20 @@ abstract class PGameXBody extends PGameMachine {
                     if ($deck == 'Colonies') {
                         continue;
                     }
+                } else {
+                    if ($deck == 'Corporate') {
+                        continue;
+                    }
                 }
             }
             if ($id == 'card_stanproj_7') { // Buffer Gas
                 if (!$this->isSolo()) continue;
                 if ($this->getGameStateValue('var_solo_flavour') != 1) {      // !=TR63
+                    continue;
+                }
+            }
+            if ($id == 'card_stanproj_8') { // Colony
+                if (!$colonies) {
                     continue;
                 }
             }
@@ -1379,6 +1386,8 @@ abstract class PGameXBody extends PGameMachine {
     function hasTag(string $card_id, string $tag) {
         $tags = $this->getRulesFor($card_id, 'tags', '');
         if (strstr($tags, $tag)) return true;
+        if ($tags == "" && $tag == "none") return true;
+        if (!$tag) return true;
         return false;
     }
 
@@ -1882,7 +1891,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->systemAssertTrue("Cannot undo $optype");
     }
 
-    function  activateColonies($card_id) {
+    function  activateColonies($card_id = '') {
         Operation_trade::activateColoniesOnPlayCard($card_id, $this);
     }
 
@@ -1948,10 +1957,10 @@ abstract class PGameXBody extends PGameMachine {
             $message = clienttranslate('${player_name} reduces ${token_name} by ${mod}');
             $mod = -$inc;
         }
-        $this->notifyCounterDirect($token_id, $value, $message, ["mod" => $mod, "token_name" => $token_id,], $this->getPlayerIdByColor($color));
+        $this->notifyCounterDirect($token_id, $value, $message, ["mod" => $mod, "token_name" => $token_id] + $options, $this->getPlayerIdByColor($color));
     }
 
-    function effect_increaseParam($color, $type, $steps, $perstep = 1) {
+    function effect_increaseParam($color, $type, $steps, $perstep = 1, array $options = []) {
         if (!$color) {
             $color = $this->getActivePlayerColor();
         }
@@ -1992,11 +2001,57 @@ abstract class PGameXBody extends PGameMachine {
             }
         }
 
-        $this->effect_incTerraformingRank($color, $steps);
+        $this->effect_incTerraformingRank($color, $steps, ['reason_tr' => $this->getReason("op_$type")]);
         if ($this->getTerraformingProgression() >= 100) {
             $this->notifyWithName('message_warning', clienttranslate("The terraforming is complete!!!"));
         }
         return true;
+    }
+
+    function getReason(string $data) {
+        if (!$data) return "";
+        $split = explode(':', $data);
+        $context = array_get($split, 0, '');
+        $type = array_get($split, 1, '');
+        $game = $this;
+        if (!$context && !$type) return '';
+        if (!$type) return $game->getTokenName($context);
+
+        switch ($type) {
+            case 'e':
+                $from = array_get($split, 2, '');
+                return [
+                    'log' => clienttranslate('triggered effect of ${from_tr}'),
+                    'args' => [
+                        'from_tr' => $game->getTokenName($from)
+                    ]
+                ];
+            case 'a':
+
+                return [
+                    'log' => clienttranslate('activation effect of ${name_tr}'),
+                    'args' => [
+                        'name_tr' => $game->getTokenName($context)
+                    ]
+                ];
+            case 'r':
+                return [
+                    'log' => clienttranslate('immediate effect of ${name_tr}'),
+                    'args' => [
+                        'name_tr' => $game->getTokenName($context)
+                    ]
+                ];
+            default:
+                $ttype = $game->getTokenName($type);
+                return [
+                    'log' => '${name_tr}: ${type_tr}',
+                    'args' => [
+                        'name_tr' => $game->getTokenName($context),
+                        'type_tr' => $ttype,
+                    ]
+                ];
+                break;
+        }
     }
 
     function isLiveScoringDisabled() {
@@ -2008,9 +2063,9 @@ abstract class PGameXBody extends PGameMachine {
             $this->notifyAllPlayers('scoringTable', '', ['data' =>   $this->scoreAllTable()]);
     }
 
-    function effect_incTerraformingRank(string $owner, int $inc) {
+    function effect_incTerraformingRank(string $owner, int $inc, array $options = []) {
         $op = 'tr';
-        $this->effect_incCount($owner, $op, $inc);
+        $this->effect_incCount($owner, $op, $inc, $options);
         $player_id = $this->getPlayerIdByColor($owner);
         $count = $this->dbIncScore($player_id, $inc);
         $tracker = $this->getTrackerId($owner, $op);

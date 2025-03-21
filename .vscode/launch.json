@@ -27,7 +27,7 @@
       },
     },
     {
-      "name": "PHP: _debug",
+      "name": "PHP: debug predeploy",
       "type": "php",
       "request": "launch",
       "program": "${workspaceFolder}/modules/_testpredeploy.php",
@@ -46,7 +46,7 @@
       "type": "php",
       "request": "launch",
       "program": "${workspaceFolder}/modules/_testpredeploy.php",
-      "cwd": "${workspaceFolder}/modules/",
+      "cwd": "${workspaceFolder}",
       "port": 0,
       "env": {
 

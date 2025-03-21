@@ -22,9 +22,12 @@ class Operation_colony extends  AbsOperation {
                 if ($id == "marker_$color") $n++;
             }
             $claimed = count($markers);
-            if ($claimed >= 3) return MA_ERR_MAXREACHED; // 3 already claimed
-            if ($n > 0) return MA_ERR_OCCUPIED;
-            return MA_OK;
+            $state = $this->game->tokens->getTokenState($tokenId);
+            $q = MA_OK;
+            if ($state < 0) $q = MA_ERR_PREREQ;
+            else if ($claimed >= 3) $q= MA_ERR_MAXREACHED; // 3 already claimed
+            else if ($n > 0) $a = MA_ERR_OCCUPIED;
+            return ['q' => $q, 'level' => $state];
         });
     }
 
@@ -49,10 +52,10 @@ class Operation_colony extends  AbsOperation {
         $step = $this->game->tokens->getTokenState($card);
         $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $card);
         $colonies = count($markers);
-        $new_col_spot = $colonies + 1;
+        $new_col_spot = $colonies;
         $new_spot = $new_col_spot + 1;
-        if ($step <= $new_spot) {
-            $this->game->dbSetTokenLocation($card, 'display_colonies', $new_spot, c_lienttranslate('Trading power of ${card_name} resets to ${step}'), [
+        if ($step < $new_spot) {
+            $this->game->dbSetTokenState($card, $new_spot, c_lienttranslate('Trading power of ${card_name} resets to ${step}'), [
                 'card_name' => $this->game->getTokenName($card),
                 'step' => $new_spot
             ]);
@@ -63,7 +66,7 @@ class Operation_colony extends  AbsOperation {
         ], $this->getPlayerId());
 
         $rules = $this->game->getRulesFor($card, 'r'); // placement bonus
-        $this->game->putInEffectPool($owner, $rules, $card);
+        $this->game->putInEffectPool($owner, $rules, "$card:colo_place_bonus");
         $this->game->notifyEffect($owner, 'place_colony', $card);
         $this->game->notifyScoringUpdate();
 
@@ -83,6 +86,6 @@ class Operation_colony extends  AbsOperation {
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Build a colony');
+        return c_lienttranslate('Build Colony');
     }
 }

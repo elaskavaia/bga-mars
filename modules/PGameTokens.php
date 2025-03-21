@@ -60,6 +60,9 @@ abstract class PGameTokens extends PGameBasic {
         if ($token_id == null) {
             return "null";
         }
+        if (!$token_id) {
+            return "";
+        }
         return $this->getRulesFor($token_id, "name", $token_id);
     }
 
@@ -507,6 +510,8 @@ abstract class PGameTokens extends PGameBasic {
             }
         }
 
+
+
         $args = array_merge($args, [
             "mod" => abs($num),
             "inc" => $num,
@@ -518,6 +523,8 @@ abstract class PGameTokens extends PGameBasic {
                 ],
             ],
         ]);
+        $reason = array_get($options,'reason_tr','');
+        if ($reason) $args['reason_tr'] = $reason;
         $this->notifyCounterDirect($token_id, $value, $message, $args, $player_id);
     }
 

@@ -14,12 +14,22 @@ class Operation_ores extends  AbsOperation {
         $keys[] = 'none';
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             if ($tokenId == 'none') return MA_OK;
-            $par = $this->params();
+            $par = $this->getResTarget();
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
             if ($par && $holds != $par)  return MA_ERR_NOTAPPLICABLE;
+            $targetTag = $this->getCardTarget();
+            if ($targetTag && !$this->game->hasTag($tokenId,"$targetTag"))  return MA_ERR_NOTAPPLICABLE;
             return MA_OK;
         });
+    }
+
+    function getResTarget() {
+        return $this->getParam(0, '');
+    }
+
+    function getCardTarget() {
+        return $this->getParam(1, '');
     }
 
     function getPrimaryArgType() {
@@ -51,7 +61,7 @@ class Operation_ores extends  AbsOperation {
     }
 
     protected function getVisargs() {
-        $par = $this->params();
+        $par = $this->getResTarget();
         return [
             "name" => $this->getOpName(),
             'count' => $this->getCount(),
@@ -61,7 +71,7 @@ class Operation_ores extends  AbsOperation {
     }
 
     protected function getOpName() {
-        $par = $this->params();
+        $par = $this->getResTarget();
         return ['log' => clienttranslate('Add ${restype_name} to another card'),  "args" => [
             'restype_name' => $this->game->getTokenName("tag$par"),
             'i18n' => ['restype_name']

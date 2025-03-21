@@ -218,7 +218,7 @@ class Operation_nmM extends AbsOperation {
                 if ($type == MA_RES_MICROBE) {
                     $this->game->executeImmediately($this->color, "nres", $ut, 'card_main_P39');
                 } else {
-                    $this->game->effect_incCount($this->color, $type, -$ut);
+                    $this->game->effect_incCount($this->color, $type, -$ut, ['reason_tr' => $this->getReason()]);
                 }
             } else {
                 $message = sprintf(self::_("Invalid amount of %s used for payment: %d of %d (max)"), $this->game->getTokenName($type), $ut, $tt);

@@ -603,6 +603,10 @@ class GameTokens extends GameBasics {
           var res = this.getTokenPresentaton(key, arg_value, args);
           if (res) args[key] = res;
         }
+
+        if (log && args.reason_tr) {
+          log = this.getTr(log) + " (${reason_tr})";
+        }
       }
     } catch (e) {
       console.error(log, args, "Exception thrown", e.stack);

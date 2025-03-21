@@ -41,6 +41,12 @@ abstract class AbsOperation {
         return $this->params ?? $default;
     }
 
+    function getParam(int $index = 0, string $default = '') {
+        $params = $this->params ?? '';
+        $pargs = explode(",", $params);
+        return array_get($pargs, $index, $default);
+    }
+
 
     public function getMnemonic() {
         return $this->mnemonic;
@@ -415,5 +421,11 @@ Reason: tile placement may draw cards (information)
 
     function undo() {
         $this->game->userAssertTrue("Undo is not implemented for this operation");
+    }
+
+    function getReason() {
+        $data = $this->op_info['data'] ?? '';
+        if (!$data) return "";
+        return $this->game->getReason($data);
     }
 }

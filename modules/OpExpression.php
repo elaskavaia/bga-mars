@@ -13,7 +13,7 @@ declare(strict_types=1);
  * ? optional, alias for [0,1]a
  * ! atomic (if needed)
  */
-class OpExpression extends APP_Object {
+class OpExpression {
     public $op;
     public $from = 1;
     public $to = 1;

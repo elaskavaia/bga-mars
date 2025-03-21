@@ -12,15 +12,29 @@ define("FAKE_PHPUNIT", 1);
 require_once "_autoload.php";
 require_once "tests/GameTest.php";
 require_once "tests/MathExpressionTest.php";
+require_once "tests/DbMachineTest.php";
+require_once "tests/OpExpressionTest.php";
 
-$x = new GameTest("GameTest");
-$methods = get_class_methods($x);
-foreach ($methods as $method) {
-    if (startsWith($method,"test")) {
-        echo("calling $method\n");
-        call_user_func_array([$x, $method], []);
+function runClassTests(object $x) {
+    $methods = get_class_methods($x);
+    foreach ($methods as $method) {
+        if (startsWith($method,"test")) {
+            //echo("calling $method\n");
+            try {
+            call_user_func_array([$x, $method], []);
+            } catch (Exception $e) {
+               echo("FAIL: $method $e\n");  
+               throw new Error();
+            }
+        }
     }
 }
-$x = new MathExpressionTest("MathExpressionTest");
-$x->testOpExpressionEval();
+
+
+runClassTests(new MathExpressionTest("MathExpressionTest"));
+runClassTests(new OpExpressionTest("OpExpressionTest"));
+runClassTests(new DbMachineTest("DbMachineTest"));
+runClassTests(new GameTest("GameTest"));
+
+
 echo "DONE, ALL GOOD\n";

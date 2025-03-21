@@ -16,7 +16,7 @@ class Operation_buycard extends AbsOperation {
         if ($money >= $tcost) {
             // use money if can
             //$this->game->executeImmediately($color,"nm",$cost);
-            $this->game->effect_incCount($color, "m", -$tcost); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
+            $this->game->effect_incCount($color, "m", -$tcost, ['reason_tr' => $this->game->getReason("op_buycard")]); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
         } else {
             foreach ($card_ids as $card_id) {
                 $this->game->multiplayerpush($color, "{$cost}nm", "$card_id:a");

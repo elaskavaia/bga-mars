@@ -526,6 +526,68 @@
   pointer-events: none;
 }
 
+.fleet.ship {
+  width: calc(var(--card-width) / 3);
+  aspect-ratio: 1/1;
+  --border-mcubesize: calc(var(--card-width) / 4);
+  --mcubesize: calc(var(--card-width) / 6);
+}
+
+.fleet.ship::before {
+  content: " ";
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0%;
+  left: -50%;
+  border-left: var(--border-mcubesize) solid transparent;
+  border-right: var(--border-mcubesize) solid transparent;
+  border-top: unset;
+  border-bottom: calc(var(--border-mcubesize) * 1.5) solid white;
+}
+
+.fleet.ship::after {
+  width: var(--mcubesize);
+  height: var(--mcubesize);
+  content: " ";
+  bottom: 0%;
+  left: 0%;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.fleet.ship.fleet_0000ff::after {
+  background-color: var(--color-mapping_0000ff);
+}
+
+.fleet.ship.fleet_ff0000::after {
+  background-color: var(--color-mapping_ff0000);
+}
+
+.fleet.ship.fleet_008000::after {
+  background-color: var(--color-mapping_008000);
+}
+
+.fleet.ship.fleet_ffa500::after {
+  background-color: var(--color-mapping_ffa500);
+}
+
+.fleet.ship.fleet_773300::after {
+  background-color: var(--color-mapping_773300);
+}
+
+.fleet.ship.fleet_ffffff::after {
+  background-color: var(--color-mapping_ffffff);
+}
+
+.colo_fleet .ship {
+  position: relative;
+  margin-top: 35%;
+  margin-left: 10%;
+  margin-right: -10%;
+  display: inline-block;
+}
+
 /*card bg ratio : 1.40658174*/
 #ebd-body {
   --card-width: calc(var(--localsetting_cardsize)*.15vh);
@@ -3571,8 +3633,20 @@
 }
 
 .card.colocard {
-  width: var(--card-height);
-  height: var(--card-width);
+  width: calc(var(--card-height) * 1.4);
+  height: calc(var(--card-height) * 1.4 * 0.56);
+  aspect-ratio: 100/56;
+}
+.card.colocard .marker {
+  position: absolute;
+  top: 64%;
+  left: 15%;
+}
+.card.colocard .marker[data-state="1"] {
+  left: 25%;
+}
+.card.colocard .marker[data-state="2"] {
+  left: 35%;
 }
 .card.colocard .card_title {
   position: absolute;
@@ -3582,11 +3656,13 @@
   justify-content: flex-start;
   left: 1%;
   text-transform: uppercase;
+  display: none;
 }
 .card.colocard .card_bg {
   background-image: unset;
-  background-color: black;
+  background-color: transparent;
   border: 1px solid salmon;
+  display: none;
 }
 .card.colocard span {
   text-transform: uppercase;
@@ -3600,6 +3676,7 @@
   left: 4%;
   width: 80%;
   display: flex;
+  display: none;
 }
 .card.colocard .card_effect {
   background: linear-gradient(to right, #c2e0f6, black);
@@ -3610,12 +3687,13 @@
   left: 10%;
   width: 80%;
   display: flex;
+  display: none;
 }
 .card.colocard .colony-colony-line {
   position: absolute;
-  width: 100%;
-  top: 60%;
-  left: 0%;
+  width: 70%;
+  top: 64%;
+  left: 15%;
 }
 .card.colocard .colony-colony-line .coloslot {
   outline: 1px solid white;
@@ -3625,11 +3703,15 @@
   vertical-align: top;
   overflow: hidden;
 }
+.card.colocard .colony-colony-line .coloslot > * {
+  display: none;
+}
 .card.colocard .colony-trade-line {
   position: absolute;
-  width: 100%;
+  width: 80%;
   top: 80%;
-  left: 0%;
+  left: 10%;
+  display: none;
 }
 .card.colocard .colony-trade-line .tradeslot {
   display: inline-block;
@@ -3640,6 +3722,403 @@
   color: white;
   text-align: center;
   text-transform: uppercase;
+}
+.card.colocard .colony-trade-cube {
+  width: 7%;
+  aspect-ratio: 1/1;
+  background-color: white;
+  position: absolute;
+  top: 67%;
+  left: 0%;
+}
+.card.colocard[data-state="0"] .colony-trade-cube {
+  left: 17%;
+}
+.card.colocard[data-state="1"] .colony-trade-cube {
+  left: 27%;
+}
+.card.colocard[data-state="2"] .colony-trade-cube {
+  left: 37%;
+}
+.card.colocard[data-state="3"] .colony-trade-cube {
+  left: 47%;
+}
+.card.colocard[data-state="4"] .colony-trade-cube {
+  left: 57%;
+}
+.card.colocard[data-state="5"] .colony-trade-cube {
+  left: 67%;
+}
+.card.colocard[data-state="6"] .colony-trade-cube {
+  left: 77%;
+}
+.card.colocard[data-state="7"] .colony-trade-cube {
+  left: 87%;
+}
+.card.colocard .fleet {
+  position: absolute;
+  right: 10%;
+  top: 10%;
+}
+
+.display_colonies > * {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.colo_fleet {
+  width: calc(var(--card-height) * 1.4);
+  height: calc(var(--card-height) * 1.4 * 0.56);
+  aspect-ratio: 100/56;
+  background-position: 0% 100%;
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 100% auto;
+  border-radius: 30%/40%;
+  order: -1;
+}
+
+.card.colocard {
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 100% auto;
+  border-radius: 30%/40%;
+}
+
+.card.colocard.card_colo_1 {
+  background-position: 1% 0%;
+}
+
+.card.colocard.card_colo_2 {
+  background-position: 1% 9.0909090909%;
+}
+
+.card.colocard.card_colo_3 {
+  background-position: 1% 18.1818181818%;
+}
+
+.card.colocard.card_colo_4 {
+  background-position: 1% 27.2727272727%;
+}
+
+.card.colocard.card_colo_5 {
+  background-position: 1% 36.1%;
+}
+
+.card.colocard.card_colo_6 {
+  background-position: 1% 45.4545454545%;
+}
+
+.card.colocard.card_colo_7 {
+  background-position: 1% 54.9%;
+}
+
+.card.colocard.card_colo_8 {
+  background-position: 1% 63.9%;
+}
+
+.card.colocard.card_colo_9 {
+  background-position: 1% 72.7272727273%;
+}
+
+.card.colocard.card_colo_10 {
+  background-position: 1% 81.8181818182%;
+}
+
+.card.colocard.card_colo_11 {
+  background-position: 1% 90.9090909091%;
+}
+
+.card.card_corp_24 .card_bg {
+  background-position: 0% 0%;
+  background-image: url(img/colonies/colo_cardsC.jpg);
+  background-size: auto 100%;
+}
+
+.card.card_corp_25 .card_bg {
+  background-position: 20% 0%;
+  background-image: url(img/colonies/colo_cardsC.jpg);
+  background-size: auto 100%;
+}
+
+.card.card_corp_26 .card_bg {
+  background-position: 40% 0%;
+  background-image: url(img/colonies/colo_cardsC.jpg);
+  background-size: auto 100%;
+}
+
+.card.card_corp_27 .card_bg {
+  background-position: 60% 0%;
+  background-image: url(img/colonies/colo_cardsC.jpg);
+  background-size: auto 100%;
+}
+
+.card.card_corp_28 .card_bg {
+  background-position: 80% 0%;
+  background-image: url(img/colonies/colo_cardsC.jpg);
+  background-size: auto 100%;
+}
+
+.card.colo_main {
+  background-image: url(img/colonies/colo_cards.jpg);
+  background-size: 600% auto;
+}
+.card.colo_main .card_decor > * {
+  display: none;
+}
+.card.colo_main .card_initial {
+  position: absolute;
+  font-size: calc(var(--card-width) * 0.038);
+  font-family: Georgia;
+}
+.card.colo_main .card_effect {
+  background: revert;
+  padding: revert;
+  font-size: calc(var(--card-width) * 0.038);
+  font-family: Georgia;
+}
+
+.card.card_main_C01 {
+  background-position-x: 0%;
+  background-position-y: 0%;
+}
+
+.card.card_main_C02 {
+  background-position-x: 20%;
+  background-position-y: 0%;
+}
+
+.card.card_main_C03 {
+  background-position-x: 40%;
+  background-position-y: 0%;
+}
+
+.card.card_main_C04 {
+  background-position-x: 60%;
+  background-position-y: 0%;
+}
+
+.card.card_main_C05 {
+  background-position-x: 80%;
+  background-position-y: 0%;
+}
+
+.card.card_main_C06 {
+  background-position-x: 100%;
+  background-position-y: 0%;
+}
+
+.card.card_main_C07 {
+  background-position-x: 0%;
+  background-position-y: 12.5%;
+}
+
+.card.card_main_C08 {
+  background-position-x: 20%;
+  background-position-y: 12.5%;
+}
+
+.card.card_main_C09 {
+  background-position-x: 40%;
+  background-position-y: 12.5%;
+}
+
+.card.card_main_C10 {
+  background-position-x: 60%;
+  background-position-y: 12.5%;
+}
+
+.card.card_main_C11 {
+  background-position-x: 80%;
+  background-position-y: 12.5%;
+}
+
+.card.card_main_C12 {
+  background-position-x: 100%;
+  background-position-y: 12.5%;
+}
+
+.card.card_main_C13 {
+  background-position-x: 0%;
+  background-position-y: 25%;
+}
+
+.card.card_main_C14 {
+  background-position-x: 20%;
+  background-position-y: 25%;
+}
+
+.card.card_main_C15 {
+  background-position-x: 40%;
+  background-position-y: 25%;
+}
+
+.card.card_main_C16 {
+  background-position-x: 60%;
+  background-position-y: 25%;
+}
+
+.card.card_main_C17 {
+  background-position-x: 80%;
+  background-position-y: 25%;
+}
+
+.card.card_main_C18 {
+  background-position-x: 100%;
+  background-position-y: 25%;
+}
+
+.card.card_main_C19 {
+  background-position-x: 0%;
+  background-position-y: 37.5%;
+}
+
+.card.card_main_C20 {
+  background-position-x: 20%;
+  background-position-y: 37.5%;
+}
+
+.card.card_main_C21 {
+  background-position-x: 40%;
+  background-position-y: 37.5%;
+}
+
+.card.card_main_C22 {
+  background-position-x: 60%;
+  background-position-y: 37.5%;
+}
+
+.card.card_main_C23 {
+  background-position-x: 80%;
+  background-position-y: 37.5%;
+}
+
+.card.card_main_C24 {
+  background-position-x: 100%;
+  background-position-y: 37.5%;
+}
+
+.card.card_main_C25 {
+  background-position-x: 0%;
+  background-position-y: 50%;
+}
+
+.card.card_main_C26 {
+  background-position-x: 20%;
+  background-position-y: 50%;
+}
+
+.card.card_main_C27 {
+  background-position-x: 40%;
+  background-position-y: 50%;
+}
+
+.card.card_main_C28 {
+  background-position-x: 60%;
+  background-position-y: 50%;
+}
+
+.card.card_main_C29 {
+  background-position-x: 80%;
+  background-position-y: 50%;
+}
+
+.card.card_main_C30 {
+  background-position-x: 100%;
+  background-position-y: 50%;
+}
+
+.card.card_main_C31 {
+  background-position-x: 0%;
+  background-position-y: 62.5%;
+}
+
+.card.card_main_C32 {
+  background-position-x: 20%;
+  background-position-y: 62.5%;
+}
+
+.card.card_main_C33 {
+  background-position-x: 40%;
+  background-position-y: 62.5%;
+}
+
+.card.card_main_C34 {
+  background-position-x: 60%;
+  background-position-y: 62.5%;
+}
+
+.card.card_main_C35 {
+  background-position-x: 80%;
+  background-position-y: 62.5%;
+}
+
+.card.card_main_C36 {
+  background-position-x: 100%;
+  background-position-y: 62.5%;
+}
+
+.card.card_main_C37 {
+  background-position-x: 0%;
+  background-position-y: 75%;
+}
+
+.card.card_main_C38 {
+  background-position-x: 20%;
+  background-position-y: 75%;
+}
+
+.card.card_main_C39 {
+  background-position-x: 40%;
+  background-position-y: 75%;
+}
+
+.card.card_main_C40 {
+  background-position-x: 60%;
+  background-position-y: 75%;
+}
+
+.card.card_main_C41 {
+  background-position-x: 80%;
+  background-position-y: 75%;
+}
+
+.card.card_main_C42 {
+  background-position-x: 100%;
+  background-position-y: 75%;
+}
+
+.card.card_main_C43 {
+  background-position-x: 0%;
+  background-position-y: 87.5%;
+}
+
+.card.card_main_C44 {
+  background-position-x: 20%;
+  background-position-y: 87.5%;
+}
+
+.card.card_main_C45 {
+  background-position-x: 40%;
+  background-position-y: 87.5%;
+}
+
+.card.card_main_C46 {
+  background-position-x: 60%;
+  background-position-y: 87.5%;
+}
+
+.card.card_main_C47 {
+  background-position-x: 80%;
+  background-position-y: 87.5%;
+}
+
+.card.card_main_C48 {
+  background-position-x: 100%;
+  background-position-y: 87.5%;
+}
+
+.card.card_main_C49 {
+  background-position-x: 0%;
+  background-position-y: 100%;
 }
 
 @keyframes showme {
@@ -11203,6 +11682,12 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   background-position: -600% 0;
 }
 
+.tracker_resFloater {
+  background-image: url("img/colonies/floater.png");
+  background-position: 0 0;
+  background-size: cover;
+}
+
 .tracker_m,
 .tracker_s,
 .tracker_gen,
@@ -11616,7 +12101,22 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   display: none;
 }
 
+.exp-colonies {
+  /* standard project */
+}
 .exp-colonies .display_colonies {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  position: relative;
+}
+.exp-colonies .colo_fleet .card {
+  width: 100%;
+  height: var(--stan-height);
+  border-radius: 10em;
+  box-shadow: revert;
+  background-image: unset;
+  background-color: unset;
+  position: absolute;
+  display: block;
 }

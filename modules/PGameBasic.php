@@ -311,9 +311,9 @@ abstract class PGameBasic extends Table {
         if ($message) {
             // automaticaly add to i18n array all keys if they ends with _name or _tr, except reserved which are auto-translated on client side
             $i18n = array_get($args, "i18n", []);
-            foreach ($args as $arg => $value) {
-                if (is_string($arg) && (endsWith($arg, "_tr") || (endsWith($arg, "_name") && $arg != "player_name" && $arg != "token_name" && $arg != "place_name"))) {
-                    $i18n[] = $arg;
+            foreach ($args as $key => $value) {
+                if (is_string($value) && (endsWith($key, "_tr") || (endsWith($key, "_name") && $key != "player_name" && $key != "token_name" && $key != "place_name"))) {
+                    $i18n[] = $key;
                 }
             }
             if (count($i18n) > 0) {
@@ -334,9 +334,12 @@ abstract class PGameBasic extends Table {
         }
         // automaticaly add to preserve array all keys if they ends with _preserve
         $preserve = array_get($args, "preserve", []);
-        foreach ($args as $arg) {
-            if (is_string($arg) && endsWith($arg, "_preserve")) {
-                $preserve[] = $arg;
+        foreach ($args as $key => $arg) {
+            if (is_string($arg) && endsWith($key, "_preserve")) {
+                $preserve[] = $key;
+            }
+            if ($key == 'reason_tr') {
+                $preserve[] = $key;
             }
         }
         if (count($preserve) > 0) {
@@ -584,6 +587,7 @@ abstract class PGameBasic extends Table {
 
     // Profiling
     function prof_point(string $str, string $type = "now", string $extra = "") {
+        return;
         if (!$this->isStudio()) return;
         global $prof_times;
         $sid = $_SERVER["REQUEST_TIME_FLOAT"];

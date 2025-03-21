@@ -181,5 +181,23 @@
             }
         },
         "default": 0
+    },
+    "108": {
+        "name": "Expansion: Colonies",
+        "$varname": "colonies",
+        "values": {
+            "0": {
+                "name": "Off",
+                "description": "Not including Colonies"
+            },
+            "1": {
+                "name": "On",
+                "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
+                "tmdisplay": "Colonies",
+                "nobeginner": true,
+                "alpha": true
+            }
+        },
+        "default": 0
     }
 }

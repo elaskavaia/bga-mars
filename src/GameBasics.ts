@@ -661,9 +661,10 @@ class GameBasics extends GameGui {
     }
   }
 
-  setMainTitle(text: string) {
+  setMainTitle(text: string, append: boolean = false) {
     var main = $("pagemaintitletext");
-    main.innerHTML = text;
+    if (append)     main.innerHTML += text;
+    else main.innerHTML = text;
   }
 
   divYou() {

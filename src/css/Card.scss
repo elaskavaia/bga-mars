@@ -1934,9 +1934,23 @@
 
 
 .card.colocard {
-  width: var(--card-height);
-  height: var(--card-width);
+  width: calc(var(--card-height)*1.4);
+  height: calc(var(--card-height)*1.4*0.56);
+  aspect-ratio: 100 / 56;
 
+  .marker {
+    position: absolute;
+    top: 64%;
+    left: 15%;
+  }
+
+  .marker[data-state="1"] {
+    left: 25%;
+  }
+
+  .marker[data-state="2"] {
+    left: 35%;
+  }
 
   .card_title {
     position: absolute;
@@ -1946,19 +1960,21 @@
     justify-content: flex-start;
     left: 1%;
     text-transform: uppercase;
+    display: none;
   }
 
   .card_bg {
     background-image: unset;
-    background-color: black;
+    background-color: transparent;
     border: 1px solid salmon;
+    display: none;
   }
 
   span {
     text-transform: uppercase;
   }
 
-// colony bonus
+  // colony bonus
   .card_initial {
     background: linear-gradient(to right, #c2e0f6, black);
     position: absolute;
@@ -1968,6 +1984,7 @@
     left: 4%;
     width: 80%;
     display: flex;
+    display: none;
   }
 
   // trade income
@@ -1980,13 +1997,14 @@
     left: 10%;
     width: 80%;
     display: flex;
+    display: none;
   }
 
   .colony-colony-line {
     position: absolute;
-    width: 100%;
-    top: 60%;
-    left: 0%;
+    width: 70%;
+    top: 64%;
+    left: 15%;
 
     .coloslot {
       outline: 1px solid white;
@@ -1995,13 +2013,19 @@
       width: calc(100%/7);
       vertical-align: top;
       overflow: hidden;
+
+      &>* {
+        display: none;
+      }
     }
   }
+
   .colony-trade-line {
     position: absolute;
-    width: 100%;
+    width: 80%;
     top: 80%;
-    left: 0%;
+    left: 10%;
+    display: none;
 
     .tradeslot {
       display: inline-block;
@@ -2015,6 +2039,164 @@
     }
   }
 
+  .colony-trade-cube {
+    width: 7%;
+    aspect-ratio: 1/1;
+    background-color: white;
+    position: absolute;
+    top: 67%;
+    left: 0%;
+  }
+
+  @for $num from 0 through 7 {
+    &[data-state="#{$num}"] .colony-trade-cube {
+      left: calc(17% + $num * 10%);
+    }
+  }
+
+  .fleet {
+    position: absolute;
+    right: 10%;
+    top: 10%;
+  }
+
+}
+
+
+.display_colonies>* {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.colo_fleet {
+  width: calc(var(--card-height)*1.4);
+  height: calc(var(--card-height)*1.4*0.56);
+  aspect-ratio: 100 / 56;
+  background-position: 0% 100%;
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 100% auto;
+  border-radius: 30% / 40%;
+  order: -1;
+}
+
+.card.colocard {
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 100% auto;
+  border-radius: 30% / 40%;
+}
+
+// @for $num from 1 through 11 {
+//   $i: $num - 1;
+//   $col: 0;
+//   $row: $i;
+
+//   .card.colocard.card_colo_#{$num} {
+//     background-position: 1% calc(100% / 11 * $row);
+
+//   }
+// }
+
+.card.colocard.card_colo_1 {
+  background-position: 1% 0%;
+}
+
+.card.colocard.card_colo_2 {
+  background-position: 1% 9.0909090909%;
+}
+
+.card.colocard.card_colo_3 {
+  background-position: 1% 18.1818181818%;
+}
+
+.card.colocard.card_colo_4 {
+  background-position: 1% 27.2727272727%;
+}
+
+.card.colocard.card_colo_5 {
+  background-position: 1% 36.1%;
+}
+
+.card.colocard.card_colo_6 {
+  background-position: 1% 45.4545454545%;
+}
+
+.card.colocard.card_colo_7 {
+  background-position: 1% 54.9%;
+}
+
+.card.colocard.card_colo_8 {
+  background-position: 1% 63.9%;
+}
+
+.card.colocard.card_colo_9 {
+  background-position: 1% 72.7272727273%;
+}
+
+.card.colocard.card_colo_10 {
+  background-position: 1% 81.8181818182%;
+}
+
+.card.colocard.card_colo_11 {
+  background-position: 1% 90.9090909091%;
+}
+
+@for $num from 24 through 28 {
+  $i: $num - 24;
+  $col: $i;
+  $row: 0;
+
+  .card.card_corp_#{$num} .card_bg {
+    background-position: calc(100% / 5 * $col) 0%;
+    background-image: url(img/colonies/colo_cardsC.jpg);
+    background-size: auto 100%;
+
+  }
+}
+
+.card.colo_main {
+  background-image: url(img/colonies/colo_cards.jpg);
+  background-size: 600% auto;
+
+  .card_decor>* {
+    display: none;
+  }
+
+  .card_initial {
+    position: absolute;
+    font-size: calc(var(--card-width) * 0.038);
+    font-family: Georgia;
+  }
+
+  .card_effect {
+    background: revert;
+    padding: revert;
+    font-size: calc(var(--card-width) * 0.038);
+    font-family: Georgia;
+  }
+}
+
+
+
+@for $num from 1 through 9 {
+  $i: $num - 1;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .card.card_main_C0#{$num} {
+    background-position-x: calc(100% / 5 * $col);
+    background-position-y: calc(100% / 8 * $row);
+  }
+}
+
+@for $num from 10 through 49 {
+  $i: $num - 1;
+  $col: $i % 6;
+  $row: calc(($i - $col) / 6);
+
+  .card.card_main_C#{$num} {
+    background-position-x: calc(100% / 5 * $col);
+    background-position-y: calc(100% / 8 * $row);
+  }
 }
 
 @keyframes showme {

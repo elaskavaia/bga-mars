@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertEmpty;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertTrue;
+
 
 require_once "terraformingmars.game.php";
 require_once "TokensInMem.php";
@@ -1676,5 +1673,35 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType("colony", PCOLOR);
         $this->assertNotNull($op);
         $this->assertFalse($op->isVoid());
+    }
+
+    public function testTrade() {
+        $m = new GameUT();
+        $m->var_colonies = 1;
+        $m->init(0);
+        $this->assertTrue($m->isColoniesVariant()===1);
+        $this->game = $m;
+        $op = $m->getOperationInstanceFromType("trade", PCOLOR);
+        $this->assertNotNull($op);
+        $this->assertFalse($op->isVoid());
+
+        $this->assertFalse($op->requireConfirmation());
+        $this->assertEquals('token',$op->getPrimaryArgType());
+        $this->assertFalse($op->canResolveAutomatically());
+        $m->dbSetTokenLocation('card_colo_2','display_colonies',1);
+        $op = $m->getOperationInstanceFromType("trade", PCOLOR);
+        $info = $op->argPrimaryDetails();
+        $this->assertEquals(MA_ERR_COST, $info['card_colo_2']['q']);
+
+        $op = $m->getOperationInstanceFromType("trade(free)", PCOLOR);
+        $info = $op->argPrimaryDetails();
+        $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
+
+
+        $m->incTrackerValue(PCOLOR,'m',10);
+
+        $op = $m->getOperationInstanceFromType("trade", PCOLOR);
+        $info = $op->argPrimaryDetails();
+        $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
     }
 }

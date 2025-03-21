@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class Operation_nR extends AbsOperation {
     function effect(string $owner, int $inc): int {
-        $this->game->effect_incCount($owner, $this->getType(), -$inc);
+        $this->game->effect_incCount($owner, $this->getType(), -$inc, ['reason_tr' => $this->getReason()]);
         return $inc;
     }
 

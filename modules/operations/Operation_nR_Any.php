@@ -90,7 +90,7 @@ class Operation_nR_Any extends AbsOperation {
             $mod = $value;
         }
 
-        $this->game->effect_incCount($owner, $type, -$mod);
+        $this->game->effect_incCount($owner, $type, -$mod, ['reason_tr' => $this->getReason()]);
         return $inc;
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 class Operation_npR extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $type = $this->getType();
-        $this->game->effect_incProduction($owner, $type, -$inc);
+        $this->game->effect_incProduction($owner, $type, -$inc, ['reason_tr' => $this->getReason()]);
         return $inc;
     }
 

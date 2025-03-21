@@ -581,9 +581,13 @@ var GameBasics = /** @class */ (function (_super) {
             this.setMainTitle(title);
         }
     };
-    GameBasics.prototype.setMainTitle = function (text) {
+    GameBasics.prototype.setMainTitle = function (text, append) {
+        if (append === void 0) { append = false; }
         var main = $("pagemaintitletext");
-        main.innerHTML = text;
+        if (append)
+            main.innerHTML += text;
+        else
+            main.innerHTML = text;
     };
     GameBasics.prototype.divYou = function () {
         var color = "black";
@@ -2784,7 +2788,7 @@ var CustomRenders = /** @class */ (function () {
         }
         item = item.replace("ores(Microbe)", "ores_Microbe");
         item = item.replace("ores(Animal)", "ores_Animal");
-        item = item.replace("ores(Floater)", "ores_Animal");
+        item = item.replace("ores(Floater)", "ores_Floater");
         item = item.replace("counter('(tagPlant>=3)*4')", "special_tagplant_sup3");
         item = item.replace("tagMicrobe/2", "special_tagmicrobe_half");
         item = item.replace("ph,0", "ph");
@@ -3445,12 +3449,12 @@ var CustomRenders = /** @class */ (function () {
         res_Science: { classes: "token_img tracker_resScience" },
         res_Animal: { classes: "token_img tracker_resAnimal" },
         res_Microbe: { classes: "token_img tracker_resMicrobe" },
-        res_Floater: { classes: "token_img tracker_resAnimal" },
+        res_Floater: { classes: "token_img tracker_resFloater" },
         nores_Animal: { classes: "token_img tracker_resAnimal", redborder: "resource", norepeat: true },
         nores_Microbe: { classes: "token_img tracker_resMicrobe", redborder: "resource", norepeat: true },
         ores_Microbe: { classes: "token_img tracker_resMicrobe", after: "*", norepeat: true },
         ores_Animal: { classes: "token_img tracker_resAnimal", after: "*", norepeat: true },
-        ores_Floater: { classes: "token_img tracker_resAnimal", after: "*", norepeat: true },
+        ores_Floater: { classes: "token_img tracker_resFloater", after: "*", norepeat: true },
         special_tagmicrobe_half: { classes: "tracker badge tracker_tagMicrobe", content: "2", norepeat: true },
         res: { classes: "token_img tracker_res%res%", norepeat: true },
         nres: { classes: "token_img tracker_res%res%", norepeat: true },
@@ -4045,6 +4049,9 @@ var GameTokens = /** @class */ (function (_super) {
                     var res = this.getTokenPresentaton(key, arg_value, args);
                     if (res)
                         args[key] = res;
+                }
+                if (log && args.reason_tr) {
+                    log = this.getTr(log) + " (${reason_tr})";
                 }
             }
         }
@@ -4992,7 +4999,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.setupHelpSheets = function () {
         var _this = this;
-        var cc = { main: 0, corp: 0, prelude: 0 };
+        var cc = { main: 0, corp: 0, prelude: 0, colo: 0 };
         for (var key in this.gamedatas.token_types) {
             var info = this.gamedatas.token_types[key];
             if (key.startsWith("card")) {
@@ -5017,9 +5024,12 @@ var GameXBody = /** @class */ (function (_super) {
         var ccmain = cc["main"];
         var cccorp = cc["corp"];
         var cc_prelude = cc["prelude"];
+        var cc_colo = cc["colo"];
         $("allcards_main_title").innerHTML = _("All Project Cards") + " (".concat(ccmain, ")");
         $("allcards_corp_title").innerHTML = _("All Corporate Cards") + " (".concat(cccorp, ")");
         $("allcards_prelude_title").innerHTML = _("All Prelude Cards") + " (".concat(cc_prelude, ")");
+        if (cc_colo)
+            $("allcards_colo_title").innerHTML = _("All Colonies") + " (".concat(cc_colo, ")");
         // clicks
         dojo.query(".expandablecontent_cards > *").connect("onclick", this, function (event) {
             var id = event.currentTarget.id;
@@ -5498,17 +5508,16 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_title = displayInfo.name || "";
                 var card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
                 var card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_a, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n            ");
-                var line = tokenNode.querySelector(".colony-colony-line");
-                var line2 = tokenNode.querySelector(".colony-trade-line");
-                for (var i = 0; i < 7; i++) {
-                    var x = card_r;
-                    if (i > 2)
-                        x = "";
-                    var trnum = displayInfo.slots[i];
-                    placeHtml("<div id='coloslot_".concat(i, "' class='coloslot'>").concat(x, "</div>"), line);
-                    placeHtml("<div class='tradeslot'>".concat(trnum, "</div>"), line2);
-                }
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_a, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
+                // const line = tokenNode.querySelector(".colony-colony-line");
+                // const line2 = tokenNode.querySelector(".colony-trade-line");
+                // for (let i = 0; i < 7; i++) {
+                //   let x = card_r;
+                //   if (i > 2) x = "";
+                //   const trnum = displayInfo.slots[i];
+                //   placeHtml(`<div id='coloslot_${i}' class='coloslot'>${x}</div>`, line);
+                //   placeHtml(`<div class='tradeslot'>${trnum}</div>`, line2);
+                // }
             }
             else {
                 //tags
@@ -6279,8 +6288,8 @@ var GameXBody = /** @class */ (function (_super) {
             if (single) {
                 if (!firstTarget_1)
                     firstTarget_1 = "generalactions";
-                var MAGIC_BUTTONS_NUMBER = 6;
-                var MAGIC_HEX_BUTTONS_NUMBER = 3;
+                var MAGIC_BUTTONS_NUMBER = 8;
+                var MAGIC_HEX_BUTTONS_NUMBER = 5;
                 var hex = firstTarget_1.startsWith("hex");
                 var showAsButtons = hex ? opTargets.length <= MAGIC_HEX_BUTTONS_NUMBER : opTargets.length <= MAGIC_BUTTONS_NUMBER;
                 if (showAsButtons) {
@@ -6797,6 +6806,13 @@ var GameXBody = /** @class */ (function (_super) {
                 this_4.addActionButtonColor("button_".concat(opId), name_6, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
+                }
+            }
+            if (!ordered && !chooseorder && i == 0 && opInfo.data) {
+                var data = opInfo.data.split(":")[0];
+                var tr = this_4.getTokenName(data);
+                if (tr) {
+                    this_4.setMainTitle(" [" + tr + "]", true);
                 }
             }
             // add done (skip) when all optional

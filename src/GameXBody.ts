@@ -975,7 +975,7 @@ class GameXBody extends GameTokens {
   }
 
   setupHelpSheets() {
-    const cc = { main: 0, corp: 0, prelude: 0 };
+    const cc = { main: 0, corp: 0, prelude: 0, colo: 0 };
     for (const key in this.gamedatas.token_types) {
       const info = this.gamedatas.token_types[key];
       if (key.startsWith("card")) {
@@ -1000,9 +1000,11 @@ class GameXBody extends GameTokens {
     const ccmain = cc["main"];
     const cccorp = cc["corp"];
     const cc_prelude = cc["prelude"];
+    const cc_colo = cc["colo"];
     $(`allcards_main_title`).innerHTML = _("All Project Cards") + ` (${ccmain})`;
     $(`allcards_corp_title`).innerHTML = _("All Corporate Cards") + ` (${cccorp})`;
     $(`allcards_prelude_title`).innerHTML = _("All Prelude Cards") + ` (${cc_prelude})`;
+    if (cc_colo) $(`allcards_colo_title`).innerHTML = _("All Colonies") + ` (${cc_colo})`;
 
     // clicks
     dojo.query(".expandablecontent_cards > *").connect("onclick", this, (event) => {
@@ -1639,16 +1641,17 @@ awarded.`);
                   <div class="card_effect">${card_a}<span>Trade Income</span></div>  
                   <div class="colony-colony-line"></div>  
                   <div class="colony-trade-line"></div>  
+                  <div class="colony-trade-cube"></div>  
             `;
-        const line = tokenNode.querySelector(".colony-colony-line");
-        const line2 = tokenNode.querySelector(".colony-trade-line");
-        for (let i = 0; i < 7; i++) {
-          let x = card_r;
-          if (i > 2) x = "";
-          const trnum = displayInfo.slots[i];
-          placeHtml(`<div id='coloslot_${i}' class='coloslot'>${x}</div>`, line);
-          placeHtml(`<div class='tradeslot'>${trnum}</div>`, line2);
-        }
+        // const line = tokenNode.querySelector(".colony-colony-line");
+        // const line2 = tokenNode.querySelector(".colony-trade-line");
+        // for (let i = 0; i < 7; i++) {
+        //   let x = card_r;
+        //   if (i > 2) x = "";
+        //   const trnum = displayInfo.slots[i];
+        //   placeHtml(`<div id='coloslot_${i}' class='coloslot'>${x}</div>`, line);
+        //   placeHtml(`<div class='tradeslot'>${trnum}</div>`, line2);
+        // }
       } else {
         //tags
         let firsttag = "";
@@ -2461,8 +2464,8 @@ awarded.`);
 
       if (single) {
         if (!firstTarget) firstTarget = "generalactions";
-        const MAGIC_BUTTONS_NUMBER = 6;
-        const MAGIC_HEX_BUTTONS_NUMBER = 3;
+        const MAGIC_BUTTONS_NUMBER = 8;
+        const MAGIC_HEX_BUTTONS_NUMBER = 5;
         const hex = firstTarget.startsWith("hex");
         const showAsButtons = hex ? opTargets.length <= MAGIC_HEX_BUTTONS_NUMBER : opTargets.length <= MAGIC_BUTTONS_NUMBER;
 
@@ -3035,6 +3038,14 @@ awarded.`);
         }
       }
 
+      if (!ordered && !chooseorder && i==0 && opInfo.data) {
+        const data = opInfo.data.split(":")[0];
+        const tr = this.getTokenName(data);
+        if (tr) {
+          this.setMainTitle(" ["+tr+"]", true);
+        }
+      }
+
       // add done (skip) when all optional
       if (opInfo.mcount > 0) {
         allSkip = false;
@@ -3046,6 +3057,7 @@ awarded.`);
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
+
   }
 
   onOperationButton(opInfo: any, clientState: boolean = true) {

@@ -19,9 +19,13 @@ class TestCase {
     }
     
     function assertEquals($expected, $actual, string $message = ''): void {
-        if ($expected != $actual)  $this->fail($message);
+        if ($expected != $actual)  $this->fail($message ? $message : "$expected <> $actual");
     }
     function assertFalse($exp, $string = null) {
         if ($exp) $this->fail($string);
+    }
+
+    function assertInstanceOf($clazz, $obj, string $message = ''): void {
+        if (!($obj instanceof $clazz))  $this->fail($message);
     }
 }

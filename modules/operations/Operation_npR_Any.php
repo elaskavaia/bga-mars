@@ -71,7 +71,7 @@ class Operation_npR_Any extends AbsOperation {
 
         $owner = $this->getCheckedArg('target');
         $this->game->checkColor($owner);
-        $this->game->effect_incProduction($owner, $type, -$inc);
+        $this->game->effect_incProduction($owner, $type, -$inc, ['reason_tr' => $this->getReason()]);
         return $inc;
     }
 
