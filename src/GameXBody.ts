@@ -5,7 +5,7 @@ const MA_PREF_CONFIRM_TURN = 101;
 class GameXBody extends GameTokens {
   private reverseIdLookup: Map<String, any>;
   private custom_pay: any;
-  private isDoingSetup: boolean;
+  public isDoingSetup: boolean;
   private vlayout: VLayout;
   private localSettings: LocalSettings;
   private customAnimation: CustomAnimation;
@@ -34,7 +34,8 @@ class GameXBody extends GameTokens {
 
   setup(gamedatas: any) {
     try {
-      this.isDoingSetup = true;
+      this.isDoingSetup = true;     
+      this.instantaneousMode = true;
       this.lastMoveId = 0;
       this.handman = new CardHand(this);
       this.CON = gamedatas.CON; // PHP contants for game
@@ -235,6 +236,7 @@ class GameXBody extends GameTokens {
       this.showError("Error during game setup: " + e);
     } finally {
       this.isDoingSetup = false;
+      this.instantaneousMode = false;
     }
 
     this.checkTerraformingCompletion();
@@ -1855,7 +1857,7 @@ awarded.`);
 
   onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined,
     animationDuration: number = 0
-  ): Promise<any> | Element {
+  ): Promise<any>{
     super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
 
     const key = tokenInfo.key;
@@ -1955,8 +1957,7 @@ awarded.`);
         const type = getPart(key, 1);
         if (this.resourceTrackers.includes(type) || type == "tr") {
           // cardboard layout animating cubes on playerboard instead
-          this.customAnimation.animateTingle(key);
-          return this.customAnimation.moveResources(key, inc);
+          return this.customAnimation.animateTingle(key).finally(()=>this.customAnimation.moveResources(key, inc));
         }
         if ($(key)) {
           return this.customAnimation.animateTingle(key);

@@ -1283,45 +1283,27 @@ class GameBasics extends GameGui {
   playnotif(notifname: string, notif: Notif, setDelay: number): void {
     //console.log("playing notif " + notifname + " with args ", notif.args);
 
-    //setSynchronous has to set for non active player in ignored notif
-    // if (setDelay == -1) {
-    //   if (notif.args.player_id == this.player_id) {
-    //     //     this.notifqueue.setSynchronous(notifname, 1);
-    //   } else {
-    //     //   this.notifqueue.setSynchronous(notifname);
-    //   }
-    // }
-
-    /*
-    Client-side duplicat notification check
-    Disabled for now
-    if (this.prev_notif_uid == args.uid) {
-      this.sendAction('ui_warning', { log: "duplicated notification uid received " + args.uid });
-      // return; // FIXME: return only if reported through production log and confirmed as an issue
-    }
-    this.prev_notif_uid = args.uid;
-    */
-
     let notiffunc = "notif_" + notifname;
 
     if (!this[notiffunc]) {
       this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
     } else {
-      //const startTime = Date.now();
+      const startTime = Date.now();
+      console.log(`${notiffunc}: ${setDelay} notif received`, notif);
       //  this.onNotif(notif);//should be moved here
       let p = this[notiffunc](notif);
       if (setDelay>0) return;  //nothing to do here
        
       if (!(p instanceof Promise)) {
         //no promise returned: no animation played
-        // console.log(notifname+' : no return, sync set to 1');
+        console.log(notiffunc+' :not a promise');
         //this.notifqueue.setSynchronousDuration(1);
       } else {
         //  this.animated=true;
         p.finally(() => {
           this.notifqueue.setSynchronousDuration(10);
-          //const executionTime = Date.now() - startTime;
-          //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
+          const executionTime = Date.now() - startTime;
+          console.log(`${notiffunc}: ${setDelay} sync has been set to dynamic after ${executionTime}ms elapsed`);
           //    this.animated=false;
         });
       }

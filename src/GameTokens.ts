@@ -55,24 +55,19 @@ class GameTokens extends GameBasics {
     }
     this.clientStateArgs = {}; // collector of client state arguments
 
-    this.instantaneousMode = true;
-    try {
-      this.gamedatas.tokens["limbo"] = {
-        key: "limbo",
-        state: 0,
-        location: "thething"
-      };
-      this.placeToken("limbo");
+    this.gamedatas.tokens["limbo"] = {
+      key: "limbo",
+      state: 0,
+      location: "thething"
+    };
+    this.placeToken("limbo");
 
-      // Setting up player boards
-      for (var player_id in gamedatas.players) {
-        var playerInfo = gamedatas.players[player_id];
-        this.setupPlayer(playerInfo);
-      }
-      this.setupTokens();
-    } finally {
-      this.instantaneousMode = false;
+    // Setting up player boards
+    for (var player_id in gamedatas.players) {
+      var playerInfo = gamedatas.players[player_id];
+      this.setupPlayer(playerInfo);
     }
+    this.setupTokens();
   }
 
   onEnteringState_before(stateName: string, args: any) {
@@ -255,7 +250,12 @@ class GameTokens extends GameBasics {
     }
   }
 
-  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token, animationDuration: number = 0): Promise<any> | Element {
+  onUpdateTokenInDom(
+    tokenNode: HTMLElement,
+    tokenInfo: Token,
+    tokenInfoBefore: Token,
+    animationDuration: number = 0
+  ): Promise<any> | Element {
     if (dojo.hasClass(tokenNode, "infonode")) {
       this.placeInfoBox(tokenNode);
     }
@@ -653,7 +653,7 @@ class GameTokens extends GameBasics {
     this.subscribeNotification("counterAsync", 1, "counter"); // same as conter but no delay
     this.subscribeNotification("tokenMoved");
     this.subscribeNotification("tokenMovedAsync", 1, "tokenMoved"); // same as conter but no delay
-    this.subscribeNotification("animate")
+    this.subscribeNotification("animate");
     /*
     dojo.subscribe("tokenMoved", this, "notif_tokenMoved");
     this.notifqueue.setSynchronous("tokenMoved", 500);
@@ -715,7 +715,7 @@ class GameTokens extends GameBasics {
       } else if ($(name)) {
         this.setDomTokenState(name, value);
       }
-      //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+      console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
     } catch (ex) {
       console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
     }

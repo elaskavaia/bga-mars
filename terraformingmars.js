@@ -1158,44 +1158,28 @@ var GameBasics = /** @class */ (function (_super) {
     GameBasics.prototype.playnotif = function (notifname, notif, setDelay) {
         //console.log("playing notif " + notifname + " with args ", notif.args);
         var _this = this;
-        //setSynchronous has to set for non active player in ignored notif
-        // if (setDelay == -1) {
-        //   if (notif.args.player_id == this.player_id) {
-        //     //     this.notifqueue.setSynchronous(notifname, 1);
-        //   } else {
-        //     //   this.notifqueue.setSynchronous(notifname);
-        //   }
-        // }
-        /*
-        Client-side duplicat notification check
-        Disabled for now
-        if (this.prev_notif_uid == args.uid) {
-          this.sendAction('ui_warning', { log: "duplicated notification uid received " + args.uid });
-          // return; // FIXME: return only if reported through production log and confirmed as an issue
-        }
-        this.prev_notif_uid = args.uid;
-        */
         var notiffunc = "notif_" + notifname;
         if (!this[notiffunc]) {
             this.showMessage("Notif: " + notiffunc + " not implemented yet", "error");
         }
         else {
-            //const startTime = Date.now();
+            var startTime_1 = Date.now();
+            console.log("".concat(notiffunc, ": ").concat(setDelay, " notif received"), notif);
             //  this.onNotif(notif);//should be moved here
             var p = this[notiffunc](notif);
             if (setDelay > 0)
                 return; //nothing to do here
             if (!(p instanceof Promise)) {
                 //no promise returned: no animation played
-                // console.log(notifname+' : no return, sync set to 1');
+                console.log(notiffunc + ' :not a promise');
                 //this.notifqueue.setSynchronousDuration(1);
             }
             else {
                 //  this.animated=true;
                 p.finally(function () {
                     _this.notifqueue.setSynchronousDuration(10);
-                    //const executionTime = Date.now() - startTime;
-                    //  console.log(notifname+' : sync has been set to dynamic after '+executionTime+"ms  elapsed");
+                    var executionTime = Date.now() - startTime_1;
+                    console.log("".concat(notiffunc, ": ").concat(setDelay, " sync has been set to dynamic after ").concat(executionTime, "ms elapsed"));
                     //    this.animated=false;
                 });
             }
@@ -2080,6 +2064,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var BIG_ANIMATION = 3;
+var SMALL_ANIMATION = 2;
+var NO_ANIMATION = 1;
 var CustomAnimation = /** @class */ (function () {
     function CustomAnimation(game) {
         this.game = game;
@@ -2153,7 +2140,7 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.setOriginalStackView = function (tableau_elem, value) {
         if (this.areAnimationsPlayed()) {
-            this.wait(this.getWaitDuration(1500)).then(function () {
+            this.waitAdjusted(1000).then(function () {
                 tableau_elem.dataset.currentview = value;
             });
         }
@@ -2164,27 +2151,21 @@ var CustomAnimation = /** @class */ (function () {
     CustomAnimation.prototype.animateTilePop = function (token_id) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
-                    return [2 /*return*/];
-                return [2 /*return*/, this.playCssAnimation(token_id, "grow_appear", null, null)];
+                return [2 /*return*/, this.playCssAnimation(token_id, "grow_appear", null, null, BIG_ANIMATION)];
             });
         });
     };
     CustomAnimation.prototype.animateTingle = function (counter_id) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                if (!this.areAnimationsPlayed())
-                    return [2 /*return*/];
-                if (this.nodeExists("alt_" + counter_id)) {
-                    void this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
-                }
-                return [2 /*return*/, this.playCssAnimation(counter_id, "small_tingle", null, null)];
+                void this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null, SMALL_ANIMATION);
+                return [2 /*return*/, this.playCssAnimation(counter_id, "small_tingle", null, null, SMALL_ANIMATION)];
             });
         });
     };
     CustomAnimation.prototype.animatePlaceResourceOnCard = function (resource_id, place_id) {
         return __awaiter(this, void 0, void 0, function () {
-            var animate_token, anim_1, anim_2;
+            var animate_token;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
@@ -2192,36 +2173,25 @@ var CustomAnimation = /** @class */ (function () {
                 animate_token = resource_id;
                 if (!this.game.isLayoutFull() && place_id.startsWith("card_main_"))
                     animate_token = place_id.replace("card_main_", "resource_holder_");
-                if (this.getAnimationAmount() == 2) {
-                    anim_1 = this.getImmediatePromise();
-                }
-                else {
-                    anim_1 = this.playCssAnimation(place_id, "pop", function () {
+                return [2 /*return*/, this.playCssAnimation(place_id, "pop", function () {
                         dojo.style(place_id, "filter", "grayscale(0)");
                     }, function () {
                         dojo.style(place_id, "transform", "scale(1.2)");
-                    });
-                }
-                anim_2 = anim_1.then(function () {
-                    return _this.playCssAnimation(animate_token, "great_tingle", function () {
-                        dojo.style(animate_token, "z-index", "10");
-                    }, function () {
-                        dojo.style(animate_token, "z-index", "");
-                    });
-                });
-                if (this.getAnimationAmount() == 2) {
-                    return [2 /*return*/, anim_2];
-                }
-                else {
-                    return [2 /*return*/, anim_2.then(function () {
-                            return _this.playCssAnimation(place_id, "depop", function () {
-                                dojo.style(place_id, "transform", "");
-                            }, function () {
-                                dojo.style(place_id, "filter", "");
-                            });
-                        })];
-                }
-                return [2 /*return*/];
+                    }, BIG_ANIMATION)
+                        .finally(function () {
+                        return _this.playCssAnimation(animate_token, "great_tingle", function () {
+                            dojo.style(animate_token, "z-index", "10");
+                        }, function () {
+                            dojo.style(animate_token, "z-index", "");
+                        }, SMALL_ANIMATION);
+                    })
+                        .finally(function () {
+                        return _this.playCssAnimation(place_id, "depop", function () {
+                            dojo.style(place_id, "transform", "");
+                        }, function () {
+                            dojo.style(place_id, "filter", "");
+                        }, BIG_ANIMATION);
+                    })];
             });
         });
     };
@@ -2236,11 +2206,7 @@ var CustomAnimation = /** @class */ (function () {
                     //too late, resource is not on card anymore
                     return [2 /*return*/];
                 }
-                return [2 /*return*/, this.playCssAnimation(animate_token, "great_tingle", function () {
-                        dojo.style(animate_token, "z-index", "10");
-                    }, function () {
-                        dojo.style(animate_token, "z-index", "");
-                    })];
+                return [2 /*return*/];
             });
         });
     };
@@ -2256,15 +2222,13 @@ var CustomAnimation = /** @class */ (function () {
                     unclip.push(place_id);
                     unclip.push($(place_id).parentElement.id);
                 }
-                if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) &&
-                    !this.game.isLayoutFull() &&
-                    this.getAnimationAmount() == 3) {
+                if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) && !this.game.isLayoutFull()) {
                     p_start = this.playCssAnimation(place_id, "award_pop", function () {
                         dojo.style(marker_id, "opacity", "0");
                         $(place_id).setAttribute("style", "box-shadow: none !important;");
                     }, function () {
                         $(place_id).setAttribute("style", "transform: translateY(-200%) scale(1.2); box-shadow: none !important;");
-                    });
+                    }, BIG_ANIMATION);
                 }
                 else {
                     p_start = this.getImmediatePromise();
@@ -2283,17 +2247,15 @@ var CustomAnimation = /** @class */ (function () {
                             var item = unclip_2[_i];
                             $(item).setAttribute("style", "");
                         }
-                    });
+                    }, SMALL_ANIMATION);
                 });
-                if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) &&
-                    !this.game.isLayoutFull() &&
-                    this.getAnimationAmount() == 3) {
+                if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) && !this.game.isLayoutFull()) {
                     return [2 /*return*/, p_mid.then(function () {
                             return _this.playCssAnimation(place_id, "award_depop", function () {
                                 $(place_id).setAttribute("style", "box-shadow: none !important;");
                             }, function () {
                                 $(place_id).setAttribute("style", "");
-                            });
+                            }, BIG_ANIMATION);
                         })];
                 }
                 return [2 /*return*/];
@@ -2302,28 +2264,18 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.animateMapItemAwareness = function (item_id) {
         return __awaiter(this, void 0, void 0, function () {
-            var anim_1;
             var _this = this;
             return __generator(this, function (_a) {
-                if (!$(item_id))
-                    return [2 /*return*/];
-                if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2)
-                    return [2 /*return*/];
-                anim_1 = this.playCssAnimation(item_id, "pop", function () {
-                    dojo.style(item_id, "z-index", "10000");
-                }, function () {
-                    dojo.style(item_id, "transform", "scale(1.2)");
-                });
-                return [2 /*return*/, anim_1
-                        .then(function () {
-                        return _this.wait(_this.getWaitDuration(500));
-                    })
-                        .then(function () {
+                return [2 /*return*/, this.playCssAnimation(item_id, "pop", function () {
+                        dojo.style(item_id, "z-index", "10000");
+                    }, function () {
+                        dojo.style(item_id, "transform", "scale(1.2)");
+                    }, BIG_ANIMATION).finally(function () {
                         return _this.playCssAnimation(item_id, "depop", function () {
                             dojo.style(item_id, "transform", "");
                         }, function () {
                             dojo.style(item_id, "z-index", "");
-                        });
+                        }, BIG_ANIMATION);
                     })];
             });
         });
@@ -2365,9 +2317,9 @@ var CustomAnimation = /** @class */ (function () {
                     }
                     var origin_1 = qty > 0 ? "move_from_" + tmpid : tracker.replace("tracker_", "alt_tracker_");
                     var destination = qty > 0 ? tracker.replace("tracker_", "alt_tracker_") : "move_from_" + tmpid;
-                    if (!this_2.nodeExists(origin_1) && origin_1.startsWith("alt_"))
+                    if (!$(origin_1) && origin_1.startsWith("alt_"))
                         origin_1 = tracker;
-                    if (!this_2.nodeExists(destination) && destination.startsWith("alt_"))
+                    if (!$(destination) && destination.startsWith("alt_"))
                         destination = tracker;
                     dojo.place(htm.replace("%t", tmpid), origin_1);
                     this_2.wait(delay).then(function () {
@@ -2423,7 +2375,9 @@ var CustomAnimation = /** @class */ (function () {
         //if(this.game.animated) return true;
         if (this.game.instantaneousMode)
             return false;
-        if (this.getAnimationAmount() <= 1)
+        if (this.game.isDoingSetup)
+            return false;
+        if (this.getAnimationAmount() <= SMALL_ANIMATION)
             return false;
         if (document.hidden || document.visibilityState === "hidden")
             return false;
@@ -2439,118 +2393,64 @@ var CustomAnimation = /** @class */ (function () {
             setTimeout(function () { return resolve(""); }, ms);
         });
     };
+    CustomAnimation.prototype.waitAdjusted = function (ms) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var msa = _this.getWaitDuration(ms);
+            setTimeout(function () { return resolve(""); }, msa);
+        });
+    };
     //Adds css class on element, plays it, executes onEnd and removes css class
     //a promise is returned for easy chaining
-    CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd) {
+    CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd, minLevel) {
+        if (minLevel === void 0) { minLevel = 2; }
         return __awaiter(this, void 0, void 0, function () {
-            var animation, cssClass, timeoutId, resolvedOK, localCssAnimationCallback;
-            var _this = this;
+            var animation, cssClass, resolvedOK, cleanUp;
             return __generator(this, function (_a) {
                 if (!$(targetId))
                     return [2 /*return*/];
+                if (!this.areAnimationsPlayed())
+                    return [2 /*return*/];
+                if (this.getAnimationAmount() < minLevel)
+                    return [2 /*return*/];
                 animation = this.animations[animationname];
                 cssClass = "anim_" + animation.name;
-                timeoutId = null;
                 resolvedOK = false;
-                localCssAnimationCallback = function (e) {
-                    if (e.animationName != "key_" + cssClass) {
-                        //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
-                        return;
-                    }
-                    resolvedOK = true;
-                    $(targetId).removeEventListener("animationend", localCssAnimationCallback);
-                    $(targetId).classList.remove(cssClass);
-                    if (onEnd)
-                        onEnd();
-                    //   this.log('+anim',animationname,'resolved with callback');
-                };
-                if (onStart)
-                    onStart();
-                $(targetId).addEventListener("animationend", localCssAnimationCallback);
-                dojo.addClass(targetId, cssClass);
-                // this.MAIN.log('+anim',animationname,'starting playing');
-                //timeout security
-                timeoutId = setTimeout(function () {
+                console.log("*** anim ".concat(animationname, " started for ").concat(targetId, " of ").concat(animation.duration, " ms"));
+                cleanUp = function (e, kind) {
+                    if (kind === void 0) { kind = "callback"; }
                     if (resolvedOK)
                         return;
-                    if (_this.nodeExists(targetId)) {
-                        $(targetId).removeEventListener("animationend", localCssAnimationCallback);
+                    resolvedOK = true;
+                    if ($(targetId)) {
+                        $(targetId).removeEventListener("animationend", cleanUp);
                         $(targetId).classList.remove(cssClass);
                     }
-                    if (onEnd)
-                        onEnd();
-                    //this.MAIN.log('+anim',animationname,'resolved with timeout');
-                }, animation.duration * 1.5);
-                return [2 /*return*/];
+                    safeCall(onEnd);
+                    console.log("*** anim ".concat(animationname, " for ").concat(targetId, " resolved with ").concat(kind));
+                };
+                safeCall(onStart);
+                $(targetId).addEventListener("animationend", cleanUp);
+                $(targetId).classList.add(cssClass);
+                // this.MAIN.log('+anim',animationname,'starting playing');
+                //timeout security
+                setTimeout(function () { return cleanUp(undefined, "timeout"); }, this.getWaitDuration(animation.duration) * 1.5);
+                return [2 /*return*/, this.waitAdjusted(animation.duration)];
             });
         });
     };
-    CustomAnimation.prototype.slideToObjectAndAttach = function (movingId, destinationId, rotation, posX, posY) {
-        var _this = this;
-        if (rotation === void 0) { rotation = 0; }
-        if (posX === void 0) { posX = undefined; }
-        if (posY === void 0) { posY = undefined; }
-        var object = document.getElementById(movingId);
-        var destination = document.getElementById(destinationId);
-        var zoom = 1;
-        if (destination.contains(object)) {
-            return Promise.resolve(true);
-        }
-        return new Promise(function (resolve) {
-            var originalZIndex = Number(object.style.zIndex);
-            object.style.zIndex = "25";
-            var objectCR = object.getBoundingClientRect();
-            var destinationCR = destination.getBoundingClientRect();
-            var deltaX = destinationCR.left - objectCR.left + (posX !== null && posX !== void 0 ? posX : 0) * zoom;
-            var deltaY = destinationCR.top - objectCR.top + (posY !== null && posY !== void 0 ? posY : 0) * zoom;
-            //When move ends
-            var attachToNewParent = function () {
-                object.style.top = posY !== undefined ? "".concat(posY, "px") : null;
-                object.style.left = posX !== undefined ? "".concat(posX, "px") : null;
-                object.style.position = posX !== undefined || posY !== undefined ? "absolute" : null;
-                object.style.zIndex = originalZIndex ? "" + originalZIndex : null;
-                object.style.transform = rotation ? "rotate(".concat(rotation, "deg)") : null;
-                object.style.transition = null;
-                destination.appendChild(object);
-            };
-            object.style.transition = "transform " + _this.slide_duration + "ms ease-in";
-            object.style.transform = "translate(".concat(deltaX / zoom, "px, ").concat(deltaY / zoom, "px) rotate(").concat(rotation, "deg)");
-            if (object.style.position != "absolute")
-                object.style.position = "relative";
-            var securityTimeoutId = null;
-            var transitionend = function () {
-                attachToNewParent();
-                object.removeEventListener("transitionend", transitionend);
-                object.removeEventListener("transitioncancel", transitionend);
-                resolve(true);
-                if (securityTimeoutId) {
-                    clearTimeout(securityTimeoutId);
-                }
-            };
-            object.addEventListener("transitionend", transitionend);
-            object.addEventListener("transitioncancel", transitionend);
-            // security check : if transition fails, we force tile to destination
-            securityTimeoutId = setTimeout(function () {
-                if (!destination.contains(object)) {
-                    attachToNewParent();
-                    object.removeEventListener("transitionend", transitionend);
-                    object.removeEventListener("transitioncancel", transitionend);
-                    resolve(true);
-                }
-            }, _this.slide_duration * 1.2);
-        });
-    };
-    CustomAnimation.prototype.nodeExists = function (node_id) {
-        var node = dojo.byId(node_id);
-        if (!node) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    };
     return CustomAnimation;
 }());
+function safeCall(handler) {
+    if (handler) {
+        try {
+            handler();
+        }
+        catch (e) {
+            console.error(e);
+        }
+    }
+}
 /* Module for rendering  card effects, powers , etc
  *
  */
@@ -2789,6 +2689,7 @@ var CustomRenders = /** @class */ (function () {
         item = item.replace("ores(Microbe)", "ores_Microbe");
         item = item.replace("ores(Animal)", "ores_Animal");
         item = item.replace("ores(Floater)", "ores_Floater");
+        item = item.replace("ores(Floater,Jovian)", "ores_Floater");
         item = item.replace("counter('(tagPlant>=3)*4')", "special_tagplant_sup3");
         item = item.replace("tagMicrobe/2", "special_tagmicrobe_half");
         item = item.replace("ph,0", "ph");
@@ -3515,24 +3416,18 @@ var GameTokens = /** @class */ (function (_super) {
             this.gamedatas.token_types = {};
         }
         this.clientStateArgs = {}; // collector of client state arguments
-        this.instantaneousMode = true;
-        try {
-            this.gamedatas.tokens["limbo"] = {
-                key: "limbo",
-                state: 0,
-                location: "thething"
-            };
-            this.placeToken("limbo");
-            // Setting up player boards
-            for (var player_id in gamedatas.players) {
-                var playerInfo = gamedatas.players[player_id];
-                this.setupPlayer(playerInfo);
-            }
-            this.setupTokens();
+        this.gamedatas.tokens["limbo"] = {
+            key: "limbo",
+            state: 0,
+            location: "thething"
+        };
+        this.placeToken("limbo");
+        // Setting up player boards
+        for (var player_id in gamedatas.players) {
+            var playerInfo = gamedatas.players[player_id];
+            this.setupPlayer(playerInfo);
         }
-        finally {
-            this.instantaneousMode = false;
-        }
+        this.setupTokens();
     };
     GameTokens.prototype.onEnteringState_before = function (stateName, args) {
         if (!this.on_client_state) {
@@ -4172,7 +4067,7 @@ var GameTokens = /** @class */ (function (_super) {
                     else if ($(name_2)) {
                         this.setDomTokenState(name_2, value);
                     }
-                    //console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
+                    console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
                 }
                 catch (ex) {
                     console.error("Cannot update " + notif.args.counter_name, notif, ex, ex.stack);
@@ -4217,6 +4112,7 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = this;
         try {
             this.isDoingSetup = true;
+            this.instantaneousMode = true;
             this.lastMoveId = 0;
             this.handman = new CardHand(this);
             this.CON = gamedatas.CON; // PHP contants for game
@@ -4380,6 +4276,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         finally {
             this.isDoingSetup = false;
+            this.instantaneousMode = false;
         }
         this.checkTerraformingCompletion();
     };
@@ -5685,6 +5582,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.onUpdateTokenInDom = function (tokenNode, tokenInfo, tokenInfoBefore, animationDuration) {
+        var _this = this;
         var _a;
         if (animationDuration === void 0) { animationDuration = 0; }
         _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
@@ -5784,8 +5682,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var type = getPart(key, 1);
                 if (this.resourceTrackers.includes(type) || type == "tr") {
                     // cardboard layout animating cubes on playerboard instead
-                    this.customAnimation.animateTingle(key);
-                    return this.customAnimation.moveResources(key, inc);
+                    return this.customAnimation.animateTingle(key).finally(function () { return _this.customAnimation.moveResources(key, inc); });
                 }
                 if ($(key)) {
                     return this.customAnimation.animateTingle(key);

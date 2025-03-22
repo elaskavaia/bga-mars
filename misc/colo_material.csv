@@ -51,7 +51,7 @@ C39|Space Port|1|4pm,1npe|||22|colony>=1|Building City|0|Colonies|Requires 1 col
 C41|Spin-Off Department|2|||2pm|10||Building|0|Colonies|Increase your MC production 2 steps.||WHEN PLAYING A CARD WITH A BASIC COST OF 20 MC OR MORE, draw a card||
 #C42|Sub-Zero Salt Fish|2||1npp_Any||5||Animal|Ref|Colonies|Requires -6°C or warmer. Decrease any plant production 1 step. 1 VP per 2 animals on this card.|Add 1 animal to this card.|||  'holds' => 'Animal'
 #C43|Titan Air-Scrapping|2||Ref_u,Ref_tr||21||Jovian|2|Colonies||Spend 1 titanium to add 2 floaters to this card, or spend 2 floaters here to increase your TR 1 step.|||  'holds' => 'Floater'
-C44|Titan Floating Launch-Pad|2|ores(Floater,Jovian)|ores(Floater,Jovian)/res:trade(free)||18||Jovian|1|Colonies|Add 2 foaters to ANY JOVIAN CARD.|Add 1 floater to ANY JOVIAN CARD, or spend 1 floater here to trade for free|||  'holds' => 'Floater'
+C44|Titan Floating Launch-Pad|2|2ores(Floater,Jovian)|ores(Floater,Jovian)/res:trade(free)||18||Jovian|1|Colonies|Add 2 foaters to ANY JOVIAN CARD.|Add 1 floater to ANY JOVIAN CARD, or spend 1 floater here to trade for free|||  'holds' => 'Floater'
 #C45|Titan Shuttles|2||Ref_u||23||Space Jovian|1|Colonies||Add 2 floaters to ANY JOVIAN CARD, or spend any number of floaters here to gain the same number of titanium.|||  'holds' => 'Floater'
 C46|Trade Envoys|2||||6|||0|Colonies|||When you trade, you may first increase that Colony Tile track 1 step.||
 C47|Trading Colony|2||||18||Space|0|Colonies|Place a colony.||When you trade, you may first increase that Colony Tile track 1 step.||

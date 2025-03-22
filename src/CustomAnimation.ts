@@ -1,3 +1,7 @@
+const BIG_ANIMATION = 3;
+const SMALL_ANIMATION = 2;
+const NO_ANIMATION = 1;
+
 class CustomAnimation {
   private animations = {};
   private slide_duration: number = 800;
@@ -155,7 +159,7 @@ class CustomAnimation {
 
   setOriginalStackView(tableau_elem: HTMLElement, value: string) {
     if (this.areAnimationsPlayed()) {
-      this.wait(this.getWaitDuration(1500)).then(() => {
+      this.waitAdjusted(1000).then(() => {
         tableau_elem.dataset.currentview = value;
       });
     } else {
@@ -164,16 +168,12 @@ class CustomAnimation {
   }
 
   async animateTilePop(token_id: string) {
-    if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2) return;
-    return this.playCssAnimation(token_id, "grow_appear", null, null);
+    return this.playCssAnimation(token_id, "grow_appear", null, null, BIG_ANIMATION);
   }
 
   async animateTingle(counter_id: string) {
-    if (!this.areAnimationsPlayed()) return;
-    if (this.nodeExists("alt_" + counter_id)) {
-      void this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null);
-    }
-    return this.playCssAnimation(counter_id, "small_tingle", null, null);
+    void this.playCssAnimation("alt_" + counter_id, "small_tingle", null, null, SMALL_ANIMATION);
+    return this.playCssAnimation(counter_id, "small_tingle", null, null, SMALL_ANIMATION);
   }
 
   async animatePlaceResourceOnCard(resource_id: string, place_id: string): Promise<any> {
@@ -182,40 +182,32 @@ class CustomAnimation {
     let animate_token = resource_id;
     if (!this.game.isLayoutFull() && place_id.startsWith("card_main_")) animate_token = place_id.replace("card_main_", "resource_holder_");
 
-    let anim_1: Promise<any>;
-    if (this.getAnimationAmount() == 2) {
-      anim_1 = this.getImmediatePromise();
-    } else {
-      anim_1 = this.playCssAnimation(
-        place_id,
-        "pop",
-        () => {
-          dojo.style(place_id, "filter", "grayscale(0)");
-        },
-        () => {
-          dojo.style(place_id, "transform", "scale(1.2)");
-        }
-      );
-    }
-
-    const anim_2 = anim_1.then(() => {
-      return this.playCssAnimation(
-        animate_token,
-        "great_tingle",
-        () => {
-          dojo.style(animate_token, "z-index", "10");
-        },
-        () => {
-          dojo.style(animate_token, "z-index", "");
-        }
-      );
-    });
-
-    if (this.getAnimationAmount() == 2) {
-      return anim_2;
-    } else {
-      return anim_2.then(() => {
-        return this.playCssAnimation(
+    return this.playCssAnimation(
+      place_id,
+      "pop",
+      () => {
+        dojo.style(place_id, "filter", "grayscale(0)");
+      },
+      () => {
+        dojo.style(place_id, "transform", "scale(1.2)");
+      },
+      BIG_ANIMATION
+    )
+      .finally(() =>
+        this.playCssAnimation(
+          animate_token,
+          "great_tingle",
+          () => {
+            dojo.style(animate_token, "z-index", "10");
+          },
+          () => {
+            dojo.style(animate_token, "z-index", "");
+          },
+          SMALL_ANIMATION
+        )
+      )
+      .finally(() =>
+        this.playCssAnimation(
           place_id,
           "depop",
           () => {
@@ -223,10 +215,10 @@ class CustomAnimation {
           },
           () => {
             dojo.style(place_id, "filter", "");
-          }
-        );
-      });
-    }
+          },
+          BIG_ANIMATION
+        )
+      );
   }
 
   async animateRemoveResourceFromCard(resource_id: string, card_id?: string): Promise<any> {
@@ -236,16 +228,6 @@ class CustomAnimation {
       //too late, resource is not on card anymore
       return;
     }
-    return this.playCssAnimation(
-      animate_token,
-      "great_tingle",
-      () => {
-        dojo.style(animate_token, "z-index", "10");
-      },
-      () => {
-        dojo.style(animate_token, "z-index", "");
-      }
-    );
   }
 
   async animatePlaceMarker(marker_id: string, place_id: string): Promise<void> {
@@ -258,11 +240,7 @@ class CustomAnimation {
     }
 
     let p_start: Promise<any>;
-    if (
-      (place_id.startsWith("award_") || place_id.startsWith("milestone")) &&
-      !this.game.isLayoutFull() &&
-      this.getAnimationAmount() == 3
-    ) {
+    if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) && !this.game.isLayoutFull()) {
       p_start = this.playCssAnimation(
         place_id,
         "award_pop",
@@ -272,7 +250,8 @@ class CustomAnimation {
         },
         () => {
           $(place_id).setAttribute("style", "transform: translateY(-200%) scale(1.2); box-shadow: none !important;");
-        }
+        },
+        BIG_ANIMATION
       );
     } else {
       p_start = this.getImmediatePromise();
@@ -293,15 +272,12 @@ class CustomAnimation {
           for (let item of unclip) {
             $(item).setAttribute("style", "");
           }
-        }
+        },
+        SMALL_ANIMATION
       );
     });
 
-    if (
-      (place_id.startsWith("award_") || place_id.startsWith("milestone")) &&
-      !this.game.isLayoutFull() &&
-      this.getAnimationAmount() == 3
-    ) {
+    if ((place_id.startsWith("award_") || place_id.startsWith("milestone")) && !this.game.isLayoutFull()) {
       return p_mid.then(() => {
         return this.playCssAnimation(
           place_id,
@@ -311,17 +287,15 @@ class CustomAnimation {
           },
           () => {
             $(place_id).setAttribute("style", "");
-          }
+          },
+          BIG_ANIMATION
         );
       });
     }
   }
 
   async animateMapItemAwareness(item_id: string): Promise<void> {
-    if (!$(item_id)) return;
-    if (!this.areAnimationsPlayed() || this.getAnimationAmount() == 2) return;
-
-    const anim_1 = this.playCssAnimation(
+    return this.playCssAnimation(
       item_id,
       "pop",
       () => {
@@ -329,25 +303,21 @@ class CustomAnimation {
       },
       () => {
         dojo.style(item_id, "transform", "scale(1.2)");
-      }
+      },
+      BIG_ANIMATION
+    ).finally(() =>
+      this.playCssAnimation(
+        item_id,
+        "depop",
+        () => {
+          dojo.style(item_id, "transform", "");
+        },
+        () => {
+          dojo.style(item_id, "z-index", "");
+        },
+        BIG_ANIMATION
+      )
     );
-
-    return anim_1
-      .then(() => {
-        return this.wait(this.getWaitDuration(500));
-      })
-      .then(() => {
-        return this.playCssAnimation(
-          item_id,
-          "depop",
-          () => {
-            dojo.style(item_id, "transform", "");
-          },
-          () => {
-            dojo.style(item_id, "z-index", "");
-          }
-        );
-      });
   }
 
   async moveResources(tracker: string, qty: number): Promise<any> {
@@ -386,8 +356,8 @@ class CustomAnimation {
       let origin = qty > 0 ? "move_from_" + tmpid : tracker.replace("tracker_", "alt_tracker_");
       let destination = qty > 0 ? tracker.replace("tracker_", "alt_tracker_") : "move_from_" + tmpid;
 
-      if (!this.nodeExists(origin) && origin.startsWith("alt_")) origin = tracker;
-      if (!this.nodeExists(destination) && destination.startsWith("alt_")) destination = tracker;
+      if (!$(origin) && origin.startsWith("alt_")) origin = tracker;
+      if (!$(destination) && destination.startsWith("alt_")) destination = tracker;
 
       dojo.place(htm.replace("%t", tmpid), origin);
 
@@ -439,7 +409,8 @@ class CustomAnimation {
   areAnimationsPlayed(): boolean {
     //if(this.game.animated) return true;
     if (this.game.instantaneousMode) return false;
-    if (this.getAnimationAmount() <= 1) return false;
+    if (this.game.isDoingSetup) return false;
+    if (this.getAnimationAmount() <= SMALL_ANIMATION) return false;
     if (document.hidden || document.visibilityState === "hidden") return false;
 
     return true;
@@ -457,121 +428,55 @@ class CustomAnimation {
     });
   }
 
+  waitAdjusted(ms: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const msa = this.getWaitDuration(ms);
+      setTimeout(() => resolve(""), msa);
+    });
+  }
   //Adds css class on element, plays it, executes onEnd and removes css class
   //a promise is returned for easy chaining
-  async playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any): Promise<any> {
+  async playCssAnimation(targetId: string, animationname: string, onStart: any, onEnd: any, minLevel: number = 2): Promise<any> {
     if (!$(targetId)) return;
+    if (!this.areAnimationsPlayed()) return;
+    if (this.getAnimationAmount() < minLevel) return;
     const animation = this.animations[animationname];
 
     let cssClass = "anim_" + animation.name;
-    let timeoutId = null;
     let resolvedOK = false;
-    let localCssAnimationCallback = (e) => {
-      if (e.animationName != "key_" + cssClass) {
-        //  console.log("+anim",animationname,"animation name intercepted ",e.animationName);
-        return;
-      }
+    console.log(`*** anim ${animationname} started for ${targetId} of ${animation.duration} ms`);
+
+    const cleanUp = function (e: Event, kind: string = "callback") {
+      if (resolvedOK) return;
       resolvedOK = true;
-      $(targetId).removeEventListener("animationend", localCssAnimationCallback);
-      $(targetId).classList.remove(cssClass);
-      if (onEnd) onEnd();
-      //   this.log('+anim',animationname,'resolved with callback');
+      if ($(targetId)) {
+        $(targetId).removeEventListener("animationend", cleanUp);
+        $(targetId).classList.remove(cssClass);
+      }
+      safeCall(onEnd);
+      console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
     };
 
-    if (onStart) onStart();
-    $(targetId).addEventListener("animationend", localCssAnimationCallback);
-    dojo.addClass(targetId, cssClass);
+    safeCall(onStart);
+    $(targetId).addEventListener("animationend", cleanUp);
+    $(targetId).classList.add(cssClass);
 
     // this.MAIN.log('+anim',animationname,'starting playing');
 
     //timeout security
 
-    timeoutId = setTimeout(() => {
-      if (resolvedOK) return;
-      if (this.nodeExists(targetId)) {
-        $(targetId).removeEventListener("animationend", localCssAnimationCallback);
-        $(targetId).classList.remove(cssClass);
-      }
+    setTimeout(() => cleanUp(undefined, "timeout"), this.getWaitDuration(animation.duration) * 1.5);
 
-      if (onEnd) onEnd();
-      //this.MAIN.log('+anim',animationname,'resolved with timeout');
-    }, animation.duration * 1.5);
+    return this.waitAdjusted(animation.duration);
   }
+}
 
-  slideToObjectAndAttach(
-    movingId: string,
-    destinationId: string,
-    rotation: number = 0,
-    posX: number = undefined,
-    posY: number = undefined
-  ) {
-    const object = document.getElementById(movingId);
-    const destination = document.getElementById(destinationId);
-    const zoom = 1;
-
-    if (destination.contains(object)) {
-      return Promise.resolve(true);
-    }
-
-    return new Promise((resolve) => {
-      const originalZIndex = Number(object.style.zIndex);
-      object.style.zIndex = "25";
-
-      const objectCR = object.getBoundingClientRect();
-      const destinationCR = destination.getBoundingClientRect();
-
-      const deltaX = destinationCR.left - objectCR.left + (posX ?? 0) * zoom;
-      const deltaY = destinationCR.top - objectCR.top + (posY ?? 0) * zoom;
-
-      //When move ends
-      const attachToNewParent = () => {
-        object.style.top = posY !== undefined ? `${posY}px` : null;
-        object.style.left = posX !== undefined ? `${posX}px` : null;
-        object.style.position = posX !== undefined || posY !== undefined ? "absolute" : null;
-        object.style.zIndex = originalZIndex ? "" + originalZIndex : null;
-        object.style.transform = rotation ? `rotate(${rotation}deg)` : null;
-        object.style.transition = null;
-        destination.appendChild(object);
-      };
-
-      object.style.transition = "transform " + this.slide_duration + "ms ease-in";
-      object.style.transform = `translate(${deltaX / zoom}px, ${deltaY / zoom}px) rotate(${rotation}deg)`;
-      if (object.style.position != "absolute") object.style.position = "relative";
-
-      let securityTimeoutId = null;
-
-      const transitionend = () => {
-        attachToNewParent();
-        object.removeEventListener("transitionend", transitionend);
-        object.removeEventListener("transitioncancel", transitionend);
-        resolve(true);
-
-        if (securityTimeoutId) {
-          clearTimeout(securityTimeoutId);
-        }
-      };
-
-      object.addEventListener("transitionend", transitionend);
-      object.addEventListener("transitioncancel", transitionend);
-
-      // security check : if transition fails, we force tile to destination
-      securityTimeoutId = setTimeout(() => {
-        if (!destination.contains(object)) {
-          attachToNewParent();
-          object.removeEventListener("transitionend", transitionend);
-          object.removeEventListener("transitioncancel", transitionend);
-          resolve(true);
-        }
-      }, this.slide_duration * 1.2);
-    });
-  }
-
-  nodeExists(node_id: string): boolean {
-    var node = dojo.byId(node_id);
-    if (!node) {
-      return false;
-    } else {
-      return true;
+function safeCall(handler: any) {
+  if (handler) {
+    try {
+      handler();
+    } catch (e) {
+      console.error(e);
     }
   }
 }

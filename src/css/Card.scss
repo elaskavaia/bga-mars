@@ -13,7 +13,7 @@
   box-shadow: 2px 2px 3px 1px #00000080;
   position: relative;
   --resourcesize: calc(var(--card-width) * 0.16);
-  user-select: none;
+  //user-select: none;
 }
 
 
@@ -1881,7 +1881,6 @@
   }
 
   .card_resource_holder[data-resource_counter="0"] {
-
     display: none;
   }
 
@@ -2154,11 +2153,12 @@
 }
 
 .card.colo_main {
-  background-image: url(img/colonies/colo_cards.jpg);
-  background-size: 600% auto;
-
-  .card_decor>* {
+  .card_decor> *:not(.card_resource_holder,.card_bg) {
     display: none;
+  }
+  & > .card_decor> .card_bg {
+    background-image: url(img/colonies/colo_cards.jpg);
+    background-size: 600% auto;
   }
 
   .card_initial {
@@ -2182,7 +2182,7 @@
   $col: $i % 6;
   $row: calc(($i - $col) / 6);
 
-  .card.card_main_C0#{$num} {
+  .card.card_main_C0#{$num}  .card_bg {
     background-position-x: calc(100% / 5 * $col);
     background-position-y: calc(100% / 8 * $row);
   }
@@ -2193,7 +2193,7 @@
   $col: $i % 6;
   $row: calc(($i - $col) / 6);
 
-  .card.card_main_C#{$num} {
+  .card.card_main_C#{$num} .card_bg  {
     background-position-x: calc(100% / 5 * $col);
     background-position-y: calc(100% / 8 * $row);
   }

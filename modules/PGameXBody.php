@@ -1,7 +1,5 @@
 <?php
 
-require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
-
 require_once "PGameMachine.php";
 require_once "MathExpression.php";
 require_once "DbUserPrefs.php";

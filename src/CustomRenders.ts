@@ -298,6 +298,7 @@ class CustomRenders {
     item = item.replace("ores(Microbe)", "ores_Microbe");
     item = item.replace("ores(Animal)", "ores_Animal");
     item = item.replace("ores(Floater)", "ores_Floater");
+    item = item.replace("ores(Floater,Jovian)", "ores_Floater");
 
     item = item.replace("counter('(tagPlant>=3)*4')", "special_tagplant_sup3");
     item = item.replace("tagMicrobe/2", "special_tagmicrobe_half");

@@ -602,7 +602,6 @@
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.5019607843);
   position: relative;
   --resourcesize: calc(var(--card-width) * 0.16);
-  user-select: none;
 }
 
 .location .card {
@@ -3857,12 +3856,12 @@
   background-size: auto 100%;
 }
 
-.card.colo_main {
+.card.colo_main .card_decor > *:not(.card_resource_holder, .card_bg) {
+  display: none;
+}
+.card.colo_main > .card_decor > .card_bg {
   background-image: url(img/colonies/colo_cards.jpg);
   background-size: 600% auto;
-}
-.card.colo_main .card_decor > * {
-  display: none;
 }
 .card.colo_main .card_initial {
   position: absolute;
@@ -3876,247 +3875,247 @@
   font-family: Georgia;
 }
 
-.card.card_main_C01 {
+.card.card_main_C01 .card_bg {
   background-position-x: 0%;
   background-position-y: 0%;
 }
 
-.card.card_main_C02 {
+.card.card_main_C02 .card_bg {
   background-position-x: 20%;
   background-position-y: 0%;
 }
 
-.card.card_main_C03 {
+.card.card_main_C03 .card_bg {
   background-position-x: 40%;
   background-position-y: 0%;
 }
 
-.card.card_main_C04 {
+.card.card_main_C04 .card_bg {
   background-position-x: 60%;
   background-position-y: 0%;
 }
 
-.card.card_main_C05 {
+.card.card_main_C05 .card_bg {
   background-position-x: 80%;
   background-position-y: 0%;
 }
 
-.card.card_main_C06 {
+.card.card_main_C06 .card_bg {
   background-position-x: 100%;
   background-position-y: 0%;
 }
 
-.card.card_main_C07 {
+.card.card_main_C07 .card_bg {
   background-position-x: 0%;
   background-position-y: 12.5%;
 }
 
-.card.card_main_C08 {
+.card.card_main_C08 .card_bg {
   background-position-x: 20%;
   background-position-y: 12.5%;
 }
 
-.card.card_main_C09 {
+.card.card_main_C09 .card_bg {
   background-position-x: 40%;
   background-position-y: 12.5%;
 }
 
-.card.card_main_C10 {
+.card.card_main_C10 .card_bg {
   background-position-x: 60%;
   background-position-y: 12.5%;
 }
 
-.card.card_main_C11 {
+.card.card_main_C11 .card_bg {
   background-position-x: 80%;
   background-position-y: 12.5%;
 }
 
-.card.card_main_C12 {
+.card.card_main_C12 .card_bg {
   background-position-x: 100%;
   background-position-y: 12.5%;
 }
 
-.card.card_main_C13 {
+.card.card_main_C13 .card_bg {
   background-position-x: 0%;
   background-position-y: 25%;
 }
 
-.card.card_main_C14 {
+.card.card_main_C14 .card_bg {
   background-position-x: 20%;
   background-position-y: 25%;
 }
 
-.card.card_main_C15 {
+.card.card_main_C15 .card_bg {
   background-position-x: 40%;
   background-position-y: 25%;
 }
 
-.card.card_main_C16 {
+.card.card_main_C16 .card_bg {
   background-position-x: 60%;
   background-position-y: 25%;
 }
 
-.card.card_main_C17 {
+.card.card_main_C17 .card_bg {
   background-position-x: 80%;
   background-position-y: 25%;
 }
 
-.card.card_main_C18 {
+.card.card_main_C18 .card_bg {
   background-position-x: 100%;
   background-position-y: 25%;
 }
 
-.card.card_main_C19 {
+.card.card_main_C19 .card_bg {
   background-position-x: 0%;
   background-position-y: 37.5%;
 }
 
-.card.card_main_C20 {
+.card.card_main_C20 .card_bg {
   background-position-x: 20%;
   background-position-y: 37.5%;
 }
 
-.card.card_main_C21 {
+.card.card_main_C21 .card_bg {
   background-position-x: 40%;
   background-position-y: 37.5%;
 }
 
-.card.card_main_C22 {
+.card.card_main_C22 .card_bg {
   background-position-x: 60%;
   background-position-y: 37.5%;
 }
 
-.card.card_main_C23 {
+.card.card_main_C23 .card_bg {
   background-position-x: 80%;
   background-position-y: 37.5%;
 }
 
-.card.card_main_C24 {
+.card.card_main_C24 .card_bg {
   background-position-x: 100%;
   background-position-y: 37.5%;
 }
 
-.card.card_main_C25 {
+.card.card_main_C25 .card_bg {
   background-position-x: 0%;
   background-position-y: 50%;
 }
 
-.card.card_main_C26 {
+.card.card_main_C26 .card_bg {
   background-position-x: 20%;
   background-position-y: 50%;
 }
 
-.card.card_main_C27 {
+.card.card_main_C27 .card_bg {
   background-position-x: 40%;
   background-position-y: 50%;
 }
 
-.card.card_main_C28 {
+.card.card_main_C28 .card_bg {
   background-position-x: 60%;
   background-position-y: 50%;
 }
 
-.card.card_main_C29 {
+.card.card_main_C29 .card_bg {
   background-position-x: 80%;
   background-position-y: 50%;
 }
 
-.card.card_main_C30 {
+.card.card_main_C30 .card_bg {
   background-position-x: 100%;
   background-position-y: 50%;
 }
 
-.card.card_main_C31 {
+.card.card_main_C31 .card_bg {
   background-position-x: 0%;
   background-position-y: 62.5%;
 }
 
-.card.card_main_C32 {
+.card.card_main_C32 .card_bg {
   background-position-x: 20%;
   background-position-y: 62.5%;
 }
 
-.card.card_main_C33 {
+.card.card_main_C33 .card_bg {
   background-position-x: 40%;
   background-position-y: 62.5%;
 }
 
-.card.card_main_C34 {
+.card.card_main_C34 .card_bg {
   background-position-x: 60%;
   background-position-y: 62.5%;
 }
 
-.card.card_main_C35 {
+.card.card_main_C35 .card_bg {
   background-position-x: 80%;
   background-position-y: 62.5%;
 }
 
-.card.card_main_C36 {
+.card.card_main_C36 .card_bg {
   background-position-x: 100%;
   background-position-y: 62.5%;
 }
 
-.card.card_main_C37 {
+.card.card_main_C37 .card_bg {
   background-position-x: 0%;
   background-position-y: 75%;
 }
 
-.card.card_main_C38 {
+.card.card_main_C38 .card_bg {
   background-position-x: 20%;
   background-position-y: 75%;
 }
 
-.card.card_main_C39 {
+.card.card_main_C39 .card_bg {
   background-position-x: 40%;
   background-position-y: 75%;
 }
 
-.card.card_main_C40 {
+.card.card_main_C40 .card_bg {
   background-position-x: 60%;
   background-position-y: 75%;
 }
 
-.card.card_main_C41 {
+.card.card_main_C41 .card_bg {
   background-position-x: 80%;
   background-position-y: 75%;
 }
 
-.card.card_main_C42 {
+.card.card_main_C42 .card_bg {
   background-position-x: 100%;
   background-position-y: 75%;
 }
 
-.card.card_main_C43 {
+.card.card_main_C43 .card_bg {
   background-position-x: 0%;
   background-position-y: 87.5%;
 }
 
-.card.card_main_C44 {
+.card.card_main_C44 .card_bg {
   background-position-x: 20%;
   background-position-y: 87.5%;
 }
 
-.card.card_main_C45 {
+.card.card_main_C45 .card_bg {
   background-position-x: 40%;
   background-position-y: 87.5%;
 }
 
-.card.card_main_C46 {
+.card.card_main_C46 .card_bg {
   background-position-x: 60%;
   background-position-y: 87.5%;
 }
 
-.card.card_main_C47 {
+.card.card_main_C47 .card_bg {
   background-position-x: 80%;
   background-position-y: 87.5%;
 }
 
-.card.card_main_C48 {
+.card.card_main_C48 .card_bg {
   background-position-x: 100%;
   background-position-y: 87.5%;
 }
 
-.card.card_main_C49 {
+.card.card_main_C49 .card_bg {
   background-position-x: 0%;
   background-position-y: 100%;
 }

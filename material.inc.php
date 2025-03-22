@@ -4304,7 +4304,7 @@ $this->token_types = [
   'num' => 'C44',
   'name' => clienttranslate('Titan Floating Launch-Pad'),
   't' => 2,
-  'r' => 'ores(Floater,Jovian)',
+  'r' => '2ores(Floater,Jovian)',
   'a' => 'ores(Floater,Jovian)/res:trade(free)',
   'cost' => 18,
   'tags' => 'Jovian',
@@ -8793,5 +8793,12 @@ $this->token_types = [
     'class' => 'Operation_trade',
     'type' => 'trade',
     'name' => c_lienttranslate('Trade with Colony'),
+  ],
+  'tagFloater' => [  //
+    'type' => 'tag',
+    'create' => 0,
+    'location' => 'params',
+    'nc' => 1,
+    'name' => c_lienttranslate('Floater'),
   ],
 ];
