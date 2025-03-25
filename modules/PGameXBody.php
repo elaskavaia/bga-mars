@@ -475,7 +475,7 @@ abstract class PGameXBody extends PGameMachine {
         ];
     }
 
-    function debug_opInfo($type, $data = '') {
+    function debug_opInfo(string $type, string $data = '') {
         if (!$type) return [];
         $color = $this->getCurrentPlayerColor();
         $inst = $this->getOperationInstanceFromType($type, $color, 1, $data);
@@ -1402,7 +1402,6 @@ abstract class PGameXBody extends PGameMachine {
 
         if (startsWith($card_id, 'card_main')) {
             $events = $this->getPlayCardEvents($card_id, 'onPay_');
-
             $listeners = $this->collectListeners($owner, $events, null, $extracontext);
             foreach ($listeners as $lisinfo) {
                 $outcome = $lisinfo['outcome'];
@@ -2129,6 +2128,7 @@ abstract class PGameXBody extends PGameMachine {
     function effect_production() {
         $params = ['m', 's', 'u', 'p', 'e', 'h'];
         $players = $this->loadPlayersBasicInfos();
+        $nodargs = ['nod'=>1];
         foreach ($params as $p) {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -2138,17 +2138,34 @@ abstract class PGameXBody extends PGameMachine {
                     $curr = $this->tokens->getTokenState("tracker_{$p}_{$color}");
                     if ($curr > 0) {
                         $this->effect_incCount($color, 'h', $curr, [
-                            'message' => clienttranslate('${player_name} gains ${token_div_count} due to heat transfer')
+                            'message' => clienttranslate('${player_name} gains ${token_div_count} due to heat transfer'),
+                            'nod'=>1
                         ]);
-                        $this->effect_incCount($color, 'e', -$curr);
+                        $this->effect_incCount($color, 'e', -$curr, $nodargs);
                     }
                 } elseif ($p == 'm') {
                     $curr = $this->tokens->getTokenState("tracker_tr_{$color}");
                     $prod += $curr;
                 }
                 if ($prod)
-                    $this->effect_incCount($color, $p, $prod);
+                    $this->effect_incCount($color, $p, $prod, $nodargs);
             }
+        }
+    }
+
+    function effect_colonyProduction() {
+        if (!$this->isColoniesVariant()) return;
+        $tokens = $this->tokens->getTokensOfTypeInLocation("fleet_", "card_%");
+        $this->dbSetTokensLocation($tokens, 'colo_fleet', 0, '');
+
+        $tokens = $this->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
+        foreach($tokens as $tokenId => $info) {
+            $state = $info['state'];
+            if ($state<0) continue;
+            if ($state>=6) continue;        
+            $this->dbSetTokenState($tokenId, $state + 1, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
+                'card_name' => $this->getTokenName($tokenId)
+            ]);
         }
     }
 
@@ -2157,6 +2174,8 @@ abstract class PGameXBody extends PGameMachine {
             return STATE_END_GAME;
         }
         $this->effect_production();
+        // solar phase
+        // step 1: end of game check
         if ($this->isEndOfGameAchived()) {
             $this->setGameStateValue('gamestage', MA_STAGE_LASTFOREST);
 
@@ -2165,6 +2184,9 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->isStudio()) $this->machine->queue("confirm");
             return null;
         }
+        // step 2: world goverment: venus only
+        // step 3: colony production
+        $this->effect_colonyProduction();
         $current_player_id = $this->getCurrentStartingPlayer();
         $player_id = $this->getPlayerAfter($current_player_id);
         $this->setCurrentStartingPlayer($player_id);

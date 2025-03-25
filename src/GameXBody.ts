@@ -34,7 +34,7 @@ class GameXBody extends GameTokens {
 
   setup(gamedatas: any) {
     try {
-      this.isDoingSetup = true;     
+      this.isDoingSetup = true;
       this.instantaneousMode = true;
       this.lastMoveId = 0;
       this.handman = new CardHand(this);
@@ -1167,13 +1167,11 @@ class GameXBody extends GameTokens {
 
     //Displays message in header while the notif is playing
     //deactivated if animations aren't played
-    if (this.customAnimation.areAnimationsPlayed() == true) {
+    //if (this.customAnimation.areAnimationsPlayed() == true)
+    {
       if (!this.instantaneousMode && notif.log) {
         if ($("gameaction_status_wrap").style.display != "none") {
-          let msg = this.format_string_recursive(notif.log, notif.args);
-          if (msg != "") {
-            $("gameaction_status").innerHTML = msg;
-          }
+          this.setSubTitle(notif.log, notif.args);
         } else {
           // XXX this is very bad in multiple player all yout buttons dissapear
           // currently gameaction_status should be visible
@@ -1182,6 +1180,7 @@ class GameXBody extends GameTokens {
       }
     }
   }
+
 
   notif_tokensUpdate(notif: Notif) {
     console.log("notif_tokensUpdate", notif);
@@ -1855,9 +1854,12 @@ awarded.`);
     }
   }
 
-  onUpdateTokenInDom(tokenNode: HTMLElement, tokenInfo: Token, tokenInfoBefore: Token | undefined,
+  onUpdateTokenInDom(
+    tokenNode: HTMLElement,
+    tokenInfo: Token,
+    tokenInfoBefore: Token | undefined,
     animationDuration: number = 0
-  ): Promise<any>{
+  ): Promise<any> {
     super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
 
     const key = tokenInfo.key;
@@ -1957,7 +1959,7 @@ awarded.`);
         const type = getPart(key, 1);
         if (this.resourceTrackers.includes(type) || type == "tr") {
           // cardboard layout animating cubes on playerboard instead
-          return this.customAnimation.animateTingle(key).finally(()=>this.customAnimation.moveResources(key, inc));
+          return this.customAnimation.animateTingle(key).finally(() => this.customAnimation.moveResources(key, inc));
         }
         if ($(key)) {
           return this.customAnimation.animateTingle(key);
@@ -2982,6 +2984,7 @@ awarded.`);
     this.clientStateArgs.ops = [];
     this.clearReverseIdMap();
     this.setMainOperationType(undefined);
+    this.setSubTitle(" ");
 
     const xop = args.op;
 
@@ -3039,11 +3042,11 @@ awarded.`);
         }
       }
 
-      if (!ordered && !chooseorder && i==0 && opInfo.data) {
+      if (!ordered && !chooseorder && i == 0 && opInfo.data) {
         const data = opInfo.data.split(":")[0];
         const tr = this.getTokenName(data);
         if (tr) {
-          this.setMainTitle(" ["+tr+"]", true);
+          this.setMainTitle(` [${tr}]`, true); // TODO
         }
       }
 
@@ -3058,7 +3061,6 @@ awarded.`);
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
-
   }
 
   onOperationButton(opInfo: any, clientState: boolean = true) {
@@ -3280,7 +3282,6 @@ awarded.`);
     super.onLeavingState(stateName);
     this.handman?.saveSort();
   }
-
 
   setUndoMove(undoMeta: any, currentMove: number) {
     if (!undoMeta) return;

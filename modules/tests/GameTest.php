@@ -36,12 +36,14 @@ class GameUT extends terraformingmars {
         $this->_colors = array(PCOLOR, BCOLOR);
     }
 
-    function init(int $map = 0) {
+    function init(int $map = 0, int $colonies = 0) {
         $this->map_number = $map;
+        $this->var_colonies = $colonies;
         $this->adjustedMaterial(true);
         $this->createTokens();
         $this->gamestate->changeActivePlayer(PCOLOR);
         $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
+        return $this;
     }
 
     function clean_cache() {
@@ -1666,9 +1668,8 @@ final class GameTest extends TestCase {
 
     public function testColony() {
         $m = new GameUT();
-        $m->var_colonies = 1;
-        $m->init(0);
-        $this->assertTrue($m->isColoniesVariant()===1);
+        $m->init(0, 1);
+        $this->assertTrue($m->isColoniesVariant() === 1);
         $this->game = $m;
         $op = $m->getOperationInstanceFromType("colony", PCOLOR);
         $this->assertNotNull($op);
@@ -1676,19 +1677,16 @@ final class GameTest extends TestCase {
     }
 
     public function testTrade() {
-        $m = new GameUT();
-        $m->var_colonies = 1;
-        $m->init(0);
-        $this->assertTrue($m->isColoniesVariant()===1);
-        $this->game = $m;
+        $m = $this->game = (new GameUT())->init(0, 1);
+        $this->assertTrue($m->isColoniesVariant() === 1);
         $op = $m->getOperationInstanceFromType("trade", PCOLOR);
         $this->assertNotNull($op);
         $this->assertFalse($op->isVoid());
 
         $this->assertFalse($op->requireConfirmation());
-        $this->assertEquals('token',$op->getPrimaryArgType());
+        $this->assertEquals('token', $op->getPrimaryArgType());
         $this->assertFalse($op->canResolveAutomatically());
-        $m->dbSetTokenLocation('card_colo_2','display_colonies',1);
+        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 1);
         $op = $m->getOperationInstanceFromType("trade", PCOLOR);
         $info = $op->argPrimaryDetails();
         $this->assertEquals(MA_ERR_COST, $info['card_colo_2']['q']);
@@ -1698,10 +1696,17 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
 
 
-        $m->incTrackerValue(PCOLOR,'m',10);
+        $m->incTrackerValue(PCOLOR, 'm', 10);
 
         $op = $m->getOperationInstanceFromType("trade", PCOLOR);
         $info = $op->argPrimaryDetails();
         $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
+    }
+
+    public function testTradeInc() {
+        $m = $this->game = (new GameUT())->init(0, 1);
+        $this->assertTrue($m->isColoniesVariant() === 1);
+        $op = $m->getOperationInstanceFromType("tradeinc", PCOLOR, 1, 'card_colo_2');
+        $this->assertFalse($op->isVoid());
     }
 }

@@ -1842,13 +1842,15 @@
   }
 
   .card_resource_holder {
+    left: 25%;
+    top: 0%;
+    background-color: #ffffffaa;
+    width: 50%;
+
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    left: 3%;
     position: absolute;
-    top: 50%;
-    width: 94%;
     color: black;
 
     font-size: calc(var(--resourcesize) * 0.8);

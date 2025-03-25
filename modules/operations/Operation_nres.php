@@ -9,14 +9,24 @@ class Operation_nres extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
-        $keys = [$this->getContext()];
+        $card = $this->getContext(0);
+        $param = $this->getParam(0);
+        if ($param) {
+            $useholds = $param;
+            $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
+            $keys = array_keys($tokens);
+        } else {
+            $keys = [$card];
+            $useholds = $this->game->getRulesFor($card, 'holds', '');
+        }
         $count = $this->getMinCount();
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($count) {
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($count, $useholds) {
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
             if (!$holds) return MA_ERR_NOTAPPLICABLE;
+            if ($holds != $useholds) return MA_ERR_NOTAPPLICABLE;
             $map = $this->game->getCardsWithResource($holds, $tokenId);
             $current = $map[$tokenId] ?? 0;
-            if ($current >= $count) return 0;
+            if ($current >= $count) return MA_OK;
             return MA_ERR_MANDATORYEFFECT;
         });
     }
@@ -35,10 +45,15 @@ class Operation_nres extends AbsOperation {
     function effect(string $owner, int $inc): int {
         $card = $this->getContext();
         if (!$card) throw new feException("Context is not defined for operation");
+        $param = $this->getParam(0);
+        if (!$param) {
+            $holds = $this->game->getRulesFor($card, 'holds', '');
+            if (!$holds) throw new feException("Card '$card' cannot hold resources");
+        } else {
+            $holds = $param;
+            $card = $this->getCheckedArg('target');
+        }
 
-
-        $holds = $this->game->getRulesFor($card, 'holds', '');
-        if (!$holds) throw new feException("Card '$card' cannot hold resources");
 
         $resources = $this->game->tokens->getTokensOfTypeInLocation("resource", $card);
         $num = $inc;
@@ -55,7 +70,16 @@ class Operation_nres extends AbsOperation {
         return 'token';
     }
 
-    function canFail(){
+    function canFail() {
         return true;
+    }
+
+    function getPrompt() {
+        $param = $this->getParam(0);
+        if ($param) {
+            return clienttranslate('Remove resource from your card');
+        } else {
+            return clienttranslate('Remove resource from this card');
+        }
     }
 }

@@ -66,7 +66,7 @@ class CustomAnimation {
     };
     this.animations["pop"] = {
       name: "pop",
-      duration: 300,
+      duration: 250,
       easing: "ease-in",
       keyframes: `   
                          0% {
@@ -80,7 +80,7 @@ class CustomAnimation {
     };
     this.animations["depop"] = {
       name: "depop",
-      duration: 300,
+      duration: 250,
       easing: "ease-in",
       keyframes: `   
                          0% {
@@ -182,43 +182,47 @@ class CustomAnimation {
     let animate_token = resource_id;
     if (!this.game.isLayoutFull() && place_id.startsWith("card_main_")) animate_token = place_id.replace("card_main_", "resource_holder_");
 
-    return this.playCssAnimation(
-      place_id,
-      "pop",
-      () => {
-        dojo.style(place_id, "filter", "grayscale(0)");
-      },
-      () => {
-        dojo.style(place_id, "transform", "scale(1.2)");
-      },
-      BIG_ANIMATION
-    )
-      .finally(() =>
-        this.playCssAnimation(
-          animate_token,
-          "great_tingle",
-          () => {
-            dojo.style(animate_token, "z-index", "10");
-          },
-          () => {
-            dojo.style(animate_token, "z-index", "");
-          },
-          SMALL_ANIMATION
-        )
-      )
-      .finally(() =>
+    const div = $(place_id);
+    const divToken = $(place_id);
+    return Promise.allSettled([
+      // first animation
+      this.playCssAnimation(
+        place_id,
+        "pop",
+        () => {
+          div.style.setProperty("filter", "grayscale(0)");
+        },
+        () => {
+          div.style.setProperty("transform", "scale(1.2)");
+        },
+        BIG_ANIMATION
+      ).finally(() =>
         this.playCssAnimation(
           place_id,
           "depop",
           () => {
-            dojo.style(place_id, "transform", "");
+            div.style.setProperty("transform", "scale(1.2)");
           },
           () => {
-            dojo.style(place_id, "filter", "");
+            div.style.removeProperty("filter");
+            div.style.removeProperty("transform");
           },
           BIG_ANIMATION
         )
-      );
+      ),
+      // second animation
+      this.playCssAnimation(
+        animate_token,
+        "great_tingle",
+        () => {
+          divToken.style.setProperty("z-index", "1000");
+        },
+        () => {
+          divToken.style.removeProperty("z-index");
+        },
+        SMALL_ANIMATION
+      )
+    ]);
   }
 
   async animateRemoveResourceFromCard(resource_id: string, card_id?: string): Promise<any> {
@@ -295,14 +299,15 @@ class CustomAnimation {
   }
 
   async animateMapItemAwareness(item_id: string): Promise<void> {
+    const div = $(item_id);
     return this.playCssAnimation(
       item_id,
       "pop",
       () => {
-        dojo.style(item_id, "z-index", "10000");
+        div.style.setProperty("z-index", "1000");
       },
       () => {
-        dojo.style(item_id, "transform", "scale(1.2)");
+        div.style.setProperty("transform", "scale(1.2)");
       },
       BIG_ANIMATION
     ).finally(() =>
@@ -310,10 +315,11 @@ class CustomAnimation {
         item_id,
         "depop",
         () => {
-          dojo.style(item_id, "transform", "");
+          div.style.setProperty("transform", "scale(1.2)");
         },
         () => {
-          dojo.style(item_id, "z-index", "");
+          div.style.removeProperty("z-index");
+          div.style.removeProperty("transform");
         },
         BIG_ANIMATION
       )
@@ -410,7 +416,7 @@ class CustomAnimation {
     //if(this.game.animated) return true;
     if (this.game.instantaneousMode) return false;
     if (this.game.isDoingSetup) return false;
-    if (this.getAnimationAmount() <= SMALL_ANIMATION) return false;
+    if (this.getAnimationAmount() < SMALL_ANIMATION) return false;
     if (document.hidden || document.visibilityState === "hidden") return false;
 
     return true;
@@ -453,11 +459,13 @@ class CustomAnimation {
         $(targetId).removeEventListener("animationend", cleanUp);
         $(targetId).classList.remove(cssClass);
       }
+      console.log(`*** anim ${animationname} for ${targetId} onEnd`);
       safeCall(onEnd);
       console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
     };
-
+    console.log(`*** anim ${animationname} for ${targetId} onStart`);
     safeCall(onStart);
+
     $(targetId).addEventListener("animationend", cleanUp);
     $(targetId).classList.add(cssClass);
 

@@ -13,20 +13,22 @@ class Operation_colony extends  AbsOperation {
         $color = $this->color;
         $tokens = $this->game->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
         $keys = array_keys($tokens);
-        $keys[] = 'none';
+
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
-            if ($tokenId == 'none') return MA_OK;
+            $param = $this->getParam(0);
             $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $tokenId);
             $n = 0;
-            foreach ($markers as $id => $rec) {
-                if ($id == "marker_$color") $n++;
+            if ($param != 'double') { // if double means can place colony more than once
+                foreach ($markers as $id => $rec) {
+                    if (getPart($id, 1) == $color) $n++;
+                }
             }
             $claimed = count($markers);
             $state = $this->game->tokens->getTokenState($tokenId);
             $q = MA_OK;
             if ($state < 0) $q = MA_ERR_PREREQ;
-            else if ($claimed >= 3) $q= MA_ERR_MAXREACHED; // 3 already claimed
-            else if ($n > 0) $a = MA_ERR_OCCUPIED;
+            else if ($claimed >= 3) $q = MA_ERR_MAXREACHED; // 3 already claimed
+            else if ($n > 0) $q = MA_ERR_OCCUPIED;
             return ['q' => $q, 'level' => $state];
         });
     }
@@ -46,8 +48,6 @@ class Operation_colony extends  AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
-        if ($card === 'none') return $inc; // skipped, this is ok for resources
-
         $res = $this->game->createPlayerMarker($owner);
         $step = $this->game->tokens->getTokenState($card);
         $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $card);
@@ -55,9 +55,8 @@ class Operation_colony extends  AbsOperation {
         $new_col_spot = $colonies;
         $new_spot = $new_col_spot + 1;
         if ($step < $new_spot) {
-            $this->game->dbSetTokenState($card, $new_spot, c_lienttranslate('Trading power of ${card_name} resets to ${step}'), [
-                'card_name' => $this->game->getTokenName($card),
-                'step' => $new_spot
+            $this->game->dbSetTokenState($card, $new_spot, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
+                'card_name' => $this->game->getTokenName($card)
             ]);
         }
 

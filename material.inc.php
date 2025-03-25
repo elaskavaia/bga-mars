@@ -3913,7 +3913,7 @@ $this->token_types = [
   'pre' => 'resFloater>=3',
   'vp' => 1,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires that you have 3 floaters. Increase your MC production 2 steps. Add 2 floaters to ANOTHER card.'),
+  'text' => clienttranslate('Requires that you have 3 floaters. Increase your M€ production 2 steps. Add 2 floaters to ANOTHER card.'),
 ],
  'card_main_C02' => [  //
   'location' => 'deck_main',
@@ -3922,12 +3922,12 @@ $this->token_types = [
   'num' => 'C02',
   'name' => clienttranslate('Air Raid'),
   't' => 3,
-  'r' => 'nres:steal_m',
+  'r' => 'nres(Floater):5steal_m',
   'cost' => 0,
   'tags' => 'Event',
   'vp' => 0,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires that you lose 1 floater. Steal 5 MC from any player.'),
+  'text' => clienttranslate('Requires that you lose 1 floater. Steal 5 M€ from any player.'),
 ],
  'card_main_C03' => [  //
   'location' => 'deck_main',
@@ -3937,7 +3937,7 @@ $this->token_types = [
   'name' => clienttranslate('Atmo Collectors'),
   't' => 2,
   'r' => '2ores(Floater)',
-  'a' => 'res/nres:2u/nres:3e/nres:4h',
+  'a' => 'ores(Floater)/(nres:(2u/3e/4h))',
   'cost' => 15,
   'vp' => 0,
   'deck' => 'Colonies',
@@ -3945,7 +3945,7 @@ $this->token_types = [
   'text_action' => clienttranslate('Add 1 floater to this card, or spend 1 floater here to gain 2 titanium, or 3 energy, or 4 heat.'),
     'holds' => 'Floater',
 ],
-// #C04|Community Services|1|Ref_pm|||13|||1|Colonies|Increase your MC production 1 step per CARD WITH NO TAGS, including this.||||
+// #C04|Community Services|1|Ref_pm|||13|||1|Colonies|Increase your M€ production 1 step per CARD WITH NO TAGS, including this.||||
  'card_main_C05' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -3959,7 +3959,7 @@ $this->token_types = [
   'tags' => 'Earth Event',
   'vp' => -1,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires 2 Earth tags. The next card you play this generation costs 16 MC less.'),
+  'text' => clienttranslate('Requires 2 Earth tags. The next card you play this generation costs 16 M€ less.'),
 ],
  'card_main_C06' => [  //
   'location' => 'deck_main',
@@ -3983,6 +3983,7 @@ $this->token_types = [
   'num' => 'C07',
   'name' => clienttranslate('Cryo-Sleep'),
   't' => 2,
+  'e' => 'onPay_trade:1q',
   'cost' => 10,
   'tags' => 'Science',
   'vp' => 1,
@@ -4004,7 +4005,7 @@ $this->token_types = [
   'text' => clienttranslate('Increase your titanium production 3 steps.'),
 ],
 // #C09|Ecology Research|1|Ref_pp|||21||Science Microbe Plant Animal|1|Colonies|Increase your plant production 1 step for each colony you own. Add 1 animal to ANOTHER card and 2 microbes to ANOTHER card.||||
-// #C10|Floater Leasing|1|Ref_pm|||3|||0|Colonies|Increase your MC production 1 step per 3 floaters you have.||||
+// #C10|Floater Leasing|1|Ref_pm|||3|||0|Colonies|Increase your M€ production 1 step per 3 floaters you have.||||
  'card_main_C11' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4012,6 +4013,7 @@ $this->token_types = [
   'num' => 'C11',
   'name' => clienttranslate('Floater Prototypes'),
   't' => 3,
+  'r' => '2ores(Floater)',
   'cost' => 2,
   'tags' => 'Science Event',
   'vp' => 0,
@@ -4031,7 +4033,7 @@ $this->token_types = [
   'deck' => 'Colonies',
   'text_action' => clienttranslate('Add 1 floater to ANOTHER card.'),
 ],
-// #C13|Gaillean Waystation|1|Ref_pm|||15||Space|1|Colonies|Increase your MC production 1 step for every Jovian tags in play.||||
+// #C13|Gaillean Waystation|1|Ref_pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
  'card_main_C14' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4045,7 +4047,7 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => -1,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires 2 Earth tags. Increase your MC production 2 steps, and gain 4 MC.'),
+  'text' => clienttranslate('Requires 2 Earth tags. Increase your M€ production 2 steps, and gain 4 M€.'),
 ],
  'card_main_C15' => [  //
   'location' => 'deck_main',
@@ -4090,7 +4092,7 @@ $this->token_types = [
   'text' => clienttranslate('Place a colony.'),
 ],
 // #C18|Jovian Lanterns|2||Ref_u,tr||20|tagJovian>=1|Jovian|Ref|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
-// #C19|Jupiter Floating Station|2||Ref_m||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 MC for every floater here (Max 4).|||  'holds' => 'Floater'
+// #C19|Jupiter Floating Station|2||Ref_m||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 M€ for every floater here (Max 4).|||  'holds' => 'Floater'
  'card_main_C20' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4104,9 +4106,9 @@ $this->token_types = [
   'tags' => 'Earth',
   'vp' => 0,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires 3 Earch tags. Increase your MC production 2 steps.'),
+  'text' => clienttranslate('Requires 3 Earch tags. Increase your M€ production 2 steps.'),
 ],
-// #C21|Lunar Exports|1|Ref_pm,Ref_pp|||19||Space Earth|0|Colonies|Increase your plant production 2 steps, or increase your MC production 5 steps.||||
+// #C21|Lunar Exports|1|Ref_pm,Ref_pp|||19||Space Earth|0|Colonies|Increase your plant production 2 steps, or increase your M€ production 5 steps.||||
 // #C22|Lunar Mining|1|Ref_pu|||11||Earth|0|Colonies|Increase your titanium production. 1 step for every 2 Earth tags you have in play, including this.||||
  'card_main_C23' => [  //
   'location' => 'deck_main',
@@ -4121,7 +4123,7 @@ $this->token_types = [
   'deck' => 'Colonies',
   'text' => clienttranslate('Increase one colony tile track 1 step. Decrease another colony tile track 1 step'),
 ],
-// #C24|Martian Zoo|2||Ref_m||12|CUSTOM|Building Animal|1|Colonies|Requires 2 city tiles in play.||When you play an Earth tag, place an animal here. Action: Gain 1 MC per animal here.||  'holds' => 'Animal'
+// #C24|Martian Zoo|2||Ref_m||12|CUSTOM|Building Animal|1|Colonies|Requires 2 city tiles in play.||When you play an Earth tag, place an animal here. Action: Gain 1 M€ per animal here.||  'holds' => 'Animal'
  'card_main_C25' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4148,9 +4150,9 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 0,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Decrese your MC production 2 steps. Place a colony.'),
+  'text' => clienttranslate('Decrese your M€ production 2 steps. Place a colony.'),
 ],
-// #C27|Molecular Printing|1|Ref_m|||11||Science|1|Colonies|Gain 1 MC fo each city tile in play. Gain 1 MC for each colony in play.||||
+// #C27|Molecular Printing|1|Ref_m|||11||Science|1|Colonies|Gain 1 M€ fo each city tile in play. Gain 1 M€ for each colony in play.||||
  'card_main_C28' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4165,7 +4167,7 @@ $this->token_types = [
   'deck' => 'Colonies',
   'text' => clienttranslate('Raise your TR 2 steps. Add 2 floaters to a JOVIAN CARD.'),
 ],
-// #C29|Pioneer Settlement|1|2npm|||13|CUSTOM|Space|2|Colonies|Requires that you have no more than 1 colony. Decrease your MC production 2 steps. Place a colony.||||
+// #C29|Pioneer Settlement|1|2npm|||13|CUSTOM|Space|2|Colonies|Requires that you have no more than 1 colony. Decrease your M€ production 2 steps. Place a colony.||||
  'card_main_C30' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4178,7 +4180,7 @@ $this->token_types = [
   'deck' => 'Colonies',
   'text' => clienttranslate('Gain all your colony bonuses'),
 ],
-// #C31|Quantum Communications|1|Ref_pm|||8|tagScience>=4||1|Colonies|Requires 4 science tags. Increase your MC production 1 step for each colony in play.||||
+// #C31|Quantum Communications|1|Ref_pm|||8|tagScience>=4||1|Colonies|Requires 4 science tags. Increase your M€ production 1 step for each colony in play.||||
  'card_main_C32' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4186,6 +4188,8 @@ $this->token_types = [
   'num' => 'C32',
   'name' => clienttranslate('Red Spot Observatory'),
   't' => 2,
+  'r' => '2draw',
+  'a' => 'res/(nres:draw)',
   'cost' => 17,
   'pre' => 'tagScience>=3',
   'tags' => 'Science Jovian',
@@ -4193,8 +4197,9 @@ $this->token_types = [
   'deck' => 'Colonies',
   'text' => clienttranslate('Requires 3 science tags. Draw 2 cards.'),
   'text_action' => clienttranslate('Add 1 floater to this card, or spend 1 floater here to draw a card.'),
+    'holds' => 'Floater',
 ],
-// #C33|Refugee Camps|2||Ref_pm||10||Earth|Ref|Colonies|1 VP for each camp resource on this card.|Decrease your MC production 1 step to add a camp resource to this card.|||  'holds' => 'Camp'
+// #C33|Refugee Camps|2||Ref_pm||10||Earth|Ref|Colonies|1 VP for each camp resource on this card.|Decrease your M€ production 1 step to add a camp resource to this card.|||  'holds' => 'Camp'
  'card_main_C34' => [  //
   'location' => 'deck_main',
   'create' => 'single',
@@ -4202,7 +4207,7 @@ $this->token_types = [
   'num' => 'C34',
   'name' => clienttranslate('Research Colony'),
   't' => 1,
-  'r' => 'colony(free)',
+  'r' => 'colony(double)',
   'cost' => 20,
   'tags' => 'Science Space',
   'vp' => 0,
@@ -4216,6 +4221,7 @@ $this->token_types = [
   'num' => 'C35',
   'name' => clienttranslate('Rim Freighters'),
   't' => 2,
+  'e' => 'onPay_trade:1q',
   'cost' => 4,
   'tags' => 'Space',
   'vp' => 0,
@@ -4229,13 +4235,15 @@ $this->token_types = [
   'num' => 'C36',
   'name' => clienttranslate('Sky Docks'),
   't' => 2,
+  'r' => 'tradefleet',
+  'e' => 'onPay_card:m',
   'cost' => 18,
   'pre' => 'tagEarth>=2',
   'tags' => 'Space Earth',
   'vp' => 2,
   'deck' => 'Colonies',
   'text' => clienttranslate('Requires 2 Earth tags. Gain 1 Trade Fleet.'),
-  'text_effect' => clienttranslate('When you play a card, you pay 1 MC less for it.'),
+  'text_effect' => clienttranslate('When you play a card, you pay 1 M€ less for it.'),
 ],
  'card_main_C37' => [  //
   'location' => 'deck_main',
@@ -4277,7 +4285,7 @@ $this->token_types = [
   'tags' => 'Building City',
   'vp' => 0,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires 1 colony. Gain 1 Trade Fleet. Place a city tile. Decrease your energy production 1 step, and increase your MC production 4 steps.'),
+  'text' => clienttranslate('Requires 1 colony. Gain 1 Trade Fleet. Place a city tile. Decrease your energy production 1 step, and increase your M€ production 4 steps.'),
 ],
 // #C40|Space Port Colony|1|colony|||27|colony>=1|Space|Ref|Colonies|Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1 VP per 2 colonies in play.||||
  'card_main_C41' => [  //
@@ -4287,13 +4295,13 @@ $this->token_types = [
   'num' => 'C41',
   'name' => clienttranslate('Spin-Off Department'),
   't' => 2,
-  'e' => '2pm',
+  'r' => '2pm',
   'cost' => 10,
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Increase your MC production 2 steps.'),
-  'text_effect' => clienttranslate('WHEN PLAYING A CARD WITH A BASIC COST OF 20 MC OR MORE, draw a card'),
+  'text' => clienttranslate('Increase your M€ production 2 steps.'),
+  'text_effect' => clienttranslate('WHEN PLAYING A CARD WITH A BASIC COST OF 20 M€ OR MORE, draw a card'),
 ],
 // #C42|Sub-Zero Salt Fish|2||1npp_Any||5||Animal|Ref|Colonies|Requires -6°C or warmer. Decrease any plant production 1 step. 1 VP per 2 animals on this card.|Add 1 animal to this card.|||  'holds' => 'Animal'
 // #C43|Titan Air-Scrapping|2||Ref_u,Ref_tr||21||Jovian|2|Colonies||Spend 1 titanium to add 2 floaters to this card, or spend 2 floaters here to increase your TR 1 step.|||  'holds' => 'Floater'
@@ -4305,7 +4313,7 @@ $this->token_types = [
   'name' => clienttranslate('Titan Floating Launch-Pad'),
   't' => 2,
   'r' => '2ores(Floater,Jovian)',
-  'a' => 'ores(Floater,Jovian)/res:trade(free)',
+  'a' => 'ores(Floater,Jovian)/(nres:trade(free))',
   'cost' => 18,
   'tags' => 'Jovian',
   'vp' => 1,
@@ -4334,6 +4342,8 @@ $this->token_types = [
   'num' => 'C47',
   'name' => clienttranslate('Trading Colony'),
   't' => 2,
+  'r' => 'colony',
+  'e' => 'on_trade:?tradeinc:that',
   'cost' => 18,
   'tags' => 'Space',
   'vp' => 0,
@@ -4363,13 +4373,14 @@ $this->token_types = [
   'num' => 'C49',
   'name' => clienttranslate('Warp Drive'),
   't' => 2,
+  'e' => 'onPay_tagSpace:4m',
   'cost' => 14,
   'pre' => 'tagScience>=5',
   'tags' => 'Science',
   'vp' => 2,
   'deck' => 'Colonies',
   'text' => clienttranslate('Requires 5 science tags.'),
-  'text_effect' => clienttranslate('When you play a space tag, you pay 4 MC less for it.'),
+  'text_effect' => clienttranslate('When you play a space tag, you pay 4 M€ less for it.'),
 ],
 // #corp cards
  'card_corp_24' => [  //
@@ -4602,8 +4613,9 @@ $this->token_types = [
 // #trade fleet stuff
  'fleet' => [  //
   'location' => 'colo_fleet',
-  'create' => 4,
+  'create' => 3,
   'type' => 'fleet ship',
+  'count' => 1,
   'num' => 0,
   'name' => clienttranslate('Trade Fleet'),
 ],
@@ -4611,6 +4623,7 @@ $this->token_types = [
   'location' => 'display_colonies',
   'create' => 1,
   'type' => 'colo_fleet',
+  'count' => 1,
   'num' => 0,
   'name' => clienttranslate('Trade Fleet Tile'),
 ],

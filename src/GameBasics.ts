@@ -41,7 +41,7 @@ class GameBasics extends GameGui {
 
   setup(gamedatas: any) {
     console.log("Starting game setup", gamedatas);
-    dojo.destroy("debug_output"); // its too slow and useless
+    //dojo.destroy("debug_output"); // its too slow and useless
     this.gamedatas_server = dojo.clone(this.gamedatas);
     this.setupInfoPanel();
     this.setupNotifications();
@@ -630,6 +630,13 @@ class GameBasics extends GameGui {
     );
   }
 
+  setSubTitle(log: string, args: [] = []) {
+    let msg = this.format_string_recursive(log, args);
+    if (msg != "") {
+      $("gameaction_status").innerHTML = msg;
+    }
+  }
+
   setDescriptionOnMyTurn(text: string, moreargs?: []) {
     this.gamedatas.gamestate.descriptionmyturn = text;
     // this.updatePageTitle();
@@ -663,7 +670,7 @@ class GameBasics extends GameGui {
 
   setMainTitle(text: string, append: boolean = false) {
     var main = $("pagemaintitletext");
-    if (append)     main.innerHTML += text;
+    if (append) main.innerHTML += text;
     else main.innerHTML = text;
   }
 
@@ -1271,7 +1278,7 @@ class GameBasics extends GameGui {
     if (!duration) {
       //variable duration
       //don't forget to call this.notifqueue.setSynchronousDuration(duration);
-      this.notifqueue.setSynchronous(notifName); 
+      this.notifqueue.setSynchronous(notifName);
     } else if (duration === 1) {
       //Notif has no animation, thus no delay
       //this.notifqueue.setSynchronous(notifName, duration);
@@ -1292,11 +1299,11 @@ class GameBasics extends GameGui {
       console.log(`${notiffunc}: ${setDelay} notif received`, notif);
       //  this.onNotif(notif);//should be moved here
       let p = this[notiffunc](notif);
-      if (setDelay>0) return;  //nothing to do here
-       
+      if (setDelay > 0) return; //nothing to do here
+
       if (!(p instanceof Promise)) {
         //no promise returned: no animation played
-        console.log(notiffunc+' :not a promise');
+        console.log(notiffunc + " :not a promise");
         //this.notifqueue.setSynchronousDuration(1);
       } else {
         //  this.animated=true;

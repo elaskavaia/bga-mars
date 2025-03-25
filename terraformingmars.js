@@ -48,7 +48,7 @@ var GameBasics = /** @class */ (function (_super) {
     }
     GameBasics.prototype.setup = function (gamedatas) {
         console.log("Starting game setup", gamedatas);
-        dojo.destroy("debug_output"); // its too slow and useless
+        //dojo.destroy("debug_output"); // its too slow and useless
         this.gamedatas_server = dojo.clone(this.gamedatas);
         this.setupInfoPanel();
         this.setupNotifications();
@@ -550,6 +550,13 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.getActionLine = function (text) {
         return ("<img class='imgtext' src='" + g_themeurl + "img/layout/help_click.png' alt='action' /> <span class='tooltiptext'>" + text + "</span>");
+    };
+    GameBasics.prototype.setSubTitle = function (log, args) {
+        if (args === void 0) { args = []; }
+        var msg = this.format_string_recursive(log, args);
+        if (msg != "") {
+            $("gameaction_status").innerHTML = msg;
+        }
     };
     GameBasics.prototype.setDescriptionOnMyTurn = function (text, moreargs) {
         this.gamedatas.gamestate.descriptionmyturn = text;
@@ -1171,7 +1178,7 @@ var GameBasics = /** @class */ (function (_super) {
                 return; //nothing to do here
             if (!(p instanceof Promise)) {
                 //no promise returned: no animation played
-                console.log(notiffunc + ' :not a promise');
+                console.log(notiffunc + " :not a promise");
                 //this.notifqueue.setSynchronousDuration(1);
             }
             else {
@@ -2092,13 +2099,13 @@ var CustomAnimation = /** @class */ (function () {
         };
         this.animations["pop"] = {
             name: "pop",
-            duration: 300,
+            duration: 250,
             easing: "ease-in",
             keyframes: "   \n                         0% {\n                               transform:scale(1);\n                            }\n                         100% {\n                               transform:scale(1.2);\n                               \n                            }\n                    "
         };
         this.animations["depop"] = {
             name: "depop",
-            duration: 300,
+            duration: 250,
             easing: "ease-in",
             keyframes: "   \n                         0% {\n                               transform:scale(1.2);\n                            }\n                         100% {\n                               transform:scale(1);\n                               \n                            }\n                    "
         };
@@ -2165,7 +2172,7 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.animatePlaceResourceOnCard = function (resource_id, place_id) {
         return __awaiter(this, void 0, void 0, function () {
-            var animate_token;
+            var animate_token, div, divToken;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.areAnimationsPlayed())
@@ -2173,25 +2180,29 @@ var CustomAnimation = /** @class */ (function () {
                 animate_token = resource_id;
                 if (!this.game.isLayoutFull() && place_id.startsWith("card_main_"))
                     animate_token = place_id.replace("card_main_", "resource_holder_");
-                return [2 /*return*/, this.playCssAnimation(place_id, "pop", function () {
-                        dojo.style(place_id, "filter", "grayscale(0)");
-                    }, function () {
-                        dojo.style(place_id, "transform", "scale(1.2)");
-                    }, BIG_ANIMATION)
-                        .finally(function () {
-                        return _this.playCssAnimation(animate_token, "great_tingle", function () {
-                            dojo.style(animate_token, "z-index", "10");
+                div = $(place_id);
+                divToken = $(place_id);
+                return [2 /*return*/, Promise.allSettled([
+                        // first animation
+                        this.playCssAnimation(place_id, "pop", function () {
+                            div.style.setProperty("filter", "grayscale(0)");
                         }, function () {
-                            dojo.style(animate_token, "z-index", "");
-                        }, SMALL_ANIMATION);
-                    })
-                        .finally(function () {
-                        return _this.playCssAnimation(place_id, "depop", function () {
-                            dojo.style(place_id, "transform", "");
+                            div.style.setProperty("transform", "scale(1.2)");
+                        }, BIG_ANIMATION).finally(function () {
+                            return _this.playCssAnimation(place_id, "depop", function () {
+                                div.style.setProperty("transform", "scale(1.2)");
+                            }, function () {
+                                div.style.removeProperty("filter");
+                                div.style.removeProperty("transform");
+                            }, BIG_ANIMATION);
+                        }),
+                        // second animation
+                        this.playCssAnimation(animate_token, "great_tingle", function () {
+                            divToken.style.setProperty("z-index", "1000");
                         }, function () {
-                            dojo.style(place_id, "filter", "");
-                        }, BIG_ANIMATION);
-                    })];
+                            divToken.style.removeProperty("z-index");
+                        }, SMALL_ANIMATION)
+                    ])];
             });
         });
     };
@@ -2264,17 +2275,20 @@ var CustomAnimation = /** @class */ (function () {
     };
     CustomAnimation.prototype.animateMapItemAwareness = function (item_id) {
         return __awaiter(this, void 0, void 0, function () {
+            var div;
             var _this = this;
             return __generator(this, function (_a) {
+                div = $(item_id);
                 return [2 /*return*/, this.playCssAnimation(item_id, "pop", function () {
-                        dojo.style(item_id, "z-index", "10000");
+                        div.style.setProperty("z-index", "1000");
                     }, function () {
-                        dojo.style(item_id, "transform", "scale(1.2)");
+                        div.style.setProperty("transform", "scale(1.2)");
                     }, BIG_ANIMATION).finally(function () {
                         return _this.playCssAnimation(item_id, "depop", function () {
-                            dojo.style(item_id, "transform", "");
+                            div.style.setProperty("transform", "scale(1.2)");
                         }, function () {
-                            dojo.style(item_id, "z-index", "");
+                            div.style.removeProperty("z-index");
+                            div.style.removeProperty("transform");
                         }, BIG_ANIMATION);
                     })];
             });
@@ -2377,7 +2391,7 @@ var CustomAnimation = /** @class */ (function () {
             return false;
         if (this.game.isDoingSetup)
             return false;
-        if (this.getAnimationAmount() <= SMALL_ANIMATION)
+        if (this.getAnimationAmount() < SMALL_ANIMATION)
             return false;
         if (document.hidden || document.visibilityState === "hidden")
             return false;
@@ -2426,9 +2440,11 @@ var CustomAnimation = /** @class */ (function () {
                         $(targetId).removeEventListener("animationend", cleanUp);
                         $(targetId).classList.remove(cssClass);
                     }
+                    console.log("*** anim ".concat(animationname, " for ").concat(targetId, " onEnd"));
                     safeCall(onEnd);
                     console.log("*** anim ".concat(animationname, " for ").concat(targetId, " resolved with ").concat(kind));
                 };
+                console.log("*** anim ".concat(animationname, " for ").concat(targetId, " onStart"));
                 safeCall(onStart);
                 $(targetId).addEventListener("animationend", cleanUp);
                 $(targetId).classList.add(cssClass);
@@ -3870,8 +3886,9 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.getTokenDisplayInfo = function (tokenId) {
         var _a, _b;
+        tokenId = String(tokenId);
         var tokenInfo = this.getAllRules(tokenId);
-        if (!tokenInfo && tokenId && tokenId.startsWith("alt_")) {
+        if (!tokenInfo && tokenId.startsWith("alt_")) {
             tokenInfo = this.getAllRules(tokenId.substring(4));
         }
         if (!tokenInfo) {
@@ -5072,13 +5089,11 @@ var GameXBody = /** @class */ (function (_super) {
         this.gameStatusCleanup();
         //Displays message in header while the notif is playing
         //deactivated if animations aren't played
-        if (this.customAnimation.areAnimationsPlayed() == true) {
+        //if (this.customAnimation.areAnimationsPlayed() == true)
+        {
             if (!this.instantaneousMode && notif.log) {
                 if ($("gameaction_status_wrap").style.display != "none") {
-                    var msg = this.format_string_recursive(notif.log, notif.args);
-                    if (msg != "") {
-                        $("gameaction_status").innerHTML = msg;
-                    }
+                    this.setSubTitle(notif.log, notif.args);
                 }
                 else {
                     // XXX this is very bad in multiple player all yout buttons dissapear
@@ -6665,6 +6680,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.clientStateArgs.ops = [];
         this.clearReverseIdMap();
         this.setMainOperationType(undefined);
+        this.setSubTitle(" ");
         var xop = args.op;
         var sortedOps = Object.keys(operations);
         var single = sortedOps.length == 1;
@@ -6709,7 +6725,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var data = opInfo.data.split(":")[0];
                 var tr = this_4.getTokenName(data);
                 if (tr) {
-                    this_4.setMainTitle(" [" + tr + "]", true);
+                    this_4.setMainTitle(" [".concat(tr, "]"), true); // TODO
                 }
             }
             // add done (skip) when all optional

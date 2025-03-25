@@ -525,6 +525,9 @@ abstract class PGameTokens extends PGameBasic {
         ]);
         $reason = array_get($options,'reason_tr','');
         if ($reason) $args['reason_tr'] = $reason;
+
+        $nod = array_get($options,'nod','');
+        if ($nod) $args['nod'] = $nod;
         $this->notifyCounterDirect($token_id, $value, $message, $args, $player_id);
     }
 

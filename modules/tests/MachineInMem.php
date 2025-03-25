@@ -63,7 +63,7 @@ class MachineInMem extends DbMachine {
         return count($this->xtable);
     }
     static public function DbQuery($sql, $specific_db = null, $bMulti = false) {
-        echo "dbquery: $sql\n";
+        //echo "dbquery: $sql\n";
         throw new feException("not implemented query");
     }
 

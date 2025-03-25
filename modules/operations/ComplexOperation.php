@@ -94,10 +94,11 @@ class ComplexOperation extends AbsOperation {
             }
         }
         if (!$this->isFullyAutomated()) return false;
-        $this->checkVoid();
+
 
         foreach ($this->delegates as $i => $sub) {
             $refcount = $sub->getCount();
+            $sub->checkVoid();
             $subvalue = $sub->auto($owner, $refcount);
             if ($subvalue == false) {
                 throw new BgaSystemException("Cannot auto-resovle " . $sub->mnemonic);
@@ -105,6 +106,16 @@ class ComplexOperation extends AbsOperation {
         }
         return true;
     }
+
+    function checkVoid() {
+        if ($this->isVoid()) {
+            foreach ($this->delegates as $i => $sub) {
+                $sub->checkVoid();
+            }
+        }
+        parent::checkVoid();
+    }
+
 
     function canFail(){
         if ($this->isOptional()) return false;

@@ -9,17 +9,20 @@ declare(strict_types=1);
 class Operation_ores extends  AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
-        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
-        $keys = array_keys($tokens);
-        $keys[] = 'none';
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
-            if ($tokenId == 'none') return MA_OK;
-            $par = $this->getResTarget();
+        $tokens_pre = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
+        $tokens = [];
+        $par = $this->getResTarget();
+        foreach($tokens_pre as $tokenId => $tokenInfo) {
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
-            if (!$holds) return MA_ERR_NOTAPPLICABLE;
-            if ($par && $holds != $par)  return MA_ERR_NOTAPPLICABLE;
+            if (!$holds) continue;
+            if ($par && $holds != $par)  continue;
             $targetTag = $this->getCardTarget();
-            if ($targetTag && !$this->game->hasTag($tokenId,"$targetTag"))  return MA_ERR_NOTAPPLICABLE;
+            if ($targetTag && !$this->game->hasTag($tokenId, "$targetTag"))  continue;;
+            $tokens[]=$tokenId;
+        }
+        $keys = $tokens;
+        if (count($keys) == 0) $keys[] = 'none';
+        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             return MA_OK;
         });
     }
@@ -72,6 +75,21 @@ class Operation_ores extends  AbsOperation {
 
     protected function getOpName() {
         $par = $this->getResTarget();
+        $tag = $this->getCardTarget();
+        if ($tag) {
+            return ['log' => clienttranslate('Add ${restype_name} to any card with ${tag} tag'),  "args" => [
+                'restype_name' => $this->game->getTokenName("tag$par"),
+                'tag' => $this->game->getTokenName("tag$tag"),
+                'i18n' => ['restype_name', 'tag']
+            ]];
+        }
+        $context = $this->getContext(0);
+        if ($this->game->getRulesFor($context, 'holds') == $par) {
+            return ['log' => clienttranslate('Add ${restype_name} to ANY card'),  "args" => [
+                'restype_name' => $this->game->getTokenName("tag$par"),
+                'i18n' => ['restype_name']
+            ]];
+        }
         return ['log' => clienttranslate('Add ${restype_name} to another card'),  "args" => [
             'restype_name' => $this->game->getTokenName("tag$par"),
             'i18n' => ['restype_name']
