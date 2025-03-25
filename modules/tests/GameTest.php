@@ -81,11 +81,13 @@ class GameUT extends terraformingmars {
         return $this->_colors;
     }
 
-    function fakeUserAction($op, $target = null) {
+    function fakeUserAction($op, $target = null, bool $no_stack = false) {
         $args = ['op_info' => $op];
         if ($target !== null) $args['target'] = $target;
         $count = $this->saction_resolve($op, $args);
-        return $this->saction_stack($count, $op);
+        if ($no_stack) return $count;
+        $this->saction_stack($count, $op);
+        return $count;
     }
 
     // override/stub methods here that access db and stuff
@@ -1164,20 +1166,47 @@ final class GameTest extends TestCase {
 
 
     public function testInstanciateAllCard() {
-        $m = $this->game();
+        $this->game = $m = $this->game();
         foreach ($m->token_types as $key => $info) {
+
+            $info['key'] = $key;
             if (array_get($info, 't', 0) == 0) continue;
             if (!startsWith($key, 'card_')) continue;
             $r = array_get($info, 'r', '');
-            if (!$r) continue;
+
+            $this->subTestOpExpr($r, $info);
+            $a = array_get($info, 'a', '');
+            $this->subTestOpExpr($a, $info);
+
+            $name = array_get($info, 'name', '');
+
+            try {
+                $pre = array_get($info, 'pre', '');
+                $this->game->evaluatePrecondition($pre, PCOLOR, $key);
+
+                $vp = array_get($info, 'vp', '');
+                if ($vp) $this->game->evaluateExpression((string)$vp, PCOLOR, $key);
+
+                $trigger_rule = array_get($info, 'e', '');
+                if ($trigger_rule) $this->game->parseOpExpression($trigger_rule);
+            } catch (Exception $e) {
+        
+                $this->fail("Error $key $name $e\n");
+            }
+        }
+    }
+
+    function subTestOpExpr($r, $info) {
+        if ($r) {
+            $key = $info['key'];
             echo ("testing $key <$r>\n");
             /** @var AbsOperation */
-            $op = $m->getOperationInstanceFromType($r, PCOLOR);
+            $op = $this->game->getOperationInstanceFromType($r, PCOLOR);
             $this->subTestOperationIntegrity($op);
-            $name = array_get($info, 'name', '');
 
             if ($r) {
                 $len = strlen($r);
+                $name = array_get($info, 'name', '');
                 $this->assertTrue($len <= 80, "type too long for $key $name $len\n");
             }
         }
@@ -1674,6 +1703,14 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType("colony", PCOLOR);
         $this->assertNotNull($op);
         $this->assertFalse($op->isVoid());
+        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 1);
+        $this->assertEquals(0, $m->evaluateExpression("colony", PCOLOR));
+        $m->push(PCOLOR, "colony");
+        $tops = $m->machine->getTopOperations(PCOLOR);
+        $op =  reset($tops);
+        $m->fakeUserAction($op, 'card_colo_2');
+        $m->st_gameDispatch();
+        $this->assertEquals(1, $m->evaluateExpression("colony", PCOLOR));
     }
 
     public function testTrade() {

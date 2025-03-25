@@ -384,6 +384,13 @@ abstract class PGameXBody extends PGameMachine {
             return;
         }
         $token = $this->findCard($fuzzy_card);
+        if (!$token) {
+            throw new feException("Cannot find $fuzzy_card");
+        }
+        if ($this->tokens->getTokenInfo($token) == null) {
+            // create
+            $this->createTokenFromInfo($token, $this->getRulesFor($token, '*'));
+        }
         $this->dbSetTokenLocation($token, $loc, 0);
     }
     function findCard($num) {
@@ -1027,6 +1034,10 @@ abstract class PGameXBody extends PGameMachine {
                 return $this->getCountOfCardsGreen($owner);
             case 'cardsBlue':
                 return $this->getCountOfCardsBlue($owner);
+            case 'colony':
+                return count($this->tokens->getTokensOfTypeInLocation("marker_{$owner}", "card_colo_%"));
+            case 'colony_all':
+                return count($this->tokens->getTokensOfTypeInLocation("marker_", "card_colo_%"));
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -2128,7 +2139,7 @@ abstract class PGameXBody extends PGameMachine {
     function effect_production() {
         $params = ['m', 's', 'u', 'p', 'e', 'h'];
         $players = $this->loadPlayersBasicInfos();
-        $nodargs = ['nod'=>1];
+        $nodargs = ['nod' => 1];
         foreach ($params as $p) {
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -2139,7 +2150,7 @@ abstract class PGameXBody extends PGameMachine {
                     if ($curr > 0) {
                         $this->effect_incCount($color, 'h', $curr, [
                             'message' => clienttranslate('${player_name} gains ${token_div_count} due to heat transfer'),
-                            'nod'=>1
+                            'nod' => 1
                         ]);
                         $this->effect_incCount($color, 'e', -$curr, $nodargs);
                     }
@@ -2159,10 +2170,10 @@ abstract class PGameXBody extends PGameMachine {
         $this->dbSetTokensLocation($tokens, 'colo_fleet', 0, '');
 
         $tokens = $this->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
-        foreach($tokens as $tokenId => $info) {
+        foreach ($tokens as $tokenId => $info) {
             $state = $info['state'];
-            if ($state<0) continue;
-            if ($state>=6) continue;        
+            if ($state < 0) continue;
+            if ($state >= 6) continue;
             $this->dbSetTokenState($tokenId, $state + 1, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
                 'card_name' => $this->getTokenName($tokenId)
             ]);
@@ -2653,6 +2664,10 @@ abstract class PGameXBody extends PGameMachine {
             if ($holds == $type) $count++;
         }
         return $count;
+    }
+
+    function getCountOfResOnCard($context) {
+        return $this->tokens->countTokensInLocation("$context");
     }
 
 
