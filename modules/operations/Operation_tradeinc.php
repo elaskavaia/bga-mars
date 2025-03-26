@@ -7,22 +7,28 @@ declare(strict_types=1);
 class Operation_tradeinc extends  AbsOperation {
     function getTargetColony() {
         $colony = $this->getContext(0);
-        return $colony;
+        $op = $this->getContext(1);
+        if ($op == 'e' || $op == 'x') return $colony;
+        return '';
     }
 
     function getPrimaryArgType() {
-        return '';
+        if ($this->getTargetColony()) return '';
+        return 'token';
     }
+
     function argPrimaryDetails() {
         $colony = $this->getTargetColony();
         $color = $this->color;
         if (!$colony) {
-            $colony = 'none';
-        }   
- 
-        $keys = [$colony];
-        return $this->game->createArgInfo($color, $keys, function ($color, $colony) {
-            if ($colony == 'none') {
+            $tokens = $this->game->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
+            $keys = array_keys($tokens);
+        } else {
+            $keys = [$colony];
+        }
+        $excluding = $this->getContext(3);
+        return $this->game->createArgInfo($color, $keys, function ($color, $colony) use ($excluding) {
+            if ($colony == 'none' || $colony == $excluding) {
                 return ['q' => MA_ERR_NOTAPPLICABLE, 'level' => -1];
             }
             $state = $this->game->tokens->getTokenState($colony);
@@ -30,19 +36,29 @@ class Operation_tradeinc extends  AbsOperation {
         });
     }
     function effect(string $owner, int $inc): int {
-        $colony = $this->getTargetColony();
+        $colony = $this->getCheckedArg('target');
         $this->game->systemAssertTrue("Cannot determine colony", $colony);
 
         $state = $this->game->tokens->getTokenState($colony);
         $this->game->systemAssertTrue("Colony is not active", $state >= 0);
 
-        if ($this->getParam(0, '') == 'reset') {
-            $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $colony);
-            $colonies = count($markers);
+        $param = $this->getParam(0, '');
+
+        if ($param == 'reset') {
+            $colonies = count($this->game->tokens->getTokensOfTypeInLocation("marker_", $colony));
             $new_spot = $colonies;
+        } else if ($param == 'dec') {
+            $new_spot = $state - $inc;
+            $colonies = count($this->game->tokens->getTokensOfTypeInLocation("marker_", $colony));
+            if ($new_spot < $colonies) $this->game->userAssertTrue(c_lienttranslate("Cannot reduce further"), false);
         } else {
             $new_spot = $state + $inc;
             if ($new_spot >= 6) $new_spot = 6;
+        }
+
+        if ($param == 'steal') {
+            // decrease another
+            $this->game->put($owner, "tradeinc(dec)", implode(":", ["", "", "", $colony]));
         }
 
         $this->game->dbSetTokenState($colony, $new_spot, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
@@ -57,7 +73,17 @@ class Operation_tradeinc extends  AbsOperation {
         return true;
     }
 
+    function isFullyAutomated() {
+        if ($this->getTargetColony()) return true;
+        return false;
+    }
+
     public function getPrompt() {
+        $param = $this->getParam(0, '');
+
+        if ($param == 'dec') {
+            return c_lienttranslate('${you} must decrease colony trading income level');
+        }
         return c_lienttranslate('${you} must confirm increase colony trading income level');
     }
 

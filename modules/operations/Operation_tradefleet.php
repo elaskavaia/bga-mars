@@ -12,7 +12,7 @@ class Operation_tradefleet extends  AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $token = "fleet_{$owner}";
-        $fleet = $this->game->tokens->createTokenAutoInc($token, "colo_fleet");
+        $fleet = $this->game->tokens->createTokenAutoInc($token, "colo_fleet", 0, 1);
 
         $this->game->dbSetTokenLocation($fleet, "colo_fleet", 0, c_lienttranslate('${player_name} gains new trade fleet'));
         return $inc;

@@ -158,11 +158,11 @@ abstract class AbsOperationTile extends AbsOperation {
         if ($tt == MA_TILE_CITY) {
             // the effect triggered here because its not only "city" operation that can place cities
             $this->game->incTrackerValue($owner, 'city');
-            $this->game->notifyEffect($owner, 'place_city', $tile);
+            $this->game->triggerEffect($owner, 'place_city', $tile);
 
             if (!$this->game->getRulesFor($hex, 'inspace')) {
                 $this->game->incTrackerValue($owner, 'cityonmars');
-                $this->game->notifyEffect($owner, 'place_cityonmars', $tile);
+                $this->game->triggerEffect($owner, 'place_cityonmars', $tile);
             }
         }
 

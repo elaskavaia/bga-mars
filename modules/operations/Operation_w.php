@@ -74,7 +74,7 @@ class Operation_w extends AbsOperationTile {
         $this->game->effect_increaseParam($owner, "w", 1);
 
         $tile = $this->effect_placeTile();
-        $this->game->notifyEffect($owner, 'place_ocean', $tile);
+        $this->game->triggerEffect($owner, 'place_ocean', $tile);
 
         //special handling card_main_188 Flooding
         if ($this->getContext() == 'card_main_188') {

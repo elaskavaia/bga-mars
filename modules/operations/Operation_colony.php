@@ -66,7 +66,7 @@ class Operation_colony extends  AbsOperation {
 
         $rules = $this->game->getRulesFor($card, 'r'); // placement bonus
         $this->game->putInEffectPool($owner, $rules, "$card:colo_place_bonus");
-        $this->game->notifyEffect($owner, 'place_colony', $card);
+        $this->game->triggerEffect($owner, 'place_colony', $card);
         $this->game->notifyScoringUpdate();
 
         return $inc;

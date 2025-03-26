@@ -138,10 +138,10 @@ class DbTokens extends APP_GameClass {
      * @param string $location
      * @return string - token key
      */
-    function createTokenAutoInc($type, $location = 'limbo', $token_state = 0) {
+    function createTokenAutoInc($type, $location = 'limbo', $token_state = 0, $start = 0) {
         $this->clear_cache();
         $allsuf = $this->getTokensOfTypeInLocation($type);
-        $resnum = count($allsuf);
+        $resnum = count($allsuf) + $start;
         return $this->createToken("{$type}_{$resnum}", $location, $token_state);
     }
 

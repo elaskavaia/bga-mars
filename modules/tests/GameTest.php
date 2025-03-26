@@ -1134,7 +1134,7 @@ final class GameTest extends TestCase {
         $m->effect_playCard(BCOLOR, $rover);
         // another player plays city on tile with resources, simulate this
         $m->putInEffectPool(PCOLOR, "p");
-        $m->notifyEffect(PCOLOR, 'place_city', 'tile_2_10');
+        $m->triggerEffect(PCOLOR, 'place_city', 'tile_2_10');
         $m->gamestate->changeActivePlayer(PCOLOR);
         // dispatch
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
@@ -1190,7 +1190,7 @@ final class GameTest extends TestCase {
                 $trigger_rule = array_get($info, 'e', '');
                 if ($trigger_rule) $this->game->parseOpExpression($trigger_rule);
             } catch (Exception $e) {
-        
+
                 $this->fail("Error $key $name $e\n");
             }
         }
@@ -1723,7 +1723,7 @@ final class GameTest extends TestCase {
         $this->assertFalse($op->requireConfirmation());
         $this->assertEquals('token', $op->getPrimaryArgType());
         $this->assertFalse($op->canResolveAutomatically());
-        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 1);
+        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 3);
         $op = $m->getOperationInstanceFromType("trade", PCOLOR);
         $info = $op->argPrimaryDetails();
         $this->assertEquals(MA_ERR_COST, $info['card_colo_2']['q']);
@@ -1739,11 +1739,31 @@ final class GameTest extends TestCase {
         $info = $op->argPrimaryDetails();
         $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
     }
+    public function testTradeAndReset() {
+        $m = $this->game = (new GameUT())->init(0, 1);
+        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 3);
+        $m->incTrackerValue(PCOLOR, 'm', 10);
+        $m->push(PCOLOR, "trade");
+        $tops = $m->machine->getTopOperations(PCOLOR);
+        $op =  reset($tops);
+        $m->fakeUserAction($op, 'card_colo_2');
+        $m->st_gameDispatch();
+        $this->assertEquals(0, $m->tokens->getTokenState('card_colo_2'));
+        $this->assertEquals(2, $m->getTrackerValue(PCOLOR, 'u')); // titanim bonus
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'm')); // 1 money left
+    }
 
     public function testTradeInc() {
         $m = $this->game = (new GameUT())->init(0, 1);
         $this->assertTrue($m->isColoniesVariant() === 1);
         $op = $m->getOperationInstanceFromType("tradeinc", PCOLOR, 1, 'card_colo_2');
         $this->assertFalse($op->isVoid());
+    }
+
+    public function testTagNone() {
+        $game = $this->game = (new GameUT())->init(0, 1); // colonies
+        $card = $game->mtFindByName('Airliners');
+        $game->effect_playCard(PCOLOR, $card);
+        $this->assertEquals(1, $game->getCountOfCardTags(PCOLOR,"")); 
     }
 }

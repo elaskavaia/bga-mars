@@ -74,7 +74,7 @@ class Operation_forest extends AbsOperationTile {
             $this->game->effect_increaseParam($owner, "o", $inc);
         }
 
-        $this->game->notifyEffect($owner, 'place_forest', $tile);
+        $this->game->triggerEffect($owner, 'place_forest', $tile);
         return 1;
     }
 }

@@ -135,13 +135,16 @@ class Operation_trade extends  AbsOperation {
 
             // that is last action before triggered effects and payment
             $data = [$this->getContext(0), $this->getContext(1), $colony];
-            $this->game->put($owner, "trade", implode(":", $data));
+            $this->game->push($owner, "trade", implode(":", $data));
             $this->game->machine->interrupt();
 
-            $this->game->notifyEffect($owner, 'on_trade', $colony);
+            $this->game->triggerEffect($owner, 'on_trade', $colony);
+            $this->game->debug_dumpMachine();
             if (!$free) {
                 $this->game->push($owner, $this->getPaymentExpr($colony), "op_trade");
             }
+
+            $this->game->debug_dumpMachine();
 
 
             return $inc;
@@ -164,7 +167,7 @@ class Operation_trade extends  AbsOperation {
 
 
         // that is last action after trade bonuses
-        $this->game->put($owner, "tradeinc(reset)", "$card:r");
+        $this->game->push($owner, "tradeinc(reset)", "$card:x");
         $this->game->machine->interrupt();
 
         $this->game->putInEffectPool($owner, $op, "$card:trade_bonus");

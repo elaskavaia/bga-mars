@@ -102,7 +102,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->activateColonies('');
             }
 
-            $corps = 2; //(int)(11 / $this->getPlayersNumber())
+            $corps = 2; //(int)( $this->tokens->countTokensInLocation('deck_corp') / $this->getPlayersNumber());
             $begginerCorps = $this->getGameStateValue('var_begginers_corp') == 1;
             foreach ($players as $player_id => $player) {
                 $color = $player["player_color"];
@@ -1036,8 +1036,8 @@ abstract class PGameXBody extends PGameMachine {
                 return $this->getCountOfCardsBlue($owner);
             case 'colony':
                 return count($this->tokens->getTokensOfTypeInLocation("marker_{$owner}", "card_colo_%"));
-            case 'colony_all':
-                return count($this->tokens->getTokensOfTypeInLocation("marker_", "card_colo_%"));
+            case 'tagNone':
+                return $this->getCountOfCardTags($owner, "");
         }
         $type = $this->getRulesFor("tracker_$x", 'type', '');
         if ($type == 'param') {
@@ -1361,7 +1361,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
 
-    function notifyEffect($owner, $events, $card_context) {
+    function triggerEffect($owner, $events, $card_context) {
         $listeners = $this->collectListeners($owner, $events, $card_context);
         foreach ($listeners as $lisinfo) {
             $outcome = $lisinfo['outcome'];
@@ -1686,15 +1686,22 @@ abstract class PGameXBody extends PGameMachine {
         if (isset($rules['a'])) {
             $state = MA_CARD_STATE_ACTION_UNUSED; // activatable cars
         }
-        $this->dbSetTokenLocation($card_id, "tableau_$color", $state, clienttranslate('${player_name} plays card ${token_name}'), [], $this->getPlayerIdByColor($color));
-        $this->clearEventListenerCache(); // clear cache since card came into play
         $tags = $rules['tags'] ?? "";
         $tagsarr = explode(' ', $tags);
         if ($ttype != MA_CARD_TYPE_EVENT && $tags) {
+            $tagsMap = $this->getTagsMap($color);
+            unset($tagsMap['']);
+            unset($tagsMap['Wild']);
             foreach ($tagsarr as $tag) {
                 $this->incTrackerValue($color, "tag$tag");
+                if (array_get($tagsMap, $tag, 0) == 0) {
+                    $this->triggerEffect($color, 'play_newtag', $card_id);
+                }
             }
         }
+        $this->dbSetTokenLocation($card_id, "tableau_$color", $state, clienttranslate('${player_name} plays card ${token_name}'), [], $this->getPlayerIdByColor($color));
+        $this->clearEventListenerCache(); // clear cache since card came into play
+
         if ($ttype == MA_CARD_TYPE_EVENT) {
             $this->incTrackerValue($color, "tagEvent");
         }
@@ -1704,7 +1711,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->putInEffectPool($color, $playeffect, "$card_id:r");
         }
         $events = $this->getPlayCardEvents($card_id, 'play_');
-        $this->notifyEffect($color, $events, $card_id);
+        $this->triggerEffect($color, $events, $card_id);
         $this->activateColonies($card_id);
         $this->notifyScoringUpdate();
     }
@@ -1734,7 +1741,7 @@ abstract class PGameXBody extends PGameMachine {
         $rules = $this->getRulesFor($card_id, 'r', '');
         $this->executeImmediately($color, $rules, 1, $card_id);
         $events = $this->getPlayCardEvents($card_id, 'play_');
-        $this->notifyEffect($color, $events, $card_id);
+        $this->triggerEffect($color, $events, $card_id);
         $this->activateColonies($card_id);
 
         // special case for Tharsis Republic it gains income for 2 placed cities in solo game
@@ -1775,7 +1782,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->map = null; // clear map cache since tile came into play ! important
         // notif
         $tile = $object;
-        $this->notifyEffect($color, 'place_tile', $tile);
+        $this->triggerEffect($color, 'place_tile', $tile);
 
         // hex bonus
         $bonus = $this->getRulesFor($target, 'r');
@@ -1784,7 +1791,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->putInEffectPool($color, $bonus, $object);
 
             if (strpos($bonus, 's') !== false || strpos($bonus, 'u') !== false  ||   strpos($bonus, 'q') !== false) {
-                $this->notifyEffect($color, 'place_bonus_su', $tile);
+                $this->triggerEffect($color, 'place_bonus_su', $tile);
             }
         }
         // ocean bonus
@@ -2643,6 +2650,29 @@ abstract class PGameXBody extends PGameMachine {
         return $this->getCountOfCardsType($owner, MA_CARD_TYPE_EVENT);
     }
 
+    function getCountOfCardTags($owner, $usetags) {
+        return array_get($this->getTagsMap($owner), $usetags, 0);
+    }
+
+    function getTagsMap($owner) {
+        $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
+        $count = 0;
+        $map = [];
+        foreach ($cards as $card => $cardrec) {
+            $tags = $this->getRulesFor($card, 'tags');
+            $t = $this->getRulesFor($card, 't');
+            if ($t == MA_CARD_TYPE_EVENT) continue;
+            $tags = explode(" ", $tags);
+            foreach ($tags as $tag) {
+                $tag = trim($tag);
+                $prev = array_get($map, $tag, 0);
+                if ($prev == 0) $map[$tag] = 1;
+                else $map[$tag] += 1;
+            }
+        }
+        return $map;
+    }
+
     function getCountOfCardsType($owner, $type) {
         $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
         $count = 0;
@@ -2652,6 +2682,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         return $count;
     }
+
 
     function getCountOfResOnCards($owner, $type = '') {
         $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%", 1);
