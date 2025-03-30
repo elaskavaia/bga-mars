@@ -101,7 +101,6 @@ class CustomRenders {
   }
 
   public static parseExprToHtml(expr: any, card_num?: number, action_mode: boolean = false, effect_mode: boolean = false): string {
-
     let rethtm = "";
 
     if (!expr || expr.length < 1) return "";
@@ -554,20 +553,15 @@ class CustomRenders {
         ret = mode == "min" ? _("Requires $v°C or warmer.") : _("It must be $v°C or colder.");
         break;
       case "w":
-        ret = mode == "min" ? _("Requires $v ocean/s tiles.") : _("$v ocean/s tiles or less.");
+        ret = mode == "min" ? _("Requires $v ocean tiles.") : _("$v ocean tiles or less.");
         break;
       case "forest":
         if (qty == 0) qty = 1;
-        ret = _("Requires $v forest/s tiles.");
+        if (qty == 1) ret = _("Requires that you have a greenery tile.");
+        else ret = _("Requires $v greenery tiles.");
         break;
       case "all_city":
-        ret = _("Requires $v citie/s in play.");
-        break;
-      case "ps":
-        ret = _("Requires that you have steel production.");
-        break;
-      case "pu":
-        ret = _("Requires that you have titanium production.");
+        ret = _("Requires $v cities in play.");
         break;
       default:
         if (what.startsWith("tag")) {
@@ -579,8 +573,18 @@ class CustomRenders {
 
           ret = ret.replace("$tag", game.getTokenName(what));
           break;
+        }
+        if (what.startsWith("res")) {
+          ret = _("Requires that you have $v $res resources.").replace("$res", game.getTokenName(what));
         } else {
-          ret = "NOT FOUND :" + what;
+          let name = game.getTokenName("tracker_" + what);
+          if (!name) name = game.getTokenName(what);
+
+          if (qty <= 1) {
+            ret = _("Requires that you have $res.").replace("$res", name);
+          } else {
+            ret = _("Requires that you have $res times $v.").replace("$res", name);
+          }
         }
         break;
     }

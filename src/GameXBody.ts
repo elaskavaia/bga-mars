@@ -1501,17 +1501,14 @@ class GameXBody extends GameTokens {
 
   generateCardTooltip(displayInfo: TokenDisplayInfo): string {
     if (!displayInfo) return "?";
-
-    if (displayInfo.t === undefined) {
+    const type = displayInfo.t;
+    if (type === undefined) {
       return this.generateItemTooltip(displayInfo);
     }
-
-    const type = displayInfo.t;
 
     let type_name = this.getCardTypeById(type);
     let card_id = "";
     if (type > 0 && type < 7) card_id += " " + _(displayInfo.deck) + " #" + (displayInfo.num ?? "");
-    let res = "";
 
     let tags = "";
     if (displayInfo.tags) {
@@ -1523,18 +1520,27 @@ class GameXBody extends GameTokens {
     let vp = _(displayInfo.text_vp);
     if (!vp) vp = displayInfo.vp;
 
+    let res = "";
+    // card type
     res += this.generateTooltipSection(type_name, card_id);
-    if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD && type != this.CON.MA_CARD_TYPE_MILESTONE)
+
+    if (type <= 3)
+      // project cards and standard projects
       res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
+
     res += this.generateTooltipSection(_("Tags"), tags);
 
     let prereqText = "";
 
-    if (displayInfo.key == "card_main_135") prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
-    else if (displayInfo.expr?.pre) prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
-
-    if (prereqText != "")
+    const cardText = displayInfo.text ?? "";
+    if (displayInfo.expr?.pre) {
+      if (displayInfo.key == "card_main_135")
+        prereqText = _("Requires at least 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
+      else if (displayInfo.expr?.pre) prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
+    } else if (type>0 && type <=3) {
+      prereqText = _('None');
+    }
 
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
 
@@ -1575,7 +1581,7 @@ awarded.`);
     } else {
       const errors = this.getPotentialErrors(displayInfo.key);
 
-      res += this.generateTooltipSection(_("Immediate Effect"), _(displayInfo.text));
+      res += this.generateTooltipSection(_("Immediate Effect"), _(cardText));
       res += this.generateTooltipSection(_("Effect"), _(displayInfo.text_effect));
       res += this.generateTooltipSection(_("Action"), _(displayInfo.text_action));
       res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));

@@ -15,23 +15,34 @@
     "build:material": "php8.2 ./misc/other/genmat.php misc/*.csv",
     "remove:colonies": "php8.2 ./misc/other/genmat.php -skip misc/colo_material.csv && node ./misc/other/genoptions.js -remove 108",
     "add:colonies": "php8.2 ./misc/other/genmat.php misc/colo_material.csv && node ./misc/other/genoptions.js",
+    "jstest:run": "TS_NODE_PROJECT=tests/tsconfig.test.json mocha -r ts-node/register tests/**/*.spec.ts",
+    "jstest:ts": "tsc -p tests/tsconfig.test.json",
+    "jstest:watch": "tsc --watch -p tests/tsconfig.test.json",
+    "jstest": "npm run jstest:ts && npm run jstest:run",
     "end": "echo The End"
   },
   "author": "VictoriaLa",
   "license": "EPL2.0",
   "devDependencies": {
     "@prettier/plugin-php": "^0.19.1",
+    "@types/chai": "^4.x.x",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^10.9.2",
+    "@types/sinon": "^10.x.x",
+    "chai": "^4.x.x",
+    "jsdom": "^20.0.0",
+    "mocha": "^10.x.x",
     "prettier": "^3.0.3",
     "sass": "^1.32.6",
-    "typescript": "^4.1.3",
-    "tsc": "^2.0.4"
+    "sinon": "^15.x.x",
+    "ts-node": "^10.9.2",
+    "tsc": "^2.0.4",
+    "typescript": "^4.1.3"
   },
   "prettier": {
     "braceStyle": "1tbs",
     "printWidth": 140,
     "trailingComma": "none"
   },
-  "dependencies": {
-
-  }
+  "dependencies": {}
 }

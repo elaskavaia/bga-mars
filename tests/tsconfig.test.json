@@ -1,0 +1,18 @@
+{
+    "rootDir": "/home/elaskavaia/git/bga-mars",
+    "compilerOptions": {
+      "target": "es5",
+      "module": "CommonJS",
+      "lib": ["dom", "esnext"],
+      "esModuleInterop": true,
+      "allowJs": true,
+      "sourceMap": true,
+      "outDir": "dist",
+      "types": ["mocha","node"],
+      "typeRoots": ["src/types", "./types", "./node_modules/@types"]
+    },
+  
+    "include": ["**/*.spec.ts", "../src/**/*.ts"],
+    "exclude": ["node_modules"]
+  }
+  

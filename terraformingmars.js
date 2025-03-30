@@ -2824,9 +2824,9 @@ var CustomRenders = /** @class */ (function () {
                 var content = item.content != undefined ? item.content : "";
                 if (optional_content)
                     content = optional_content;
-                var after = item.after != undefined ? item.after : "";
+                var after_1 = item.after != undefined ? item.after : "";
                 if (item.production === true) {
-                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div>" + after + "</div>";
+                    finds[idx] = '<div class="outer_production"><div class="' + item.classes + '">' + content + "</div>" + after_1 + "</div>";
                 }
                 else if (item.redborder) {
                     finds[idx] =
@@ -2837,11 +2837,11 @@ var CustomRenders = /** @class */ (function () {
                             '">' +
                             content +
                             "</div>" +
-                            after +
+                            after_1 +
                             "</div>";
                 }
                 else {
-                    finds[idx] = '<div class="' + item.classes + '">' + content + "</div>" + after;
+                    finds[idx] = '<div class="' + item.classes + '">' + content + "</div>" + after_1;
                 }
                 idx++;
             }
@@ -2959,21 +2959,18 @@ var CustomRenders = /** @class */ (function () {
                 ret = mode == "min" ? _("Requires $v°C or warmer.") : _("It must be $v°C or colder.");
                 break;
             case "w":
-                ret = mode == "min" ? _("Requires $v ocean/s tiles.") : _("$v ocean/s tiles or less.");
+                ret = mode == "min" ? _("Requires $v ocean tiles.") : _("$v ocean tiles or less.");
                 break;
             case "forest":
                 if (qty == 0)
                     qty = 1;
-                ret = _("Requires $v forest/s tiles.");
+                if (qty == 1)
+                    ret = _("Requires that you have a greenery tile.");
+                else
+                    ret = _("Requires $v greenery tiles.");
                 break;
             case "all_city":
-                ret = _("Requires $v citie/s in play.");
-                break;
-            case "ps":
-                ret = _("Requires that you have steel production.");
-                break;
-            case "pu":
-                ret = _("Requires that you have titanium production.");
+                ret = _("Requires $v cities in play.");
                 break;
             default:
                 if (what.startsWith("tag")) {
@@ -2986,8 +2983,19 @@ var CustomRenders = /** @class */ (function () {
                     ret = ret.replace("$tag", game.getTokenName(what));
                     break;
                 }
+                if (what.startsWith("res")) {
+                    ret = _("Requires that you have $v $res resources.").replace("$res", game.getTokenName(what));
+                }
                 else {
-                    ret = "NOT FOUND :" + what;
+                    var name_2 = game.getTokenName("tracker_" + what);
+                    if (!name_2)
+                        name_2 = game.getTokenName(what);
+                    if (qty <= 1) {
+                        ret = _("Requires that you have $res.").replace("$res", name_2);
+                    }
+                    else {
+                        ret = _("Requires that you have $res times $v.").replace("$res", name_2);
+                    }
                 }
                 break;
         }
@@ -4053,35 +4061,35 @@ var GameTokens = /** @class */ (function (_super) {
     };
     GameTokens.prototype.notif_counter = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
-            var name_2, value, counter_inc, counters;
+            var name_3, value, counter_inc, counters;
             return __generator(this, function (_a) {
                 try {
                     this.onNotif(notif);
-                    name_2 = notif.args.counter_name;
+                    name_3 = notif.args.counter_name;
                     value = void 0;
                     if (notif.args.counter_value !== undefined) {
                         value = notif.args.counter_value;
                     }
                     else {
                         counter_inc = notif.args.counter_inc;
-                        value = notif.args.counter_value = this.gamedatas.counters[name_2].counter_value + counter_inc;
+                        value = notif.args.counter_value = this.gamedatas.counters[name_3].counter_value + counter_inc;
                     }
-                    if (this.gamedatas.counters[name_2]) {
+                    if (this.gamedatas.counters[name_3]) {
                         counters = {};
-                        counters[name_2] = {
-                            counter_name: name_2,
+                        counters[name_3] = {
+                            counter_name: name_3,
                             counter_value: value
                         };
-                        if (this.gamedatas_server && this.gamedatas_server.counters[name_2])
-                            this.gamedatas_server.counters[name_2].counter_value = value;
+                        if (this.gamedatas_server && this.gamedatas_server.counters[name_3])
+                            this.gamedatas_server.counters[name_3].counter_value = value;
                         this.updateCountersSafe(counters);
                     }
-                    else if ($(name_2) && this.gamedatas.tokens[name_2]) {
+                    else if ($(name_3) && this.gamedatas.tokens[name_3]) {
                         notif.args.nop = true; // no move animation
-                        return [2 /*return*/, this.placeTokenServer(name_2, this.gamedatas.tokens[name_2].location, value, notif.args)];
+                        return [2 /*return*/, this.placeTokenServer(name_3, this.gamedatas.tokens[name_3].location, value, notif.args)];
                     }
-                    else if ($(name_2)) {
-                        this.setDomTokenState(name_2, value);
+                    else if ($(name_3)) {
+                        this.setDomTokenState(name_3, value);
                     }
                     console.log("** notif counter " + notif.args.counter_name + " -> " + notif.args.counter_value);
                 }
@@ -4589,11 +4597,11 @@ var GameXBody = /** @class */ (function (_super) {
         }
         for (var plid in this.gamedatas.players) {
             var plcolor = this.getPlayerColor(parseInt(plid));
-            var name_3 = this.getPlayerName(parseInt(plid));
+            var name_4 = this.getPlayerName(parseInt(plid));
             var progress_2 = this.cachedProgressTable[plid];
             var opInfoArgs = this.getOpInfoArgs(progress_2.operations, "claim");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_3, "\n                          <div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
+            lines += "\n                    <div class=\" scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_4, "\n                          <div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
                 var current = opInfoArgs[key].c;
                 var claimed = opInfoArgs[key].claimed;
@@ -4677,11 +4685,11 @@ var GameXBody = /** @class */ (function (_super) {
         for (var plid in this.gamedatas.players) {
             var info = this.gamedatas.players[plid];
             var plcolor = info.color;
-            var name_4 = info.name;
+            var name_5 = info.name;
             var progress_4 = this.cachedProgressTable[plid];
             var opInfoArgs = this.getOpInfoArgs(progress_4.operations, "fund");
             var corp = $("tableau_" + plcolor + "_corp_logo").dataset.corp;
-            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_4, "<div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
+            lines += "<div class=\"scorecol\">\n                          <div class=\"scorecell header name\" style=\"color:#".concat(plcolor, ";\">\n                          ").concat(name_5, "<div class=\"corp_logo\" data-corp=\"").concat(corp, "\"></div>\n                          </div>\n                          ");
             for (var key in msinfo) {
                 var current = opInfoArgs[key].counter;
                 var vp = opInfoArgs[key].vp;
@@ -5318,39 +5326,46 @@ var GameXBody = /** @class */ (function (_super) {
         return res;
     };
     GameXBody.prototype.generateCardTooltip = function (displayInfo) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         if (!displayInfo)
             return "?";
-        if (displayInfo.t === undefined) {
+        var type = displayInfo.t;
+        if (type === undefined) {
             return this.generateItemTooltip(displayInfo);
         }
-        var type = displayInfo.t;
         var type_name = this.getCardTypeById(type);
         var card_id = "";
         if (type > 0 && type < 7)
             card_id += " " + _(displayInfo.deck) + " #" + ((_a = displayInfo.num) !== null && _a !== void 0 ? _a : "");
-        var res = "";
         var tags = "";
         if (displayInfo.tags) {
-            for (var _i = 0, _c = displayInfo.tags.split(" "); _i < _c.length; _i++) {
-                var tag = _c[_i];
+            for (var _i = 0, _e = displayInfo.tags.split(" "); _i < _e.length; _i++) {
+                var tag = _e[_i];
                 tags += _(tag) + " ";
             }
         }
         var vp = _(displayInfo.text_vp);
         if (!vp)
             vp = displayInfo.vp;
+        var res = "";
+        // card type
         res += this.generateTooltipSection(type_name, card_id);
-        if (type != this.CON.MA_CARD_TYPE_CORP && type != this.CON.MA_CARD_TYPE_AWARD && type != this.CON.MA_CARD_TYPE_MILESTONE)
+        if (type <= 3)
+            // project cards and standard projects
             res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
         res += this.generateTooltipSection(_("Tags"), tags);
         var prereqText = "";
-        if (displayInfo.key == "card_main_135")
-            prereqText = _("Requires 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
-        else if ((_b = displayInfo.expr) === null || _b === void 0 ? void 0 : _b.pre)
-            prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
-        if (prereqText != "")
+        var cardText = (_b = displayInfo.text) !== null && _b !== void 0 ? _b : "";
+        if ((_c = displayInfo.expr) === null || _c === void 0 ? void 0 : _c.pre) {
+            if (displayInfo.key == "card_main_135")
+                prereqText = _("Requires at least 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
+            else if ((_d = displayInfo.expr) === null || _d === void 0 ? void 0 : _d.pre)
+                prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
             prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
+        }
+        else if (type > 0 && type <= 3) {
+            prereqText = _('None');
+        }
         res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
         if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
             res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
@@ -5366,7 +5381,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else {
             var errors = this.getPotentialErrors(displayInfo.key);
-            res += this.generateTooltipSection(_("Immediate Effect"), _(displayInfo.text));
+            res += this.generateTooltipSection(_("Immediate Effect"), _(cardText));
             res += this.generateTooltipSection(_("Effect"), _(displayInfo.text_effect));
             res += this.generateTooltipSection(_("Action"), _(displayInfo.text_action));
             res += this.generateTooltipSection(_("Holds"), _(displayInfo.holds));
@@ -6216,8 +6231,8 @@ var GameXBody = /** @class */ (function (_super) {
                 }
                 else if (!hex) {
                     // people confused when buttons are not shown, add button with explanations
-                    var name_5 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
-                    this.addActionButtonColor("button_x", name_5, function () {
+                    var name_6 = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
+                    this.addActionButtonColor("button_x", name_6, function () {
                         _this.removeTooltip("button_x");
                         dojo.destroy("button_x");
                         _this.addTargetButtons(opId, opTargets);
@@ -6709,7 +6724,7 @@ var GameXBody = /** @class */ (function (_super) {
             this_4.completeOpInfo(opId, opInfo, xop, sortedOps.length);
             numops.push(opId);
             var opArgs = opInfo.args;
-            var name_6 = this_4.getButtonNameForOperation(opInfo);
+            var name_7 = this_4.getButtonNameForOperation(opInfo);
             var singleOrFirst = single || (ordered && i == 0);
             this_4.updateVisualsFromOp(opInfo, opId);
             // update screen with activate slots for:
@@ -6726,7 +6741,7 @@ var GameXBody = /** @class */ (function (_super) {
                 // temp hack
                 if (opInfo.type === "passauto")
                     return "continue";
-                this_4.addActionButtonColor("button_".concat(opId), name_6, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+                this_4.addActionButtonColor("button_".concat(opId), name_7, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
                 }
@@ -6808,8 +6823,8 @@ var GameXBody = /** @class */ (function (_super) {
             var opArgs = opInfo.args;
             if (opArgs.void)
                 return "continue";
-            var name_7 = this_5.getButtonNameForOperation(opInfo);
-            this_5.addActionButtonColor("button_".concat(opId), name_7, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
+            var name_8 = this_5.getButtonNameForOperation(opInfo);
+            this_5.addActionButtonColor("button_".concat(opId), name_8, function () { return _this.onOperationButton(opInfo, false); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
         };
         var this_5 = this;
         for (var i = 0; i < sortedOps.length; i++) {
@@ -7052,10 +7067,10 @@ var GameXBody = /** @class */ (function (_super) {
             return;
         var text = "";
         if (node.id.startsWith("card")) {
-            var name_8 = node.dataset.name;
+            var name_9 = node.dataset.name;
             var dcost = node.dataset.discount_cost;
             var cost = this.getRulesFor(node.id, "cost", 0);
-            text += "[".concat(name_8, "]");
+            text += "[".concat(name_9, "]");
             if (cost && (options === null || options === void 0 ? void 0 : options.showCost)) {
                 if (dcost !== undefined && cost != dcost) {
                     text += " ".concat(cost, "(").concat(dcost, ")ME");
@@ -7078,8 +7093,8 @@ var GameXBody = /** @class */ (function (_super) {
             var hexname = hex.dataset.name;
             var tile = node;
             text += "".concat(hexname, ": ");
-            var name_9 = tile.dataset.name;
-            text += "[".concat(name_9, "]");
+            var name_10 = tile.dataset.name;
+            text += "[".concat(name_10, "]");
             var state = tile.dataset.state;
             if (state && state != "0") {
                 var pid = this.getPlayerIdByNo(state);
@@ -7092,9 +7107,9 @@ var GameXBody = /** @class */ (function (_super) {
             return text;
         }
         if (node.id.startsWith("tracker")) {
-            var name_10 = node.dataset.name;
+            var name_11 = node.dataset.name;
             var state = node.dataset.state;
-            text = "".concat(name_10, " ").concat(state);
+            text = "".concat(name_11, " ").concat(state);
             return text;
         }
         return node.id;

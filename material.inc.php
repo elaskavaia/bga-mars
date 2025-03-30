@@ -9278,4 +9278,11 @@ $this->token_types = [
     'nc' => 1,
     'name' => c_lienttranslate('Camp'),
   ],
+  'resFloater' => [  //
+    'type' => 'resource',
+    'create' => 0,
+    'location' => 'params',
+    'nc' => 1,
+    'name' => c_lienttranslate('Floater'),
+  ],
 ];
