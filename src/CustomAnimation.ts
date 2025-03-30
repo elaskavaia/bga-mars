@@ -180,7 +180,7 @@ class CustomAnimation {
     if (!this.areAnimationsPlayed()) return;
 
     let animate_token = resource_id;
-    if (!this.game.isLayoutFull() && place_id.startsWith("card_main_")) animate_token = place_id.replace("card_main_", "resource_holder_");
+    if (!this.game.isLayoutFull()) animate_token = `resource_holder_${place_id}`;
 
     const div = $(place_id);
     const divToken = $(place_id);
@@ -450,7 +450,7 @@ class CustomAnimation {
 
     let cssClass = "anim_" + animation.name;
     let resolvedOK = false;
-    console.log(`*** anim ${animationname} started for ${targetId} of ${animation.duration} ms`);
+    //console.log(`*** anim ${animationname} started for ${targetId} of ${animation.duration} ms`);
 
     const cleanUp = function (e: Event, kind: string = "callback") {
       if (resolvedOK) return;
@@ -459,11 +459,11 @@ class CustomAnimation {
         $(targetId).removeEventListener("animationend", cleanUp);
         $(targetId).classList.remove(cssClass);
       }
-      console.log(`*** anim ${animationname} for ${targetId} onEnd`);
+      // console.log(`*** anim ${animationname} for ${targetId} onEnd`);
       safeCall(onEnd);
-      console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
+      //console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
     };
-    console.log(`*** anim ${animationname} for ${targetId} onStart`);
+    //console.log(`*** anim ${animationname} for ${targetId} onStart`);
     safeCall(onStart);
 
     $(targetId).addEventListener("animationend", cleanUp);

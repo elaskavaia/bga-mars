@@ -608,7 +608,7 @@
     color: white;
   }
 
-  .card {
+  .card:not(.colocard) {
     background-size: 1000% auto;
   }
 

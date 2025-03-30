@@ -77,7 +77,7 @@ class GameXBody extends GameTokens {
       //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
 
       //Give tooltips to alt trackers in player boards
-      const togglehtml = this.getTooptipHtml(
+      const togglehtml = this.getTooltipHtml(
         _("Card visibility toggle"),
         _("Shows number of cards of corresponding color on tableau"),
         "",
@@ -204,7 +204,7 @@ class GameXBody extends GameTokens {
           "button_debug_dump",
           "Dump Machine",
           () => {
-            this.tmAjaxCallWrapperUnchecked("say", { msg: "debug_dumpMachineDb()" });
+            this.remoteCallWrapperUnchecked("say", { msg: "debug_dumpMachineDb()" });
           },
           parent
         ); // NOI18N
@@ -1044,7 +1044,7 @@ class GameXBody extends GameTokens {
       card.style.removeProperty("display");
     });
     contentnode.querySelectorAll(".card").forEach((card: any) => {
-      const cardtext = this.getTooptipHtmlForToken(card.id);
+      const cardtext = this.getTooltipHtmlForToken(card.id);
       if (!cardtext.toLowerCase().includes(text)) {
         card.style.display = hiddenOpacity;
       }
@@ -1075,12 +1075,12 @@ class GameXBody extends GameTokens {
       .querySelectorAll(".token,.card")
       .forEach((node) => {
         node.addEventListener("click", (e) => {
-          const selected_html = this.getTooptipHtmlForToken((e.currentTarget as any).id);
+          const selected_html = this.getTooltipHtmlForToken((e.currentTarget as any).id);
           $("card_pile_selector").innerHTML = selected_html;
         });
       });
     if (selectedId) {
-      const selected_html = this.getTooptipHtmlForToken(selectedId);
+      const selected_html = this.getTooltipHtmlForToken(selectedId);
       $("card_pile_selector").innerHTML = selected_html;
     }
     dlg.show();
@@ -1149,13 +1149,13 @@ class GameXBody extends GameTokens {
   }
 
   //Expands for cleanup
-  ajaxuseraction(action: string, args?: any, handler?: (err: any) => void) {
+  remoteUserAction(action: string, args?: any, handler?: (err: any) => void) {
     this.gameStatusCleanup();
     console.log(`sending ${action}`, args);
     if (action === "passauto") {
-      return this.tmAjaxCallWrapperUnchecked(action, {}, handler);
+      return this.remoteCallWrapperUnchecked(action, {}, handler);
     }
-    super.ajaxuseraction(action, args, handler);
+    super.remoteUserAction(action, args, handler);
   }
 
   onNotif(notif: Notif) {
@@ -1180,7 +1180,6 @@ class GameXBody extends GameTokens {
       }
     }
   }
-
 
   notif_tokensUpdate(notif: Notif) {
     console.log("notif_tokensUpdate", notif);
@@ -1620,12 +1619,17 @@ awarded.`);
         const card_effect = displayInfo.text_effect || displayInfo.text_action || "";
         const card_title = displayInfo.name || "";
 
+        const holds = displayInfo.holds || "";
+
         decor.innerHTML = `
                   <div class="card_bg"></div>
                   <div class="card_title">${_(card_title)}</div>
                   <div class="card_initial">${_(card_initial)}</div>
-                  <div class="card_effect">${_(card_effect)}</div>
+                  <div class="card_effect">${_(card_effect)}</div>           
             `;
+        if (holds) {
+          decor.innerHTML += ` <div id="resource_holder_${tokenNode.id}" class="card_resource_holder resource_counter token_img tracker_res tracker_res${holds}" data-resource_counter="0"></div>`;
+        }
       } else if (tokenNode.id.startsWith("card_stanproj")) {
         tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
       } else if (tokenNode.id.startsWith("card_colo_")) {
@@ -1771,15 +1775,17 @@ awarded.`);
         }
 
         const holds = displayInfo.holds ?? "Generic";
+        const num = displayInfo.num;
         const htm_holds =
           '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +
           holds +
           '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' +
-          tokenNode.id.replace("card_main_", "") +
+          num +
           '" class="resource_counter"  data-resource_counter="0"></div></div>';
+        const cardId = tokenNode.id;
 
         decor.innerHTML = `
-                  <div class="card_illustration cardnum_${displayInfo.num}"></div>
+                  <div class="card_illustration cardnum_${num}"></div>
                   <div class="card_bg"></div>
                   <div class='card_badges'>${tagshtm}</div>
                   <div class='card_title'><div class='card_title_inner'>${_(displayInfo.name)}</div></div>
@@ -1787,16 +1793,14 @@ awarded.`);
                     card_action_text
                   )}</div><div class="card_action_bottomdecor"></div></div>
                   <div class="card_effect ${addeffclass}">${card_r}<div class="card_tt">${_(displayInfo.text) || ""}</div></div>           
-                  <div class="card_prereq">${parsedPre !== "" ? parsedPre : ""}</div>
-                  <div class="card_number">${displayInfo.num ?? ""}</div>
+                  <div class="card_prereq">${parsedPre}</div>
+                  <div class="card_number">${num}</div>
                   <div class="card_number_binary">${cn_binary}</div>
-                  <div id='cost_${tokenNode.id}' class='card_cost'><div class="number_inside">${displayInfo.cost}</div>
-                  <div id='discountedcost_${tokenNode.id}' class='card_cost minidiscount token_img tracker_m'></div> 
+                  <div id='cost_${cardId}' class='card_cost'><div class="number_inside">${displayInfo.cost}</div>
+                  <div id='discountedcost_${cardId}' class='card_cost minidiscount token_img tracker_m'></div> 
                   <div class="discountarrow fa fa-arrow-circle-down"></div>
                   </div> 
-                  <div id="resource_holder_${tokenNode.id.replace("card_main_", "")}" class="card_resource_holder ${
-                    displayInfo.holds ?? ""
-                  }" data-resource_counter="0">${htm_holds}</div>
+                  <div id="resource_holder_${cardId}" class="card_resource_holder resource_counter token_img tracker_res tracker_res${holds}" data-resource_counter="0"></div>
                   ${vp}
             `;
       }
@@ -1860,115 +1864,118 @@ awarded.`);
     tokenInfoBefore: Token | undefined,
     animationDuration: number = 0
   ): Promise<any> {
-    super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
+    try {
+      super.onUpdateTokenInDom(tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
 
-    const key = tokenInfo.key;
-    const location = tokenInfo.location; // db location
-    const place_id = tokenNode.parentElement?.id; // where is object in dom
-    const prevLocation = tokenInfoBefore?.location;
-    const prevState = tokenInfoBefore?.state;
-    const inc = tokenInfo.state - prevState;
+      const key = tokenInfo.key;
+      const location = tokenInfo.location; // db location
+      const place_id = tokenNode.parentElement?.id; // where is object in dom
+      const prevLocation = tokenInfoBefore?.location;
+      const prevState = tokenInfoBefore?.state;
+      const inc = tokenInfo.state - prevState;
 
-    if (key.startsWith("card_")) {
-      this.handman.maybeEnabledDragOnCard(tokenNode);
-    }
-
-    // update resource holder counters
-    if (key.startsWith("resource_")) {
-      // debugger;
-      let targetCard = 0;
-      let removed = false;
-      if (location.startsWith("card_")) {
-        //resource added to card
-        targetCard = getPart(location, 2);
-      } else if (prevLocation?.startsWith("card_")) {
-        //resource removed from a card
-        removed = true;
-        targetCard = getPart(prevLocation, 2);
+      if (key.startsWith("card_")) {
+        this.handman.maybeEnabledDragOnCard(tokenNode);
       }
-      if (targetCard) {
-        if (this.isLayoutFull()) {
-          const dest_holder: string = place_id;
-          const count = String($(dest_holder).querySelectorAll(".resource").length);
-          $(dest_holder).dataset.resource_counter = count;
-        } else {
-          const dest_holder: string = `resource_holder_${targetCard}`;
-          const dest_counter: string = `resource_holder_counter_${targetCard}`;
-          const count = String($(dest_holder).querySelectorAll(".resource").length);
-          $(dest_holder).dataset.resource_counter = count;
-          $(dest_counter).dataset.resource_counter = count;
-          if (!removed) {
-            return this.customAnimation.animatePlaceResourceOnCard(key, location);
+
+      // update resource holder counters
+      if (key.startsWith("resource_")) {
+        let targetCard = place_id;
+        let removed = false;
+        if (location.startsWith("card_")) {
+          //resource added to card
+          targetCard = location;
+        } else if (prevLocation?.startsWith("card_")) {
+          //resource removed from a card
+          removed = true;
+          targetCard = prevLocation;
+        }
+        const targetCardNode = $(targetCard);
+        if (targetCardNode) {
+          const count = String(targetCardNode.querySelectorAll(".resource").length);
+          if (this.isLayoutFull()) {
+            targetCardNode.dataset.resource_counter = count;
           } else {
-            return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+            const dest_holder = `resource_holder_${targetCard}`;
+            const node = $(dest_holder);
+            if (node) {
+              node.dataset.resource_counter = count;
+            }
+            if (!removed) {
+              return this.customAnimation.animatePlaceResourceOnCard(key, location);
+            } else {
+              return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+            }
           }
         }
       }
-    }
-    //pop animation on Tiles
-    if (key.startsWith("tile_")) {
-      return this.customAnimation.animateTilePop(key);
-    }
-
-    //temperature & oxygen - compact only as full doesn't have individual rendered elements
-    if (!this.isLayoutFull() && this.getMapNumber() != 4) {
-      if (key == "tracker_t") {
-        return this.customAnimation.animateMapItemAwareness("temperature_map");
-      } else if (key == "tracker_o") {
-        return this.customAnimation.animateMapItemAwareness("oxygen_map");
+      //pop animation on Tiles
+      if (key.startsWith("tile_")) {
+        return this.customAnimation.animateTilePop(key);
       }
-    }
-    //ocean's pile
-    if (key == "tracker_w") {
-      return this.customAnimation.animateMapItemAwareness("oceans_pile");
-    } else if (key == "tracker_gen") {
-      return this.customAnimation.animateMapItemAwareness("outer_generation");
-    }
 
-    if (key.startsWith("marker_")) {
-      if (location.startsWith("award")) {
-        this.strikeNextAwardMilestoneCost("award");
-        return this.customAnimation.animatePlaceMarker(key, place_id);
-      } else if (location.startsWith("milestone")) {
-        this.strikeNextAwardMilestoneCost("milestone");
-        return this.customAnimation.animatePlaceMarker(key, place_id);
-      } else if (location.startsWith("tile_")) {
-        return this.customAnimation.animatePlaceMarker(key, place_id);
-      }
-    }
-
-    if (key.startsWith("card_corp") && location.startsWith("tableau")) {
-      $(location + "_corp_logo").dataset.corp = key;
-      $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
-
-      //adds tt to corp logos
-      this.updateTooltip(key, location + "_corp_logo");
-      this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
-    }
-
-    if (key.startsWith("card_") && location.startsWith("tableau")) {
-      const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
-      tokenNode.parentElement.parentElement.dataset.subcount = sub;
-      tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
-      tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
-    }
-
-    //move animation on main player board counters
-    if (key.startsWith("tracker_")) {
-      if (!this.isLayoutFull() && inc) {
-        const type = getPart(key, 1);
-        if (this.resourceTrackers.includes(type) || type == "tr") {
-          // cardboard layout animating cubes on playerboard instead
-          return this.customAnimation.animateTingle(key).finally(() => this.customAnimation.moveResources(key, inc));
-        }
-        if ($(key)) {
-          return this.customAnimation.animateTingle(key);
+      //temperature & oxygen - compact only as full doesn't have individual rendered elements
+      if (!this.isLayoutFull() && this.getMapNumber() != 4) {
+        if (key == "tracker_t") {
+          return this.customAnimation.animateMapItemAwareness("temperature_map");
+        } else if (key == "tracker_o") {
+          return this.customAnimation.animateMapItemAwareness("oxygen_map");
         }
       }
-      return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
-    }
+      //ocean's pile
+      if (key == "tracker_w") {
+        return this.customAnimation.animateMapItemAwareness("oceans_pile");
+      } else if (key == "tracker_gen") {
+        return this.customAnimation.animateMapItemAwareness("outer_generation");
+      }
 
-    return this.customAnimation.wait(animationDuration); // default move animation
+      if (key.startsWith("marker_")) {
+        if (location.startsWith("award")) {
+          this.strikeNextAwardMilestoneCost("award");
+          return this.customAnimation.animatePlaceMarker(key, place_id);
+        } else if (location.startsWith("milestone")) {
+          this.strikeNextAwardMilestoneCost("milestone");
+          return this.customAnimation.animatePlaceMarker(key, place_id);
+        } else if (location.startsWith("tile_")) {
+          return this.customAnimation.animatePlaceMarker(key, place_id);
+        }
+      }
+
+      if (key.startsWith("card_corp") && location.startsWith("tableau")) {
+        $(location + "_corp_logo").dataset.corp = key;
+        $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
+
+        //adds tt to corp logos
+        this.updateTooltip(key, location + "_corp_logo");
+        this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
+      }
+
+      if (key.startsWith("card_") && location.startsWith("tableau")) {
+        const sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+        tokenNode.parentElement.parentElement.dataset.subcount = sub;
+        tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
+        tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
+      }
+
+      //move animation on main player board counters
+      if (key.startsWith("tracker_")) {
+        if (!this.isLayoutFull() && inc) {
+          const type = getPart(key, 1);
+          if (this.resourceTrackers.includes(type) || type == "tr") {
+            // cardboard layout animating cubes on playerboard instead
+            return this.customAnimation.animateTingle(key).finally(() => this.customAnimation.moveResources(key, inc));
+          }
+          if ($(key)) {
+            return this.customAnimation.animateTingle(key);
+          }
+        }
+        return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
+      }
+
+      return this.customAnimation.wait(animationDuration); // default move animation
+    } catch (e) {
+      return Promise.reject(e);
+    }
   }
 
   preSlideAnimation(tokenNode: HTMLElement, tokenInfo: Token, location: string) {
@@ -2158,12 +2165,6 @@ awarded.`);
     } else if (tokenInfo.key == "starting_player") {
       result.location = tokenInfo.location.replace("tableau_", "fpholder_");
     } else if (tokenInfo.key.startsWith("resource_")) {
-      if (!this.isLayoutFull()) {
-        if (tokenInfo.location.startsWith("card_main_")) {
-          //resource added to card
-          result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
-        }
-      }
     } else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
       //result.location = tokenInfo.location + "_corp_effect";
       result.location = tokenInfo.location + "_cards_4";
@@ -2233,7 +2234,7 @@ awarded.`);
     //   if (err) return;
     //   dojo.empty('generalactions');
     // }
-    this.ajaxuseraction(
+    this.remoteUserAction(
       action,
       {
         ops: [{ op: op, ...args }]
@@ -2254,12 +2255,12 @@ awarded.`);
   }
 
   sendActionDecline(op: number) {
-    this.ajaxuseraction("decline", {
+    this.remoteUserAction("decline", {
       ops: [{ op: op }]
     });
   }
   sendActionSkip(...op: number[]) {
-    this.ajaxuseraction("skip", {
+    this.remoteUserAction("skip", {
       oparr: op
     });
   }
@@ -2320,7 +2321,7 @@ awarded.`);
     const message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
     this.setMainTitle(message);
     dojo.empty("generalactions");
-    this.tmAjaxCallWrapperUnchecked("undo", { move_id: undoMove }, (err) => {
+    this.remoteCallWrapperUnchecked("undo", { move_id: undoMove }, (err) => {
       if (err) {
         this.cancelLocalStateEffects();
       }
@@ -2339,7 +2340,9 @@ awarded.`);
       : this.getButtonNameForOperationExp(op.type);
 
     const opTargets = op.args?.target ?? [];
-    if (opTargets.length == 1 && !op.type.startsWith("conv")) {
+    if (opTargets.length == 1) {
+      if (op.type.endsWith("nres")) return baseActionName;
+      if (op.type.startsWith("conv")) return baseActionName;
       const onlyAvailableAction = this.getOpTargetName(op, 0);
       return `${baseActionName} ⤇ ${onlyAvailableAction}`;
     }
@@ -2407,7 +2410,7 @@ awarded.`);
 
   onUpdateActionButtons_playerConfirm(args) {
     this.addActionButton("button_0", _("Confirm"), () => {
-      this.ajaxuseraction("confirm");
+      this.remoteUserAction("confirm");
     });
   }
 
@@ -2530,12 +2533,18 @@ awarded.`);
             if (sign < 0) buttonColor = "gray";
             if (sign > 0) buttonColor = "red";
             const divId = "button_" + i;
+
             let title = this.resourcesToHtml(detailsInfo.resources);
             this.addActionButtonColor(divId, title, () => this.onSelectTarget(opId, tid), buttonColor);
           }
         });
         if (customNeeded)
-          this.addActionButtonColor("btn_create_custompay", _("Custom"), () => this.createCustomPayment(opId, customNeeded), "blue");
+          this.addActionButtonColor(
+            "btn_create_custompay",
+            _("Custom"),
+            () => this.createCustomPayment(opId, customNeeded, opInfo),
+            "blue"
+          );
       }
     } else if (ttype == "none" || !ttype) {
       // no arguments
@@ -2740,7 +2749,7 @@ awarded.`);
   }
 
   //Adds the payment picker according to available alternative payment options
-  createCustomPayment(opId, info) {
+  createCustomPayment(opId, info, opInfo: any) {
     this.custom_pay = {
       needed: info.count,
       selected: {},
@@ -2751,23 +2760,26 @@ awarded.`);
     if ($("btn_create_custompay")) $("btn_create_custompay").remove();
 
     let items_htm = "";
+    const targetRes = opInfo?.type?.substring(1, 2) ?? "m";
+
     for (let res in info.resources) {
       this.custom_pay.selected[res] = 0;
       this.custom_pay.available[res] = info.resources[res];
       this.custom_pay.rate[res] = info.rate[res];
 
       //megacredits are spent automatically
-      if (res == "m") {
+      if (res == targetRes) {
         this.custom_pay.selected[res] = this.custom_pay.available[res];
         continue;
       }
 
       if (this.custom_pay.available[res] <= 0) continue;
+
       //add paiments buttons
       items_htm += `
         <div class="payment_group">
-           <div class="token_img tracker_${res}"></div>
-           <div class="item_worth">
+          <div class="token_img tracker_${res}"></div>
+          <div class="item_worth">
                <div class="token_img tracker_m payment_item">${this.custom_pay.rate[res]}</div>
           </div>
           <div id="payment_item_minus_${res}" class="btn_payment_item btn_item_minus" data-resource="${res}" data-direction="minus">-</div>
@@ -2820,7 +2832,7 @@ awarded.`);
         let total_res = 0;
         // let values_htm='';
         for (let res in this.custom_pay.rate) {
-          if (res != "m") {
+          if (res != targetRes) {
             total_res = total_res + this.custom_pay.rate[res] * this.custom_pay.selected[res];
             //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
           }
@@ -2832,7 +2844,7 @@ awarded.`);
         } else {
           $("btn_custompay_send").classList.remove("overpay");
         }
-        this.custom_pay.selected["m"] = mc;
+        this.custom_pay.selected[targetRes] = mc;
         //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
         const values_htm = this.resourcesToHtml(this.custom_pay.selected, true);
 
@@ -2856,10 +2868,11 @@ awarded.`);
 
   resourcesToHtml(resources: any, show_zeroes: boolean = false): string {
     var htm = "";
-    const trackers = this.resourceTrackers.concat("resMicrobe");
+    const trackers = this.resourceTrackers.concat("resMicrobe", "resFloater");
     trackers.forEach((item) => {
-      if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
-        htm += `<div class="token_img tracker_${item} payment_item">${resources[item]}</div>`;
+      const value = resources[item];
+      if (value !== undefined && (value > 0 || show_zeroes === true)) {
+        htm += `<div class="token_img tracker_${item} payment_item">${value}</div>`;
       }
     });
 
@@ -3042,9 +3055,14 @@ awarded.`);
         }
       }
 
-      if (!ordered && !chooseorder && i == 0 && opInfo.data) {
-        const data = opInfo.data.split(":")[0];
-        const tr = this.getTokenName(data);
+      if (!ordered && !chooseorder && i == 0) {
+        let tr: string;
+        if (opInfo.args?.reason) {
+          tr = this.getTr(opInfo.args.reason);
+        } else if (opInfo.data) {
+          const data = opInfo.data.split(":")[0];
+          tr = this.getTokenName(data);
+        }
         if (tr) {
           this.setMainTitle(` [${tr}]`, true); // TODO
         }
@@ -3060,7 +3078,7 @@ awarded.`);
       this.addActionButtonColor("button_skip", _("Skip All"), () => this.sendActionSkip(...numops), "red");
     }
 
-    if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.ajaxuseraction("whatever", {}), "orange");
+    if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.remoteUserAction("whatever", {}), "orange");
   }
 
   onOperationButton(opInfo: any, clientState: boolean = true) {
@@ -3152,6 +3170,13 @@ awarded.`);
     }
     var parent = document.querySelector(".debug_section"); // studio only
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
+    if (!this.isCurrentPlayerActive()) {
+      if (stateName == "playerTurnChoice" && args?.master != this.getActivePlayerId()) {
+        this.setDescriptionOnMyTurn("${player_name} is performing out of turn action", {
+          player_name: this.divColoredPlayer(this.getActivePlayerId())
+        });
+      }
+    }
   }
   onSelectTarget(opId: number, target: string, checkActive: boolean = false) {
     // can add prompt
@@ -3215,7 +3240,7 @@ awarded.`);
     if (parenttt) {
       const parentToken = parentNode.dataset.tt_token ?? parentId;
       const childToken = childNode.dataset.tt_token ?? childNode.id;
-      const newhtml = this.getTooptipHtmlForToken(parentToken) + this.getTooptipHtmlForToken(childToken);
+      const newhtml = this.getTooltipHtmlForToken(parentToken) + this.getTooltipHtmlForToken(childToken);
       this.addTooltipHtml(parentId, newhtml, parenttt.showDelay);
       this.removeTooltip(childNode.id);
     }

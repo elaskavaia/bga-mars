@@ -36,6 +36,7 @@ abstract class PGameXBody extends PGameMachine {
         parent::__construct();
         self::initGameStateLabels([
             "gamestage" => 11,
+            "turn_master" => 12, // player who's turn it is 
             // game variants
             "var_begginers_corp" => 100,
             "var_corporate_era" => 101,
@@ -1131,7 +1132,7 @@ abstract class PGameXBody extends PGameMachine {
                 $opinst->setParams($params);
             return $opinst;
         } catch (Throwable $e) {
-            $this->error($e);
+            $this->error(toJson($e));
             throw new BgaSystemException("Cannot instantiate $classname for $type");
         }
     }
@@ -1236,8 +1237,8 @@ abstract class PGameXBody extends PGameMachine {
         $this->machine->push($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
     }
 
-    function put($color, $type, $data = '') {
-        $this->machine->put($type, 1, 1, $color, MACHINE_OP_SEQ, $data);
+    function put($color, $type, $data = '', $op = MACHINE_OP_SEQ) {
+        $this->machine->put($type, 1, 1, $color, $op, $data);
     }
 
     function putInEffectPool($owner, $type, $data = '') {
@@ -1552,6 +1553,22 @@ abstract class PGameXBody extends PGameMachine {
         return "{$costm}nm";
     }
 
+
+    function getOwnCardOnTableau($tokenId, $color) {
+        $info = $this->tokens->getTokenInfo($tokenId);
+        if (!$info) return false;
+        if ($info['location'] == "tableau_$color") return $info;
+        return null;
+    }
+
+    function playerHasCard($color, $token_id) {
+        $info = $this->tokens->getTokenInfo($token_id);
+        if (!$info) return false;
+        if ($info['location'] == "tableau_$color") return true;
+        return false;
+    }
+
+
     function getCurrentStartingPlayer() {
         $loc = $this->tokens->getTokenLocation('starting_player');
         if (!$loc)
@@ -1590,14 +1607,8 @@ abstract class PGameXBody extends PGameMachine {
         return $maxgen;
     }
 
-    function playerHasCard($color, $token_id) {
-        $info = $this->tokens->getTokenInfo($token_id);
-        if (!$info) return false;
-        if ($info['location'] == "tableau_$color") return true;
-        return false;
-    }
 
-    function switchActivePlayerIfNeeded($player_color) {
+    function switchActivePlayerIfNeeded($player_color, $op) {
         if (!$player_color) return;
         $player_id = $this->getPlayerIdByColor($player_color);
         if (!$player_id) return;
@@ -1615,8 +1626,24 @@ abstract class PGameXBody extends PGameMachine {
         // in this game we never switch active player during the single active state turns
         // in the normal game state
         if ($active_player != $player_id) {
+            $opinst = $this->getOperationInstance($op);
+
             $stage = $this->getGameStateValue('gamestage');
-            if ($stage != MA_STAGE_GAME || $this->isZombiePlayer($active_player)) {
+            $master = $this->getTurnMaster();
+            $canauto = $opinst->canResolveAutomatically();
+            $switch = false;
+            $this->debugConsole("switch $active_player != $player_id mas=$master can=$canauto");
+            if ($stage != MA_STAGE_GAME) {
+                $switch = true;
+            } else if ($player_id == $master) {
+                $switch = true;
+            } else  if (!$canauto) {
+                $switch = true;
+            } else if ($this->isZombiePlayer($active_player)) {
+                $switch = true;
+            }
+
+            if ($switch) {
                 $this->setNextActivePlayerCustom($player_id);
                 $this->undoSavepointWithLabel("switchplayer");
                 return;
@@ -2697,6 +2724,11 @@ abstract class PGameXBody extends PGameMachine {
         return $count;
     }
 
+    function getBuyCardCost($color) {
+        if ($this->getOwnCardOnTableau("card_corp_26", $color)) return 5;
+        return 3;
+    }
+
     function getCountOfResOnCard($context) {
         return $this->tokens->countTokensInLocation("$context");
     }
@@ -2897,7 +2929,7 @@ abstract class PGameXBody extends PGameMachine {
      * game state.
      */
     function arg_playerTurnChoice() {
-        $result = [];
+        $result = ['master' => $this->getTurnMaster()];
 
         if (!$this->isSolo()) {
             $players = $this->loadPlayersBasicInfos();
@@ -3084,7 +3116,7 @@ abstract class PGameXBody extends PGameMachine {
             return STATE_END_GAME;
         }
         // check end of game
-        $player_id = $this->getActivePlayerId(); // xxx turn owner?
+        $player_id = $this->getTurnMaster();
         $this->effect_endOfActions($player_id);
         $player_id = $this->getNextReadyPlayer($player_id);
         if (!$player_id) {
@@ -3127,9 +3159,16 @@ abstract class PGameXBody extends PGameMachine {
 
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
         $this->setNextActivePlayerCustom($player_id, $give_time, $inc_turn);
+        $this->setGameStateValue('turn_master', $player_id);
         $color = $this->getPlayerColorById($player_id);
         //$this->undoSavepoint();
         $this->machine->queue("turn", 1, 1, $color);
+    }
+
+    function getTurnMaster() {
+        $master = $this->getGameStateValue('turn_master');
+        if (!$master) $master = $this->getActivePlayerId(); // backward compat
+        return $master;
     }
 
     function getRollingVp($player_id = 0, string $category = '') {

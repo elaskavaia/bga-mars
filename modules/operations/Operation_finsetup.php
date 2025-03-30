@@ -11,15 +11,15 @@ class Operation_finsetup extends AbsOperation {
 
     function effect(string $color, int $inc): int {
         //$player_id = $this->game->getPlayerIdByColor($color);
-    
+
         if ($this->game->getGameStateValue('var_begginers_corp') == 1)  return 1;
 
         // pin drawn cards
-        $selected = $this->game->tokens->getTokensOfTypeInLocation("card_","hand_$color", MA_CARD_STATE_SELECTED);
+        $selected = $this->game->tokens->getTokensOfTypeInLocation("card_", "hand_$color", MA_CARD_STATE_SELECTED);
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "hand_$color", 0);
         }
-        $selected_proj = $this->game->tokens->getTokensOfTypeInLocation("card_main_","hand_$color", 0);
+        $selected_proj = $this->game->tokens->getTokensOfTypeInLocation("card_main_", "hand_$color", 0);
         $count =  count($selected_proj);
         if ($count)
             $this->game->notifyWithName('message', clienttranslate('${player_name} keeps ${count} card/s'), [
@@ -48,21 +48,23 @@ class Operation_finsetup extends AbsOperation {
 
         // play selected corp properly
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "hand_{$color}"); // new new
+
         foreach ($rest as $card_id => $card) {
             $this->game->effect_playCorporation($color, $card_id, false);
             $corpcost = -$this->game->getRulesFor($card_id, 'cost');
             $this->game->effect_incCount($color, 'm', $corpcost, ['message' => '']);
-            $this->game->executeImmediately($color,"nm",3 * $count); // pay for card
+    
             break;
         }
-
+        $cost = $this->game->getBuyCardCost($color);
+        $this->game->executeImmediately($color, "nm", $cost * $count); // pay for cards
 
         if ($this->game->isSolo()) {
             $this->game->undoSavepointWithLabel(clienttranslate("setup"), MA_UNDO_NOBARRIER);
         } else {
             $this->game->undoSavepointWithLabel(clienttranslate("setup"), MA_UNDO_BARRIER);
         }
-        
+
         return 1;
     }
 }

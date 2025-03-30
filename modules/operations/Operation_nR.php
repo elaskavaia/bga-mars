@@ -1,20 +1,50 @@
 <?php
 
 declare(strict_types=1);
-
-class Operation_nR extends AbsOperation {
+require_once "Operation_nmM.php";
+class Operation_nR extends Operation_nmM {
+    var $storm = null;
     function effect(string $owner, int $inc): int {
+        if ($this->getPrimaryArgType() == 'enum') return parent::effect($owner, $inc);
         $this->game->effect_incCount($owner, $this->getType(), -$inc, ['reason_tr' => $this->getReason()]);
         return $inc;
     }
 
-    protected function getType() {
+    function getType() {
         return substr($this->mnemonic, 1);
+    }
+
+    function getAlternativeResourceType() {
+        return '-';
+    }
+
+    function getTypes() {
+        $type = $this->getType();
+        $arr = [$type];
+        if ($this->getStormCount()) {
+            $arr[] = "resFloater";
+        }
+        return $arr;
+    }
+
+    protected function getExchangeRate($type): int {
+        if ($type == $this->getType()) return 1;
+        if ($type == "resFloater") return 2; // for now only this
+        throw new BgaSystemException("Invalid resource type $type");
+    }
+
+    function doPayWithResource($color, $type, $count) {
+        if ($type == "resFloater") {
+            $this->game->executeImmediately($color, "nres", $count, "card_corp_28");
+        } else {
+            parent::doPayWithResource($color, $type, $count);
+        }
     }
 
     public function noValidTargets(): bool {
         $value = $this->game->getTrackerValue($this->color, $this->getType());
         $min = $this->getMinCount();
+        if ($this->getType() == 'h') $value += $this->getStormCount() * 2;
         $diff = $value - $min;
 
 
@@ -26,6 +56,9 @@ class Operation_nR extends AbsOperation {
                 }
             }
         }
+
+
+
         return  $diff < 0;
     }
 
@@ -34,10 +67,36 @@ class Operation_nR extends AbsOperation {
     }
 
     function getPrimaryArgType() {
+        if ($this->getStormCount() > 0) return 'enum';
         return '';
+    }
+
+    function canResolveAutomatically() {
+        if ($this->getPrimaryArgType() == 'enum') return parent::canResolveAutomatically();
+        if ($this->isOptional() && $this->noValidTargets()) return true;
+        if ($this->isOptional()) return false;
+        if ($this->getMinCount() != $this->getCount()) return false;
+        return true;
     }
 
     function canFail() {
         return true;
+    }
+
+    function getStormCount() {
+        if ($this->storm == null) {
+            if ($this->getType() == 'h' && $this->game->getOwnCardOnTableau("card_corp_28", $this->color))
+                $this->storm = $this->game->getCountOfResOnCard("card_corp_28");
+            else $this->storm = 0;
+        }
+        return $this->storm;
+    }
+
+    function getCountOfResourceType($type) {
+        if ($type ==  "resFloater") {
+            return $this->getStormCount();
+        } else {
+            return parent::getCountOfResourceType($type);
+        }
     }
 }

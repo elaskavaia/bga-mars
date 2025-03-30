@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 /**
- * Remove resource from your own card
+ * Remove resource from your own card nres
  */
 class Operation_nres extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
         $card = $this->getContext(0);
+
         $param = $this->getParam(0);
         if ($param) {
             $useholds = $param;

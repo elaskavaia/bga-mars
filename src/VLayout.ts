@@ -39,7 +39,7 @@ class VLayout {
 
   setupDone() {
     if (!this.game.isLayoutFull()) return;
-    // const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
+    // const togglehtml = this.game.getTooltipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
 
     // document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {
     //   // have to attach tooltip directly, this element does not have a game model
@@ -161,7 +161,7 @@ class VLayout {
     const state = $(tokenNodeId).getAttribute("data-state");
     tokenDisplayInfo.tooltip = this.game.generateItemTooltip(tokenDisplayInfo);
     tokenDisplayInfo.tooltip += this.game.generateTooltipSection(_("Count"), state + "");
-    const tt = this.game.getTooptipHtmlForTokenInfo(tokenDisplayInfo);
+    const tt = this.game.getTooltipHtmlForTokenInfo(tokenDisplayInfo);
     this.game.addTooltipHtml(attachTo, tt);
   }
 

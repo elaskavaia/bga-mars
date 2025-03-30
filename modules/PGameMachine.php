@@ -456,14 +456,14 @@ abstract class PGameMachine extends PGameTokens {
         }
 
         if ($this->isInMultiplayerMasterState()) {
-            $this->switchActivePlayerIfNeeded($owner);
+            $this->switchActivePlayerIfNeeded($owner, $op);
             $player_id = $this->getPlayerIdByColor($owner);
             $this->gamestate->initializePrivateState($player_id);
             return ABORT_DISPATCH;
         }
         $userState = $this->getStateForOperations($operations);
         if (!$userState)  return CONTINUE_DISPATCH;
-        $this->switchActivePlayerIfNeeded($owner);
+        $this->switchActivePlayerIfNeeded($owner, $op);
         $this->gamestate->jumpToState($userState);
         return ABORT_DISPATCH;
     }
@@ -476,7 +476,7 @@ abstract class PGameMachine extends PGameTokens {
         return PLAYER_INPUT;
     }
 
-    function switchActivePlayerIfNeeded($player_color) {
+    function switchActivePlayerIfNeeded($player_color, $op) {
         if (!$player_color) return;
         $player_id = $this->getPlayerIdByColor($player_color);
         if (!$player_id) return;

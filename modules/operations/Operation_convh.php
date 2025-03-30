@@ -11,16 +11,22 @@ class Operation_convh extends AbsOperation {
     }
 
     function effect(string $color, int $inc): int {
-        $this->game->effect_incCount($color, 'h', -8);
-        $this->game->push($this->color, 't');
+        $cost = $this->getCost();
+        $this->game->push($color, "{$cost}nh:t", "op_convh");
+
         return 1;
     }
 
-    function noValidTargets(): bool {
-        $heat = $this->game->getTrackerValue($this->color, 'h');
-        if ($heat < 8) return true; // not enough
-        return false;
+    function getCost() {
+        return 8;
     }
+
+    function noValidTargets(): bool {
+        $color = $this->color;
+        $cost = $this->getCost();
+        return $this->game->isVoidSingle("{$cost}nh", $color);
+    }
+
     function getPrimaryArgType() {
         return 'token';
     }

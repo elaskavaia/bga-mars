@@ -77,4 +77,8 @@ class TokensInMem extends DbTokens {
 
         return $result;
     }
+
+    function countTokensInLocation($location, $state = null) {
+        return count($this->getTokensOfTypeInLocation(null, $location, $state));
+    }
 }

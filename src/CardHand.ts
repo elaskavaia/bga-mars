@@ -84,7 +84,7 @@ class CardHand {
       fullmsg += this.game.generateTooltipSection(name, `<i class="fa ${oInfo.icon}"></i> ` + _(oInfo.tooltip));
     }
     const title = _("Sort Order: ") + `<i class="fa ${sortInfo.icon}"></i> ` + _(sortInfo.name);
-    const html = this.game.getTooptipHtml(title, fullmsg, "");
+    const html = this.game.getTooltipHtml(title, fullmsg, "");
 
     this.game.addTooltipHtml(button.id, html);
     button.classList.add("withtooltip");

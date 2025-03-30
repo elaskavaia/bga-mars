@@ -48,9 +48,9 @@ class ComplexOperation extends AbsOperation {
 
     protected function getOpName() {
         $rules = $this->rules();
-        $name = array_get($rules,'name');
+        $name = array_get($rules, 'name');
         if ($name) return $name;
-        
+
         $op = $this->operation;
 
         switch ($op) {
@@ -75,7 +75,7 @@ class ComplexOperation extends AbsOperation {
         return  clienttranslate('${you} must confirm ${name}');
     }
 
-    function getSkipButtonName(){
+    function getSkipButtonName() {
         if ($this->isOptional()) return clienttranslate('Skip');
         return parent::getSkipButtonName();
     }
@@ -87,7 +87,7 @@ class ComplexOperation extends AbsOperation {
         if ($this->isOptional()) {
             if ($this->noValidTargets()) {
                 // skip
-                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'),[
+                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'), [
                     "name" => $this->getOpName()
                 ], $this->getPlayerId());
                 return true;
@@ -117,7 +117,7 @@ class ComplexOperation extends AbsOperation {
     }
 
 
-    function canFail(){
+    function canFail() {
         if ($this->isOptional()) return false;
         return true;
     }
@@ -125,7 +125,7 @@ class ComplexOperation extends AbsOperation {
 
     protected function effect(string $owner, int $userCount): int {
         if ($this->game->expandOperation($this->op_info, $userCount)) {
-            if ($userCount>=$this->getMinCount()) return $this->getCount(); // user picked less than all
+            if ($userCount >= $this->getMinCount()) return $this->getCount(); // user picked less than all
             return $userCount;
         }
         $type = $this->op_info['type'];
@@ -137,7 +137,7 @@ class ComplexOperation extends AbsOperation {
             if ($this->noValidTargets()) return true; // auto skip
             return false;
         }
-     
+
         if ($this->getMinCount() != $this->getCount()) return false;
         if ($this->operation == '/') return false;
         if ($this->operation == '+') return false;
@@ -193,6 +193,15 @@ class ComplexOperation extends AbsOperation {
             }
         }
         return $subvoid;
+    }
+
+    public function order() {
+        $total = 0;
+        foreach ($this->delegates as $i => $sub) {
+            $subvalue = $sub->order();
+            $total |= $subvalue;
+        }
+        return $total;
     }
 
     function noValidTargets(): bool {

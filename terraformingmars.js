@@ -114,7 +114,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         return undefined;
     };
-    GameBasics.prototype.tmAjaxCallWrapperUnchecked = function (action, args, handler) {
+    GameBasics.prototype.remoteCallWrapperUnchecked = function (action, args, handler) {
         if (!args) {
             args = {};
         }
@@ -128,9 +128,9 @@ var GameBasics = /** @class */ (function (_super) {
         var url = "/".concat(gname, "/").concat(gname, "/").concat(action, ".html");
         this.ajaxcall(url, args, this, function (result) { }, handler);
     };
-    GameBasics.prototype.tmAjaxCallWrapper = function (action, args, handler) {
+    GameBasics.prototype.remoteCallWrapper = function (action, args, handler) {
         if (this.checkAction(action)) {
-            this.tmAjaxCallWrapperUnchecked(action, args, handler);
+            this.remoteCallWrapperUnchecked(action, args, handler);
         }
     };
     /**
@@ -140,7 +140,7 @@ var GameBasics = /** @class */ (function (_super) {
      * @param args
      * @param handler
      */
-    GameBasics.prototype.ajaxuseraction = function (action, args, handler) {
+    GameBasics.prototype.remoteUserAction = function (action, args, handler) {
         if (this.checkAction(action)) {
             var gname = this.game_name;
             var url = "/".concat(gname, "/").concat(gname, "/userAction.html");
@@ -499,7 +499,7 @@ var GameBasics = /** @class */ (function (_super) {
         }
         return div;
     };
-    GameBasics.prototype.getTooptipHtml = function (name, message, imgTypes, action) {
+    GameBasics.prototype.getTooltipHtml = function (name, message, imgTypes, action) {
         if (name == null || message == "-")
             return "";
         if (!message)
@@ -982,9 +982,9 @@ var GameBasics = /** @class */ (function (_super) {
         if (!prefId)
             return; // error?
         var prefValue = +((_a = target.value) !== null && _a !== void 0 ? _a : target.getAttribute("value"));
-        this.tmAjaxCallChangePreferenceCustom(prefId, prefValue);
+        this.remoteCallChangePreferenceCustom(prefId, prefValue);
     };
-    GameBasics.prototype.tmAjaxCallChangePreferenceCustom = function (pref_id, value) {
+    GameBasics.prototype.remoteCallChangePreferenceCustom = function (pref_id, value) {
         console.log("ajaxCallChangePreference", pref_id, value);
         value = parseInt(value);
         this.prefs[pref_id].value = value;
@@ -1000,8 +1000,8 @@ var GameBasics = /** @class */ (function (_super) {
             // send to our game to update per game table
             this.gamedatas.server_prefs[pref_id] = value;
             if (pref_id >= 100 && pref_id < 200) {
-                var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
-                this.tmAjaxCallWrapperUnchecked("changePreference", args, function (err, res) {
+                var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: true };
+                this.remoteCallWrapperUnchecked("changePreference", args, function (err, res) {
                     if (err)
                         console.error("changePreference callback failed " + res);
                     else {
@@ -1535,7 +1535,7 @@ var CardHand = /** @class */ (function () {
             fullmsg += this.game.generateTooltipSection(name_1, "<i class=\"fa ".concat(oInfo.icon, "\"></i> ") + _(oInfo.tooltip));
         }
         var title = _("Sort Order: ") + "<i class=\"fa ".concat(sortInfo.icon, "\"></i> ") + _(sortInfo.name);
-        var html = this.game.getTooptipHtml(title, fullmsg, "");
+        var html = this.game.getTooltipHtml(title, fullmsg, "");
         this.game.addTooltipHtml(button.id, html);
         button.classList.add("withtooltip");
     };
@@ -2178,8 +2178,8 @@ var CustomAnimation = /** @class */ (function () {
                 if (!this.areAnimationsPlayed())
                     return [2 /*return*/];
                 animate_token = resource_id;
-                if (!this.game.isLayoutFull() && place_id.startsWith("card_main_"))
-                    animate_token = place_id.replace("card_main_", "resource_holder_");
+                if (!this.game.isLayoutFull())
+                    animate_token = "resource_holder_".concat(place_id);
                 div = $(place_id);
                 divToken = $(place_id);
                 return [2 /*return*/, Promise.allSettled([
@@ -2430,7 +2430,6 @@ var CustomAnimation = /** @class */ (function () {
                 animation = this.animations[animationname];
                 cssClass = "anim_" + animation.name;
                 resolvedOK = false;
-                console.log("*** anim ".concat(animationname, " started for ").concat(targetId, " of ").concat(animation.duration, " ms"));
                 cleanUp = function (e, kind) {
                     if (kind === void 0) { kind = "callback"; }
                     if (resolvedOK)
@@ -2440,11 +2439,11 @@ var CustomAnimation = /** @class */ (function () {
                         $(targetId).removeEventListener("animationend", cleanUp);
                         $(targetId).classList.remove(cssClass);
                     }
-                    console.log("*** anim ".concat(animationname, " for ").concat(targetId, " onEnd"));
+                    // console.log(`*** anim ${animationname} for ${targetId} onEnd`);
                     safeCall(onEnd);
-                    console.log("*** anim ".concat(animationname, " for ").concat(targetId, " resolved with ").concat(kind));
+                    //console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
                 };
-                console.log("*** anim ".concat(animationname, " for ").concat(targetId, " onStart"));
+                //console.log(`*** anim ${animationname} for ${targetId} onStart`);
                 safeCall(onStart);
                 $(targetId).addEventListener("animationend", cleanUp);
                 $(targetId).classList.add(cssClass);
@@ -3793,7 +3792,7 @@ var GameTokens = /** @class */ (function (_super) {
         //   attachNode.setAttribute("title", this.getTr(tokenInfo.name));
         //   return;
         // }
-        var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
+        var main = this.getTooltipHtmlForTokenInfo(tokenInfo);
         if (main) {
             attachNode.classList.add("withtooltip");
             if (attachNode.id != token)
@@ -3827,7 +3826,7 @@ var GameTokens = /** @class */ (function (_super) {
         this.inherited(arguments);
         delete this.tooltips[nodeId];
     };
-    GameTokens.prototype.getTooptipHtmlForToken = function (token) {
+    GameTokens.prototype.getTooltipHtmlForToken = function (token) {
         if (typeof token != "string") {
             console.error("cannot calc tooltip" + token);
             return null;
@@ -3836,10 +3835,10 @@ var GameTokens = /** @class */ (function (_super) {
         // console.log(tokenInfo);
         if (!tokenInfo)
             return;
-        return this.getTooptipHtmlForTokenInfo(tokenInfo);
+        return this.getTooltipHtmlForTokenInfo(tokenInfo);
     };
-    GameTokens.prototype.getTooptipHtmlForTokenInfo = function (tokenInfo) {
-        return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
+    GameTokens.prototype.getTooltipHtmlForTokenInfo = function (tokenInfo) {
+        return this.getTooltipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
     };
     GameTokens.prototype.getTokenName = function (tokenId) {
         var tokenInfo = this.getTokenDisplayInfo(tokenId);
@@ -4163,7 +4162,7 @@ var GameXBody = /** @class */ (function (_super) {
             //player controls
             //this.connectClass("viewcards_button", "onclick", "onShowTableauCardsOfColor");
             //Give tooltips to alt trackers in player boards
-            var togglehtml_1 = this.getTooptipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", _("Click to show or hide cards"));
+            var togglehtml_1 = this.getTooltipHtml(_("Card visibility toggle"), _("Shows number of cards of corresponding color on tableau"), "", _("Click to show or hide cards"));
             document.querySelectorAll(".player_controls .viewcards_button").forEach(function (node) {
                 // have to attach tooltip directly, this element does not have a game model
                 _this.addTooltipHtml(node.id, togglehtml_1, _this.defaultTooltipDelay);
@@ -4264,7 +4263,7 @@ var GameXBody = /** @class */ (function (_super) {
             var parent = document.querySelector(".debug_section");
             if (parent) {
                 this.addActionButton("button_debug_dump", "Dump Machine", function () {
-                    _this.tmAjaxCallWrapperUnchecked("say", { msg: "debug_dumpMachineDb()" });
+                    _this.remoteCallWrapperUnchecked("say", { msg: "debug_dumpMachineDb()" });
                 }, parent); // NOI18N
             }
             this.updateStacks();
@@ -4979,7 +4978,7 @@ var GameXBody = /** @class */ (function (_super) {
             card.style.removeProperty("display");
         });
         contentnode.querySelectorAll(".card").forEach(function (card) {
-            var cardtext = _this.getTooptipHtmlForToken(card.id);
+            var cardtext = _this.getTooltipHtmlForToken(card.id);
             if (!cardtext.toLowerCase().includes(text)) {
                 card.style.display = hiddenOpacity;
             }
@@ -5007,12 +5006,12 @@ var GameXBody = /** @class */ (function (_super) {
             .querySelectorAll(".token,.card")
             .forEach(function (node) {
             node.addEventListener("click", function (e) {
-                var selected_html = _this.getTooptipHtmlForToken(e.currentTarget.id);
+                var selected_html = _this.getTooltipHtmlForToken(e.currentTarget.id);
                 $("card_pile_selector").innerHTML = selected_html;
             });
         });
         if (selectedId) {
-            var selected_html = this.getTooptipHtmlForToken(selectedId);
+            var selected_html = this.getTooltipHtmlForToken(selectedId);
             $("card_pile_selector").innerHTML = selected_html;
         }
         dlg.show();
@@ -5074,13 +5073,13 @@ var GameXBody = /** @class */ (function (_super) {
             $("custom_paiement").remove();
     };
     //Expands for cleanup
-    GameXBody.prototype.ajaxuseraction = function (action, args, handler) {
+    GameXBody.prototype.remoteUserAction = function (action, args, handler) {
         this.gameStatusCleanup();
         console.log("sending ".concat(action), args);
         if (action === "passauto") {
-            return this.tmAjaxCallWrapperUnchecked(action, {}, handler);
+            return this.remoteCallWrapperUnchecked(action, {}, handler);
         }
-        _super.prototype.ajaxuseraction.call(this, action, args, handler);
+        _super.prototype.remoteUserAction.call(this, action, args, handler);
     };
     GameXBody.prototype.onNotif = function (notif) {
         _super.prototype.onNotif.call(this, notif);
@@ -5397,7 +5396,7 @@ var GameXBody = /** @class */ (function (_super) {
         return msg;
     };
     GameXBody.prototype.createHtmlForToken = function (tokenNode, displayInfo) {
-        var _a, _b, _c;
+        var _a;
         // use this to generate some fake parts of card, remove this when use images
         if (displayInfo.mainType == "card") {
             var tagshtm = "";
@@ -5408,7 +5407,11 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_initial = displayInfo.text || "";
                 var card_effect = displayInfo.text_effect || displayInfo.text_action || "";
                 var card_title = displayInfo.name || "";
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(_(card_initial), "</div>\n                  <div class=\"card_effect\">").concat(_(card_effect), "</div>\n            ");
+                var holds = displayInfo.holds || "";
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(_(card_initial), "</div>\n                  <div class=\"card_effect\">").concat(_(card_effect), "</div>           \n            ");
+                if (holds) {
+                    decor.innerHTML += " <div id=\"resource_holder_".concat(tokenNode.id, "\" class=\"card_resource_holder resource_counter token_img tracker_res tracker_res").concat(holds, "\" data-resource_counter=\"0\"></div>");
+                }
             }
             else if (tokenNode.id.startsWith("card_stanproj")) {
                 tokenNode.dataset.cost = displayInfo.cost != 0 ? displayInfo.cost : "X";
@@ -5435,8 +5438,8 @@ var GameXBody = /** @class */ (function (_super) {
                 //tags
                 var firsttag = "";
                 if (displayInfo.tags && displayInfo.tags != "") {
-                    for (var _i = 0, _d = displayInfo.tags.split(" "); _i < _d.length; _i++) {
-                        var tag = _d[_i];
+                    for (var _i = 0, _b = displayInfo.tags.split(" "); _i < _b.length; _i++) {
+                        var tag = _b[_i];
                         tagshtm += '<div class="badge tag_' + tag + '"></div>';
                         if (firsttag == "")
                             firsttag = tag;
@@ -5541,12 +5544,14 @@ var GameXBody = /** @class */ (function (_super) {
                     card_action_text = "<div class=\"card_action_line card_action_text\">".concat(_(displayInfo.text_action) + " " + _(displayInfo.text_effect), "</div>");
                 }
                 var holds = (_a = displayInfo.holds) !== null && _a !== void 0 ? _a : "Generic";
+                var num = displayInfo.num;
                 var htm_holds = '<div class="card_line_holder"><div class="cnt_media token_img tracker_res' +
                     holds +
                     '"></div><div class="counter_sep">:</div><div id="resource_holder_counter_' +
-                    tokenNode.id.replace("card_main_", "") +
+                    num +
                     '" class="resource_counter"  data-resource_counter="0"></div></div>';
-                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(displayInfo.num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(_(displayInfo.name), "</div></div>\n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(_(card_action_text), "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(_(displayInfo.text) || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre !== "" ? parsedPre : "", "</div>\n                  <div class=\"card_number\">").concat((_b = displayInfo.num) !== null && _b !== void 0 ? _b : "", "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id='cost_").concat(tokenNode.id, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div>\n                  <div id='discountedcost_").concat(tokenNode.id, "' class='card_cost minidiscount token_img tracker_m'></div> \n                  <div class=\"discountarrow fa fa-arrow-circle-down\"></div>\n                  </div> \n                  <div id=\"resource_holder_").concat(tokenNode.id.replace("card_main_", ""), "\" class=\"card_resource_holder ").concat((_c = displayInfo.holds) !== null && _c !== void 0 ? _c : "", "\" data-resource_counter=\"0\">").concat(htm_holds, "</div>\n                  ").concat(vp, "\n            ");
+                var cardId = tokenNode.id;
+                decor.innerHTML = "\n                  <div class=\"card_illustration cardnum_".concat(num, "\"></div>\n                  <div class=\"card_bg\"></div>\n                  <div class='card_badges'>").concat(tagshtm, "</div>\n                  <div class='card_title'><div class='card_title_inner'>").concat(_(displayInfo.name), "</div></div>\n                  <div class=\"card_outer_action\"><div class=\"card_action\"><div class=\"card_action_line card_action_icono\">").concat(card_a, "</div>").concat(_(card_action_text), "</div><div class=\"card_action_bottomdecor\"></div></div>\n                  <div class=\"card_effect ").concat(addeffclass, "\">").concat(card_r, "<div class=\"card_tt\">").concat(_(displayInfo.text) || "", "</div></div>           \n                  <div class=\"card_prereq\">").concat(parsedPre, "</div>\n                  <div class=\"card_number\">").concat(num, "</div>\n                  <div class=\"card_number_binary\">").concat(cn_binary, "</div>\n                  <div id='cost_").concat(cardId, "' class='card_cost'><div class=\"number_inside\">").concat(displayInfo.cost, "</div>\n                  <div id='discountedcost_").concat(cardId, "' class='card_cost minidiscount token_img tracker_m'></div> \n                  <div class=\"discountarrow fa fa-arrow-circle-down\"></div>\n                  </div> \n                  <div id=\"resource_holder_").concat(cardId, "\" class=\"card_resource_holder resource_counter token_img tracker_res tracker_res").concat(holds, "\" data-resource_counter=\"0\"></div>\n                  ").concat(vp, "\n            ");
             }
             // const div = this.createDivNode(null, "card_info_box", tokenNode.id);
             // div.innerHTML = `
@@ -5600,112 +5605,116 @@ var GameXBody = /** @class */ (function (_super) {
         var _this = this;
         var _a;
         if (animationDuration === void 0) { animationDuration = 0; }
-        _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
-        var key = tokenInfo.key;
-        var location = tokenInfo.location; // db location
-        var place_id = (_a = tokenNode.parentElement) === null || _a === void 0 ? void 0 : _a.id; // where is object in dom
-        var prevLocation = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.location;
-        var prevState = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.state;
-        var inc = tokenInfo.state - prevState;
-        if (key.startsWith("card_")) {
-            this.handman.maybeEnabledDragOnCard(tokenNode);
-        }
-        // update resource holder counters
-        if (key.startsWith("resource_")) {
-            // debugger;
-            var targetCard = 0;
-            var removed = false;
-            if (location.startsWith("card_")) {
-                //resource added to card
-                targetCard = getPart(location, 2);
+        try {
+            _super.prototype.onUpdateTokenInDom.call(this, tokenNode, tokenInfo, tokenInfoBefore, animationDuration);
+            var key_1 = tokenInfo.key;
+            var location_2 = tokenInfo.location; // db location
+            var place_id = (_a = tokenNode.parentElement) === null || _a === void 0 ? void 0 : _a.id; // where is object in dom
+            var prevLocation = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.location;
+            var prevState = tokenInfoBefore === null || tokenInfoBefore === void 0 ? void 0 : tokenInfoBefore.state;
+            var inc_1 = tokenInfo.state - prevState;
+            if (key_1.startsWith("card_")) {
+                this.handman.maybeEnabledDragOnCard(tokenNode);
             }
-            else if (prevLocation === null || prevLocation === void 0 ? void 0 : prevLocation.startsWith("card_")) {
-                //resource removed from a card
-                removed = true;
-                targetCard = getPart(prevLocation, 2);
-            }
-            if (targetCard) {
-                if (this.isLayoutFull()) {
-                    var dest_holder = place_id;
-                    var count = String($(dest_holder).querySelectorAll(".resource").length);
-                    $(dest_holder).dataset.resource_counter = count;
+            // update resource holder counters
+            if (key_1.startsWith("resource_")) {
+                var targetCard = place_id;
+                var removed = false;
+                if (location_2.startsWith("card_")) {
+                    //resource added to card
+                    targetCard = location_2;
                 }
-                else {
-                    var dest_holder = "resource_holder_".concat(targetCard);
-                    var dest_counter = "resource_holder_counter_".concat(targetCard);
-                    var count = String($(dest_holder).querySelectorAll(".resource").length);
-                    $(dest_holder).dataset.resource_counter = count;
-                    $(dest_counter).dataset.resource_counter = count;
-                    if (!removed) {
-                        return this.customAnimation.animatePlaceResourceOnCard(key, location);
+                else if (prevLocation === null || prevLocation === void 0 ? void 0 : prevLocation.startsWith("card_")) {
+                    //resource removed from a card
+                    removed = true;
+                    targetCard = prevLocation;
+                }
+                var targetCardNode = $(targetCard);
+                if (targetCardNode) {
+                    var count = String(targetCardNode.querySelectorAll(".resource").length);
+                    if (this.isLayoutFull()) {
+                        targetCardNode.dataset.resource_counter = count;
                     }
                     else {
-                        return this.customAnimation.animateRemoveResourceFromCard(key, prevLocation);
+                        var dest_holder = "resource_holder_".concat(targetCard);
+                        var node = $(dest_holder);
+                        if (node) {
+                            node.dataset.resource_counter = count;
+                        }
+                        if (!removed) {
+                            return this.customAnimation.animatePlaceResourceOnCard(key_1, location_2);
+                        }
+                        else {
+                            return this.customAnimation.animateRemoveResourceFromCard(key_1, prevLocation);
+                        }
                     }
                 }
             }
-        }
-        //pop animation on Tiles
-        if (key.startsWith("tile_")) {
-            return this.customAnimation.animateTilePop(key);
-        }
-        //temperature & oxygen - compact only as full doesn't have individual rendered elements
-        if (!this.isLayoutFull() && this.getMapNumber() != 4) {
-            if (key == "tracker_t") {
-                return this.customAnimation.animateMapItemAwareness("temperature_map");
+            //pop animation on Tiles
+            if (key_1.startsWith("tile_")) {
+                return this.customAnimation.animateTilePop(key_1);
             }
-            else if (key == "tracker_o") {
-                return this.customAnimation.animateMapItemAwareness("oxygen_map");
-            }
-        }
-        //ocean's pile
-        if (key == "tracker_w") {
-            return this.customAnimation.animateMapItemAwareness("oceans_pile");
-        }
-        else if (key == "tracker_gen") {
-            return this.customAnimation.animateMapItemAwareness("outer_generation");
-        }
-        if (key.startsWith("marker_")) {
-            if (location.startsWith("award")) {
-                this.strikeNextAwardMilestoneCost("award");
-                return this.customAnimation.animatePlaceMarker(key, place_id);
-            }
-            else if (location.startsWith("milestone")) {
-                this.strikeNextAwardMilestoneCost("milestone");
-                return this.customAnimation.animatePlaceMarker(key, place_id);
-            }
-            else if (location.startsWith("tile_")) {
-                return this.customAnimation.animatePlaceMarker(key, place_id);
-            }
-        }
-        if (key.startsWith("card_corp") && location.startsWith("tableau")) {
-            $(location + "_corp_logo").dataset.corp = key;
-            $(location.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key;
-            //adds tt to corp logos
-            this.updateTooltip(key, location + "_corp_logo");
-            this.updateTooltip(key, location.replace("tableau_", "miniboard_corp_logo_"));
-        }
-        if (key.startsWith("card_") && location.startsWith("tableau")) {
-            var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
-            tokenNode.parentElement.parentElement.dataset.subcount = sub;
-            tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
-            tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
-        }
-        //move animation on main player board counters
-        if (key.startsWith("tracker_")) {
-            if (!this.isLayoutFull() && inc) {
-                var type = getPart(key, 1);
-                if (this.resourceTrackers.includes(type) || type == "tr") {
-                    // cardboard layout animating cubes on playerboard instead
-                    return this.customAnimation.animateTingle(key).finally(function () { return _this.customAnimation.moveResources(key, inc); });
+            //temperature & oxygen - compact only as full doesn't have individual rendered elements
+            if (!this.isLayoutFull() && this.getMapNumber() != 4) {
+                if (key_1 == "tracker_t") {
+                    return this.customAnimation.animateMapItemAwareness("temperature_map");
                 }
-                if ($(key)) {
-                    return this.customAnimation.animateTingle(key);
+                else if (key_1 == "tracker_o") {
+                    return this.customAnimation.animateMapItemAwareness("oxygen_map");
                 }
             }
-            return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
+            //ocean's pile
+            if (key_1 == "tracker_w") {
+                return this.customAnimation.animateMapItemAwareness("oceans_pile");
+            }
+            else if (key_1 == "tracker_gen") {
+                return this.customAnimation.animateMapItemAwareness("outer_generation");
+            }
+            if (key_1.startsWith("marker_")) {
+                if (location_2.startsWith("award")) {
+                    this.strikeNextAwardMilestoneCost("award");
+                    return this.customAnimation.animatePlaceMarker(key_1, place_id);
+                }
+                else if (location_2.startsWith("milestone")) {
+                    this.strikeNextAwardMilestoneCost("milestone");
+                    return this.customAnimation.animatePlaceMarker(key_1, place_id);
+                }
+                else if (location_2.startsWith("tile_")) {
+                    return this.customAnimation.animatePlaceMarker(key_1, place_id);
+                }
+            }
+            if (key_1.startsWith("card_corp") && location_2.startsWith("tableau")) {
+                $(location_2 + "_corp_logo").dataset.corp = key_1;
+                $(location_2.replace("tableau_", "miniboard_corp_logo_")).dataset.corp = key_1;
+                //adds tt to corp logos
+                this.updateTooltip(key_1, location_2 + "_corp_logo");
+                this.updateTooltip(key_1, location_2.replace("tableau_", "miniboard_corp_logo_"));
+            }
+            if (key_1.startsWith("card_") && location_2.startsWith("tableau")) {
+                var sub = String(tokenNode.parentElement.querySelectorAll(".card").length);
+                tokenNode.parentElement.parentElement.dataset.subcount = sub;
+                tokenNode.parentElement.parentElement.style.setProperty("--subcount", JSON.stringify(sub));
+                tokenNode.parentElement.parentElement.style.setProperty("--subcount-n", sub);
+            }
+            //move animation on main player board counters
+            if (key_1.startsWith("tracker_")) {
+                if (!this.isLayoutFull() && inc_1) {
+                    var type = getPart(key_1, 1);
+                    if (this.resourceTrackers.includes(type) || type == "tr") {
+                        // cardboard layout animating cubes on playerboard instead
+                        return this.customAnimation.animateTingle(key_1).finally(function () { return _this.customAnimation.moveResources(key_1, inc_1); });
+                    }
+                    if ($(key_1)) {
+                        return this.customAnimation.animateTingle(key_1);
+                    }
+                }
+                return this.customAnimation.wait(this.customAnimation.getWaitDuration(200));
+            }
+            return this.customAnimation.wait(animationDuration); // default move animation
         }
-        return this.customAnimation.wait(animationDuration); // default move animation
+        catch (e) {
+            return Promise.reject(e);
+        }
     };
     GameXBody.prototype.preSlideAnimation = function (tokenNode, tokenInfo, location) {
         _super.prototype.preSlideAnimation.call(this, tokenNode, tokenInfo, location);
@@ -5887,12 +5896,6 @@ var GameXBody = /** @class */ (function (_super) {
             result.location = tokenInfo.location.replace("tableau_", "fpholder_");
         }
         else if (tokenInfo.key.startsWith("resource_")) {
-            if (!this.isLayoutFull()) {
-                if (tokenInfo.location.startsWith("card_main_")) {
-                    //resource added to card
-                    result.location = tokenInfo.location.replace("card_main_", "resource_holder_");
-                }
-            }
         }
         else if (tokenInfo.key.startsWith("card_corp") && tokenInfo.location.startsWith("tableau")) {
             //result.location = tokenInfo.location + "_corp_effect";
@@ -5963,7 +5966,7 @@ var GameXBody = /** @class */ (function (_super) {
         //   if (err) return;
         //   dojo.empty('generalactions');
         // }
-        this.ajaxuseraction(action, {
+        this.remoteUserAction(action, {
             ops: [__assign({ op: op }, args)]
         }, handler);
         return true;
@@ -5977,7 +5980,7 @@ var GameXBody = /** @class */ (function (_super) {
         return this.sendActionResolve(opId, { target: target, payment: payment });
     };
     GameXBody.prototype.sendActionDecline = function (op) {
-        this.ajaxuseraction("decline", {
+        this.remoteUserAction("decline", {
             ops: [{ op: op }]
         });
     };
@@ -5986,7 +5989,7 @@ var GameXBody = /** @class */ (function (_super) {
         for (var _i = 0; _i < arguments.length; _i++) {
             op[_i] = arguments[_i];
         }
-        this.ajaxuseraction("skip", {
+        this.remoteUserAction("skip", {
             oparr: op
         });
     };
@@ -6051,7 +6054,7 @@ var GameXBody = /** @class */ (function (_super) {
         var message = this.format_string_recursive(_("Cancelling all moves up to ${movenum}..."), { movenum: undoMove });
         this.setMainTitle(message);
         dojo.empty("generalactions");
-        this.tmAjaxCallWrapperUnchecked("undo", { move_id: undoMove }, function (err) {
+        this.remoteCallWrapperUnchecked("undo", { move_id: undoMove }, function (err) {
             if (err) {
                 _this.cancelLocalStateEffects();
             }
@@ -6068,7 +6071,11 @@ var GameXBody = /** @class */ (function (_super) {
             ? this.format_string_recursive(op.args.button, op.args.args)
             : this.getButtonNameForOperationExp(op.type);
         var opTargets = (_b = (_a = op.args) === null || _a === void 0 ? void 0 : _a.target) !== null && _b !== void 0 ? _b : [];
-        if (opTargets.length == 1 && !op.type.startsWith("conv")) {
+        if (opTargets.length == 1) {
+            if (op.type.endsWith("nres"))
+                return baseActionName;
+            if (op.type.startsWith("conv"))
+                return baseActionName;
             var onlyAvailableAction = this.getOpTargetName(op, 0);
             return "".concat(baseActionName, " \u2907 ").concat(onlyAvailableAction);
         }
@@ -6139,7 +6146,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.onUpdateActionButtons_playerConfirm = function (args) {
         var _this = this;
         this.addActionButton("button_0", _("Confirm"), function () {
-            _this.ajaxuseraction("confirm");
+            _this.remoteUserAction("confirm");
         });
     };
     GameXBody.prototype.activateSlotForOp = function (tid, opId) {
@@ -6255,7 +6262,7 @@ var GameXBody = /** @class */ (function (_super) {
                     }
                 });
                 if (customNeeded_1)
-                    this.addActionButtonColor("btn_create_custompay", _("Custom"), function () { return _this.createCustomPayment(opId, customNeeded_1); }, "blue");
+                    this.addActionButtonColor("btn_create_custompay", _("Custom"), function () { return _this.createCustomPayment(opId, customNeeded_1, opInfo); }, "blue");
             }
         }
         else if (ttype == "none" || !ttype) {
@@ -6456,8 +6463,9 @@ var GameXBody = /** @class */ (function (_super) {
         return target;
     };
     //Adds the payment picker according to available alternative payment options
-    GameXBody.prototype.createCustomPayment = function (opId, info) {
+    GameXBody.prototype.createCustomPayment = function (opId, info, opInfo) {
         var _this = this;
+        var _a, _b;
         this.custom_pay = {
             needed: info.count,
             selected: {},
@@ -6467,19 +6475,20 @@ var GameXBody = /** @class */ (function (_super) {
         if ($("btn_create_custompay"))
             $("btn_create_custompay").remove();
         var items_htm = "";
+        var targetRes = (_b = (_a = opInfo === null || opInfo === void 0 ? void 0 : opInfo.type) === null || _a === void 0 ? void 0 : _a.substring(1, 2)) !== null && _b !== void 0 ? _b : "m";
         for (var res in info.resources) {
             this.custom_pay.selected[res] = 0;
             this.custom_pay.available[res] = info.resources[res];
             this.custom_pay.rate[res] = info.rate[res];
             //megacredits are spent automatically
-            if (res == "m") {
+            if (res == targetRes) {
                 this.custom_pay.selected[res] = this.custom_pay.available[res];
                 continue;
             }
             if (this.custom_pay.available[res] <= 0)
                 continue;
             //add paiments buttons
-            items_htm += "\n        <div class=\"payment_group\">\n           <div class=\"token_img tracker_".concat(res, "\"></div>\n           <div class=\"item_worth\">\n               <div class=\"token_img tracker_m payment_item\">").concat(this.custom_pay.rate[res], "</div>\n          </div>\n          <div id=\"payment_item_minus_").concat(res, "\" class=\"btn_payment_item btn_item_minus\" data-resource=\"").concat(res, "\" data-direction=\"minus\">-</div>\n          <div id=\"payment_item_").concat(res, "\" class=\"payment_item_value item_value_").concat(res, "\">0</div>\n          <div id=\"payment_item_plus_").concat(res, "\" class=\"btn_payment_item btn_item_plus\" data-resource=\"").concat(res, "\" data-direction=\"plus\">+</div>                \n        </div>\n      ");
+            items_htm += "\n        <div class=\"payment_group\">\n          <div class=\"token_img tracker_".concat(res, "\"></div>\n          <div class=\"item_worth\">\n               <div class=\"token_img tracker_m payment_item\">").concat(this.custom_pay.rate[res], "</div>\n          </div>\n          <div id=\"payment_item_minus_").concat(res, "\" class=\"btn_payment_item btn_item_minus\" data-resource=\"").concat(res, "\" data-direction=\"minus\">-</div>\n          <div id=\"payment_item_").concat(res, "\" class=\"payment_item_value item_value_").concat(res, "\">0</div>\n          <div id=\"payment_item_plus_").concat(res, "\" class=\"btn_payment_item btn_item_plus\" data-resource=\"").concat(res, "\" data-direction=\"plus\">+</div>                \n        </div>\n      ");
         }
         /*
           <div class="token_img tracker_m payment_item">
@@ -6514,7 +6523,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var total_res = 0;
                 // let values_htm='';
                 for (var res_1 in _this.custom_pay.rate) {
-                    if (res_1 != "m") {
+                    if (res_1 != targetRes) {
                         total_res = total_res + _this.custom_pay.rate[res_1] * _this.custom_pay.selected[res_1];
                         //  values_htm+=`<div class="token_img tracker_${res}">${this.custom_pay.selected[res]}</div>`;
                     }
@@ -6527,7 +6536,7 @@ var GameXBody = /** @class */ (function (_super) {
                 else {
                     $("btn_custompay_send").classList.remove("overpay");
                 }
-                _this.custom_pay.selected["m"] = mc;
+                _this.custom_pay.selected[targetRes] = mc;
                 //   values_htm+=` <div class="token_img tracker_m payment_item">${mc}</div>`;
                 var values_htm = _this.resourcesToHtml(_this.custom_pay.selected, true);
                 $("btn_custompay_send").innerHTML = "Pay %s".replace("%s", values_htm);
@@ -6550,10 +6559,11 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.resourcesToHtml = function (resources, show_zeroes) {
         if (show_zeroes === void 0) { show_zeroes = false; }
         var htm = "";
-        var trackers = this.resourceTrackers.concat("resMicrobe");
+        var trackers = this.resourceTrackers.concat("resMicrobe", "resFloater");
         trackers.forEach(function (item) {
-            if (resources[item] !== undefined && (resources[item] > 0 || show_zeroes === true)) {
-                htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(resources[item], "</div>");
+            var value = resources[item];
+            if (value !== undefined && (value > 0 || show_zeroes === true)) {
+                htm += "<div class=\"token_img tracker_".concat(item, " payment_item\">").concat(value, "</div>");
             }
         });
         return htm;
@@ -6672,7 +6682,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onUpdateActionButtons_playerTurnChoice = function (args) {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         var operations = args.operations;
         if (!operations)
             return; // XXX
@@ -6721,9 +6731,15 @@ var GameXBody = /** @class */ (function (_super) {
                     $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
                 }
             }
-            if (!ordered && !chooseorder && i == 0 && opInfo.data) {
-                var data = opInfo.data.split(":")[0];
-                var tr = this_4.getTokenName(data);
+            if (!ordered && !chooseorder && i == 0) {
+                var tr = void 0;
+                if ((_c = opInfo.args) === null || _c === void 0 ? void 0 : _c.reason) {
+                    tr = this_4.getTr(opInfo.args.reason);
+                }
+                else if (opInfo.data) {
+                    var data = opInfo.data.split(":")[0];
+                    tr = this_4.getTokenName(data);
+                }
                 if (tr) {
                     this_4.setMainTitle(" [".concat(tr, "]"), true); // TODO
                 }
@@ -6741,7 +6757,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.addActionButtonColor("button_skip", _("Skip All"), function () { return _this.sendActionSkip.apply(_this, numops); }, "red");
         }
         if (chooseorder)
-            this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.ajaxuseraction("whatever", {}); }, "orange");
+            this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.remoteUserAction("whatever", {}); }, "orange");
     };
     GameXBody.prototype.onOperationButton = function (opInfo, clientState) {
         var _this = this;
@@ -6834,6 +6850,13 @@ var GameXBody = /** @class */ (function (_super) {
         var parent = document.querySelector(".debug_section"); // studio only
         if (parent)
             this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
+        if (!this.isCurrentPlayerActive()) {
+            if (stateName == "playerTurnChoice" && (args === null || args === void 0 ? void 0 : args.master) != this.getActivePlayerId()) {
+                this.setDescriptionOnMyTurn("${player_name} is performing out of turn action", {
+                    player_name: this.divColoredPlayer(this.getActivePlayerId())
+                });
+            }
+        }
     };
     GameXBody.prototype.onSelectTarget = function (opId, target, checkActive) {
         if (checkActive === void 0) { checkActive = false; }
@@ -6915,7 +6938,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (parenttt) {
             var parentToken = (_a = parentNode.dataset.tt_token) !== null && _a !== void 0 ? _a : parentId;
             var childToken = (_b = childNode.dataset.tt_token) !== null && _b !== void 0 ? _b : childNode.id;
-            var newhtml = this.getTooptipHtmlForToken(parentToken) + this.getTooptipHtmlForToken(childToken);
+            var newhtml = this.getTooltipHtmlForToken(parentToken) + this.getTooltipHtmlForToken(childToken);
             this.addTooltipHtml(parentId, newhtml, parenttt.showDelay);
             this.removeTooltip(childNode.id);
         }
@@ -7561,7 +7584,7 @@ var VLayout = /** @class */ (function () {
     VLayout.prototype.setupDone = function () {
         if (!this.game.isLayoutFull())
             return;
-        // const togglehtml = this.game.getTooptipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
+        // const togglehtml = this.game.getTooltipHtml(_("Player board visibility toggle"), "", "*", _("Click to show or hide player board"));
         // document.querySelectorAll(".viewcards_button[data-cardtype='0']").forEach((node) => {
         //   // have to attach tooltip directly, this element does not have a game model
         //   this.game.addTooltipHtml(node.id, togglehtml, this.game.defaultTooltipDelay);
@@ -7682,7 +7705,7 @@ var VLayout = /** @class */ (function () {
         var state = $(tokenNodeId).getAttribute("data-state");
         tokenDisplayInfo.tooltip = this.game.generateItemTooltip(tokenDisplayInfo);
         tokenDisplayInfo.tooltip += this.game.generateTooltipSection(_("Count"), state + "");
-        var tt = this.game.getTooptipHtmlForTokenInfo(tokenDisplayInfo);
+        var tt = this.game.getTooltipHtmlForTokenInfo(tokenDisplayInfo);
         this.game.addTooltipHtml(attachTo, tt);
     };
     VLayout.prototype.convertInto3DCube = function (tokenNode, color) {

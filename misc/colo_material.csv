@@ -7,7 +7,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set id=card_main_{num}
 #set location=deck_main
 #set create=single
-#set type=card main colo_main
+#set type=card main colo_main e{deck}
 C01|Airliners|1|2pm,2ores(Floater)|||11|resFloater>=3||1|Colonies|Requires that you have 3 floaters. Increase your M€ production 2 steps. Add 2 floaters to ANOTHER card.||||
 C02|Air Raid|3|nres(Floater):5steal_m|||0||Event|0|Colonies|Requires that you lose 1 floater. Steal 5 M€ from any player.||||
 C03|Atmo Collectors|2|2ores(Floater)|res/(nres:(2u/3e/4h))||15|||0|Colonies|Add 2 floaters to ANY card.|Add 1 floater to this card, or spend 1 floater here to gain 2 titanium, or 3 energy, or 4 heat.|||  'holds' => 'Floater'
@@ -23,7 +23,7 @@ C12|Floater Technology|2||ores(Floater)||7||Science|0|Colonies||Add 1 floater to
 C13|Gaillean Waystation|1|counter(tagJovian_any):pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
 C14|Heavy Taxation|1|2pm,4m|||3|tagEarth>=2|Earth|-1|Colonies|Requires 2 Earth tags. Increase your M€ production 2 steps, and gain 4 M€.||||
 C15|Ice Moon Colony|1|w,colony|||23||Space|0|Colonies|Place 1 colony and 1 ocean tile.||||
-C16|Impactor Swarm|3|2np_Any,12h|||11||Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
+C16|Impactor Swarm|3|2np_Any,12h|||11|tagJovian>=2|Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
 C17|Interplanetary Colony Ship|3|colony|||12||Space Earth Event|0|Colonies|Place a colony.||||
 C18|Jovian Lanterns|2|ores(Floater),tr|u:res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
 C19|Jupiter Floating Station|2||ores(Floater)/(counter(resCard,4):m)||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 M€ for every floater here (Max 4).|||  'holds' => 'Floater'
@@ -41,7 +41,7 @@ C30|Productive Outpost|1|colonybon|||0|||0|Colonies|Gain all your colony bonuses
 C31|Quantum Communications|1|counter(all_colony):pm|||8|tagScience>=4||1|Colonies|Requires 4 science tags. Increase your M€ production 1 step for each colony in play.||||
 C32|Red Spot Observatory|2|2draw|res/(nres:draw)||17|tagScience>=3|Science Jovian|2|Colonies|Requires 3 science tags. Draw 2 cards.|Add 1 floater to this card, or spend 1 floater here to draw a card.|||  'holds' => 'Floater'
 C33|Refugee Camps|2||npm:res||10||Earth|resCard|Colonies|1 VP for each camp resource on this card.|Decrease your M€ production 1 step to add a camp resource to this card.|||  'holds' => 'Camp'
-C34|Research Colony|1|colony(double)|||20||Science Space|0|Colonies|Place a colony. MAY BE PLACED WHERE YOU ALREADY HAVE A COLONY. Draw 2 cards.||||
+C34|Research Colony|1|colony(double),2draw|||20||Science Space|0|Colonies|Place a colony. MAY BE PLACED WHERE YOU ALREADY HAVE A COLONY. Draw 2 cards.||||
 C35|Rim Freighters|2|||onPay_trade:1q|4||Space|0|Colonies|||When you trade, you pay 1 less resource for it.||
 C36|Sky Docks|2|tradefleet||onPay_card:m|18|tagEarth>=2|Space Earth|2|Colonies|Requires 2 Earth tags. Gain 1 Trade Fleet.||When you play a card, you pay 1 M€ less for it.||
 C37|Solar Probe|3|counter(tagScience):draw|||9||Science Space Event|1|Colonies|Draw 1 card for every 3 science tags you have, including this.||||
@@ -50,7 +50,7 @@ C39|Space Port|1|1npe,city,tradefleet,4pm|||22|colony>=1|Building City|0|Colonie
 C40|Space Port Colony|1|colony(double),tradefleet|||27|colony>=1|Space|all_colony/2|Colonies|Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1 VP per 2 colonies in play.||||
 C41|Spin-Off Department|2|2pm|||10||Building|0|Colonies|Increase your M€ production 2 steps.||WHEN PLAYING A CARD WITH A BASIC COST OF 20 M€ OR MORE, draw a card||
 C42|Sub-Zero Salt Fish|2|1npp_Any|res||5|t>=-6|Animal|resCard/2|Colonies|Requires -6°C or warmer. Decrease any plant production 1 step. 1 VP per 2 animals on this card.|Add 1 animal to this card.|||  'holds' => 'Animal'
-C43|Titan Air-Scrapping|2||(u:2res)/(2nres:tr)||21||Jovian|2|Colonies||Spend 1 titanium to add 2 floaters to this card, or spend 2 floaters here to increase your TR 1 step.|||  'holds' => 'Floater'
+C43|Titan Air-Scrapping|2||(nu:2res)/(2nres:tr)||21||Jovian|2|Colonies||Spend 1 titanium to add 2 floaters to this card, or spend 2 floaters here to increase your TR 1 step.|||  'holds' => 'Floater'
 C44|Titan Floating Launch-Pad|2|2ores(Floater,Jovian)|ores(Floater,Jovian)/(nres:trade(free))||18||Jovian|1|Colonies|Add 2 foaters to ANY JOVIAN CARD.|Add 1 floater to ANY JOVIAN CARD, or spend 1 floater here to trade for free|||  'holds' => 'Floater'
 C45|Titan Shuttles|2||(2ores(Floater,Jovian))/(counter(resCard,1):(nres,u))||23||Space Jovian|1|Colonies||Add 2 floaters to ANY JOVIAN CARD, or spend any number of floaters here to gain the same number of titanium.|||  'holds' => 'Floater'
 C46|Trade Envoys|2|||on_trade:?tradeinc:that|6|||0|Colonies|||When you trade, you may first increase that Colony Tile track 1 step.||
@@ -65,12 +65,12 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 #set count=1
 #set create=single
 #set location=deck_corp
-#set type=card corp corp_colo
+#set type=card corp colo_corp e{deck}
 24|Aridor|4|||play_newtag:pm|-40|||0|Colonies|You start with 40 M€. As your first action, put an additional Colony Tile of your choice into play.||When you get a new type of tag in play (event cards do not count), increase your M€ production 1 step.||'a1'=>'colocard'
-25|Arklight|4|2pm||play_tagAnimal:res;play_tagPlant:res|-45||Animal|resCard/2|Colonies|You start with 45 M€. Increase your M€ production 2 steps,||When you play an animal or plant tag, including this, add 1 animal to this card.|1 VP per 2 animals on this card,|'holds' => 'Animal'
+25|Arklight|4|2pm||play_tagAnimal:res;play_tagPlant:res|-45||Animal|resCard/2|Colonies|You start with 45 M€. Increase your M€ production 2 steps||When you play an animal or plant tag, including this, add 1 animal to this card.|1 VP per 2 animals on this card.|'holds' => 'Animal'
 26|Polyphemos|4|5pm,5u|||-50|||0|Colonies|You start with 50 M€. Increase your M€ production 5 steps. Gain 5 titanium.||When you buy a card to hand, pay 5 M€ instead of 3 M€, including the starting hand.||
 27|Poseidon|4|||place_colony:pm|-45|||0|Colonies|You start with 45 M€. As your first action, place a colony.||When any colony is placed, including this, raise your M€ production 1 step.||'a1'=>'colony'
-28|Stormcraft Incorporated|4||ores(Floater)||-48||Jovian|0|Colonies|You start with 48 M€.|Add 1 floater to ANY card.|Floaters on this card may be used as 2 heat each.||'holds' => 'Floater'
+28|Stormcraft|4||ores(Floater)||-48||Jovian|0|Colonies|You start with 48 M€.|Add 1 floater to ANY card.|Floaters on this card may be used as 2 heat each.||'holds' => 'Floater'
 
 
 #colony cards r - colony placement bonus, a- colony trade bonus, i - trade action 
@@ -78,7 +78,7 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 #set count=1
 #set create=single
 #set location=deck_colo
-#set type=card colocard
+#set type=card colocard eColonies
 1|Europa|9|w|m|||||||||||'i'=>'','slots'=>['pm','pm','pe','pe','pp','pp','pp']
 2|Triton|9|3u|u|||||||||||'i'=>'u','slots'=>[0,1,1,2,3,4,5]
 3|Callisto|9|pe|3e|||||||||||'i'=>'e','slots'=>[0,2,3,5,7,10,13]
@@ -89,7 +89,7 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 8|Ganymede|9|pp|p|||||||||||'i'=>'p','slots'=>[0,1,2,3,4,5,6]
 9|Luna|9|2pm|2m|||||||||||'i'=>'m','slots'=>[1,2,4,7,10,13,17]
 10|Io|9|ph|2h|||||||||||'i'=>'h','slots'=>[2,3,4,6,8,10,13]
-11|Pluto|9|2draw|discard:draw|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
+11|Pluto|9|2draw|draw:discard|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
 
 #standard project
 #set id=card_stanproj_{num}

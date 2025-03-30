@@ -116,7 +116,7 @@ class GameBasics extends GameGui {
     return undefined;
   }
 
-  tmAjaxCallWrapperUnchecked(action: string, args?: any, handler?: (err: any, res?: any) => void) {
+  remoteCallWrapperUnchecked(action: string, args?: any, handler?: (err: any, res?: any) => void) {
     if (!args) {
       args = {};
     }
@@ -131,9 +131,9 @@ class GameBasics extends GameGui {
     this.ajaxcall(url, args, this, (result) => {}, handler);
   }
 
-  tmAjaxCallWrapper(action: string, args?: any, handler?: (err: any, res?: any) => void) {
+  remoteCallWrapper(action: string, args?: any, handler?: (err: any, res?: any) => void) {
     if (this.checkAction(action)) {
-      this.tmAjaxCallWrapperUnchecked(action, args, handler);
+      this.remoteCallWrapperUnchecked(action, args, handler);
     }
   }
 
@@ -144,7 +144,7 @@ class GameBasics extends GameGui {
    * @param args
    * @param handler
    */
-  ajaxuseraction(action: string, args?: any, handler?: (err: any, message?: string) => void) {
+  remoteUserAction(action: string, args?: any, handler?: (err: any, message?: string) => void) {
     if (this.checkAction(action)) {
       let gname = this.game_name;
       let url = `/${gname}/${gname}/userAction.html`;
@@ -569,7 +569,7 @@ class GameBasics extends GameGui {
     return div;
   }
 
-  getTooptipHtml(name: string, message: string, imgTypes?: string, action?: string) {
+  getTooltipHtml(name: string, message: string, imgTypes?: string, action?: string) {
     if (name == null || message == "-") return "";
     if (!message) message = "";
     var divImg = "";
@@ -637,7 +637,7 @@ class GameBasics extends GameGui {
     }
   }
 
-  setDescriptionOnMyTurn(text: string, moreargs?: []) {
+  setDescriptionOnMyTurn(text: string, moreargs?: {}) {
     this.gamedatas.gamestate.descriptionmyturn = text;
     // this.updatePageTitle();
     //console.log('in',   this.gamedatas.gamestate.args, moreargs);
@@ -1092,10 +1092,10 @@ class GameBasics extends GameGui {
     }
     if (!prefId) return; // error?
     const prefValue = +(target.value ?? target.getAttribute("value"));
-    this.tmAjaxCallChangePreferenceCustom(prefId, prefValue);
+    this.remoteCallChangePreferenceCustom(prefId, prefValue);
   }
 
-  tmAjaxCallChangePreferenceCustom(pref_id: number, value: any) {
+  remoteCallChangePreferenceCustom(pref_id: number, value: any) {
     console.log("ajaxCallChangePreference", pref_id, value);
     value = parseInt(value);
     this.prefs[pref_id].value = value;
@@ -1115,8 +1115,8 @@ class GameBasics extends GameGui {
         // send to our game to update per game table
         this.gamedatas.server_prefs[pref_id] = value;
         if (pref_id >= 100 && pref_id < 200) {
-          var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: false };
-          this.tmAjaxCallWrapperUnchecked("changePreference", args, (err, res) => {
+          var args = { pref_id: pref_id, pref_value: value, player_id: this.player_id, lock: true };
+          this.remoteCallWrapperUnchecked("changePreference", args, (err, res) => {
             if (err) console.error("changePreference callback failed " + res);
             else {
               console.log("changePreference sent " + pref_id + "=" + value);

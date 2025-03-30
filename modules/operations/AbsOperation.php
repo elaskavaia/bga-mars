@@ -248,7 +248,6 @@ Reason: tile placement may draw cards (information)
         return $this->mnemonic;
     }
 
-
     protected function getPrompt() {
         $rules = $this->rules();
         return  array_get($rules, 'prompt') ?? clienttranslate('${you} must confirm');
@@ -273,6 +272,8 @@ Reason: tile placement may draw cards (information)
         $result["prompt"] = $this->getPrompt();
         $result["button"] = $this->getButtonName();
         $result["args"] = $this->getVisargs();
+        $reason = $this->getReason();
+        if ($reason) $result["reason"] = $reason;
         if ($this->isOptional()) {
             $result["skipname"] = $this->getSkipButtonName();
             $result["nvt"] = $this->noValidTargets();

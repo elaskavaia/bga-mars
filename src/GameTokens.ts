@@ -423,7 +423,7 @@ class GameTokens extends GameBasics {
     //   return;
     // }
 
-    var main = this.getTooptipHtmlForTokenInfo(tokenInfo);
+    var main = this.getTooltipHtmlForTokenInfo(tokenInfo);
 
     if (main) {
       attachNode.classList.add("withtooltip");
@@ -462,7 +462,7 @@ class GameTokens extends GameBasics {
     delete this.tooltips[nodeId];
   }
 
-  getTooptipHtmlForToken(token: string) {
+  getTooltipHtmlForToken(token: string) {
     if (typeof token != "string") {
       console.error("cannot calc tooltip" + token);
       return null;
@@ -470,11 +470,11 @@ class GameTokens extends GameBasics {
     var tokenInfo = this.getTokenDisplayInfo(token);
     // console.log(tokenInfo);
     if (!tokenInfo) return;
-    return this.getTooptipHtmlForTokenInfo(tokenInfo);
+    return this.getTooltipHtmlForTokenInfo(tokenInfo);
   }
 
-  getTooptipHtmlForTokenInfo(tokenInfo: TokenDisplayInfo) {
-    return this.getTooptipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
+  getTooltipHtmlForTokenInfo(tokenInfo: TokenDisplayInfo) {
+    return this.getTooltipHtml(tokenInfo.name, tokenInfo.tooltip, tokenInfo.imageTypes, tokenInfo.tooltip_action);
   }
 
   getTokenName(tokenId: string): string {

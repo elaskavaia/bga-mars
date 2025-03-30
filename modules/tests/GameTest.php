@@ -1507,6 +1507,44 @@ final class GameTest extends TestCase {
         $this->assertEquals(true, $op->isVoid());
     }
 
+    public function testPay() {
+        $m = $this->game();
+        $p = PCOLOR;
+        $effect = "6nm";
+        /** @var ComplexOperation */
+        $op = $m->getOperationInstanceFromType($effect, $p, 1);
+        //$args = $op->argPrimaryDetails();
+        $this->assertEquals(true, $op->isVoid());
+        $m->setTrackerValue(PCOLOR, 'm', 6);
+        $this->assertEquals(false, $op->isVoid());
+        $this->assertEquals(true, $op->canResolveAutomatically());
+
+        $m->putInEffectPool(PCOLOR, $effect);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $value = $m->getTrackerValue(PCOLOR, 'm');
+        $this->assertEquals(0, $value);
+    }
+
+    public function testPayHeat() {
+        $m = $this->game();
+        $p = PCOLOR;
+        $effect = "8nh";
+        /** @var AbsOperation */
+        $op = $m->getOperationInstanceFromType($effect, $p, 1);
+        //$args = $op->argPrimaryDetails();
+        $this->assertEquals(true, $op->isVoid());
+        $m->setTrackerValue(PCOLOR, 'h', 6);
+        $this->assertEquals(true, $op->isVoid());
+        $this->assertEquals(true, $op->canResolveAutomatically());
+        $m->setTrackerValue(PCOLOR, 'h', 10);
+        $m->putInEffectPool(PCOLOR, $effect);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $value = $m->getTrackerValue(PCOLOR, 'h');
+        $this->assertEquals(2, $value);
+    }
+
 
     public function testBusinessEmpire() {
         $m = $this->game();
@@ -1766,4 +1804,41 @@ final class GameTest extends TestCase {
         $game->effect_playCard(PCOLOR, $card);
         $this->assertEquals(1, $game->getCountOfCardTags(PCOLOR,"")); 
     }
+    public function testPayHeatWithCorp() {
+        $game = $m = $this->game = (new GameUT())->init(0, 1); // colonies
+        $color = $p = PCOLOR;
+        $effect = "8nh";
+
+        $corp = $game->mtFindByName('Stormcraft');
+        $game->effect_playCorporation(PCOLOR, $corp, true);
+        $game->effect_playCorporation(PCOLOR, $corp, false);
+        $game->st_gameDispatch();
+
+        $num = 2;
+        for ($i = 0; $i < $num; $i++) {
+            $game->dbSetTokenLocation("resource_{$color}_$i", $corp, 1); // add floater
+        }
+
+        $this->assertEquals($num, $this->game->getCountOfResOnCards($color));
+    
+        /** @var DelegatedOperation */
+        $op = $m->getOperationInstanceFromType($effect, $p, 1);
+
+        $m->setTrackerValue(PCOLOR, 'h', 6);
+        $this->assertEquals(false, $op->isVoid());
+        $op = $op->delegate;
+        $this->assertEquals('enum', $op->getPrimaryArgType());
+        $args = $op->argPrimaryDetails();
+        echo(toJson($args));
+
+        $m->push(PCOLOR, $effect);
+        $m->st_gameDispatch();
+
+        $tops = $game->machine->getTopOperations(PCOLOR);
+        $this->assertEquals(1, count(($tops)));
+        $op =  array_shift($tops);
+        $this->assertEquals("nh", $op['type']);
+    }
+
+
 }

@@ -2621,12 +2621,18 @@
   position: absolute;
   font-size: calc(var(--card-width) * 0.038);
   font-family: Georgia;
+  left: 6%;
+  top: 66%;
+  width: 35%;
 }
 .card.corp .card_effect {
   background: revert;
   padding: revert;
   font-size: calc(var(--card-width) * 0.038);
   font-family: Georgia;
+  left: 56%;
+  top: 60%;
+  width: 38%;
 }
 
 .card_corp_1 .card_bg {
@@ -3126,7 +3132,7 @@
 }
 
 /* corp specific */
-.card_corp_1 .card_title {
+.card.corp.card_corp_1 .card_title {
   display: flex !important;
   top: 16.7%;
   left: 15%;
@@ -3134,23 +3140,23 @@
   height: 13%;
   font-size: calc(var(--card-width) * 0.08);
 }
-.card_corp_1 .card_effect {
+.card.corp.card_corp_1 .card_effect {
   left: 56%;
   top: 58%;
   width: 38%;
 }
-.card_corp_1 .card_initial {
+.card.corp.card_corp_1 .card_initial {
   left: 6%;
   top: 66%;
   width: 47%;
 }
 
-.card_corp_2 .card_effect {
+.card.corp.card_corp_2 .card_effect {
   left: 37%;
   top: 59%;
   width: 53%;
 }
-.card_corp_2 .card_initial {
+.card.corp.card_corp_2 .card_initial {
   left: 6%;
   top: 66%;
   width: 29%;
@@ -3167,149 +3173,170 @@
   width: 47%;
 }
 
-.card_corp_4 .card_effect {
+.card.corp.card_corp_4 .card_effect {
   left: 51%;
   top: 58%;
   width: 39%;
 }
-.card_corp_4 .card_initial {
+.card.corp.card_corp_4 .card_initial {
   left: 5%;
   top: 66%;
   width: 47%;
 }
 
-.card_corp_5 .card_effect {
+.card.corp.card_corp_5 .card_effect {
   left: 56%;
   top: 58%;
   width: 38%;
 }
-.card_corp_5 .card_initial {
+.card.corp.card_corp_5 .card_initial {
   left: 6%;
   top: 66%;
   width: 47%;
 }
 
-.card_corp_6 .card_effect {
+.card.corp.card_corp_6 .card_effect {
   left: 50%;
   top: 58%;
   width: 43%;
 }
-.card_corp_6 .card_initial {
+.card.corp.card_corp_6 .card_initial {
   left: 6%;
   top: 65%;
   width: 42%;
 }
 
-.card_corp_7 .card_effect {
+.card.corp.card_corp_7 .card_effect {
   top: 49%;
   width: 36%;
   height: 24%;
   left: 57%;
 }
-.card_corp_7 .card_initial {
+.card.corp.card_corp_7 .card_initial {
   top: 70%;
   width: 89.5%;
   left: 6%;
 }
 
-.card_corp_8 .card_effect {
+.card.corp.card_corp_8 .card_effect {
   top: 53%;
   width: 46%;
   height: 24%;
   left: 47%;
 }
-.card_corp_8 .card_initial {
+.card.corp.card_corp_8 .card_initial {
   top: 58%;
   width: 38.5%;
   left: 6%;
 }
 
-.card_corp_9 .card_effect {
+.card.corp.card_corp_9 .card_effect {
   top: 59%;
   width: 39%;
   height: 24%;
   left: 51%;
 }
-.card_corp_9 .card_initial {
+.card.corp.card_corp_9 .card_initial {
   top: 63%;
   width: 42.5%;
   left: 6%;
 }
 
-.card_corp_10 .card_effect {
+.card.corp.card_corp_10 .card_effect {
   top: 56%;
   width: 40%;
   height: 24%;
   left: 52%;
 }
-.card_corp_10 .card_initial {
+.card.corp.card_corp_10 .card_initial {
   top: 66%;
   width: 44.5%;
   left: 6%;
 }
 
-.card_corp_11 .card_effect {
+.card.corp.card_corp_11 .card_effect {
   top: 48%;
   width: 45%;
   height: 24%;
   left: 49%;
 }
-.card_corp_11 .card_initial {
+.card.corp.card_corp_11 .card_initial {
   top: 72%;
   width: 86.5%;
   left: 6%;
 }
 
-.card_corp_12 .card_effect {
+.card.corp.card_corp_12 .card_effect {
   top: 53%;
   width: 49%;
   height: 24%;
   left: 43%;
 }
-.card_corp_12 .card_initial {
+.card.corp.card_corp_12 .card_initial {
   top: 70%;
   width: 44.5%;
   left: 6%;
 }
 
-.card_corp_13 .card_effect {
+.card.corp.card_corp_13 .card_effect {
   top: 54%;
   width: 47%;
   height: 16%;
   left: 46%;
 }
-.card_corp_13 .card_initial {
+.card.corp.card_corp_13 .card_initial {
   top: 26%;
   width: 44.5%;
   left: 44%;
 }
 
-.card_corp_22 .card_initial,
-.card_corp_23 .card_initial,
-.card_corp_21 .card_initial,
-.card_corp_19 .card_initial {
+.card.corp.card_corp_22 .card_initial,
+.card.corp.card_corp_23 .card_initial,
+.card.corp.card_corp_21 .card_initial,
+.card.corp.card_corp_19 .card_initial {
   top: 62%;
   left: 6.5%;
   width: 37%;
 }
-.card_corp_22 .card_effect,
-.card_corp_23 .card_effect,
-.card_corp_21 .card_effect,
-.card_corp_19 .card_effect {
+.card.corp.card_corp_22 .card_effect,
+.card.corp.card_corp_23 .card_effect,
+.card.corp.card_corp_21 .card_effect,
+.card.corp.card_corp_19 .card_effect {
   top: 62%;
   left: 53%;
   width: 40%;
 }
 
-.card_corp_20 .card_initial {
-  top: 71%;
-  left: 11%;
+.card.corp.card_corp_24 .card_initial {
+  top: 65%;
+  width: 42%;
+}
+.card.corp.card_corp_24 .card_effect {
+  top: 60%;
+  left: 50%;
+  width: 42%;
+}
+
+.card.corp.card_corp_25 .card_initial {
+  top: 62%;
+  left: 6.5%;
   width: 37%;
 }
-.card_corp_20 .card_effect {
-  top: 67%;
-  left: 46%;
-  width: 42%;
+.card.corp.card_corp_25 .card_effect {
+  top: 52%;
+  left: 50%;
+  width: 40%;
+}
+
+.card.corp.card_corp_28 .card_initial {
+  top: 66%;
+  left: 7%;
+  width: 37%;
+}
+.card.corp.card_corp_28 .card_effect {
+  top: 66%;
+  left: 50%;
+  width: 40%;
 }
 
 /* compact corp */
@@ -3558,47 +3585,32 @@
   margin-right: 2%;
 }
 .mcompact .card_resource_holder {
-  left: 25%;
-  top: 0%;
-  background-color: rgba(255, 255, 255, 0.6666666667);
-  width: 50%;
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
   position: absolute;
+  left: 42%;
+  top: 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: black;
   font-size: calc(var(--resourcesize) * 0.8);
   text-shadow: #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px, #fff 0px 0px 2px;
   font-family: var(--mars-font);
 }
-.mcompact .card_resource_holder .card_line_holder {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.mcompact .card_resource_holder .token_img {
+.mcompact .card_resource_holder .tracker_res {
   width: calc(var(--resourcesize) * 0.8);
   height: calc(var(--resourcesize) * 0.8);
   border: 2px solid white;
   background-color: white;
   border-radius: 4px;
 }
-.mcompact .card_resource_holder .resource_counter::after {
+.mcompact .card_resource_holder::after {
   content: attr(data-resource_counter);
-}
-.mcompact .card_resource_holder .counter_sep {
-  padding-left: calc(var(--resourcesize) * 0.1);
-  padding-right: calc(var(--resourcesize) * 0.2);
+  margin-left: 100%;
 }
 .mcompact .card_resource_holder[data-resource_counter="0"] {
   display: none;
 }
-.mcompact .card_resource_holder[data-resource_counter="1"] .resource_counter,
-.mcompact .card_resource_holder[data-resource_counter="1"] .counter_sep {
-  display: none;
-}
-.mcompact .card_resource_holder .resource {
+.mcompact .card > .resource {
   display: none;
 }
 .mcompact .before {
@@ -3726,34 +3738,34 @@
 .card.colocard .colony-trade-cube {
   width: 7%;
   aspect-ratio: 1/1;
-  background-color: white;
+  border: 4px solid white;
   position: absolute;
-  top: 67%;
+  top: 82%;
   left: 0%;
 }
 .card.colocard[data-state="0"] .colony-trade-cube {
-  left: 17%;
+  left: 16%;
 }
 .card.colocard[data-state="1"] .colony-trade-cube {
-  left: 27%;
+  left: 26%;
 }
 .card.colocard[data-state="2"] .colony-trade-cube {
-  left: 37%;
+  left: 36%;
 }
 .card.colocard[data-state="3"] .colony-trade-cube {
-  left: 47%;
+  left: 46%;
 }
 .card.colocard[data-state="4"] .colony-trade-cube {
-  left: 57%;
+  left: 56%;
 }
 .card.colocard[data-state="5"] .colony-trade-cube {
-  left: 67%;
+  left: 66%;
 }
 .card.colocard[data-state="6"] .colony-trade-cube {
-  left: 77%;
+  left: 76%;
 }
 .card.colocard[data-state="7"] .colony-trade-cube {
-  left: 87%;
+  left: 86%;
 }
 .card.colocard .fleet {
   position: absolute;
@@ -3827,31 +3839,61 @@
   background-position: 1% 90.9090909091%;
 }
 
-.card.card_corp_24 .card_bg {
+.mcompact .card.card_corp_24 .card_bg {
+  background-position: 0% 0%;
+  background-image: url(img/colonies/colo_cards_corp_bg.jpg);
+  background-size: auto 100%;
+}
+
+.mfull .card.card_corp_24 {
   background-position: 0% 0%;
   background-image: url(img/colonies/colo_cardsC.jpg);
   background-size: auto 100%;
 }
 
-.card.card_corp_25 .card_bg {
+.mcompact .card.card_corp_25 .card_bg {
+  background-position: 20% 0%;
+  background-image: url(img/colonies/colo_cards_corp_bg.jpg);
+  background-size: auto 100%;
+}
+
+.mfull .card.card_corp_25 {
   background-position: 20% 0%;
   background-image: url(img/colonies/colo_cardsC.jpg);
   background-size: auto 100%;
 }
 
-.card.card_corp_26 .card_bg {
+.mcompact .card.card_corp_26 .card_bg {
+  background-position: 40% 0%;
+  background-image: url(img/colonies/colo_cards_corp_bg.jpg);
+  background-size: auto 100%;
+}
+
+.mfull .card.card_corp_26 {
   background-position: 40% 0%;
   background-image: url(img/colonies/colo_cardsC.jpg);
   background-size: auto 100%;
 }
 
-.card.card_corp_27 .card_bg {
+.mcompact .card.card_corp_27 .card_bg {
+  background-position: 60% 0%;
+  background-image: url(img/colonies/colo_cards_corp_bg.jpg);
+  background-size: auto 100%;
+}
+
+.mfull .card.card_corp_27 {
   background-position: 60% 0%;
   background-image: url(img/colonies/colo_cardsC.jpg);
   background-size: auto 100%;
 }
 
-.card.card_corp_28 .card_bg {
+.mcompact .card.card_corp_28 .card_bg {
+  background-position: 80% 0%;
+  background-image: url(img/colonies/colo_cards_corp_bg.jpg);
+  background-size: auto 100%;
+}
+
+.mfull .card.card_corp_28 {
   background-position: 80% 0%;
   background-image: url(img/colonies/colo_cardsC.jpg);
   background-size: auto 100%;
@@ -3862,7 +3904,11 @@
 }
 .card.colo_main > .card_decor > .card_bg {
   background-image: url(img/colonies/colo_cards.jpg);
-  background-size: 600% auto;
+  background-size: 1000% auto;
+}
+.mfull .card.colo_main {
+  background-image: url(img/colonies/colo_cards.jpg);
+  background-size: 1000% auto;
 }
 .card.colo_main .card_initial {
   position: absolute;
@@ -3876,248 +3922,493 @@
   font-family: Georgia;
 }
 
-.card.card_main_C01 .card_bg {
+.mcompact .card.card_main_C01 .card_bg {
   background-position-x: 0%;
   background-position-y: 0%;
 }
 
-.card.card_main_C02 .card_bg {
-  background-position-x: 20%;
+.mfull .card.card_main_C01 {
+  background-position-x: 0%;
   background-position-y: 0%;
 }
 
-.card.card_main_C03 .card_bg {
-  background-position-x: 40%;
+.mcompact .card.card_main_C02 .card_bg {
+  background-position-x: 11.1111111111%;
   background-position-y: 0%;
 }
 
-.card.card_main_C04 .card_bg {
-  background-position-x: 60%;
+.mfull .card.card_main_C02 {
+  background-position-x: 11.1111111111%;
   background-position-y: 0%;
 }
 
-.card.card_main_C05 .card_bg {
-  background-position-x: 80%;
+.mcompact .card.card_main_C03 .card_bg {
+  background-position-x: 22.2222222222%;
   background-position-y: 0%;
 }
 
-.card.card_main_C06 .card_bg {
+.mfull .card.card_main_C03 {
+  background-position-x: 22.2222222222%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C04 .card_bg {
+  background-position-x: 33.3333333333%;
+  background-position-y: 0%;
+}
+
+.mfull .card.card_main_C04 {
+  background-position-x: 33.3333333333%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C05 .card_bg {
+  background-position-x: 44.4444444444%;
+  background-position-y: 0%;
+}
+
+.mfull .card.card_main_C05 {
+  background-position-x: 44.4444444444%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C06 .card_bg {
+  background-position-x: 55.5555555556%;
+  background-position-y: 0%;
+}
+
+.mfull .card.card_main_C06 {
+  background-position-x: 55.5555555556%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C07 .card_bg {
+  background-position-x: 66.6666666667%;
+  background-position-y: 0%;
+}
+
+.mfull .card.card_main_C07 {
+  background-position-x: 66.6666666667%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C08 .card_bg {
+  background-position-x: 77.7777777778%;
+  background-position-y: 0%;
+}
+
+.mfull .card.card_main_C08 {
+  background-position-x: 77.7777777778%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C09 .card_bg {
+  background-position-x: 88.8888888889%;
+  background-position-y: 0%;
+}
+
+.mfull .card.card_main_C09 {
+  background-position-x: 88.8888888889%;
+  background-position-y: 0%;
+}
+
+.mcompact .card.card_main_C10 .card_bg {
   background-position-x: 100%;
   background-position-y: 0%;
 }
 
-.card.card_main_C07 .card_bg {
-  background-position-x: 0%;
-  background-position-y: 12.5%;
-}
-
-.card.card_main_C08 .card_bg {
-  background-position-x: 20%;
-  background-position-y: 12.5%;
-}
-
-.card.card_main_C09 .card_bg {
-  background-position-x: 40%;
-  background-position-y: 12.5%;
-}
-
-.card.card_main_C10 .card_bg {
-  background-position-x: 60%;
-  background-position-y: 12.5%;
-}
-
-.card.card_main_C11 .card_bg {
-  background-position-x: 80%;
-  background-position-y: 12.5%;
-}
-
-.card.card_main_C12 .card_bg {
+.mfull .card.card_main_C10 {
   background-position-x: 100%;
-  background-position-y: 12.5%;
+  background-position-y: 0%;
 }
 
-.card.card_main_C13 .card_bg {
+.mcompact .card.card_main_C11 .card_bg {
   background-position-x: 0%;
   background-position-y: 25%;
 }
 
-.card.card_main_C14 .card_bg {
-  background-position-x: 20%;
+.mfull .card.card_main_C11 {
+  background-position-x: 0%;
   background-position-y: 25%;
 }
 
-.card.card_main_C15 .card_bg {
-  background-position-x: 40%;
+.mcompact .card.card_main_C12 .card_bg {
+  background-position-x: 11.1111111111%;
   background-position-y: 25%;
 }
 
-.card.card_main_C16 .card_bg {
-  background-position-x: 60%;
+.mfull .card.card_main_C12 {
+  background-position-x: 11.1111111111%;
   background-position-y: 25%;
 }
 
-.card.card_main_C17 .card_bg {
-  background-position-x: 80%;
+.mcompact .card.card_main_C13 .card_bg {
+  background-position-x: 22.2222222222%;
   background-position-y: 25%;
 }
 
-.card.card_main_C18 .card_bg {
+.mfull .card.card_main_C13 {
+  background-position-x: 22.2222222222%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C14 .card_bg {
+  background-position-x: 33.3333333333%;
+  background-position-y: 25%;
+}
+
+.mfull .card.card_main_C14 {
+  background-position-x: 33.3333333333%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C15 .card_bg {
+  background-position-x: 44.4444444444%;
+  background-position-y: 25%;
+}
+
+.mfull .card.card_main_C15 {
+  background-position-x: 44.4444444444%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C16 .card_bg {
+  background-position-x: 55.5555555556%;
+  background-position-y: 25%;
+}
+
+.mfull .card.card_main_C16 {
+  background-position-x: 55.5555555556%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C17 .card_bg {
+  background-position-x: 66.6666666667%;
+  background-position-y: 25%;
+}
+
+.mfull .card.card_main_C17 {
+  background-position-x: 66.6666666667%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C18 .card_bg {
+  background-position-x: 77.7777777778%;
+  background-position-y: 25%;
+}
+
+.mfull .card.card_main_C18 {
+  background-position-x: 77.7777777778%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C19 .card_bg {
+  background-position-x: 88.8888888889%;
+  background-position-y: 25%;
+}
+
+.mfull .card.card_main_C19 {
+  background-position-x: 88.8888888889%;
+  background-position-y: 25%;
+}
+
+.mcompact .card.card_main_C20 .card_bg {
   background-position-x: 100%;
   background-position-y: 25%;
 }
 
-.card.card_main_C19 .card_bg {
-  background-position-x: 0%;
-  background-position-y: 37.5%;
-}
-
-.card.card_main_C20 .card_bg {
-  background-position-x: 20%;
-  background-position-y: 37.5%;
-}
-
-.card.card_main_C21 .card_bg {
-  background-position-x: 40%;
-  background-position-y: 37.5%;
-}
-
-.card.card_main_C22 .card_bg {
-  background-position-x: 60%;
-  background-position-y: 37.5%;
-}
-
-.card.card_main_C23 .card_bg {
-  background-position-x: 80%;
-  background-position-y: 37.5%;
-}
-
-.card.card_main_C24 .card_bg {
+.mfull .card.card_main_C20 {
   background-position-x: 100%;
-  background-position-y: 37.5%;
+  background-position-y: 25%;
 }
 
-.card.card_main_C25 .card_bg {
+.mcompact .card.card_main_C21 .card_bg {
   background-position-x: 0%;
   background-position-y: 50%;
 }
 
-.card.card_main_C26 .card_bg {
-  background-position-x: 20%;
+.mfull .card.card_main_C21 {
+  background-position-x: 0%;
   background-position-y: 50%;
 }
 
-.card.card_main_C27 .card_bg {
-  background-position-x: 40%;
+.mcompact .card.card_main_C22 .card_bg {
+  background-position-x: 11.1111111111%;
   background-position-y: 50%;
 }
 
-.card.card_main_C28 .card_bg {
-  background-position-x: 60%;
+.mfull .card.card_main_C22 {
+  background-position-x: 11.1111111111%;
   background-position-y: 50%;
 }
 
-.card.card_main_C29 .card_bg {
-  background-position-x: 80%;
+.mcompact .card.card_main_C23 .card_bg {
+  background-position-x: 22.2222222222%;
   background-position-y: 50%;
 }
 
-.card.card_main_C30 .card_bg {
+.mfull .card.card_main_C23 {
+  background-position-x: 22.2222222222%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C24 .card_bg {
+  background-position-x: 33.3333333333%;
+  background-position-y: 50%;
+}
+
+.mfull .card.card_main_C24 {
+  background-position-x: 33.3333333333%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C25 .card_bg {
+  background-position-x: 44.4444444444%;
+  background-position-y: 50%;
+}
+
+.mfull .card.card_main_C25 {
+  background-position-x: 44.4444444444%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C26 .card_bg {
+  background-position-x: 55.5555555556%;
+  background-position-y: 50%;
+}
+
+.mfull .card.card_main_C26 {
+  background-position-x: 55.5555555556%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C27 .card_bg {
+  background-position-x: 66.6666666667%;
+  background-position-y: 50%;
+}
+
+.mfull .card.card_main_C27 {
+  background-position-x: 66.6666666667%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C28 .card_bg {
+  background-position-x: 77.7777777778%;
+  background-position-y: 50%;
+}
+
+.mfull .card.card_main_C28 {
+  background-position-x: 77.7777777778%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C29 .card_bg {
+  background-position-x: 88.8888888889%;
+  background-position-y: 50%;
+}
+
+.mfull .card.card_main_C29 {
+  background-position-x: 88.8888888889%;
+  background-position-y: 50%;
+}
+
+.mcompact .card.card_main_C30 .card_bg {
   background-position-x: 100%;
   background-position-y: 50%;
 }
 
-.card.card_main_C31 .card_bg {
-  background-position-x: 0%;
-  background-position-y: 62.5%;
-}
-
-.card.card_main_C32 .card_bg {
-  background-position-x: 20%;
-  background-position-y: 62.5%;
-}
-
-.card.card_main_C33 .card_bg {
-  background-position-x: 40%;
-  background-position-y: 62.5%;
-}
-
-.card.card_main_C34 .card_bg {
-  background-position-x: 60%;
-  background-position-y: 62.5%;
-}
-
-.card.card_main_C35 .card_bg {
-  background-position-x: 80%;
-  background-position-y: 62.5%;
-}
-
-.card.card_main_C36 .card_bg {
+.mfull .card.card_main_C30 {
   background-position-x: 100%;
-  background-position-y: 62.5%;
+  background-position-y: 50%;
 }
 
-.card.card_main_C37 .card_bg {
+.mcompact .card.card_main_C31 .card_bg {
   background-position-x: 0%;
   background-position-y: 75%;
 }
 
-.card.card_main_C38 .card_bg {
-  background-position-x: 20%;
+.mfull .card.card_main_C31 {
+  background-position-x: 0%;
   background-position-y: 75%;
 }
 
-.card.card_main_C39 .card_bg {
-  background-position-x: 40%;
+.mcompact .card.card_main_C32 .card_bg {
+  background-position-x: 11.1111111111%;
   background-position-y: 75%;
 }
 
-.card.card_main_C40 .card_bg {
-  background-position-x: 60%;
+.mfull .card.card_main_C32 {
+  background-position-x: 11.1111111111%;
   background-position-y: 75%;
 }
 
-.card.card_main_C41 .card_bg {
-  background-position-x: 80%;
+.mcompact .card.card_main_C33 .card_bg {
+  background-position-x: 22.2222222222%;
   background-position-y: 75%;
 }
 
-.card.card_main_C42 .card_bg {
+.mfull .card.card_main_C33 {
+  background-position-x: 22.2222222222%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C34 .card_bg {
+  background-position-x: 33.3333333333%;
+  background-position-y: 75%;
+}
+
+.mfull .card.card_main_C34 {
+  background-position-x: 33.3333333333%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C35 .card_bg {
+  background-position-x: 44.4444444444%;
+  background-position-y: 75%;
+}
+
+.mfull .card.card_main_C35 {
+  background-position-x: 44.4444444444%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C36 .card_bg {
+  background-position-x: 55.5555555556%;
+  background-position-y: 75%;
+}
+
+.mfull .card.card_main_C36 {
+  background-position-x: 55.5555555556%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C37 .card_bg {
+  background-position-x: 66.6666666667%;
+  background-position-y: 75%;
+}
+
+.mfull .card.card_main_C37 {
+  background-position-x: 66.6666666667%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C38 .card_bg {
+  background-position-x: 77.7777777778%;
+  background-position-y: 75%;
+}
+
+.mfull .card.card_main_C38 {
+  background-position-x: 77.7777777778%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C39 .card_bg {
+  background-position-x: 88.8888888889%;
+  background-position-y: 75%;
+}
+
+.mfull .card.card_main_C39 {
+  background-position-x: 88.8888888889%;
+  background-position-y: 75%;
+}
+
+.mcompact .card.card_main_C40 .card_bg {
   background-position-x: 100%;
   background-position-y: 75%;
 }
 
-.card.card_main_C43 .card_bg {
-  background-position-x: 0%;
-  background-position-y: 87.5%;
-}
-
-.card.card_main_C44 .card_bg {
-  background-position-x: 20%;
-  background-position-y: 87.5%;
-}
-
-.card.card_main_C45 .card_bg {
-  background-position-x: 40%;
-  background-position-y: 87.5%;
-}
-
-.card.card_main_C46 .card_bg {
-  background-position-x: 60%;
-  background-position-y: 87.5%;
-}
-
-.card.card_main_C47 .card_bg {
-  background-position-x: 80%;
-  background-position-y: 87.5%;
-}
-
-.card.card_main_C48 .card_bg {
+.mfull .card.card_main_C40 {
   background-position-x: 100%;
-  background-position-y: 87.5%;
+  background-position-y: 75%;
 }
 
-.card.card_main_C49 .card_bg {
+.mcompact .card.card_main_C41 .card_bg {
   background-position-x: 0%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C41 {
+  background-position-x: 0%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C42 .card_bg {
+  background-position-x: 11.1111111111%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C42 {
+  background-position-x: 11.1111111111%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C43 .card_bg {
+  background-position-x: 22.2222222222%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C43 {
+  background-position-x: 22.2222222222%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C44 .card_bg {
+  background-position-x: 33.3333333333%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C44 {
+  background-position-x: 33.3333333333%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C45 .card_bg {
+  background-position-x: 44.4444444444%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C45 {
+  background-position-x: 44.4444444444%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C46 .card_bg {
+  background-position-x: 55.5555555556%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C46 {
+  background-position-x: 55.5555555556%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C47 .card_bg {
+  background-position-x: 66.6666666667%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C47 {
+  background-position-x: 66.6666666667%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C48 .card_bg {
+  background-position-x: 77.7777777778%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C48 {
+  background-position-x: 77.7777777778%;
+  background-position-y: 100%;
+}
+
+.mcompact .card.card_main_C49 .card_bg {
+  background-position-x: 88.8888888889%;
+  background-position-y: 100%;
+}
+
+.mfull .card.card_main_C49 {
+  background-position-x: 88.8888888889%;
   background-position-y: 100%;
 }
 
@@ -7347,6 +7638,35 @@
   background-position: -400% 0%;
 }
 
+.corp_logo[data-corp=card_corp_24],
+.corp_logo[data-corp=card_corp_25],
+.corp_logo[data-corp=card_corp_26],
+.corp_logo[data-corp=card_corp_27],
+.corp_logo[data-corp=card_corp_28] {
+  background-image: url("img/colonies/colo_corps_logo.png");
+  background-size: 500% 100%;
+}
+
+.corp_logo[data-corp=card_corp_24] {
+  background-position: 0 0%;
+}
+
+.corp_logo[data-corp=card_corp_25] {
+  background-position: -100% 0%;
+}
+
+.corp_logo[data-corp=card_corp_26] {
+  background-position: -300% 0%;
+}
+
+.corp_logo[data-corp=card_corp_27] {
+  background-position: -200% 0%;
+}
+
+.corp_logo[data-corp=card_corp_28] {
+  background-position: -400% 0%;
+}
+
 .corp_effect .card.corp.card_corp_1 .card_title {
   display: none !important;
 }
@@ -7566,7 +7886,7 @@
   font-family: SpaceFont;
   margin-left: 5px;
 }
-#generalactions .tracker_m, #gameaction_status_wrap .tracker_m {
+#generalactions .tracker_m, #generalactions .tracker_resFloater, #gameaction_status_wrap .tracker_m, #gameaction_status_wrap .tracker_resFloater {
   color: black;
 }
 #generalactions .tracker_s, #gameaction_status_wrap .tracker_s {
@@ -10174,7 +10494,7 @@
 .mfull .player_tags .tracker::after {
   color: white;
 }
-.mfull .card {
+.mfull .card:not(.colocard) {
   background-size: 1000% auto;
 }
 .mfull .pboard {

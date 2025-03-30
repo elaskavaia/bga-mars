@@ -10,11 +10,18 @@ class Operation_nmM extends AbsOperation {
         parent::__construct($type  == "nmM" ? "nm" : $type, $opinfo, $game);
     }
 
+    function getType() {
+        return 'm';
+    }
+    function getAlternativeResourceType() {
+        return 'h';
+    }
+
     function getPrimaryArgType() {
         return 'enum';
     }
     protected function getPrompt() {
-        return  clienttranslate('${you} must pay ${count} M€ (can use ${res_name}) for ${card_name}');
+        return  clienttranslate('${you} must pay ${count} M€ (can use ${res_name})');
     }
     protected function getVisargs() {
         $types = $this->getTypes();
@@ -36,7 +43,7 @@ class Operation_nmM extends AbsOperation {
     }
 
 
-     function argPrimaryDetails() {
+    function argPrimaryDetails() {
         if ($this->isVoid()) return [];
         $info = [];
         $cost = $this->getCount();
@@ -69,6 +76,8 @@ class Operation_nmM extends AbsOperation {
 
         $rem = $cost;
         $prop = [];
+
+        $targetRes = $this->getType();
         foreach ($alltypes as $type) {
             $er = $info['payment']['rate'][$type];
             $propres = $info['payment']['resopti'][$type]; // optimal res
@@ -76,7 +85,7 @@ class Operation_nmM extends AbsOperation {
             $typecount = $info['payment']['rescount'][$type]; // total res
             if ($er > 1) {
                 // default proposal
-                $this->addProposal($info,  [$type => $propres, 'm' => $cost - $propres * $er]);
+                $this->addProposal($info,  [$type => $propres, $targetRes => $cost - $propres * $er]);
                 // overpayment proposal (no money)
                 if ($overres > $propres) $this->addProposal($info,  [$type => $overres]);
             }
@@ -93,17 +102,18 @@ class Operation_nmM extends AbsOperation {
         $this->addProposal($info, $prop);
 
         //  proposal with minimal resource
-        $mcount = $info['payment']['rescount']['m'];
-        $heatcount = array_get($info['payment']['rescount'], 'h', 0);
+        $altRes = $this->getAlternativeResourceType();
+        $mcount = $info['payment']['rescount'][$targetRes];
+        $heatcount = array_get($info['payment']['rescount'], $altRes, 0);
         $mhcount = min($mcount + $heatcount, $cost);
         if ($mhcount > 0) {
             $type = array_shift($alltypes);
             $er = $info['payment']['rate'][$type];
             $propres = min((int)ceil(($cost - $mhcount) / $er), $info['payment']['rescount'][$type]);
             $propm = min($mcount, $cost - $propres * $er);
-            $map = [$type => $propres, 'm' => $propm];
+            $map = [$type => $propres, $targetRes  => $propm];
             if ($heatcount > 0 && $mhcount - $propm > 0) {
-                $map['h'] = $mhcount - $propm;
+                $map[$altRes] = $mhcount - $propm;
             }
             if ($this->addProposal($info, $map)) return $info;
         }
@@ -127,7 +137,7 @@ class Operation_nmM extends AbsOperation {
         return $typecount;
     }
 
-    private function addProposal(array &$info, array $map): bool {
+    protected function addProposal(array &$info, array $map): bool {
         $total = 0;
         $proposal = '';
         foreach ($map as $type => $type_try) {
@@ -161,7 +171,7 @@ class Operation_nmM extends AbsOperation {
         if (count($possible) == 1) return false; // this is only Custom option
 
         $info = $this->getStateArg('info');
-        if ($info['payment']['rescount']['m'] == 0) return false; // no money, force choice
+        if ($info['payment']['rescount'][$this->getType()] == 0) return false; // no money, force choice
         $alltypes = $this->getTypes();
         $uniqueRes = 0;
         foreach ($alltypes as $type) {
@@ -208,30 +218,30 @@ class Operation_nmM extends AbsOperation {
         return $inc;
     }
 
-    private function payWithResource($type, $ut, $infores) {
-        if (isset($infores['resources'][$type])) {
-            $tt = $infores['resources'][$type];
-            if ($ut === 'full') $ut = $tt;
-            if ($ut <= 0 || !((int)$ut)) return 0;
+    protected function payWithResource($type, $ut, $infores) {
+        $tt = array_get($infores['resources'], $type, 0);
+        if ($ut === 'full') $ut = $tt;
+        if ($ut <= 0 || !((int)$ut)) return 0;
+        if (!$tt) $this->game->systemAssertTrue("Invalid payment type $type"); // XSS
 
-            if ($ut > 0 && $ut <= $tt) {
-                if ($type == MA_RES_MICROBE) {
-                    $this->game->executeImmediately($this->color, "nres", $ut, 'card_main_P39');
-                } else {
-                    $this->game->effect_incCount($this->color, $type, -$ut, ['reason_tr' => $this->getReason()]);
-                }
-            } else {
-                $message = sprintf(self::_("Invalid amount of %s used for payment: %d of %d (max)"), $this->game->getTokenName($type), $ut, $tt);
-                throw new BgaUserException($message);
-            }
-            return $ut;
+        if ($ut > 0 && $ut <= $tt) {
+            $this->doPayWithResource($this->color, $type, $ut);
         } else {
-            if ($ut <= 0 || !((int)$ut)) return 0;
-            $this->game->systemAssertTrue("Invalid payment type $type"); // XSS
+            $message = sprintf(self::_("Invalid amount of %s used for payment: %d of %d (max)"), $this->game->getTokenName($type), $ut, $tt);
+            throw new BgaUserException($message);
+        }
+        return $ut;
+    }
+
+    function doPayWithResource($color, $type, $ut) {
+        if ($type == MA_RES_MICROBE) {
+            $this->game->executeImmediately($color, "nres", $ut, "card_main_P39");
+        } else {
+            $this->game->effect_incCount($color, $type, -$ut, ['reason_tr' => $this->getReason()]);
         }
     }
 
-    private function getTypes() {
+    protected function getTypes() {
         $card_id = $this->getContext();
         $effect = $this->getContext(1);
         if ($effect === 'a' || !$card_id) {
@@ -266,7 +276,7 @@ class Operation_nmM extends AbsOperation {
     }
 
 
-    private function getCost() {
+    protected function getCost() {
         $card_id = $this->getContext();
         $effect = $this->getContext(1);
         if ($effect || !$card_id) {
@@ -277,7 +287,7 @@ class Operation_nmM extends AbsOperation {
         return $cost;
     }
 
-    private function getExchangeRate($type): int {
+    protected function getExchangeRate($type): int {
         if ($type == 'm') return 1;
         if ($type == 'h') return 1;
         if ($type == MA_RES_MICROBE) return 2; // for now only microbes

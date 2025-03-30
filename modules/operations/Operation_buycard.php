@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 
 class Operation_buycard extends AbsOperation {
+    var $effictiveCost = null; // cached cost
+
     function effect(string $color, int $inc): int {
         $card_ids = $this->getCheckedArg('target');
         if (!is_array($card_ids)) {
@@ -11,7 +13,7 @@ class Operation_buycard extends AbsOperation {
         }
         $count = count($card_ids);
         $money = $this->game->getTrackerValue($color, 'm');
-        $cost = 3;
+        $cost = $this->getBuyCost();
         $tcost = $cost * $count;
         if ($money >= $tcost) {
             // use money if can
@@ -29,6 +31,13 @@ class Operation_buycard extends AbsOperation {
         return $this->getCount(); //remove reset of the counter
     }
 
+    function getBuyCost() {
+        if ($this->effictiveCost == null) {
+            $this->effictiveCost = $this->game->getBuyCardCost($this->color);
+        }
+        return $this->effictiveCost;
+    }
+
     function canSkipChoice() {
         return false;
     }
@@ -39,8 +48,9 @@ class Operation_buycard extends AbsOperation {
 
     function argPrimaryDetails() {
         $color = $this->color;
+        $cost = $this->getBuyCost();
         $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_$color"));
-        $hasmoney = !$this->game->isVoidSingle("3nm", $color);
+        $hasmoney = !$this->game->isVoidSingle("{$cost}nm", $color);
         $q = MA_ERR_COST;
         if ($hasmoney) $q = MA_OK;
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($q) {
@@ -61,8 +71,17 @@ class Operation_buycard extends AbsOperation {
     }
 
     function getPrompt() {
-        if ($this->getCount() == 1) return clienttranslate('${you} may buy this card for 3 M€ or discard');
-        return clienttranslate('${you} must select up to ${count} card/s to buy for 3 M€ each');
+        if ($this->getCount() == 1) return clienttranslate('${you} may buy this card for ${cost} M€ or discard');
+        return clienttranslate('${you} must select up to ${count} card/s to buy for ${cost} M€ each');
+    }
+
+    protected function getVisargs() {
+        return [
+            "name" => $this->getOpName(),
+            'count' => $this->getCount(),
+            'cost' => $this->getBuyCost(),
+            'i18n' => ['name']
+        ];
     }
 
 
@@ -77,18 +96,20 @@ class Operation_buycard extends AbsOperation {
         $my_operations = $this->game->machine->getTopOperations($color);
         $my_op = array_shift($my_operations);
         $this->game->systemAssertTrue("ERR:Operation_buycard:01", $my_op);
-        $optype = array_get($my_op,'type',null);
-     
+        $optype = array_get($my_op, 'type', null);
+
 
         if ($optype != 'prediscard') {
             $this->game->userAssertTrue(totranslate("Nothing to undo"));
         }
-   
+
         $total = $count + count($rest);
+
+        $cost = $this->getBuyCost();
 
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_NORMAL);
-            $this->game->effect_incCount($color, 'm', 3, ['message' => '']);
+            $this->game->effect_incCount($color, 'm', $cost, ['message' => '']);
         }
 
 
