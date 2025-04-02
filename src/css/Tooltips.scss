@@ -70,6 +70,12 @@
   background-size: contain;
 }
 
+.tt_tradeline {
+   & > * {
+    display: inline-block !important;
+   }
+}
+
 .mcompact {
   .tooltipcontainer {
     --card-width: 20vh;
@@ -79,12 +85,20 @@
     font-size: large;
   }
 
+
+
   .compact_card_tt {
     display: flex;
   }
 
   .card_tooltipcontainer {
     max-width: calc(var(--card-width) * 2.5);
+  }
+
+  .colocard_tooltipcontainer {
+    --card-width: 15vh;
+    --map-width: calc(92vh * 3 / 4) ;
+    max-width: 60vh;
   }
 
   .card_tt_tooltipimagecontainer {

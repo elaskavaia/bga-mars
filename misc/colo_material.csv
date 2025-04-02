@@ -96,8 +96,7 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 #set location=colo_fleet
 #set create=1
 #set type=stanproj
-8|Build Colony|0|colony|||17|
-
+8|Build Colony|0|colony|||17||||Colonies|This is a standard project that costs 17 M€: place your player marker on the lowest available spot on the Colony Tile track. Take the placement bonus printed inside the track. Only 3 colonies total per Colony Tile are allowed - no exceptions! Each player may only have one colony per Colony Tile (unless stated otherwise on a card).
 
 #trade fleet stuff
 #set id=fleet

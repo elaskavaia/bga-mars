@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 /** 
- * Add colony tcard
+ * Discard a colony tile
  */
-class Operation_colocard extends  AbsOperation {
+class Operation_colodiscard extends  AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
-        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card_colo", "deck_colo");
+        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
         $keys = array_keys($tokens);
-
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             return MA_OK;
         });
@@ -28,19 +27,25 @@ class Operation_colocard extends  AbsOperation {
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
 
-        $this->game->dbSetTokenLocation($card, 'display_colonies', -1, c_lienttranslate('Colony tile ${card_name} is put in play'), [
+        $this->game->dbSetTokenLocation($card, 'limbo', 0, c_lienttranslate('${player_name} discards ${card_name}'), [
             'card_name' => $this->game->getTokenName($card)
-        ]);
-
-        $this->game->activateColonies();
+        ], $this->getPlayerId());
         return $inc;
     }
 
+    function canFail(): bool {
+        return false;
+    }
+
+    function canResolveAutomatically() {
+        return false;
+    }
+
     public function getPrompt() {
-        return c_lienttranslate('${you} must select a colony tile to put in play');
+        return c_lienttranslate('${you} must select a colony tile to discard');
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Add Colony tile');
+        return c_lienttranslate('Discard Colony Tile');
     }
 }

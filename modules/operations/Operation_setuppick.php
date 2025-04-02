@@ -65,14 +65,10 @@ class Operation_setuppick extends AbsOperation {
         return 1;
     }
 
-    function checkIntegrity() {
-        $c = $this->getUserCount();
-        if ($c === null) $c = $this->getCount();
-        if ($c != 1)
-            throw new feException("Cannot use counter $c for this operation " . $this->mnemonic);
-        return true;
+    public function checkIntegrity() {
+        return $this->checkIntegritySingleton();
     }
-
+    
     function argPrimaryDetails() {
         $color = $this->color;
         $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_", "draw_{$color}"));
@@ -123,7 +119,7 @@ class Operation_setuppick extends AbsOperation {
         $op = array_shift($operations);
         $this->game->systemAssertTrue("unexpected state", $op);
         $optype = $op['type'];
-        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup' ||  startsWith($optype,'conf'));
+        $this->game->systemAssertTrue("unexpected state $optype", $optype == 'finsetup' ||  startsWith($optype, 'conf'));
 
         if ($onlyCheck) return;
 

@@ -209,6 +209,29 @@ class CustomRenders {
     return rethtm;
   }
 
+  public static parseExprToText(expr: any, game: GameXBody): string {
+    if (!expr) return "";
+
+    if (!Array.isArray(expr)) {
+      expr = [expr];
+    }
+    let op = expr[0];
+    const min = expr.length > 1 ? expr[1] : "1";
+    const max = expr.length > 2 ? expr[2] : "1";
+    let arg = expr.length > 3 ? expr[3] : "";
+
+    if (expr.length == 1) {
+      arg = op;
+      op = "!";
+    }
+    if (op == "!") {
+      if (min == 1) return game.getTokenName(`op_${arg}`);
+      return game.getTokenName(`op_${arg}`) + " x " + min;
+    }
+
+    return JSON.stringify(expr);
+  }
+
   public static parseExprItem(expr: any, depth: number): any {
     if (!expr) return [];
 

@@ -9,9 +9,6 @@ global["_"] = function _(x: string) {
   return x;
 };
 
-// class GameXBody {
-//   public getTokenName = Sinon.stub();
-// }
 
 describe("CustomRenders", () => {
   var CustomRenders;
@@ -27,11 +24,11 @@ describe("CustomRenders", () => {
   });
 
   before(() => {
-    xfile = fs.readFileSync("tests/dist/src/CustomRenders.js", "utf8");
+    xfile = fs.readFileSync("terraformingmars.js", "utf8");
     expect(xfile).to.be.not.equal("");
-    xfile += "\nmodule.exports.CustomRenders = CustomRenders;\n";
-    fs.writeFileSync("tests/dist/src/CustomRenders_mod.js", xfile);
-    var mod = require("./dist/src/CustomRenders_mod.js");
+    xfile += "\nmodule.exports.CustomRenders = CustomRenders;function define(a,b) {};\n";
+    fs.writeFileSync("tests/out.jsa", xfile);
+    var mod = require("./out.jsa");
     CustomRenders = mod.CustomRenders;
   });
 

@@ -155,16 +155,26 @@ abstract class PGameXBody extends PGameMachine {
             $adj = $this->getMapNumber();
             $this->notifyWithName('message', clienttranslate('Map: ${map_name}'), ['map_name' => $this->getTokenName("map_$adj")]);
 
+            $player_id = $this->getFirstPlayer();
+
             if ($this->isSolo()) {
                 $this->setupSoloMap();
+                if ($colonies) {
+                    $color = $this->getPlayerColorById($player_id);
+                    $this->push($color,"colodiscard");
+                    $this->notifyWithName('message', c_lienttranslate('Colonies solo mode starts with descreased megacredit production'));
+                    $this->effect_incProduction($color, "pm", -2);
+                }
             }
 
-            $player_id = $this->getFirstPlayer();
+
             $this->setCurrentStartingPlayer($player_id);
             $this->queuePlayersTurn($player_id, false);
             $this->doUndoSavePoint(); // TODO?
         } catch (Exception $e) {
-            $this->error($e);
+            throw $e;
+            //$this->error(toJson($e));
+            //$this->error($e->getTraceAsString());
         }
     }
 
@@ -1632,7 +1642,7 @@ abstract class PGameXBody extends PGameMachine {
             $master = $this->getTurnMaster();
             $canauto = $opinst->canResolveAutomatically();
             $switch = false;
-            $this->debugConsole("switch $active_player != $player_id mas=$master can=$canauto");
+            //$this->debugConsole("switch $active_player != $player_id mas=$master can=$canauto");
             if ($stage != MA_STAGE_GAME) {
                 $switch = true;
             } else if ($player_id == $master) {

@@ -1218,6 +1218,8 @@ class GameXBody extends GameTokens {
         return _("Milestone");
       case 8:
         return _("Award");
+      case 9:
+        return "Colony";
       default:
         return "?";
     }
@@ -1267,7 +1269,7 @@ class GameXBody extends GameTokens {
             adClass += " " + item;
           }
         });
-      } else if (type == this.CON.MA_CARD_TYPE_STAN) {
+      } else if (type == this.CON.MA_CARD_TYPE_STANDARD_PROJECT) {
         fullitemhtm = "";
       }
       displayInfo.imageTypes += " _override";
@@ -1506,43 +1508,48 @@ class GameXBody extends GameTokens {
       return this.generateItemTooltip(displayInfo);
     }
 
-    let type_name = this.getCardTypeById(type);
+    const isProjectCard = type > 0 && type <= 3;
+    const isCard = isProjectCard || type == this.CON.MA_CARD_TYPE_CORP || type == this.CON.MA_CARD_TYPE_PRELUDE;
+
     let card_id = "";
     if (type > 0 && type < 7) card_id += " " + _(displayInfo.deck) + " #" + (displayInfo.num ?? "");
 
-    let tags = "";
-    if (displayInfo.tags) {
-      for (let tag of displayInfo.tags.split(" ")) {
-        tags += _(tag) + " ";
-      }
-    }
-
-    let vp = _(displayInfo.text_vp);
-    if (!vp) vp = displayInfo.vp;
-
     let res = "";
     // card type
+    let type_name = this.getCardTypeById(type);
     res += this.generateTooltipSection(type_name, card_id);
 
-    if (type <= 3)
-      // project cards and standard projects
+    // cost
+    if (isProjectCard || type == this.CON.MA_CARD_TYPE_STANDARD_PROJECT) {
       res += this.generateTooltipSection(_("Cost"), displayInfo.cost, true, "tt_cost");
+    }
 
+    // tags
+    let tags = displayInfo.tags
+      ?.split(" ")
+      .map((x: string) => _(x)) // translate
+      .join(" ");
+    if (!tags && isCard) {
+      tags = _("None");
+    }
     res += this.generateTooltipSection(_("Tags"), tags);
 
+    // prereq
     let prereqText = "";
 
-    const cardText = displayInfo.text ?? "";
     if (displayInfo.expr?.pre) {
       if (displayInfo.key == "card_main_135")
         prereqText = _("Requires at least 1 plant tag, 1 microbe tag and 1 animal tag."); //special case
       else if (displayInfo.expr?.pre) prereqText = CustomRenders.parsePrereqToText(displayInfo.expr.pre, this);
       prereqText += '<div class="prereq_notmet">' + _("(You cannot play this card now because pre-requisites are not met.)") + "</div>";
-    } else if (type>0 && type <=3) {
-      prereqText = _('None');
+    } else if (type > 0 && type <= 3) {
+      prereqText = _("None");
     }
 
     res += this.generateTooltipSection(_("Requirement"), prereqText, true, "tt_prereq");
+
+    let vp = _(displayInfo.text_vp);
+    if (!vp) vp = displayInfo.vp;
 
     if (type == this.CON.MA_CARD_TYPE_MILESTONE) {
       res += this.generateTooltipSection(_("Criteria"), _(displayInfo.text));
@@ -1578,9 +1585,35 @@ player may get the first or second place bonus.
 If more than one player gets 1st place bonus, no 2nd place is
 awarded.`);
       res += this.generateTooltipSection(_("Info"), text);
-    } else {
-      const errors = this.getPotentialErrors(displayInfo.key);
 
+    } else if (type == this.CON.MA_CARD_TYPE_COLONY) {
+      debugger;
+
+      //colony cards r - colony placement bonus, a- colony trade bonus, i - trade action
+      const card_r = CustomRenders.parseExprToText(displayInfo.expr.r, this);
+      const card_a = CustomRenders.parseExprToText(displayInfo.expr.a, this);
+      const card_i = CustomRenders.parseExprToText(displayInfo.i, this);
+
+      const build = `<div>${_("Gain the indicated bonus when building a colony here:")}</div>` + this.getTradeLine(displayInfo.expr.r);
+
+      res += this.generateTooltipSection(_("Build Plcement Bonus"), build);
+      const actu =
+        `<div>${_("Gain the indicated bonus for each colony you have here if trade is initiated:")}</div>` +
+        this.getTradeLine(displayInfo.expr.a);
+      res += this.generateTooltipSection(_("Colony Bonus"), actu);
+
+      let tradeSection = "";
+      if (!card_i) tradeSection = `<div>${_("Gain the indicated below")}</div>`;
+      for (let i = 0; i < 7; i++) {
+        const trnum = displayInfo.slots[i];
+        const num = i + 1;
+        if (!displayInfo.i) tradeSection += this.getTradeLine(trnum, 1, num);
+        else tradeSection += this.getTradeLine(displayInfo.i, Number(trnum), num);
+      }
+      res += this.generateTooltipSection(_("Trade Income"), tradeSection);
+    }  else {
+      const errors = this.getPotentialErrors(displayInfo.key);
+      const cardText = displayInfo.text ?? "";
       res += this.generateTooltipSection(_("Immediate Effect"), _(cardText));
       res += this.generateTooltipSection(_("Effect"), _(displayInfo.text_effect));
       res += this.generateTooltipSection(_("Action"), _(displayInfo.text_action));
@@ -1590,6 +1623,16 @@ awarded.`);
     }
 
     return res;
+  }
+
+  getTradeLine(op: any, count: number = 1, num?: number | undefined) {
+    let traction: string;
+    let exp: any = op;
+    if (count > 1) exp = ["!", count, count, op];
+    traction = CustomRenders.parseExprToHtml(exp) + " <div>" + CustomRenders.parseExprToText(exp, this) + "</div>";
+
+    if (num === undefined) return `<div class="tt_tradeline">${traction}</div>`;
+    return `<div class="tt_tradeline">${_("Slot")} ${num}: ${traction}</div>`;
   }
 
   getPotentialErrors(card_id: string): string {

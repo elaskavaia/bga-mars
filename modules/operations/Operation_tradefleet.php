@@ -19,13 +19,8 @@ class Operation_tradefleet extends  AbsOperation {
     }
 
     public function checkIntegrity() {
-        $c = $this->getUserCount();
-        if ($c === null) $c = $this->getCount();
-        if ($c != 1)
-            throw new feException("Cannot use counter $c for this operation " . $this->mnemonic);
-        return true;
+        return $this->checkIntegritySingleton();
     }
-
 
     function canFail(): bool {
         return false;

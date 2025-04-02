@@ -7648,7 +7648,7 @@
 }
 
 .corp_logo[data-corp=card_corp_24] {
-  background-position: 0 0%;
+  background-position: -1% 0%;
 }
 
 .corp_logo[data-corp=card_corp_25] {
@@ -8042,6 +8042,10 @@
   background-size: contain;
 }
 
+.tt_tradeline > * {
+  display: inline-block !important;
+}
+
 .mcompact .tooltipcontainer {
   --card-width: 20vh;
   --card-height: calc(var(--card-width) * 1.40658174);
@@ -8054,6 +8058,11 @@
 }
 .mcompact .card_tooltipcontainer {
   max-width: calc(var(--card-width) * 2.5);
+}
+.mcompact .colocard_tooltipcontainer {
+  --card-width: 15vh;
+  --map-width: calc(92vh * 3 / 4) ;
+  max-width: 60vh;
 }
 .mcompact .card_tt_tooltipimagecontainer {
   padding: 0.2em;
@@ -12429,6 +12438,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   flex-direction: row;
   flex-wrap: wrap;
   position: relative;
+  order: 4;
 }
 .exp-colonies .colo_fleet .card {
   width: 100%;

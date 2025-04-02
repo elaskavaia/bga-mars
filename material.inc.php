@@ -5066,6 +5066,8 @@ $this->token_types = [
   't' => 0,
   'r' => 'colony',
   'cost' => 17,
+  'deck' => 'Colonies',
+  'text' => clienttranslate('This is a standard project that costs 17 M€: place your player marker on the lowest available spot on the Colony Tile track. Take the placement bonus printed inside the track. Only 3 colonies total per Colony Tile are allowed - no exceptions! Each player may only have one colony per Colony Tile (unless stated otherwise on a card).'),
 ],
 // #trade fleet stuff
  'fleet' => [  //
