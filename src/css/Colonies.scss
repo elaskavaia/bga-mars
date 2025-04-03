@@ -1,0 +1,429 @@
+.fleet.ship {
+    width: calc(var(--card-width) / 3);
+    aspect-ratio: 1 / 1;
+    --border-mcubesize: calc(var(--card-width) / 4);
+    --mcubesize: calc(var(--card-width) / 6);
+}
+
+.fleet.ship::before {
+    content: " ";
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 0%;
+    left: -50%;
+    border-left: var(--border-mcubesize) solid transparent;
+    border-right: var(--border-mcubesize) solid transparent;
+    border-top: unset;
+    border-bottom: calc(var(--border-mcubesize)*1.5) solid white;
+}
+
+.fleet.ship::after {
+    width: var(--mcubesize);
+    height: var(--mcubesize);
+    content: " ";
+    bottom: 0%;
+    left: 0%;
+    position: absolute;
+    background-color: #ffffff66;
+}
+
+@each $key, $val in $colors-list {
+    .fleet.ship.fleet#{$key}::after {
+        background-color: var(--color-mapping#{$key});
+    }
+}
+
+.colo_fleet .ship {
+    position: relative;
+    margin-top: 35%;
+    margin-left: 10%;
+    margin-right: -10%;
+    display: inline-block;
+}
+
+.card.colocard {
+    width: calc(var(--card-height)*1.4);
+    height: calc(var(--card-height)*1.4*0.56);
+    aspect-ratio: 100 / 56;
+    background-image: url(img/colonies/colonies.jpg);
+    background-size: 100% auto;
+    border-radius: 30% / 40%;
+
+    &::before {
+        display: none;
+    }
+
+    &>.card_decor {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+    }
+
+    .card_bg {
+        background-image: unset;
+        background-color: transparent;
+        border: 1px solid salmon;
+        display: none;
+    }
+
+    // placement bonus
+    .card_initial {
+        display: none;
+    }
+
+    .marker {
+        position: absolute;
+        top: 64%;
+        left: 15%;
+    }
+
+
+
+    .marker[data-state="1"] {
+        left: 25%;
+    }
+
+    .marker[data-state="2"] {
+        left: 35%;
+    }
+
+    .fleet.ship {
+        position: absolute;
+        right: 10%;
+        top: 10%;
+        bottom: unset;
+    }
+
+    span {
+        text-transform: uppercase;
+    }
+
+
+}
+
+.display_colonies[data-mode="synthetic"] .card.colocard {
+    width: calc(var(--card-width)* 1.5);
+    height: 2em;
+    aspect-ratio: unset;
+    background-image: none;
+    border-radius: 5%;
+    background: linear-gradient(to right, #c2e0f6, black);
+
+    &::before {
+        content: attr(data-state);
+        color: white;
+        height: 1em;
+        position: absolute;
+        left: 70%;
+        top: 0%;
+        z-index: 20;
+    }
+
+
+    .card_title {
+        position: absolute;
+        top: 10%;
+        height: 100%;
+        width: 80%;
+        left: 5%;
+    }
+
+
+    // trade income 
+    .card_effect {
+        background: unset;
+        padding: unset;
+        height: unset;
+        width: 20%;
+        position: absolute;
+        top: 0%;
+        left: unset;
+        right: 0%;
+        display: block;
+
+        &>span {
+            display: none;
+        }
+    }
+
+    .colony-colony-line {
+        display: none;
+    }
+
+    .colony-trade-line {
+        display: none;
+    }
+
+
+    .colony-trade-cube {
+        position: absolute;
+        top: 0%;
+        left: unset;
+        right: 20%;
+        &::before {
+            content: attr(data-state);
+        }
+    }
+
+
+
+    .fleet.ship {
+        width: calc(var(--card-width) / 3 / 3);
+        --border-mcubesize: calc(var(--card-width) / 4 / 3);
+        --mcubesize: calc(var(--card-width) / 6 / 3);
+        position: absolute;
+        top: 0%;
+        left: 0%;
+    }
+
+    .marker {
+        position: absolute;
+        top: 0%;
+    }
+
+
+
+}
+
+.display_colonies[data-mode="grid"] .card.colocard {
+
+    // &>.card_decor {
+    //     display: none;
+    // }
+    .card_title {
+        position: absolute;
+        top: 2%;
+        height: 2em;
+        justify-content: flex-start;
+        left: 1%;
+        text-transform: uppercase;
+        display: none;
+    }
+
+
+
+    // colony bonus
+    .card_initial {
+        background: linear-gradient(to right, #c2e0f6, black);
+        position: absolute;
+        padding: unset;
+        height: 2em;
+        top: 20%;
+        left: 4%;
+        width: 80%;
+        display: flex;
+        display: none;
+    }
+
+    // trade income
+    .card_effect {
+        background: linear-gradient(to right, #c2e0f6, black);
+        position: absolute;
+        padding: unset;
+        height: 2em;
+        top: 40%;
+        left: 10%;
+        width: 80%;
+        display: none;
+    }
+
+    .colony-colony-line {
+        position: absolute;
+        width: 70%;
+        top: 64%;
+        left: 15%;
+
+        .coloslot {
+            outline: 1px solid white;
+            display: inline-block;
+            aspect-ratio: 1/1;
+            width: calc(100%/7);
+            vertical-align: top;
+            overflow: hidden;
+
+            &>* {
+                display: none;
+            }
+        }
+    }
+
+    .colony-trade-line {
+        position: absolute;
+        width: 80%;
+        top: 80%;
+        left: 10%;
+        display: none;
+
+        .tradeslot {
+            display: inline-block;
+            aspect-ratio: 1/1;
+            width: calc(100%/7);
+            vertical-align: top;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+            text-transform: uppercase;
+        }
+    }
+
+    .colony-trade-cube {
+        width: 7%;
+        aspect-ratio: 1/1;
+        //background-color: white;
+        border: 4px solid white;
+        position: absolute;
+        top: 82%;
+        left: 0%;
+    }
+
+    @for $num from 0 through 7 {
+        &[data-state="#{$num}"] .colony-trade-cube {
+            left: calc(16% + $num * 10%);
+        }
+    }
+
+
+
+}
+
+
+.display_colonies>* {
+    flex-shrink: 0;
+    position: relative;
+}
+
+.colo_fleet {
+    width: calc(var(--card-height)*1.4);
+    height: calc(var(--card-height)*1.4*0.56);
+    aspect-ratio: 100 / 56;
+    background-position: 0% 100%;
+    background-image: url(img/colonies/colonies.jpg);
+    background-size: 100% auto;
+    border-radius: 30% / 40%;
+    order: -1;
+    margin-left: 3%; // to not hide the button
+}
+
+.display_colonies[data-mode="synthetic"] .colo_fleet {
+    width: calc(var(--card-width)* 1.5);
+    height: 2em;
+    aspect-ratio: unset;
+    background-image: none;
+    border-radius: 5%;
+
+    & > .card_stanproj_8 {
+        background-position: 25% 93.4%;
+        background-image: url(img/colonies/colonies.jpg);
+        background-size: 117% auto;
+    }
+
+    & > .fleet.ship {
+        width: calc(var(--card-width) / 3 / 3);
+        --border-mcubesize: calc(var(--card-width) / 4 / 3);
+        --mcubesize: calc(var(--card-width) / 6 / 3);
+        position: absolute;
+        top: 0%;
+        left: 0%;
+    }
+}
+
+
+// @for $num from 1 through 11 {
+//   $i: $num - 1;
+//   $col: 0;
+//   $row: $i;
+
+//   .card.colocard.card_colo_#{$num} {
+//     background-position: 1% calc(100% / 11 * $row);
+
+//   }
+// }
+
+.card.colocard.card_colo_1 {
+    background-position: 1% 0%;
+}
+
+.card.colocard.card_colo_2 {
+    background-position: 1% 9.0909090909%;
+}
+
+.card.colocard.card_colo_3 {
+    background-position: 1% 18.1818181818%;
+}
+
+.card.colocard.card_colo_4 {
+    background-position: 1% 27.2727272727%;
+}
+
+.card.colocard.card_colo_5 {
+    background-position: 1% 36.1%;
+}
+
+.card.colocard.card_colo_6 {
+    background-position: 1% 45.4545454545%;
+}
+
+.card.colocard.card_colo_7 {
+    background-position: 1% 54.9%;
+}
+
+.card.colocard.card_colo_8 {
+    background-position: 1% 63.9%;
+}
+
+.card.colocard.card_colo_9 {
+    background-position: 1% 72.7272727273%;
+}
+
+.card.colocard.card_colo_10 {
+    background-position: 1% 81.8181818182%;
+}
+
+.card.colocard.card_colo_11 {
+    background-position: 1% 90.9090909091%;
+}
+
+.display_colonies {
+    display: none;
+}
+
+.exp-colonies {
+    .display_colonies {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: relative;
+        width: 100%;
+    }
+
+    .button_display_colonies_layout {
+        position: absolute;
+        width: calc(var(--card-width) * 0.16);
+        height: calc(var(--card-width) * 0.16);
+        font-size: calc(var(--card-width) * 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        color: gray;
+    }
+
+    /* standard project */
+    .colo_fleet .card {
+        width: 100%;
+        height: var(--stan-height);
+        //border: yellow solid 1px;
+        border-radius: 10em;
+        box-shadow: revert;
+        background-image: unset;
+        background-color: unset;
+        position: absolute;
+        display: block;
+    }
+
+
+
+}

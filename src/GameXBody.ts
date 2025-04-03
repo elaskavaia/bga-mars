@@ -211,6 +211,7 @@ class GameXBody extends GameTokens {
       }
 
       this.updateStacks();
+      this.setupColonies();
 
       const move = gamedatas.notifications.move_nbr;
       this.cachedScoringTable = gamedatas.scoringTable;
@@ -240,6 +241,27 @@ class GameXBody extends GameTokens {
     }
 
     this.checkTerraformingCompletion();
+  }
+
+  setupColonies() {
+    if (this.isColoniesExpansionEnabled()) {
+      const butla = $("button_display_colonies_layout");
+      const coloniesDisplay = $('display_colonies');
+      this.addTooltip(butla.id, _("Layout for Colonues - grid vs synthetic"), _("Click to change layout"));
+      butla.addEventListener("click", () => {
+        if (butla.dataset.mode == "grid") {
+          butla.dataset.mode = "synthetic";
+          coloniesDisplay.dataset.mode = "synthetic";
+          butla.classList.remove("fa-tablet");
+          butla.classList.add("fa-window-restore");
+        } else {
+          butla.dataset.mode = "grid";
+          coloniesDisplay.dataset.mode = "grid";
+          butla.classList.add("fa-tablet");
+          butla.classList.remove("fa-window-restore");
+        }
+      });
+    }
   }
 
   setupMilestonesAndAwards(mapnum: number) {
@@ -1585,9 +1607,8 @@ player may get the first or second place bonus.
 If more than one player gets 1st place bonus, no 2nd place is
 awarded.`);
       res += this.generateTooltipSection(_("Info"), text);
-
     } else if (type == this.CON.MA_CARD_TYPE_COLONY) {
-      debugger;
+      //debugger;
 
       //colony cards r - colony placement bonus, a- colony trade bonus, i - trade action
       const card_r = CustomRenders.parseExprToText(displayInfo.expr.r, this);
@@ -1611,7 +1632,7 @@ awarded.`);
         else tradeSection += this.getTradeLine(displayInfo.i, Number(trnum), num);
       }
       res += this.generateTooltipSection(_("Trade Income"), tradeSection);
-    }  else {
+    } else {
       const errors = this.getPotentialErrors(displayInfo.key);
       const cardText = displayInfo.text ?? "";
       res += this.generateTooltipSection(_("Immediate Effect"), _(cardText));
@@ -1688,11 +1709,12 @@ awarded.`);
         const card_title = displayInfo.name || "";
         const card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
         const card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
+        const card_i = CustomRenders.parseExprToHtml(displayInfo.i);
         decor.innerHTML = `
                   <div class="card_bg"></div>
                   <div class="card_title">${_(card_title)}</div>
                   <div class="card_initial">${card_a}<span>Colony Bonus</span></div>
-                  <div class="card_effect">${card_a}<span>Trade Income</span></div>  
+                  <div class="card_effect">${card_i}<span>Trade Income</span></div>  
                   <div class="colony-colony-line"></div>  
                   <div class="colony-trade-line"></div>  
                   <div class="colony-trade-cube"></div>  

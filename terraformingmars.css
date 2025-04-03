@@ -526,68 +526,6 @@
   pointer-events: none;
 }
 
-.fleet.ship {
-  width: calc(var(--card-width) / 3);
-  aspect-ratio: 1/1;
-  --border-mcubesize: calc(var(--card-width) / 4);
-  --mcubesize: calc(var(--card-width) / 6);
-}
-
-.fleet.ship::before {
-  content: " ";
-  position: absolute;
-  width: 0;
-  height: 0;
-  top: 0%;
-  left: -50%;
-  border-left: var(--border-mcubesize) solid transparent;
-  border-right: var(--border-mcubesize) solid transparent;
-  border-top: unset;
-  border-bottom: calc(var(--border-mcubesize) * 1.5) solid white;
-}
-
-.fleet.ship::after {
-  width: var(--mcubesize);
-  height: var(--mcubesize);
-  content: " ";
-  bottom: 0%;
-  left: 0%;
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-.fleet.ship.fleet_0000ff::after {
-  background-color: var(--color-mapping_0000ff);
-}
-
-.fleet.ship.fleet_ff0000::after {
-  background-color: var(--color-mapping_ff0000);
-}
-
-.fleet.ship.fleet_008000::after {
-  background-color: var(--color-mapping_008000);
-}
-
-.fleet.ship.fleet_ffa500::after {
-  background-color: var(--color-mapping_ffa500);
-}
-
-.fleet.ship.fleet_773300::after {
-  background-color: var(--color-mapping_773300);
-}
-
-.fleet.ship.fleet_ffffff::after {
-  background-color: var(--color-mapping_ffffff);
-}
-
-.colo_fleet .ship {
-  position: relative;
-  margin-top: 35%;
-  margin-left: 10%;
-  margin-right: -10%;
-  display: inline-block;
-}
-
 /*card bg ratio : 1.40658174*/
 #ebd-body {
   --card-width: calc(var(--localsetting_cardsize)*.15vh);
@@ -3644,201 +3582,6 @@
   bottom: 14%;
 }
 
-.card.colocard {
-  width: calc(var(--card-height) * 1.4);
-  height: calc(var(--card-height) * 1.4 * 0.56);
-  aspect-ratio: 100/56;
-}
-.card.colocard .marker {
-  position: absolute;
-  top: 64%;
-  left: 15%;
-}
-.card.colocard .marker[data-state="1"] {
-  left: 25%;
-}
-.card.colocard .marker[data-state="2"] {
-  left: 35%;
-}
-.card.colocard .card_title {
-  position: absolute;
-  top: 2%;
-  background: linear-gradient(to right, #c2e0f6, black);
-  height: 2em;
-  justify-content: flex-start;
-  left: 1%;
-  text-transform: uppercase;
-  display: none;
-}
-.card.colocard .card_bg {
-  background-image: unset;
-  background-color: transparent;
-  border: 1px solid salmon;
-  display: none;
-}
-.card.colocard span {
-  text-transform: uppercase;
-}
-.card.colocard .card_initial {
-  background: linear-gradient(to right, #c2e0f6, black);
-  position: absolute;
-  padding: unset;
-  height: 2em;
-  top: 20%;
-  left: 4%;
-  width: 80%;
-  display: flex;
-  display: none;
-}
-.card.colocard .card_effect {
-  background: linear-gradient(to right, #c2e0f6, black);
-  position: absolute;
-  padding: unset;
-  height: 2em;
-  top: 40%;
-  left: 10%;
-  width: 80%;
-  display: flex;
-  display: none;
-}
-.card.colocard .colony-colony-line {
-  position: absolute;
-  width: 70%;
-  top: 64%;
-  left: 15%;
-}
-.card.colocard .colony-colony-line .coloslot {
-  outline: 1px solid white;
-  display: inline-block;
-  aspect-ratio: 1/1;
-  width: 14.2857142857%;
-  vertical-align: top;
-  overflow: hidden;
-}
-.card.colocard .colony-colony-line .coloslot > * {
-  display: none;
-}
-.card.colocard .colony-trade-line {
-  position: absolute;
-  width: 80%;
-  top: 80%;
-  left: 10%;
-  display: none;
-}
-.card.colocard .colony-trade-line .tradeslot {
-  display: inline-block;
-  aspect-ratio: 1/1;
-  width: 14.2857142857%;
-  vertical-align: top;
-  overflow: hidden;
-  color: white;
-  text-align: center;
-  text-transform: uppercase;
-}
-.card.colocard .colony-trade-cube {
-  width: 7%;
-  aspect-ratio: 1/1;
-  border: 4px solid white;
-  position: absolute;
-  top: 82%;
-  left: 0%;
-}
-.card.colocard[data-state="0"] .colony-trade-cube {
-  left: 16%;
-}
-.card.colocard[data-state="1"] .colony-trade-cube {
-  left: 26%;
-}
-.card.colocard[data-state="2"] .colony-trade-cube {
-  left: 36%;
-}
-.card.colocard[data-state="3"] .colony-trade-cube {
-  left: 46%;
-}
-.card.colocard[data-state="4"] .colony-trade-cube {
-  left: 56%;
-}
-.card.colocard[data-state="5"] .colony-trade-cube {
-  left: 66%;
-}
-.card.colocard[data-state="6"] .colony-trade-cube {
-  left: 76%;
-}
-.card.colocard[data-state="7"] .colony-trade-cube {
-  left: 86%;
-}
-.card.colocard .fleet {
-  position: absolute;
-  right: 10%;
-  top: 10%;
-}
-
-.display_colonies > * {
-  flex-shrink: 0;
-  position: relative;
-}
-
-.colo_fleet {
-  width: calc(var(--card-height) * 1.4);
-  height: calc(var(--card-height) * 1.4 * 0.56);
-  aspect-ratio: 100/56;
-  background-position: 0% 100%;
-  background-image: url(img/colonies/colonies.jpg);
-  background-size: 100% auto;
-  border-radius: 30%/40%;
-  order: -1;
-}
-
-.card.colocard {
-  background-image: url(img/colonies/colonies.jpg);
-  background-size: 100% auto;
-  border-radius: 30%/40%;
-}
-
-.card.colocard.card_colo_1 {
-  background-position: 1% 0%;
-}
-
-.card.colocard.card_colo_2 {
-  background-position: 1% 9.0909090909%;
-}
-
-.card.colocard.card_colo_3 {
-  background-position: 1% 18.1818181818%;
-}
-
-.card.colocard.card_colo_4 {
-  background-position: 1% 27.2727272727%;
-}
-
-.card.colocard.card_colo_5 {
-  background-position: 1% 36.1%;
-}
-
-.card.colocard.card_colo_6 {
-  background-position: 1% 45.4545454545%;
-}
-
-.card.colocard.card_colo_7 {
-  background-position: 1% 54.9%;
-}
-
-.card.colocard.card_colo_8 {
-  background-position: 1% 63.9%;
-}
-
-.card.colocard.card_colo_9 {
-  background-position: 1% 72.7272727273%;
-}
-
-.card.colocard.card_colo_10 {
-  background-position: 1% 81.8181818182%;
-}
-
-.card.colocard.card_colo_11 {
-  background-position: 1% 90.9090909091%;
-}
-
 .mcompact .card.card_corp_24 .card_bg {
   background-position: 0% 0%;
   background-image: url(img/colonies/colo_cards_corp_bg.jpg);
@@ -4436,6 +4179,397 @@
     transform: translateX(0%);
   }
 }
+.fleet.ship {
+  width: calc(var(--card-width) / 3);
+  aspect-ratio: 1/1;
+  --border-mcubesize: calc(var(--card-width) / 4);
+  --mcubesize: calc(var(--card-width) / 6);
+}
+
+.fleet.ship::before {
+  content: " ";
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0%;
+  left: -50%;
+  border-left: var(--border-mcubesize) solid transparent;
+  border-right: var(--border-mcubesize) solid transparent;
+  border-top: unset;
+  border-bottom: calc(var(--border-mcubesize) * 1.5) solid white;
+}
+
+.fleet.ship::after {
+  width: var(--mcubesize);
+  height: var(--mcubesize);
+  content: " ";
+  bottom: 0%;
+  left: 0%;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.fleet.ship.fleet_0000ff::after {
+  background-color: var(--color-mapping_0000ff);
+}
+
+.fleet.ship.fleet_ff0000::after {
+  background-color: var(--color-mapping_ff0000);
+}
+
+.fleet.ship.fleet_008000::after {
+  background-color: var(--color-mapping_008000);
+}
+
+.fleet.ship.fleet_ffa500::after {
+  background-color: var(--color-mapping_ffa500);
+}
+
+.fleet.ship.fleet_773300::after {
+  background-color: var(--color-mapping_773300);
+}
+
+.fleet.ship.fleet_ffffff::after {
+  background-color: var(--color-mapping_ffffff);
+}
+
+.colo_fleet .ship {
+  position: relative;
+  margin-top: 35%;
+  margin-left: 10%;
+  margin-right: -10%;
+  display: inline-block;
+}
+
+.card.colocard {
+  width: calc(var(--card-height) * 1.4);
+  height: calc(var(--card-height) * 1.4 * 0.56);
+  aspect-ratio: 100/56;
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 100% auto;
+  border-radius: 30%/40%;
+}
+.card.colocard::before {
+  display: none;
+}
+.card.colocard > .card_decor {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+.card.colocard .card_bg {
+  background-image: unset;
+  background-color: transparent;
+  border: 1px solid salmon;
+  display: none;
+}
+.card.colocard .card_initial {
+  display: none;
+}
+.card.colocard .marker {
+  position: absolute;
+  top: 64%;
+  left: 15%;
+}
+.card.colocard .marker[data-state="1"] {
+  left: 25%;
+}
+.card.colocard .marker[data-state="2"] {
+  left: 35%;
+}
+.card.colocard .fleet.ship {
+  position: absolute;
+  right: 10%;
+  top: 10%;
+  bottom: unset;
+}
+.card.colocard span {
+  text-transform: uppercase;
+}
+
+.display_colonies[data-mode=synthetic] .card.colocard {
+  width: calc(var(--card-width) * 1.5);
+  height: 2em;
+  aspect-ratio: unset;
+  background-image: none;
+  border-radius: 5%;
+  background: linear-gradient(to right, #c2e0f6, black);
+}
+.display_colonies[data-mode=synthetic] .card.colocard::before {
+  content: attr(data-state);
+  color: white;
+  height: 1em;
+  position: absolute;
+  left: 70%;
+  top: 0%;
+  z-index: 20;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .card_title {
+  position: absolute;
+  top: 10%;
+  height: 100%;
+  width: 80%;
+  left: 5%;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .card_effect {
+  background: unset;
+  padding: unset;
+  height: unset;
+  width: 20%;
+  position: absolute;
+  top: 0%;
+  left: unset;
+  right: 0%;
+  display: block;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .card_effect > span {
+  display: none;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .colony-colony-line {
+  display: none;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .colony-trade-line {
+  display: none;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .colony-trade-cube {
+  position: absolute;
+  top: 0%;
+  left: unset;
+  right: 20%;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .colony-trade-cube::before {
+  content: attr(data-state);
+}
+.display_colonies[data-mode=synthetic] .card.colocard .fleet.ship {
+  width: calc(var(--card-width) / 3 / 3);
+  --border-mcubesize: calc(var(--card-width) / 4 / 3);
+  --mcubesize: calc(var(--card-width) / 6 / 3);
+  position: absolute;
+  top: 0%;
+  left: 0%;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .marker {
+  position: absolute;
+  top: 0%;
+}
+
+.display_colonies[data-mode=grid] .card.colocard .card_title {
+  position: absolute;
+  top: 2%;
+  height: 2em;
+  justify-content: flex-start;
+  left: 1%;
+  text-transform: uppercase;
+  display: none;
+}
+.display_colonies[data-mode=grid] .card.colocard .card_initial {
+  background: linear-gradient(to right, #c2e0f6, black);
+  position: absolute;
+  padding: unset;
+  height: 2em;
+  top: 20%;
+  left: 4%;
+  width: 80%;
+  display: flex;
+  display: none;
+}
+.display_colonies[data-mode=grid] .card.colocard .card_effect {
+  background: linear-gradient(to right, #c2e0f6, black);
+  position: absolute;
+  padding: unset;
+  height: 2em;
+  top: 40%;
+  left: 10%;
+  width: 80%;
+  display: none;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-colony-line {
+  position: absolute;
+  width: 70%;
+  top: 64%;
+  left: 15%;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-colony-line .coloslot {
+  outline: 1px solid white;
+  display: inline-block;
+  aspect-ratio: 1/1;
+  width: 14.2857142857%;
+  vertical-align: top;
+  overflow: hidden;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-colony-line .coloslot > * {
+  display: none;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-trade-line {
+  position: absolute;
+  width: 80%;
+  top: 80%;
+  left: 10%;
+  display: none;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-trade-line .tradeslot {
+  display: inline-block;
+  aspect-ratio: 1/1;
+  width: 14.2857142857%;
+  vertical-align: top;
+  overflow: hidden;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-trade-cube {
+  width: 7%;
+  aspect-ratio: 1/1;
+  border: 4px solid white;
+  position: absolute;
+  top: 82%;
+  left: 0%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="0"] .colony-trade-cube {
+  left: 16%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="1"] .colony-trade-cube {
+  left: 26%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="2"] .colony-trade-cube {
+  left: 36%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="3"] .colony-trade-cube {
+  left: 46%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="4"] .colony-trade-cube {
+  left: 56%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="5"] .colony-trade-cube {
+  left: 66%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="6"] .colony-trade-cube {
+  left: 76%;
+}
+.display_colonies[data-mode=grid] .card.colocard[data-state="7"] .colony-trade-cube {
+  left: 86%;
+}
+
+.display_colonies > * {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.colo_fleet {
+  width: calc(var(--card-height) * 1.4);
+  height: calc(var(--card-height) * 1.4 * 0.56);
+  aspect-ratio: 100/56;
+  background-position: 0% 100%;
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 100% auto;
+  border-radius: 30%/40%;
+  order: -1;
+  margin-left: 3%;
+}
+
+.display_colonies[data-mode=synthetic] .colo_fleet {
+  width: calc(var(--card-width) * 1.5);
+  height: 2em;
+  aspect-ratio: unset;
+  background-image: none;
+  border-radius: 5%;
+}
+.display_colonies[data-mode=synthetic] .colo_fleet > .card_stanproj_8 {
+  background-position: 25% 93.4%;
+  background-image: url(img/colonies/colonies.jpg);
+  background-size: 117% auto;
+}
+.display_colonies[data-mode=synthetic] .colo_fleet > .fleet.ship {
+  width: calc(var(--card-width) / 3 / 3);
+  --border-mcubesize: calc(var(--card-width) / 4 / 3);
+  --mcubesize: calc(var(--card-width) / 6 / 3);
+  position: absolute;
+  top: 0%;
+  left: 0%;
+}
+
+.card.colocard.card_colo_1 {
+  background-position: 1% 0%;
+}
+
+.card.colocard.card_colo_2 {
+  background-position: 1% 9.0909090909%;
+}
+
+.card.colocard.card_colo_3 {
+  background-position: 1% 18.1818181818%;
+}
+
+.card.colocard.card_colo_4 {
+  background-position: 1% 27.2727272727%;
+}
+
+.card.colocard.card_colo_5 {
+  background-position: 1% 36.1%;
+}
+
+.card.colocard.card_colo_6 {
+  background-position: 1% 45.4545454545%;
+}
+
+.card.colocard.card_colo_7 {
+  background-position: 1% 54.9%;
+}
+
+.card.colocard.card_colo_8 {
+  background-position: 1% 63.9%;
+}
+
+.card.colocard.card_colo_9 {
+  background-position: 1% 72.7272727273%;
+}
+
+.card.colocard.card_colo_10 {
+  background-position: 1% 81.8181818182%;
+}
+
+.card.colocard.card_colo_11 {
+  background-position: 1% 90.9090909091%;
+}
+
+.display_colonies {
+  display: none;
+}
+
+.exp-colonies {
+  /* standard project */
+}
+.exp-colonies .display_colonies {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  position: relative;
+  width: 100%;
+}
+.exp-colonies .button_display_colonies_layout {
+  position: absolute;
+  width: calc(var(--card-width) * 0.16);
+  height: calc(var(--card-width) * 0.16);
+  font-size: calc(var(--card-width) * 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: gray;
+}
+.exp-colonies .colo_fleet .card {
+  width: 100%;
+  height: var(--stan-height);
+  border-radius: 10em;
+  box-shadow: revert;
+  background-image: unset;
+  background-color: unset;
+  position: absolute;
+  display: block;
+}
+
 .card_main_6 .card_action_line.card_action_text {
   display: none;
 }
@@ -12428,25 +12562,4 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 
 .defhidden {
   display: none;
-}
-
-.exp-colonies {
-  /* standard project */
-}
-.exp-colonies .display_colonies {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  position: relative;
-  order: 4;
-}
-.exp-colonies .colo_fleet .card {
-  width: 100%;
-  height: var(--stan-height);
-  border-radius: 10em;
-  box-shadow: revert;
-  background-image: unset;
-  background-color: unset;
-  position: absolute;
-  display: block;
 }

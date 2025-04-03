@@ -4296,6 +4296,7 @@ var GameXBody = /** @class */ (function (_super) {
                 }, parent); // NOI18N
             }
             this.updateStacks();
+            this.setupColonies();
             var move = gamedatas.notifications.move_nbr;
             this.cachedScoringTable = gamedatas.scoringTable;
             this.cachedProgressTable = gamedatas.progressTable;
@@ -4324,6 +4325,27 @@ var GameXBody = /** @class */ (function (_super) {
             this.instantaneousMode = false;
         }
         this.checkTerraformingCompletion();
+    };
+    GameXBody.prototype.setupColonies = function () {
+        if (this.isColoniesExpansionEnabled()) {
+            var butla_1 = $("button_display_colonies_layout");
+            var coloniesDisplay_1 = $('display_colonies');
+            this.addTooltip(butla_1.id, _("Layout for Colonues - grid vs synthetic"), _("Click to change layout"));
+            butla_1.addEventListener("click", function () {
+                if (butla_1.dataset.mode == "grid") {
+                    butla_1.dataset.mode = "synthetic";
+                    coloniesDisplay_1.dataset.mode = "synthetic";
+                    butla_1.classList.remove("fa-tablet");
+                    butla_1.classList.add("fa-window-restore");
+                }
+                else {
+                    butla_1.dataset.mode = "grid";
+                    coloniesDisplay_1.dataset.mode = "grid";
+                    butla_1.classList.add("fa-tablet");
+                    butla_1.classList.remove("fa-window-restore");
+                }
+            });
+        }
     };
     GameXBody.prototype.setupMilestonesAndAwards = function (mapnum) {
         var list = ["milestone", "award"];
@@ -5404,7 +5426,7 @@ var GameXBody = /** @class */ (function (_super) {
             res += this.generateTooltipSection(_("Info"), text);
         }
         else if (type == this.CON.MA_CARD_TYPE_COLONY) {
-            debugger;
+            //debugger;
             //colony cards r - colony placement bonus, a- colony trade bonus, i - trade action
             var card_r = CustomRenders.parseExprToText(displayInfo.expr.r, this);
             var card_a = CustomRenders.parseExprToText(displayInfo.expr.a, this);
@@ -5498,7 +5520,8 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_title = displayInfo.name || "";
                 var card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
                 var card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_a, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
+                var card_i = CustomRenders.parseExprToHtml(displayInfo.i);
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
                 // const line = tokenNode.querySelector(".colony-colony-line");
                 // const line2 = tokenNode.querySelector(".colony-trade-line");
                 // for (let i = 0; i < 7; i++) {

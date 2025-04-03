@@ -21,6 +21,7 @@
 @import "GameTokens";
 @import "Cubes";
 @import "Card";
+@import "Colonies";
 @import "Card_specific";
 @import "Map";
 @import "MiniBoard";
@@ -1048,26 +1049,3 @@
   display: none;
 }
 
-.exp-colonies {
-  .display_colonies {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    position: relative;
-    order: 4;
-  }
-
-  /* standard project */
-  .colo_fleet .card {
-    width: 100%;
-    height: var(--stan-height);
-    //border: yellow solid 1px;
-    border-radius: 10em;
-    box-shadow: revert;
-    background-image: unset;
-    background-color: unset;
-    position: absolute;
-    display: block;
-  }
-
-}

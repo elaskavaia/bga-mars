@@ -119,7 +119,10 @@
           </div>
         </div>
       </div>
-      <div id="display_colonies" class="display_colonies"></div>
+      <div id="display_colonies" class="display_colonies" data-mode="grid">
+        <div id="button_display_colonies_layout" class="button_display_colonies_layout fa fa-tablet" data-mode="grid">
+        </div>
+      </div>
     </div>
 
     <div id="players_area">
