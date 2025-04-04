@@ -1727,8 +1727,8 @@ abstract class PGameXBody extends PGameMachine {
         $tagsarr = explode(' ', $tags);
         if ($ttype != MA_CARD_TYPE_EVENT && $tags) {
             $tagsMap = $this->getTagsMap($color);
-            unset($tagsMap['']);
-            unset($tagsMap['Wild']);
+            $tagsMap['']=-1;
+            $tagsMap['Wild']=-1;
             foreach ($tagsarr as $tag) {
                 $this->incTrackerValue($color, "tag$tag");
                 if (array_get($tagsMap, $tag, 0) == 0) {
