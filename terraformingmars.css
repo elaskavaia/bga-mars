@@ -4259,13 +4259,13 @@
   left: 0;
   top: 0;
 }
+.card.colocard > .card_decor > * {
+  display: none;
+}
 .card.colocard .card_bg {
   background-image: unset;
   background-color: transparent;
   border: 1px solid salmon;
-  display: none;
-}
-.card.colocard .card_initial {
   display: none;
 }
 .card.colocard .marker {
@@ -4291,10 +4291,10 @@
 
 .display_colonies[data-mode=synthetic] .card.colocard {
   width: calc(var(--card-width) * 1.5);
-  height: 2em;
+  height: calc(var(--card-width) * 0.2);
   aspect-ratio: unset;
   background-image: none;
-  border-radius: 5%;
+  border-radius: 2em;
   background: linear-gradient(to right, #c2e0f6, black);
 }
 .display_colonies[data-mode=synthetic] .card.colocard::before {
@@ -4306,26 +4306,29 @@
   top: 0%;
   z-index: 20;
 }
-.display_colonies[data-mode=synthetic] .card.colocard .card_title {
+.display_colonies[data-mode=synthetic] .card.colocard > .card_decor > * {
   position: absolute;
+  height: 100%;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .card_title {
   top: 10%;
   height: 100%;
-  width: 80%;
-  left: 5%;
+  width: 50%;
+  left: 10%;
+  display: inline-block;
+  font-size: calc(var(--card-width) * 0.1);
 }
 .display_colonies[data-mode=synthetic] .card.colocard .card_effect {
-  background: unset;
-  padding: unset;
-  height: unset;
-  width: 20%;
+  display: none;
+}
+.display_colonies[data-mode=synthetic] .card.colocard .colony-trade-value {
   position: absolute;
   top: 0%;
-  left: unset;
-  right: 0%;
-  display: block;
-}
-.display_colonies[data-mode=synthetic] .card.colocard .card_effect > span {
-  display: none;
+  left: 50%;
+  width: 20%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 .display_colonies[data-mode=synthetic] .card.colocard .colony-colony-line {
   display: none;
@@ -4334,13 +4337,7 @@
   display: none;
 }
 .display_colonies[data-mode=synthetic] .card.colocard .colony-trade-cube {
-  position: absolute;
-  top: 0%;
-  left: unset;
-  right: 20%;
-}
-.display_colonies[data-mode=synthetic] .card.colocard .colony-trade-cube::before {
-  content: attr(data-state);
+  display: none;
 }
 .display_colonies[data-mode=synthetic] .card.colocard .fleet.ship {
   width: calc(var(--card-width) / 3 / 3);
@@ -4353,6 +4350,10 @@
 .display_colonies[data-mode=synthetic] .card.colocard .marker {
   position: absolute;
   top: 0%;
+  margin-left: 55%;
+  height: 100%;
+  width: unset;
+  aspect-ratio: 1/1;
 }
 
 .display_colonies[data-mode=grid] .card.colocard .card_title {
@@ -4420,6 +4421,7 @@
   text-transform: uppercase;
 }
 .display_colonies[data-mode=grid] .card.colocard .colony-trade-cube {
+  display: inline-block;
   width: 7%;
   aspect-ratio: 1/1;
   border: 4px solid white;
@@ -4469,25 +4471,44 @@
   margin-left: 3%;
 }
 
+/* standard project */
+.colo_fleet .card_stanproj_8 {
+  width: 100%;
+  height: var(--stan-height);
+  border-radius: 10em;
+  box-shadow: revert;
+  background-image: unset;
+  background-color: unset;
+  position: absolute;
+  display: block;
+}
+
 .display_colonies[data-mode=synthetic] .colo_fleet {
   width: calc(var(--card-width) * 1.5);
-  height: 2em;
+  height: calc(var(--card-width) * 0.2);
   aspect-ratio: unset;
   background-image: none;
-  border-radius: 5%;
+  border-radius: 2em;
+  background: linear-gradient(to right, #c2e0f6, black);
 }
 .display_colonies[data-mode=synthetic] .colo_fleet > .card_stanproj_8 {
-  background-position: 25% 93.4%;
   background-image: url(img/colonies/colonies.jpg);
-  background-size: 117% auto;
+  background-position: 45% 93.3%;
+  background-size: 147% auto;
+  height: 80%;
+  top: 10%;
+  right: 10%;
+  width: 80%;
 }
 .display_colonies[data-mode=synthetic] .colo_fleet > .fleet.ship {
   width: calc(var(--card-width) / 3 / 3);
+  height: calc(var(--card-width) / 3 / 3);
   --border-mcubesize: calc(var(--card-width) / 4 / 3);
   --mcubesize: calc(var(--card-width) / 6 / 3);
   position: absolute;
   top: 0%;
   left: 0%;
+  margin: unset;
 }
 
 .card.colocard.card_colo_1 {
@@ -4538,15 +4559,13 @@
   display: none;
 }
 
-.exp-colonies {
-  /* standard project */
-}
 .exp-colonies .display_colonies {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   position: relative;
   width: 100%;
+  padding: 0.5em;
 }
 .exp-colonies .button_display_colonies_layout {
   position: absolute;
@@ -4558,16 +4577,6 @@
   align-items: center;
   cursor: pointer;
   color: gray;
-}
-.exp-colonies .colo_fleet .card {
-  width: 100%;
-  height: var(--stan-height);
-  border-radius: 10em;
-  box-shadow: revert;
-  background-image: unset;
-  background-color: unset;
-  position: absolute;
-  display: block;
 }
 
 .card_main_6 .card_action_line.card_action_text {

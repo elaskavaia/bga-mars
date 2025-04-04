@@ -60,17 +60,16 @@
         height: 100%;
         left: 0;
         top: 0;
+
+        &>* {
+            display: none;
+        }
     }
 
     .card_bg {
         background-image: unset;
         background-color: transparent;
         border: 1px solid salmon;
-        display: none;
-    }
-
-    // placement bonus
-    .card_initial {
         display: none;
     }
 
@@ -106,10 +105,10 @@
 
 .display_colonies[data-mode="synthetic"] .card.colocard {
     width: calc(var(--card-width)* 1.5);
-    height: 2em;
+    height: calc(var(--card-width)* 0.2);
     aspect-ratio: unset;
     background-image: none;
-    border-radius: 5%;
+    border-radius: 2em;
     background: linear-gradient(to right, #c2e0f6, black);
 
     &::before {
@@ -122,32 +121,39 @@
         z-index: 20;
     }
 
+    &>.card_decor>* {
+        position: absolute;
+        height: 100%;
+    }
+
 
     .card_title {
-        position: absolute;
+
         top: 10%;
         height: 100%;
-        width: 80%;
-        left: 5%;
+        width: 50%;
+        left: 10%;
+        display: inline-block;
+        font-size: calc(var(--card-width) * 0.1);
     }
 
 
     // trade income 
     .card_effect {
-        background: unset;
-        padding: unset;
-        height: unset;
-        width: 20%;
+        display: none;
+    }
+
+    .colony-trade-value {
         position: absolute;
         top: 0%;
-        left: unset;
-        right: 0%;
-        display: block;
+        left: 50%;
+        width: 20%;
 
-        &>span {
-            display: none;
-        }
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
     }
+
 
     .colony-colony-line {
         display: none;
@@ -157,15 +163,8 @@
         display: none;
     }
 
-
     .colony-trade-cube {
-        position: absolute;
-        top: 0%;
-        left: unset;
-        right: 20%;
-        &::before {
-            content: attr(data-state);
-        }
+        display: none;
     }
 
 
@@ -182,6 +181,10 @@
     .marker {
         position: absolute;
         top: 0%;
+        margin-left: 55%;
+        height: 100%;
+        width: unset;
+        aspect-ratio: 1/1;
     }
 
 
@@ -230,6 +233,8 @@
         display: none;
     }
 
+
+
     .colony-colony-line {
         position: absolute;
         width: 70%;
@@ -270,6 +275,7 @@
     }
 
     .colony-trade-cube {
+        display: inline-block;
         width: 7%;
         aspect-ratio: 1/1;
         //background-color: white;
@@ -307,26 +313,47 @@
     margin-left: 3%; // to not hide the button
 }
 
+/* standard project */
+.colo_fleet .card_stanproj_8 {
+    width: 100%;
+    height: var(--stan-height);
+    //border: yellow solid 1px;
+    border-radius: 10em;
+    box-shadow: revert;
+    background-image: unset;
+    background-color: unset;
+    position: absolute;
+    display: block;
+}
+
+
 .display_colonies[data-mode="synthetic"] .colo_fleet {
     width: calc(var(--card-width)* 1.5);
-    height: 2em;
+    height: calc(var(--card-width)* 0.2);
     aspect-ratio: unset;
     background-image: none;
-    border-radius: 5%;
+    border-radius: 2em;
+    background: linear-gradient(to right, #c2e0f6, black);
 
-    & > .card_stanproj_8 {
-        background-position: 25% 93.4%;
+    &>.card_stanproj_8 {
         background-image: url(img/colonies/colonies.jpg);
-        background-size: 117% auto;
+        background-position: 45% 93.3%;
+        background-size: 147% auto;
+        height: 80%;
+        top: 10%;
+        right: 10%;
+        width: 80%;
     }
 
-    & > .fleet.ship {
+    &>.fleet.ship {
         width: calc(var(--card-width) / 3 / 3);
+        height: calc(var(--card-width) / 3 / 3);
         --border-mcubesize: calc(var(--card-width) / 4 / 3);
         --mcubesize: calc(var(--card-width) / 6 / 3);
         position: absolute;
         top: 0%;
         left: 0%;
+        margin: unset;
     }
 }
 
@@ -397,6 +424,7 @@
         flex-wrap: wrap;
         position: relative;
         width: 100%;
+        padding: 0.5em;
     }
 
     .button_display_colonies_layout {
@@ -411,18 +439,6 @@
         color: gray;
     }
 
-    /* standard project */
-    .colo_fleet .card {
-        width: 100%;
-        height: var(--stan-height);
-        //border: yellow solid 1px;
-        border-radius: 10em;
-        box-shadow: revert;
-        background-image: unset;
-        background-color: unset;
-        position: absolute;
-        display: block;
-    }
 
 
 

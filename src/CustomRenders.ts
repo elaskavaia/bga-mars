@@ -11,7 +11,7 @@ class CustomRenders {
     city: { classes: "tracker micon tracker_city" },
     ocean: { classes: "token_img tracker_w" },
     discard: { classes: "token_img cardback", before: "-" },
-    draw: { classes: "token_img cardback", before: "+" },
+    draw: { classes: "token_img cardback"},
     tile: { classes: "tracker micon tile_%card_number%" },
     tagScience: { classes: "tracker badge tracker_tagScience" },
     tagEnergy: { classes: "tracker badge tracker_tagEnergy" },

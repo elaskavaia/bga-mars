@@ -246,19 +246,35 @@ class GameXBody extends GameTokens {
   setupColonies() {
     if (this.isColoniesExpansionEnabled()) {
       const butla = $("button_display_colonies_layout");
-      const coloniesDisplay = $('display_colonies');
+      const coloniesDisplay = $("display_colonies");
       this.addTooltip(butla.id, _("Layout for Colonues - grid vs synthetic"), _("Click to change layout"));
-      butla.addEventListener("click", () => {
-        if (butla.dataset.mode == "grid") {
+
+      const localSetting = new LocalSettings(this.getLocalSettingNamespace("card_colo_layout"));
+      let current = localSetting.readProp("layout", "grid");
+
+      const applyMode = function (mode: string) {
+        if (mode == "synthetic") {
           butla.dataset.mode = "synthetic";
           coloniesDisplay.dataset.mode = "synthetic";
           butla.classList.remove("fa-tablet");
           butla.classList.add("fa-window-restore");
+          localSetting.writeProp("layout", mode);
         } else {
           butla.dataset.mode = "grid";
           coloniesDisplay.dataset.mode = "grid";
           butla.classList.add("fa-tablet");
           butla.classList.remove("fa-window-restore");
+          localSetting.writeProp("layout", "grid");
+        }
+      };
+
+      applyMode(current);
+
+      butla.addEventListener("click", () => {
+        if (butla.dataset.mode == "grid") {
+          applyMode("synthetic");
+        } else {
+          applyMode("grid");
         }
       });
     }
@@ -1717,6 +1733,7 @@ awarded.`);
                   <div class="card_effect">${card_i}<span>Trade Income</span></div>  
                   <div class="colony-colony-line"></div>  
                   <div class="colony-trade-line"></div>  
+                  <div class="colony-trade-value"></div>  
                   <div class="colony-trade-cube"></div>  
             `;
         // const line = tokenNode.querySelector(".colony-colony-line");
@@ -2077,6 +2094,26 @@ awarded.`);
         node.setAttribute("data-sign", "+");
       } else {
         node.removeAttribute("data-sign");
+      }
+    }
+
+    if (node.id.startsWith("card_colo")) {
+      const cube = $(node).querySelector(".colony-trade-cube") as HTMLElement;
+      if (cube) {
+        cube.dataset.state = newState;
+      }
+      const valueNode = $(node).querySelector(".colony-trade-value") as HTMLElement;
+      if (valueNode) {
+        const i = newState;
+        const displayInfo = this.getTokenDisplayInfo(node.id);
+        const trnum = displayInfo.slots[i];
+        let text = "";
+        if (displayInfo.i) {
+          text = `<span>${trnum}</span><span>${CustomRenders.parseExprToHtml(displayInfo.i)}</span>`;
+        } else {
+          text = CustomRenders.parseExprToHtml(trnum);
+        }
+        valueNode.innerHTML = text;
       }
     }
 

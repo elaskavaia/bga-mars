@@ -3371,7 +3371,7 @@ var CustomRenders = /** @class */ (function () {
         city: { classes: "tracker micon tracker_city" },
         ocean: { classes: "token_img tracker_w" },
         discard: { classes: "token_img cardback", before: "-" },
-        draw: { classes: "token_img cardback", before: "+" },
+        draw: { classes: "token_img cardback" },
         tile: { classes: "tracker micon tile_%card_number%" },
         tagScience: { classes: "tracker badge tracker_tagScience" },
         tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
@@ -4329,20 +4329,33 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.setupColonies = function () {
         if (this.isColoniesExpansionEnabled()) {
             var butla_1 = $("button_display_colonies_layout");
-            var coloniesDisplay_1 = $('display_colonies');
+            var coloniesDisplay_1 = $("display_colonies");
             this.addTooltip(butla_1.id, _("Layout for Colonues - grid vs synthetic"), _("Click to change layout"));
-            butla_1.addEventListener("click", function () {
-                if (butla_1.dataset.mode == "grid") {
+            var localSetting_1 = new LocalSettings(this.getLocalSettingNamespace("card_colo_layout"));
+            var current = localSetting_1.readProp("layout", "grid");
+            var applyMode_1 = function (mode) {
+                if (mode == "synthetic") {
                     butla_1.dataset.mode = "synthetic";
                     coloniesDisplay_1.dataset.mode = "synthetic";
                     butla_1.classList.remove("fa-tablet");
                     butla_1.classList.add("fa-window-restore");
+                    localSetting_1.writeProp("layout", mode);
                 }
                 else {
                     butla_1.dataset.mode = "grid";
                     coloniesDisplay_1.dataset.mode = "grid";
                     butla_1.classList.add("fa-tablet");
                     butla_1.classList.remove("fa-window-restore");
+                    localSetting_1.writeProp("layout", "grid");
+                }
+            };
+            applyMode_1(current);
+            butla_1.addEventListener("click", function () {
+                if (butla_1.dataset.mode == "grid") {
+                    applyMode_1("synthetic");
+                }
+                else {
+                    applyMode_1("grid");
                 }
             });
         }
@@ -5521,7 +5534,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
                 var card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
                 var card_i = CustomRenders.parseExprToHtml(displayInfo.i);
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-value\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
                 // const line = tokenNode.querySelector(".colony-colony-line");
                 // const line2 = tokenNode.querySelector(".colony-trade-line");
                 // for (let i = 0; i < 7; i++) {
@@ -5842,6 +5855,26 @@ var GameXBody = /** @class */ (function (_super) {
             }
             else {
                 node.removeAttribute("data-sign");
+            }
+        }
+        if (node.id.startsWith("card_colo")) {
+            var cube = $(node).querySelector(".colony-trade-cube");
+            if (cube) {
+                cube.dataset.state = newState;
+            }
+            var valueNode = $(node).querySelector(".colony-trade-value");
+            if (valueNode) {
+                var i = newState;
+                var displayInfo = this.getTokenDisplayInfo(node.id);
+                var trnum = displayInfo.slots[i];
+                var text = "";
+                if (displayInfo.i) {
+                    text = "<span>".concat(trnum, "</span><span>").concat(CustomRenders.parseExprToHtml(displayInfo.i), "</span>");
+                }
+                else {
+                    text = CustomRenders.parseExprToHtml(trnum);
+                }
+                valueNode.innerHTML = text;
             }
         }
         //intercept player passed state
