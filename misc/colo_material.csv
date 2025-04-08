@@ -44,7 +44,7 @@ C33|Refugee Camps|2||npm:res||10||Earth|resCard|Colonies|1 VP for each camp reso
 C34|Research Colony|1|colony(double),2draw|||20||Science Space|0|Colonies|Place a colony. MAY BE PLACED WHERE YOU ALREADY HAVE A COLONY. Draw 2 cards.||||
 C35|Rim Freighters|2|||onPay_trade:1q|4||Space|0|Colonies|||When you trade, you pay 1 less resource for it.||
 C36|Sky Docks|2|tradefleet||onPay_card:m|18|tagEarth>=2|Space Earth|2|Colonies|Requires 2 Earth tags. Gain 1 Trade Fleet.||When you play a card, you pay 1 M€ less for it.||
-C37|Solar Probe|3|counter(tagScience):draw|||9||Science Space Event|1|Colonies|Draw 1 card for every 3 science tags you have, including this.||||
+C37|Solar Probe|3|counter(tagScience/3):draw|||9||Science Space Event|1|Colonies|Draw 1 card for every 3 science tags you have, including this.||||
 C38|Solar Reflectors|1|5ph|||23||Space|0|Colonies|Increase your heat production 5 steps.||||
 C39|Space Port|1|1npe,city,tradefleet,4pm|||22|colony>=1|Building City|0|Colonies|Requires 1 colony. Gain 1 Trade Fleet. Place a city tile. Decrease your energy production 1 step, and increase your M€ production 4 steps.||||
 C40|Space Port Colony|1|colony(double),tradefleet|||27|colony>=1|Space|all_colony/2|Colonies|Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1 VP per 2 colonies in play.||||
