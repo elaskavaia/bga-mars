@@ -1448,6 +1448,7 @@ class GameXBody extends GameTokens {
       txt += this.generateTooltipSection(_("Coordinates"), `${displayInfo.x},${displayInfo.y}`);
       if (displayInfo.ocean == 1) txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
       else if (displayInfo.reserved == 1) txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
+      else if (displayInfo.vol == 1) txt += this.generateTooltipSection(_("Volcanic Area"), _(displayInfo.name));
 
       if (displayInfo.expr?.r) {
         txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
@@ -3335,51 +3336,53 @@ awarded.`);
   }
 
   //custom actions
-  combineTooltips(parentNode: HTMLElement, childNode: HTMLElement) {
+  combineTooltips(parentNode: HTMLElement, ...childNodes: HTMLElement[]) {
     // combine parent and child tooltips and stuck to parnet, remove child one
     if (!parentNode) return;
-    if (!childNode) return;
     if (!parentNode.id) return;
-    if (!childNode.id) return;
     if (!parentNode.classList.contains("withtooltip")) return;
-    if (!childNode.classList.contains("withtooltip")) return;
+
     const parentId = parentNode.id;
     const parenttt = this.tooltips[parentId];
     if (parenttt) {
       const parentToken = parentNode.dataset.tt_token ?? parentId;
-      const childToken = childNode.dataset.tt_token ?? childNode.id;
-      const newhtml = this.getTooltipHtmlForToken(parentToken) + this.getTooltipHtmlForToken(childToken);
+      let newhtml = this.getTooltipHtmlForToken(parentToken);
+      for (let childNode of childNodes) {
+        if (!childNode) return;
+        if (!childNode.id) return;
+        if (!childNode.classList.contains("withtooltip")) return;
+        const childToken = childNode.dataset.tt_token ?? childNode.id;
+        newhtml += this.getTooltipHtmlForToken(childToken);
+        this.removeTooltip(childNode.id);
+      }
       this.addTooltipHtml(parentId, newhtml, parenttt.showDelay);
-      this.removeTooltip(childNode.id);
     }
   }
 
   // stack or combined tooltips
   handleStackedTooltips(attachNode: HTMLElement) {
+    const parentId = attachNode.parentElement.id;
     if (attachNode.childElementCount > 0) {
       if (attachNode.id.startsWith("hex")) {
         this.removeTooltip(attachNode.id);
         return;
       }
-
-      const marker = attachNode.querySelector(".marker") as HTMLElement;
-      if (marker) {
-        this.combineTooltips(attachNode, marker);
-        return;
-      }
     }
+
+    const markers = attachNode.querySelectorAll(".marker");
+    const elems: HTMLElement[] = Array.from(markers) as any;
+    if (parentId?.startsWith("hex")) {
+      // remove tooltip from parent, it will likely just collide
+      this.removeTooltip(parentId);
+      elems.push(attachNode.parentElement);
+    }
+    if (elems.length>0) this.combineTooltips(attachNode, ...elems);
+
     // sometimes parent are added first and sometimes child, have to handle both independency here...
 
-    const parentId = attachNode.parentElement.id;
-    if (parentId) {
-      if (parentId.startsWith("hex")) {
-        // remove tooltip from parent, it will likely just collide
-        this.removeTooltip(parentId);
-      }
-      if (attachNode.id.startsWith("marker_")) {
-        this.combineTooltips(attachNode.parentElement, attachNode);
-        return;
-      }
+    if (attachNode.id.startsWith("marker_")) {
+      this.handleStackedTooltips(attachNode.parentElement);
+      return;
     }
   }
 
@@ -3455,11 +3458,7 @@ awarded.`);
   }
 
   //get settings
-  getSetting(key: string): string {
-    //doesn't work.
-    // return this.localSettings.readProp(key);
-    return $("ebd-body").dataset["localsetting_" + key];
-  }
+  getSetting(key: string): string {}
 
   //Prevent moving parts when animations are set to none
   phantomMove(

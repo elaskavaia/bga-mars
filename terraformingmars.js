@@ -4134,6 +4134,15 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var LAYOUT_PREF_ID = 100;
 var LIVESCORING_PREF_ID = 105;
 var MA_PREF_CONFIRM_TURN = 101;
@@ -5319,6 +5328,8 @@ var GameXBody = /** @class */ (function (_super) {
                 txt += this.generateTooltipSection(_("Reserved For"), _("Ocean"));
             else if (displayInfo.reserved == 1)
                 txt += this.generateTooltipSection(_("Reserved For"), _(displayInfo.name));
+            else if (displayInfo.vol == 1)
+                txt += this.generateTooltipSection(_("Volcanic Area"), _(displayInfo.name));
             if ((_a = displayInfo.expr) === null || _a === void 0 ? void 0 : _a.r) {
                 txt += this.generateTooltipSection(_("Bonus"), CustomRenders.parseExprToHtml(displayInfo.expr.r));
             }
@@ -7049,55 +7060,61 @@ var GameXBody = /** @class */ (function (_super) {
         this.onToken_playerTurnChoice(tid);
     };
     //custom actions
-    GameXBody.prototype.combineTooltips = function (parentNode, childNode) {
+    GameXBody.prototype.combineTooltips = function (parentNode) {
         var _a, _b;
+        var childNodes = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            childNodes[_i - 1] = arguments[_i];
+        }
         // combine parent and child tooltips and stuck to parnet, remove child one
         if (!parentNode)
             return;
-        if (!childNode)
-            return;
         if (!parentNode.id)
             return;
-        if (!childNode.id)
-            return;
         if (!parentNode.classList.contains("withtooltip"))
-            return;
-        if (!childNode.classList.contains("withtooltip"))
             return;
         var parentId = parentNode.id;
         var parenttt = this.tooltips[parentId];
         if (parenttt) {
             var parentToken = (_a = parentNode.dataset.tt_token) !== null && _a !== void 0 ? _a : parentId;
-            var childToken = (_b = childNode.dataset.tt_token) !== null && _b !== void 0 ? _b : childNode.id;
-            var newhtml = this.getTooltipHtmlForToken(parentToken) + this.getTooltipHtmlForToken(childToken);
+            var newhtml = this.getTooltipHtmlForToken(parentToken);
+            for (var _c = 0, childNodes_1 = childNodes; _c < childNodes_1.length; _c++) {
+                var childNode = childNodes_1[_c];
+                if (!childNode)
+                    return;
+                if (!childNode.id)
+                    return;
+                if (!childNode.classList.contains("withtooltip"))
+                    return;
+                var childToken = (_b = childNode.dataset.tt_token) !== null && _b !== void 0 ? _b : childNode.id;
+                newhtml += this.getTooltipHtmlForToken(childToken);
+                this.removeTooltip(childNode.id);
+            }
             this.addTooltipHtml(parentId, newhtml, parenttt.showDelay);
-            this.removeTooltip(childNode.id);
         }
     };
     // stack or combined tooltips
     GameXBody.prototype.handleStackedTooltips = function (attachNode) {
+        var parentId = attachNode.parentElement.id;
         if (attachNode.childElementCount > 0) {
             if (attachNode.id.startsWith("hex")) {
                 this.removeTooltip(attachNode.id);
                 return;
             }
-            var marker = attachNode.querySelector(".marker");
-            if (marker) {
-                this.combineTooltips(attachNode, marker);
-                return;
-            }
         }
+        var markers = attachNode.querySelectorAll(".marker");
+        var elems = Array.from(markers);
+        if (parentId === null || parentId === void 0 ? void 0 : parentId.startsWith("hex")) {
+            // remove tooltip from parent, it will likely just collide
+            this.removeTooltip(parentId);
+            elems.push(attachNode.parentElement);
+        }
+        if (elems.length > 0)
+            this.combineTooltips.apply(this, __spreadArray([attachNode], elems, false));
         // sometimes parent are added first and sometimes child, have to handle both independency here...
-        var parentId = attachNode.parentElement.id;
-        if (parentId) {
-            if (parentId.startsWith("hex")) {
-                // remove tooltip from parent, it will likely just collide
-                this.removeTooltip(parentId);
-            }
-            if (attachNode.id.startsWith("marker_")) {
-                this.combineTooltips(attachNode.parentElement, attachNode);
-                return;
-            }
+        if (attachNode.id.startsWith("marker_")) {
+            this.handleStackedTooltips(attachNode.parentElement);
+            return;
         }
     };
     // notifications
@@ -7163,11 +7180,7 @@ var GameXBody = /** @class */ (function (_super) {
         return div;
     };
     //get settings
-    GameXBody.prototype.getSetting = function (key) {
-        //doesn't work.
-        // return this.localSettings.readProp(key);
-        return $("ebd-body").dataset["localsetting_" + key];
-    };
+    GameXBody.prototype.getSetting = function (key) { };
     //Prevent moving parts when animations are set to none
     GameXBody.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
         if (!this.customAnimation.areAnimationsPlayed()) {
