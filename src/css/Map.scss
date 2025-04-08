@@ -414,6 +414,10 @@
 .map .tile {
   position: absolute;
 }
+.map .tile:hover {
+  opacity: 0.3;
+}
+
 
 .tile {
   width: calc(var(--map-width) * 0.1085);

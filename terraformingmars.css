@@ -4252,6 +4252,9 @@
 .card.colocard::before {
   display: none;
 }
+.card.colocard > * {
+  pointer-events: unset;
+}
 .card.colocard > .card_decor {
   position: absolute;
   width: 100%;
@@ -4272,6 +4275,9 @@
   position: absolute;
   top: 64%;
   left: 15%;
+  width: 9%;
+  height: unset;
+  aspect-ratio: 1/1;
 }
 .card.colocard .marker[data-state="1"] {
   left: 25%;
@@ -4422,12 +4428,18 @@
 }
 .display_colonies[data-mode=grid] .card.colocard .colony-trade-cube {
   display: inline-block;
-  width: 7%;
-  aspect-ratio: 1/1;
-  border: 4px solid white;
   position: absolute;
-  top: 82%;
+  width: 9%;
+  height: unset;
+  aspect-ratio: 1/1;
+  top: 64%;
   left: 0%;
+  background-image: url("img/cubes_opaque.png");
+  background-size: 600% 100%;
+  background-position: 100% 0%;
+}
+.display_colonies[data-mode=grid] .card.colocard .colony-trade-cube:hover {
+  opacity: 0.2;
 }
 .display_colonies[data-mode=grid] .card.colocard[data-state="0"] .colony-trade-cube {
   left: 16%;
@@ -6168,6 +6180,10 @@
   position: absolute;
 }
 
+.map .tile:hover {
+  opacity: 0.3;
+}
+
 .tile {
   width: calc(var(--map-width) * 0.1085);
   height: calc(var(--map-width) * 0.12);
@@ -7799,11 +7815,11 @@
 }
 
 .corp_logo[data-corp=card_corp_26] {
-  background-position: -300% 0%;
+  background-position: -200% 0%;
 }
 
 .corp_logo[data-corp=card_corp_27] {
-  background-position: -200% 0%;
+  background-position: -300% 0%;
 }
 
 .corp_logo[data-corp=card_corp_28] {

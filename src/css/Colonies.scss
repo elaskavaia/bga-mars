@@ -54,6 +54,11 @@
         display: none;
     }
 
+    & > * {
+        pointer-events: unset;
+    }
+    
+
     &>.card_decor {
         position: absolute;
         width: 100%;
@@ -77,6 +82,9 @@
         position: absolute;
         top: 64%;
         left: 15%;
+        width: 9%;
+        height: unset;
+        aspect-ratio: 1/1;
     }
 
 
@@ -191,6 +199,7 @@
 
 }
 
+
 .display_colonies[data-mode="grid"] .card.colocard {
 
     // &>.card_decor {
@@ -276,13 +285,22 @@
 
     .colony-trade-cube {
         display: inline-block;
-        width: 7%;
+        position: absolute;
+        width: 9%;
+        height: unset;
         aspect-ratio: 1/1;
         //background-color: white;
-        border: 4px solid white;
-        position: absolute;
-        top: 82%;
+        //border: 4px solid white;
+        //top: 82%;
+        top: 64%;
         left: 0%;
+
+        background-image: url("img/cubes_opaque.png");
+        background-size: 600% 100%;
+        background-position: 100% 0%;
+    }
+    .colony-trade-cube:hover {
+        opacity: 0.2;
     }
 
     @for $num from 0 through 7 {
