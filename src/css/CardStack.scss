@@ -3,7 +3,7 @@
   --outlinecolor: lightgray;
   --hlcolor: gray;
 
- /* transition: all 400ms ease-in;*/
+  /* transition: all 400ms ease-in;*/
   position: relative;
   user-select: none;
   flex: 0 0 auto;
@@ -16,13 +16,14 @@
   }
 
   .stack_content_txt::after {
-    content: ": "var(--subcount);
+    content: ": " var(--subcount);
   }
 
   .stack_sum.cards::after {
     content: var(--subcount);
     position: relative;
   }
+
   .stack_sum.cards {
     width: calc(var(--card-width)*0.15);
     height: calc(var(--card-width)*0.2);
@@ -60,12 +61,12 @@
 }
 
 .mcompact {
-  .tableautoprow{
+  .tableautoprow {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
   }
-  
+
   .cardstack {
     outline: 1px dashed var(--outlinecolor);
     border-radius: calc(var(--card-width) * 0.05);
@@ -129,7 +130,7 @@
       color: gray;
     }
 
-    .stack_dd_buttons{
+    .stack_dd_buttons {
       .stack_btn {
         width: 98%;
       }
@@ -138,8 +139,9 @@
     .switchview {
       margin-right: calc(var(--card-width) * 0.02);
     }
+
     .switchview:hover {
-      color:  var(--outlinecolor);
+      color: var(--outlinecolor);
       background-color: black;
     }
 
@@ -157,25 +159,29 @@
   }
 
   //small stack evrsion in header
-  .tableautoprow .cardstack{
-    .stack_header .stack_header_middle{
+  .tableautoprow .cardstack {
+    .stack_header .stack_header_middle {
       display: none;
     }
+
     width: calc(var(--card-width) * 0.4);
 
-    .stack_dd_buttons.open{
+    .stack_dd_buttons.open {
       right: revert;
     }
   }
 }
+
 .cardstack.blue {
   --outlinecolor: var(--card-outline-blue);
   --hlcolor: var(--card-background-blue);
 }
+
 .cardstack.red {
-  --outlinecolor:var(--card-outline-event);
+  --outlinecolor: var(--card-outline-event);
   --hlcolor: var(--card-background-event);
 }
+
 .cardstack.green {
   --outlinecolor: var(--card-outline-green);
   --hlcolor: var(--card-background-green);
@@ -184,8 +190,8 @@
 
 .stack_content {
   --overlap: 0;
-  --cards-in-stack: round(down,(1.5 / (1 - var(--overlap))) + 1, 1);
-  --columns: round(up, calc(var(--subcount-n) / var(--cards-in-stack)),1);
+  --cards-in-stack: round(down, (1.5 / (1 - var(--overlap))) + 1, 1);
+  --columns: round(up, calc(var(--subcount-n) / var(--cards-in-stack)), 1);
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -206,34 +212,37 @@
   .prelude.card {
     margin-top: calc(var(--card-width) * var(--overlap) * -1 * 0.9);
   }
+
   .corp.card {
     margin-top: calc(var(--card-height) * (-1 * var(--overlap)));
     margin-bottom: calc(var(--card-width) - (1 - var(--overlap)) * var(--card-width));
   }
-  
+
 }
 
 // hidden
 
-.mcompact .cardstack[data-currentview="0"]  .stack_content{
+.mcompact .cardstack[data-currentview="0"] .stack_content {
   min-width: calc(var(--card-width) * 1.03);
 }
 
 .cardstack[data-currentview="0"] {
   height: calc(var(--card-width) * 0.2);
-  
-  .stack_content  .card {
-      display: none;
+
+  .stack_content .card {
+    display: none;
   }
+
   .stack_content_txt {
     display: none;
   }
 }
 
 // synthetic
-.cardstack[data-currentview="1"] .stack_content{
- // --columns: 1; // XXX cannot calculate properly
+.cardstack[data-currentview="1"] .stack_content {
+  // --columns: 1; // XXX cannot calculate properly
   min-width: calc(var(--card-width) * 1.03 * var(--columns-synth));
+
   .active_slot.card {
     box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5019607843), 0px 0px 0px 3px #ff9800 !important;
     transform: none;
@@ -280,36 +289,42 @@
 }
 
 
-.cardstack[data-currentview="2"].red,.cardstack[data-currentview="3"].red {
-    .stack_content_txt {
-      display: block;
-      width: calc(var(--card-width) * 1);
-    }
+.cardstack[data-currentview="2"].red,
+.cardstack[data-currentview="3"].red {
+  .stack_content_txt {
+    display: block;
+    width: calc(var(--card-width) * 1);
+  }
 }
 
 .mcompact {
   .player_controls {
     display: none;
   }
-  .cardstack[data-currentview="1"] .stack_content{
+
+  .cardstack[data-currentview="1"] .stack_content {
 
     .card[data-card-type="2"] {
       background-color: var(--card-background-blue);
       outline: 1px solid var(--card-outline-blue);
     }
+
     .card[data-card-type="1"] {
       background-color: var(--card-background-green);
       outline: 1px solid var(--card-outline-green);
     }
+
     .card[data-card-type="3"] {
       background-color: var(--card-background-event);
       outline: 1px solid var(--card-outline-event);
     }
+
     .card[data-card-type="5"] {
       background-color: var(--card-background-prelude);
       outline: 1px solid var(--card-outline-prelude);
       width: var(--card-width);
     }
+
     .card[data-card-type="4"] {
       background-color: var(--card-background-corp);
       outline: 1px solid var(--card-outline-corp);
@@ -328,10 +343,11 @@
         background-size: 100% 100%;
       }
     }
+
     .card {
-     // height: calc(var(--card-height)*0.4);
-    //  overflow: hidden;
-      height:fit-content;
+      // height: calc(var(--card-height)*0.4);
+      //  overflow: hidden;
+      height: fit-content;
       margin-bottom: calc(var(--card-height)*0.03);
       padding-bottom: calc(var(--card-height) * 0.03);
       border-radius: 0.25em;
@@ -345,56 +361,79 @@
 
       .card_outer_action {
         position: relative;
-        top:0;
-      }
-      .card_action_bottomdecor,.card_action_text{
-        display: none;
-      }
-
-      .card_resource_holder  {
-        position: relative;
-        margin-top: calc(var(--card-height) * 0.02);
-        top:0;
-      }
-      .card_badges,.card_cost,.card_bg,.card_illustration,.card_effect,.card_prereq,.card_number,.card_number_binary, .card_initial {
-        display: none;
-      }
-
-      .card_title{
-        position: relative;
         top: 0;
-        left: 0.5em;
-        display: block;
+        visibility: visible;
       }
 
-      .card_vp {
-        top: 0;
-        right: 0;
-        bottom:revert;
+      .card_action_icono {
+        display: flex;
       }
-      .card_vp.vp_custom {
-        position: relative;
-        margin-top: calc(var(--card-height) * 0.02);
-        left: 37%;
-      }
+    }
 
+    .card_action_bottomdecor,
+    .card_action_text {
+      display: none;
     }
-    .card[data-show_calc_vp="1"][data-vp]::after {
-      right: 1%;
-      bottom: 2%;
+
+    .card_resource_holder {
+      position: relative;
+      margin-top: calc(var(--card-height) * 0.02);
+      top: 0;
     }
+
+    .card_badges,
+    .card_cost,
+    .card_bg,
+    .card_illustration,
+    .card_effect,
+    .card_prereq,
+    .card_number,
+    .card_number_binary,
+    .card_initial {
+      display: none;
+    }
+
+    .card_title {
+      position: relative;
+      top: 0;
+      left: 0.5em;
+      display: block;
+    }
+
+    .card_vp {
+      top: 0;
+      right: 0;
+      bottom: revert;
+
+      visibility: visible;
+    }
+
+    .card_vp.vp_custom {
+      position: relative;
+      margin-top: calc(var(--card-height) * 0.02);
+      left: 37%;
+    }
+
   }
-  .stack_dd_buttons_close {
-    font-size: 1vh;
+
+  .card[data-show_calc_vp="1"][data-vp]::after {
+    right: 1%;
+    bottom: 2%;
   }
 }
 
-.stack_dd_buttons{
+.stack_dd_buttons_close {
+  font-size: 1vh;
+}
+
+
+.stack_dd_buttons {
   display: none;
   opacity: 0;
   transition: all 300ms ease-in;
 }
-.stack_dd_buttons.open{
+
+.stack_dd_buttons.open {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -407,25 +446,27 @@
   background: white;
   height: fit-content;
 
- .stack_btn {
-   width: calc(var(--card-width)*1.06);
-   left: 1%;
-   border-radius: 3%;
-   margin-bottom: 2%;
-   position: relative;
+  .stack_btn {
+    width: calc(var(--card-width)*1.06);
+    left: 1%;
+    border-radius: 3%;
+    margin-bottom: 2%;
+    position: relative;
 
-   .stack_ddl_icon {
-     display: inline-block;
-     width:10%;
-   }
-   .stack_ddl_label {
-     display: inline-block;
-     width: 80%;
-     text-align: center;
-   }
- }
+    .stack_ddl_icon {
+      display: inline-block;
+      width: 10%;
+    }
+
+    .stack_ddl_label {
+      display: inline-block;
+      width: 80%;
+      text-align: center;
+    }
+  }
+
   .stack_btn:hover {
-    color:  var(--outlinecolor);
+    color: var(--outlinecolor);
     background-color: black;
   }
 }

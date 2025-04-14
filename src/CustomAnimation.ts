@@ -450,7 +450,9 @@ class CustomAnimation {
 
     let cssClass = "anim_" + animation.name;
     let resolvedOK = false;
-    //console.log(`*** anim ${animationname} started for ${targetId} of ${animation.duration} ms`);
+    const adjDuration = this.getWaitDuration(animation.duration);
+    // console.log(`*** anim ${animationname} started for ${targetId} of ${animation.duration} ms (${adjDuration} ms)`);
+    if (adjDuration <= 0) return;
 
     const cleanUp = function (e: Event, kind: string = "callback") {
       if (resolvedOK) return;
@@ -459,7 +461,7 @@ class CustomAnimation {
         $(targetId).removeEventListener("animationend", cleanUp);
         $(targetId).classList.remove(cssClass);
       }
-      // console.log(`*** anim ${animationname} for ${targetId} onEnd`);
+      //console.log(`*** anim ${animationname} for ${targetId} onEnd`);
       safeCall(onEnd);
       //console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
     };
@@ -473,9 +475,9 @@ class CustomAnimation {
 
     //timeout security
 
-    setTimeout(() => cleanUp(undefined, "timeout"), this.getWaitDuration(animation.duration) * 1.5);
+    setTimeout(() => cleanUp(undefined, "timeout"), adjDuration * 1.5);
 
-    return this.waitAdjusted(animation.duration);
+    return this.wait(adjDuration);
   }
 }
 

@@ -298,9 +298,12 @@
         background-image: url("img/cubes_opaque.png");
         background-size: 600% 100%;
         background-position: 100% 0%;
+
+
     }
     .colony-trade-cube:hover {
-        opacity: 0.2;
+        opacity: 0.3;
+        transition: 3s opacity;
     }
 
     @for $num from 0 through 7 {

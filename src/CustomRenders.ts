@@ -11,7 +11,7 @@ class CustomRenders {
     city: { classes: "tracker micon tracker_city" },
     ocean: { classes: "token_img tracker_w" },
     discard: { classes: "token_img cardback", before: "-" },
-    draw: { classes: "token_img cardback"},
+    draw: { classes: "token_img cardback" },
     tile: { classes: "tracker micon tile_%card_number%" },
     tagScience: { classes: "tracker badge tracker_tagScience" },
     tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
@@ -31,6 +31,7 @@ class CustomRenders {
     twopoints: { classes: "txtcontent", content: ":" },
     play_stan: { classes: "txtcontent", content: "Standard projects" },
     star: { classes: "txtcontent", content: "*" },
+    colony: { classes: "colony" },
 
     res_Science: { classes: "token_img tracker_resScience" },
     res_Animal: { classes: "token_img tracker_resAnimal" },
@@ -82,6 +83,7 @@ class CustomRenders {
     w: { classes: "token_img tracker_w" },
     o: { classes: "token_img oxygen_icon" },
     q: { classes: "token_img tracker_q" },
+
     ":": { classes: "action_arrow" }
   };
 
@@ -287,11 +289,16 @@ class CustomRenders {
     } else if (op == "/") {
       for (let i = 3; i < expr.length; i++) {
         //    items.push(this.parseExprItem(expr[i],true));
+        let lastOr = null;
         for (let ret of this.parseExprItem(expr[i], depth + 1)) {
           if (ret != null) {
-            ret.divider = "OR";
+ 
             items.push(ret);
+            lastOr = ret;
           }
+        }
+        if (lastOr) {
+          lastOr.divider = "OR";
         }
       }
     } else if (op == ":") {
@@ -600,13 +607,18 @@ class CustomRenders {
         if (what.startsWith("res")) {
           ret = _("Requires that you have $v $res resources.").replace("$res", game.getTokenName(what));
         } else {
-          let name = game.getTokenName("tracker_" + what);
-          if (!name) name = game.getTokenName(what);
+          let tr = "tracker_" + what;
+          let name = game.getTokenName(tr);
+          if (!name || name === tr) name = game.getTokenName(what);
 
-          if (qty <= 1) {
-            ret = _("Requires that you have $res.").replace("$res", name);
+          if (mode == "min") {
+            if (qty <= 1) {
+              ret = _("Requires that you have $res.").replace("$res", name);
+            } else {
+              ret = _("Requires that you have $res times $v.").replace("$res", name);
+            }
           } else {
-            ret = _("Requires that you have $res times $v.").replace("$res", name);
+            ret = _("Requires that you have at most $v $res.").replace("$res", name);
           }
         }
         break;

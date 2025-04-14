@@ -2419,7 +2419,7 @@ var CustomAnimation = /** @class */ (function () {
     CustomAnimation.prototype.playCssAnimation = function (targetId, animationname, onStart, onEnd, minLevel) {
         if (minLevel === void 0) { minLevel = 2; }
         return __awaiter(this, void 0, void 0, function () {
-            var animation, cssClass, resolvedOK, cleanUp;
+            var animation, cssClass, resolvedOK, adjDuration, cleanUp;
             return __generator(this, function (_a) {
                 if (!$(targetId))
                     return [2 /*return*/];
@@ -2430,6 +2430,10 @@ var CustomAnimation = /** @class */ (function () {
                 animation = this.animations[animationname];
                 cssClass = "anim_" + animation.name;
                 resolvedOK = false;
+                adjDuration = this.getWaitDuration(animation.duration);
+                // console.log(`*** anim ${animationname} started for ${targetId} of ${animation.duration} ms (${adjDuration} ms)`);
+                if (adjDuration <= 0)
+                    return [2 /*return*/];
                 cleanUp = function (e, kind) {
                     if (kind === void 0) { kind = "callback"; }
                     if (resolvedOK)
@@ -2439,7 +2443,7 @@ var CustomAnimation = /** @class */ (function () {
                         $(targetId).removeEventListener("animationend", cleanUp);
                         $(targetId).classList.remove(cssClass);
                     }
-                    // console.log(`*** anim ${animationname} for ${targetId} onEnd`);
+                    //console.log(`*** anim ${animationname} for ${targetId} onEnd`);
                     safeCall(onEnd);
                     //console.log(`*** anim ${animationname} for ${targetId} resolved with ${kind}`);
                 };
@@ -2449,8 +2453,8 @@ var CustomAnimation = /** @class */ (function () {
                 $(targetId).classList.add(cssClass);
                 // this.MAIN.log('+anim',animationname,'starting playing');
                 //timeout security
-                setTimeout(function () { return cleanUp(undefined, "timeout"); }, this.getWaitDuration(animation.duration) * 1.5);
-                return [2 /*return*/, this.waitAdjusted(animation.duration)];
+                setTimeout(function () { return cleanUp(undefined, "timeout"); }, adjDuration * 1.5);
+                return [2 /*return*/, this.wait(adjDuration)];
             });
         });
     };
@@ -2691,12 +2695,16 @@ var CustomRenders = /** @class */ (function () {
         else if (op == "/") {
             for (var i = 3; i < expr.length; i++) {
                 //    items.push(this.parseExprItem(expr[i],true));
+                var lastOr = null;
                 for (var _d = 0, _e = this.parseExprItem(expr[i], depth + 1); _d < _e.length; _d++) {
                     var ret = _e[_d];
                     if (ret != null) {
-                        ret.divider = "OR";
                         items.push(ret);
+                        lastOr = ret;
                     }
+                }
+                if (lastOr) {
+                    lastOr.divider = "OR";
                 }
             }
         }
@@ -3008,14 +3016,20 @@ var CustomRenders = /** @class */ (function () {
                     ret = _("Requires that you have $v $res resources.").replace("$res", game.getTokenName(what));
                 }
                 else {
-                    var name_2 = game.getTokenName("tracker_" + what);
-                    if (!name_2)
+                    var tr = "tracker_" + what;
+                    var name_2 = game.getTokenName(tr);
+                    if (!name_2 || name_2 === tr)
                         name_2 = game.getTokenName(what);
-                    if (qty <= 1) {
-                        ret = _("Requires that you have $res.").replace("$res", name_2);
+                    if (mode == "min") {
+                        if (qty <= 1) {
+                            ret = _("Requires that you have $res.").replace("$res", name_2);
+                        }
+                        else {
+                            ret = _("Requires that you have $res times $v.").replace("$res", name_2);
+                        }
                     }
                     else {
-                        ret = _("Requires that you have $res times $v.").replace("$res", name_2);
+                        ret = _("Requires that you have at most $v $res.").replace("$res", name_2);
                     }
                 }
                 break;
@@ -3391,6 +3405,7 @@ var CustomRenders = /** @class */ (function () {
         twopoints: { classes: "txtcontent", content: ":" },
         play_stan: { classes: "txtcontent", content: "Standard projects" },
         star: { classes: "txtcontent", content: "*" },
+        colony: { classes: "colony" },
         res_Science: { classes: "token_img tracker_resScience" },
         res_Animal: { classes: "token_img tracker_resAnimal" },
         res_Microbe: { classes: "token_img tracker_resMicrobe" },
@@ -4886,7 +4901,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.isColoniesExpansionEnabled = function () {
         var _a, _b;
-        return ((_b = (_a = this.gamedatas.table_options["108"]) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 0) >= 0;
+        return ((_b = (_a = this.gamedatas.table_options["108"]) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 0) > 0;
     };
     GameXBody.prototype.isLiveScoringOn = function () {
         if (this.isLiveScoringDisabled())
@@ -6993,7 +7008,7 @@ var GameXBody = /** @class */ (function (_super) {
         if (parent)
             this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
         if (!this.isCurrentPlayerActive()) {
-            if (stateName == "playerTurnChoice" && (args === null || args === void 0 ? void 0 : args.master) != this.getActivePlayerId()) {
+            if (stateName == "playerTurnChoice" && (args === null || args === void 0 ? void 0 : args.master) && (args === null || args === void 0 ? void 0 : args.master) != this.getActivePlayerId()) {
                 this.setDescriptionOnMyTurn("${player_name} is performing out of turn action", {
                     player_name: this.divColoredPlayer(this.getActivePlayerId())
                 });
@@ -7180,7 +7195,11 @@ var GameXBody = /** @class */ (function (_super) {
         return div;
     };
     //get settings
-    GameXBody.prototype.getSetting = function (key) { };
+    GameXBody.prototype.getSetting = function (key) {
+        //doesn't work.
+        // return this.localSettings.readProp(key);
+        return $("ebd-body").dataset["localsetting_" + key];
+    };
     //Prevent moving parts when animations are set to none
     GameXBody.prototype.phantomMove = function (mobileId, newparentId, duration, mobileStyle, onEnd) {
         if (!this.customAnimation.areAnimationsPlayed()) {

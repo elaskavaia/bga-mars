@@ -74,19 +74,6 @@
   justify-content: center;
   align-items: center;
   font-size: calc(var(--card-width) * 0.09);
-
-
-  /*
-     width: calc(var(--card-width) * 0.2);
-    height: calc(var(--card-width) * 0.2);
-    background-color: gold;
-    border: calc(var(--card-width) * 0.015) solid black;
-    border-radius: calc(var(--card-width) * 0.08);
-    background-image: url("img/resources.png");
-    background-size: 1000% 200%;
-    background-position: -300% 0;
-   */
-
 }
 
 .minidiscount.token_img {
@@ -113,15 +100,13 @@
   font-size: calc(var(--card-width) * 0.08);
 }
 
-
-
 .hand,
 .draw,
 .draft,
 .tooltip-body {
 
 
-  .card_cost.discounted {
+  & .card_cost.discounted {
     // color: #bef983;
     // text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
     // outline: calc(var(--card-width) * 0.025) solid #bef983;
@@ -134,8 +119,6 @@
       display: block;
     }
   }
-
-
 
 }
 
@@ -285,14 +268,9 @@
   height: fit-content;
   --resourcesize: calc(var(--card-width) * 0.12);
 
-}
-
-.card {
-  .card_action_line {
-    .badge {
-      width: calc(var(--card-width) * 0.12);
-      height: calc(var(--card-width) * 0.12);
-    }
+  .badge {
+    width: calc(var(--card-width) * 0.12);
+    height: calc(var(--card-width) * 0.12);
   }
 }
 
@@ -325,6 +303,11 @@
 .card[data-card-type="3"] .card_outer_action {
   display: none;
 }
+
+
+
+
+
 
 
 
@@ -496,39 +479,36 @@
     right: -42%;
     top: -27%;
   }
-}
 
-.card {
-  .card_icono {
-    .badge {
-      width: calc(var(--card-width) * 0.13);
-      height: calc(var(--card-width) * 0.13);
-    }
+  .badge {
+    width: calc(var(--card-width) * 0.13);
+    height: calc(var(--card-width) * 0.13);
   }
 
+  &.icono_prod {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &.icono_gains {
+    min-width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &.icono_losses {
+    min-width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 
 
-.card_icono.icono_prod {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
 
-.card_icono.icono_gains {
-  min-width: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.card_icono.icono_losses {
-  min-width: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .card_action {
   .card_icono.icono_losses {
@@ -681,6 +661,8 @@
   right: 0;
   flex-direction: row-reverse;
 }
+
+
 
 .card>* {
   pointer-events: none;
@@ -1022,7 +1004,7 @@
       .card_outer_action,
       .card_vp,
       .card_number_binary {
-        display: none;
+        visibility: hidden;
       }
 
       .card_cost {
@@ -1564,7 +1546,7 @@
   }
 }
 
-.card.corp.card_corp_25  {
+.card.corp.card_corp_25 {
   .card_initial {
     top: 62%;
     left: 6.5%;
@@ -1578,7 +1560,7 @@
   }
 }
 
-.card.corp.card_corp_28  {
+.card.corp.card_corp_28 {
   .card_initial {
     top: 66%;
     left: 7%;
@@ -1913,7 +1895,7 @@
     display: none;
   }
 
-  .card > .resource {
+  .card>.resource {
     display: none;
   }
 
@@ -1963,6 +1945,7 @@
     background-image: url(img/colonies/colo_cards_corp_bg.jpg);
     background-size: auto 100%;
   }
+
   .mfull .card.card_corp_#{$num} {
     background-position: calc(100% / 5 * $col) 0%;
     background-image: url(img/colonies/colo_cardsC.jpg);
@@ -1970,24 +1953,79 @@
   }
 }
 
-.card.colo_main {
-  .card_decor> *:not(.card_resource_holder,.card_bg) {
+.mfull .card.colo_main {
+  background-image: url(img/colonies/colo_cards.jpg);
+  background-size: 1000% auto;
+
+  .card_decor>*:not(.card_resource_holder, .card_bg) {
     display: none;
   }
-  & > .card_decor> .card_bg {
-    background-image: url(img/colonies/colo_cards.jpg);
+}
+
+.mcompact .card.colo_main {
+  &>.card_decor>.card_bg {
+    background-image: url(img/colonies/colo_cards_main_bg.jpg);
     background-size: 1000% auto;
   }
 
-  .mfull & {
-    background-image: url(img/colonies/colo_cards.jpg);
-    background-size: 1000% auto;
+  .card_number_binary,
+  .card_number,
+  .card_badges,
+  .card_illustration,
+  .card_vp {
+    visibility: hidden;
   }
+
+  .prereq_content {
+    visibility: hidden;
+  }
+
+  .card_title {
+    top: 11.8%;
+  }
+
+  .card_cost {
+    &>.number_inside {
+      visibility: hidden;
+    }
+  }
+
+  .card_outer_action {
+    height: 25%;
+    left: 8%;
+    width: 86%;
+    font-size: calc(var(--card-width) * 0.065);
+
+    &>.card_action {
+      position: relative;
+      background-image: unset;
+      background-color: unset;
+      display: block;
+      height: 100%;
+      text-align: center;
+
+      &>.card_action_text {
+        position: absolute;
+        top: 64%;
+      }
+
+      &>.card_action_icono {
+        display: none;
+      }
+    }
+
+    &>.card_action_bottomdecor {
+      visibility: hidden;
+    }
+  }
+
+
 
   .card_initial {
     position: absolute;
     font-size: calc(var(--card-width) * 0.038);
     font-family: Georgia;
+
   }
 
   .card_effect {
@@ -1995,8 +2033,280 @@
     padding: revert;
     font-size: calc(var(--card-width) * 0.038);
     font-family: Georgia;
+    display: block;
+    left: 8%;
+    width: 86%;
+
+    &>.groupline {
+      display: none;
+    }
+
+    &>.card_icono {
+      display: none;
+    }
+
   }
 }
+
+
+.mcompact .card.card_main_C01 .card_effect {
+  left: 37%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C02 .card_effect {
+  top: 80%;
+}
+
+.mcompact .card.card_main_C03 .card_outer_action>.card_action>.card_action_text {
+  top: 92%;
+}
+
+.mcompact .card.card_main_C03 .card_effect {
+  left: 46%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C04 .card_effect {
+  width: 56%;
+  top: 78%;
+}
+
+.mcompact .card.card_main_C05 .card_effect {
+  width: 56%;
+  top: 76%;
+}
+
+.mcompact .card.card_main_C06 .card_effect {
+  left: 43%;
+  width: 46%;
+  top: 74%;
+}
+
+.mcompact .card.card_main_C08 .card_effect {
+  width: 56%;
+  top: 81%;
+}
+
+.mcompact .card.card_main_C09 .card_effect {
+  left: 8%;
+  width: 56%;
+}
+
+.mcompact .card.card_main_C10 .card_effect {
+  top: 74%;
+  left: 50%;
+  width: 46%;
+}
+
+.mcompact .card.card_main_C11 .card_effect {
+  top: 84%;
+}
+
+
+.mcompact .card.card_main_C13 .card_effect {
+  top: 74%;
+  width: 56%;
+}
+
+.mcompact .card.card_main_C14 .card_effect {
+  left: 33%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C15 .card_effect {
+  top: 74%;
+  left: 50%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C16 .card_effect {
+  top: 72%;
+  left: 46%;
+  width: 46%;
+}
+
+.mcompact .card.card_main_C17 .card_title {
+  top: 13%;
+  font-size: calc(var(--card-width) * 0.05);
+}
+
+.mcompact .card.card_main_C17 .card_effect {
+  top: 79%;
+  left: 40%;
+  width: 56%;
+}
+
+.mcompact .card.card_main_C18 .card_effect {
+  left: 8%;
+  top: 74%;
+  width: 68%;
+}
+
+.mcompact .card.card_main_C19 .card_outer_action>.card_action>.card_action_text {
+  top: 100%;
+}
+
+.mcompact .card.card_main_C20 .card_effect {
+  left: 33%;
+  top: 74%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C21 .card_effect {
+  top: 74%;
+}
+
+.mcompact .card.card_main_C22 .card_effect {
+  left: 50%;
+  top: 72%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C23 .card_effect {
+  top: 80%;
+}
+.mcompact .card.card_main_C24 .card_outer_action>.card_action>.card_action_text {
+  top: 108%;
+}
+.mcompact .card.card_main_C24 .card_effect {
+  top: 84%;
+}
+
+.mcompact .card.card_main_C25 .card_effect {
+  left: 50%;
+  top: 72%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C26 .card_effect {
+  left: 50%;
+  top: 72%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C27 .card_effect {
+  left: 46%;
+  top: 62%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C28 .card_effect {
+  top: 78%;
+  width: 70%;
+}
+
+.mcompact .card.card_main_C29 .card_effect {
+  top: 78%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C30 .card_effect {
+  top: 74%;
+}
+
+.mcompact .card.card_main_C31 .card_effect {
+  top: 78%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C32 .card_outer_action>.card_action>.card_action_text {
+  top: 105%;
+}
+
+
+.mcompact .card.card_main_C32 .card_effect {
+  left: 36%;
+  width: 40%;
+}
+
+
+.mcompact .card.card_main_C33 .card_outer_action>.card_action>.card_action_text {
+  top: 86%;
+}
+
+.mcompact .card.card_main_C33 .card_effect {
+  left: 8%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C34 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+
+.mcompact .card.card_main_C36 .card_effect {
+  left: 30%;
+}
+
+.mcompact .card.card_main_C37 .card_effect {
+  top: 80%;
+  width: 70%;
+}
+
+.mcompact .card.card_main_C38 .card_effect {
+  top: 80%;
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C39 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C40 .card_effect {
+  left: 8%;
+  width: 80%;
+}
+
+.mcompact .card.card_main_C41 .card_outer_action>.card_action>.card_action_text {
+  top: 83%;
+}
+
+.mcompact .card.card_main_C41 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C42 .card_effect {
+  top: 70%;
+  left: 30%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C43 .card_outer_action>.card_action>.card_action_text {
+  top: 105%;
+}
+
+
+.mcompact .card.card_main_C44 .card_outer_action>.card_action>.card_action_text {
+  top: 108%;
+}
+
+.mcompact .card.card_main_C44 .card_effect {
+  top: 74%;
+  left: 40%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C45 .card_outer_action>.card_action>.card_action_text {
+  top: 105%;
+}
+
+
+.mcompact .card.card_main_C47 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C48 .card_effect {
+  top: 80%;
+  width: 86%;
+}
+
+
 
 
 
@@ -2010,10 +2320,11 @@
     $cnum: "0#{$num}"
   }
 
-  .mcompact .card.card_main_C#{$cnum} .card_bg  {
+  .mcompact .card.card_main_C#{$cnum} .card_bg {
     background-position-x: calc(100% / 9 * $col);
     background-position-y: calc(100% / 4 * $row);
   }
+
   .mfull .card.card_main_C#{$cnum} {
     background-position-x: calc(100% / 9 * $col);
     background-position-y: calc(100% / 4 * $row);

@@ -597,16 +597,6 @@
   justify-content: center;
   align-items: center;
   font-size: calc(var(--card-width) * 0.09);
-  /*
-     width: calc(var(--card-width) * 0.2);
-    height: calc(var(--card-width) * 0.2);
-    background-color: gold;
-    border: calc(var(--card-width) * 0.015) solid black;
-    border-radius: calc(var(--card-width) * 0.08);
-    background-image: url("img/resources.png");
-    background-size: 1000% 200%;
-    background-position: -300% 0;
-   */
 }
 
 .minidiscount.token_img {
@@ -782,8 +772,7 @@
   height: fit-content;
   --resourcesize: calc(var(--card-width) * 0.12);
 }
-
-.card .card_action_line .badge {
+.card_action_line .badge {
   width: calc(var(--card-width) * 0.12);
   height: calc(var(--card-width) * 0.12);
 }
@@ -959,25 +948,21 @@
   right: -42%;
   top: -27%;
 }
-
-.card .card_icono .badge {
+.card_icono .badge {
   width: calc(var(--card-width) * 0.13);
   height: calc(var(--card-width) * 0.13);
 }
-
 .card_icono.icono_prod {
   position: relative;
   display: flex;
   align-items: center;
 }
-
 .card_icono.icono_gains {
   min-width: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .card_icono.icono_losses {
   min-width: 10%;
   display: flex;
@@ -2920,7 +2905,7 @@
 .mcompact .card.prelude .card_decor .card_outer_action,
 .mcompact .card.prelude .card_decor .card_vp,
 .mcompact .card.prelude .card_decor .card_number_binary {
-  display: none;
+  visibility: hidden;
 }
 .mcompact .card.prelude .card_decor .card_cost .number_inside {
   display: none;
@@ -3642,27 +3627,330 @@
   background-size: auto 100%;
 }
 
-.card.colo_main .card_decor > *:not(.card_resource_holder, .card_bg) {
-  display: none;
-}
-.card.colo_main > .card_decor > .card_bg {
-  background-image: url(img/colonies/colo_cards.jpg);
-  background-size: 1000% auto;
-}
 .mfull .card.colo_main {
   background-image: url(img/colonies/colo_cards.jpg);
   background-size: 1000% auto;
 }
-.card.colo_main .card_initial {
+.mfull .card.colo_main .card_decor > *:not(.card_resource_holder, .card_bg) {
+  display: none;
+}
+
+.mcompact .card.colo_main > .card_decor > .card_bg {
+  background-image: url(img/colonies/colo_cards_main_bg.jpg);
+  background-size: 1000% auto;
+}
+.mcompact .card.colo_main .card_number_binary,
+.mcompact .card.colo_main .card_number,
+.mcompact .card.colo_main .card_badges,
+.mcompact .card.colo_main .card_illustration,
+.mcompact .card.colo_main .card_vp {
+  visibility: hidden;
+}
+.mcompact .card.colo_main .prereq_content {
+  visibility: hidden;
+}
+.mcompact .card.colo_main .card_title {
+  top: 11.8%;
+}
+.mcompact .card.colo_main .card_cost > .number_inside {
+  visibility: hidden;
+}
+.mcompact .card.colo_main .card_outer_action {
+  height: 25%;
+  left: 8%;
+  width: 86%;
+  font-size: calc(var(--card-width) * 0.065);
+}
+.mcompact .card.colo_main .card_outer_action > .card_action {
+  position: relative;
+  background-image: unset;
+  background-color: unset;
+  display: block;
+  height: 100%;
+  text-align: center;
+}
+.mcompact .card.colo_main .card_outer_action > .card_action > .card_action_text {
+  position: absolute;
+  top: 64%;
+}
+.mcompact .card.colo_main .card_outer_action > .card_action > .card_action_icono {
+  display: none;
+}
+.mcompact .card.colo_main .card_outer_action > .card_action_bottomdecor {
+  visibility: hidden;
+}
+.mcompact .card.colo_main .card_initial {
   position: absolute;
   font-size: calc(var(--card-width) * 0.038);
   font-family: Georgia;
 }
-.card.colo_main .card_effect {
+.mcompact .card.colo_main .card_effect {
   background: revert;
   padding: revert;
   font-size: calc(var(--card-width) * 0.038);
   font-family: Georgia;
+  display: block;
+  left: 8%;
+  width: 86%;
+}
+.mcompact .card.colo_main .card_effect > .groupline {
+  display: none;
+}
+.mcompact .card.colo_main .card_effect > .card_icono {
+  display: none;
+}
+
+.mcompact .card.card_main_C01 .card_effect {
+  left: 37%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C02 .card_effect {
+  top: 80%;
+}
+
+.mcompact .card.card_main_C03 .card_outer_action > .card_action > .card_action_text {
+  top: 92%;
+}
+
+.mcompact .card.card_main_C03 .card_effect {
+  left: 46%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C04 .card_effect {
+  width: 56%;
+  top: 78%;
+}
+
+.mcompact .card.card_main_C05 .card_effect {
+  width: 56%;
+  top: 76%;
+}
+
+.mcompact .card.card_main_C06 .card_effect {
+  left: 43%;
+  width: 46%;
+  top: 74%;
+}
+
+.mcompact .card.card_main_C08 .card_effect {
+  width: 56%;
+  top: 81%;
+}
+
+.mcompact .card.card_main_C09 .card_effect {
+  left: 8%;
+  width: 56%;
+}
+
+.mcompact .card.card_main_C10 .card_effect {
+  top: 74%;
+  left: 50%;
+  width: 46%;
+}
+
+.mcompact .card.card_main_C11 .card_effect {
+  top: 84%;
+}
+
+.mcompact .card.card_main_C13 .card_effect {
+  top: 74%;
+  width: 56%;
+}
+
+.mcompact .card.card_main_C14 .card_effect {
+  left: 33%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C15 .card_effect {
+  top: 74%;
+  left: 50%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C16 .card_effect {
+  top: 72%;
+  left: 46%;
+  width: 46%;
+}
+
+.mcompact .card.card_main_C17 .card_title {
+  top: 13%;
+  font-size: calc(var(--card-width) * 0.05);
+}
+
+.mcompact .card.card_main_C17 .card_effect {
+  top: 79%;
+  left: 40%;
+  width: 56%;
+}
+
+.mcompact .card.card_main_C18 .card_effect {
+  left: 8%;
+  top: 74%;
+  width: 68%;
+}
+
+.mcompact .card.card_main_C19 .card_outer_action > .card_action > .card_action_text {
+  top: 100%;
+}
+
+.mcompact .card.card_main_C20 .card_effect {
+  left: 33%;
+  top: 74%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C21 .card_effect {
+  top: 74%;
+}
+
+.mcompact .card.card_main_C22 .card_effect {
+  left: 50%;
+  top: 72%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C23 .card_effect {
+  top: 80%;
+}
+
+.mcompact .card.card_main_C24 .card_outer_action > .card_action > .card_action_text {
+  top: 108%;
+}
+
+.mcompact .card.card_main_C24 .card_effect {
+  top: 84%;
+}
+
+.mcompact .card.card_main_C25 .card_effect {
+  left: 50%;
+  top: 72%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C26 .card_effect {
+  left: 50%;
+  top: 72%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C27 .card_effect {
+  left: 46%;
+  top: 62%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C28 .card_effect {
+  top: 78%;
+  width: 70%;
+}
+
+.mcompact .card.card_main_C29 .card_effect {
+  top: 78%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C30 .card_effect {
+  top: 74%;
+}
+
+.mcompact .card.card_main_C31 .card_effect {
+  top: 78%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C32 .card_outer_action > .card_action > .card_action_text {
+  top: 105%;
+}
+
+.mcompact .card.card_main_C32 .card_effect {
+  left: 36%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C33 .card_outer_action > .card_action > .card_action_text {
+  top: 86%;
+}
+
+.mcompact .card.card_main_C33 .card_effect {
+  left: 8%;
+  width: 60%;
+}
+
+.mcompact .card.card_main_C34 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C36 .card_effect {
+  left: 30%;
+}
+
+.mcompact .card.card_main_C37 .card_effect {
+  top: 80%;
+  width: 70%;
+}
+
+.mcompact .card.card_main_C38 .card_effect {
+  top: 80%;
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C39 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C40 .card_effect {
+  left: 8%;
+  width: 80%;
+}
+
+.mcompact .card.card_main_C41 .card_outer_action > .card_action > .card_action_text {
+  top: 83%;
+}
+
+.mcompact .card.card_main_C41 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C42 .card_effect {
+  top: 70%;
+  left: 30%;
+  width: 40%;
+}
+
+.mcompact .card.card_main_C43 .card_outer_action > .card_action > .card_action_text {
+  top: 105%;
+}
+
+.mcompact .card.card_main_C44 .card_outer_action > .card_action > .card_action_text {
+  top: 108%;
+}
+
+.mcompact .card.card_main_C44 .card_effect {
+  top: 74%;
+  left: 40%;
+  width: 36%;
+}
+
+.mcompact .card.card_main_C45 .card_outer_action > .card_action > .card_action_text {
+  top: 105%;
+}
+
+.mcompact .card.card_main_C47 .card_effect {
+  left: 40%;
+  width: 50%;
+}
+
+.mcompact .card.card_main_C48 .card_effect {
+  top: 80%;
+  width: 86%;
 }
 
 .mcompact .card.card_main_C01 .card_bg {
@@ -4439,7 +4727,8 @@
   background-position: 100% 0%;
 }
 .display_colonies[data-mode=grid] .card.colocard .colony-trade-cube:hover {
-  opacity: 0.2;
+  opacity: 0.3;
+  transition: 3s opacity;
 }
 .display_colonies[data-mode=grid] .card.colocard[data-state="0"] .colony-trade-cube {
   left: 16%;
@@ -6182,6 +6471,11 @@
 
 .map .tile:hover {
   opacity: 0.3;
+  transition: 3s opacity;
+}
+
+.move_target .map .tile:hover {
+  opacity: unset;
 }
 
 .tile {
@@ -11287,7 +11581,7 @@
 }
 
 .cardstack.red {
-  --outlinecolor:var(--card-outline-event);
+  --outlinecolor: var(--card-outline-event);
   --hlcolor: var(--card-background-event);
 }
 
@@ -11298,8 +11592,8 @@
 
 .stack_content {
   --overlap: 0;
-  --cards-in-stack: round(down,(1.5 / (1 - var(--overlap))) + 1, 1);
-  --columns: round(up, calc(var(--subcount-n) / var(--cards-in-stack)),1);
+  --cards-in-stack: round(down, (1.5 / (1 - var(--overlap))) + 1, 1);
+  --columns: round(up, calc(var(--subcount-n) / var(--cards-in-stack)), 1);
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -11374,7 +11668,8 @@
   max-width: 99.2%;
 }
 
-.cardstack[data-currentview="2"].red .stack_content_txt, .cardstack[data-currentview="3"].red .stack_content_txt {
+.cardstack[data-currentview="2"].red .stack_content_txt,
+.cardstack[data-currentview="3"].red .stack_content_txt {
   display: block;
   width: calc(var(--card-width) * 1);
 }
@@ -11431,39 +11726,54 @@
 .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_outer_action {
   position: relative;
   top: 0;
+  visibility: visible;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_action_bottomdecor, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_action_text {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_action_icono {
+  display: flex;
+}
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_action_bottomdecor,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_action_text {
   display: none;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_resource_holder {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_resource_holder {
   position: relative;
   margin-top: calc(var(--card-height) * 0.02);
   top: 0;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_badges, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_cost, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_bg, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_illustration, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_effect, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_prereq, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_number, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_number_binary, .mcompact .cardstack[data-currentview="1"] .stack_content .card .card_initial {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_badges,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_cost,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_bg,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_illustration,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_effect,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_prereq,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_number,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_number_binary,
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_initial {
   display: none;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_title {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_title {
   position: relative;
   top: 0;
   left: 0.5em;
   display: block;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_vp {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_vp {
   top: 0;
   right: 0;
   bottom: revert;
+  visibility: visible;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card .card_vp.vp_custom {
+.mcompact .cardstack[data-currentview="1"] .stack_content .card_vp.vp_custom {
   position: relative;
   margin-top: calc(var(--card-height) * 0.02);
   left: 37%;
 }
-.mcompact .cardstack[data-currentview="1"] .stack_content .card[data-show_calc_vp="1"][data-vp]::after {
+.mcompact .card[data-show_calc_vp="1"][data-vp]::after {
   right: 1%;
   bottom: 2%;
 }
-.mcompact .stack_dd_buttons_close {
+
+.stack_dd_buttons_close {
   font-size: 1vh;
 }
 
