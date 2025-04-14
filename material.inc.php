@@ -9223,7 +9223,7 @@ $this->token_types = [
   'sort_none' => [
     'icon' => "fa-sort",
     'name' => "None",
-    'tooltip' => 'Do not sort cards, they will be presented in order they were gained',
+    'tooltip' => clienttranslate('Do not sort cards, they will be presented in order they were gained'),
     'o' => 0,
   ],
   'sort_playable' => [
