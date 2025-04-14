@@ -416,6 +416,11 @@
 }
 .map .tile:hover {
   opacity: 0.3;
+  transition: 3s opacity;
+}
+
+.move_target .map .tile:hover {
+  opacity: unset;
 }
 
 
