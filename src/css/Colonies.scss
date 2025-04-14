@@ -54,10 +54,10 @@
         display: none;
     }
 
-    & > * {
+    &>* {
         pointer-events: unset;
     }
-    
+
 
     &>.card_decor {
         position: absolute;
@@ -301,6 +301,7 @@
 
 
     }
+
     .colony-trade-cube:hover {
         opacity: 0.3;
         transition: 3s opacity;
@@ -438,6 +439,10 @@
     display: none;
 }
 
+#allcards_colo {
+    display: none;
+}
+
 .exp-colonies {
     .display_colonies {
         display: flex;
@@ -446,6 +451,10 @@
         position: relative;
         width: 100%;
         padding: 0.5em;
+    }
+
+    #allcards_colo {
+        display: block;
     }
 
     .button_display_colonies_layout {
@@ -459,8 +468,4 @@
         cursor: pointer;
         color: gray;
     }
-
-
-
-
 }
