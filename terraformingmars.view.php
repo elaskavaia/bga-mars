@@ -58,9 +58,8 @@ class view_terraformingmars_terraformingmars extends game_view
 
     /*********** Place your code below:  ************/
     $this->tpl['PLAYER_NUMBER'] = $players_nbr;
-    global $g_user;
     $this->tpl['CURRENT_PLAYER_COLOR'] = 'ffffff'; // spectator
-    $cplayer = $g_user->get_id();
+    $cplayer = $this->game->getCurrentPlayerId();
 
     if (isset($players[$cplayer])) {
       $this->tpl['CURRENT_PLAYER_COLOR'] = $players[$cplayer]['player_color'];
