@@ -44,11 +44,11 @@ C33|Refugee Camps|2||npm:res||10||Earth|resCard|Colonies|1 VP for each camp reso
 C34|Research Colony|1|colony(double),2draw|||20||Science Space|0|Colonies|Place a colony. MAY BE PLACED WHERE YOU ALREADY HAVE A COLONY. Draw 2 cards.||||
 C35|Rim Freighters|2|||onPay_trade:1q|4||Space|0|Colonies|||When you trade, you pay 1 less resource for it.||
 C36|Sky Docks|2|tradefleet||onPay_card:m|18|tagEarth>=2|Space Earth|2|Colonies|Requires 2 Earth tags. Gain 1 Trade Fleet.||When you play a card, you pay 1 M€ less for it.||
-C37|Solar Probe|3|counter(tagScience/3):draw|||9||Science Space Event|1|Colonies|Draw 1 card for every 3 science tags you have, including this.||||
+C37|Solar Probe|3|counter('(tagScience+1)/3'):draw|||9||Science Space Event|1|Colonies|Draw 1 card for every 3 science tags you have, including this.||||
 C38|Solar Reflectors|1|5ph|||23||Space|0|Colonies|Increase your heat production 5 steps.||||
 C39|Space Port|1|1npe,city,tradefleet,4pm|||22|colony>=1|Building City|0|Colonies|Requires 1 colony. Gain 1 Trade Fleet. Place a city tile. Decrease your energy production 1 step, and increase your M€ production 4 steps.||||
 C40|Space Port Colony|1|colony(double),tradefleet|||27|colony>=1|Space|all_colony/2|Colonies|Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1 VP per 2 colonies in play.||||
-C41|Spin-Off Department|2|2pm|||10||Building|0|Colonies|Increase your M€ production 2 steps.||WHEN PLAYING A CARD WITH A BASIC COST OF 20 M€ OR MORE, draw a card||
+C41|Spin-Off Department|2|2pm||play_card:(counter('cost>=20'):draw):that|10||Building|0|Colonies|Increase your M€ production 2 steps.||When playing a card with a basic cost of 20 M€ or more, draw a card||
 C42|Sub-Zero Salt Fish|2|1npp_Any|res||5|t>=-6|Animal|resCard/2|Colonies|Requires -6°C or warmer. Decrease any plant production 1 step. 1 VP per 2 animals on this card.|Add 1 animal to this card.|||  'holds' => 'Animal'
 C43|Titan Air-Scrapping|2||(nu:2res)/(2nres:tr)||21||Jovian|2|Colonies||Spend 1 titanium to add 2 floaters to this card, or spend 2 floaters here to increase your TR 1 step.|||  'holds' => 'Floater'
 C44|Titan Floating Launch-Pad|2|2ores(Floater,Jovian)|ores(Floater,Jovian)/(nres:trade(free))||18||Jovian|1|Colonies|Add 2 foaters to ANY JOVIAN CARD.|Add 1 floater to ANY JOVIAN CARD, or spend 1 floater here to trade for free|||  'holds' => 'Floater'
