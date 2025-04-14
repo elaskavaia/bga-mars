@@ -721,11 +721,7 @@ abstract class PGameXBody extends PGameMachine {
                     if ($deck == 'Colonies') {
                         continue;
                     }
-                } else {
-                    if ($deck == 'Corporate') {
-                        continue;
-                    }
-                }
+                } 
             }
             if ($id == 'card_stanproj_7') { // Buffer Gas
                 if (!$this->isSolo()) continue;
@@ -2939,7 +2935,11 @@ abstract class PGameXBody extends PGameMachine {
      * game state.
      */
     function arg_playerTurnChoice() {
-        $result = ['master' => $this->getTurnMaster()];
+        $result = [];
+        if ($this->getGameStateValue('gamestage') == MA_STAGE_GAME) {
+            $result = ['master' => $this->getTurnMaster()];
+        }
+
 
         if (!$this->isSolo()) {
             $players = $this->loadPlayersBasicInfos();
