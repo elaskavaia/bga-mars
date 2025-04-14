@@ -114,3 +114,5 @@ src/css/*.map
 #Locks
 **/.~lock*
 **/*.swp
+
+tests/out.jsa
