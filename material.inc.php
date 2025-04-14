@@ -9254,41 +9254,41 @@ $this->token_types = [
 
     // other stuff
   'colo_place_bonus' => [
-    'name' => c_lienttranslate("Colony placement"),
+    'name' => clienttranslate("Colony placement"),
   ],
   'colo_bonus' => [
-    'name' => c_lienttranslate("Colony bonus"),
+    'name' => clienttranslate("Colony bonus"),
   ],
   'trade_bonus' => [
-    'name' => c_lienttranslate("Trading bonus"),
+    'name' => clienttranslate("Trading bonus"),
   ],
   'colony' => [
-    'name' => c_lienttranslate("Colony"),
+    'name' => clienttranslate("Colony"),
   ],
   'op_trade' => [  //
     'class' => 'Operation_trade',
     'type' => 'trade',
-    'name' => c_lienttranslate('Trade with Colony'),
+    'name' => clienttranslate('Trade with Colony'),
   ],
   'tagFloater' => [  //
     'type' => 'tag',
     'create' => 0,
     'location' => 'params',
     'nc' => 1,
-    'name' => c_lienttranslate('Floater'),
+    'name' => clienttranslate('Floater'),
   ],
   'tagCamp' => [  //
     'type' => 'tag',
     'create' => 0,
     'location' => 'params',
     'nc' => 1,
-    'name' => c_lienttranslate('Camp'),
+    'name' => clienttranslate('Camp'),
   ],
   'resFloater' => [  //
     'type' => 'resource',
     'create' => 0,
     'location' => 'params',
     'nc' => 1,
-    'name' => c_lienttranslate('Floater'),
+    'name' => clienttranslate('Floater'),
   ],
 ];

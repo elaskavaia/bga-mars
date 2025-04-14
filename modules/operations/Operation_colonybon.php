@@ -37,6 +37,6 @@ class Operation_colonybon extends  AbsOperation {
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Gain all colony bonuses');
+        return clienttranslate('Gain all colony bonuses');
     }
 }

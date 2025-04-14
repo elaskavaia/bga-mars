@@ -162,7 +162,7 @@ abstract class PGameXBody extends PGameMachine {
                 if ($colonies) {
                     $color = $this->getPlayerColorById($player_id);
                     $this->push($color,"colodiscard");
-                    $this->notifyWithName('message', c_lienttranslate('Colonies solo mode starts with descreased megacredit production'));
+                    $this->notifyWithName('message', clienttranslate('Colonies solo mode starts with descreased megacredit production'));
                     $this->effect_incProduction($color, "pm", -2);
                 }
             }
@@ -2214,7 +2214,7 @@ abstract class PGameXBody extends PGameMachine {
             $state = $info['state'];
             if ($state < 0) continue;
             if ($state >= 6) continue;
-            $this->dbSetTokenState($tokenId, $state + 1, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
+            $this->dbSetTokenState($tokenId, $state + 1, clienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
                 'card_name' => $this->getTokenName($tokenId)
             ]);
         }

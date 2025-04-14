@@ -27,7 +27,7 @@ class Operation_colodiscard extends  AbsOperation {
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
 
-        $this->game->dbSetTokenLocation($card, 'limbo', 0, c_lienttranslate('${player_name} discards ${card_name}'), [
+        $this->game->dbSetTokenLocation($card, 'limbo', 0, clienttranslate('${player_name} discards ${card_name}'), [
             'card_name' => $this->game->getTokenName($card)
         ], $this->getPlayerId());
         return $inc;
@@ -42,10 +42,10 @@ class Operation_colodiscard extends  AbsOperation {
     }
 
     public function getPrompt() {
-        return c_lienttranslate('${you} must select a colony tile to discard');
+        return clienttranslate('${you} must select a colony tile to discard');
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Discard Colony Tile');
+        return clienttranslate('Discard Colony Tile');
     }
 }

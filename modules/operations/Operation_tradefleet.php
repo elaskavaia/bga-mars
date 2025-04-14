@@ -14,7 +14,7 @@ class Operation_tradefleet extends  AbsOperation {
         $token = "fleet_{$owner}";
         $fleet = $this->game->tokens->createTokenAutoInc($token, "colo_fleet", 0, 1);
 
-        $this->game->dbSetTokenLocation($fleet, "colo_fleet", 0, c_lienttranslate('${player_name} gains new trade fleet'));
+        $this->game->dbSetTokenLocation($fleet, "colo_fleet", 0, clienttranslate('${player_name} gains new trade fleet'));
         return $inc;
     }
 
@@ -27,6 +27,6 @@ class Operation_tradefleet extends  AbsOperation {
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Gain trade fleet');
+        return clienttranslate('Gain trade fleet');
     }
 }

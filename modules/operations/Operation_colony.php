@@ -51,12 +51,12 @@ class Operation_colony extends  AbsOperation {
         $new_col_spot = $colonies;
         $new_spot = $new_col_spot + 1;
         if ($step < $new_spot) {
-            $this->game->dbSetTokenState($card, $new_spot, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
+            $this->game->dbSetTokenState($card, $new_spot, clienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
                 'card_name' => $this->game->getTokenName($card)
             ]);
         }
 
-        $this->game->dbSetTokenLocation($res,  $card, $new_col_spot, c_lienttranslate('${player_name} builds a colony on ${card_name}'), [
+        $this->game->dbSetTokenLocation($res,  $card, $new_col_spot, clienttranslate('${player_name} builds a colony on ${card_name}'), [
             'card_name' => $this->game->getTokenName($card)
         ], $this->getPlayerId());
 
@@ -77,10 +77,10 @@ class Operation_colony extends  AbsOperation {
     }
 
     public function getPrompt() {
-        return c_lienttranslate('${you} must select a colony tile to build a colony on');
+        return clienttranslate('${you} must select a colony tile to build a colony on');
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Build Colony');
+        return clienttranslate('Build Colony');
     }
 }

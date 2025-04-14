@@ -50,7 +50,7 @@ class Operation_tradeinc extends  AbsOperation {
         } else if ($param == 'dec') {
             $new_spot = $state - $inc;
             $colonies = count($this->game->tokens->getTokensOfTypeInLocation("marker_", $colony));
-            if ($new_spot < $colonies) $this->game->userAssertTrue(c_lienttranslate("Cannot reduce further"), false);
+            if ($new_spot < $colonies) $this->game->userAssertTrue(clienttranslate("Cannot reduce further"), false);
         } else {
             $new_spot = $state + $inc;
             if ($new_spot >= 6) $new_spot = 6;
@@ -61,7 +61,7 @@ class Operation_tradeinc extends  AbsOperation {
             $this->game->put($owner, "tradeinc(dec)", implode(":", ["", "", "", $colony]));
         }
 
-        $this->game->dbSetTokenState($colony, $new_spot, c_lienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
+        $this->game->dbSetTokenState($colony, $new_spot, clienttranslate('Trade income level of ${card_name} changes to ${new_state}'), [
             'card_name' => $this->game->getTokenName($colony)
         ]);
 
@@ -82,9 +82,9 @@ class Operation_tradeinc extends  AbsOperation {
         $param = $this->getParam(0, '');
 
         if ($param == 'dec') {
-            return c_lienttranslate('${you} must decrease colony trading income level');
+            return clienttranslate('${you} must decrease colony trading income level');
         }
-        return c_lienttranslate('${you} must confirm increase colony trading income level');
+        return clienttranslate('${you} must confirm increase colony trading income level');
     }
 
     protected function getSkipButtonName() {
@@ -93,6 +93,6 @@ class Operation_tradeinc extends  AbsOperation {
 
 
     protected function getOpName() {
-        return c_lienttranslate('Increase colony trading income level');
+        return clienttranslate('Increase colony trading income level');
     }
 }

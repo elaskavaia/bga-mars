@@ -58,13 +58,13 @@ class Operation_trade extends  AbsOperation {
             $err = $infotarget['q'];
             switch ($err) {
                 case MA_ERR_ALREADYUSED:
-                    $this->game->userAssertTrue(c_lienttranslate("Cannot perform Trade: your fleet ship is already used this generation"));
+                    $this->game->userAssertTrue(clienttranslate("Cannot perform Trade: your fleet ship is already used this generation"));
                     break;
                 case MA_ERR_OCCUPIED:
-                    $this->game->userAssertTrue(c_lienttranslate("Cannot perform Trade: colony is occupied"));
+                    $this->game->userAssertTrue(clienttranslate("Cannot perform Trade: colony is occupied"));
                     break;
                 case MA_ERR_COST:
-                    $this->game->userAssertTrue(c_lienttranslate("Cannot perform Trade: you cannot afford it"));
+                    $this->game->userAssertTrue(clienttranslate("Cannot perform Trade: you cannot afford it"));
                     break;
             }
         }
@@ -151,7 +151,7 @@ class Operation_trade extends  AbsOperation {
         $this->game->systemAssertTrue("Trade error", $ship);
         $step = $this->game->tokens->getTokenState($card);
 
-        $this->game->dbSetTokenLocation($ship,  $card, 1, c_lienttranslate('${player_name} trades on ${card_name} with power of ${step}'), [
+        $this->game->dbSetTokenLocation($ship,  $card, 1, clienttranslate('${player_name} trades on ${card_name} with power of ${step}'), [
             'card_name' => $this->game->getTokenName($card),
             'step' => $step
         ], $this->getPlayerId());
@@ -190,7 +190,7 @@ class Operation_trade extends  AbsOperation {
             if ($info['state'] >= 0) continue;
             $prod = $game->getRulesFor($colo, 'prod', '');
             if ((!$prod && !$proj) || $holds == $prod) {
-                $game->dbSetTokenLocation($colo, 'display_colonies', 1, c_lienttranslate('Colony tile ${card_name} is activated'), [
+                $game->dbSetTokenLocation($colo, 'display_colonies', 1, clienttranslate('Colony tile ${card_name} is activated'), [
                     'card_name' => $game->getTokenName($colo)
                 ]);
             }
@@ -210,10 +210,10 @@ class Operation_trade extends  AbsOperation {
     }
 
     public function getPrompt() {
-        return c_lienttranslate('${you} must select a colony tile to trade with');
+        return clienttranslate('${you} must select a colony tile to trade with');
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Trade with a Colony');
+        return clienttranslate('Trade with a Colony');
     }
 }

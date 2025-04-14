@@ -28,7 +28,7 @@ class Operation_colocard extends  AbsOperation {
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
 
-        $this->game->dbSetTokenLocation($card, 'display_colonies', -1, c_lienttranslate('Colony tile ${card_name} is put in play'), [
+        $this->game->dbSetTokenLocation($card, 'display_colonies', -1, clienttranslate('Colony tile ${card_name} is put in play'), [
             'card_name' => $this->game->getTokenName($card)
         ]);
 
@@ -37,10 +37,10 @@ class Operation_colocard extends  AbsOperation {
     }
 
     public function getPrompt() {
-        return c_lienttranslate('${you} must select a colony tile to put in play');
+        return clienttranslate('${you} must select a colony tile to put in play');
     }
 
     protected function getOpName() {
-        return c_lienttranslate('Add Colony tile');
+        return clienttranslate('Add Colony tile');
     }
 }
