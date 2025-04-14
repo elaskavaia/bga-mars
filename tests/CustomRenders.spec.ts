@@ -9,7 +9,6 @@ global["_"] = function _(x: string) {
   return x;
 };
 
-
 describe("CustomRenders", () => {
   var CustomRenders;
   var xfile: string;
@@ -59,6 +58,14 @@ describe("CustomRenders", () => {
       expect(result).to.have.length(2);
       expect(result[0]).to.have.property("classes", "tracker badge tracker_tagSpace");
       expect(result[1]).to.have.property("classes", "tracker badge tracker_tagEvent");
+    });
+
+    //(nu:2res)/(2nres:tr)
+    it("should handle special case OR", () => {
+      const result = CustomRenders.parseExprItem(["/", 1, 1, [":", 1, 1, "nu", "res"], [":", 1, 1, "nres", "tr"]], 0);
+      expect(result).to.have.length(4);
+      expect(result[0]).to.have.property("classes", "token_img tracker_u");
+      expect(result[1]).to.have.property("classes", "token_img tracker_res%res%");
     });
   });
 
@@ -209,6 +216,28 @@ describe("CustomRenders", () => {
       expect(CustomRenders.parsePrereqToText("ps", gameMock)).to.equal("Requires that you have Steel Production.");
 
       expect(CustomRenders.parsePrereqToText("pu", gameMock)).to.equal("Requires that you have Titanium Production.");
+    });
+
+    it("should handle colony requirements", () => {
+      expect(CustomRenders.parsePrereqToText(["<=", "colony", 1], gameMock)).to.equal("Requires that you have at most 1 colony.");
+      expect(CustomRenders.parsePrereqToText([">=", "colony", 1], gameMock)).to.equal("Requires that you have colony.");
+    });
+  });
+
+  describe("parsePrereqToHTML", () => {
+    it("should return empty string for null expression", () => {
+      const result = CustomRenders.parsePrereqToHTML("");
+      expect(result).to.equal("");
+    });
+
+    it("should parse max", () => {
+      const result = CustomRenders.parsePrereqToHTML(["<=", "colony", 1]);
+      expect(result).to.equal('<div class="prereq_content mode_max">max 1<div class="colony"></div></div></div>');
+    });
+
+    it("should parse oxi", () => {
+      const result = CustomRenders.parsePrereqToHTML("o<=5");
+      expect(result).to.equal('<div class="prereq_content mode_min">1<div class="token_img oxygen_icon"></div><=5</div></div>');
     });
   });
 });

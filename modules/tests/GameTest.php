@@ -166,6 +166,17 @@ final class GameTest extends TestCase {
         $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
     }
 
+    public function testEvaluteCounter() {
+        $m = $this->game();
+        $color = PCOLOR;
+        $this->game->tokens->setTokenState("tracker_tagScience_{$color}", 5);
+        $this->assertEquals(2, $m->evaluateExpression("(tagScience+1)/3", PCOLOR));
+
+        $m->push($color, "counter('(tagScience+1)/3'):m");
+        $m->st_gameDispatch();
+        $this->assertEquals(2, $m->getTrackerValue($color, 'm'));
+    }
+
 
     public function testCanAfford() {
         $m = $this->game();
@@ -1802,7 +1813,7 @@ final class GameTest extends TestCase {
         $game = $this->game = (new GameUT())->init(0, 1); // colonies
         $card = $game->mtFindByName('Airliners');
         $game->effect_playCard(PCOLOR, $card);
-        $this->assertEquals(1, $game->getCountOfCardTags(PCOLOR,"")); 
+        $this->assertEquals(1, $game->getCountOfCardTags(PCOLOR, ""));
     }
     public function testPayHeatWithCorp() {
         $game = $m = $this->game = (new GameUT())->init(0, 1); // colonies
@@ -1820,7 +1831,7 @@ final class GameTest extends TestCase {
         }
 
         $this->assertEquals($num, $this->game->getCountOfResOnCards($color));
-    
+
         /** @var DelegatedOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1);
 
@@ -1829,7 +1840,7 @@ final class GameTest extends TestCase {
         $op = $op->delegate;
         $this->assertEquals('enum', $op->getPrimaryArgType());
         $args = $op->argPrimaryDetails();
-        echo(toJson($args));
+        echo (toJson($args));
 
         $m->push(PCOLOR, $effect);
         $m->st_gameDispatch();
@@ -1839,6 +1850,4 @@ final class GameTest extends TestCase {
         $op =  array_shift($tops);
         $this->assertEquals("nh", $op['type']);
     }
-
-
 }
