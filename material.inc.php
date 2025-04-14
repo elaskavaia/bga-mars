@@ -4646,7 +4646,7 @@ $this->token_types = [
   'num' => 'C37',
   'name' => clienttranslate('Solar Probe'),
   't' => 3,
-  'r' => 'counter(tagScience/3):draw',
+  'r' => "counter('(tagScience+1)/3'):draw",
   'cost' => 9,
   'tags' => 'Science Space Event',
   'vp' => 1,
@@ -4705,12 +4705,13 @@ $this->token_types = [
   'name' => clienttranslate('Spin-Off Department'),
   't' => 2,
   'r' => '2pm',
+  'e' => "play_card:(counter('cost>=20'):draw):that",
   'cost' => 10,
   'tags' => 'Building',
   'vp' => 0,
   'deck' => 'Colonies',
   'text' => clienttranslate('Increase your M€ production 2 steps.'),
-  'text_effect' => clienttranslate('WHEN PLAYING A CARD WITH A BASIC COST OF 20 M€ OR MORE, draw a card'),
+  'text_effect' => clienttranslate('When playing a card with a basic cost of 20 M€ or more, draw a card'),
 ],
  'card_main_C42' => [  //
   'location' => 'deck_main',
@@ -9260,6 +9261,9 @@ $this->token_types = [
   ],
   'trade_bonus' => [
     'name' => c_lienttranslate("Trading bonus"),
+  ],
+  'colony' => [
+    'name' => c_lienttranslate("Colony"),
   ],
   'op_trade' => [  //
     'class' => 'Operation_trade',
