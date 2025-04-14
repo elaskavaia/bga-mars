@@ -916,7 +916,7 @@ class GameXBody extends GameTokens {
   }
 
   isColoniesExpansionEnabled() {
-    return (this.gamedatas.table_options["108"]?.value ?? 0) >= 0;
+    return (this.gamedatas.table_options["108"]?.value ?? 0) > 0;
   }
 
   isLiveScoringOn() {
@@ -3280,7 +3280,7 @@ awarded.`);
     var parent = document.querySelector(".debug_section"); // studio only
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
     if (!this.isCurrentPlayerActive()) {
-      if (stateName == "playerTurnChoice" && args?.master != this.getActivePlayerId()) {
+      if (stateName == "playerTurnChoice" && args?.master && args?.master != this.getActivePlayerId()) {
         this.setDescriptionOnMyTurn("${player_name} is performing out of turn action", {
           player_name: this.divColoredPlayer(this.getActivePlayerId())
         });
@@ -3376,7 +3376,7 @@ awarded.`);
       this.removeTooltip(parentId);
       elems.push(attachNode.parentElement);
     }
-    if (elems.length>0) this.combineTooltips(attachNode, ...elems);
+    if (elems.length > 0) this.combineTooltips(attachNode, ...elems);
 
     // sometimes parent are added first and sometimes child, have to handle both independency here...
 
@@ -3458,7 +3458,11 @@ awarded.`);
   }
 
   //get settings
-  getSetting(key: string): string {}
+  getSetting(key: string): string {
+    //doesn't work.
+    // return this.localSettings.readProp(key);
+    return $("ebd-body").dataset["localsetting_" + key];
+  }
 
   //Prevent moving parts when animations are set to none
   phantomMove(
