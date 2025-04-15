@@ -10,7 +10,7 @@ use PhpParser\Node\Stmt\Continue_;
 class Operation_acard149 extends  AbsOperation {
     function argPrimaryDetails() {
         $color = $this->color;
-        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color"); 
+        $tokens = $this->game->tokens->getTokensOfTypeInLocation("card", "tableau_$color");
         $keys = ['none'];
         foreach (array_keys($tokens) as $tokenId) {
             $holds = $this->game->getRulesFor($tokenId, 'holds', '');
@@ -37,7 +37,7 @@ class Operation_acard149 extends  AbsOperation {
 
         for ($i = 0; $i < $inc; $i++) {
             $res = $this->game->createPlayerResource($owner);
-            $this->game->effect_moveCard($owner, $res, $card, 0);
+            $this->game->effect_moveCard($owner, $res, $card, 0, '*');
         }
 
         return $inc;
