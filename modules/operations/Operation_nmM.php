@@ -237,7 +237,7 @@ class Operation_nmM extends AbsOperation {
         if ($type == MA_RES_MICROBE) {
             $this->game->executeImmediately($color, "nres", $ut, "card_main_P39");
         } else {
-            $this->game->effect_incCount($color, $type, -$ut, ['reason_tr' => $this->getReason()]);
+            $this->game->effect_incCount($color, $type, -$ut);
         }
     }
 
