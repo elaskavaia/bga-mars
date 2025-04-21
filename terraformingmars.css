@@ -4887,6 +4887,10 @@
   color: gray;
 }
 
+.mfull .button_display_colonies_layout {
+  display: none;
+}
+
 .card_main_6 .card_action_line.card_action_text {
   display: none;
 }

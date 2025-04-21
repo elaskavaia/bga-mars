@@ -7761,6 +7761,17 @@ var VLayout = /** @class */ (function () {
     VLayout.prototype.renderSpecificToken = function (tokenNode) {
         if (!this.game.isLayoutFull())
             return;
+        if (tokenNode.id.startsWith("card_colo_")) {
+            var marker = "marker_" + tokenNode.id;
+            var markerNode = $(marker);
+            var color = getPart(tokenNode.id, 2);
+            var state = tokenNode.getAttribute("data-state");
+            if (!markerNode) {
+                markerNode = this.game.createDivNode(marker, "colony-trade-cube marker_" + color, tokenNode.id);
+                //this.convertInto3DCube(markerNode, color);
+            }
+            markerNode.dataset.state = state;
+        }
         if (tokenNode.id.startsWith("tracker_tr")) {
             // debugger;
             var marker = "marker_" + tokenNode.id;

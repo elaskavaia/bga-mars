@@ -16,7 +16,6 @@ class VLayout {
     //dojo.removeClass(`tableau_${color}_corp_effect`, "corp_effect");
     dojo.place(`player_area_name_${color}`, `player_board_header_${color}`, "first");
 
-
     dojo.place("alt_tracker_gen", "main_board");
     dojo.destroy("outer_generation");
 
@@ -54,6 +53,17 @@ class VLayout {
 
   renderSpecificToken(tokenNode: HTMLElement) {
     if (!this.game.isLayoutFull()) return;
+    if (tokenNode.id.startsWith("card_colo_")) {
+      const marker = "marker_" + tokenNode.id;
+      let markerNode = $(marker);
+      const color = getPart(tokenNode.id, 2);
+      let state = tokenNode.getAttribute("data-state") ;
+      if (!markerNode) {
+        markerNode = this.game.createDivNode(marker, "colony-trade-cube marker_" + color, tokenNode.id);
+        //this.convertInto3DCube(markerNode, color);
+      }
+      markerNode.dataset.state = state;
+    }
     if (tokenNode.id.startsWith("tracker_tr")) {
       // debugger;
       const marker = "marker_" + tokenNode.id;
