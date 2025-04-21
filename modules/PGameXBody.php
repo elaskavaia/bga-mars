@@ -2718,7 +2718,7 @@ abstract class PGameXBody extends PGameMachine {
 
 
     function getCountOfResOnCards($owner, $type = '') {
-        $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%", 1);
+        $res = $this->tokens->getTokensOfTypeInLocation("resource_$owner", "card_%");
         if (!$type)
             return count($res);
         $count = 0;
