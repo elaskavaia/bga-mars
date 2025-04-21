@@ -1006,8 +1006,8 @@ var GameBasics = /** @class */ (function (_super) {
                         console.error("changePreference callback failed " + res);
                     else {
                         console.log("changePreference sent " + pref_id + "=" + value);
-                        var opname = _(_this.prefs[pref_id].name);
-                        var opvalue = _(_this.prefs[pref_id].values[value].name);
+                        var opname = _this.getTr(_this.prefs[pref_id].name);
+                        var opvalue = _this.getTr(_this.prefs[pref_id].values[value].name);
                         _this.showMessage(_("Done, preference changed:") + " " + opname + " => " + opvalue, "info");
                     }
                 });

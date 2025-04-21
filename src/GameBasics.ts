@@ -1120,8 +1120,8 @@ class GameBasics extends GameGui {
             if (err) console.error("changePreference callback failed " + res);
             else {
               console.log("changePreference sent " + pref_id + "=" + value);
-              const opname = _(this.prefs[pref_id].name);
-              const opvalue = _(this.prefs[pref_id].values[value].name);
+              const opname = this.getTr(this.prefs[pref_id].name);
+              const opvalue = this.getTr(this.prefs[pref_id].values[value].name);
               this.showMessage(_("Done, preference changed:") + " " + opname + " => " + opvalue, "info");
             }
           });
