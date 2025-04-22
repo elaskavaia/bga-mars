@@ -4359,7 +4359,7 @@ $this->token_types = [
   'name' => clienttranslate('Jovian Lanterns'),
   't' => 2,
   'r' => 'ores(Floater),tr',
-  'a' => 'u:res',
+  'a' => 'nu:res',
   'cost' => 20,
   'pre' => 'tagJovian>=1',
   'tags' => 'Jovian',
