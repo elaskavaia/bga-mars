@@ -1863,4 +1863,27 @@ final class GameTest extends TestCase {
         $this->assertEquals(8, $this->game->evaluateExpression('all_tagJovian'));
         $this->assertEquals(1, $this->game->evaluateExpression('opp_tagJovian'));
     }
+
+
+    public function testProductiveOutpost() {
+        $m = new GameUT();
+        $m->init(0, 1);
+        $this->game = $m;
+
+        $m->dbSetTokenLocation('card_colo_1', 'display_colonies', 1);
+     
+        $m->push(PCOLOR, "colony");
+        $tops = $m->machine->getTopOperations(PCOLOR);
+        $op =  reset($tops);
+        $m->fakeUserAction($op, 'card_colo_1');
+        $m->st_gameDispatch();
+        $tops = $m->machine->getTopOperations(PCOLOR);
+        $m->machine->clear();
+        $this->assertEquals(1, $m->evaluateExpression("colony", PCOLOR));
+        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, 'm')); 
+        $m->machine->interrupt();
+        $m->effect_playCard(PCOLOR, 'card_main_C30');
+        $m->st_gameDispatch();
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'm')); // 1 money from colony
+    }
 }

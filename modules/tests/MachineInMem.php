@@ -160,6 +160,12 @@ class MachineInMem extends DbMachine {
         return array_values($subarr);
     }
 
+    function clear() {
+        foreach ($this->xtable as &$row) {
+            $row["rank"] = -1;
+        }
+    }
+
     function interrupt($from = 1, $count = 1) {
         foreach ($this->xtable as &$row) {
             if ($row["rank"] >= $from) {

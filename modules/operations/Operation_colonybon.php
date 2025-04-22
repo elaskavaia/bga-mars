@@ -17,7 +17,7 @@ class Operation_colonybon extends  AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $color = $this->color;
-        $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_$color", "card_colo");
+        $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_$color", "card_colo%");
         foreach ($markers as $markerId => $info) {
             $card = $info['location'];
             $rules = $this->game->getRulesFor($card, '*');
