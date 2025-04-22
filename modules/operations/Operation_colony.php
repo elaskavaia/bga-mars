@@ -14,7 +14,7 @@ class Operation_colony extends  AbsOperation {
         $tokens = $this->game->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
         $keys = array_keys($tokens);
 
-        return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
+        $detais = $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
             $param = $this->getParam(0);
             $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $tokenId);
             $n = 0;
@@ -31,6 +31,12 @@ class Operation_colony extends  AbsOperation {
             else if ($n > 0) $q = MA_ERR_OCCUPIED;
             return ['q' => $q, 'level' => $state];
         });
+        // $primary = $this->getTargetList($detais);
+        // if (count($primary) == 0) {
+        //     // no valid targets add 'none'
+        //     $detais['none'] = ['q' => MA_OK];
+        // }
+        return $detais;
     }
 
     function getPrimaryArgType() {
@@ -44,6 +50,10 @@ class Operation_colony extends  AbsOperation {
 
     function effect(string $owner, int $inc): int {
         $card = $this->getCheckedArg('target');
+        if ($card == 'none') {
+            $this->game->notifyMessage(clienttranslate('${player_name} No valid colony location, action is skipped'));
+            return 1; // skipped
+        }
         $res = $this->game->createPlayerMarker($owner);
         $step = $this->game->tokens->getTokenState($card);
         $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $card);
@@ -65,11 +75,7 @@ class Operation_colony extends  AbsOperation {
         $this->game->triggerEffect($owner, 'place_colony', $card);
         $this->game->notifyScoringUpdate();
 
-        return $inc;
-    }
-
-    function canFail(): bool {
-        return false;
+        return 1;
     }
 
     function canResolveAutomatically() {

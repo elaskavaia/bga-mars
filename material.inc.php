@@ -4315,7 +4315,7 @@ $this->token_types = [
   'num' => 'C15',
   'name' => clienttranslate('Ice Moon Colony'),
   't' => 1,
-  'r' => 'w,colony',
+  'r' => 'colony+w',
   'cost' => 23,
   'tags' => 'Space',
   'vp' => 0,
@@ -5053,7 +5053,7 @@ $this->token_types = [
   'name' => clienttranslate('Pluto'),
   't' => 9,
   'r' => '2draw',
-  'a' => 'draw:discard',
+  'a' => '?(draw:discard)',
   'i'=>'draw','slots'=>[0,1,2,2,3,3,4],
 ],
 // #standard project

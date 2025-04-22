@@ -22,7 +22,7 @@ C11|Floater Prototypes|3|2ores(Floater)|||2||Science Event|0|Colonies|Add 2 floa
 C12|Floater Technology|2||ores(Floater)||7||Science|0|Colonies||Add 1 floater to ANOTHER card.|||
 C13|Galilean Waystation|1|counter(all_tagJovian):pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
 C14|Heavy Taxation|1|2pm,4m|||3|tagEarth>=2|Earth|-1|Colonies|Requires 2 Earth tags. Increase your M€ production 2 steps, and gain 4 M€.||||
-C15|Ice Moon Colony|1|w,colony|||23||Space|0|Colonies|Place 1 colony and 1 ocean tile.||||
+C15|Ice Moon Colony|1|colony+w|||23||Space|0|Colonies|Place 1 colony and 1 ocean tile.||||
 C16|Impactor Swarm|3|2np_Any,12h|||11|tagJovian>=2|Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
 C17|Interplanetary Colony Ship|3|colony|||12||Space Earth Event|0|Colonies|Place a colony.||||
 C18|Jovian Lanterns|2|ores(Floater),tr|nu:res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
@@ -89,7 +89,7 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 8|Ganymede|9|pp|p|||||||||||'i'=>'p','slots'=>[0,1,2,3,4,5,6]
 9|Luna|9|2pm|2m|||||||||||'i'=>'m','slots'=>[1,2,4,7,10,13,17]
 10|Io|9|ph|2h|||||||||||'i'=>'h','slots'=>[2,3,4,6,8,10,13]
-11|Pluto|9|2draw|draw:discard|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
+11|Pluto|9|2draw|?(draw:discard)|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
 
 #standard project
 #set id=card_stanproj_{num}

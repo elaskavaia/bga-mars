@@ -291,8 +291,12 @@ Reason: tile placement may draw cards (information)
     }
 
     protected function argPrimary() {
+        return $this->getTargetList($this->argresult["info"]);
+    }
+
+    function getTargetList(array $details) {
         $res = [];
-        foreach ($this->argresult["info"] as $target => $info) {
+        foreach ($details as $target => $info) {
             if ($info['q'] == 0)  $res[] = $target;
         }
         return $res;
