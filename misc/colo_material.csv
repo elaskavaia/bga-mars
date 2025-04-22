@@ -69,7 +69,7 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 24|Aridor|4|||play_newtag:pm|-40|||0|Colonies|You start with 40 M€. As your first action, put an additional Colony Tile of your choice into play.||When you get a new type of tag in play (event cards do not count), increase your M€ production 1 step.||'a1'=>'colocard'
 25|Arklight|4|2pm||play_tagAnimal:res;play_tagPlant:res|-45||Animal|resCard/2|Colonies|You start with 45 M€. Increase your M€ production 2 steps||When you play an animal or plant tag, including this, add 1 animal to this card.|1 VP per 2 animals on this card.|'holds' => 'Animal'
 26|Polyphemos|4|5pm,5u|||-50|||0|Colonies|You start with 50 M€. Increase your M€ production 5 steps. Gain 5 titanium.||When you buy a card to hand, pay 5 M€ instead of 3 M€, including the starting hand.||
-27|Poseidon|4|||place_colony:pm|-45|||0|Colonies|You start with 45 M€. As your first action, place a colony.||When any colony is placed, including this, raise your M€ production 1 step.||'a1'=>'colony'
+27|Poseidon|4|||place_colony:pm:this:any|-45|||0|Colonies|You start with 45 M€. As your first action, place a colony.||When any colony is placed, including this, raise your M€ production 1 step.||'a1'=>'colony'
 28|Stormcraft|4||ores(Floater)||-48||Jovian|0|Colonies|You start with 48 M€.|Add 1 floater to ANY card.|Floaters on this card may be used as 2 heat each.||'holds' => 'Floater'
 
 
