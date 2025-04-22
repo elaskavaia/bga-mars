@@ -20,7 +20,7 @@ C09|Ecology Research|1|counter(colony):pp,ores(Animal),2ores(Microbe)|||21||Scie
 C10|Floater Leasing|1|counter(resFloater):m|||3|||0|Colonies|Increase your M€ production 1 step per 3 floaters you have.||||
 C11|Floater Prototypes|3|2ores(Floater)|||2||Science Event|0|Colonies|Add 2 floaters to ANOTHER card||||
 C12|Floater Technology|2||ores(Floater)||7||Science|0|Colonies||Add 1 floater to ANOTHER card.|||
-C13|Gaillean Waystation|1|counter(tagJovian_any):pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
+C13|Gaillean Waystation|1|counter(all_tagJovian):pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
 C14|Heavy Taxation|1|2pm,4m|||3|tagEarth>=2|Earth|-1|Colonies|Requires 2 Earth tags. Increase your M€ production 2 steps, and gain 4 M€.||||
 C15|Ice Moon Colony|1|w,colony|||23||Space|0|Colonies|Place 1 colony and 1 ocean tile.||||
 C16|Impactor Swarm|3|2np_Any,12h|||11|tagJovian>=2|Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
