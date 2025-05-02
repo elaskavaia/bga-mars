@@ -16,8 +16,8 @@ class Operation_trade extends  AbsOperation {
         if (!$colony) {
             $par = $this->params();
             $free = $par == 'free';
-            $avail = $this->game->tokens->getTokensOfTypeInLocation("fleet_$color","colo_fleet");
-            if (count($avail)==0) {
+            $avail = $this->game->tokens->getTokensOfTypeInLocation("fleet_$color", "colo_fleet");
+            if (count($avail) == 0) {
                 $keys = ['none'];
                 return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
                     return ['q' => MA_ERR_ALREADYUSED, 'level' => 0];
@@ -32,7 +32,7 @@ class Operation_trade extends  AbsOperation {
                 $q = MA_OK;
                 if ($state < 0) $q = MA_ERR_PREREQ;
                 else if ($claimed > 0) $q = MA_ERR_OCCUPIED;
-                else if (!$free && !$this->canPayCost()) $q = MA_ERR_COST;
+                else if (!$free && !$this->canPayCost($tokenId)) $q = MA_ERR_COST;
 
                 return ['q' => $q, 'level' => $state];
             });
@@ -76,11 +76,12 @@ class Operation_trade extends  AbsOperation {
         return $colony;
     }
 
-    function canPayCost() {
+    function canPayCost($tokenId) {
         $color = $this->color;
         if ($this->game->getTrackerValue($color, 'u') >= 3) return true;
         if ($this->game->getTrackerValue($color, 'e') >= 3) return true;
-        $payment_inst = $this->game->getOperationInstanceFromType("9nm", $color, 1);
+        $pay = $this->getPaymentExpr($tokenId);
+        $payment_inst = $this->game->getOperationInstanceFromType($pay, $color, 1);
         if ($payment_inst->isVoid()) return false;
         return true;
     }
@@ -146,7 +147,7 @@ class Operation_trade extends  AbsOperation {
             return $inc;
         }
         $card = $colony;
-        $avail = $this->game->tokens->getTokensOfTypeInLocation("fleet_$owner","colo_fleet");
+        $avail = $this->game->tokens->getTokensOfTypeInLocation("fleet_$owner", "colo_fleet");
         $ship = array_key_first($avail);
         $this->game->systemAssertTrue("Trade error", $ship);
         $step = $this->game->tokens->getTokenState($card);
