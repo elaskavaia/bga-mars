@@ -107,7 +107,6 @@ class MathBinaryExpression extends MathExpression {
         $left = $this->left->evaluate($mapper);
         $right = $this->right->evaluate($mapper);
  
-        //$res = eval("return $left $op $right;");
         $res = 0;
         switch($op) {
             case "+": $res =  $left + $right; break;

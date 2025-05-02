@@ -224,7 +224,7 @@ abstract class PGameBasic extends Table {
         //     try {
         //         $code = 'return $this->' . $parts[0] . ";";
         //         $message = $parts[1];
-        //         $object = eval("$code");
+        //         $object = e_v_a_l("$code");
         //     } catch (Throwable $t) {
         //         self::notifyPlayer($this->getCurrentPlayerId(), "simplenotif", "DEBUG: running $code; Error: method $t", []);
         //         return false;
