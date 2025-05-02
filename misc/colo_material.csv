@@ -16,8 +16,8 @@ C05|Conscription|3|||onPay_card:16m;play_card:flip:that|5|tagEarth>=2|Earth Even
 C06|Corona Extractor|1|4pe|||10|tagScience>=4|Space Energy|0|Colonies|Requires 4 science tags. Increase your energy production 4 steps.||||
 C07|Cryo-Sleep|2|||onPay_trade:1q|10||Science|1|Colonies|||When you trade, you pay 1 less resource for it.||
 C08|Earth Elevator|1|3pu|||43||Space Earth|4|Colonies|Increase your titanium production 3 steps.||||
-C09|Ecology Research|1|counter(colony):pp,ores(Animal),2ores(Microbe)|||21||Science Microbe Plant Animal|1|Colonies|Increase your plant production 1 step for each colony you own. Add 1 animal to ANOTHER card and 2 microbes to ANOTHER card.||||
-C10|Floater Leasing|1|counter(resFloater):m|||3|||0|Colonies|Increase your M€ production 1 step per 3 floaters you have.||||
+C09|Ecology Research|1|ores(Animal),2ores(Microbe),counter(colony):pp|||21||Science Microbe Plant Animal|1|Colonies|Increase your plant production 1 step for each colony you own. Add 1 animal to ANOTHER card and 2 microbes to ANOTHER card.||||
+C10|Floater Leasing|1|counter(resFloater):pm|||3|||0|Colonies|Increase your M€ production 1 step per 3 floaters you have.||||
 C11|Floater Prototypes|3|2ores(Floater)|||2||Science Event|0|Colonies|Add 2 floaters to ANOTHER card||||
 C12|Floater Technology|2||ores(Floater)||7||Science|0|Colonies||Add 1 floater to ANOTHER card.|||
 C13|Galilean Waystation|1|counter(all_tagJovian):pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
@@ -25,7 +25,7 @@ C14|Heavy Taxation|1|2pm,4m|||3|tagEarth>=2|Earth|-1|Colonies|Requires 2 Earth t
 C15|Ice Moon Colony|1|colony+w|||23||Space|0|Colonies|Place 1 colony and 1 ocean tile.||||
 C16|Impactor Swarm|3|2np_Any,12h|||11|tagJovian>=2|Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
 C17|Interplanetary Colony Ship|3|colony|||12||Space Earth Event|0|Colonies|Place a colony.||||
-C18|Jovian Lanterns|2|ores(Floater),tr|nu:res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
+C18|Jovian Lanterns|2|2ores(Floater),tr|nu:2res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
 C19|Jupiter Floating Station|2||ores(Floater)/(counter(resCard,4):m)||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 M€ for every floater here (Max 4).|||  'holds' => 'Floater'
 C20|Luna Governor|1|2pm|||4|tagEarth>=3|Earth Earth|0|Colonies|Requires 3 Earch tags. Increase your M€ production 2 steps.||||
 C21|Lunar Exports|1|5pm/2pp|||19||Space Earth|0|Colonies|Increase your plant production 2 steps, or increase your M€ production 5 steps.||||
