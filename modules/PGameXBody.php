@@ -2688,7 +2688,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getTagsMap($owner) {
-        $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
+        $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_$owner");
         $count = 0;
         $map = [];
         foreach ($cards as $card => $cardrec) {
