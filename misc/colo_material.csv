@@ -17,7 +17,7 @@ C06|Corona Extractor|1|4pe|||10|tagScience>=4|Space Energy|0|Colonies|Requires 4
 C07|Cryo-Sleep|2|||onPay_trade:1q|10||Science|1|Colonies|||When you trade, you pay 1 less resource for it.||
 C08|Earth Elevator|1|3pu|||43||Space Earth|4|Colonies|Increase your titanium production 3 steps.||||
 C09|Ecology Research|1|ores(Animal),2ores(Microbe),counter(colony):pp|||21||Science Microbe Plant Animal|1|Colonies|Increase your plant production 1 step for each colony you own. Add 1 animal to ANOTHER card and 2 microbes to ANOTHER card.||||
-C10|Floater Leasing|1|counter(resFloater):pm|||3|||0|Colonies|Increase your M€ production 1 step per 3 floaters you have.||||
+C10|Floater Leasing|1|counter(resFloater/3):pm|||3|||0|Colonies|Increase your M€ production 1 step per 3 floaters you have.||||
 C11|Floater Prototypes|3|2ores(Floater)|||2||Science Event|0|Colonies|Add 2 floaters to ANOTHER card||||
 C12|Floater Technology|2||ores(Floater)||7||Science|0|Colonies||Add 1 floater to ANOTHER card.|||
 C13|Galilean Waystation|1|counter(all_tagJovian):pm|||15||Space|1|Colonies|Increase your M€ production 1 step for every Jovian tags in play.||||
@@ -55,7 +55,7 @@ C44|Titan Floating Launch-Pad|2|2ores(Floater,Jovian)|ores(Floater,Jovian)/(nres
 C45|Titan Shuttles|2||(2ores(Floater,Jovian))/(counter(resCard,1):(nres,u))||23||Space Jovian|1|Colonies||Add 2 floaters to ANY JOVIAN CARD, or spend any number of floaters here to gain the same number of titanium.|||  'holds' => 'Floater'
 C46|Trade Envoys|2|||on_trade:?tradeinc:that|6|||0|Colonies|||When you trade, you may first increase that Colony Tile track 1 step.||
 C47|Trading Colony|2|colony||on_trade:?tradeinc:that|18||Space|0|Colonies|Place a colony.||When you trade, you may first increase that Colony Tile track 1 step.||
-C48|Urban Decomposers|1|pp,2ores(Microbe)|||6|colony>=1 & city>=1|Microbe|0|Colonies|Requires that you have 1 city tile and 1 colony in play. Increase your plant production 1 step, and add 2 microbes to ANOTHER card.||||
+C48|Urban Decomposers|1|pp,2ores(Microbe)|||6|(colony>=1) & (city>=1)|Microbe|0|Colonies|Requires that you have 1 city tile and 1 colony in play. Increase your plant production 1 step, and add 2 microbes to ANOTHER card.||||
 C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Requires 5 science tags.||When you play a space tag, you pay 4 M€ less for it.||
 
 

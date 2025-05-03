@@ -60,6 +60,7 @@ final class MathExpressionTest extends TestCase {
         $this->checkExprValue("(1 + 2) + 3",6);
         $this->checkExpr("(1 & 1)",1);
         $this->checkExpr("((1 > 0) & (2 > 10))",0);
+        $this->checkExprValue("(1 >= 0) & (0 >= 1)",0);
 
         //$this->checkExprValue("10 == 11",0);
         //$this->checkExprValue("10 == 10",1);
