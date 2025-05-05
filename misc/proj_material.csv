@@ -146,6 +146,6 @@ num|name|t|r|cost|text|min|php
 #set pre=
 1|Collector|8|collector|20|Having most types of resources, both on player board and cards (e.g. different kinds of microbes only count as 1 type of resource).
 2|Innovator|8|cardsRed+tycoon|20|Having most played cards (event cards also count!).
-3|Constructor|8|city|20|Owning most colonies and city tiles.
+3|Constructor|8|city+colony|20|Owning most colonies and city tiles.
 4|Manufacturer|8|ps+ph|20|Having most steel production and heat production combined.
 5|Physicist|8|tagScience+tagSpace|20|Having most science and space tags.

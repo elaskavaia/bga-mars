@@ -5788,7 +5788,7 @@ $this->token_types = [
   'num' => 3,
   'name' => clienttranslate('Constructor'),
   't' => 8,
-  'r' => 'city',
+  'r' => 'city+colony',
   'cost' => 20,
   'text' => clienttranslate('Owning most colonies and city tiles.'),
 ],
