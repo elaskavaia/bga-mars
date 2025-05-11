@@ -26,7 +26,7 @@ C15|Ice Moon Colony|1|colony+w|||23||Space|0|Colonies|Place 1 colony and 1 ocean
 C16|Impactor Swarm|3|2np_Any,12h|||11|tagJovian>=2|Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
 C17|Interplanetary Colony Ship|3|colony|||12||Space Earth Event|0|Colonies|Place a colony.||||
 C18|Jovian Lanterns|2|2ores(Floater),tr|nu:2res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
-C19|Jupiter Floating Station|2||ores(Floater)/(counter(resCard,4):m)||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 M€ for every floater here (Max 4).|||  'holds' => 'Floater'
+C19|Jupiter Floating Station|2||ores(Floater)/(counter(resCard,null,4):m)||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 M€ for every floater here (Max 4).|||  'holds' => 'Floater'
 C20|Luna Governor|1|2pm|||4|tagEarth>=3|Earth Earth|0|Colonies|Requires 3 Earch tags. Increase your M€ production 2 steps.||||
 C21|Lunar Exports|1|5pm/2pp|||19||Space Earth|0|Colonies|Increase your plant production 2 steps, or increase your M€ production 5 steps.||||
 C22|Lunar Mining|1|counter(tagEarth/2):pu|||11||Earth|0|Colonies|Increase your titanium production 1 step for every 2 Earth tags you have in play, including this.||||

@@ -792,6 +792,21 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'pp'));
     }
 
+    public function testCounterMax() {
+        $m = $this->game();
+        $m->incTrackerValue(PCOLOR, 'pp', 0);
+        $m->machine->insertRule("counter(5,null,4) pp", 1, 1, 1, PCOLOR);
+        $m->st_gameDispatch();
+        $this->assertEquals(4, $m->getTrackerValue(PCOLOR, 'pp'));
+    }
+    public function testCounterMaxMin() {
+        $m = $this->game();
+        $m->incTrackerValue(PCOLOR, 'pp', 0);
+        $m->machine->insertRule("counter(3,3,4) pp", 1, 1, 1, PCOLOR);
+        $m->st_gameDispatch();
+        $this->assertEquals(3, $m->getTrackerValue(PCOLOR, 'pp'));
+    }
+
     public function testPut() {
         $m = $this->game();
         $value = $m->getTrackerValue(PCOLOR, 's');
@@ -1871,7 +1886,7 @@ final class GameTest extends TestCase {
         $this->game = $m;
 
         $m->dbSetTokenLocation('card_colo_1', 'display_colonies', 1);
-     
+
         $m->push(PCOLOR, "colony");
         $tops = $m->machine->getTopOperations(PCOLOR);
         $op =  reset($tops);
@@ -1880,7 +1895,7 @@ final class GameTest extends TestCase {
         $tops = $m->machine->getTopOperations(PCOLOR);
         $m->machine->clear();
         $this->assertEquals(1, $m->evaluateExpression("colony", PCOLOR));
-        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, 'm')); 
+        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, 'm'));
         $m->machine->interrupt();
         $m->effect_playCard(PCOLOR, 'card_main_C30');
         $m->st_gameDispatch();

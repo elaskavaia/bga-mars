@@ -4376,7 +4376,7 @@ $this->token_types = [
   'num' => 'C19',
   'name' => clienttranslate('Jupiter Floating Station'),
   't' => 2,
-  'a' => 'ores(Floater)/(counter(resCard,4):m)',
+  'a' => 'ores(Floater)/(counter(resCard,null,4):m)',
   'cost' => 9,
   'pre' => 'tagScience>=3',
   'tags' => 'Jovian',
