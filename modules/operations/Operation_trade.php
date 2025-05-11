@@ -136,13 +136,10 @@ class Operation_trade extends  AbsOperation {
             $this->game->machine->interrupt();
 
             $this->game->triggerEffect($owner, 'on_trade', $colony);
-            $this->game->debug_dumpMachine();
+            
             if (!$free) {
                 $this->game->push($owner, $this->getPaymentExpr($colony), "op_trade");
             }
-
-            $this->game->debug_dumpMachine();
-
 
             return $inc;
         }
