@@ -28,6 +28,10 @@
     background-color: #ffffff66;
 }
 
+.tooltipimage.fleet.ship {
+    margin-left: 18%;
+}
+
 @each $key, $val in $colors-list {
     .fleet.ship.fleet#{$key}::after {
         background-color: var(--color-mapping#{$key});

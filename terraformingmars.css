@@ -4498,6 +4498,10 @@
   background-color: rgba(255, 255, 255, 0.4);
 }
 
+.tooltipimage.fleet.ship {
+  margin-left: 18%;
+}
+
 .fleet.ship.fleet_0000ff::after {
   background-color: var(--color-mapping_0000ff);
 }
@@ -8466,6 +8470,7 @@
 
 .tooltipimage {
   flex: none;
+  position: relative;
 }
 
 .tooltiptext {
