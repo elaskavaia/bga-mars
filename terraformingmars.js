@@ -2337,13 +2337,15 @@ var CustomAnimation = /** @class */ (function () {
                         destination = tracker;
                     dojo.place(htm.replace("%t", tmpid), origin_1);
                     this_2.wait(delay).then(function () {
-                        if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
-                            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
+                        if ($(tmpid)) {
+                            if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
+                                dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
+                            }
+                            _this.game.slideAndPlace(tmpid, destination, singleDur, undefined, function () {
+                                dojo.destroy(tmpid);
+                                dojo.destroy("move_from_" + tmpid);
+                            });
                         }
-                        _this.game.slideAndPlace(tmpid, destination, singleDur, undefined, function () {
-                            dojo.destroy(tmpid);
-                            dojo.destroy("move_from_" + tmpid);
-                        });
                     });
                     delay += sequenceDur;
                 };
@@ -7009,7 +7011,7 @@ var GameXBody = /** @class */ (function (_super) {
             this.addActionButton("button_rcss", "Reload CSS", function () { return reloadCss(); });
         if (!this.isCurrentPlayerActive()) {
             if (stateName == "playerTurnChoice" && (args === null || args === void 0 ? void 0 : args.master) && (args === null || args === void 0 ? void 0 : args.master) != this.getActivePlayerId()) {
-                this.setDescriptionOnMyTurn("${player_name} is performing out of turn action", {
+                this.setDescriptionOnMyTurn(_("${player_name} is performing out of turn action"), {
                     player_name: this.divColoredPlayer(this.getActivePlayerId())
                 });
             }

@@ -368,13 +368,15 @@ class CustomAnimation {
       dojo.place(htm.replace("%t", tmpid), origin);
 
       this.wait(delay).then(() => {
-        if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
-          dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
+        if ($(tmpid)) {
+          if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
+            dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
+          }
+          this.game.slideAndPlace(tmpid, destination, singleDur, undefined, () => {
+            dojo.destroy(tmpid);
+            dojo.destroy("move_from_" + tmpid);
+          });
         }
-        this.game.slideAndPlace(tmpid, destination, singleDur, undefined, () => {
-          dojo.destroy(tmpid);
-          dojo.destroy("move_from_" + tmpid);
-        });
       });
 
       delay += sequenceDur;
