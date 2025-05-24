@@ -1817,11 +1817,74 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'm')); // 1 money left
     }
 
+    function checkOpVoid($type, $data = '') {
+        $op = $this->game->getOperationInstanceFromType($type, PCOLOR, 1, $data);
+        $this->assertTrue($op->isVoid());
+        return $op;
+    }
+
+    function checkOpNotVoid($type, $data = '') {
+        $op = $this->game->getOperationInstanceFromType($type, PCOLOR, 1, $data);
+        $this->assertFalse($op->isVoid());
+        return $op;
+    }
+
     public function testTradeInc() {
         $m = $this->game = (new GameUT())->init(0, 1);
         $this->assertTrue($m->isColoniesVariant() === 1);
         $op = $m->getOperationInstanceFromType("tradeinc", PCOLOR, 1, 'card_colo_2');
         $this->assertFalse($op->isVoid());
+    }
+
+    public function testTradeIncIncMax() {
+        $game = $this->game = (new GameUT())->init(0, 1);
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 6);
+        $op = $game->getOperationInstanceFromType("tradeinc", PCOLOR, 1);
+        $this->assertTrue($op->isVoid());
+        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $op = $game->getOperationInstanceFromType("tradeinc", PCOLOR, 1);
+        $this->assertFalse($op->isVoid());
+        $op = $game->getOperationInstanceFromType("tradeinc(inc)", PCOLOR);
+        $this->assertFalse($op->isVoid());
+    }
+
+
+    public function testTradeIncDec() {
+        $game = $this->game = (new GameUT())->init(0, 1);
+        $opname = "tradeinc(dec)";
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 6);
+        $this->checkOpNotVoid($opname);
+
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 0);
+        $this->checkOpVoid($opname);
+
+        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $this->checkOpNotVoid($opname);
+    }
+
+    public function testTradeIncSteal() {
+        $game = $this->game = (new GameUT())->init(0, 1);
+        $opname = "tradeinc(steal)";
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 6);
+        $this->checkOpVoid($opname);
+
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 3);
+        $this->checkOpVoid($opname);
+
+        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $this->checkOpNotVoid($opname);
+
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 0);
+        $this->checkOpNotVoid($opname);
+        // $op = $this->game->getOperationInstanceFromType($opname, PCOLOR);
+        // var_dump($op->argPrimaryDetails());
+
+        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 0);
+        $game->dbSetTokenLocation('card_colo_4', 'display_colonies', 0);
+        $op = $this->checkOpNotVoid($opname);
+        $arginfo = $op->argPrimaryDetails();
+        $this->assertEquals($arginfo['card_colo_3']['q'], 3);
     }
 
     public function testTagNone() {

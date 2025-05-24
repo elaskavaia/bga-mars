@@ -286,6 +286,10 @@ Reason: tile placement may draw cards (information)
         return $result;
     }
 
+    public function clearCache() {
+        $this->argresult = null;
+    }
+
     public function argPrimaryDetails() {
         return [];
     }
