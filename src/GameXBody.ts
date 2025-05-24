@@ -3281,7 +3281,7 @@ awarded.`);
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());
     if (!this.isCurrentPlayerActive()) {
       if (stateName == "playerTurnChoice" && args?.master && args?.master != this.getActivePlayerId()) {
-        this.setDescriptionOnMyTurn("${player_name} is performing out of turn action", {
+        this.setDescriptionOnMyTurn(_("${player_name} is performing out of turn action"), {
           player_name: this.divColoredPlayer(this.getActivePlayerId())
         });
       }
