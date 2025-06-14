@@ -2337,12 +2337,13 @@ var CustomAnimation = /** @class */ (function () {
                         destination = tracker;
                     dojo.place(htm.replace("%t", tmpid), origin_1);
                     this_2.wait(delay).then(function () {
-                        if ($(tmpid)) {
+                        var tempNode = $(tmpid);
+                        if (tempNode) {
                             if (destination.startsWith("move_from_") && !dojo.byId(destination)) {
                                 dojo.place('<div id="move_from_' + tmpid + '" class="topbar_movefrom"></div>', "thething");
                             }
-                            _this.game.slideAndPlace(tmpid, destination, singleDur, undefined, function () {
-                                dojo.destroy(tmpid);
+                            _this.game.slideAndPlace(tempNode, destination, singleDur, undefined, function () {
+                                dojo.destroy(tempNode);
                                 dojo.destroy("move_from_" + tmpid);
                             });
                         }
@@ -5562,7 +5563,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
                 var card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
                 var card_i = CustomRenders.parseExprToHtml(displayInfo.i);
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(_(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>Colony Bonus</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>Trade Income</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-value\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(this.getTr(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>").concat(_('Colony Bonus'), "</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>").concat(_('Trade Income'), "</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-value\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
                 // const line = tokenNode.querySelector(".colony-colony-line");
                 // const line2 = tokenNode.querySelector(".colony-trade-line");
                 // for (let i = 0; i < 7; i++) {
