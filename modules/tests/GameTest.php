@@ -1893,6 +1893,16 @@ final class GameTest extends TestCase {
         $game->effect_playCard(PCOLOR, $card);
         $this->assertEquals(1, $game->getCountOfCardTags(PCOLOR, ""));
     }
+    public function testTagNoneCC() {
+        $game = $this->game = (new GameUT())->init(0, 1); // colonies
+        $this->assertEquals(0, $game->getCountOfCardTags(PCOLOR, ""));
+        $card = $game->mtFindByName('Community Services');
+        $game->effect_playCard(PCOLOR, $card);
+        //Research Coordination
+        $card = $game->mtFindByName('Research Coordination'); // Wild
+        $game->effect_playCard(PCOLOR, $card);
+        $this->assertEquals(2, $game->getCountOfCardTags(PCOLOR, ""));
+    }
     public function testPayHeatWithCorp() {
         $game = $m = $this->game = (new GameUT())->init(0, 1); // colonies
         $color = $p = PCOLOR;

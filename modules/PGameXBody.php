@@ -161,7 +161,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->setupSoloMap();
                 if ($colonies) {
                     $color = $this->getPlayerColorById($player_id);
-                    $this->push($color,"colodiscard");
+                    $this->push($color, "colodiscard");
                     $this->notifyWithName('message', clienttranslate('Colonies solo mode starts with descreased megacredit production'));
                     $this->effect_incProduction($color, "pm", -2);
                 }
@@ -721,7 +721,7 @@ abstract class PGameXBody extends PGameMachine {
                     if ($deck == 'Colonies') {
                         continue;
                     }
-                } 
+                }
             }
             if ($id == 'card_stanproj_7') { // Buffer Gas
                 if (!$this->isSolo()) continue;
@@ -1723,8 +1723,8 @@ abstract class PGameXBody extends PGameMachine {
         $tagsarr = explode(' ', $tags);
         if ($ttype != MA_CARD_TYPE_EVENT && $tags) {
             $tagsMap = $this->getTagsMap($color);
-            $tagsMap['']=-1;
-            $tagsMap['Wild']=-1;
+            $tagsMap[''] = -1;
+            $tagsMap['Wild'] = -1;
             foreach ($tagsarr as $tag) {
                 $this->incTrackerValue($color, "tag$tag");
                 if (array_get($tagsMap, $tag, 0) == 0) {
@@ -2684,7 +2684,11 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getCountOfCardTags($owner, $usetags) {
-        return array_get($this->getTagsMap($owner), $usetags, 0);
+        $map = $this->getTagsMap($owner);
+        $realTags = array_get($map, $usetags, 0);
+        $wildTags = 0;
+        if ($usetags === '') $wildTags = array_get($map, "Wild", 0);
+        return $realTags + $wildTags;
     }
 
     function getTagsMap($owner) {
