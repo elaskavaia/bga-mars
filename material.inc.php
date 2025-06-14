@@ -918,7 +918,7 @@ $this->token_types = [
   'num' => 52,
   'name' => clienttranslate('Fish'),
   't' => 2,
-  'r' => 'npp_Any',
+  'r' => 'npp',
   'a' => 'res',
   'cost' => 9,
   'pre' => 't>=2',

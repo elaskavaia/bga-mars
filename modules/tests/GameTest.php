@@ -1956,6 +1956,33 @@ final class GameTest extends TestCase {
         $this->assertEquals(8, $this->game->evaluateExpression('opp_tagJovian', BCOLOR, null, ['wilds' => []]));
     }
 
+    public function testGalileanWaystation() {
+        $game = $this->game(2);
+        $color = PCOLOR;
+        $color2 = BCOLOR;
+        $card = $game->mtFindByName('Research Coordination');
+        $game->effect_playCard(PCOLOR, $card);
+        $this->assertEquals(1, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+
+        $card = $game->mtFindByName('Jupiter Floating Station');
+        $game->effect_playCard(PCOLOR, $card);
+        $this->assertEquals(2, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+        $tops = $game->machine->interrupt();
+
+        $corp = $game->mtFindByName('Stormcraft');
+        $game->effect_playCorporation(PCOLOR, $corp, true);
+        $game->effect_playCorporation(PCOLOR, $corp, false);
+        $game->st_gameDispatch();
+        $this->assertEquals(3, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+        $tops = $game->machine->interrupt();
+
+
+        $card = $game->mtFindByName('Galilean Waystation');
+        $game->effect_playCard(PCOLOR, $card);
+        $game->st_gameDispatch();
+        $this->assertEquals(3, $game->getTrackerValue(PCOLOR, 'pm'));
+    }
+
 
     public function testProductiveOutpost() {
         $m = new GameUT();

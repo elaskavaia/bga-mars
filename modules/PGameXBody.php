@@ -353,20 +353,25 @@ abstract class PGameXBody extends PGameMachine {
     function debug_q() {
         //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
-        $this->debug_incparam('o', 13);
-        $this->debug_incparam('t', 18);
-        $this->debug_incparam('w', 11);
-        $this->debug_incparam('gen', 10);
-        $this->debug_optionUndo(1);
+              $color = $this->getCurrentPlayerColor();
 
-        $players = $this->loadPlayersBasicInfos();
+        $res = $this->evaluateExpression('all_tagJovian', $color, null, ['wilds' => []]);
+        $this->debugConsole("res=$res",[]);
+
+        // $this->debug_incparam('o', 13);
+        // $this->debug_incparam('t', 18);
+        // $this->debug_incparam('w', 11);
+        // $this->debug_incparam('gen', 10);
+        // $this->debug_optionUndo(1);
+
+        // $players = $this->loadPlayersBasicInfos();
 
 
-        foreach ($players as $player_id => $player) {
-            $color = $player["player_color"];
-            $this->effect_incCount($color, 'pp', 8);
-            $this->effect_incCount($color, 'pm', 20);
-        }
+        // foreach ($players as $player_id => $player) {
+        //     $color = $player["player_color"];
+        //     $this->effect_incCount($color, 'pp', 8);
+        //     $this->effect_incCount($color, 'pm', 20);
+        // }
         //$this->dbSetTokensLocation($cards, 'temp');
         //$this->gamestate->jumpToState(STATE_GAME_DISPATCH);
         //$card = "card_stanproj_1";
@@ -419,7 +424,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         return $token;
     }
-    function debug_discardCard($fuzzy_card, $color = null) {
+    function debug_discardCard(string $fuzzy_card, string $color = null) {
         if ($color === null) $color = $this->getCurrentPlayerColor();
         $card_id = $this->findCard($fuzzy_card);
         $this->effect_moveCard($color, $card_id, "discard_main", 0);
