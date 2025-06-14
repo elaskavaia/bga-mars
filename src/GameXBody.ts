@@ -1729,9 +1729,9 @@ awarded.`);
         const card_i = CustomRenders.parseExprToHtml(displayInfo.i);
         decor.innerHTML = `
                   <div class="card_bg"></div>
-                  <div class="card_title">${_(card_title)}</div>
-                  <div class="card_initial">${card_a}<span>Colony Bonus</span></div>
-                  <div class="card_effect">${card_i}<span>Trade Income</span></div>  
+                  <div class="card_title">${this.getTr(card_title)}</div>
+                  <div class="card_initial">${card_a}<span>${_('Colony Bonus')}</span></div>
+                  <div class="card_effect">${card_i}<span>${_('Trade Income')}</span></div>  
                   <div class="colony-colony-line"></div>  
                   <div class="colony-trade-line"></div>  
                   <div class="colony-trade-value"></div>  
