@@ -4488,7 +4488,7 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 0,
   'deck' => 'Colonies',
-  'text' => clienttranslate('Decrese your M€ production 2 steps. Place a colony.'),
+  'text' => clienttranslate('Decrease your M€ production 2 steps. Place a colony.'),
 ],
  'card_main_C27' => [  //
   'location' => 'deck_main',
