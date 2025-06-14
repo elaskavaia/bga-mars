@@ -1777,6 +1777,28 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, $m->evaluateExpression("colony", PCOLOR));
     }
 
+    public function testColonyActivate() {
+        $game = new GameUT();
+        $game->init(0, 1);
+        $this->assertTrue($game->isColoniesVariant() === 1);
+        $this->game = $game;
+        $color = PCOLOR;
+        $fish = $game->mtFind('name', 'Fish');
+        $game->effect_playCard($color, $fish);
+
+        $card = $game->mtFind('name', 'Miranda');
+        $this->game->dbSetTokenLocation($card, 'display_colonies', -1);
+        $this->assertEquals(-1, $game->tokens->getTokenState($card));
+        $this->game->activateColonies();
+
+        $game->st_gameDispatch();
+        $this->assertEquals(1, $game->tokens->getTokenState($card));
+
+        $this->game->dbSetTokenLocation($card, 'display_colonies', -1);
+        $this->game->activateColonies($fish);
+        $this->assertEquals(1, $game->tokens->getTokenState($card));
+    }
+
     public function testTrade() {
         $m = $this->game = (new GameUT())->init(0, 1);
         $this->assertTrue($m->isColoniesVariant() === 1);
@@ -1928,7 +1950,7 @@ final class GameTest extends TestCase {
         $op = $op->delegate;
         $this->assertEquals('enum', $op->getPrimaryArgType());
         $args = $op->argPrimaryDetails();
-        echo (toJson($args));
+        //echo (toJson($args));
 
         $m->push(PCOLOR, $effect);
         $m->st_gameDispatch();

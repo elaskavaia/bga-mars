@@ -136,7 +136,7 @@ class Operation_trade extends  AbsOperation {
             $this->game->machine->interrupt();
 
             $this->game->triggerEffect($owner, 'on_trade', $colony);
-            
+
             if (!$free) {
                 $this->game->push($owner, $this->getPaymentExpr($colony), "op_trade");
             }
@@ -187,10 +187,35 @@ class Operation_trade extends  AbsOperation {
         foreach ($colonies as $colo => $info) {
             if ($info['state'] >= 0) continue;
             $prod = $game->getRulesFor($colo, 'prod', '');
-            if ((!$prod && !$proj) || $holds == $prod) {
+            $activate = false;
+            if (!$prod) {
+                $activate = true;
+            } else if (!$proj) {
+                // check all cards
+                $cards = $game->tokens->getTokensOfTypeInLocation("card", "tableau_%");
+                foreach ($cards as $card => $info) {
+                    $holds = $game->getRulesFor($card, 'holds', '');
+                    if ($holds == $prod) {
+                        $activate = true;
+                        break;
+                    }
+                }
+            } else if ($proj) {
+                if ($holds == $prod) {
+                    $activate = true;
+                }
+            }
+            if ($activate) {
                 $game->dbSetTokenLocation($colo, 'display_colonies', 1, clienttranslate('Colony tile ${card_name} is activated'), [
                     'card_name' => $game->getTokenName($colo)
                 ]);
+            } else if (!$proj) {
+                $game->notifyMessage(
+                    clienttranslate('Colony tile ${card_name} is not yet activated because no player possesses a card that holds required resources'),
+                    [
+                        'card_name' => $game->getTokenName($colo)
+                    ]
+                );
             }
         }
     }
