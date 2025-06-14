@@ -1944,12 +1944,16 @@ final class GameTest extends TestCase {
         $color = PCOLOR;
         $color2 = BCOLOR;
         $this->game->tokens->setTokenState("tracker_tagJovian_{$color}", 7);
+        $this->game->tokens->setTokenState("tracker_tagWild_{$color}", 1);
         $this->game->tokens->setTokenState("tracker_tagJovian_{$color2}", 1);
         $this->game->tokens->setTokenState("tracker_tagScience_{$color}", 7);
-        $this->assertEquals(2, $this->game->getCountOfUniqueTags($color));
+        $this->assertEquals(3, $this->game->getCountOfUniqueTags($color));
         $this->game->setTrackerValue(PCOLOR, 'pm', 10);
         $this->assertEquals(8, $this->game->evaluateExpression('all_tagJovian'));
-        $this->assertEquals(1, $this->game->evaluateExpression('opp_tagJovian'));
+        $this->assertEquals(7, $this->game->evaluateExpression('opp_tagJovian', BCOLOR));
+
+        $this->assertEquals(9, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(8, $this->game->evaluateExpression('opp_tagJovian', BCOLOR, null, ['wilds' => []]));
     }
 
 

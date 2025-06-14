@@ -1064,7 +1064,7 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($colors as $color) {
                 if ($opp && $color === $owner)
                     continue;
-                $value += $this->evaluateTerm($x, $color, $context);
+                $value += $this->evaluateTerm($x, $color, $context, $options);
             }
             return $value;
         }
