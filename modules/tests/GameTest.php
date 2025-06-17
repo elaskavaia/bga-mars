@@ -2004,8 +2004,27 @@ final class GameTest extends TestCase {
         $game->effect_playCard(PCOLOR, $card);
         $game->st_gameDispatch();
         $this->assertEquals(3, $game->getTrackerValue(PCOLOR, 'pm'));
-    }
 
+
+        //Martian Survey
+    }
+    public function testMediaArchives() {
+        $game = $this->game();
+
+        $game->machine->interrupt();
+        $card = $game->mtFindByName('Media Archives');
+        $game->effect_playCard(PCOLOR, $card);
+        $game->machine->interrupt(); // media archives effect will be last to resolve
+        $card = $game->mtFindByName('Bribed Committee');
+        $game->effect_playCard(PCOLOR, $card);
+
+
+        $card = $game->mtFindByName('Research Coordination');
+        $game->effect_playCard(PCOLOR, $card); // wild
+
+        $game->st_gameDispatch();
+        $this->assertEquals(1, $game->getTrackerValue(PCOLOR, 'm'));
+    }
 
     public function testProductiveOutpost() {
         $m = new GameUT();
