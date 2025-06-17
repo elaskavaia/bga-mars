@@ -1975,7 +1975,8 @@ final class GameTest extends TestCase {
         $this->assertEquals(7, $this->game->evaluateExpression('opp_tagJovian', BCOLOR));
 
         $this->assertEquals(9, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
-        $this->assertEquals(8, $this->game->evaluateExpression('opp_tagJovian', BCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(7, $this->game->evaluateExpression('opp_tagJovian', BCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(8, $this->game->evaluateExpression('all_tagJovian', BCOLOR, null, ['wilds' => []]));
     }
 
     public function testGalileanWaystation() {

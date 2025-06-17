@@ -353,10 +353,10 @@ abstract class PGameXBody extends PGameMachine {
     function debug_q() {
         //$this->dbMultiUndo->doSaveUndoSnapshot();
         $player_id = $this->getCurrentPlayerId();
-              $color = $this->getCurrentPlayerColor();
+        $color = $this->getCurrentPlayerColor();
 
         $res = $this->evaluateExpression('all_tagJovian', $color, null, ['wilds' => []]);
-        $this->debugConsole("res=$res",[]);
+        $this->debugConsole("res=$res", []);
 
         // $this->debug_incparam('o', 13);
         // $this->debug_incparam('t', 18);
@@ -1069,7 +1069,10 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($colors as $color) {
                 if ($opp && $color === $owner)
                     continue;
-                $value += $this->evaluateTerm($x, $color, $context, $options);
+                if ($color === $owner)
+                    $value += $this->evaluateTerm($x, $color, $context, $options);
+                else
+                    $value += $this->evaluateTerm($x, $color, $context); // no wild for opponents
             }
             return $value;
         }
