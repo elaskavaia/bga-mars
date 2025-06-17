@@ -1042,6 +1042,8 @@ abstract class PGameXBody extends PGameMachine {
                 return 0; // Turmoil expantion
             case 'cardsRed':
                 return $this->getCountOfCardsRed($owner);
+            case 'all_cardsRed':
+                return $this->getCountOfCardsRed(null);
             case 'cardsGreen':
                 return $this->getCountOfCardsGreen($owner);
             case 'cardsBlue':
@@ -2719,6 +2721,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function getCountOfCardsType($owner, $type) {
+        if (!$owner) $owner = "%";
         $cards = $this->tokens->getTokensOfTypeInLocation("card_main", "tableau_$owner");
         $count = 0;
         foreach ($cards as $card => $cardrec) {

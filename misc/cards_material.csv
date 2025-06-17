@@ -115,7 +115,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 104|Ore Processor|2||4ne:u,o||13||Building|0|Basic||Spend 4 energy to gain 1 titanium and increase oxygen 1 step.|||
 105|Earth Office|2|||onPay_tagEarth:3m|1||Earth|0|Corporate|||When you play an Earth tag, you pay 3 M€ less for it.||
 106|Acquired Company|1|3pm|||10||Earth|0|Corporate|Increase your M€ production 3 steps.||||
-107|Media Archives|1|counter(all_tagEvent)m|||8||Earth|0|Corporate|Gain 1 M€ for each event EVER PLAYED by all players||||
+107|Media Archives|1|counter(all_cardsRed)m|||8||Earth|0|Corporate|Gain 1 M€ for each event EVER PLAYED by all players||||
 108|Open City|1|npe,4pm,2p,city|||23|o>=12|Building City|1|Basic|Decrease your energy production 1 step and increase your M€ production 4 steps. Gain 2 plants and place a city tile.||||
 109|Media Group|2|||play_cardEvent:3m|6||Earth|0|Corporate|||After you play an event card, you gain 3MC||
 110|Business Network|2|1npm|predraw,?buycard,prediscard||4||Earth|0|Corporate|Decrease your M€ production 1 step.|Look at the top card and either buy it or discard it|||
