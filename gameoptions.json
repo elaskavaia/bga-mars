@@ -195,7 +195,7 @@
                 "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
                 "tmdisplay": "Colonies",
                 "nobeginner": true,
-                "alpha": true
+                "beta": true
             }
         },
         "default": 0

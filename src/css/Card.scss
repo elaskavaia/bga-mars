@@ -1288,6 +1288,12 @@
   background-position: -1000% 0;
 }
 
+.outer_redborder.redborder_tag {
+   background-image: unset;
+   border-radius: 50%;
+   border: 1px solid red;
+}
+
 .token_img.temperature_icon {
   background-position: -200% -100%;
 }

@@ -23,6 +23,7 @@ class CustomRenders {
     opp_tagSpace: { classes: "tracker badge tracker_tagSpace", redborder: "resource" },
     tagSpace: { classes: "tracker badge tracker_tagSpace" },
     tagEvent: { classes: "tracker badge tracker_tagEvent" },
+    all_cardsRed: { classes: "tracker badge token_img tracker_tagEvent", redborder: "tag", after: "*"  },
     onPay_tagEarth: { classes: "tracker badge tracker_tagEarth" },
     tagEarth: { classes: "tracker badge tracker_tagEarth" },
     "[1,](sell)": { classes: "" },
@@ -400,15 +401,9 @@ class CustomRenders {
 
     let resicon = '<div class="cnt_media ' + item.classes + " depth_" + item.depth + '">' + content + "</div>";
     if (item.redborder) {
-      const redborderclass =
-        item.classes.includes("tile") ||
-        item.classes.includes("city") ||
-        item.classes.includes("forest") ||
-        item.classes.includes("tracker_w")
-          ? "hex"
-          : "resource";
+      let cc = `redborder_${item.redborder}`;
       after = '<div class="after">' + after + "</div>";
-      resicon = before + '<div class="outer_redborder redborder_' + redborderclass + '">' + resicon + after + "</div>";
+      resicon = before + `<div class="outer_redborder ${cc}">` + resicon + after + "</div>";
     } else {
       resicon = before + resicon + after;
     }
