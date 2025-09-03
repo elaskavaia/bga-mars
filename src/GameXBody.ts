@@ -1625,12 +1625,14 @@ If more than one player gets 1st place bonus, no 2nd place is
 awarded.`);
       res += this.generateTooltipSection(_("Info"), text);
     } else if (type == this.CON.MA_CARD_TYPE_COLONY) {
-      //debugger;
 
       //colony cards r - colony placement bonus, a- colony trade bonus, i - trade action
       const card_r = CustomRenders.parseExprToText(displayInfo.expr.r, this);
       const card_a = CustomRenders.parseExprToText(displayInfo.expr.a, this);
       const card_i = CustomRenders.parseExprToText(displayInfo.i, this);
+      if (card_i.includes("ores")) {
+        debugger;
+      }
 
       const build = `<div>${_("Gain the indicated bonus when building a colony here:")}</div>` + this.getTradeLine(displayInfo.expr.r);
 
@@ -2107,7 +2109,7 @@ awarded.`);
       if (valueNode) {
         const i = newState;
         const displayInfo = this.getTokenDisplayInfo(node.id);
-        const trnum = displayInfo.slots[i];
+        const trnum = displayInfo.slots[i] ?? "";
         let text = "";
         if (displayInfo.i) {
           text = `<span>${trnum}</span><span>${CustomRenders.parseExprToHtml(displayInfo.i)}</span>`;

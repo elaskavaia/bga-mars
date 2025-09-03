@@ -2050,7 +2050,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -2626,9 +2626,17 @@ var CustomRenders = /** @class */ (function () {
             op = "!";
         }
         if (op == "!") {
+            var opId = "op_".concat(arg);
+            if (arg.includes("ores")) {
+                arg = arg.replace("ores(Microbe)", "resMicrobe");
+                arg = arg.replace("ores(Animal)", "resAnimal");
+                arg = arg.replace("ores(Floater)", "resFloater");
+                arg = arg.replace("ores(Floater,Jovian)", "resFloater");
+                opId = arg;
+            }
             if (min == 1)
-                return game.getTokenName("op_".concat(arg));
-            return game.getTokenName("op_".concat(arg)) + " x " + min;
+                return game.getTokenName(opId);
+            return game.getTokenName(opId) + " x " + min;
         }
         return JSON.stringify(expr);
     };
@@ -2812,9 +2820,10 @@ var CustomRenders = /** @class */ (function () {
             after = '<div class="resource_exponent"><div class="' + item.exp + '"></div></div>';
         }
         var resicon = '<div class="cnt_media ' + item.classes + " depth_" + item.depth + '">' + content + "</div>";
+        if (after)
+            after = '<div class="after">' + after + "</div>";
         if (item.redborder) {
             var cc = "redborder_".concat(item.redborder);
-            after = '<div class="after">' + after + "</div>";
             resicon = before + "<div class=\"outer_redborder ".concat(cc, "\">") + resicon + after + "</div>";
         }
         else {
@@ -3384,6 +3393,7 @@ var CustomRenders = /** @class */ (function () {
         ocean: { classes: "token_img tracker_w" },
         discard: { classes: "token_img cardback", before: "-" },
         draw: { classes: "token_img cardback" },
+        drawdis: { classes: "token_img cardback", before: "+", after: "-" },
         tile: { classes: "tracker micon tile_%card_number%" },
         tagScience: { classes: "tracker badge tracker_tagScience" },
         tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
@@ -5464,11 +5474,13 @@ var GameXBody = /** @class */ (function (_super) {
             res += this.generateTooltipSection(_("Info"), text);
         }
         else if (type == this.CON.MA_CARD_TYPE_COLONY) {
-            //debugger;
             //colony cards r - colony placement bonus, a- colony trade bonus, i - trade action
             var card_r = CustomRenders.parseExprToText(displayInfo.expr.r, this);
             var card_a = CustomRenders.parseExprToText(displayInfo.expr.a, this);
             var card_i = CustomRenders.parseExprToText(displayInfo.i, this);
+            if (card_i.includes("ores")) {
+                debugger;
+            }
             var build = "<div>".concat(_("Gain the indicated bonus when building a colony here:"), "</div>") + this.getTradeLine(displayInfo.expr.r);
             res += this.generateTooltipSection(_("Build Plcement Bonus"), build);
             var actu = "<div>".concat(_("Gain the indicated bonus for each colony you have here if trade is initiated:"), "</div>") +
@@ -5866,6 +5878,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
     };
     GameXBody.prototype.setDomTokenState = function (tokenId, newState) {
+        var _a;
         _super.prototype.setDomTokenState.call(this, tokenId, newState);
         var node = $(tokenId);
         if (!node)
@@ -5891,7 +5904,7 @@ var GameXBody = /** @class */ (function (_super) {
             if (valueNode) {
                 var i = newState;
                 var displayInfo = this.getTokenDisplayInfo(node.id);
-                var trnum = displayInfo.slots[i];
+                var trnum = (_a = displayInfo.slots[i]) !== null && _a !== void 0 ? _a : "";
                 var text = "";
                 if (displayInfo.i) {
                     text = "<span>".concat(trnum, "</span><span>").concat(CustomRenders.parseExprToHtml(displayInfo.i), "</span>");

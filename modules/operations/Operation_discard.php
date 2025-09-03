@@ -16,7 +16,7 @@ class Operation_discard extends AbsOperation {
             $cards_ids = $card_id;
             $num = count($cards_ids);
             if (count($cards_ids) < $this->getMinCount()) {
-                $this->game->userAssertTrue(totranslate('Insufficient amount of cards selected'));
+                $this->game->userAssertTrue(clienttranslate('Insufficient amount of cards selected'));
             }
         }
 
@@ -32,6 +32,7 @@ class Operation_discard extends AbsOperation {
             'tokenMovedHidden',
             clienttranslate('${player_name} discards ${count} card/s'),
             ['count' => $num, 
+             'reason_tr' => $this->getReason(),
             'place_from' => $location, 'location' => 'discard_main', 'token_type' => 'card'],
             $this->getPlayerId()
         );

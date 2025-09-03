@@ -12,6 +12,7 @@ class CustomRenders {
     ocean: { classes: "token_img tracker_w" },
     discard: { classes: "token_img cardback", before: "-" },
     draw: { classes: "token_img cardback" },
+    drawdis: { classes: "token_img cardback", before: "+",after: "-"},
     tile: { classes: "tracker micon tile_%card_number%" },
     tagScience: { classes: "tracker badge tracker_tagScience" },
     tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
@@ -23,7 +24,7 @@ class CustomRenders {
     opp_tagSpace: { classes: "tracker badge tracker_tagSpace", redborder: "resource" },
     tagSpace: { classes: "tracker badge tracker_tagSpace" },
     tagEvent: { classes: "tracker badge tracker_tagEvent" },
-    all_cardsRed: { classes: "tracker badge token_img tracker_tagEvent", redborder: "tag", after: "*"  },
+    all_cardsRed: { classes: "tracker badge token_img tracker_tagEvent", redborder: "tag", after: "*" },
     onPay_tagEarth: { classes: "tracker badge tracker_tagEarth" },
     tagEarth: { classes: "tracker badge tracker_tagEarth" },
     "[1,](sell)": { classes: "" },
@@ -228,8 +229,17 @@ class CustomRenders {
       op = "!";
     }
     if (op == "!") {
-      if (min == 1) return game.getTokenName(`op_${arg}`);
-      return game.getTokenName(`op_${arg}`) + " x " + min;
+      let opId = `op_${arg}`;
+      if (arg.includes("ores")) {
+        arg = arg.replace("ores(Microbe)", "resMicrobe");
+        arg = arg.replace("ores(Animal)", "resAnimal");
+        arg = arg.replace("ores(Floater)", "resFloater");
+        arg = arg.replace("ores(Floater,Jovian)", "resFloater");
+        opId = arg;
+      }
+
+      if (min == 1) return game.getTokenName(opId);
+      return game.getTokenName(opId) + " x " + min;
     }
 
     return JSON.stringify(expr);
@@ -293,7 +303,6 @@ class CustomRenders {
         let lastOr = null;
         for (let ret of this.parseExprItem(expr[i], depth + 1)) {
           if (ret != null) {
- 
             items.push(ret);
             lastOr = ret;
           }
@@ -400,9 +409,9 @@ class CustomRenders {
     }
 
     let resicon = '<div class="cnt_media ' + item.classes + " depth_" + item.depth + '">' + content + "</div>";
+    if (after) after = '<div class="after">' + after + "</div>";
     if (item.redborder) {
       let cc = `redborder_${item.redborder}`;
-      after = '<div class="after">' + after + "</div>";
       resicon = before + `<div class="outer_redborder ${cc}">` + resicon + after + "</div>";
     } else {
       resicon = before + resicon + after;

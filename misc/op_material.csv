@@ -40,6 +40,7 @@ pass|Pass|${you} must confirm Pass for this generation, cannot be undone
 skipsec|Skip Second Action|${you} must confirm skipping second action, turn cannot be undone after this
 draw|Draw Card in Hand|${you} must confirm draw ${count} card/s, cannot be undone
 predraw|Draw Card|${you} must confirm draw ${count} card/s, cannot be undone
+drawdis|Draw Card, Discard Card|${you} must confirm draw ${count} card/s, cannot be undone
 
 #set class=Operation_confirm
 #set ack=

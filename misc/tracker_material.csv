@@ -65,8 +65,13 @@ tagWild|Wild
 #tags below do not count as tags for purposes of awards and milestones
 #set nc=1
 tagEvent|Event
+
+#set create=0
+#set nc=1
 #this is not a real tag but its used for translation
 tagFighter|Fighter
+resAnimal|Animal
+resMicrobe|Microbe
 #set nc=
 
 #set type=tracker badge 

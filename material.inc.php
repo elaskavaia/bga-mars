@@ -5053,7 +5053,7 @@ $this->token_types = [
   'name' => clienttranslate('Pluto'),
   't' => 9,
   'r' => '2draw',
-  'a' => '?(draw:discard)',
+  'a' => 'drawdis',
   'i'=>'draw','slots'=>[0,1,2,2,3,3,4],
 ],
 // #standard project
@@ -6051,6 +6051,13 @@ $this->token_types = [
   'name' => clienttranslate('Draw Card'),
   'prompt' => clienttranslate('${you} must confirm draw ${count} card/s, cannot be undone'),
 ],
+ 'op_drawdis' => [  //
+  'undo' => 1,
+  'ack' => 1,
+  'type' => 'drawdis',
+  'name' => clienttranslate('Draw Card, Discard Card'),
+  'prompt' => clienttranslate('${you} must confirm draw ${count} card/s, cannot be undone'),
+],
  'op_confirm' => [  //
   'undo' => 1,
   'class' => 'Operation_confirm',
@@ -6700,6 +6707,20 @@ $this->token_types = [
   'location' => 'params',
   'nc' => 1,
   'name' => clienttranslate('Fighter'),
+],
+ 'resAnimal' => [  //
+  'type' => 'tag',
+  'create' => 0,
+  'location' => 'params',
+  'nc' => 1,
+  'name' => clienttranslate('Animal'),
+],
+ 'resMicrobe' => [  //
+  'type' => 'tag',
+  'create' => 0,
+  'location' => 'params',
+  'nc' => 1,
+  'name' => clienttranslate('Microbe'),
 ],
  'tracker_tagScience' => [  //
   'type' => 'tracker badge',

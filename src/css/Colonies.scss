@@ -122,6 +122,24 @@
     background-image: none;
     border-radius: 2em;
     background: linear-gradient(to right, #c2e0f6, black);
+    font-family: var(--mars-font);
+
+    .colony-trade-value .after {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .mfull &::after {
+        content: attr(data-name); 
+        position: absolute;
+        top: 10%;
+        height: 100%;
+        width: 50%;
+        left: 5%;
+        font-size: calc(var(--card-width) * 0.1);
+        text-transform: uppercase;
+    }
 
     &::before {
         content: attr(data-state);

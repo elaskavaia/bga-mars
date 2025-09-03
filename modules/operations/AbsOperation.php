@@ -446,4 +446,8 @@ Reason: tile placement may draw cards (information)
         if (!$data) return "";
         return $this->game->getReason($data);
     }
+
+    function getData(string $def = '') {
+        return $this->op_info['data'] ?? $def;
+    }
 }

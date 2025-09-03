@@ -414,6 +414,7 @@
       height: unset;
       flex-direction: unset;
       padding: unset;
+      position: relative;
     }
   }
 
@@ -1911,8 +1912,8 @@
 
   .after {
     position: absolute;
-    right: calc(var(--card-width) * 0.05);
-    top: calc(var(--card-width) * 0.08);
+    right: 0;
+    top: 0;
   }
 
 

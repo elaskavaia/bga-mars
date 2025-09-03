@@ -15,7 +15,7 @@
       {
         "match": "misc/.*material\\.csv$",
         "isAsync": true,
-        "cmd": "php7.4 misc/other/genmat.php ${file}"
+        "cmd": "php8.2 misc/other/genmat.php ${file}"
       }
     ]
   },

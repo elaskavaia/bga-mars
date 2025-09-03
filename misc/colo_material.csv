@@ -89,7 +89,7 @@ C49|Warp Drive|2|||onPay_tagSpace:4m|14|tagScience>=5|Science|2|Colonies|Require
 8|Ganymede|9|pp|p|||||||||||'i'=>'p','slots'=>[0,1,2,3,4,5,6]
 9|Luna|9|2pm|2m|||||||||||'i'=>'m','slots'=>[1,2,4,7,10,13,17]
 10|Io|9|ph|2h|||||||||||'i'=>'h','slots'=>[2,3,4,6,8,10,13]
-11|Pluto|9|2draw|?(draw:discard)|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
+11|Pluto|9|2draw|drawdis|||||||||||'i'=>'draw','slots'=>[0,1,2,2,3,3,4]
 
 #standard project
 #set id=card_stanproj_{num}

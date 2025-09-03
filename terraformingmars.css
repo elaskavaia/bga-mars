@@ -896,6 +896,7 @@
   height: unset;
   flex-direction: unset;
   padding: unset;
+  position: relative;
 }
 .card_icono .outer_gains {
   display: flex;
@@ -3547,8 +3548,8 @@
 }
 .mcompact .after {
   position: absolute;
-  right: calc(var(--card-width) * 0.05);
-  top: calc(var(--card-width) * 0.08);
+  right: 0;
+  top: 0;
 }
 .mcompact .card[data-show_calc_vp="1"][data-vp]::after {
   position: absolute;
@@ -4601,6 +4602,22 @@
   background-image: none;
   border-radius: 2em;
   background: linear-gradient(to right, #c2e0f6, black);
+  font-family: var(--mars-font);
+}
+.display_colonies[data-mode=synthetic] .card.colocard .colony-trade-value .after {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.mfull .display_colonies[data-mode=synthetic] .card.colocard::after {
+  content: attr(data-name);
+  position: absolute;
+  top: 10%;
+  height: 100%;
+  width: 50%;
+  left: 5%;
+  font-size: calc(var(--card-width) * 0.1);
+  text-transform: uppercase;
 }
 .display_colonies[data-mode=synthetic] .card.colocard::before {
   content: attr(data-state);
@@ -12457,6 +12474,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   text-shadow: revert;
 }
 .innerbutton .card_icono .outer_production {
+  position: relative;
   padding-bottom: 2px;
   padding-top: 2px;
   flex-direction: row;
@@ -12795,7 +12813,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 .expandable {
   border-radius: 10px;
   box-shadow: 0px 0px 4px 0px #555;
-  background-color: hsla(27deg, 28.6%, 13.7%, 0.11);
+  background-color: hsla(27, 28.6%, 13.7%, 0.11);
 }
 
 /*Sort*/
