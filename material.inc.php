@@ -3,7 +3,7 @@
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
  * game implementation : © Alena Laskavaia <laskava@gmail.com>
- * 
+ *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  * -----
@@ -13,157 +13,156 @@
  * game material description
  *
  * Here, you can describe the material of your game with PHP variables.
- *   
+ *
  * This file is loaded in your game logic class constructor, ie these variables
  * are available everywhere in your game logic code.
- * 
- * 
+ *
+ *
  * GENERATED CODE DO NOT EDIT MANAULLY (except constants and template tags)
  *
  */
 
 if (!defined("MA_GAME")) {
-  // guard since this included multiple times
-  define("MA_GAME", 1);
-  define("MA_GAME_DISPATCH_MAX", 100);
-  #project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude 
-  define("MA_CARD_TYPE_STANDARD_PROJECT", 0);
-  define("MA_CARD_TYPE_GREEN", 1);
-  define("MA_CARD_TYPE_BLUE", 2);
-  define("MA_CARD_TYPE_EVENT", 3);
-  define("MA_CARD_TYPE_CORP", 4);
-  define("MA_CARD_TYPE_PRELUDE", 5);
-  define("MA_CARD_TYPE_MILESTONE", 7);
-  define("MA_CARD_TYPE_AWARD", 8);
-  define("MA_CARD_TYPE_COLONY", 9);
+    // guard since this included multiple times
+    define("MA_GAME", 1);
+    define("MA_GAME_DISPATCH_MAX", 100);
+    #project cards, t is color type 1 - green, 2 - blue, 3 - event, 0 - stanard project, 4 - corp, 5 - prelude
+    define("MA_CARD_TYPE_STANDARD_PROJECT", 0);
+    define("MA_CARD_TYPE_GREEN", 1);
+    define("MA_CARD_TYPE_BLUE", 2);
+    define("MA_CARD_TYPE_EVENT", 3);
+    define("MA_CARD_TYPE_CORP", 4);
+    define("MA_CARD_TYPE_PRELUDE", 5);
+    define("MA_CARD_TYPE_MILESTONE", 7);
+    define("MA_CARD_TYPE_AWARD", 8);
+    define("MA_CARD_TYPE_COLONY", 9);
 
-  // error codes
-  define("MA_OK", 0);
-  define("MA_ERR_COST", 1);
-  define("MA_ERR_PREREQ", 2);
-  define("MA_ERR_MANDATORYEFFECT", 3);
-  define("MA_ERR_ACTIONCOST", 4);
-  define("MA_ERR_OCCUPIED", 7);
-  define("MA_ERR_RESERVED", 6);
-  define("MA_ERR_NOTRESERVED", 5);
-  define("MA_ERR_CITYPLACEMENT", 8);
-  define("MA_ERR_FORESTPLACEMENT", 9);
+    // error codes
+    define("MA_OK", 0);
+    define("MA_ERR_COST", 1);
+    define("MA_ERR_PREREQ", 2);
+    define("MA_ERR_MANDATORYEFFECT", 3);
+    define("MA_ERR_ACTIONCOST", 4);
+    define("MA_ERR_OCCUPIED", 7);
+    define("MA_ERR_RESERVED", 6);
+    define("MA_ERR_NOTRESERVED", 5);
+    define("MA_ERR_CITYPLACEMENT", 8);
+    define("MA_ERR_FORESTPLACEMENT", 9);
 
-  define("MA_ERR_MAXREACHED", 10);
-  define("MA_ERR_NOTAPPLICABLE", 11);
-  define("MA_ERR_ALREADYUSED", 12);
-  define("MA_ERR_PLACEMENT", 13);
-  define("MA_ERR_PROTECTED", 14);
+    define("MA_ERR_MAXREACHED", 10);
+    define("MA_ERR_NOTAPPLICABLE", 11);
+    define("MA_ERR_ALREADYUSED", 12);
+    define("MA_ERR_PLACEMENT", 13);
+    define("MA_ERR_PROTECTED", 14);
 
-  // tile types
-  define("MA_TILE_FOREST", 1);
-  define("MA_TILE_CITY", 2);
-  define("MA_TILE_OCEAN", 3);
-  define("MA_TILE_SPECIAL", 4);
-  define("MA_TILE_MINING", 5);
+    // tile types
+    define("MA_TILE_FOREST", 1);
+    define("MA_TILE_CITY", 2);
+    define("MA_TILE_OCEAN", 3);
+    define("MA_TILE_SPECIAL", 4);
+    define("MA_TILE_MINING", 5);
 
-  // card states on tableau
-  define("MA_CARD_STATE_FACEDOWN", 0);
-  define("MA_CARD_STATE_NORMAL", 0);
-  define("MA_CARD_STATE_TAGUP", 1);
-  define("MA_CARD_STATE_SELECTED", 1);
-  define("MA_CARD_STATE_ACTION_UNUSED", 2);
-  define("MA_CARD_STATE_ACTION_USED", 3);
-  define("MA_CARD_STATE_ACTION_SINGLEUSE", 4);
-  define("MA_CARD_STATE_ACTION_UNUSED_PRE", 5);
+    // card states on tableau
+    define("MA_CARD_STATE_FACEDOWN", 0);
+    define("MA_CARD_STATE_NORMAL", 0);
+    define("MA_CARD_STATE_TAGUP", 1);
+    define("MA_CARD_STATE_SELECTED", 1);
+    define("MA_CARD_STATE_ACTION_UNUSED", 2);
+    define("MA_CARD_STATE_ACTION_USED", 3);
+    define("MA_CARD_STATE_ACTION_SINGLEUSE", 4);
+    define("MA_CARD_STATE_ACTION_UNUSED_PRE", 5);
 
+    // prefs
+    define("MA_PREF_CONFIRM_TURN", 101);
+    define("MA_PREF_CONFIRM_DRAW", 102);
 
-  // prefs
-  define("MA_PREF_CONFIRM_TURN", 101);
-  define("MA_PREF_CONFIRM_DRAW", 102);
+    // op order
 
-  // op order
+    define("MA_ORDER_AUTO", 1 << 4);
+    define("MA_ORDER_FAIL", 1 << 5);
+    define("MA_ORDER_NOUNDO", 1 << 6);
 
-  define("MA_ORDER_AUTO", 1 << 4);
-  define("MA_ORDER_FAIL", 1 << 5);
-  define("MA_ORDER_NOUNDO", 1 << 6);
+    // undo
+    define("MA_UNDO_BARRIER", 1);
+    define("MA_UNDO_NOBARRIER", 0);
 
-  // undo
-  define("MA_UNDO_BARRIER", 1);
-  define("MA_UNDO_NOBARRIER", 0);
-
-  // options
-  define("MA_OPT_BEGGINERS_CORP", 100);
-  define("MA_OPTVALUE_BEGGINERS_CORP_NO", 0);
-  define("MA_OPTVALUE_BEGGINERS_CORP_YES", 1);
-  define("MA_OPT_CORPORATE_ERA", 101);
-  define("MA_OPTVALUE_CORPORATE_ERA_OFF", 0);
-  define("MA_OPTVALUE_CORPORATE_ERA_ON", 1);
-  define("MA_OPT_SOLO_FLAVOUR", 102);
-  define("MA_OPTVALUE_SOLO_FLAVOUR_STANDARD", 0);
-  define("MA_OPTVALUE_SOLO_FLAVOUR_TR63", 1);
-  define("MA_OPT_DRAFT", 103);
-  define("MA_OPTVALUE_DRAFT_NO", 0);
-  define("MA_OPTVALUE_DRAFT_YES", 1);
-  define("MA_OPT_PRELUDE", 104);
-  define("MA_OPTVALUE_PRELUDE_OFF", 0);
-  define("MA_OPTVALUE_PRELUDE_ON", 1);
-  define("MA_OPT_LIVE_SCORING", 105);
-  define("MA_OPTVALUE_LIVE_SCORING_ENABLED", 1);
-  define("MA_OPTVALUE_LIVE_SCORING_DISABLED", 2);
-  define("MA_OPT_XUNDO", 106);
-  define("MA_OPTVALUE_XUNDO_DISABLED", 0);
-  define("MA_OPTVALUE_XUNDO_ENABLED", 1);
-  define("MA_OPT_MAP", 107);
-  define("MA_OPTVALUE_MAP_THARSIS", 0);
-  define("MA_OPTVALUE_MAP_ELYSIUM", 1);
-  define("MA_OPTVALUE_MAP_HELLAS", 2);
-  define("MA_OPTVALUE_MAP_VASTITAS_BOREALIS", 3);
-  define("MA_OPTVALUE_MAP_AMAZONIS_PLANITIA", 4);
-  define("MA_OPT_COLONIES", 108);
-  define("MA_OPTVALUE_COLONIES_OFF", 0);
-  define("MA_OPTVALUE_COLONIES_ON", 1);
+    // options
+    define("MA_OPT_BEGGINERS_CORP", 100);
+    define("MA_OPTVALUE_BEGGINERS_CORP_NO", 0);
+    define("MA_OPTVALUE_BEGGINERS_CORP_YES", 1);
+    define("MA_OPT_CORPORATE_ERA", 101);
+    define("MA_OPTVALUE_CORPORATE_ERA_OFF", 0);
+    define("MA_OPTVALUE_CORPORATE_ERA_ON", 1);
+    define("MA_OPT_SOLO_FLAVOUR", 102);
+    define("MA_OPTVALUE_SOLO_FLAVOUR_STANDARD", 0);
+    define("MA_OPTVALUE_SOLO_FLAVOUR_TR63", 1);
+    define("MA_OPT_DRAFT", 103);
+    define("MA_OPTVALUE_DRAFT_NO", 0);
+    define("MA_OPTVALUE_DRAFT_YES", 1);
+    define("MA_OPT_PRELUDE", 104);
+    define("MA_OPTVALUE_PRELUDE_OFF", 0);
+    define("MA_OPTVALUE_PRELUDE_ON", 1);
+    define("MA_OPT_LIVE_SCORING", 105);
+    define("MA_OPTVALUE_LIVE_SCORING_ENABLED", 1);
+    define("MA_OPTVALUE_LIVE_SCORING_DISABLED", 2);
+    define("MA_OPT_XUNDO", 106);
+    define("MA_OPTVALUE_XUNDO_DISABLED", 0);
+    define("MA_OPTVALUE_XUNDO_ENABLED", 1);
+    define("MA_OPT_MAP", 107);
+    define("MA_OPTVALUE_MAP_THARSIS", 0);
+    define("MA_OPTVALUE_MAP_ELYSIUM", 1);
+    define("MA_OPTVALUE_MAP_HELLAS", 2);
+    define("MA_OPTVALUE_MAP_VASTITAS_BOREALIS", 3);
+    define("MA_OPTVALUE_MAP_AMAZONIS_PLANITIA", 4);
+    define("MA_OPT_COLONIES", 108);
+    define("MA_OPTVALUE_COLONIES_OFF", 0);
+    define("MA_OPTVALUE_COLONIES_ON", 1);
 }
 
 $this->token_types = [
-  /* this stuff is added manual untl gen php tag */
-  #parameters bonuses
-  'param_o_8' => [
-    'r' => 't',
-    'param' => 'o',
-    'value' => 8
-  ],
-  'param_o_8@m4' => [
-    'r' => '',
-    'param' => 'o',
-    'value' => 8
-  ],
-  'param_o_7@m4' => [
-    'r' => 'draw',
-    'param' => 'o',
-    'value' => 7
-  ],
-  'param_o_11@m4' => [
-    'r' => 't',
-    'param' => 'o',
-    'value' => 11
-  ],
-  'param_t_0' => [
-    'r' => 'w',
-    'param' => 't',
-    'value' => 0
-  ],
-  'param_t_n24' => [
-    'r' => 'ph',
-    'param' => 't',
-    'value' => -24
-  ],
-  'param_t_n20' => [
-    'r' => 'ph',
-    'param' => 't',
-    'value' => -20
-  ],
-  'param_t_n12@m4' => [
-    'r' => 'pp',
-    'param' => 't',
-    'value' => -12
-  ],
-  /* --- gen php begin cards_material --- */
+    /* this stuff is added manual untl gen php tag */
+    #parameters bonuses
+    "param_o_8" => [
+        "r" => "t",
+        "param" => "o",
+        "value" => 8,
+    ],
+    "param_o_8@m4" => [
+        "r" => "",
+        "param" => "o",
+        "value" => 8,
+    ],
+    "param_o_7@m4" => [
+        "r" => "draw",
+        "param" => "o",
+        "value" => 7,
+    ],
+    "param_o_11@m4" => [
+        "r" => "t",
+        "param" => "o",
+        "value" => 11,
+    ],
+    "param_t_0" => [
+        "r" => "w",
+        "param" => "t",
+        "value" => 0,
+    ],
+    "param_t_n24" => [
+        "r" => "ph",
+        "param" => "t",
+        "value" => -24,
+    ],
+    "param_t_n20" => [
+        "r" => "ph",
+        "param" => "t",
+        "value" => -20,
+    ],
+    "param_t_n12@m4" => [
+        "r" => "pp",
+        "param" => "t",
+        "value" => -12,
+    ],
+    /* --- gen php begin cards_material --- */
 // #project cards
  'card_main_1' => [  //
   'location' => 'deck_main',
@@ -4105,9 +4104,9 @@ $this->token_types = [
   'text_effect' => clienttranslate('When you play a card with a NON-NEGATIVE VP icon, including this, gain 3 M€.'),
   'a1'=>'fund(free)',
 ],
-  /* --- gen php end cards_material --- */
+    /* --- gen php end cards_material --- */
 
-  /* --- gen php begin colo_material --- */
+    /* --- gen php begin colo_material --- */
 // #project cards
  'card_main_C01' => [  //
   'location' => 'deck_main',
@@ -5087,10 +5086,9 @@ $this->token_types = [
   'num' => 0,
   'name' => clienttranslate('Trade Fleet Tile'),
 ],
-  /* --- gen php end colo_material --- */
+    /* --- gen php end colo_material --- */
 
-
-  /* --- gen php begin proj_material --- */
+    /* --- gen php begin proj_material --- */
 // #
 // #standard projects
 // #
@@ -5814,8 +5812,8 @@ $this->token_types = [
   'cost' => 20,
   'text' => clienttranslate('Having most science and space tags.'),
 ],
-/* --- gen php end proj_material --- */
-/* --- gen php begin loc_material --- */
+    /* --- gen php end proj_material --- */
+    /* --- gen php begin loc_material --- */
  'deck_main' => [  //
   'type' => 'location',
   'showtooltip' => 0,
@@ -5897,9 +5895,9 @@ $this->token_types = [
   'counter' => 'hidden',
   'content' => 'hidden',
 ],
-/* --- gen php end loc_material --- */
+    /* --- gen php end loc_material --- */
 
-/* --- gen php begin op_material --- */
+    /* --- gen php begin op_material --- */
  'op_stan' => [  //
   'type' => 'stan',
   'name' => clienttranslate('Standard Project'),
@@ -6414,9 +6412,9 @@ $this->token_types = [
   'type' => 'turn2',
   'name' => clienttranslate('Take a second action'),
 ],
-/* --- gen php end op_material --- */
+    /* --- gen php end op_material --- */
 
-/* --- gen php begin tracker_material --- */
+    /* --- gen php begin tracker_material --- */
 // #counters
  'tracker_passed' => [  //
   'type' => 'tracker',
@@ -6984,8 +6982,8 @@ $this->token_types = [
   'count' => 0,
   'name' => clienttranslate('None'),
 ],
-/* --- gen php end tracker_material --- */
-/* --- gen php begin map_material --- */
+    /* --- gen php end tracker_material --- */
+    /* --- gen php begin map_material --- */
 // #tharsis - can do variants later
 // #r - placement bonus, p - plant, s - steal, u - titanium, draw - card
 // #ocean - 1 if reserved for ocean
@@ -9124,192 +9122,223 @@ $this->token_types = [
   'y' => 11,
   'r' => 'draw',
 ],
-/* --- gen php end map_material --- */
+    /* --- gen php end map_material --- */
 
-  // various stuff - MANUAL ENTRY
-  'm' => [
-    'name' => clienttranslate("M€")
-  ],
-  's' => [
-    'name' => clienttranslate("Steel")
-  ],
-  'u' => [
-    'name' => clienttranslate("Titanium")
-  ],
-  'p' => [
-    'name' => clienttranslate("Plant")
-  ],
-  'e' => [
-    'name' => clienttranslate("Energy")
-  ],
-  'h' => [
-    'name' => clienttranslate("Heat")
-  ],
-  'solo' => [  //
-    'gen' => 14,
-  ],
-  'exp_0' => [
-    'name' => clienttranslate('Basic')
-  ],
-  'exp_1' => [
-    'name' => clienttranslate('Corporate')
-  ],
-  // Maps
-  'map_0' => [
-    'name' => clienttranslate('Tharsis')
-  ],
-  'map_1' => [
-    'name' => clienttranslate('Elysium')
-  ],
-  'map_2' => [
-    'name' => clienttranslate('Hellas')
-  ],
-  // #error codes - MANUAL ENTRY
-  'err_0' => [  //
-    'code' => MA_OK,
-    'type' => 'err',
-    'name' => clienttranslate("Ok"),
-  ],
-  'err_1' => [  //
-    'code' => MA_ERR_COST,
-    'type' => 'err',
-    'name' => clienttranslate("Insufficient Funds"),
-  ],
-  'err_2' => [  //
-    'code' => MA_ERR_PREREQ,
-    'type' => 'err',
-    'name' => clienttranslate("Prerequisites are not fullfilled"),
-  ],
-  'err_3' => [  //
-    'code' => MA_ERR_MANDATORYEFFECT,
-    'type' => 'err',
-    'name' => clienttranslate("Immediate effect cannot be resolved"),
-  ],
-  'err_4' => [  //
-    'code' => MA_ERR_ACTIONCOST,
-    'type' => 'err',
-    'name' => clienttranslate("Cannot pay action cost"),
-  ],
-  'err_5' => [  //
-    'code' => 5,
-    'type' => 'err',
-    'name' => clienttranslate("Hex is not reserved"),
-  ],
-  'err_6' => [  //
-    'code' => 6,
-    'type' => 'err',
-    'name' => clienttranslate("Hex is reserved"),
-  ],
-  'err_7' => [  //
-    'code' => 7,
-    'type' => 'err',
-    'name' => clienttranslate("Hex is occupied"),
-  ],
-  'err_8' => [  //
-    'code' => 8,
-    'type' => 'err',
-    'name' => clienttranslate("City placement restrictions"),
-  ],
-  'err_9' => [  //
-    'code' => 9,
-    'type' => 'err',
-    'name' => clienttranslate("Greenery placement restrictions"),
-  ],
-  'err_10' => [  //
-    'code' => 10,
-    'type' => 'err',
-    'name' => clienttranslate("Max is reached"),
-  ],
-  'err_11' => [  //
-    'code' => 11,
-    'type' => 'err',
-    'name' => clienttranslate("Not applicable"),
-  ],
-  'err_12' => [  //
-    'code' => 12,
-    'type' => 'err',
-    'name' => clienttranslate("Already used"),
-  ],
-  'err_13' => [  //
-    'code' => 13,
-    'type' => 'err',
-    'name' => clienttranslate("Placement restrictions"),
-  ],
-  'err_14' => [  //
-    'code' => 14,
-    'type' => 'err',
-    'name' => clienttranslate("Protected"),
-  ],
-  // sort modes
-  'sort_none' => [
-    'icon' => "fa-sort",
-    'name' => "None",
-    'tooltip' => clienttranslate('Do not sort cards, they will be presented in order they were gained'),
-    'o' => 0,
-  ],
-  'sort_playable' => [
-    'icon' => "fa-arrow-down",
-    'name' => "Playability",
-    'tooltip' => clienttranslate('Sort by playability, staring with the cards that can be played, then cards that require more funds, etc'),
-    'o' => 1,
-  ],
-  'sort_cost' => [
-    'icon' => "fa-eur",
-    'name' => "Cost",
-    'tooltip' => clienttranslate('Sort by discounted cost'),
-    'o' => 2,
-  ],
-  'sort_vp' => [
-    'icon' => "fa-circle-thin",
-    'name' => "VP",
-    'tooltip' => clienttranslate('Sort by victory points value, starting from negative vp, then neutral, then cards with points'),
-    'o' => 3,
-  ],
+    // various stuff - MANUAL ENTRY
+    "m" => [
+        "name" => clienttranslate("M€"),
+    ],
+    "s" => [
+        "name" => clienttranslate("Steel"),
+    ],
+    "u" => [
+        "name" => clienttranslate("Titanium"),
+    ],
+    "p" => [
+        "name" => clienttranslate("Plant"),
+    ],
+    "e" => [
+        "name" => clienttranslate("Energy"),
+    ],
+    "h" => [
+        "name" => clienttranslate("Heat"),
+    ],
+    "solo" => [
+        //
+        "gen" => 14,
+    ],
+    "exp_0" => [
+        "name" => clienttranslate("Basic"),
+    ],
+    "exp_1" => [
+        "name" => clienttranslate("Corporate"),
+    ],
+    // Maps
+    "map_0" => [
+        "name" => clienttranslate("Tharsis"),
+    ],
+    "map_1" => [
+        "name" => clienttranslate("Elysium"),
+    ],
+    "map_2" => [
+        "name" => clienttranslate("Hellas"),
+    ],
+    "map_3" => [
+        "name" => clienttranslate("Vastitas"),
+    ],
+    "map_4" => [
+        "name" => clienttranslate("Amazonis"),
+    ],
+    "map_5" => [
+        "name" => clienttranslate("Random"),
+    ],
+    // #error codes - MANUAL ENTRY
+    "err_0" => [
+        //
+        "code" => MA_OK,
+        "type" => "err",
+        "name" => clienttranslate("Ok"),
+    ],
+    "err_1" => [
+        //
+        "code" => MA_ERR_COST,
+        "type" => "err",
+        "name" => clienttranslate("Insufficient Funds"),
+    ],
+    "err_2" => [
+        //
+        "code" => MA_ERR_PREREQ,
+        "type" => "err",
+        "name" => clienttranslate("Prerequisites are not fullfilled"),
+    ],
+    "err_3" => [
+        //
+        "code" => MA_ERR_MANDATORYEFFECT,
+        "type" => "err",
+        "name" => clienttranslate("Immediate effect cannot be resolved"),
+    ],
+    "err_4" => [
+        //
+        "code" => MA_ERR_ACTIONCOST,
+        "type" => "err",
+        "name" => clienttranslate("Cannot pay action cost"),
+    ],
+    "err_5" => [
+        //
+        "code" => 5,
+        "type" => "err",
+        "name" => clienttranslate("Hex is not reserved"),
+    ],
+    "err_6" => [
+        //
+        "code" => 6,
+        "type" => "err",
+        "name" => clienttranslate("Hex is reserved"),
+    ],
+    "err_7" => [
+        //
+        "code" => 7,
+        "type" => "err",
+        "name" => clienttranslate("Hex is occupied"),
+    ],
+    "err_8" => [
+        //
+        "code" => 8,
+        "type" => "err",
+        "name" => clienttranslate("City placement restrictions"),
+    ],
+    "err_9" => [
+        //
+        "code" => 9,
+        "type" => "err",
+        "name" => clienttranslate("Greenery placement restrictions"),
+    ],
+    "err_10" => [
+        //
+        "code" => 10,
+        "type" => "err",
+        "name" => clienttranslate("Max is reached"),
+    ],
+    "err_11" => [
+        //
+        "code" => 11,
+        "type" => "err",
+        "name" => clienttranslate("Not applicable"),
+    ],
+    "err_12" => [
+        //
+        "code" => 12,
+        "type" => "err",
+        "name" => clienttranslate("Already used"),
+    ],
+    "err_13" => [
+        //
+        "code" => 13,
+        "type" => "err",
+        "name" => clienttranslate("Placement restrictions"),
+    ],
+    "err_14" => [
+        //
+        "code" => 14,
+        "type" => "err",
+        "name" => clienttranslate("Protected"),
+    ],
+    // sort modes
+    "sort_none" => [
+        "icon" => "fa-sort",
+        "name" => "None",
+        "tooltip" => clienttranslate("Do not sort cards, they will be presented in order they were gained"),
+        "o" => 0,
+    ],
+    "sort_playable" => [
+        "icon" => "fa-arrow-down",
+        "name" => "Playability",
+        "tooltip" => clienttranslate(
+            "Sort by playability, staring with the cards that can be played, then cards that require more funds, etc"
+        ),
+        "o" => 1,
+    ],
+    "sort_cost" => [
+        "icon" => "fa-eur",
+        "name" => "Cost",
+        "tooltip" => clienttranslate("Sort by discounted cost"),
+        "o" => 2,
+    ],
+    "sort_vp" => [
+        "icon" => "fa-circle-thin",
+        "name" => "VP",
+        "tooltip" => clienttranslate("Sort by victory points value, starting from negative vp, then neutral, then cards with points"),
+        "o" => 3,
+    ],
 
-  'sort_manual' => [
-    'icon' => "fa-hand-paper-o",
-    'name' => "Manual",
-    'tooltip' => clienttranslate('Sort cards manually by drag and drop. Does not work on some mobile platforms'),
-    'o' => 4
-  ],
+    "sort_manual" => [
+        "icon" => "fa-hand-paper-o",
+        "name" => "Manual",
+        "tooltip" => clienttranslate("Sort cards manually by drag and drop. Does not work on some mobile platforms"),
+        "o" => 4,
+    ],
 
     // other stuff
-  'colo_place_bonus' => [
-    'name' => clienttranslate("Colony placement"),
-  ],
-  'colo_bonus' => [
-    'name' => clienttranslate("Colony bonus"),
-  ],
-  'trade_bonus' => [
-    'name' => clienttranslate("Trading bonus"),
-  ],
-  'colony' => [
-    'name' => clienttranslate("Colony"),
-  ],
-  'op_trade' => [  //
-    'class' => 'Operation_trade',
-    'type' => 'trade',
-    'name' => clienttranslate('Trade with Colony'),
-  ],
-  'tagFloater' => [  //
-    'type' => 'tag',
-    'create' => 0,
-    'location' => 'params',
-    'nc' => 1,
-    'name' => clienttranslate('Floater'),
-  ],
-  'tagCamp' => [  //
-    'type' => 'tag',
-    'create' => 0,
-    'location' => 'params',
-    'nc' => 1,
-    'name' => clienttranslate('Camp'),
-  ],
-  'resFloater' => [  //
-    'type' => 'resource',
-    'create' => 0,
-    'location' => 'params',
-    'nc' => 1,
-    'name' => clienttranslate('Floater'),
-  ],
+    "colo_place_bonus" => [
+        "name" => clienttranslate("Colony placement"),
+    ],
+    "colo_bonus" => [
+        "name" => clienttranslate("Colony bonus"),
+    ],
+    "trade_bonus" => [
+        "name" => clienttranslate("Trading bonus"),
+    ],
+    "colony" => [
+        "name" => clienttranslate("Colony"),
+    ],
+    "op_trade" => [
+        //
+        "class" => "Operation_trade",
+        "type" => "trade",
+        "name" => clienttranslate("Trade with Colony"),
+    ],
+    "tagFloater" => [
+        //
+        "type" => "tag",
+        "create" => 0,
+        "location" => "params",
+        "nc" => 1,
+        "name" => clienttranslate("Floater"),
+    ],
+    "tagCamp" => [
+        //
+        "type" => "tag",
+        "create" => 0,
+        "location" => "params",
+        "nc" => 1,
+        "name" => clienttranslate("Camp"),
+    ],
+    "resFloater" => [
+        //
+        "type" => "resource",
+        "create" => 0,
+        "location" => "params",
+        "nc" => 1,
+        "name" => clienttranslate("Floater"),
+    ],
 ];

@@ -1,203 +1,198 @@
 {
-    "100": {
-        "name": "Beginners Corporations",
-        "$varname": "begginers_corp",
-        "values": {
-            "0": {
-                "name": "No",
-                "nobeginner": true
-            },
-            "1": {
-                "name": "Yes",
-                "tmdisplay": "Beginners Corporations",
-                "firstgameonly": true
-            }
-        },
-        "level": "additional",
-        "default": 0
+  "100": {
+    "name": "Beginners Corporations",
+    "$varname": "begginers_corp",
+    "values": {
+      "0": {
+        "name": "No",
+        "nobeginner": true
+      },
+      "1": {
+        "name": "Yes",
+        "tmdisplay": "Beginners Corporations",
+        "firstgameonly": true
+      }
     },
-    "101": {
-        "name": "Corporate Era",
-        "$varname": "corporate_era",
-        "values": {
-            "0": {
-                "name": "Off",
-                "description": "Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1",
-                "tmdisplay": "Standard Game"
-            },
-            "1": {
-                "name": "On",
-                "description": "Corporate Era variant includes Corporate Era deck cards and all productions starts at 0",
-                "tmdisplay": "Corporate Era",
-                "nobeginner": true
-            }
-        },
-        "displaycondition": [
-            {
-                "type": "minplayers",
-                "value": [
-                    2,
-                    3,
-                    4,
-                    5
-                ]
-            }
-        ],
-        "notdisplayedmessage": "Corporate Era is On",
-        "level": "additional",
-        "default": 1
+    "level": "additional",
+    "default": 0
+  },
+  "101": {
+    "name": "Corporate Era",
+    "$varname": "corporate_era",
+    "values": {
+      "0": {
+        "name": "Off",
+        "description": "Standard Game variant does NOT include Corporate Era deck cards and all productions starts at 1",
+        "tmdisplay": "Standard Game"
+      },
+      "1": {
+        "name": "On",
+        "description": "Corporate Era variant includes Corporate Era deck cards and all productions starts at 0",
+        "tmdisplay": "Corporate Era",
+        "nobeginner": true
+      }
     },
-    "102": {
-        "name": "Solo variant",
-        "$varname": "solo_flavour",
-        "values": [
-            {
-                "name": "Standard",
-                "description": "All global parameters must be maxed out by the end of generation 14 to win (12 with Prelude)",
-                "tmdisplay": "Solo - Standard"
-            },
-            {
-                "name": "TR63",
-                "description": "You must reach a Terraform Rating of 63 by the end of generation 14 to win (12 with Prelude)",
-                "tmdisplay": "Solo - TR63"
-            }
-        ],
-        "displaycondition": [
-            {
-                "type": "maxplayers",
-                "value": 1
-            }
-        ],
-        "level": "additional",
-        "default": 0
+    "displaycondition": [
+      {
+        "type": "minplayers",
+        "value": [2, 3, 4, 5]
+      }
+    ],
+    "notdisplayedmessage": "Corporate Era is On",
+    "level": "additional",
+    "default": 1
+  },
+  "102": {
+    "name": "Solo variant",
+    "$varname": "solo_flavour",
+    "values": [
+      {
+        "name": "Standard",
+        "description": "All global parameters must be maxed out by the end of generation 14 to win (12 with Prelude)",
+        "tmdisplay": "Solo - Standard"
+      },
+      {
+        "name": "TR63",
+        "description": "You must reach a Terraform Rating of 63 by the end of generation 14 to win (12 with Prelude)",
+        "tmdisplay": "Solo - TR63"
+      }
+    ],
+    "displaycondition": [
+      {
+        "type": "maxplayers",
+        "value": 1
+      }
+    ],
+    "level": "additional",
+    "default": 0
+  },
+  "103": {
+    "name": "Draft",
+    "$varname": "draft",
+    "values": {
+      "0": {
+        "name": "No"
+      },
+      "1": {
+        "name": "Yes",
+        "description": "Draft 4 cards during Research phase, 1st generation is NOT included",
+        "tmdisplay": "Draft",
+        "nobeginner": true
+      }
     },
-    "103": {
-        "name": "Draft",
-        "$varname": "draft",
-        "values": {
-            "0": {
-                "name": "No"
-            },
-            "1": {
-                "name": "Yes",
-                "description": "Draft 4 cards during Research phase, 1st generation is NOT included",
-                "tmdisplay": "Draft",
-                "nobeginner": true
-            }
-        },
-        "displaycondition": [
-            {
-                "type": "minplayers",
-                "value": [
-                    2,
-                    3,
-                    4,
-                    5
-                ]
-            }
-        ],
-        "notdisplayedmessage": "Draft is Off",
-        "default": 0
+    "displaycondition": [
+      {
+        "type": "minplayers",
+        "value": [2, 3, 4, 5]
+      }
+    ],
+    "notdisplayedmessage": "Draft is Off",
+    "default": 0
+  },
+  "104": {
+    "name": "Expansion: Prelude",
+    "$varname": "prelude",
+    "values": {
+      "0": {
+        "name": "Off",
+        "description": "Not including Prelude"
+      },
+      "1": {
+        "name": "On",
+        "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
+        "tmdisplay": "Prelude",
+        "nobeginner": true
+      }
     },
-    "104": {
-        "name": "Expansion: Prelude",
-        "$varname": "prelude",
-        "values": {
-            "0": {
-                "name": "Off",
-                "description": "Not including Prelude"
-            },
-            "1": {
-                "name": "On",
-                "description": "Prelude variant includes Prelude cards, extra project cards and extra corporations",
-                "tmdisplay": "Prelude",
-                "nobeginner": true
-            }
-        },
-        "default": 0
+    "default": 0
+  },
+  "105": {
+    "name": "Live Scoring",
+    "$varname": "live_scoring",
+    "values": {
+      "1": {
+        "name": "Enabled",
+        "description": "Players at this table can chose to see or not live scoring update via individual game preference"
+      },
+      "2": {
+        "name": "Disabled",
+        "description": "Players at this table CANNOT see live scoring update or scoring preview table regardless of their preferences. Not recommended",
+        "tmdisplay": "No Live Scoring"
+      }
     },
-    "105": {
-        "name": "Live Scoring",
-        "$varname": "live_scoring",
-        "values": {
-            "1": {
-                "name": "Enabled",
-                "description": "Players at this table can chose to see or not live scoring update via individual game preference"
-            },
-            "2": {
-                "name": "Disabled",
-                "description": "Players at this table CANNOT see live scoring update or scoring preview table regardless of their preferences. Not recommended",
-                "tmdisplay": "No Live Scoring"
-            }
-        },
-        "level": "additional",
-        "default": 1
+    "level": "additional",
+    "default": 1
+  },
+  "106": {
+    "name": "Multi-step undo support (Experimental)",
+    "$varname": "xundo",
+    "values": {
+      "0": {
+        "name": "Disabled",
+        "description": "Original Undo"
+      },
+      "1": {
+        "name": "Enabled",
+        "description": "Player can undo a single step if able (up to non-undoable action). Experimental",
+        "tmdisplay": "Multi-step undo",
+        "alpha": true
+      }
     },
-    "106": {
-        "name": "Multi-step undo support (Experimental)",
-        "$varname": "xundo",
-        "values": {
-            "0": {
-                "name": "Disabled",
-                "description": "Original Undo"
-            },
-            "1": {
-                "name": "Enabled",
-                "description": "Player can undo a single step if able (up to non-undoable action). Experimental",
-                "tmdisplay": "Multi-step undo",
-                "alpha": true
-            }
-        },
-        "level": "additional",
-        "default": 0
+    "level": "additional",
+    "default": 0
+  },
+  "107": {
+    "name": "Map",
+    "$varname": "map",
+    "values": {
+      "0": {
+        "name": "Tharsis",
+        "description": "The original map"
+      },
+      "1": {
+        "name": "Elysium",
+        "description": "The other side of Mars",
+        "tmdisplay": "Elysium"
+      },
+      "2": {
+        "name": "Hellas",
+        "description": "The southern wild",
+        "tmdisplay": "Hellas"
+      },
+      "3": {
+        "name": "Vastitas Borealis",
+        "description": "The ancient sea",
+        "tmdisplay": "Vastitas"
+      },
+      "4": {
+        "name": "Amazonis Planitia",
+        "description": "The smooth plain",
+        "tmdisplay": "Amazonis"
+      },
+      "5": {
+        "name": "Random",
+        "description": "Random standard size map",
+        "tmdisplay": "Random"
+      }
     },
-    "107": {
-        "name": "Map",
-        "$varname": "map",
-        "values": {
-            "0": {
-                "name": "Tharsis",
-                "description": "The original map"
-            },
-            "1": {
-                "name": "Elysium",
-                "description": "The other side of Mars",
-                "tmdisplay": "Elysium"
-            },
-            "2": {
-                "name": "Hellas",
-                "description": "The southern wild",
-                "tmdisplay": "Hellas"
-            },
-            "3": {
-                "name": "Vastitas Borealis",
-                "description": "The ancient sea",
-                "tmdisplay": "Vastitas"
-            },
-            "4": {
-                "name": "Amazonis Planitia",
-                "description": "The smooth plain",
-                "tmdisplay": "Amazonis"
-            }
-        },
-        "default": 0
+    "default": 0
+  },
+  "108": {
+    "name": "Expansion: Colonies",
+    "$varname": "colonies",
+    "values": {
+      "0": {
+        "name": "Off",
+        "description": "Not including Colonies"
+      },
+      "1": {
+        "name": "On",
+        "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
+        "tmdisplay": "Colonies",
+        "nobeginner": true,
+        "beta": true
+      }
     },
-    "108": {
-        "name": "Expansion: Colonies",
-        "$varname": "colonies",
-        "values": {
-            "0": {
-                "name": "Off",
-                "description": "Not including Colonies"
-            },
-            "1": {
-                "name": "On",
-                "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
-                "tmdisplay": "Colonies",
-                "nobeginner": true,
-                "beta": true
-            }
-        },
-        "default": 0
-    }
+    "default": 0
+  }
 }

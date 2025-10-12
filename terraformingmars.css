@@ -12813,7 +12813,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
 .expandable {
   border-radius: 10px;
   box-shadow: 0px 0px 4px 0px #555;
-  background-color: hsla(27, 28.6%, 13.7%, 0.11);
+  background-color: hsla(27deg, 28.6%, 13.7%, 0.11);
 }
 
 /*Sort*/

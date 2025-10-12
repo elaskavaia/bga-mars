@@ -67,6 +67,10 @@ abstract class PGameXBody extends PGameMachine {
                 // for now it has to be set automatically
                 $this->setGameStateValue("var_corporate_era", 1); // cannot be basic for solo
             }
+            if ($this->getMapNumber() == 5) {
+                $number = bga_rand(0, 3);
+                $this->setGameStateValue("var_map", $number);
+            }
 
             $this->adjustedMaterial(true);
             $this->createTokens();
