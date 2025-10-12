@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-
-
 require_once "terraformingmars.game.php";
 require_once "TokensInMem.php";
 
-
-class GameStateInMem extends GameState {
-}
+class GameStateInMem extends GameState {}
 
 define("PCOLOR", "008000");
 define("BCOLOR", "0000ff");
@@ -30,10 +26,10 @@ class GameUT extends terraformingmars {
 
         $this->tokens = new TokensInMem();
         $this->xtable = [];
-        $this->machine = new MachineInMem($this, 'machine', 'main', $this->xtable);
-        $this->multimachine = new MachineInMem($this, 'machine', 'multi', $this->xtable);
+        $this->machine = new MachineInMem($this, "machine", "main", $this->xtable);
+        $this->multimachine = new MachineInMem($this, "machine", "multi", $this->xtable);
         $this->curid = 1;
-        $this->_colors = array(PCOLOR, BCOLOR);
+        $this->_colors = [PCOLOR, BCOLOR];
     }
 
     function init(int $map = 0, int $colonies = 0) {
@@ -72,7 +68,6 @@ class GameUT extends terraformingmars {
         return $this->curid;
     }
 
-
     protected function getCurrentPlayerColor() {
         return $this->getPlayerColorById($this->curid);
     }
@@ -82,17 +77,20 @@ class GameUT extends terraformingmars {
     }
 
     function fakeUserAction($op, $target = null, bool $no_stack = false) {
-        $args = ['op_info' => $op];
-        if ($target !== null) $args['target'] = $target;
+        $args = ["op_info" => $op];
+        if ($target !== null) {
+            $args["target"] = $target;
+        }
         $count = $this->saction_resolve($op, $args);
-        if ($no_stack) return $count;
+        if ($no_stack) {
+            return $count;
+        }
         $this->saction_stack($count, $op);
         return $count;
     }
 
     // override/stub methods here that access db and stuff
 }
-
 
 final class GameTest extends TestCase {
     var $game;
@@ -101,17 +99,17 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $this->assertNotNull($m);
         $this->assertEquals(0, $m->getGameProgression());
-        $m->tokens->setTokenState('tracker_o', 5);
+        $m->tokens->setTokenState("tracker_o", 5);
         $this->assertTrue($m->getGameProgression() > 0);
-        $m->tokens->setTokenState('tracker_o', 14);
-        $m->tokens->setTokenState('tracker_w', 9);
-        $m->tokens->setTokenState('tracker_t', 8);
+        $m->tokens->setTokenState("tracker_o", 14);
+        $m->tokens->setTokenState("tracker_w", 9);
+        $m->tokens->setTokenState("tracker_t", 8);
         $this->assertTrue($m->getGameProgression() == 100);
     }
 
     public function testOps() {
         $m = $this->game();
-        $res = $m->executeImmediately(PCOLOR, 'm', 1);
+        $res = $m->executeImmediately(PCOLOR, "m", 1);
         $this->assertTrue($res);
     }
 
@@ -122,48 +120,46 @@ final class GameTest extends TestCase {
         return $m;
     }
 
-
     public function testArgIfo() {
         $info = $this->game()->createArgInfo(PCOLOR, ["a", "b"], function ($a, $b) {
             return 0;
         });
-        $this->assertTrue($info["a"]['q'] == 0);
+        $this->assertTrue($info["a"]["q"] == 0);
     }
 
     public function testEvalute() {
         $m = $this->game();
 
-
-        $m->incTrackerValue(PCOLOR, 'u', 8);
-        $m->incTrackerValue(BCOLOR, 'u', 2);
+        $m->incTrackerValue(PCOLOR, "u", 8);
+        $m->incTrackerValue(BCOLOR, "u", 2);
         $this->assertEquals(8, $m->evaluateExpression("u", PCOLOR));
         $this->assertEquals(1, $m->evaluateExpression("u > 1", PCOLOR));
-        $m->tokens->setTokenState('tracker_u_' . PCOLOR, 7);
+        $m->tokens->setTokenState("tracker_u_" . PCOLOR, 7);
         $this->assertEquals(3, $m->evaluateExpression("u/2", PCOLOR));
         $this->assertEquals(3, $m->evaluateExpression("(u>0)*3", PCOLOR));
-        $m->incTrackerValue('', 't', 0);
+        $m->incTrackerValue("", "t", 0);
         $this->assertEquals(0, $m->evaluateExpression("(t>0)*3", PCOLOR));
         $this->assertEquals(9, $m->evaluateExpression("all_u", PCOLOR));
-        $m->tokens->setTokenState('tracker_m_' . PCOLOR, 40);
+        $m->tokens->setTokenState("tracker_m_" . PCOLOR, 40);
         // oxygens
-        $m->tokens->setTokenState('tracker_o', 9);
+        $m->tokens->setTokenState("tracker_o", 9);
         $this->assertEquals(1, $m->evaluateExpression("o>=9", PCOLOR, null));
         $this->assertEquals(0, $m->evaluateExpression("o<9", PCOLOR, null));
         $this->assertEquals(1, $m->evaluateExpression("o>0", PCOLOR, null));
-        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
+        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName("Predators")));
         $color = PCOLOR;
         //$m->tokens->setTokenState("tracker_pdelta_${color}" . PCOLOR, 2);
-        $m->effect_playCard(PCOLOR, $m->mtFindByName('Adaptation Technology'));
+        $m->effect_playCard(PCOLOR, $m->mtFindByName("Adaptation Technology"));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(2, $m->tokens->getTokenState("tracker_pdelta_{$color}"));
-        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
-        $m->tokens->setTokenState('tracker_o', 8);
-        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName('Predators')));
+        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName("Predators")));
+        $m->tokens->setTokenState("tracker_o", 8);
+        $this->assertEquals(MA_ERR_PREREQ, $m->playability(PCOLOR, $m->mtFindByName("Predators")));
         $info = [];
-        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Predators'), $info, 'card_prelude_P10'));
-        $m->tokens->setTokenState('tracker_t', -8);
-        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName('Arctic Algae')));
+        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName("Predators"), $info, "card_prelude_P10"));
+        $m->tokens->setTokenState("tracker_t", -8);
+        $this->assertEquals(MA_OK, $m->playability(PCOLOR, $m->mtFindByName("Arctic Algae")));
     }
 
     public function testEvaluteCounter() {
@@ -174,54 +170,53 @@ final class GameTest extends TestCase {
 
         $m->push($color, "counter('(tagScience+1)/3'):m");
         $m->st_gameDispatch();
-        $this->assertEquals(2, $m->getTrackerValue($color, 'm'));
+        $this->assertEquals(2, $m->getTrackerValue($color, "m"));
     }
-
 
     public function testCanAfford() {
         $m = $this->game();
         $info = [];
-        $m->setTrackerValue(PCOLOR, 'm', 10);
-        $this->assertEquals(false, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P10'));
+        $m->setTrackerValue(PCOLOR, "m", 10);
+        $this->assertEquals(false, $m->canAfford(PCOLOR, $m->mtFindByName("Convoy From Europa"), null, $info, "card_prelude_P10"));
         // eccentric sponsor
-        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Convoy From Europa'), null, $info, 'card_prelude_P11'));
+        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName("Convoy From Europa"), null, $info, "card_prelude_P11"));
 
-        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Deimos Down'), null, $info, 'card_prelude_P11'));
-        $this->assertEquals("6nm", $info['payop']);
+        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName("Deimos Down"), null, $info, "card_prelude_P11"));
+        $this->assertEquals("6nm", $info["payop"]);
 
-        $m->effect_playCard(PCOLOR, 'card_prelude_P11');
-        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName('Deimos Down'), null, $info, 'card_prelude_P11'));
-        $this->assertEquals("6nm", $info['payop']);
+        $m->effect_playCard(PCOLOR, "card_prelude_P11");
+        $this->assertEquals(true, $m->canAfford(PCOLOR, $m->mtFindByName("Deimos Down"), null, $info, "card_prelude_P11"));
+        $this->assertEquals("6nm", $info["payop"]);
     }
 
     public function testEvalute2() {
         $m = $this->game();
-        $this->assertEquals(0, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Nuclear Zone')));
-        $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Lightning Harvest')));
-        $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName('Ants')));
-        $this->assertEquals(8, $m->evaluateExpression("cost", PCOLOR, $m->mtFindByName('Lightning Harvest')));
+        $this->assertEquals(0, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName("Nuclear Zone")));
+        $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName("Lightning Harvest")));
+        $this->assertEquals(1, $m->evaluateExpression("vptag", PCOLOR, $m->mtFindByName("Ants")));
+        $this->assertEquals(8, $m->evaluateExpression("cost", PCOLOR, $m->mtFindByName("Lightning Harvest")));
     }
 
     public function testEvaluateTagCount() {
         $m = $this->game();
-        $card = $m->mtFindByName('Power Infrastructure');
+        $card = $m->mtFindByName("Power Infrastructure");
         $m->effect_playCard(PCOLOR, $card);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
 
-        $card = $m->mtFindByName('Research Coordination');
+        $card = $m->mtFindByName("Research Coordination");
         $m->effect_playCard(PCOLOR, $card);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("tagBuilding==1", PCOLOR, null));
-        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(1, $m->evaluateExpression("tagBuilding==2", PCOLOR, null, ["wilds" => []]));
     }
 
     public function testEvaluateTagCountAdvancedEcosystems() {
         $m = $this->game();
         $color = PCOLOR;
-        $card = $m->mtFindByName('Advanced Ecosystems');
+        $card = $m->mtFindByName("Advanced Ecosystems");
         $q = $m->precondition(PCOLOR, $card);
         $this->assertEquals(MA_ERR_PREREQ, $q);
 
@@ -263,14 +258,14 @@ final class GameTest extends TestCase {
         $color = PCOLOR;
         $m->tokens->setTokenState("tracker_tagBuilding_{$color}", 7);
         $m->tokens->setTokenState("tracker_tagWild_{$color}", 1);
-        $m->setTrackerValue(PCOLOR, 'm', 10);
+        $m->setTrackerValue(PCOLOR, "m", 10);
 
         /** @var Operation_claim */
         $op = $m->getOperationInstanceFromType("claim", PCOLOR);
         $args = $op->argPrimaryDetails();
-        $builder = array_get($args, 'milestone_4');
+        $builder = array_get($args, "milestone_4");
         $this->assertNotNull($builder);
-        $this->assertEquals(MA_OK, $builder['q']);
+        $this->assertEquals(MA_OK, $builder["q"]);
     }
 
     function assertOperationTargetStatus(string $optype, string $target, int $status = MA_OK, string $color = PCOLOR) {
@@ -279,7 +274,7 @@ final class GameTest extends TestCase {
         $args = $op->argPrimaryDetails();
         $ms = array_get($args, $target);
         $this->assertNotNull($ms);
-        $this->assertEquals($status, $ms['q']);
+        $this->assertEquals($status, $ms["q"]);
     }
 
     public function testClaimMilestone_HellasRimSettler() {
@@ -287,7 +282,7 @@ final class GameTest extends TestCase {
         $this->game(2);
         $color = PCOLOR;
         $this->game->tokens->setTokenState("tracker_tagJovian_{$color}", 7);
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $this->assertEquals("RIM SETTLER", $this->game->getTokenName("milestone_5"));
         $this->assertOperationTargetStatus("claim", "milestone_5");
     }
@@ -297,28 +292,27 @@ final class GameTest extends TestCase {
         $this->game(2);
         $color = PCOLOR;
         $this->game->tokens->setTokenState("tracker_pe_{$color}", 7);
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $milestone = "milestone_4";
         $this->assertEquals("ENERGIZER", $this->game->getTokenName($milestone));
         $this->assertOperationTargetStatus("claim", $milestone);
     }
-
 
     public function testClaimMilestone_HellasPolar() {
         //    3|POLAR EXPLORER|7||8|(polartiles>=3)|Requires that you have 3 tiles on the two bottom rows|
         $game = $this->game(2);
         $color = PCOLOR;
 
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $milestone = "milestone_3";
         $this->assertEquals("POLAR EXPLORER", $this->game->getTokenName($milestone));
 
-        $game->tokens->moveToken('tile_64', 'hex_4_9', 1);
-        $game->tokens->moveToken('tile_67', 'hex_7_8', 1);
-        $game->tokens->moveToken('tile_3_1', 'hex_6_8', 2);
+        $game->tokens->moveToken("tile_64", "hex_4_9", 1);
+        $game->tokens->moveToken("tile_67", "hex_7_8", 1);
+        $game->tokens->moveToken("tile_3_1", "hex_6_8", 2);
         $this->assertEquals(2, $this->game->getCountOfPolarTiles($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
-        $game->tokens->moveToken('tile_85', 'hex_5_9', 1);
+        $game->tokens->moveToken("tile_85", "hex_5_9", 1);
         $game->clean_cache();
         $this->assertEquals(3, $this->game->getCountOfPolarTiles($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
@@ -329,22 +323,22 @@ final class GameTest extends TestCase {
         $game = $this->game(2);
         $color = PCOLOR;
 
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $milestone = "milestone_2";
 
-        $this->game->tokens->moveToken($game->mtFindByName('Lava Flows'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Lava Flows"), "tableau_{$color}", 1);
 
         $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
         $this->assertEquals(0, $this->game->getCountOfCardsWithPre($color));
-        $this->game->tokens->moveToken($game->mtFindByName('Advanced Ecosystems'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Advanced Ecosystems"), "tableau_{$color}", 1);
         $this->assertEquals(1, $this->game->getCountOfCardsWithPre($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
         //
-        $this->game->tokens->moveToken($game->mtFindByName('Zeppelins'), "tableau_{$color}", 1);
-        $this->game->tokens->moveToken($game->mtFindByName('Worms'), "tableau_{$color}", 1);
-        $this->game->tokens->moveToken($game->mtFindByName('Caretaker Contract'), "tableau_{$color}", 1);
-        $this->game->tokens->moveToken($game->mtFindByName('Power Supply Consortium'), "tableau_{$color}", 1);
-        $this->game->tokens->moveToken($game->mtFindByName('Martian Survey'), "tableau_{$color}", 1); // event does not count
+        $this->game->tokens->moveToken($game->mtFindByName("Zeppelins"), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Worms"), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Caretaker Contract"), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Power Supply Consortium"), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Martian Survey"), "tableau_{$color}", 1); // event does not count
 
         $this->assertEquals(5, $this->game->getCountOfCardsWithPre($color));
         $this->assertOperationTargetStatus("claim", $milestone, MA_OK);
@@ -358,7 +352,7 @@ final class GameTest extends TestCase {
         $this->game->tokens->setTokenState("tracker_tagJovian_{$color}", 7);
         $this->game->tokens->setTokenState("tracker_tagScience_{$color}", 7);
         $this->assertEquals(2, $this->game->getCountOfUniqueTags($color));
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $milestone = "milestone_1";
         $this->assertEquals("DIVERSIFIER", $this->game->getTokenName($milestone));
         $this->assertOperationTargetStatus("claim", $milestone, MA_ERR_PREREQ);
@@ -383,7 +377,7 @@ final class GameTest extends TestCase {
         $this->game->clean_cache();
         $token = "milestone_$num";
         $this->assertEquals($name, $this->game->getTokenName($token));
-        $expr = $this->game->getRulesFor($token, 'r');
+        $expr = $this->game->getRulesFor($token, "r");
         $res = $this->game->evaluateExpression($expr, $color);
         $this->assertEquals($value, $res);
     }
@@ -391,14 +385,14 @@ final class GameTest extends TestCase {
         $this->game->clean_cache();
         $token = "award_$num";
         $this->assertEquals($name, $this->game->getTokenName($token));
-        $expr = $this->game->getRulesFor($token, 'r');
+        $expr = $this->game->getRulesFor($token, "r");
         $res = $this->game->evaluateExpression($expr, $color);
         $this->assertEquals($value, $res);
     }
 
     public function testAward_Hellas1() {
         $this->game(2);
-        $this->game->setTrackerValue(PCOLOR, 'forest', 5);
+        $this->game->setTrackerValue(PCOLOR, "forest", 5);
         //1|Cultivator|8|forest|20||Owning the most greenery tiles
         $this->assertAward(1, "Cultivator", 5);
     }
@@ -408,9 +402,9 @@ final class GameTest extends TestCase {
         $color = PCOLOR;
         // 2|Magnate|8|card_green|20||Having most automated cards in play (green cards).
 
-        $this->game->tokens->moveToken($game->mtFindByName('Lava Flows'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Lava Flows"), "tableau_{$color}", 1);
         $this->assertEquals(0, $this->game->getCountOfCardsGreen($color));
-        $this->game->tokens->moveToken($game->mtFindByName('Advanced Ecosystems'), "tableau_{$color}", 1);
+        $this->game->tokens->moveToken($game->mtFindByName("Advanced Ecosystems"), "tableau_{$color}", 1);
         $this->assertEquals(1, $this->game->getCountOfCardsGreen($color));
 
         $this->assertAward(2, "Magnate", 1);
@@ -418,7 +412,7 @@ final class GameTest extends TestCase {
 
     public function testAward_Hellas3() {
         $this->game(2);
-        $this->game->setTrackerValue(PCOLOR, 'tagSpace', 5);
+        $this->game->setTrackerValue(PCOLOR, "tagSpace", 5);
         // 3|Space Baron|8|tagSpace|20||Having the most space tags (event cards do not count).
         $this->assertAward(3, "Space Baron", 5);
     }
@@ -426,7 +420,7 @@ final class GameTest extends TestCase {
         $game = $this->game(2);
         $color = PCOLOR;
 
-        $fish = $game->mtFind('name', 'Fish');
+        $fish = $game->mtFind("name", "Fish");
 
         $game->effect_playCard($color, $fish);
         $num = 5;
@@ -440,7 +434,7 @@ final class GameTest extends TestCase {
     }
     public function testAward_Hellas5() {
         $this->game(2);
-        $this->game->setTrackerValue(PCOLOR, 'tagBuilding', 2);
+        $this->game->setTrackerValue(PCOLOR, "tagBuilding", 2);
         // 5|Contractor|8|tagBuilding|20||Having the most building tags (event cards do not count).
         $this->assertAward(5, "Contractor", 2);
     }
@@ -451,12 +445,12 @@ final class GameTest extends TestCase {
         $this->game(1);
         $color = PCOLOR;
         $num = 1;
-        $kind = 'milestone';
-        $token =  "{$kind}_{$num}";
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $kind = "milestone";
+        $token = "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $this->assertEquals("GENERALIST", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
-        $production = ['pm', 'ps', 'pu', 'pp', 'pe', 'ph'];
+        $production = ["pm", "ps", "pu", "pp", "pe", "ph"];
         foreach ($production as $key) {
             $this->game->setTrackerValue(PCOLOR, $key, 2);
         }
@@ -469,9 +463,9 @@ final class GameTest extends TestCase {
         $this->game(1);
         $color = PCOLOR;
         $num = 2;
-        $kind = 'milestone';
-        $token =  "{$kind}_{$num}";
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $kind = "milestone";
+        $token = "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $this->assertEquals("SPECIALIST", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
         $this->game->setTrackerValue(PCOLOR, "pm", 2);
@@ -486,18 +480,18 @@ final class GameTest extends TestCase {
         $this->game(1);
         $color = PCOLOR;
         $num = 3;
-        $kind = 'milestone';
-        $token =  "{$kind}_{$num}";
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $kind = "milestone";
+        $token = "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $this->assertEquals("ECOLOGIST", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
-        $this->game->setTrackerValue(PCOLOR, 'tagAnimal', 1);
-        $this->game->setTrackerValue(PCOLOR, 'tagPlant', 2);
-        $this->game->setTrackerValue(PCOLOR, 'tagMicrobe', 1);
+        $this->game->setTrackerValue(PCOLOR, "tagAnimal", 1);
+        $this->game->setTrackerValue(PCOLOR, "tagPlant", 2);
+        $this->game->setTrackerValue(PCOLOR, "tagMicrobe", 1);
         $count = $this->game->getEcologistCount($color);
         $this->assertEquals(4, $count);
         $this->assertOperationTargetStatus("claim", $token);
-        $this->game->setTrackerValue(PCOLOR, 'tagWild', 1);
+        $this->game->setTrackerValue(PCOLOR, "tagWild", 1);
         $count = $this->game->getEcologistCount($color);
         $this->assertEquals(5, $count);
     }
@@ -506,9 +500,9 @@ final class GameTest extends TestCase {
         $game = $this->game(1);
         $color = PCOLOR;
         $num = 4;
-        $kind = 'milestone';
-        $token =  "{$kind}_{$num}";
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $kind = "milestone";
+        $token = "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $this->assertEquals("TYCOON", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
 
@@ -525,12 +519,18 @@ final class GameTest extends TestCase {
         $count = 0;
         $game = $this->game;
         foreach ($game->token_types as $key => $info) {
-            if (!startsWith($key, 'card_main')) continue;
-            $t = array_get($info, 't');
-            if ($t != $ptype) continue;
+            if (!startsWith($key, "card_main")) {
+                continue;
+            }
+            $t = array_get($info, "t");
+            if ($t != $ptype) {
+                continue;
+            }
             $game->effect_playCard(PCOLOR, $key);
             $count++;
-            if ($count >= $max) break;
+            if ($count >= $max) {
+                break;
+            }
         }
     }
 
@@ -539,9 +539,9 @@ final class GameTest extends TestCase {
         $game = $this->game(1);
         $color = PCOLOR;
         $num = 5;
-        $kind = 'milestone';
-        $token =  "{$kind}_{$num}";
-        $this->game->setTrackerValue(PCOLOR, 'm', 10);
+        $kind = "milestone";
+        $token = "{$kind}_{$num}";
+        $this->game->setTrackerValue(PCOLOR, "m", 10);
         $this->assertEquals("LEGEND", $this->game->getTokenName($token));
         $this->assertOperationTargetStatus("claim", $token, MA_ERR_PREREQ);
         $this->playProjectCards(MA_CARD_TYPE_EVENT, 10);
@@ -553,7 +553,7 @@ final class GameTest extends TestCase {
         $game = $this->game(1);
         $color = PCOLOR;
         $this->assertAward(1, "Celebrity", 0);
-        $card = $game->mtFindByName('Strip Mine');
+        $card = $game->mtFindByName("Strip Mine");
         $game->effect_playCard($color, $card);
         // 1|Celebrity|8|celebrity|20|Having most cards in play (not events) with a cost of at least 20 megacredits.
         $this->assertAward(1, "Celebrity", 1);
@@ -561,8 +561,8 @@ final class GameTest extends TestCase {
 
     public function testAward_Elysium2() {
         $this->game(1);
-        $this->game->setTrackerValue(PCOLOR, 's', 1);
-        $this->game->setTrackerValue(PCOLOR, 'e', 2);
+        $this->game->setTrackerValue(PCOLOR, "s", 1);
+        $this->game->setTrackerValue(PCOLOR, "e", 2);
         // 2|Industrialist|8|s+e|20|Having most steel and energy resources.
         $this->assertAward(2, "Industrialist", 3);
     }
@@ -570,24 +570,24 @@ final class GameTest extends TestCase {
     public function testAward_Elysium3() {
         $game = $this->game(1);
         $color = PCOLOR;
-        $game->tokens->moveToken('tile_67', 'hex_7_8', 1);
-        $game->tokens->moveToken('tile_44', 'hex_6_8', 1);
+        $game->tokens->moveToken("tile_67", "hex_7_8", 1);
+        $game->tokens->moveToken("tile_44", "hex_6_8", 1);
         $this->assertEquals(2, $this->game->getCountOfDesertTiles($color));
         // 3|Desert Settler|8|desert|20|Owning most tiles south of the equator (the four bottom rows).
         $this->assertAward(3, "Desert Settler", 2);
     }
     public function testAward_Elysium4() {
         $game = $this->game(1);
-        $game->tokens->moveToken('tile_67', 'hex_4_2', 1);
-        $game->tokens->moveToken('tile_44', 'hex_5_2', 1);
-        $game->tokens->moveToken('tile_2_1', 'hex_3_2', 1); // not adj
-        $game->tokens->moveToken('tile_3_1', 'hex_4_1', 0); // ocean
+        $game->tokens->moveToken("tile_67", "hex_4_2", 1);
+        $game->tokens->moveToken("tile_44", "hex_5_2", 1);
+        $game->tokens->moveToken("tile_2_1", "hex_3_2", 1); // not adj
+        $game->tokens->moveToken("tile_3_1", "hex_4_1", 0); // ocean
         // 4|Estate Dealer|8|estate|20|Owning most tiles adjacent to ocean tiles.
         $this->assertAward(4, "Estate Dealer", 2);
     }
     public function testAward_Elysium5() {
         $game = $this->game(1);
-        $game->setTrackerValue(PCOLOR, 'tr', 20);
+        $game->setTrackerValue(PCOLOR, "tr", 20);
         // 5|Benefactor|8|tr|20|Having highest terraform rating. Count this award first!
         $this->assertAward(5, "Benefactor", 20);
     }
@@ -596,7 +596,7 @@ final class GameTest extends TestCase {
         $game = $this->game(3);
         $color = PCOLOR;
 
-        $fish = $game->mtFind('name', 'Fish');
+        $fish = $game->mtFind("name", "Fish");
 
         $game->effect_playCard($color, $fish);
 
@@ -604,37 +604,35 @@ final class GameTest extends TestCase {
             $game->dbSetTokenLocation("resource_{$color}_$i", $fish, 1); // add a fish
         }
 
-        $tard = $game->mtFind('name', 'Tardigrades');
+        $tard = $game->mtFind("name", "Tardigrades");
         $num = 5;
         for (; $i < $num; $i++) {
             $game->dbSetTokenLocation("resource_{$color}_$i", $tard, 1); // add a microbe
         }
 
-
         // 5|FARMER|7|farmer|8|requires to have 5 animal and microbe resources combined|5
-        $this->assertEquals(2, $this->game->getCountOfResOnCards($color, 'Animal'));
-        $this->assertEquals(0, $this->game->getCountOfResOnCards($color, 'Science'));
+        $this->assertEquals(2, $this->game->getCountOfResOnCards($color, "Animal"));
+        $this->assertEquals(0, $this->game->getCountOfResOnCards($color, "Science"));
         $this->assertMilestone(5, "FARMER", $num);
-        $this->game->setTrackerValue(PCOLOR, 'm', 20);
+        $this->game->setTrackerValue(PCOLOR, "m", 20);
         $this->assertOperationTargetStatus("claim", "milestone_5", MA_OK);
     }
-
 
     public function testMilestone_Amazonis2_Landshaper() {
         $game = $this->game(4);
         $color = PCOLOR;
         //2|LANDSHAPER|7|landshaper|8|Requires that you own 1 greenery tile, 1 special tile, and 1 city tile (do not need to be adjacent to each other)|3
-        $game->tokens->moveToken('tile_67', 'hex_4_2', 1);
-        $game->tokens->moveToken('tile_44', 'hex_5_2', 1);
+        $game->tokens->moveToken("tile_67", "hex_4_2", 1);
+        $game->tokens->moveToken("tile_44", "hex_5_2", 1);
         $this->assertMilestone(2, "LANDSHAPER", 1);
-        $game->tokens->moveToken('tile_8', 'hex_5_5', 1);
+        $game->tokens->moveToken("tile_8", "hex_5_5", 1);
         $this->assertMilestone(2, "LANDSHAPER", 2);
     }
     public function testAward_Amazonis1_Collector() {
         $game = $this->game(4);
         $color = PCOLOR;
 
-        $fish = $game->mtFind('name', 'Fish');
+        $fish = $game->mtFind("name", "Fish");
         $game->effect_playCard($color, $fish);
         $num = 5;
         for ($i = 0; $i < $num; $i++) {
@@ -642,16 +640,16 @@ final class GameTest extends TestCase {
         }
         $this->assertEquals(1, $this->game->getCountOfUniqueTypesOfResources($color));
         $this->assertAward(1, "Collector", 1);
-        $this->game->setTrackerValue(PCOLOR, 'm', 20);
+        $this->game->setTrackerValue(PCOLOR, "m", 20);
         $this->assertEquals(2, $this->game->getCountOfUniqueTypesOfResources($color));
     }
 
     public function test_getTerraformingProgression_Amazonis() {
         $game = $this->game(4);
 
-        $game->tokens->setTokenState('tracker_o', 18);
-        $game->tokens->setTokenState('tracker_t', 14);
-        $game->tokens->setTokenState('tracker_w', 11); // max oceans
+        $game->tokens->setTokenState("tracker_o", 18);
+        $game->tokens->setTokenState("tracker_t", 14);
+        $game->tokens->setTokenState("tracker_w", 11); // max oceans
         $this->assertEquals(100, $this->game->getTerraformingProgression());
     }
 
@@ -660,8 +658,10 @@ final class GameTest extends TestCase {
         $map = $game->getPlanetMap();
 
         foreach ($map as $hex => $info) {
-            $rules = $game->getRulesFor($hex, 'r');
-            if (!$rules) continue;
+            $rules = $game->getRulesFor($hex, "r");
+            if (!$rules) {
+                continue;
+            }
 
             $op = $game->getOperationInstanceFromType($rules, PCOLOR, 1, $hex);
             $this->assertTrue(!!$op, "cannot instanciat $rules for $hex");
@@ -671,37 +671,34 @@ final class GameTest extends TestCase {
     public function testVolcanic() {
         $game = $this->game(3);
         $color = PCOLOR;
-        $volc = $game->mtFind('name', 'Hecates Tholus');
-        $this->assertEquals(1, $game->getRulesFor($volc, 'vol'));
+        $volc = $game->mtFind("name", "Hecates Tholus");
+        $this->assertEquals(1, $game->getRulesFor($volc, "vol"));
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
         $this->assertOperationTargetStatus("city(vol)", "hex_4_1", MA_ERR_NOTRESERVED);
 
-
-        $game->effect_placeTile($color, 'tile_2_2', 'hex_4_1');
+        $game->effect_placeTile($color, "tile_2_2", "hex_4_1");
         $this->assertEquals(1, $this->game->getCountOfGeologistTiles($color));
-        $game->effect_placeTile($color, 'tile_2_1', 'hex_5_1');
+        $game->effect_placeTile($color, "tile_2_1", "hex_5_1");
         $this->assertEquals(2, $this->game->getCountOfGeologistTiles($color));
     }
 
     public function testConnected() {
         $game = $this->game(3);
         $color = PCOLOR;
-        $game->effect_placeTile($color, 'tile_2_2', 'hex_4_1');
+        $game->effect_placeTile($color, "tile_2_2", "hex_4_1");
         $this->assertEquals(1, $this->game->getCountOfLandscapeTiles($color));
-        $game->effect_placeTile($color, 'tile_2_1', 'hex_5_1');
+        $game->effect_placeTile($color, "tile_2_1", "hex_5_1");
         $this->assertEquals(2, $this->game->getCountOfLandscapeTiles($color));
-        $game->effect_placeTile($color, 'tile_2_3', 'hex_5_6');
+        $game->effect_placeTile($color, "tile_2_3", "hex_5_6");
         $this->assertEquals(2, $this->game->getCountOfLandscapeTiles($color));
     }
-
-
 
     public function testNoctisCity() {
         $this->game(3);
         $this->assertOperationTargetStatus("city('Noctis City')", "hex_5_1");
         $this->assertOperationTargetStatus("w", "hex_3_5");
         $this->assertOperationTargetStatus("city(vol)", "hex_5_1");
-        $this->game->effect_placeTile(PCOLOR, 'tile_2_1', 'hex_1_5');
+        $this->game->effect_placeTile(PCOLOR, "tile_2_1", "hex_1_5");
         $this->assertOperationTargetStatus("city('Noctis City')", "hex_2_5", MA_ERR_CITYPLACEMENT);
         // on default map its 3_5
         $this->game(0);
@@ -720,16 +717,16 @@ final class GameTest extends TestCase {
 
             for ($i = 0; $i < 100; $i++) {
                 $places = $game->getSoloMapPlacements();
-                $all = array_merge($places['city'], $places['forest']);
+                $all = array_merge($places["city"], $places["forest"]);
                 $this->assertEquals(4, count($all), "map $map: " . toJson($all));
                 foreach ($all as $hex) {
-                    $this->assertEquals(0, $game->getRulesFor($hex, 'ocean', 0));
-                    $this->assertEquals(0, $game->getRulesFor($hex, 'reserved', 0));
+                    $this->assertEquals(0, $game->getRulesFor($hex, "ocean", 0));
+                    $this->assertEquals(0, $game->getRulesFor($hex, "reserved", 0));
                 }
                 $this->assertEquals(4, count(array_unique($all)));
 
-                $adj = $game->getAdjecentHexes($places['city'][0]);
-                $index = array_search($places['city'][1], $adj);
+                $adj = $game->getAdjecentHexes($places["city"][0]);
+                $index = array_search($places["city"][1], $adj);
                 $this->assertEquals(false, $index);
             }
         }
@@ -739,14 +736,13 @@ final class GameTest extends TestCase {
         for ($map = 0; $map <= 3; $map++) {
             $game = $this->game($map);
             $game->setupSoloMap();
-            $this->assertEquals(2, $game->getCountOfCitiesOnMars('ffffff'));
+            $this->assertEquals(2, $game->getCountOfCitiesOnMars("ffffff"));
         }
     }
 
-
     public function testCounterCall() {
         $m = $this->game();
-        $m->incTrackerValue(PCOLOR, 'u', 8);
+        $m->incTrackerValue(PCOLOR, "u", 8);
         // $m->incTrackerValue(PCOLOR,'u',8);
         $m->machine->insertRule("counter(u) m", 1, 1, 1, PCOLOR);
         $ops = $m->machine->getTopOperations();
@@ -754,15 +750,15 @@ final class GameTest extends TestCase {
         $m->executeOperationSingle($op);
         $ops = $m->machine->getTopOperations();
         $op = array_shift($ops);
-        $this->assertEquals(8, $op['count']);
+        $this->assertEquals(8, $op["count"]);
     }
     public function testCounterComplex() {
         $m = $this->game();
-        $m->incTrackerValue(PCOLOR, 'pp', 0);
+        $m->incTrackerValue(PCOLOR, "pp", 0);
 
-        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Algae'));
-        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Mangrove'));
-        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Trees'));
+        $m->effect_playCard(PCOLOR, $m->mtFind("name", "Algae"));
+        $m->effect_playCard(PCOLOR, $m->mtFind("name", "Mangrove"));
+        $m->effect_playCard(PCOLOR, $m->mtFind("name", "Trees"));
 
         $m->machine->insertRule("counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp", 1, 1, 1, PCOLOR);
         $ops = $m->machine->getTopOperations();
@@ -770,16 +766,15 @@ final class GameTest extends TestCase {
         $m->executeOperationSingle($op);
         $ops = $m->machine->getTopOperations();
         $op = array_shift($ops);
-        $this->assertEquals(4, $op['count']);
+        $this->assertEquals(4, $op["count"]);
         $m->executeOperationSingle($op);
-        $this->assertEquals(4, $m->getTrackerValue(PCOLOR, 'pp'));
+        $this->assertEquals(4, $m->getTrackerValue(PCOLOR, "pp"));
     }
     public function testCounterComplex1() {
         $m = $this->game();
-        $m->incTrackerValue(PCOLOR, 'pp', 0);
+        $m->incTrackerValue(PCOLOR, "pp", 0);
 
-        $m->effect_playCard(PCOLOR, $m->mtFind('name', 'Algae'));
-
+        $m->effect_playCard(PCOLOR, $m->mtFind("name", "Algae"));
 
         $m->machine->insertRule("counter('((tagPlant>=3)*4)+((tagPlant<3)*1)') pp", 1, 1, 1, PCOLOR);
         $ops = $m->machine->getTopOperations();
@@ -787,51 +782,51 @@ final class GameTest extends TestCase {
         $m->executeOperationSingle($op);
         $ops = $m->machine->getTopOperations();
         $op = array_shift($ops);
-        $this->assertEquals(1, $op['count']);
+        $this->assertEquals(1, $op["count"]);
         $m->executeOperationSingle($op);
-        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'pp'));
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, "pp"));
     }
 
     public function testCounterMax() {
         $m = $this->game();
-        $m->incTrackerValue(PCOLOR, 'pp', 0);
+        $m->incTrackerValue(PCOLOR, "pp", 0);
         $m->machine->insertRule("counter(5,null,4) pp", 1, 1, 1, PCOLOR);
         $m->st_gameDispatch();
-        $this->assertEquals(4, $m->getTrackerValue(PCOLOR, 'pp'));
+        $this->assertEquals(4, $m->getTrackerValue(PCOLOR, "pp"));
     }
     public function testCounterMaxMin() {
         $m = $this->game();
-        $m->incTrackerValue(PCOLOR, 'pp', 0);
+        $m->incTrackerValue(PCOLOR, "pp", 0);
         $m->machine->insertRule("counter(3,3,4) pp", 1, 1, 1, PCOLOR);
         $m->st_gameDispatch();
-        $this->assertEquals(3, $m->getTrackerValue(PCOLOR, 'pp'));
+        $this->assertEquals(3, $m->getTrackerValue(PCOLOR, "pp"));
     }
 
     public function testPut() {
         $m = $this->game();
-        $value = $m->getTrackerValue(PCOLOR, 's');
+        $value = $m->getTrackerValue(PCOLOR, "s");
         $this->assertEquals(0, $value);
         $m->putInEffectPool(PCOLOR, "2s");
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $value = $m->getTrackerValue(PCOLOR, 's');
+        $value = $m->getTrackerValue(PCOLOR, "s");
         $this->assertEquals(2, $value);
     }
 
     public function testResolveAcivate() {
         $m = $this->game();
-        $m->incTrackerValue(PCOLOR, 'e', 4);
-        $value = $m->getTrackerValue(PCOLOR, 'e');
+        $m->incTrackerValue(PCOLOR, "e", 4);
+        $value = $m->getTrackerValue(PCOLOR, "e");
         $this->assertEquals(4, $value);
-        $card = 'card_main_101';
+        $card = "card_main_101";
         $m->tokens->moveToken($card, "tableau_" . PCOLOR, 2);
-        $op = $m->machine->createOperationSimple('activate', PCOLOR);
-        $args = ['target' => $card, 'op_info' => $op];
+        $op = $m->machine->createOperationSimple("activate", PCOLOR);
+        $args = ["target" => $card, "op_info" => $op];
         $count = $m->saction_resolve($op, $args);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $this->assertEquals(1, $count);
-        $value = $m->getTrackerValue(PCOLOR, 's');
+        $value = $m->getTrackerValue(PCOLOR, "s");
         $this->assertEquals(1, $value);
     }
 
@@ -842,9 +837,9 @@ final class GameTest extends TestCase {
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $tops = $m->machine->getTopOperations(PCOLOR);
-        $op =  reset($tops);
-        $args = ['target' => 'hex_5_5', 'op_info' => $op];
-        $this->assertEquals("w", $op['type']);
+        $op = reset($tops);
+        $args = ["target" => "hex_5_5", "op_info" => $op];
+        $this->assertEquals("w", $op["type"]);
         $count = $m->saction_resolve($op, $args);
         $m->saction_stack($count, $op, $tops);
         $this->assertEquals(1, $count);
@@ -855,8 +850,8 @@ final class GameTest extends TestCase {
         $this->assertEquals(2, count($tops));
         $w = array_shift($tops);
         $pp = array_shift($tops);
-        $this->assertEquals("w", $w['type']);
-        $this->assertEquals("2p", $pp['type']);
+        $this->assertEquals("w", $w["type"]);
+        $this->assertEquals("2p", $pp["type"]);
     }
 
     public function testEffectMatch() {
@@ -881,13 +876,13 @@ final class GameTest extends TestCase {
     public function testListeners() {
         $m = $this->game();
         $m->setListerts([
-            'card_1' => ['e' => 'play_card:nop;onPay_card:2m', 'owner' => PCOLOR, 'key' => 'card_1'],
-            'card_2' => ['e' => 'onPay_cardSpaceEvent:2m', 'owner' => PCOLOR, 'key' => 'card_2']
+            "card_1" => ["e" => "play_card:nop;onPay_card:2m", "owner" => PCOLOR, "key" => "card_1"],
+            "card_2" => ["e" => "onPay_cardSpaceEvent:2m", "owner" => PCOLOR, "key" => "card_2"],
         ]);
         $res = $m->collectListeners(PCOLOR, "play_card", "xxx");
         $this->assertNotNull($res);
         $this->assertEquals(1, count($res));
-        $this->assertEquals('nop', $res[0]['outcome']);
+        $this->assertEquals("nop", $res[0]["outcome"]);
 
         $dis = $m->collectDiscounts(PCOLOR, "card_main_1");
         $this->assertEquals(2, $dis);
@@ -906,8 +901,8 @@ final class GameTest extends TestCase {
         $m = $this->game();
 
         $p2 = BCOLOR;
-        $hab = $m->mtFind('name', 'Protected Habitats');
-        $fish = $m->mtFind('name', 'Fish');
+        $hab = $m->mtFind("name", "Protected Habitats");
+        $fish = $m->mtFind("name", "Fish");
 
         $m->effect_playCard(BCOLOR, $fish);
         $m->dbSetTokenLocation("resource_{$p2}_1", $fish, 0); // add a fish
@@ -915,11 +910,11 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType("nores(Animal)", PCOLOR);
         $args = $op->argPrimaryDetails();
         $this->assertNotNull(array_get($args, $fish));
-        $this->assertEquals(MA_OK, $args[$fish]['q']); // first is ok to kill fish
+        $this->assertEquals(MA_OK, $args[$fish]["q"]); // first is ok to kill fish
         $m->effect_playCard(BCOLOR, $hab);
         $args = $op->argPrimaryDetails();
         $this->assertNotNull(array_get($args, $fish));
-        $this->assertEquals(MA_ERR_PROTECTED, $args[$fish]['q']); // second its protected
+        $this->assertEquals(MA_ERR_PROTECTED, $args[$fish]["q"]); // second its protected
     }
 
     public function testMultiplayer() {
@@ -927,25 +922,25 @@ final class GameTest extends TestCase {
         $p1 = $m->getPlayerIdByColor(PCOLOR);
         $m->dbUserPrefs->setPrefValue($p1, MA_PREF_CONFIRM_DRAW, 1);
         $this->assertEquals(1, $m->dbUserPrefs->getPrefValue($p1, MA_PREF_CONFIRM_DRAW));
-        $m->machine->push("draw", 1, 1, PCOLOR, MACHINE_OP_SEQ, '', 'multi');
+        $m->machine->push("draw", 1, 1, PCOLOR, MACHINE_OP_SEQ, "", "multi");
         //$this->assertTrue($m->machine->xtable=== $m->getMultiMachine()->xtable);
 
         $this->assertNotNull($m->machine->getTopOperations());
         $top1 = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top1));
-        $m->machine->put("draw", 1, 1, BCOLOR, MACHINE_OP_SEQ, '', 'multi');
-        $m->machine->queue("m", 1, 1, PCOLOR, MACHINE_OP_SEQ, '', 'main');
+        $m->machine->put("draw", 1, 1, BCOLOR, MACHINE_OP_SEQ, "", "multi");
+        $m->machine->queue("m", 1, 1, PCOLOR, MACHINE_OP_SEQ, "", "main");
         $this->assertEquals(2, count($m->machine->getTopOperations()));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
 
-        $this->assertEquals("multiplayerDispatch", $m->gamestate->state()['name']);
+        $this->assertEquals("multiplayerDispatch", $m->gamestate->state()["name"]);
         $m->st_gameDispatchMultiplayer();
         $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getPrivateState($p1));
         $m->curid = $p1;
         $top1 = $m->machine->getTopOperations();
         $op = array_shift($top1);
-        $m->action_resolve(['ops' => [['op' => $op['id']]]]);
+        $m->action_resolve(["ops" => [["op" => $op["id"]]]]);
         $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
         $p2 = $m->getPlayerIdByColor(BCOLOR);
         $m->curid = $p2;
@@ -955,12 +950,11 @@ final class GameTest extends TestCase {
         $top1 = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top1));
         $op = array_shift($top1);
-        $m->action_resolve(['ops' => [['op' => $op['id']]]]);
+        $m->action_resolve(["ops" => [["op" => $op["id"]]]]);
         $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
         $m->st_gameDispatchMultiplayer();
-        $this->assertEquals("gameDispatch", $m->gamestate->state()['name']);
+        $this->assertEquals("gameDispatch", $m->gamestate->state()["name"]);
     }
-
 
     public function testCopyBu() {
         $m = $this->game();
@@ -968,15 +962,15 @@ final class GameTest extends TestCase {
         $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
         $this->assertNotNull($bu);
 
-        $subrules = $bu->getProductionOnlyRules('npe,h', 'card_main_1');
+        $subrules = $bu->getProductionOnlyRules("npe,h", "card_main_1");
         $this->assertEquals("npe", $subrules);
 
-        $m->dbSetTokenLocation('tile_64', 'hex_7_9', 1);
-        $m->dbSetTokenLocation('tile_67', 'hex_4_1', 1);
+        $m->dbSetTokenLocation("tile_64", "hex_7_9", 1);
+        $m->dbSetTokenLocation("tile_67", "hex_4_1", 1);
 
         $color = PCOLOR;
-        $card_id = $m->mtFindByName('Mining Area');
-        $subrules = $bu->getProductionOnlyRules('', $card_id);
+        $card_id = $m->mtFindByName("Mining Area");
+        $subrules = $bu->getProductionOnlyRules("", $card_id);
         $this->assertEquals("pu", $subrules);
 
         $m->dbSetTokenLocation($card_id, "tableau_$color", 1);
@@ -985,7 +979,7 @@ final class GameTest extends TestCase {
 
     public function testRoboticWorkforceWithResearchNetwork() {
         $m = $this->game();
-        $card_id = $m->mtFindByName('Research Network');
+        $card_id = $m->mtFindByName("Research Network");
         //$card2 = $m->mtFindByName('Robotic Workforce');
         $color = PCOLOR;
         $m->dbSetTokenLocation($card_id, "tableau_$color", 1);
@@ -1003,20 +997,27 @@ final class GameTest extends TestCase {
         $bu = $m->getOperationInstanceFromType("copybu", PCOLOR);
         $tt = [];
         foreach ($m->token_types as $key => $info) {
-            if (!startsWith($key, 'card_main')) continue;
-            $deck = array_get($info, 'deck');
-            if (!array_get($tt, $deck)) $tt[$deck] = 0;
-            if (!strstr(array_get($info, 'tags', ''), 'Building')) continue;
-            $r = array_get($info, 'r', '');
+            if (!startsWith($key, "card_main")) {
+                continue;
+            }
+            $deck = array_get($info, "deck");
+            if (!array_get($tt, $deck)) {
+                $tt[$deck] = 0;
+            }
+            if (!strstr(array_get($info, "tags", ""), "Building")) {
+                continue;
+            }
+            $r = array_get($info, "r", "");
             $subrules = $bu->getProductionOnlyRules($r, $key);
-            //if ($r) $this->assertTrue(!!$subrules,"rules $r");    
-            if ($subrules) $tt[$deck] += 1;
+            //if ($r) $this->assertTrue(!!$subrules,"rules $r");
+            if ($subrules) {
+                $tt[$deck] += 1;
+            }
         }
-        $this->assertEquals(35, $tt['Basic']);
-        $this->assertEquals(11, $tt['Corporate']);
-        $this->assertEquals(2, $tt['Prelude']);
+        $this->assertEquals(35, $tt["Basic"]);
+        $this->assertEquals(11, $tt["Corporate"]);
+        $this->assertEquals(2, $tt["Prelude"]);
     }
-
 
     public function testIsVoid() {
         $m = $this->game();
@@ -1025,7 +1026,6 @@ final class GameTest extends TestCase {
         $this->assertFalse($op->isVoid());
         $this->assertTrue($op->hasNoSideEffects());
     }
-
 
     public function testIsVoidComplex() {
         $m = $this->game();
@@ -1037,41 +1037,46 @@ final class GameTest extends TestCase {
         $this->assertTrue($op->isVoid());
     }
 
-
     public function testIsVoidComplexCount() {
         $m = $this->game();
-        $m->setTrackerValue(PCOLOR, 'e', 0);
+        $m->setTrackerValue(PCOLOR, "e", 0);
         $op = $m->getOperationInstanceFromType("counter(e,1):(ne:m)", PCOLOR);
         $this->assertNotNull($op);
         $this->assertTrue($op->isVoid());
-        $m->setTrackerValue(PCOLOR, 'e', 1);
+        $m->setTrackerValue(PCOLOR, "e", 1);
         $this->assertFalse($op->isVoid());
     }
 
     public function testIsVoidComplexCountInsulation() {
         $m = $this->game();
-        $m->setTrackerValue(PCOLOR, 'ph', 0);
+        $m->setTrackerValue(PCOLOR, "ph", 0);
         $op = $m->getOperationInstanceFromType("counter(ph,1):(nph:pm)", PCOLOR);
         $this->assertNotNull($op);
         $this->assertTrue($op->isVoid());
-        $m->setTrackerValue(PCOLOR, 'ph', 2);
+        $m->setTrackerValue(PCOLOR, "ph", 2);
         $this->assertFalse($op->isVoid());
     }
 
     public function testLavaFlows() {
         $m = $this->game();
         $color = PCOLOR;
-        $m->tokens->setTokenState('tracker_t', +6);
-        $card_id = $m->mtFindByName('Lava Flows');
-        $m->putInEffectPool(PCOLOR, '2t', $card_id);
+        $m->tokens->setTokenState("tracker_t", +6);
+        $card_id = $m->mtFindByName("Lava Flows");
+        $m->putInEffectPool(PCOLOR, "2t", $card_id);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $tops = $m->machine->getTopOperations();
         foreach ($tops as $op) {
-            if ($op['type'] == 'card') continue;
-            if ($op['type'] == 'activate') continue;
-            if ($op['type'] == 'pass') continue;
-            $this->assertTrue(false, "Unexpected operation " . ($op['type']));
+            if ($op["type"] == "card") {
+                continue;
+            }
+            if ($op["type"] == "activate") {
+                continue;
+            }
+            if ($op["type"] == "pass") {
+                continue;
+            }
+            $this->assertTrue(false, "Unexpected operation " . $op["type"]);
         }
         $this->assertEquals(8, $m->tokens->getTokenState("tracker_t"));
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_$color"));
@@ -1080,19 +1085,23 @@ final class GameTest extends TestCase {
     public function testLavaFlowsHellas() {
         $m = $this->game(2);
         $color = PCOLOR;
-        $m->tokens->setTokenState('tracker_t', +6);
-        $card_id = $m->mtFindByName('Lava Flows');
+        $m->tokens->setTokenState("tracker_t", +6);
+        $card_id = $m->mtFindByName("Lava Flows");
         $r = $m->getRulesFor($card_id);
         $m->putInEffectPool(PCOLOR, $r, $card_id);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $tops = $m->machine->getTopOperations();
         foreach ($tops as $op) {
-            if ($op['type'] == 'tile(vol)') continue;
-            if ($op['type'] == '2t') continue;
-            $this->assertTrue(false, "Unexpected operation " . ($op['type']));
+            if ($op["type"] == "tile(vol)") {
+                continue;
+            }
+            if ($op["type"] == "2t") {
+                continue;
+            }
+            $this->assertTrue(false, "Unexpected operation " . $op["type"]);
         }
-        $op = $m->getOperationInstanceFromType('tile(vol)', PCOLOR, 1, $card_id);
+        $op = $m->getOperationInstanceFromType("tile(vol)", PCOLOR, 1, $card_id);
         $this->assertEquals(true, !$op->isVoid());
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($r, PCOLOR, 1, $card_id);
@@ -1102,25 +1111,25 @@ final class GameTest extends TestCase {
     public function testLavaTubeSettlementHellas() {
         $m = $this->game(2);
         $color = PCOLOR;
-        $m->setTrackerValue(PCOLOR, 'pe', 2);
-        $card = $m->mtFind('name', 'Lava Tube Settlement');
-        $op = $m->getOperationInstanceFromType('city(vol)', $color, 1, $card);
+        $m->setTrackerValue(PCOLOR, "pe", 2);
+        $card = $m->mtFind("name", "Lava Tube Settlement");
+        $op = $m->getOperationInstanceFromType("city(vol)", $color, 1, $card);
         $this->assertEquals(true, !$op->isVoid());
     }
 
     public function testHasTag() {
         $m = $this->game();
-        $card_id = $m->mtFindByName('Moss');
-        $this->assertTrue($m->hasTag($card_id, 'Plant'));
+        $card_id = $m->mtFindByName("Moss");
+        $this->assertTrue($m->hasTag($card_id, "Plant"));
     }
 
     public function testMossAndViralEnhancencers() {
         $m = $this->game();
-        $moss = $m->mtFindByName('Moss');
-        $vire = $m->mtFindByName('Viral Enhancers');
-        $m->incTrackerValue(PCOLOR, 'm', 4);
+        $moss = $m->mtFindByName("Moss");
+        $vire = $m->mtFindByName("Viral Enhancers");
+        $m->incTrackerValue(PCOLOR, "m", 4);
 
-        $ops = $m->getRulesFor($moss, 'r');
+        $ops = $m->getRulesFor($moss, "r");
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($ops, PCOLOR, 1, $moss);
         $this->assertEquals(true, $op->isVoid());
@@ -1132,10 +1141,10 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $m->gamestate->changeActivePlayer(PCOLOR);
         $color = PCOLOR;
-        $m->tokens->setTokenState('tracker_t', -2);
-        $m->tokens->setTokenState('tracker_w', 9); // max oceans
-        $card_id = $m->mtFindByName('Lava Flows');
-        $m->putInEffectPool(PCOLOR, '2t', $card_id);
+        $m->tokens->setTokenState("tracker_t", -2);
+        $m->tokens->setTokenState("tracker_w", 9); // max oceans
+        $card_id = $m->mtFindByName("Lava Flows");
+        $m->putInEffectPool(PCOLOR, "2t", $card_id);
         $top1 = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top1));
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
@@ -1150,17 +1159,17 @@ final class GameTest extends TestCase {
         $top1 = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top1));
         $op = array_shift($top1);
-        $this->assertEquals("w", $op['type']); // unfonfirmed ocean
+        $this->assertEquals("w", $op["type"]); // unfonfirmed ocean
     }
 
     public function testRoverConstruction() {
         $m = $this->game();
         // setup one player has Rover Construction in play
-        $rover = $m->mtFindByName('Rover Construction');
+        $rover = $m->mtFindByName("Rover Construction");
         $m->effect_playCard(BCOLOR, $rover);
         // another player plays city on tile with resources, simulate this
         $m->putInEffectPool(PCOLOR, "p");
-        $m->triggerEffect(PCOLOR, 'place_city', 'tile_2_10');
+        $m->triggerEffect(PCOLOR, "place_city", "tile_2_10");
         $m->gamestate->changeActivePlayer(PCOLOR);
         // dispatch
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
@@ -1169,54 +1178,65 @@ final class GameTest extends TestCase {
         $top = $m->machine->getTopOperations();
         $this->assertEquals(2, count($top));
         $op = array_shift($top);
-        $this->assertEquals("p", $op['type']);
+        $this->assertEquals("p", $op["type"]);
         $op = array_shift($top);
-        $this->assertEquals("2m", $op['type']);
+        $this->assertEquals("2m", $op["type"]);
         // make sure active player can pick op of another player to resolve first
-        $m->action_resolve(['ops' => [['op' => $op['id']]]]);
+        $m->action_resolve(["ops" => [["op" => $op["id"]]]]);
         $top = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top));
         $op = array_shift($top);
-        $this->assertEquals("p", $op['type']);
+        $this->assertEquals("p", $op["type"]);
         // dispatch
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $top = $m->machine->getTopOperations();
         foreach ($top as $op) {
-            if ($op['type'] == 'card') continue;
-            if ($op['type'] == 'activate') continue;
-            if ($op['type'] == 'pass') continue;
-            $this->assertTrue(false, "Unexpected operation " . ($op['type']));
+            if ($op["type"] == "card") {
+                continue;
+            }
+            if ($op["type"] == "activate") {
+                continue;
+            }
+            if ($op["type"] == "pass") {
+                continue;
+            }
+            $this->assertTrue(false, "Unexpected operation " . $op["type"]);
         }
     }
-
 
     public function testInstanciateAllCard() {
         $this->game = $m = $this->game();
         foreach ($m->token_types as $key => $info) {
-
-            $info['key'] = $key;
-            if (array_get($info, 't', 0) == 0) continue;
-            if (!startsWith($key, 'card_')) continue;
-            $r = array_get($info, 'r', '');
+            $info["key"] = $key;
+            if (array_get($info, "t", 0) == 0) {
+                continue;
+            }
+            if (!startsWith($key, "card_")) {
+                continue;
+            }
+            $r = array_get($info, "r", "");
 
             $this->subTestOpExpr($r, $info);
-            $a = array_get($info, 'a', '');
+            $a = array_get($info, "a", "");
             $this->subTestOpExpr($a, $info);
 
-            $name = array_get($info, 'name', '');
+            $name = array_get($info, "name", "");
 
             try {
-                $pre = array_get($info, 'pre', '');
+                $pre = array_get($info, "pre", "");
                 $this->game->evaluatePrecondition($pre, PCOLOR, $key);
 
-                $vp = array_get($info, 'vp', '');
-                if ($vp) $this->game->evaluateExpression((string)$vp, PCOLOR, $key);
+                $vp = array_get($info, "vp", "");
+                if ($vp) {
+                    $this->game->evaluateExpression((string) $vp, PCOLOR, $key);
+                }
 
-                $trigger_rule = array_get($info, 'e', '');
-                if ($trigger_rule) $this->game->parseOpExpression($trigger_rule);
+                $trigger_rule = array_get($info, "e", "");
+                if ($trigger_rule) {
+                    $this->game->parseOpExpression($trigger_rule);
+                }
             } catch (Exception $e) {
-
                 $this->fail("Error $key $name $e\n");
             }
         }
@@ -1224,15 +1244,15 @@ final class GameTest extends TestCase {
 
     function subTestOpExpr($r, $info) {
         if ($r) {
-            $key = $info['key'];
-            echo ("testing $key <$r>\n");
+            $key = $info["key"];
+            echo "testing $key <$r>\n";
             /** @var AbsOperation */
             $op = $this->game->getOperationInstanceFromType($r, PCOLOR);
             $this->subTestOperationIntegrity($op);
 
             if ($r) {
                 $len = strlen($r);
-                $name = array_get($info, 'name', '');
+                $name = array_get($info, "name", "");
                 $this->assertTrue($len <= 80, "type too long for $key $name $len\n");
             }
         }
@@ -1242,24 +1262,30 @@ final class GameTest extends TestCase {
         $m = $this->game();
         $tested = [];
         foreach ($m->token_types as $key => $info) {
-            if (!startsWith($key, 'op_')) continue;
-            echo ("testing op $key\n");
+            if (!startsWith($key, "op_")) {
+                continue;
+            }
+            echo "testing op $key\n";
             $this->subTestOp($m, $key, $info);
             $tested[$key] = 1;
         }
-        $this->subTestOp($m, 'op_acard188', ['type' => 'acard188']);
+        $this->subTestOp($m, "op_acard188", ["type" => "acard188"]);
 
         $dir = dirname(dirname(__FILE__));
         $files = glob("$dir/operations/*.php");
 
         foreach ($files as $file) {
             $base = basename($file);
-            if (!startsWith($base, 'Operation_')) continue;
+            if (!startsWith($base, "Operation_")) {
+                continue;
+            }
             $mne = preg_replace("/Operation_(.*).php/", "\\1", $base);
             $key = "op_{$mne}";
-            if (array_key_exists($key, $tested)) continue;
-            echo ("testing op $key\n");
-            $this->subTestOp($m, $key,  ['type' => $mne]);
+            if (array_key_exists($key, $tested)) {
+                continue;
+            }
+            echo "testing op $key\n";
+            $this->subTestOp($m, $key, ["type" => $mne]);
         }
     }
 
@@ -1272,28 +1298,26 @@ final class GameTest extends TestCase {
         $this->assertFalse($op->isVoid());
         $this->assertFalse($op->canResolveAutomatically());
         $this->assertFalse($op->canSkipChoice());
-        $this->assertEquals('pass', $op->getMnemonic());
+        $this->assertEquals("pass", $op->getMnemonic());
 
-        $ttype = $args['ttype'];
-        $this->assertEquals('', $ttype);
+        $ttype = $args["ttype"];
+        $this->assertEquals("", $ttype);
     }
 
     public function testSteal() {
         $game = $this->game();
-        $game->_colors = array(PCOLOR);
+        $game->_colors = [PCOLOR];
         $this->assertTrue($game->isSolo());
 
-        $optype = 'steal_s';
+        $optype = "steal_s";
         $op = $game->getOperationInstanceFromType($optype, PCOLOR);
         $this->assertFalse($op->canSkipChoice());
         $this->subTestOperationIntegrity($op);
         $args = $op->arg();
 
-
-        $card = $game->mtFindByName('Hired Raiders');
-        $optype = $game->getRulesFor($card, 'r');
+        $card = $game->mtFindByName("Hired Raiders");
+        $optype = $game->getRulesFor($card, "r");
         $op = $game->getOperationInstanceFromType($optype, PCOLOR);
-
 
         $this->subTestOperationIntegrity($op);
         $args = $op->arg();
@@ -1310,7 +1334,6 @@ final class GameTest extends TestCase {
         $top = $this->dispatchOneStep($game);
         $this->assertEquals(2, count($top)); // expanded into 2
 
-
         $top = $this->dispatchOneStep($game, true);
         $this->assertEquals(2, count($top));
     }
@@ -1325,10 +1348,10 @@ final class GameTest extends TestCase {
         $this->assertFalse($op->isVoid()); // is not void if no cards its skipped
         $this->assertTrue($op->canResolveAutomatically());
         $this->assertTrue($op->canSkipChoice());
-        $this->assertEquals('2draft', $op->getMnemonic());
+        $this->assertEquals("2draft", $op->getMnemonic());
 
-        $ttype = $args['ttype'];
-        $this->assertEquals('token', $ttype);
+        $ttype = $args["ttype"];
+        $this->assertEquals("token", $ttype);
         $count = 2;
         $this->assertTrue($op->auto(PCOLOR, $count));
     }
@@ -1340,7 +1363,6 @@ final class GameTest extends TestCase {
     }
 
     public function testDiscardDraw() {
-
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("?(discard:draw)", PCOLOR);
         $this->subTestOperationIntegrity($op);
@@ -1357,7 +1379,6 @@ final class GameTest extends TestCase {
     }
 
     public function testDiscardOpt() {
-
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("?discard", PCOLOR);
         $this->subTestOperationIntegrity($op);
@@ -1374,7 +1395,6 @@ final class GameTest extends TestCase {
     }
 
     public function testDiscardNVT() {
-
         $m = $this->game();
         $op = $m->getOperationInstanceFromType("discard", PCOLOR);
         $this->subTestOperationIntegrity($op);
@@ -1392,7 +1412,7 @@ final class GameTest extends TestCase {
 
     public function testComplex() {
         $m = $this->game();
-        $card = $m->mtFind('name',  'Olympus Conference');
+        $card = $m->mtFind("name", "Olympus Conference");
         //$m->effect_playCard(PCOLOR, $card);
 
         $optype = "res,m/nres";
@@ -1408,12 +1428,12 @@ final class GameTest extends TestCase {
         $top = $this->dispatchOneStep($m);
         $this->assertEquals(1, count($top)); // reduced to one because nres is void
         $top = $this->dispatchOneStep($m);
-        $this->assertEquals(2, count($top)); // res, m 
+        $this->assertEquals(2, count($top)); // res, m
         $top = $this->dispatchOneStep($m); // m left
-        $this->assertEquals(0,  $m->getTrackerValue(PCOLOR, 'm'));
+        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, "m"));
         $this->dispatchOneStep($m, false); // done
 
-        $this->assertEquals(1,  $m->getTrackerValue(PCOLOR, 'm'));
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, "m"));
     }
 
     public function testComplex2() {
@@ -1426,7 +1446,7 @@ final class GameTest extends TestCase {
     public function test_res() {
         $m = $this->game();
         $optype = "p/res";
-        $card = $m->mtFind('name',  'Arctic Algae');
+        $card = $m->mtFind("name", "Arctic Algae");
         $op = $m->getOperationInstanceFromType($optype, PCOLOR, 1, $card);
         $this->subTestOperationIntegrity($op);
         $m->putInEffectPool(PCOLOR, $optype, $card);
@@ -1436,7 +1456,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(1, count($top)); // p
         $this->dispatchOneStep($m, false); // done
 
-        $this->assertEquals(1,  $m->getTrackerValue(PCOLOR, 'p'));
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, "p"));
     }
 
     function dispatchOneStep($game, $done = false) {
@@ -1447,10 +1467,10 @@ final class GameTest extends TestCase {
     function subTestOperationIntegrity($op) {
         $this->assertNotNull($op);
         $this->assertTrue($op->checkIntegrity());
-        $mne = ($op->getMnemonic());
+        $mne = $op->getMnemonic();
         $opargs = $op->arg();
         $this->assertNotNull($opargs);
-        $visargs = $opargs['args'];
+        $visargs = $opargs["args"];
         $this->assertNotNull($visargs);
         $complex = $op instanceof ComplexOperation;
         if ($op->isOptional()) {
@@ -1462,13 +1482,15 @@ final class GameTest extends TestCase {
         } else {
             if ($op->canSkipChoice()) {
                 $this->assertTrue($op->isVoid(), "can skip choice but not void $mne");
-                if (!$complex)
+                if (!$complex) {
                     $this->assertTrue($op->noValidTargets(), "can skip choice but valid targets $mne");
+                }
             }
         }
         if (!$op->noValidTargets()) {
-            if (!$complex)
+            if (!$complex) {
                 $this->assertFalse($op->isVoid(), "void with valid targets $mne");
+            }
         }
         if ($op->isVoid()) {
             $this->assertTrue($op->canFail(), "can fail $mne");
@@ -1476,7 +1498,7 @@ final class GameTest extends TestCase {
     }
 
     function subTestOp($m, $key, $info = []) {
-        $type = array_get($info, 'type', substr($key, 3));
+        $type = array_get($info, "type", substr($key, 3));
         $this->assertTrue(!!$type);
 
         /** @var AbsOperation */
@@ -1484,31 +1506,31 @@ final class GameTest extends TestCase {
         $this->subTestOperationIntegrity($op);
 
         $args = $op->arg();
-        $ttype = $args['ttype'];
-        $ack = array_get($args, 'ack', false);
+        $ttype = $args["ttype"];
+        $ack = array_get($args, "ack", false);
 
         if (!$op->isFullyAutomated()) {
             $this->assertTrue(!!$ttype, "  err: $type ttype=$ttype ack=$ack\n");
-        } else if (!$ack) {
+        } elseif (!$ack) {
             $this->assertEquals("$ttype", "", "  err: $type ttype=$ttype ack=$ack\n");
         }
 
         $conf = $op->requireConfirmation();
 
-        if ($ttype == 'player') {
+        if ($ttype == "player") {
             $this->assertTrue($conf, "conf $type");
-        } else  if ($ttype == 'token') {
+        } elseif ($ttype == "token") {
             // $this->assertTrue( $conf, "$ttype conf $type");
-        } else  if ($ttype == 'enum') {
+        } elseif ($ttype == "enum") {
             $this->assertTrue($conf);
         } else {
             // $this->assertFalse( $conf);
         }
 
-        if (isset($info['prompt'])) {
-            $this->assertEquals($info['prompt'], $args['prompt'], $type);
+        if (isset($info["prompt"])) {
+            $this->assertEquals($info["prompt"], $args["prompt"], $type);
         } else {
-            $this->assertTrue(!!$args['prompt'], "$type");
+            $this->assertTrue(!!$args["prompt"], "$type");
         }
         return $op;
     }
@@ -1518,10 +1540,10 @@ final class GameTest extends TestCase {
 
         $p = PCOLOR;
 
-        $eaters = $m->mtFind('name', 'Regolith Eaters');
+        $eaters = $m->mtFind("name", "Regolith Eaters");
 
         $m->effect_playCard($p, $eaters);
-        $act = $m->getRulesFor($eaters, 'a');
+        $act = $m->getRulesFor($eaters, "a");
         //$m->dbSetTokenLocation("resource_${p}_1", $eaters, 0); // add a microbe
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType("$act", $p, 1, $eaters);
@@ -1541,14 +1563,14 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType($effect, $p, 1);
         //$args = $op->argPrimaryDetails();
         $this->assertEquals(true, $op->isVoid());
-        $m->setTrackerValue(PCOLOR, 'm', 6);
+        $m->setTrackerValue(PCOLOR, "m", 6);
         $this->assertEquals(false, $op->isVoid());
         $this->assertEquals(true, $op->canResolveAutomatically());
 
         $m->putInEffectPool(PCOLOR, $effect);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $value = $m->getTrackerValue(PCOLOR, 'm');
+        $value = $m->getTrackerValue(PCOLOR, "m");
         $this->assertEquals(0, $value);
     }
 
@@ -1560,53 +1582,52 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType($effect, $p, 1);
         //$args = $op->argPrimaryDetails();
         $this->assertEquals(true, $op->isVoid());
-        $m->setTrackerValue(PCOLOR, 'h', 6);
+        $m->setTrackerValue(PCOLOR, "h", 6);
         $this->assertEquals(true, $op->isVoid());
         $this->assertEquals(true, $op->canResolveAutomatically());
-        $m->setTrackerValue(PCOLOR, 'h', 10);
+        $m->setTrackerValue(PCOLOR, "h", 10);
         $m->putInEffectPool(PCOLOR, $effect);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $value = $m->getTrackerValue(PCOLOR, 'h');
+        $value = $m->getTrackerValue(PCOLOR, "h");
         $this->assertEquals(2, $value);
     }
-
 
     public function testBusinessEmpire() {
         $m = $this->game();
         $p = PCOLOR;
-        $card = $m->mtFind('name', 'Business Empire');
-        $effect = $m->getRulesFor($card, 'r');
+        $card = $m->mtFind("name", "Business Empire");
+        $effect = $m->getRulesFor($card, "r");
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
         //$args = $op->argPrimaryDetails();
         $this->assertEquals(true, $op->isVoid());
-        $m->setTrackerValue(PCOLOR, 'm', 6);
+        $m->setTrackerValue(PCOLOR, "m", 6);
         $this->assertEquals(false, $op->isVoid());
         $this->assertEquals(true, $op->canResolveAutomatically());
 
         $m->putInEffectPool(PCOLOR, $effect);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
-        $value = $m->getTrackerValue(PCOLOR, 'm');
+        $value = $m->getTrackerValue(PCOLOR, "m");
         $this->assertEquals(0, $value);
-        $value = $m->getTrackerValue(PCOLOR, 'pm');
+        $value = $m->getTrackerValue(PCOLOR, "pm");
         $this->assertEquals(6, $value);
     }
     public function testLavaTubeSettlement() {
         $m = $this->game();
         $p = PCOLOR;
 
-        $m->effect_placeTile($p, 'tile_2_1', 'hex_3_2');
-        $card = $m->mtFind('name', 'Lava Tube Settlement');
-        $effect = $m->getRulesFor($card, 'r');
+        $m->effect_placeTile($p, "tile_2_1", "hex_3_2");
+        $card = $m->mtFind("name", "Lava Tube Settlement");
+        $effect = $m->getRulesFor($card, "r");
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
-        $m->setTrackerValue(PCOLOR, 'pe', 0);
+        $m->setTrackerValue(PCOLOR, "pe", 0);
         $this->assertEquals(true, $op->isVoid());
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1, $card);
-        $m->setTrackerValue(PCOLOR, 'pe', 1);
+        $m->setTrackerValue(PCOLOR, "pe", 1);
         $this->assertEquals(false, $op->isVoid());
 
         $m->putInEffectPool(PCOLOR, $effect);
@@ -1614,8 +1635,8 @@ final class GameTest extends TestCase {
         $m->st_gameDispatch();
         $ops = $m->machine->getTopOperations();
         $op = array_shift($ops);
-        $tt = explode('(', $op['type']);
-        $this->assertEquals('city', $tt[0]);
+        $tt = explode("(", $op["type"]);
+        $this->assertEquals("city", $tt[0]);
         $m->executeOperationSingle($op);
 
         /** @var ComplexOperation */
@@ -1623,140 +1644,138 @@ final class GameTest extends TestCase {
         $this->assertFalse($opcity->isVoid());
         //$args = $opcity->arg();
         // "hex_4_2"
-        $opcity->action_resolve(['target' => 'hex_4_2']);
+        $opcity->action_resolve(["target" => "hex_4_2"]);
         return;
     }
     public function testPaymentMicrobes() {
         $m = $this->game();
         $p = PCOLOR;
-        $m->incTrackerValue(PCOLOR, 's', 1);
-        $m->incTrackerValue(PCOLOR, 'm', 10);
-        $psyc = $m->mtFindByName('Psychrophiles');
+        $m->incTrackerValue(PCOLOR, "s", 1);
+        $m->incTrackerValue(PCOLOR, "m", 10);
+        $psyc = $m->mtFindByName("Psychrophiles");
         $m->effect_playCard(PCOLOR, $psyc);
         $m->dbSetTokenLocation("resource_{$p}_1", $psyc, 0); // add a microbe
 
-
-        $card = $m->mtFindByName('Greenhouses');
+        $card = $m->mtFindByName("Greenhouses");
         $payment = $m->getPayment($p, $card);
-        $this->assertEquals($payment, '6nm');
+        $this->assertEquals($payment, "6nm");
         $args = $m->debug_opInfo($payment, $card);
 
-        $targets = $args['args']['target'];
+        $targets = $args["args"]["target"];
         $this->assertEquals(count($targets), 5);
 
-        $this->assertEquals('payment', $targets[0]);
-        $this->assertEquals('1s4m', $targets[1]);
-        $this->assertEquals('1resMicrobe4m', $targets[2]);
-        $this->assertEquals('1s1resMicrobe2m', $targets[3]);
+        $this->assertEquals("payment", $targets[0]);
+        $this->assertEquals("1s4m", $targets[1]);
+        $this->assertEquals("1resMicrobe4m", $targets[2]);
+        $this->assertEquals("1s1resMicrobe2m", $targets[3]);
 
-        $this->assertEquals($targets[4], '6m');
+        $this->assertEquals($targets[4], "6m");
 
         $m->dbSetTokenLocation("resource_{$p}_2", $psyc, 0); // add a microbe
         $args = $m->debug_opInfo($payment, $card);
-        $targets = $args['args']['target'];
+        $targets = $args["args"]["target"];
         $this->assertEquals(count($targets), 5);
-        $this->assertEquals('payment', $targets[0]);
-        $this->assertEquals('1s4m', $targets[1]);
-        $this->assertEquals('2resMicrobe2m', $targets[2]);
-        $this->assertEquals('1s2resMicrobe', $targets[3]);
+        $this->assertEquals("payment", $targets[0]);
+        $this->assertEquals("1s4m", $targets[1]);
+        $this->assertEquals("2resMicrobe2m", $targets[2]);
+        $this->assertEquals("1s2resMicrobe", $targets[3]);
 
-        $m->setTrackerValue(PCOLOR, 'm', 2);
+        $m->setTrackerValue(PCOLOR, "m", 2);
         $m->dbSetTokenLocation("resource_{$p}_2", $psyc, 0); // add a microbe
         $payment = $m->getPayment($p, $card);
-        $this->assertEquals($payment, '6nm');
+        $this->assertEquals($payment, "6nm");
         $args = $m->debug_opInfo($payment, $card);
-        $this->assertEquals(false, array_get($args['args'], 'void', false));
-        $targets = $args['args']['target'];
+        $this->assertEquals(false, array_get($args["args"], "void", false));
+        $targets = $args["args"]["target"];
         $this->assertEquals(4, count($targets));
     }
 
     public function testPaymentHeat() {
         $m = $this->game();
         $p = PCOLOR;
-        $m->setTrackerValue(PCOLOR, 's', 1);
-        $m->setTrackerValue(PCOLOR, 'u', 1);
-        $m->setTrackerValue(PCOLOR, 'm', 26);
-        $m->setTrackerValue(PCOLOR, 'h', 2);
-        $psyc = $m->mtFindByName('Helion');
+        $m->setTrackerValue(PCOLOR, "s", 1);
+        $m->setTrackerValue(PCOLOR, "u", 1);
+        $m->setTrackerValue(PCOLOR, "m", 26);
+        $m->setTrackerValue(PCOLOR, "h", 2);
+        $psyc = $m->mtFindByName("Helion");
         $m->effect_playCorporation(PCOLOR, $psyc, false);
 
-        $card = $m->mtFindByName('Space Elevator');
+        $card = $m->mtFindByName("Space Elevator");
         $payment = $m->getPayment($p, $card);
-        $this->assertEquals($payment, '27nm');
+        $this->assertEquals($payment, "27nm");
         $args = $m->debug_opInfo($payment, $card);
-        $targets = $args['args']['target'];
+        $targets = $args["args"]["target"];
         $this->assertEquals(count($targets), 5);
-        $this->assertEquals('payment', $targets[0]);
-        $this->assertEquals('1s25m', $targets[1]);
-        $this->assertEquals('1u24m', $targets[2]);
-        $this->assertEquals('1s1u22m', $targets[3]);
-        $this->assertEquals('26m1h', $targets[4]);
+        $this->assertEquals("payment", $targets[0]);
+        $this->assertEquals("1s25m", $targets[1]);
+        $this->assertEquals("1u24m", $targets[2]);
+        $this->assertEquals("1s1u22m", $targets[3]);
+        $this->assertEquals("26m1h", $targets[4]);
     }
-
 
     public function test_getProductionPlacementBonus() {
         $game = $this->game(4);
-        $bo = $game->getProductionPlacementBonus('hex_3_5');
-        $this->assertEquals('ps/pu', $bo);
+        $bo = $game->getProductionPlacementBonus("hex_3_5");
+        $this->assertEquals("ps/pu", $bo);
     }
 
     public function test_getMiningGuild() {
         $game = $this->game(4);
         $p = PCOLOR;
 
-        $corp = $game->mtFindByName('Mining Guild');
+        $corp = $game->mtFindByName("Mining Guild");
         $game->effect_playCorporation(PCOLOR, $corp, false);
         $game->effect_playCorporation(PCOLOR, $corp, true);
         $game->st_gameDispatch();
-        $this->assertEquals(1,  $game->getTrackerValue(PCOLOR, 'ps'));
-        $game->effect_placeTile($p, 'tile_2_2', 'hex_3_5');
+        $this->assertEquals(1, $game->getTrackerValue(PCOLOR, "ps"));
+        $game->effect_placeTile($p, "tile_2_2", "hex_3_5");
         $game->st_gameDispatch();
         // asks what resource to gain
         $tops = $game->machine->getTopOperations(PCOLOR);
-        $this->assertEquals(2, count(($tops)));
-        $op =  array_shift($tops);
-        $this->assertEquals("q", $op['type']);
-        $op =  array_shift($tops);
-        $this->assertEquals("ps", $op['type']); // gain steel
+        $this->assertEquals(2, count($tops));
+        $op = array_shift($tops);
+        $this->assertEquals("q", $op["type"]);
+        $op = array_shift($tops);
+        $this->assertEquals("ps", $op["type"]); // gain steel
     }
     public function test_getMiningGuild2() {
         $game = $this->game(4);
         $p = PCOLOR;
 
-        $corp = $game->mtFindByName('Mining Guild');
+        $corp = $game->mtFindByName("Mining Guild");
         $game->effect_playCorporation(PCOLOR, $corp, false);
         $game->effect_playCorporation(PCOLOR, $corp, true);
         $game->st_gameDispatch();
-        $this->assertEquals(1,  $game->getTrackerValue(PCOLOR, 'ps'));
-        $game->effect_placeTile($p, 'tile_2_2', 'hex_2_9');
+        $this->assertEquals(1, $game->getTrackerValue(PCOLOR, "ps"));
+        $game->effect_placeTile($p, "tile_2_2", "hex_2_9");
         $game->st_gameDispatch();
         // asks what resource to gain
         $tops = $game->machine->getTopOperations(PCOLOR);
-        $this->assertEquals(2, count(($tops)));
-        $op =  array_shift($tops);
-        $this->assertEquals("s,u", $op['type']);
-        $op =  array_shift($tops);
-        $this->assertEquals("ps", $op['type']); // gain steel
+        $this->assertEquals(2, count($tops));
+        $op = array_shift($tops);
+        $this->assertEquals("s,u", $op["type"]);
+        $op = array_shift($tops);
+        $this->assertEquals("ps", $op["type"]); // gain steel
     }
 
     public function test_getMiningGuild3() {
         $game = $this->game(1);
         $p = PCOLOR;
 
-        $corp = $game->mtFindByName('Mining Guild');
+        $corp = $game->mtFindByName("Mining Guild");
         $game->effect_playCorporation(PCOLOR, $corp, false);
         $game->effect_playCorporation(PCOLOR, $corp, true);
         $game->st_gameDispatch();
-        $this->assertEquals(1,  $game->getTrackerValue(PCOLOR, 'ps'));
-        $game->effect_placeTile($p, 'tile_2_2', 'hex_2_7');
+        $this->assertEquals(1, $game->getTrackerValue(PCOLOR, "ps"));
+        $game->effect_placeTile($p, "tile_2_2", "hex_2_7");
         $game->st_gameDispatch();
         // asks what resource to gain
         $tops = $game->machine->getTopOperations(PCOLOR);
-        $this->assertEquals(2, count(($tops)));
-        $op =  array_shift($tops);
-        $this->assertEquals("u", $op['type']);
-        $op =  array_shift($tops);
-        $this->assertEquals("ps", $op['type']); // gain steel
+        $this->assertEquals(2, count($tops));
+        $op = array_shift($tops);
+        $this->assertEquals("u", $op["type"]);
+        $op = array_shift($tops);
+        $this->assertEquals("ps", $op["type"]); // gain steel
     }
 
     public function testColony() {
@@ -1767,12 +1786,12 @@ final class GameTest extends TestCase {
         $op = $m->getOperationInstanceFromType("colony", PCOLOR);
         $this->assertNotNull($op);
         $this->assertFalse($op->isVoid());
-        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 1);
+        $m->dbSetTokenLocation("card_colo_2", "display_colonies", 1);
         $this->assertEquals(0, $m->evaluateExpression("colony", PCOLOR));
         $m->push(PCOLOR, "colony");
         $tops = $m->machine->getTopOperations(PCOLOR);
-        $op =  reset($tops);
-        $m->fakeUserAction($op, 'card_colo_2');
+        $op = reset($tops);
+        $m->fakeUserAction($op, "card_colo_2");
         $m->st_gameDispatch();
         $this->assertEquals(1, $m->evaluateExpression("colony", PCOLOR));
     }
@@ -1783,18 +1802,18 @@ final class GameTest extends TestCase {
         $this->assertTrue($game->isColoniesVariant() === 1);
         $this->game = $game;
         $color = PCOLOR;
-        $fish = $game->mtFind('name', 'Fish');
+        $fish = $game->mtFind("name", "Fish");
         $game->effect_playCard($color, $fish);
 
-        $card = $game->mtFind('name', 'Miranda');
-        $this->game->dbSetTokenLocation($card, 'display_colonies', -1);
+        $card = $game->mtFind("name", "Miranda");
+        $this->game->dbSetTokenLocation($card, "display_colonies", -1);
         $this->assertEquals(-1, $game->tokens->getTokenState($card));
         $this->game->activateColonies();
 
         $game->st_gameDispatch();
         $this->assertEquals(1, $game->tokens->getTokenState($card));
 
-        $this->game->dbSetTokenLocation($card, 'display_colonies', -1);
+        $this->game->dbSetTokenLocation($card, "display_colonies", -1);
         $this->game->activateColonies($fish);
         $this->assertEquals(1, $game->tokens->getTokenState($card));
     }
@@ -1807,45 +1826,44 @@ final class GameTest extends TestCase {
         $this->assertFalse($op->isVoid());
 
         $this->assertFalse($op->requireConfirmation());
-        $this->assertEquals('token', $op->getPrimaryArgType());
+        $this->assertEquals("token", $op->getPrimaryArgType());
         $this->assertFalse($op->canResolveAutomatically());
-        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 3);
+        $m->dbSetTokenLocation("card_colo_2", "display_colonies", 3);
         $op = $m->getOperationInstanceFromType("trade", PCOLOR);
         $info = $op->argPrimaryDetails();
-        $this->assertEquals(MA_ERR_COST, $info['card_colo_2']['q']);
+        $this->assertEquals(MA_ERR_COST, $info["card_colo_2"]["q"]);
 
         $op = $m->getOperationInstanceFromType("trade(free)", PCOLOR);
         $info = $op->argPrimaryDetails();
-        $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
+        $this->assertEquals(MA_OK, $info["card_colo_2"]["q"]);
 
-
-        $m->incTrackerValue(PCOLOR, 'm', 10);
+        $m->incTrackerValue(PCOLOR, "m", 10);
 
         $op = $m->getOperationInstanceFromType("trade", PCOLOR);
         $info = $op->argPrimaryDetails();
-        $this->assertEquals(MA_OK, $info['card_colo_2']['q']);
+        $this->assertEquals(MA_OK, $info["card_colo_2"]["q"]);
     }
     public function testTradeAndReset() {
         $m = $this->game = (new GameUT())->init(0, 1);
-        $m->dbSetTokenLocation('card_colo_2', 'display_colonies', 3);
-        $m->incTrackerValue(PCOLOR, 'm', 10);
+        $m->dbSetTokenLocation("card_colo_2", "display_colonies", 3);
+        $m->incTrackerValue(PCOLOR, "m", 10);
         $m->push(PCOLOR, "trade");
         $tops = $m->machine->getTopOperations(PCOLOR);
-        $op =  reset($tops);
-        $m->fakeUserAction($op, 'card_colo_2');
+        $op = reset($tops);
+        $m->fakeUserAction($op, "card_colo_2");
         $m->st_gameDispatch();
-        $this->assertEquals(0, $m->tokens->getTokenState('card_colo_2'));
-        $this->assertEquals(2, $m->getTrackerValue(PCOLOR, 'u')); // titanim bonus
-        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'm')); // 1 money left
+        $this->assertEquals(0, $m->tokens->getTokenState("card_colo_2"));
+        $this->assertEquals(2, $m->getTrackerValue(PCOLOR, "u")); // titanim bonus
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, "m")); // 1 money left
     }
 
-    function checkOpVoid($type, $data = '') {
+    function checkOpVoid($type, $data = "") {
         $op = $this->game->getOperationInstanceFromType($type, PCOLOR, 1, $data);
         $this->assertTrue($op->isVoid());
         return $op;
     }
 
-    function checkOpNotVoid($type, $data = '') {
+    function checkOpNotVoid($type, $data = "") {
         $op = $this->game->getOperationInstanceFromType($type, PCOLOR, 1, $data);
         $this->assertFalse($op->isVoid());
         return $op;
@@ -1854,74 +1872,73 @@ final class GameTest extends TestCase {
     public function testTradeInc() {
         $m = $this->game = (new GameUT())->init(0, 1);
         $this->assertTrue($m->isColoniesVariant() === 1);
-        $op = $m->getOperationInstanceFromType("tradeinc", PCOLOR, 1, 'card_colo_2');
+        $op = $m->getOperationInstanceFromType("tradeinc", PCOLOR, 1, "card_colo_2");
         $this->assertFalse($op->isVoid());
     }
 
     public function testTradeIncIncMax() {
         $game = $this->game = (new GameUT())->init(0, 1);
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 6);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 6);
         $op = $game->getOperationInstanceFromType("tradeinc", PCOLOR, 1);
         $this->assertTrue($op->isVoid());
-        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $game->dbSetTokenLocation("card_colo_3", "display_colonies", 3);
         $op = $game->getOperationInstanceFromType("tradeinc", PCOLOR, 1);
         $this->assertFalse($op->isVoid());
         $op = $game->getOperationInstanceFromType("tradeinc(inc)", PCOLOR);
         $this->assertFalse($op->isVoid());
     }
 
-
     public function testTradeIncDec() {
         $game = $this->game = (new GameUT())->init(0, 1);
         $opname = "tradeinc(dec)";
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 6);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 6);
         $this->checkOpNotVoid($opname);
 
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 0);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 0);
         $this->checkOpVoid($opname);
 
-        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $game->dbSetTokenLocation("card_colo_3", "display_colonies", 3);
         $this->checkOpNotVoid($opname);
     }
 
     public function testTradeIncSteal() {
         $game = $this->game = (new GameUT())->init(0, 1);
         $opname = "tradeinc(steal)";
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 6);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 6);
         $this->checkOpVoid($opname);
 
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 3);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 3);
         $this->checkOpVoid($opname);
 
-        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
+        $game->dbSetTokenLocation("card_colo_3", "display_colonies", 3);
         $this->checkOpNotVoid($opname);
 
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 0);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 0);
         $this->checkOpNotVoid($opname);
         // $op = $this->game->getOperationInstanceFromType($opname, PCOLOR);
         // var_dump($op->argPrimaryDetails());
 
-        $game->dbSetTokenLocation('card_colo_3', 'display_colonies', 3);
-        $game->dbSetTokenLocation('card_colo_2', 'display_colonies', 0);
-        $game->dbSetTokenLocation('card_colo_4', 'display_colonies', 0);
+        $game->dbSetTokenLocation("card_colo_3", "display_colonies", 3);
+        $game->dbSetTokenLocation("card_colo_2", "display_colonies", 0);
+        $game->dbSetTokenLocation("card_colo_4", "display_colonies", 0);
         $op = $this->checkOpNotVoid($opname);
         $arginfo = $op->argPrimaryDetails();
-        $this->assertEquals($arginfo['card_colo_3']['q'], 3);
+        $this->assertEquals($arginfo["card_colo_3"]["q"], 3);
     }
 
     public function testTagNone() {
         $game = $this->game = (new GameUT())->init(0, 1); // colonies
-        $card = $game->mtFindByName('Airliners');
+        $card = $game->mtFindByName("Airliners");
         $game->effect_playCard(PCOLOR, $card);
         $this->assertEquals(1, $game->getCountOfCardTags(PCOLOR, ""));
     }
     public function testTagNoneCC() {
         $game = $this->game = (new GameUT())->init(0, 1); // colonies
         $this->assertEquals(0, $game->getCountOfCardTags(PCOLOR, ""));
-        $card = $game->mtFindByName('Community Services');
+        $card = $game->mtFindByName("Community Services");
         $game->effect_playCard(PCOLOR, $card);
         //Research Coordination
-        $card = $game->mtFindByName('Research Coordination'); // Wild
+        $card = $game->mtFindByName("Research Coordination"); // Wild
         $game->effect_playCard(PCOLOR, $card);
         $this->assertEquals(2, $game->getCountOfCardTags(PCOLOR, ""));
     }
@@ -1930,7 +1947,7 @@ final class GameTest extends TestCase {
         $color = $p = PCOLOR;
         $effect = "8nh";
 
-        $corp = $game->mtFindByName('Stormcraft');
+        $corp = $game->mtFindByName("Stormcraft");
         $game->effect_playCorporation(PCOLOR, $corp, true);
         $game->effect_playCorporation(PCOLOR, $corp, false);
         $game->st_gameDispatch();
@@ -1945,10 +1962,10 @@ final class GameTest extends TestCase {
         /** @var DelegatedOperation */
         $op = $m->getOperationInstanceFromType($effect, $p, 1);
 
-        $m->setTrackerValue(PCOLOR, 'h', 6);
+        $m->setTrackerValue(PCOLOR, "h", 6);
         $this->assertEquals(false, $op->isVoid());
         $op = $op->delegate;
-        $this->assertEquals('enum', $op->getPrimaryArgType());
+        $this->assertEquals("enum", $op->getPrimaryArgType());
         $args = $op->argPrimaryDetails();
         //echo (toJson($args));
 
@@ -1956,9 +1973,9 @@ final class GameTest extends TestCase {
         $m->st_gameDispatch();
 
         $tops = $game->machine->getTopOperations(PCOLOR);
-        $this->assertEquals(1, count(($tops)));
-        $op =  array_shift($tops);
-        $this->assertEquals("nh", $op['type']);
+        $this->assertEquals(1, count($tops));
+        $op = array_shift($tops);
+        $this->assertEquals("nh", $op["type"]);
     }
 
     public function testJovian() {
@@ -1970,41 +1987,39 @@ final class GameTest extends TestCase {
         $this->game->tokens->setTokenState("tracker_tagJovian_{$color2}", 1);
         $this->game->tokens->setTokenState("tracker_tagScience_{$color}", 7);
         $this->assertEquals(3, $this->game->getCountOfUniqueTags($color));
-        $this->game->setTrackerValue(PCOLOR, 'pm', 10);
-        $this->assertEquals(8, $this->game->evaluateExpression('all_tagJovian'));
-        $this->assertEquals(7, $this->game->evaluateExpression('opp_tagJovian', BCOLOR));
+        $this->game->setTrackerValue(PCOLOR, "pm", 10);
+        $this->assertEquals(8, $this->game->evaluateExpression("all_tagJovian"));
+        $this->assertEquals(7, $this->game->evaluateExpression("opp_tagJovian", BCOLOR));
 
-        $this->assertEquals(9, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
-        $this->assertEquals(7, $this->game->evaluateExpression('opp_tagJovian', BCOLOR, null, ['wilds' => []]));
-        $this->assertEquals(8, $this->game->evaluateExpression('all_tagJovian', BCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(9, $this->game->evaluateExpression("all_tagJovian", PCOLOR, null, ["wilds" => []]));
+        $this->assertEquals(7, $this->game->evaluateExpression("opp_tagJovian", BCOLOR, null, ["wilds" => []]));
+        $this->assertEquals(8, $this->game->evaluateExpression("all_tagJovian", BCOLOR, null, ["wilds" => []]));
     }
 
     public function testGalileanWaystation() {
         $game = $this->game(2);
         $color = PCOLOR;
         $color2 = BCOLOR;
-        $card = $game->mtFindByName('Research Coordination');
+        $card = $game->mtFindByName("Research Coordination");
         $game->effect_playCard(PCOLOR, $card);
-        $this->assertEquals(1, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(1, $this->game->evaluateExpression("all_tagJovian", PCOLOR, null, ["wilds" => []]));
 
-        $card = $game->mtFindByName('Jupiter Floating Station');
+        $card = $game->mtFindByName("Jupiter Floating Station");
         $game->effect_playCard(PCOLOR, $card);
-        $this->assertEquals(2, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(2, $this->game->evaluateExpression("all_tagJovian", PCOLOR, null, ["wilds" => []]));
         $tops = $game->machine->interrupt();
 
-        $corp = $game->mtFindByName('Stormcraft');
+        $corp = $game->mtFindByName("Stormcraft");
         $game->effect_playCorporation(PCOLOR, $corp, true);
         $game->effect_playCorporation(PCOLOR, $corp, false);
         $game->st_gameDispatch();
-        $this->assertEquals(3, $this->game->evaluateExpression('all_tagJovian', PCOLOR, null, ['wilds' => []]));
+        $this->assertEquals(3, $this->game->evaluateExpression("all_tagJovian", PCOLOR, null, ["wilds" => []]));
         $tops = $game->machine->interrupt();
 
-
-        $card = $game->mtFindByName('Galilean Waystation');
+        $card = $game->mtFindByName("Galilean Waystation");
         $game->effect_playCard(PCOLOR, $card);
         $game->st_gameDispatch();
-        $this->assertEquals(3, $game->getTrackerValue(PCOLOR, 'pm'));
-
+        $this->assertEquals(3, $game->getTrackerValue(PCOLOR, "pm"));
 
         //Martian Survey
     }
@@ -2012,18 +2027,17 @@ final class GameTest extends TestCase {
         $game = $this->game();
 
         $game->machine->interrupt();
-        $card = $game->mtFindByName('Media Archives');
+        $card = $game->mtFindByName("Media Archives");
         $game->effect_playCard(PCOLOR, $card);
         $game->machine->interrupt(); // media archives effect will be last to resolve
-        $card = $game->mtFindByName('Bribed Committee');
+        $card = $game->mtFindByName("Bribed Committee");
         $game->effect_playCard(PCOLOR, $card);
 
-
-        $card = $game->mtFindByName('Research Coordination');
+        $card = $game->mtFindByName("Research Coordination");
         $game->effect_playCard(PCOLOR, $card); // wild
 
         $game->st_gameDispatch();
-        $this->assertEquals(1, $game->getTrackerValue(PCOLOR, 'm'));
+        $this->assertEquals(1, $game->getTrackerValue(PCOLOR, "m"));
     }
 
     public function testProductiveOutpost() {
@@ -2031,20 +2045,41 @@ final class GameTest extends TestCase {
         $m->init(0, 1);
         $this->game = $m;
 
-        $m->dbSetTokenLocation('card_colo_1', 'display_colonies', 1);
+        $m->dbSetTokenLocation("card_colo_1", "display_colonies", 1);
 
         $m->push(PCOLOR, "colony");
         $tops = $m->machine->getTopOperations(PCOLOR);
-        $op =  reset($tops);
-        $m->fakeUserAction($op, 'card_colo_1');
+        $op = reset($tops);
+        $m->fakeUserAction($op, "card_colo_1");
         $m->st_gameDispatch();
         $tops = $m->machine->getTopOperations(PCOLOR);
         $m->machine->clear();
         $this->assertEquals(1, $m->evaluateExpression("colony", PCOLOR));
-        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, 'm'));
+        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, "m"));
         $m->machine->interrupt();
-        $m->effect_playCard(PCOLOR, 'card_main_C30');
+        $m->effect_playCard(PCOLOR, "card_main_C30");
         $m->st_gameDispatch();
-        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, 'm')); // 1 money from colony
+        $this->assertEquals(1, $m->getTrackerValue(PCOLOR, "m")); // 1 money from colony
+    }
+
+    public function test_getTagsMapForSingleCard() {
+        $game = new GameUT();
+        $card = $game->mtFindByName("Research");
+        $tagsArr = $game->getTagsMapForSingleCard($card);
+        $this->assertEquals(array_keys($tagsArr), ["Science"]);
+    }
+
+    public function test_getTagsMap() {
+        $game = new GameUT();
+        $game->init(0, 0);
+        $this->game = $game;
+        $card = $game->mtFindByName("Research");
+        $game->effect_playCard(PCOLOR, $card);
+        $card = $game->mtFindByName("Research Coordination");
+        $game->effect_playCard(PCOLOR, $card); // wild
+        $game->st_gameDispatch();
+
+        $tagsArr = $game->getTagsMap(PCOLOR);
+        $this->assertEquals($tagsArr, ["Science" => 2, "Wild" => 1]);
     }
 }

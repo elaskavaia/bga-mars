@@ -370,42 +370,6 @@ abstract class PGameXBody extends PGameMachine {
         return $info;
     }
 
-    function debug_q() {
-        //$this->dbMultiUndo->doSaveUndoSnapshot();
-        $player_id = $this->getCurrentPlayerId();
-        $color = $this->getCurrentPlayerColor();
-
-        $res = $this->evaluateExpression("all_tagJovian", $color, null, ["wilds" => []]);
-        $this->debugConsole("res=$res", []);
-
-        // $this->debug_incparam('o', 13);
-        // $this->debug_incparam('t', 18);
-        // $this->debug_incparam('w', 11);
-        // $this->debug_incparam('gen', 10);
-        // $this->debug_optionUndo(1);
-
-        // $players = $this->loadPlayersBasicInfos();
-
-        // foreach ($players as $player_id => $player) {
-        //     $color = $player["player_color"];
-        //     $this->effect_incCount($color, 'pp', 8);
-        //     $this->effect_incCount($color, 'pm', 20);
-        // }
-        //$this->dbSetTokensLocation($cards, 'temp');
-        //$this->gamestate->jumpToState(STATE_GAME_DISPATCH);
-        //$card = "card_stanproj_1";
-        //return $this->debug_opInfo("counter(all_city),m", $card);
-        //$this->gamestate->nextState("next");
-
-        // $player_id = $this->getFirstPlayer();
-        // $this->setCurrentStartingPlayer($player_id);
-        // $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
-
-        // $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
-        //     'target' => 'tile_3_1', // target of score animation
-        // ]);
-    }
-
     function debug_drawCard(string $fuzzy_card, string $loc = null) {
         $color = $this->getCurrentPlayerColor();
 
@@ -431,6 +395,28 @@ abstract class PGameXBody extends PGameMachine {
             $this->createTokenFromInfo($token, $this->getRulesFor($token, "*"));
         }
         $this->dbSetTokenLocation($token, $loc, 0);
+    }
+    function debug_switchCorp(string $fuzzy_card) {
+        if (is_numeric($fuzzy_card)) {
+            $token = "card_corp_$fuzzy_card";
+            if (!array_get($this->token_types, $token)) {
+                throw new feException("card not found $token");
+            }
+        } else {
+            $token = $this->findCard($fuzzy_card);
+            if (!$token) {
+                throw new feException("Cannot find $fuzzy_card");
+            }
+        }
+        if ($this->tokens->getTokenInfo($token) == null) {
+            // create
+            $this->createTokenFromInfo($token, $this->getRulesFor($token, "*"));
+        }
+        $color = $this->getCurrentPlayerColor();
+        $prev = $this->tokens->getTokenOfTypeInLocation("card_corp", "tableau_$color");
+        $this->userAssertTrue("No prev corp", $prev);
+        $this->dbSetTokenLocation($prev["key"], "limbo", 0);
+        $this->dbSetTokenLocation($token, "tableau_$color", MA_CARD_STATE_TAGUP);
     }
     function findCard($num) {
         if (is_numeric($num)) {
@@ -537,6 +523,42 @@ abstract class PGameXBody extends PGameMachine {
             "ack" => $inst->requireConfirmation(),
             "auto" => $inst->isFullyAutomated(),
         ];
+    }
+
+    function debug_q() {
+        //$this->dbMultiUndo->doSaveUndoSnapshot();
+        $player_id = $this->getCurrentPlayerId();
+        $color = $this->getCurrentPlayerColor();
+
+        $res = $this->evaluateExpression("all_tagJovian", $color, null, ["wilds" => []]);
+        $this->debugConsole("res=$res", []);
+
+        // $this->debug_incparam('o', 13);
+        // $this->debug_incparam('t', 18);
+        // $this->debug_incparam('w', 11);
+        // $this->debug_incparam('gen', 10);
+        // $this->debug_optionUndo(1);
+
+        // $players = $this->loadPlayersBasicInfos();
+
+        // foreach ($players as $player_id => $player) {
+        //     $color = $player["player_color"];
+        //     $this->effect_incCount($color, 'pp', 8);
+        //     $this->effect_incCount($color, 'pm', 20);
+        // }
+        //$this->dbSetTokensLocation($cards, 'temp');
+        //$this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        //$card = "card_stanproj_1";
+        //return $this->debug_opInfo("counter(all_city),m", $card);
+        //$this->gamestate->nextState("next");
+
+        // $player_id = $this->getFirstPlayer();
+        // $this->setCurrentStartingPlayer($player_id);
+        // $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
+
+        // $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
+        //     'target' => 'tile_3_1', // target of score animation
+        // ]);
     }
 
     // HEX MATH
@@ -1893,10 +1915,12 @@ abstract class PGameXBody extends PGameMachine {
             $tagsMap = $this->getTagsMap($color);
             $tagsMap[""] = -1;
             $tagsMap["Wild"] = -1;
+
             foreach ($tagsarr as $tag) {
                 $this->incTrackerValue($color, "tag$tag");
                 if (array_get($tagsMap, $tag, 0) == 0) {
                     $this->triggerEffect($color, "play_newtag", $card_id);
+                    $tagsMap[$tag] = 1;
                 }
             }
         }
@@ -2156,7 +2180,7 @@ abstract class PGameXBody extends PGameMachine {
             foreach ($tagsarr as $tag) {
                 $events[] = "{$prefix}tag$tag";
                 $tagMap[$tag] = 1;
-            };
+            }
         }
         if (array_get($tagMap, "Space") && array_get($tagMap, "Event")) {
             $events[] = "{$prefix}cardSpaceEvent";
@@ -3040,23 +3064,30 @@ abstract class PGameXBody extends PGameMachine {
 
     function getTagsMap($owner) {
         $cards = $this->tokens->getTokensOfTypeInLocation("card", "tableau_$owner");
-        $count = 0;
         $map = [];
         foreach ($cards as $card => $cardrec) {
-            $tags = $this->getRulesFor($card, "tags");
-            $t = $this->getRulesFor($card, "t");
-            if ($t == MA_CARD_TYPE_EVENT) {
-                continue;
-            }
-            $tags = explode(" ", $tags);
-            foreach ($tags as $tag) {
-                $tag = trim($tag);
-                $prev = array_get($map, $tag, 0);
-                if ($prev == 0) {
-                    $map[$tag] = 1;
-                } else {
-                    $map[$tag] += 1;
-                }
+            $map = $this->getTagsMapForSingleCard($card, $map);
+        }
+        return $map;
+    }
+    function getTagsMapForSingleCard($card, &$map = null) {
+        if ($map === null) {
+            $map = [];
+        }
+
+        $t = $this->getRulesFor($card, "t");
+        if ($t == MA_CARD_TYPE_EVENT) {
+            return $map;
+        }
+        $tags = $this->getRulesFor($card, "tags");
+        $tags = explode(" ", $tags);
+        foreach ($tags as $tag) {
+            $tag = trim($tag);
+            $prev = array_get($map, $tag, 0);
+            if ($prev == 0) {
+                $map[$tag] = 1;
+            } else {
+                $map[$tag] += 1;
             }
         }
         return $map;
