@@ -16,7 +16,6 @@
 require_once "PGameBasic.php";
 require_once "DbTokens.php";
 
-
 abstract class PGameTokens extends PGameBasic {
     public $tokens;
     public $token_types;
@@ -86,7 +85,9 @@ abstract class PGameTokens extends PGameBasic {
             }
             $content = $this->isContentAllowedForLocation($current_player_id, $location);
 
-            if ($content === false) continue;
+            if ($content === false) {
+                continue;
+            }
             if ($content === true) {
                 $tokens = $this->tokens->getTokensInLocation($location, null, $sort);
                 $this->fillTokensFromArray($result["tokens"], $tokens);
@@ -117,7 +118,9 @@ abstract class PGameTokens extends PGameBasic {
         $res = [];
         $players_basic = $this->loadPlayersBasicInfos();
         foreach ($types as $key => $info) {
-            if (!$this->isConsideredLocation($key)) continue;
+            if (!$this->isConsideredLocation($key)) {
+                continue;
+            }
             $scope = array_get($info, "scope");
             $counter = array_get($info, "counter");
             if ($scope && $counter != "hidden") {
@@ -137,13 +140,13 @@ abstract class PGameTokens extends PGameBasic {
 
     function createCounterInfoForLocation($location) {
         $counter = $this->counterNameOf($location);
-        $location_name = $this->getRulesFor($location, 'name');
+        $location_name = $this->getRulesFor($location, "name");
         return [
             "counter_name" => $counter,
             "location" => $location,
             "name" => [
                 "log" => clienttranslate('${location_name} Counter'),
-                "args" => ["location_name" => $location_name, 'i18n' => ['location_name']],
+                "args" => ["location_name" => $location_name, "i18n" => ["location_name"]],
             ],
         ];
     }
@@ -156,7 +159,9 @@ abstract class PGameTokens extends PGameBasic {
         $this->token_types_adjusted = true;
         $players_basic = $this->loadPlayersBasicInfos();
         foreach ($this->token_types as $key => $info) {
-            if (!$this->isConsideredLocation($key)) continue;
+            if (!$this->isConsideredLocation($key)) {
+                continue;
+            }
             $scope = array_get($info, "scope");
             if ($scope) {
                 if ($scope == "player") {
@@ -183,7 +188,7 @@ abstract class PGameTokens extends PGameBasic {
         $this->DbQuery("DELETE FROM token");
         $this->DbQuery("DELETE FROM machine");
         $this->DbQuery("DELETE FROM multiundo");
-        $this->player_preferences  = [];
+        $this->player_preferences = [];
         $this->initTables();
         $newGameDatas = $this->getAllTableDatas(); // this is framework function
         $this->notifyPlayer($this->getActivePlayerId(), "resetInterfaceWithAllDatas", "", $newGameDatas); // this is notification to reset all data
@@ -212,7 +217,7 @@ abstract class PGameTokens extends PGameBasic {
             $data = array_get($tt, $key, null);
             if ($data) {
                 if ($field === "*") {
-                    $data['_key'] = $key;
+                    $data["_key"] = $key;
                     return $data;
                 }
                 return array_get($data, $field, $default);
@@ -285,8 +290,8 @@ abstract class PGameTokens extends PGameBasic {
     }
 
     protected function isConsideredLocation(string $id) {
-        $type = $this->getRulesFor($id, 'type', '');
-        return ($type == "location"); // XXX contains?
+        $type = $this->getRulesFor($id, "type", "");
+        return $type == "location"; // XXX contains?
     }
 
     protected function isContentAllowedForLocation($player_id, $location, $attr = "content") {
@@ -315,7 +320,9 @@ abstract class PGameTokens extends PGameBasic {
             }
         }
 
-        if ($attr == 'counter') return false; // not listed - do not need counter
+        if ($attr == "counter") {
+            return false;
+        } // not listed - do not need counter
         return true; // otherwise it location ok
     }
 
@@ -323,7 +330,7 @@ abstract class PGameTokens extends PGameBasic {
         return $this->isContentAllowedForLocation($player_id, $location, "counter");
     }
 
-    function dbSetTokenState($token_id, $state = null, $notif = "*", $args = [],  int $player_id = 0) {
+    function dbSetTokenState($token_id, $state = null, $notif = "*", $args = [], int $player_id = 0) {
         $this->dbSetTokenLocation($token_id, null, $state, $notif, $args, $player_id);
     }
 
@@ -341,7 +348,7 @@ abstract class PGameTokens extends PGameBasic {
             $place_id = $place_from;
         }
         $this->tokens->moveToken($token_id, $place_id, $state);
-        
+
         $notifyArgs = [
             "token_id" => $token_id,
             "place_id" => $place_id,
@@ -485,19 +492,19 @@ abstract class PGameTokens extends PGameBasic {
         $current = $this->tokens->getTokenState($token_id);
         $value = $current + $num;
 
-        $min = array_get($options, 'min', 0);
-        $check = array_get($options, 'check', true);
-        $ifpossible = array_get($options, 'ifpossible', false);
+        $min = array_get($options, "min", 0);
+        $check = array_get($options, "check", true);
+        $ifpossible = array_get($options, "ifpossible", false);
 
         if ($num < 0) {
             if ($value < $min && $ifpossible) {
                 $num = 0;
                 $value = $min;
-            } else if ($value < $min && $check) {
+            } elseif ($value < $min && $check) {
                 $this->userAssertTrue(clienttranslate("Not enough resources to pay"));
             }
         }
-        if (array_get($options, 'onlyCheck')) {
+        if (array_get($options, "onlyCheck")) {
             return;
         }
         $this->tokens->setTokenState($token_id, $value);
@@ -510,8 +517,6 @@ abstract class PGameTokens extends PGameBasic {
             }
         }
 
-
-
         $args = array_merge($args, [
             "mod" => abs($num),
             "inc" => $num,
@@ -519,18 +524,21 @@ abstract class PGameTokens extends PGameBasic {
                 "log" => '${mod} ${token_name}',
                 "args" => [
                     "token_name" => $token_id,
-                    "mod" => abs($num)
+                    "mod" => abs($num),
                 ],
             ],
         ]);
-        $reason = array_get($options,'reason_tr','');
-        if ($reason) $args['reason_tr'] = $reason;
+        $reason = array_get($options, "reason_tr", "");
+        if ($reason) {
+            $args["reason_tr"] = $reason;
+        }
 
-        $nod = array_get($options,'nod','');
-        if ($nod) $args['nod'] = $nod;
+        $nod = array_get($options, "nod", "");
+        if ($nod) {
+            $args["nod"] = $nod;
+        }
         $this->notifyCounterDirect($token_id, $value, $message, $args, $player_id);
     }
-
 
     function notifyCounterChanged($location, $notifyArgs = null) {
         $key = $this->counterNameOf($location);

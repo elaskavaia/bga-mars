@@ -39,7 +39,6 @@ define("MACHINE_OP_LAND", MACHINE_FLAG_UNIQUE | MACHINE_FLAG_SHARED_COUNTER);
 define("MACHINE_OP_AND", MACHINE_FLAG_UNIQUE);
 define("MACHINE_OP_SEQ", MACHINE_FLAG_ORDERED);
 
-
 class DbMachine extends APP_GameClass {
     var $table;
     var $game;
@@ -59,11 +58,11 @@ class DbMachine extends APP_GameClass {
         return ["id", "rank", "type", "owner", "count", "mcount", "flags", "parent", "data", "pool"];
     }
 
-    function getSelectQuery($expr = '') {
-        return $this->getSelectQueryLimited('*', $expr);
+    function getSelectQuery($expr = "") {
+        return $this->getSelectQueryLimited("*", $expr);
     }
 
-    function getSelectQueryLimited($field, $expr = '1') {
+    function getSelectQueryLimited($field, $expr = "1") {
         $sql = "SELECT $field FROM " . $this->table . " WHERE $expr ";
         return $sql;
     }
@@ -116,26 +115,24 @@ class DbMachine extends APP_GameClass {
     }
 
     function insertOp($rank, $op) {
-
-
         $this->insertList($rank, [$op]);
         return $this->DbGetLastId();
     }
 
-    function createOperationSimple(string $type, string $color, string $data = '', $id = 0) {
+    function createOperationSimple(string $type, string $color, string $data = "", $id = 0) {
         $expr = $this->parseOpExpression($type);
 
         $from = $expr->from;
         $to = $expr->to;
         $type = OpExpression::str($expr->toUnranged());
 
-        $opdb =  $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_SEQ, 0, $data);
-        $opdb['id'] = $id;
+        $opdb = $this->createOperation($type, 1, $from, $to, $color, MACHINE_OP_SEQ, 0, $data);
+        $opdb["id"] = $id;
         return $opdb;
     }
 
     public function parseOpExpression($op) {
-        if (strlen($op)>80) {
+        if (strlen($op) > 80) {
             throw new BgaSystemException("Parse expression is too long '$op'");
         }
         try {
@@ -157,8 +154,12 @@ class DbMachine extends APP_GameClass {
         $data = "",
         $pool = null
     ) {
-        if (!$pool) $pool = $this->pool;
-        if (!$this->pool) throw new feException("no pool");
+        if (!$pool) {
+            $pool = $this->pool;
+        }
+        if (!$this->pool) {
+            throw new feException("no pool");
+        }
         // sanity check
         $this->parseOpExpression($type);
 
@@ -309,10 +310,14 @@ class DbMachine extends APP_GameClass {
         } else {
             $min = "MIN(`rank`) res ";
         }
-        $andowner = '';
-        $andpool = '';
-        if ($owner) $andowner = " AND owner = '$owner'";
-        if ($pool)  $andpool = " AND pool = '$pool'";
+        $andowner = "";
+        $andpool = "";
+        if ($owner) {
+            $andowner = " AND owner = '$owner'";
+        }
+        if ($pool) {
+            $andpool = " AND pool = '$pool'";
+        }
         $sql = $this->getSelectQueryLimited("$min", "rank > 0 $andowner $andpool");
         $dbres = self::DbQuery($sql);
         $row = mysql_fetch_assoc($dbres);
@@ -382,7 +387,7 @@ class DbMachine extends APP_GameClass {
     }
 
     function getBarrierRank() {
-        $barrank = $this->getTopRank(null, 'main');
+        $barrank = $this->getTopRank(null, "main");
         return $barrank;
     }
 
@@ -391,21 +396,27 @@ class DbMachine extends APP_GameClass {
             $rank = $this->getTopRank($owner, $pool);
         }
         $this->checkInt($rank);
-        $andowner = '';
-        if ($owner) $andowner = " AND owner = '$owner'";
+        $andowner = "";
+        if ($owner) {
+            $andowner = " AND owner = '$owner'";
+        }
         return $this->getCollectionFromDB($this->getSelectQuery("rank = $rank $andowner"));
     }
 
     function getOperations($owner = null, $pool = null) {
-        $andowner = '';
-        $andpool = '';
-        if ($owner) $andowner = " AND owner = '$owner'";
-        if ($pool)  $andpool = " AND pool = '$pool'";
+        $andowner = "";
+        $andpool = "";
+        if ($owner) {
+            $andowner = " AND owner = '$owner'";
+        }
+        if ($pool) {
+            $andpool = " AND pool = '$pool'";
+        }
         return $this->getCollectionFromDB($this->getSelectQuery("rank >= 0 $andowner $andpool ORDER BY rank ASC"));
     }
 
     function info($op) {
-        if (is_array($op) && array_get($op, 'id') > 0) {
+        if (is_array($op) && array_get($op, "id") > 0) {
             return $op;
         }
 
@@ -535,9 +546,11 @@ class DbMachine extends APP_GameClass {
         $count = $this->checkInt($count);
         $set = $this->getUpdateQuery();
         $ids = $this->getIdsWhereExpr($list);
-        if ($mcount !== null)
+        if ($mcount !== null) {
             $other = ", mcount = $mcount";
-        else $other  = '';
+        } else {
+            $other = "";
+        }
         $sql = "$set count = $count $other WHERE $ids";
         self::DbQuery($sql);
     }
@@ -563,10 +576,14 @@ class DbMachine extends APP_GameClass {
     }
 
     public function checkValidCountForOp(array $op, int $count) {
-        $min = $op['mcount'];
-        $max = $op['count'];
-        if ($count < $min) throw new BgaUserException("Illegal count $count, minimum value is $min");
-        if ($count > $max && $max != -1) throw new BgaUserException("Illegal count $count, maximum value is $max");
+        $min = $op["mcount"];
+        $max = $op["count"];
+        if ($count < $min) {
+            throw new BgaUserException("Illegal count $count, minimum value is $min");
+        }
+        if ($count > $max && $max != -1) {
+            throw new BgaUserException("Illegal count $count, maximum value is $max");
+        }
         return true;
     }
 
@@ -592,8 +609,20 @@ class DbMachine extends APP_GameClass {
     }
 
     public function expandOp($op, $rank = 1) {
-        if (is_numeric($op)) $op = $this->info($op);
-        $this->insertRule($op["type"], $rank, $op["mcount"], $op["count"], $op["owner"], $op["flags"], $op["data"], array_get($op, 'id', 0), $op["pool"]);
+        if (is_numeric($op)) {
+            $op = $this->info($op);
+        }
+        $this->insertRule(
+            $op["type"],
+            $rank,
+            $op["mcount"],
+            $op["count"],
+            $op["owner"],
+            $op["flags"],
+            $op["data"],
+            array_get($op, "id", 0),
+            $op["pool"]
+        );
     }
 
     public function operandCode($op) {
@@ -701,12 +730,20 @@ class DbMachine extends APP_GameClass {
         $info = $this->info($op_info);
 
         if ($this->isSharedCounter($info)) {
-            if ($tops == null) $tops = $this->getTopOperations($info['owner']);
-            if ($count === null) $count = 1;
+            if ($tops == null) {
+                $tops = $this->getTopOperations($info["owner"]);
+            }
+            if ($count === null) {
+                $count = 1;
+            }
             $this->subtract($tops, $count);
         } else {
-            if ($count === null) $count = $info['count'];
-            if ($count == -1) $count = 1;
+            if ($count === null) {
+                $count = $info["count"];
+            }
+            if ($count == -1) {
+                $count = 1;
+            }
             $this->subtract($info, $count);
         }
 
@@ -782,7 +819,7 @@ class DbMachine extends APP_GameClass {
         $res = "";
         if (count($ops) == 1) {
             $res = $this->getrowexpr(array_shift($ops));
-        } else if (count($ops) == 0) {
+        } elseif (count($ops) == 0) {
             $res = "";
         } else {
             $one = reset($ops);

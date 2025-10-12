@@ -47,7 +47,7 @@ class MathTerminalExpression extends MathExpression {
         return $this->left;
     }
 
-    public function toArray(){
+    public function toArray() {
         return $this->left;
     }
 }
@@ -72,7 +72,7 @@ class MathUnaryExpression extends MathExpression {
         //return (int)($res);
     }
 
-    public function toArray(){
+    public function toArray() {
         return [$this->op, $this->right->toArray()];
     }
 }
@@ -94,36 +94,58 @@ class MathBinaryExpression extends MathExpression {
         return sprintf("(%s %s %s)", $this->left, $this->op, $this->right);
     }
 
-    public function toArray(){
+    public function toArray() {
         return [$this->op, $this->left->toArray(), $this->right->toArray()];
     }
 
     public function evaluate($mapper) {
         $op = $this->op;
-        if ($op == '(') {
+        if ($op == "(") {
             // function calls?
-            
         }
         $left = $this->left->evaluate($mapper);
         $right = $this->right->evaluate($mapper);
- 
+
         $res = 0;
-        switch($op) {
-            case "+": $res =  $left + $right; break;
-            case "-": $res =  $left - $right; break;
-            case "/": $res =  $left / $right; break;
-            case "%": $res =  $left % $right; break;
-            case "*": $res =  $left * $right; break;
-            case "<": $res =  $left < $right; break;
-            case "<=": $res =  $left <= $right; break;
-            case ">": $res =  $left > $right; break;
-            case ">=": $res =  $left >= $right; break;
-            case "==": $res =  $left == $right; break;
-            case "&": $res =  $left & $right; break;
-            case "|": $res =  $left | $right; break;
-        
+        switch ($op) {
+            case "+":
+                $res = $left + $right;
+                break;
+            case "-":
+                $res = $left - $right;
+                break;
+            case "/":
+                $res = $left / $right;
+                break;
+            case "%":
+                $res = $left % $right;
+                break;
+            case "*":
+                $res = $left * $right;
+                break;
+            case "<":
+                $res = $left < $right;
+                break;
+            case "<=":
+                $res = $left <= $right;
+                break;
+            case ">":
+                $res = $left > $right;
+                break;
+            case ">=":
+                $res = $left >= $right;
+                break;
+            case "==":
+                $res = $left == $right;
+                break;
+            case "&":
+                $res = $left & $right;
+                break;
+            case "|":
+                $res = $left | $right;
+                break;
         }
-        return (int)($res);
+        return (int) $res;
     }
 }
 
@@ -152,7 +174,7 @@ class MathExpressionParser {
         }
     }
     function isEos() {
-        return (count($this->tokens) == 0);
+        return count($this->tokens) == 0;
     }
 
     function pop() {
@@ -181,13 +203,13 @@ class MathExpressionParser {
         if ($tt != "T_IDENTIFIER" && $tt != "T_NUMBER") {
             throw new Exception("Unexpected token '$op' $tt");
         }
-        return  new MathTerminalExpression($op);
+        return new MathTerminalExpression($op);
     }
     function parseExpression() {
         $left = $this->parseTerm();
         $lookup = $this->peek();
 
-        if ($lookup === null || $lookup === ')') {
+        if ($lookup === null || $lookup === ")") {
             return $left;
         }
         $op = $this->pop();
@@ -213,11 +235,13 @@ class MathLexer extends OpLexer {
     }
 
     static function toregex(string $str) {
-        if ($str[0]=='\'') {
+        if ($str[0] == '\'') {
             $str = static::unquote($str);
-        } 
+        }
 
-        if ($str[0]=='/') return $str;
+        if ($str[0] == "/") {
+            return $str;
+        }
         return "/^{$str}\$/";
     }
 

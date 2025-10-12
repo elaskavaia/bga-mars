@@ -13,7 +13,7 @@ class NotifBuilder {
         $this->args = [];
         $this->player_id = null;
         $this->preserve = [];
-        $this->message = '';
+        $this->message = "";
     }
 
     function ofType($p) {
@@ -27,9 +27,9 @@ class NotifBuilder {
         if (is_array($card_id)) {
             $card_id = $card_id["token_key"];
         }
-        $this->withArg('token_id',$card_id);
-        $this->withArg('token_name',$card_id);
-        $this->withArg('token_div',$card_id);
+        $this->withArg("token_id", $card_id);
+        $this->withArg("token_name", $card_id);
+        $this->withArg("token_div", $card_id);
         return $this;
     }
 
@@ -88,7 +88,9 @@ class NotifBuilder {
     }
 
     function withMessage($message) {
-        if ($message!==null) $this->message=$message;
+        if ($message !== null) {
+            $this->message = $message;
+        }
         return $this;
     }
 

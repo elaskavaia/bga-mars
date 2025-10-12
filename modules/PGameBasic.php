@@ -47,8 +47,7 @@ abstract class PGameBasic extends Table {
     /**
      * override to setup all custom tables
      */
-    protected function initTables() {
-    }
+    protected function initTables() {}
 
     public function initPlayers($players) {
         // Set the colors of the players with HTML color code
@@ -110,9 +109,8 @@ abstract class PGameBasic extends Table {
 
     public function getStateIdByTransitionName($action) {
         $state = $this->gamestate->state();
-        foreach ($state['transitions'] as $possible_action => $possible_next_state) {
+        foreach ($state["transitions"] as $possible_action => $possible_next_state) {
             if ($action == $possible_action) {
-
                 return $possible_next_state;
             }
         }
@@ -120,20 +118,21 @@ abstract class PGameBasic extends Table {
     }
 
     public function notifyGameStateArgsChange($player_id) {
-        $curr_id =  $this->gamestate->state_id();
+        $curr_id = $this->gamestate->state_id();
         $gamestate = $this->gamestate->states[$curr_id];
         $state_args = $this->gamestate->state(false, true);
-        $state_args['type'] =  $gamestate['type'];
+        $state_args["type"] = $gamestate["type"];
 
         // reload game state args
-        if (isset($gamestate['args'])) {
-            if (!method_exists($this, $gamestate['args']))
+        if (isset($gamestate["args"])) {
+            if (!method_exists($this, $gamestate["args"])) {
                 throw new feException("Invalid 'args' method for state $curr_id");
+            }
 
-            $state_args['args'] =  $this->{$gamestate['args']}();
+            $state_args["args"] = $this->{$gamestate["args"]}();
         }
 
-        $this->notifyPlayer($player_id, 'gameStateChange', '', $state_args);
+        $this->notifyPlayer($player_id, "gameStateChange", "", $state_args);
     }
 
     // ------ ERROR HANDLING ----------
@@ -205,7 +204,7 @@ abstract class PGameBasic extends Table {
             }
         } catch (Throwable $e) {
             $this->error($e);
-            $this->debugConsole("ERROR: exception is thrown for $message", ['e' => $e]);
+            $this->debugConsole("ERROR: exception is thrown for $message", ["e" => $e]);
             return parent::say(":" . $message);
         }
         return parent::say($message);
@@ -251,7 +250,7 @@ abstract class PGameBasic extends Table {
                 if (is_scalar($ret)) {
                     $retval = $ret;
                 } elseif (!$ret) {
-                    $retval = 'falsy';
+                    $retval = "falsy";
                 } else {
                     $retval = "arr";
                 }
@@ -275,7 +274,7 @@ abstract class PGameBasic extends Table {
         $this->warn($info);
     }
     function debugLog($info, $args = []) {
-        $this->notifyAllPlayers("log", '', $args + ['info' => $info]);
+        $this->notifyAllPlayers("log", "", $args + ["info" => $info]);
         $this->warn($info);
     }
 
@@ -312,7 +311,11 @@ abstract class PGameBasic extends Table {
             // automaticaly add to i18n array all keys if they ends with _name or _tr, except reserved which are auto-translated on client side
             $i18n = array_get($args, "i18n", []);
             foreach ($args as $key => $value) {
-                if (is_string($value) && (endsWith($key, "_tr") || (endsWith($key, "_name") && $key != "player_name" && $key != "token_name" && $key != "place_name"))) {
+                if (
+                    is_string($value) &&
+                    (endsWith($key, "_tr") ||
+                        (endsWith($key, "_name") && $key != "player_name" && $key != "token_name" && $key != "place_name"))
+                ) {
                     $i18n[] = $key;
                 }
             }
@@ -338,7 +341,7 @@ abstract class PGameBasic extends Table {
             if (is_string($arg) && endsWith($key, "_preserve")) {
                 $preserve[] = $key;
             }
-            if ($key == 'reason_tr') {
+            if ($key == "reason_tr") {
                 $preserve[] = $key;
             }
         }
@@ -385,7 +388,7 @@ abstract class PGameBasic extends Table {
     function getPlayerColorById($player_id) {
         $players = $this->loadPlayersBasicInfos();
         if (!isset($players[$player_id])) {
-            return 'fffff0';
+            return "fffff0";
         }
         return $players[$player_id]["player_color"];
     }
@@ -393,11 +396,13 @@ abstract class PGameBasic extends Table {
     function getPlayerColorByNo(int $no) {
         $players = $this->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player_info) {
-            if ($player_info["player_no"] == $no) return $player_info["player_color"];
+            if ($player_info["player_no"] == $no) {
+                return $player_info["player_color"];
+            }
         }
-        if ($no == (count($players) + 1) || $no == 0) {
+        if ($no == count($players) + 1 || $no == 0) {
             // neutural player for solo game, white
-            return 'ffffff';
+            return "ffffff";
         }
         return null;
     }
@@ -412,13 +417,13 @@ abstract class PGameBasic extends Table {
 
     function isRealPlayer($player_id) {
         $players = $this->loadPlayersBasicInfos();
-        return (isset($players[$player_id]));
+        return isset($players[$player_id]);
     }
 
     function isZombiePlayer($player_id) {
         $players = $this->loadPlayersBasicInfos();
         if (isset($players[$player_id])) {
-            if ($players[$player_id]['player_zombie'] == 1) {
+            if ($players[$player_id]["player_zombie"] == 1) {
                 return true;
             }
         }
@@ -428,7 +433,7 @@ abstract class PGameBasic extends Table {
     function isPlayerEliminated($player_id) {
         $players = self::loadPlayersBasicInfos();
         if (isset($players[$player_id])) {
-            return $players[$player_id]['player_eliminated'] == 1;
+            return $players[$player_id]["player_eliminated"] == 1;
         }
         return false;
     }
@@ -441,10 +446,10 @@ abstract class PGameBasic extends Table {
         $players = $this->loadPlayersBasicInfos();
         $count = 0;
         foreach ($players as $player_id => $info) {
-            if ($info['player_zombie'] == 1) {
+            if ($info["player_zombie"] == 1) {
                 continue;
             }
-            if ($info['player_eliminated'] == 1) {
+            if ($info["player_eliminated"] == 1) {
                 continue;
             }
             $count++;
@@ -459,11 +464,13 @@ abstract class PGameBasic extends Table {
         $this->reloadPlayersBasicInfos();
         //$this->onPlayerHasBeenZombified( $player_id );
         $this->sendNotifications();
-        if (!$z) return;
+        if (!$z) {
+            return;
+        }
         $active_player_list = $this->gamestate->getActivePlayerList();
         //$players = self::loadPlayersBasicInfos();
         $state = $this->gamestate->state(true, false, true);
-        if ($state['type'] == 'activeplayer' || $state['type'] == 'multipleactiveplayer') {
+        if ($state["type"] == "activeplayer" || $state["type"] == "multipleactiveplayer") {
             // Check active player is not a zombie
             foreach ($active_player_list as $active_player) {
                 if ($active_player == $player_id) {
@@ -473,15 +480,16 @@ abstract class PGameBasic extends Table {
         }
     }
 
-
     /**
      *
      * @return integer player id based on hex $color
      */
     function getPlayerIdByColor(?string $color) {
-        if (!$color) return $this->getActivePlayerId();
-        if ($color === 8000 || $color === '8000') {
-            $color = '0080000'; // weird stuff
+        if (!$color) {
+            return $this->getActivePlayerId();
+        }
+        if ($color === 8000 || $color === "8000") {
+            $color = "0080000"; // weird stuff
         }
         $players = $this->loadPlayersBasicInfos();
         if (!isset($this->player_colors)) {
@@ -588,7 +596,9 @@ abstract class PGameBasic extends Table {
     // Profiling
     function prof_point(string $str, string $type = "now", string $extra = "") {
         return;
-        if (!$this->isStudio()) return;
+        if (!$this->isStudio()) {
+            return;
+        }
         global $prof_times;
         $sid = $_SERVER["REQUEST_TIME_FLOAT"];
         $time = microtime(true) - $sid; // timestamp since request
@@ -596,11 +606,10 @@ abstract class PGameBasic extends Table {
 
         $dur = null;
 
-
-        if ($type == 'start') {
+        if ($type == "start") {
             $prof_times[$str] = $time;
             // if (!$extra) $extra = array_get($_GET,'action','?')
-        } else if ($type == 'end' || $type == 'check') {
+        } elseif ($type == "end" || $type == "check") {
             if (array_key_exists($str, $prof_times)) {
                 $dur = $time - $prof_times[$str];
             } else {
@@ -609,10 +618,11 @@ abstract class PGameBasic extends Table {
             $prof_times[$str] = $time;
         }
 
-        if ($dur !== null)
+        if ($dur !== null) {
             $dur_s = sprintf("(%.06f)", $dur);
-        else
+        } else {
             $dur_s = "-";
+        }
 
         $this->debug(sprintf("prof:%.03f: g%3d: %s/%s %s %s", $time, $gameid, $str, $type, $dur_s, $extra));
     }
@@ -699,15 +709,17 @@ abstract class PGameBasic extends Table {
      */
     function dbSetPlayerMultiactive($player_id = -1, $value = 1) {
         if (!$value) {
-            if ($this->bIndependantMultiactiveTable)
+            if ($this->bIndependantMultiactiveTable) {
                 $sql = "UPDATE playermultiactive SET ma_is_multiactive='0' WHERE 1";
-            else
+            } else {
                 $sql = "UPDATE player SET player_is_multiactive = '0' WHERE 1";
+            }
         } else {
-            if ($this->bIndependantMultiactiveTable)
+            if ($this->bIndependantMultiactiveTable) {
                 $sql = "UPDATE playermultiactive SET ma_is_multiactive='1' WHERE ma_is_multiactive!='1'";
-            else
+            } else {
                 $sql = "UPDATE player SET player_is_multiactive = '1' WHERE player_zombie = 0 AND player_eliminated = 0";
+            }
         }
 
         if ($player_id > 0) {
@@ -720,19 +732,21 @@ abstract class PGameBasic extends Table {
         $result = [];
         $fields = $this->getObjectListFromDB("SHOW COLUMNS FROM $table");
         foreach ($fields as $field) {
-            $result[] = $field['Field'];
+            $result[] = $field["Field"];
         }
         return $result;
     }
 
     function dbGetFieldListAsString(string $table) {
         $fields_list = $this->dbGetFieldList($table);
-        $fields = '`' . implode('`,`', $fields_list) . '`';
+        $fields = "`" . implode("`,`", $fields_list) . "`";
         return $fields;
     }
 
     function dbInsertValues($table, $values) {
-        if (count($values) == 0) return;
+        if (count($values) == 0) {
+            return;
+        }
         $fields_list = $this->dbGetFieldList($table);
         $seqvalues = [];
         foreach ($values as $row) {
@@ -741,16 +755,16 @@ abstract class PGameBasic extends Table {
                 $value = array_get($row, $field, null);
                 if ($value === null) {
                     $quoted[] = "NULL";
-                } else if (is_numeric($value)) {
+                } elseif (is_numeric($value)) {
                     $quoted[] = "$value";
                 } else {
                     $value = $this->escapeStringForDB($value);
                     $quoted[] = "'$value'";
                 }
             }
-            $seqvalues[] = "( " . (implode(',', $quoted)) . " )";
+            $seqvalues[] = "( " . implode(",", $quoted) . " )";
         }
-        $fields = '`' . implode('`,`', $fields_list) . '`';
+        $fields = "`" . implode("`,`", $fields_list) . "`";
         $sql = "INSERT INTO $table ($fields)";
         $sql .= " VALUES " . implode(",", $seqvalues);
         $this->DbQuery($sql);
@@ -759,7 +773,7 @@ abstract class PGameBasic extends Table {
     public function isMultiActive() {
         $gamestate = $this->gamestate;
         $state = $gamestate->states[$gamestate->state_id()];
-        return ($state['type'] == 'multipleactiveplayer');
+        return $state["type"] == "multipleactiveplayer";
     }
 
     /*
@@ -770,7 +784,6 @@ abstract class PGameBasic extends Table {
         //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
         $this->setUndoSavepoint(true);
         //$this->statelog("undoSavepoint");
-
     }
 
     function setUndoSavepoint(bool $value) {
@@ -778,7 +791,7 @@ abstract class PGameBasic extends Table {
     }
 
     function isUndoSavepoint() {
-        return   $this->undoSaveOnMoveEndDup;
+        return $this->undoSaveOnMoveEndDup;
     }
 
     /*
@@ -788,13 +801,14 @@ abstract class PGameBasic extends Table {
      */
     function doUndoSavePoint() {
         $this->statelog("*** doUndoSavePoint *** " . $this->undoSaveOnMoveEndDup);
-        if (!$this->undoSaveOnMoveEndDup)
+        if (!$this->undoSaveOnMoveEndDup) {
             return;
+        }
 
         try {
             $this->doCustomUndoSavePoint();
         } catch (Exception $e) {
-            $this->error("undo save point failed " . ($e->getMessage()));
+            $this->error("undo save point failed " . $e->getMessage());
             $this->error($e->getTraceAsString());
         }
         $this->setUndoSavepoint(false);
@@ -834,23 +848,22 @@ abstract class PGameBasic extends Table {
         // self::notifyAllPlayers('undoRestorePoint', clienttranslate('${player_name} takes back his move'), [
         //     'player_name' => self::getActivePlayerName(),
         // ]);
-        $this->notifyAllPlayers('undoRestorePoint', '', []);
+        $this->notifyAllPlayers("undoRestorePoint", "", []);
 
-
-        $undo_moves_player = self::getGameStateValue('undo_moves_player');
-        if ($undo_moves_player != self::getActivePlayerId())
+        $undo_moves_player = self::getGameStateValue("undo_moves_player");
+        if ($undo_moves_player != self::getActivePlayerId()) {
             throw new feException("The stored UNDO corresponds to another player's turn : you cannot restore it");
+        }
 
-        if ($this->isMultiActive())
+        if ($this->isMultiActive()) {
             throw new feException("UNDO cannot be used for multiple active players game states");
-
+        }
 
         // Copy all savepoints tables back to their respective table
         $tables = self::getObjectListFromDB("SHOW TABLES", true);
         $prefix = "zz_savepoint_";
 
-        $player_id =  $this->getActivePlayerId();
-
+        $player_id = $this->getActivePlayerId();
 
         // Particular case: keep current "zombie" states and reflexion time
         // Note: for the ACTIVE player we must NOT keep reflexion time values (start and remaining) for the case where some extra time has been added between
@@ -863,7 +876,6 @@ abstract class PGameBasic extends Table {
                                 WHERE  zz_savepoint_player.player_id=player.player_id
                                   AND  zz_savepoint_player.player_id!=$player_id");
 
-
         // Another particular case: keep globals that cannot be undone
         // GAMESTATE_GAME_RESULT_NEUTRALIZED
         // GAMESTATE_NEUTRALIZED_PLAYER_ID
@@ -872,14 +884,13 @@ abstract class PGameBasic extends Table {
                                 WHERE zz_savepoint_global.global_id=`global`.global_id
                                   AND `global`.global_id IN (301, 302)");
 
-
         foreach ($tables as $table) {
             if (startsWith($table, $prefix)) {
                 // Save point => must be restored
                 $original = substr($table, strlen($prefix));
                 $copy = $table;
                 $fields = self::getFieldsListOfTable($original);
-                if ($original == 'gamelog') {
+                if ($original == "gamelog") {
                     // Particular case: keep private messages
                     $this->DbQuery("DELETE FROM $original WHERE gamelog_private!='1'");
                     $this->DbQuery("INSERT INTO $original SELECT * FROM $copy WHERE gamelog_private!='1'");
@@ -888,7 +899,7 @@ abstract class PGameBasic extends Table {
                     $this->DbQuery("INSERT INTO $original ($fields) SELECT $fields FROM $copy");
                 }
             } else {
-                // This table is an original 
+                // This table is an original
             }
         }
 
@@ -901,16 +912,15 @@ abstract class PGameBasic extends Table {
 
     function bgaUndoSavePoint() {
         if ($this->isMultiActive()) {
-            throw new feException('UNDO cannot be used for multiple active players game states');
+            throw new feException("UNDO cannot be used for multiple active players game states");
         }
-
 
         // Copy all tables to their respective savepoints
 
-        $tables = self::getObjectListFromDB('SHOW TABLES', true);
-        $prefix = 'zz_savepoint_';
-        $other_prefix = 'zz_replay';
-        self::setGameStateValue('undo_moves_player', self::getActivePlayerId());
+        $tables = self::getObjectListFromDB("SHOW TABLES", true);
+        $prefix = "zz_savepoint_";
+        $other_prefix = "zz_replay";
+        self::setGameStateValue("undo_moves_player", self::getActivePlayerId());
 
         // Check that undo tables exists
         $bUndoConfigured = false;
@@ -931,13 +941,13 @@ abstract class PGameBasic extends Table {
             if (substr($table, 0, strlen($prefix)) == $prefix) {
                 // Save point => do not copy
             } elseif (substr($table, 0, strlen($other_prefix)) == $other_prefix) {
-            } elseif ($table == 'replaysavepoint' ||  $table == 'bga_user_preferences') {
+            } elseif ($table == "replaysavepoint" || $table == "bga_user_preferences") {
             } else {
                 // This table must be saved into its copy
                 $copy = $prefix . $table;
                 self::DbQuery("DELETE FROM $copy");
                 $fields = self::getFieldsListOfTable($table);
-                $fields = str_replace(',`cancel`', '', $fields);
+                $fields = str_replace(",`cancel`", "", $fields);
                 try {
                     self::DbQuery("INSERT INTO $copy ($fields) SELECT $fields FROM $table");
                 } catch (Exception $ex) {
@@ -954,14 +964,14 @@ abstract class PGameBasic extends Table {
         $subsql = "SELECT global_value FROM global WHERE global_id='$next_move_index' ";
         $dbres = $this->DbQuery($subsql);
         $row = mysql_fetch_assoc($dbres);
-        $move_id = (int) array_get($row, 'global_value', 0);
+        $move_id = (int) array_get($row, "global_value", 0);
         return $move_id;
     }
 
     function statelog(string $log = "trace") {
         $state = $this->gamestate->state();
-        $name = $state['name'];
-        $type = $state['type'];
+        $name = $state["name"];
+        $type = $state["type"];
         $player = $this->getActivePlayerName();
         $move = $this->getGameStateValue("playerturn_nbr");
         $this->debug("$log move $move in $type state $name (act: $player)");
@@ -969,15 +979,15 @@ abstract class PGameBasic extends Table {
 
     function getPhpConstants($prefix = null) {
         $res = [];
-        $cc = get_defined_constants(true)['user'];
+        $cc = get_defined_constants(true)["user"];
         foreach ($cc as $key => $value) {
-            if (!$prefix  || startsWith($key, $prefix)) $res[$key] = $value;
+            if (!$prefix || startsWith($key, $prefix)) {
+                $res[$key] = $value;
+            }
         }
         return $res;
     }
 }
-
-
 
 // GLOBAL utility functions
 function startsWith($haystack, $needle) {
@@ -986,8 +996,9 @@ function startsWith($haystack, $needle) {
 }
 
 function endsWith($haystack, $needle) {
-    if ($haystack === null)
+    if ($haystack === null) {
         return false;
+    }
     $length = strlen($needle);
     return $length === 0 || substr($haystack, -$length) === $needle;
 }

@@ -19,7 +19,7 @@ class DbUserPrefs extends APP_GameClass {
     var $table;
     public PGameXBody $game; // game ref
     function __construct(PGameXBody $game) {
-        $this->table = 'user_preferences';
+        $this->table = "user_preferences";
         $this->game = $game;
     }
 
@@ -36,14 +36,10 @@ class DbUserPrefs extends APP_GameClass {
         $values = [];
         //$players = $this->loadPlayersBasicInfos();
         foreach ($game_preferences as $id => $data) {
-            $defaultValue = array_get($data, 'default') ?? array_keys($data['values'])[0];
+            $defaultValue = array_get($data, "default") ?? array_keys($data["values"])[0];
 
             foreach ($players as $pId => $infos) {
-                $values[] = [
-                    $pId,
-                    $id,
-                    $prefs[$pId][$id] ?? $defaultValue,
-                ];
+                $values[] = [$pId, $id, $prefs[$pId][$id] ?? $defaultValue];
             }
         }
 
@@ -72,9 +68,10 @@ class DbUserPrefs extends APP_GameClass {
 
     function getPrefValue($player_id, $pref_id) {
         $res = $this->getPrefInfo($player_id, $pref_id);
-        if ($res === null)
+        if ($res === null) {
             return null;
-        return (int) $res['pref_value'];
+        }
+        return (int) $res["pref_value"];
     }
 
     function setPrefValue($player_id, $pref_id, $pref_value, $auto_insert = true) {
@@ -111,7 +108,7 @@ class DbUserPrefs extends APP_GameClass {
         $res = mysql_fetch_assoc($dbres);
         if ($use_default && ($res == null || count($res) == 0)) {
             $def = $this->getDefaultValue($pref_id);
-            return ['player_id' => $player_id, 'pref_id' => $pref_id, 'pref_value' => $def];
+            return ["player_id" => $player_id, "pref_id" => $pref_id, "pref_value" => $def];
         }
         return $res;
     }
@@ -120,7 +117,7 @@ class DbUserPrefs extends APP_GameClass {
         $game_preferences = $this->game->getTablePreferences();
         $data = array_get($game_preferences, $pref_id);
         if ($data) {
-            $defaultValue = array_get($data, 'default') ?? array_keys($data['values'])[0] ?? 0;
+            $defaultValue = array_get($data, "default") ?? (array_keys($data["values"])[0] ?? 0);
             return (int) $defaultValue;
         }
         return 0;

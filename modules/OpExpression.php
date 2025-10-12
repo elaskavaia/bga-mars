@@ -19,7 +19,6 @@ class OpExpression {
     public $to = 1;
     public $args;
 
-
     function __construct(string $op, $args = []) {
         if (!is_string($op)) {
             throw new Exception("Operator should be string");
@@ -134,7 +133,7 @@ class OpExpression {
     }
 
     function isUnranged() {
-        return ($this->to == $this->from && $this->to == 1);
+        return $this->to == $this->from && $this->to == 1;
     }
 }
 
@@ -212,7 +211,6 @@ class OpExpressionRanged extends OpExpression {
         return $res;
     }
 
-
     function __toString() {
         $res = parent::__toString();
         if (count($this->args) > 1) {
@@ -256,9 +254,7 @@ class OpExpressionRanged extends OpExpression {
 class OpLexer {
     protected static $instance;
 
-    public function  __construct() {
-    }
-
+    public function __construct() {}
 
     public static function getInstance() {
         if (self::$instance == null) {
@@ -295,32 +291,41 @@ class OpLexer {
 
     function isdigit($c) {
         $ordc = ord($c);
-        return $ordc >= ord('0') && $ordc <= ord('9');
+        return $ordc >= ord("0") && $ordc <= ord("9");
     }
     function isident($c) {
         $ordc = ord($c);
-        return $c == '_' || ($ordc >= ord('0') && $ordc <= ord('9')) || ($ordc >= ord('a') && $ordc <= ord('z')) || ($ordc >= ord('A') && $ordc <= ord('Z'));
+        return $c == "_" ||
+            ($ordc >= ord("0") && $ordc <= ord("9")) ||
+            ($ordc >= ord("a") && $ordc <= ord("z")) ||
+            ($ordc >= ord("A") && $ordc <= ord("Z"));
     }
     function isspace($c) {
-        return $c == ' ';
+        return $c == " ";
     }
     protected function nextToken(string $line, $offset = 0, &$tname = null) {
         $tname = "T_EOS";
         $len = strlen($line);
-        if ($line === '' || $offset >= $len) {
+        if ($line === "" || $offset >= $len) {
             return "";
         }
         for ($i = $offset; $i < $len; $i++) {
             $c = $line[$i];
             switch ($tname) {
                 case "T_NUMBER":
-                    if ($this->isdigit($c)) break;
+                    if ($this->isdigit($c)) {
+                        break;
+                    }
                     return substr($line, $offset, $i - $offset);
                 case "T_WHITESPACE":
-                    if ($this->isspace($c)) break;
+                    if ($this->isspace($c)) {
+                        break;
+                    }
                     return substr($line, $offset, $i - $offset);
                 case "T_IDENTIFIER":
-                    if ($this->isident($c)) break;
+                    if ($this->isident($c)) {
+                        break;
+                    }
                     return substr($line, $offset, $i - $offset);
                 case "T_STRING":
                     if ($c == "'") {
@@ -346,13 +351,13 @@ class OpLexer {
                     }
                     if ($i + 1 < $len) {
                         $cnext = $line[$i + 1];
-                        if ($cnext == '=') {
-                            if ($c == '<' || $c == '>' || $c == '=') {
+                        if ($cnext == "=") {
+                            if ($c == "<" || $c == ">" || $c == "=") {
                                 $tname = "T_OP";
                                 return "{$c}{$cnext}";
                             }
                         }
-                        if ($c == '-') {
+                        if ($c == "-") {
                             if ($this->isdigit($cnext)) {
                                 $tname = "T_NUMBER";
                                 break;
@@ -366,8 +371,12 @@ class OpLexer {
             }
         }
 
-        if ($tname == "T_STRING") throw new Error("unclosed string");
-        if ($tname != "T_EOS") return substr($line, $offset);
+        if ($tname == "T_STRING") {
+            throw new Error("unclosed string");
+        }
+        if ($tname != "T_EOS") {
+            return substr($line, $offset);
+        }
 
         throw new Error("invalid state $tname");
     }
@@ -384,7 +393,7 @@ class OpParser {
         "/" => 3,
         "+" => 4,
         "," => 5,
-        "!" => 6
+        "!" => 6,
     ];
 
     public static function compareOperationRank($pop, $cop) {
@@ -419,7 +428,7 @@ class OpParser {
         }
     }
     function isEos() {
-        return (count($this->tokens) == 0);
+        return count($this->tokens) == 0;
     }
 
     function pop() {
@@ -449,12 +458,12 @@ class OpParser {
         $op = $this->pop();
         $tt = $this->lexer->getTerminalName($op);
 
-        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING"  && $tt != "T_NUMBER"  && $tt != "T_STRING") {
+        if ($tt != "T_IDENTIFIER" && $tt != "T_STRING" && $tt != "T_NUMBER" && $tt != "T_STRING") {
             throw new feException("Unexpected token '$op' $tt");
         }
         if ($tt == "T_IDENTIFIER") {
             $lookup = $this->peek();
-            if ($lookup == '(') {
+            if ($lookup == "(") {
                 // function all
                 $this->consume("(");
                 $parms = $this->parseExpression();
@@ -464,13 +473,12 @@ class OpParser {
             }
         }
 
-        return  OpExpressionTerminal::create($op);
+        return OpExpressionTerminal::create($op);
     }
-
 
     public function parseRangedExpression() {
         if ($this->isEos()) {
-            $this->parseError('Expected expression');
+            $this->parseError("Expected expression");
         }
 
         $from = 1;
@@ -482,13 +490,13 @@ class OpParser {
         $op = $this->peek();
         if ($op == "[") {
             $this->pop();
-            $from =  $this->pop();
-            $this->consume(',');
-            $to =  $this->pop();
+            $from = $this->pop();
+            $this->consume(",");
+            $to = $this->pop();
             if ($to == "]") {
                 $to = -1;
             } else {
-                $this->consume(']');
+                $this->consume("]");
             }
             $op = $this->peek();
             if ($op == "^") {
@@ -524,14 +532,17 @@ class OpParser {
             }
         }
         $pr = static::$binary_operator_priority[$op] ?? null;
-        if ($pr !== null || $op == ')') {
-            if ($numeric)
+        if ($pr !== null || $op == ")") {
+            if ($numeric) {
                 return OpExpressionTerminal::create($to);
-            else
+            } else {
                 $this->parseError("Unexpected token $op");
+            }
         }
 
-        if ($optional) $from = 0;
+        if ($optional) {
+            $from = 0;
+        }
         $node = self::parseTerm();
         return OpExpressionRanged::createRanged($from, $to, $node, $shared);
     }
@@ -543,9 +554,10 @@ class OpParser {
             $val = $this->peek();
             $pr = static::$binary_operator_priority[$val] ?? null;
             $has_op = false;
-            if ($pr) { // binary operation
+            if ($pr) {
+                // binary operation
                 $has_op = true;
-            } else if ($val == ')') {
+            } elseif ($val == ")") {
                 break;
             } else {
                 $val = $this->defaultOp;
@@ -554,13 +566,14 @@ class OpParser {
             if ($pr < $min_priority) {
                 return $node;
             }
-            if ($has_op)
+            if ($has_op) {
                 $this->pop();
+            }
             $rnode = $this->parseExpression($pr + 1);
             if ($rnode === false) {
-                $this->parseError('Expected expression at the right side of ' . $val . ' operator');
+                $this->parseError("Expected expression at the right side of " . $val . " operator");
             }
-            if ($val != '!') {
+            if ($val != "!") {
                 $prevop = OpExpression::getop($node);
                 if ($prevop == $val) {
                     // append
