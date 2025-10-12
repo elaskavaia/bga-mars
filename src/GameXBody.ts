@@ -449,6 +449,11 @@ class GameXBody extends GameTokens {
     this.showPopin(html, "dialog", _("Saved Layout"));
   }
 
+  withConfirmation(message: string, yesHander: any, condition: boolean = true) {
+    if (condition) this.confirmationDialog(message, yesHander);
+    else yesHander();
+  }
+
   showGameScoringDialog() {
     if (this.cachedScoringTable) {
       let html = this.createScoringTableHTML(this.cachedScoringTable);
@@ -1625,7 +1630,6 @@ If more than one player gets 1st place bonus, no 2nd place is
 awarded.`);
       res += this.generateTooltipSection(_("Info"), text);
     } else if (type == this.CON.MA_CARD_TYPE_COLONY) {
-
       //colony cards r - colony placement bonus, a- colony trade bonus, i - trade action
       const card_r = CustomRenders.parseExprToText(displayInfo.expr.r, this);
       const card_a = CustomRenders.parseExprToText(displayInfo.expr.a, this);
@@ -1732,8 +1736,8 @@ awarded.`);
         decor.innerHTML = `
                   <div class="card_bg"></div>
                   <div class="card_title">${this.getTr(card_title)}</div>
-                  <div class="card_initial">${card_a}<span>${_('Colony Bonus')}</span></div>
-                  <div class="card_effect">${card_i}<span>${_('Trade Income')}</span></div>  
+                  <div class="card_initial">${card_a}<span>${_("Colony Bonus")}</span></div>
+                  <div class="card_effect">${card_i}<span>${_("Trade Income")}</span></div>  
                   <div class="colony-colony-line"></div>  
                   <div class="colony-trade-line"></div>  
                   <div class="colony-trade-value"></div>  
@@ -3201,6 +3205,9 @@ awarded.`);
       this.sendActionResolve(opId, { target: opTargets[0] }, opInfo);
     } else if (!ack && opTargets.length == 0) {
       this.sendActionResolve(opId, {}, opInfo); // operations without targets
+    } else if (opInfo.owner !== this.player_color) {
+      const prompt = _("The control will be passed to another player and you cannot undo this action");
+      this.withConfirmation(prompt, () => this.remoteUserAction("choose", { op: opId }));
     } else {
       if (clientState)
         this.setClientStateUpdOn(

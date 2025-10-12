@@ -4553,6 +4553,13 @@ var GameXBody = /** @class */ (function (_super) {
         }
         this.showPopin(html, "dialog", _("Saved Layout"));
     };
+    GameXBody.prototype.withConfirmation = function (message, yesHander, condition) {
+        if (condition === void 0) { condition = true; }
+        if (condition)
+            this.confirmationDialog(message, yesHander);
+        else
+            yesHander();
+    };
     GameXBody.prototype.showGameScoringDialog = function () {
         if (this.cachedScoringTable) {
             var html = this.createScoringTableHTML(this.cachedScoringTable);
@@ -5571,7 +5578,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var card_r = CustomRenders.parseExprToHtml(displayInfo.expr.r);
                 var card_a = CustomRenders.parseExprToHtml(displayInfo.expr.a);
                 var card_i = CustomRenders.parseExprToHtml(displayInfo.i);
-                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(this.getTr(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>").concat(_('Colony Bonus'), "</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>").concat(_('Trade Income'), "</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-value\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
+                decor.innerHTML = "\n                  <div class=\"card_bg\"></div>\n                  <div class=\"card_title\">".concat(this.getTr(card_title), "</div>\n                  <div class=\"card_initial\">").concat(card_a, "<span>").concat(_("Colony Bonus"), "</span></div>\n                  <div class=\"card_effect\">").concat(card_i, "<span>").concat(_("Trade Income"), "</span></div>  \n                  <div class=\"colony-colony-line\"></div>  \n                  <div class=\"colony-trade-line\"></div>  \n                  <div class=\"colony-trade-value\"></div>  \n                  <div class=\"colony-trade-cube\"></div>  \n            ");
                 // const line = tokenNode.querySelector(".colony-colony-line");
                 // const line2 = tokenNode.querySelector(".colony-trade-line");
                 // for (let i = 0; i < 7; i++) {
@@ -6941,6 +6948,10 @@ var GameXBody = /** @class */ (function (_super) {
         }
         else if (!ack && opTargets.length == 0) {
             this.sendActionResolve(opId, {}, opInfo); // operations without targets
+        }
+        else if (opInfo.owner !== this.player_color) {
+            var prompt_1 = _("The control will be passed to another player and you cannot undo this action");
+            this.withConfirmation(prompt_1, function () { return _this.remoteUserAction("choose", { op: opId }); });
         }
         else {
             if (clientState)

@@ -19,9 +19,11 @@
       }
     ]
   },
+  "intelephense.environment.includePaths": ["/home/elaskavaia/php-composer"],
   "prettier.printWidth": 140,
-  "editor.formatOnSaveMode": "modificationsIfAvailable",
-  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSaveMode": "file",
+  "editor.formatOnSave": true,
   "eslint.codeActionsOnSave.mode": "problems",
   "eslint.codeActionsOnSave.rules": []
 }
