@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-/** 
+/**
  * Trade with colony
  * This can be void.
  * - when player's ship is already in another colony
  * - when its occupied
  * - cost 9m/3e/3u
  */
-class Operation_trade extends  AbsOperation {
+class Operation_trade extends AbsOperation {
     function argPrimaryDetails() {
         $colony = $this->getTargetColony();
         $color = $this->color;
         if (!$colony) {
             $par = $this->params();
-            $free = $par == 'free';
+            $free = $par == "free";
             $avail = $this->game->tokens->getTokensOfTypeInLocation("fleet_$color", "colo_fleet");
             if (count($avail) == 0) {
-                $keys = ['none'];
+                $keys = ["none"];
                 return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
-                    return ['q' => MA_ERR_ALREADYUSED, 'level' => 0];
+                    return ["q" => MA_ERR_ALREADYUSED, "level" => 0];
                 });
             }
             $tokens = $this->game->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
@@ -30,32 +30,35 @@ class Operation_trade extends  AbsOperation {
                 $claimed = count($oncolony);
                 $state = $this->game->tokens->getTokenState($tokenId);
                 $q = MA_OK;
-                if ($state < 0) $q = MA_ERR_PREREQ;
-                else if ($claimed > 0) $q = MA_ERR_OCCUPIED;
-                else if (!$free && !$this->canPayCost($tokenId)) $q = MA_ERR_COST;
+                if ($state < 0) {
+                    $q = MA_ERR_PREREQ;
+                } elseif ($claimed > 0) {
+                    $q = MA_ERR_OCCUPIED;
+                } elseif (!$free && !$this->canPayCost($tokenId)) {
+                    $q = MA_ERR_COST;
+                }
 
-                return ['q' => $q, 'level' => $state];
+                return ["q" => $q, "level" => $state];
             });
         } else {
             // auto-resolve
             $keys = [$colony];
             return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) {
                 $state = $this->game->tokens->getTokenState($tokenId);
-                return ['q' => MA_OK, 'level' => $state];
+                return ["q" => MA_OK, "level" => $state];
             });
         }
     }
 
-
     function checkVoid() {
         if ($this->isVoid()) {
             $op = $this->mnemonic;
-            $info = $this->arg()['info'];
+            $info = $this->arg()["info"];
             // $this->game->userAssertTrue(toJson($this->arg()));
             $usertarget = array_key_first($info);
-            $this->game->userAssertTrue(totranslate("This move is not allowed by the rules"),  $usertarget, "Operation $op");
+            $this->game->userAssertTrue(clienttranslate("This move is not allowed by the rules"), $usertarget, "Operation $op");
             $infotarget = array_get($info, $usertarget);
-            $err = $infotarget['q'];
+            $err = $infotarget["q"];
             switch ($err) {
                 case MA_ERR_ALREADYUSED:
                     $this->game->userAssertTrue(clienttranslate("Cannot perform Trade: your fleet ship is already used this generation"));
@@ -78,47 +81,57 @@ class Operation_trade extends  AbsOperation {
 
     function canPayCost($tokenId) {
         $color = $this->color;
-        if ($this->game->getTrackerValue($color, 'u') >= 3) return true;
-        if ($this->game->getTrackerValue($color, 'e') >= 3) return true;
+        if ($this->game->getTrackerValue($color, "u") >= 3) {
+            return true;
+        }
+        if ($this->game->getTrackerValue($color, "e") >= 3) {
+            return true;
+        }
         $pay = $this->getPaymentExpr($tokenId);
         $payment_inst = $this->game->getOperationInstanceFromType($pay, $color, 1);
-        if ($payment_inst->isVoid()) return false;
+        if ($payment_inst->isVoid()) {
+            return false;
+        }
         return true;
+    }
+
+    function canSkipChoice() {
+        return false;
     }
 
     function getPrimaryArgType() {
         $colony = $this->getTargetColony();
-        if (!$colony)
-            return 'token';
-        else
-            return '';
+        if (!$colony) {
+            return "token";
+        } else {
+            return "";
+        }
     }
-
 
     public function checkIntegrity() {
         return $this->checkIntegritySingleton();
     }
 
     public function getPaymentExpr($colony) {
-        $listeners = $this->game->collectListeners($this->color, 'onPay_trade', null, $colony);
+        $listeners = $this->game->collectListeners($this->color, "onPay_trade", null, $colony);
 
-        $counts = ['m' => 9, 'e' => 3, 'u' => 3];
+        $counts = ["m" => 9, "e" => 3, "u" => 3];
         foreach ($listeners as $lisinfo) {
-            $outcome = $lisinfo['outcome'];
+            $outcome = $lisinfo["outcome"];
             // at this point only discounts are any res
             $opexpr = $this->game->parseOpExpression($outcome);
             $res = $opexpr->args[0];
-            if ($res == 'q') {
-                $counts['m'] -= 1;
-                $counts['e'] -= 1;
-                $counts['u'] -= 1;
+            if ($res == "q") {
+                $counts["m"] -= 1;
+                $counts["e"] -= 1;
+                $counts["u"] -= 1;
             } else {
                 $counts[$res] -= 1;
             }
         }
-        $m = $counts['m'];
-        $e = $counts['e'];
-        $u = $counts['u'];
+        $m = $counts["m"];
+        $e = $counts["e"];
+        $u = $counts["u"];
         return "{$m}nm/{$e}ne/{$u}nu";
     }
 
@@ -127,15 +140,15 @@ class Operation_trade extends  AbsOperation {
 
         if (!$colony) {
             $par = $this->params();
-            $free = $par == 'free';
-            $colony = $this->getCheckedArg('target');
+            $free = $par == "free";
+            $colony = $this->getCheckedArg("target");
 
             // that is last action before triggered effects and payment
             $data = [$this->getContext(0), $this->getContext(1), $colony];
             $this->game->push($owner, "trade", implode(":", $data));
             $this->game->machine->interrupt();
 
-            $this->game->triggerEffect($owner, 'on_trade', $colony);
+            $this->game->triggerEffect($owner, "on_trade", $colony);
 
             if (!$free) {
                 $this->game->push($owner, $this->getPaymentExpr($colony), "op_trade");
@@ -149,16 +162,22 @@ class Operation_trade extends  AbsOperation {
         $this->game->systemAssertTrue("Trade error", $ship);
         $step = $this->game->tokens->getTokenState($card);
 
-        $this->game->dbSetTokenLocation($ship,  $card, 1, clienttranslate('${player_name} trades on ${card_name} with power of ${step}'), [
-            'card_name' => $this->game->getTokenName($card),
-            'step' => $step
-        ], $this->getPlayerId());
+        $this->game->dbSetTokenLocation(
+            $ship,
+            $card,
+            1,
+            clienttranslate('${player_name} trades on ${card_name} with power of ${step}'),
+            [
+                "card_name" => $this->game->getTokenName($card),
+                "step" => $step,
+            ],
+            $this->getPlayerId()
+        );
 
-        $rules = $this->game->getRulesFor($card, '*');
-        $trade_res = $rules['i'];
-        $trade_slots  = $rules['slots'];
+        $rules = $this->game->getRulesFor($card, "*");
+        $trade_res = $rules["i"];
+        $trade_slots = $rules["slots"];
         $op = $trade_slots[$step] . $trade_res;
-
 
         // that is last action after trade bonuses
         $this->game->push($owner, "tradeinc(reset)", "$card:x");
@@ -168,7 +187,7 @@ class Operation_trade extends  AbsOperation {
 
         $markers = $this->game->tokens->getTokensOfTypeInLocation("marker_", $card);
 
-        $trade_res = $rules['a'];
+        $trade_res = $rules["a"];
         foreach ($markers as $markerId => $info) {
             // each player with colony gets trading bonus
             $other = getPart($markerId, 1);
@@ -178,42 +197,48 @@ class Operation_trade extends  AbsOperation {
         return $inc;
     }
     static function activateColoniesOnPlayCard($proj, $game) {
-        $holds = 'x';
+        $holds = "x";
         if ($proj) {
-            $holds = $game->getRulesFor($proj, 'holds', '');
-            if (!$holds) return;
+            $holds = $game->getRulesFor($proj, "holds", "");
+            if (!$holds) {
+                return;
+            }
         }
         $colonies = $game->tokens->getTokensOfTypeInLocation("card_colo", "display_colonies");
         foreach ($colonies as $colo => $info) {
-            if ($info['state'] >= 0) continue;
-            $prod = $game->getRulesFor($colo, 'prod', '');
+            if ($info["state"] >= 0) {
+                continue;
+            }
+            $prod = $game->getRulesFor($colo, "prod", "");
             $activate = false;
             if (!$prod) {
                 $activate = true;
-            } else if (!$proj) {
+            } elseif (!$proj) {
                 // check all cards
                 $cards = $game->tokens->getTokensOfTypeInLocation("card", "tableau_%");
                 foreach ($cards as $card => $info) {
-                    $holds = $game->getRulesFor($card, 'holds', '');
+                    $holds = $game->getRulesFor($card, "holds", "");
                     if ($holds == $prod) {
                         $activate = true;
                         break;
                     }
                 }
-            } else if ($proj) {
+            } elseif ($proj) {
                 if ($holds == $prod) {
                     $activate = true;
                 }
             }
             if ($activate) {
-                $game->dbSetTokenLocation($colo, 'display_colonies', 1, clienttranslate('Colony tile ${card_name} is activated'), [
-                    'card_name' => $game->getTokenName($colo)
+                $game->dbSetTokenLocation($colo, "display_colonies", 1, clienttranslate('Colony tile ${card_name} is activated'), [
+                    "card_name" => $game->getTokenName($colo),
                 ]);
-            } else if (!$proj) {
+            } elseif (!$proj) {
                 $game->notifyMessage(
-                    clienttranslate('Colony tile ${card_name} is not yet activated because no player possesses a card that holds required resources'),
+                    clienttranslate(
+                        'Colony tile ${card_name} is not yet activated because no player possesses a card that holds required resources'
+                    ),
                     [
-                        'card_name' => $game->getTokenName($colo)
+                        "card_name" => $game->getTokenName($colo),
                     ]
                 );
             }
@@ -237,6 +262,6 @@ class Operation_trade extends  AbsOperation {
     }
 
     protected function getOpName() {
-        return clienttranslate('Trade with a Colony');
+        return clienttranslate("Trade");
     }
 }

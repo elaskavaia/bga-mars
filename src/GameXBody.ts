@@ -3166,7 +3166,7 @@ awarded.`);
           opArgs.void
         );
         if (opArgs.void) {
-          $(`button_${opId}`).title = _("Operation cannot be executed: No valid targets");
+          $(`button_${opId}`).title = this.extractError(opInfo, _("Operation cannot be executed"));
         }
       }
 
@@ -3194,6 +3194,18 @@ awarded.`);
     }
 
     if (chooseorder) this.addActionButtonColor("button_whatever", _("Whatever"), () => this.remoteUserAction("whatever", {}), "orange");
+  }
+
+  extractError(opInfo: any, errorPrefix: string): string {
+    const opArgs = opInfo.args;
+    const argsInfo = opArgs.info;
+    for (const key in argsInfo) {
+      const elem = argsInfo[key];
+      if (elem.q != 0) {
+        return errorPrefix + ": " + this.getTokenName("err_" + elem.q);
+      }
+    }
+    return errorPrefix + ": " + _("No valid targets");
   }
 
   onOperationButton(opInfo: any, clientState: boolean = true) {

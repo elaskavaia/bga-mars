@@ -6904,7 +6904,7 @@ var GameXBody = /** @class */ (function (_super) {
                     return "continue";
                 this_4.addActionButtonColor("button_".concat(opId), name_7, function () { return _this.onOperationButton(opInfo); }, (_b = (_a = opInfo.args) === null || _a === void 0 ? void 0 : _a.args) === null || _b === void 0 ? void 0 : _b.bcolor, opInfo.owner, opArgs.void);
                 if (opArgs.void) {
-                    $("button_".concat(opId)).title = _("Operation cannot be executed: No valid targets");
+                    $("button_".concat(opId)).title = this_4.extractError(opInfo, _("Operation cannot be executed"));
                 }
             }
             if (!ordered && !chooseorder && i == 0) {
@@ -6934,6 +6934,17 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if (chooseorder)
             this.addActionButtonColor("button_whatever", _("Whatever"), function () { return _this.remoteUserAction("whatever", {}); }, "orange");
+    };
+    GameXBody.prototype.extractError = function (opInfo, errorPrefix) {
+        var opArgs = opInfo.args;
+        var argsInfo = opArgs.info;
+        for (var key in argsInfo) {
+            var elem = argsInfo[key];
+            if (elem.q != 0) {
+                return errorPrefix + ": " + this.getTokenName("err_" + elem.q);
+            }
+        }
+        return errorPrefix + ": " + _("No valid targets");
     };
     GameXBody.prototype.onOperationButton = function (opInfo, clientState) {
         var _this = this;
