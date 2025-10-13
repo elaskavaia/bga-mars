@@ -12527,6 +12527,14 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   background-size: cover;
 }
 
+.tracker_resCamp {
+  background-image: url("img/colonies/colo_cards_main_bg.jpg");
+  background-position: 0 0;
+  background-size: 14000% auto;
+  background-position-x: 28.5%;
+  background-position-y: 76.8%;
+}
+
 .tracker_m,
 .tracker_s,
 .tracker_gen,
@@ -12770,7 +12778,7 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   display: flex;
   justify-content: center;
   --card-width: 220px;
-  --card-height: calc(var(--card-width)*1.40658174);
+  --card-height: calc(var(--card-width) * 1.40658174);
   align-items: flex-start;
   height: 50px;
   margin-bottom: 0px;
