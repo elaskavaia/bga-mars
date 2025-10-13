@@ -399,6 +399,7 @@ abstract class PGameXBody extends PGameMachine {
             $this->createTokenFromInfo($token, $this->getRulesFor($token, "*"));
         }
         $this->dbSetTokenLocation($token, $loc, 0);
+        $this->debug_dispatch();
     }
     function debug_switchCorp(string $fuzzy_card) {
         if (is_numeric($fuzzy_card)) {
