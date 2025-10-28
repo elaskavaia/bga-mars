@@ -37,7 +37,7 @@ class GameUT extends terraformingmars {
         $this->var_colonies = $colonies;
         $this->adjustedMaterial(true);
         $this->createTokens();
-        $this->gamestate->changeActivePlayer(PCOLOR);
+        $this->gamestate->changeActivePlayer(1);
         $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
         return $this;
     }
@@ -1139,7 +1139,7 @@ final class GameTest extends TestCase {
 
     public function testExtraOcean() {
         $m = $this->game();
-        $m->gamestate->changeActivePlayer(PCOLOR);
+        $m->gamestate->changeActivePlayer($m->getPlayerIdByColor(PCOLOR));
         $color = PCOLOR;
         $m->tokens->setTokenState("tracker_t", -2);
         $m->tokens->setTokenState("tracker_w", 9); // max oceans
@@ -1170,7 +1170,7 @@ final class GameTest extends TestCase {
         // another player plays city on tile with resources, simulate this
         $m->putInEffectPool(PCOLOR, "p");
         $m->triggerEffect(PCOLOR, "place_city", "tile_2_10");
-        $m->gamestate->changeActivePlayer(PCOLOR);
+        $m->gamestate->changeActivePlayer($m->getPlayerIdByColor(PCOLOR));
         // dispatch
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();

@@ -5,13 +5,67 @@ declare(strict_types=1);
 require_once "Operation_discard.php";
 class Operation_sell extends Operation_discard {
     function effect(string $color, int $inc): int {
-        $actual = parent::effect($color, $inc);
-        $this->game->effect_incCount($color, "m", $actual);
-        return $this->getCount(); // all done
+        if ($this->autoSkip()) {
+            return $inc;
+        }
+
+        $card_id = $this->getCheckedArg("target");
+        if (!is_array($card_id)) {
+            $cards_ids = [$card_id];
+            $num = 1;
+        } else {
+            $cards_ids = $card_id;
+            $num = count($cards_ids);
+            if (count($cards_ids) < $this->getMinCount()) {
+                $this->game->userAssertTrue(clienttranslate("Insufficient amount of cards selected"));
+            }
+        }
+
+        if ($num > 0) {
+            $location = null;
+            foreach ($cards_ids as $card_id) {
+                if ($location == null) {
+                    $location = $this->game->tokens->getTokenLocation($card_id);
+                }
+                $this->game->effect_moveCard($color, $card_id, "discard_main", 0, "", ["_private" => true]);
+            }
+        }
+
+        $this->game->notifyWithName(
+            "tokenMovedHidden",
+            clienttranslate('${player_name} discards ${count} card/s'),
+            [
+                "count" => $num,
+                "reason_tr" => $this->getReason(),
+                "place_from" => $location,
+                "location" => "discard_main",
+                "token_type" => "card",
+            ],
+            $this->getPlayerId()
+        );
+
+        $this->game->effect_incCount($color, "m", $num);
+        return $inc; // all done
+    }
+
+    function argPrimary() {
+        $color = $this->color;
+        $keys = array_keys($this->game->tokens->getTokensInLocation("hand_$color"));
+        return $keys;
+    }
+
+    function getPrimaryArgType() {
+        if ($this->getCount() > 1) {
+            return "token_array";
+        }
+        return "token";
     }
 
     function getPrompt() {
-        if ($this->getCount() > 1) return clienttranslate('${you} must select one or more cards to discard to gain 1 M€ per card');
-        return parent::getPrompt();
+        if ($this->getCount() > 1) {
+            return clienttranslate('${you} must select one or more cards to discard to gain 1 M€ per card');
+        } else {
+            return clienttranslate('${you} must select a card to discard to gain 1 M€');
+        }
     }
 }

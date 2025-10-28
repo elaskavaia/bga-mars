@@ -23,8 +23,11 @@ spl_autoload_register(function ($class_name) {
         case "terraformingmars":
             include "modules/terraformingmars.game.php";
         default:
-
-            include "modules/". $class_name . ".php";
+            if (strpos($class_name, "Operation_") === 0) {
+                include "modules/operations/". $class_name . ".php";
+            } else {
+                include "modules/". $class_name . ".php";
+            }
             break;
     }
 });

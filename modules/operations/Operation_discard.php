@@ -8,60 +8,71 @@ class Operation_discard extends AbsOperation {
             return $inc;
         }
 
-        $card_id = $this->getCheckedArg('target');
-        if (!is_array($card_id)) {
-            $cards_ids = [$card_id];
-            $num = 1;
-        } else {
-            $cards_ids = $card_id;
-            $num = count($cards_ids);
-            if (count($cards_ids) < $this->getMinCount()) {
-                $this->game->userAssertTrue(clienttranslate('Insufficient amount of cards selected'));
-            }
+        $card_id = $this->getCard();
+        if ($card_id) {
+            $location = $this->game->tokens->getTokenLocation($card_id);
+            $this->game->effect_moveCard($color, $card_id, "discard_main", 0, "", ["_private" => true]);
+
+            $this->game->notifyWithName(
+                "tokenMovedHidden",
+                clienttranslate('${player_name} discards a card'),
+                [
+                    "count" => 1,
+                    "reason_tr" => $this->getReason(),
+                    "place_from" => $location,
+                    "location" => "discard_main",
+                    "token_type" => "card",
+                ],
+                $this->getPlayerId()
+            );
+
+            return 1;
         }
 
-        if ($num > 0) {
-            $location = null;
-            foreach ($cards_ids as $card_id) {
-                if ($location == null) $location = $this->game->tokens->getTokenLocation($card_id);
-                $this->game->effect_moveCard($color, $card_id, "discard_main", 0, '', ['_private' => true]);
-            }
-        }
-
-        $this->game->notifyWithName(
-            'tokenMovedHidden',
-            clienttranslate('${player_name} discards ${count} card/s'),
-            ['count' => $num, 
-             'reason_tr' => $this->getReason(),
-            'place_from' => $location, 'location' => 'discard_main', 'token_type' => 'card'],
-            $this->getPlayerId()
-        );
-
-        return $num;
+        $card_id = $this->getCheckedArg("target");
+        $this->game->push($color, "discard", $card_id);
+        return 1;
     }
 
-    function canSkipChoice() {
-        return true;
+    function getCard() {
+        return $this->getContext(0);
     }
 
     function argPrimary() {
+        $card = $this->getCard();
+        if ($card) {
+            return [$card];
+        }
         $color = $this->color;
         $keys = array_keys($this->game->tokens->getTokensInLocation("hand_$color"));
         return $keys;
     }
 
+    function requireConfirmation() {
+        return true;
+    }
+
     function getPrimaryArgType() {
-        if ($this->getCount() > 1) return 'token_array';
-        return 'token';
+        return "token";
     }
 
     function noValidTargets(): bool {
         $arg = $this->arg();
-        return count($arg['target']) == 0;
+        return count($arg["target"]) == 0;
     }
 
-    function canFail(){
-        if ($this->isOptional()) return false;
+    function canFail() {
+        if ($this->isOptional()) {
+            return false;
+        }
         return true;
+    }
+
+    function getPrompt() {
+        $card = $this->getCard();
+        if ($card) {
+            return clienttranslate('${you} must confirm that you want to DISCARD');
+        }
+        return clienttranslate('${you} must select a card to discard');
     }
 }
