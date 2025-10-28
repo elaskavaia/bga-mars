@@ -16,7 +16,9 @@ class Operation_cardpre extends AbsOperation {
                         '${player_name} cannot play card ${token_name}, player discrds it and gains compensation (designer ruling)'
                     )
                 );
-                $this->game->effect_incCount($color, "m", 15);
+            }
+            if (count($infos) > 0) {
+                $this->game->effect_incCount($color, "m", 15); // only one time
             }
             return 1; // skip this
         }
