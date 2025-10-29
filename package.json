@@ -11,10 +11,10 @@
     "watch": "npm run watch:ts && npm run watch:scss",
     "build": "npm run build:ts && npm run build:scss && npm run build:material",
     "test": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ phpunit --bootstrap modules/_autoload.php --colors=always modules/tests",
-    "predeploy": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ php8.2  modules/_testpredeploy.php",
-    "build:material": "php8.2 ./misc/other/genmat.php misc/*.csv",
+    "predeploy": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ php8.4  modules/_testpredeploy.php",
+    "build:material": "php8.4 ./misc/other/genmat.php misc/*.csv",
     "remove:colonies": "node ./misc/other/genoptions.js -remove 108",
-    "add:colonies": "php8.2 ./misc/other/genmat.php misc/colo_material.csv && node ./misc/other/genoptions.js",
+    "add:colonies": "php8.4 ./misc/other/genmat.php misc/colo_material.csv && node ./misc/other/genoptions.js",
     "jstest": "TS_NODE_PROJECT=tests/tsconfig.test.json mocha -r ts-node/register tests/**/*.spec.ts",
     "end": "echo The End"
   },

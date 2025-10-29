@@ -30,12 +30,12 @@ class Operation_discard extends AbsOperation {
         }
 
         $card_id = $this->getCheckedArg("target");
-        $this->game->push($color, "discard", $card_id);
+        $this->game->push($color, "discard", ":::$card_id");
         return 1;
     }
 
     function getCard() {
-        return $this->getContext(0);
+        return $this->getContext(3);
     }
 
     function argPrimary() {
