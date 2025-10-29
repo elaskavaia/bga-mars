@@ -1894,6 +1894,14 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyWithName("ack", $message, ["pref_id" => $pref, "pref_value" => $value], $current_player_id);
     }
 
+    function getUserPreference($playerId, int $prefId): int {
+        if (!$this->isRealPlayer($playerId)) {
+            return 0;
+        }
+        $pref = (int) $this->userPreferences->get($playerId, $prefId);
+        return $pref;
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Effects
     ////////////
