@@ -10,7 +10,7 @@
     "watch:scss": "sass --watch  src/css/GameXBody.scss terraformingmars.css",
     "watch": "npm run watch:ts && npm run watch:scss",
     "build": "npm run build:ts && npm run build:scss && npm run build:material",
-    "test": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ phpunit --bootstrap modules/_autoload.php --colors=always modules/tests",
+    "test": "XDEBUG_MODE=off APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ phpunit --display-deprecations --display-warnings  --bootstrap modules/_autoload.php --colors=always modules/tests",
     "predeploy": "APP_GAMEMODULE_PATH=~/git/bga-sharedcode/misc/ php8.4  modules/_testpredeploy.php",
     "build:material": "php8.4 ./misc/other/genmat.php misc/*.csv",
     "remove:colonies": "node ./misc/other/genoptions.js -remove 108",

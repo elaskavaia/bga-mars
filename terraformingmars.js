@@ -7058,7 +7058,7 @@ var GameXBody = /** @class */ (function (_super) {
     };
     // on click hooks
     GameXBody.prototype.onToken_playerTurnChoice = function (tid) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f;
         //debugger;
         if (!tid)
             return;
@@ -7098,6 +7098,10 @@ var GameXBody = /** @class */ (function (_super) {
             this.onToken_playerTurnChoice($(tid).parentNode.id);
         }
         else {
+            var inactive = (_f = (_e = (_d = this.currentOperation.opInfo) === null || _d === void 0 ? void 0 : _d.args) === null || _e === void 0 ? void 0 : _e.info) === null || _f === void 0 ? void 0 : _f[tid];
+            if (inactive && inactive.q != 0) {
+                this.showError(_("Cannot choose this target") + ": " + this.getTokenName("err_" + inactive.q));
+            }
             return false;
         }
         return true;

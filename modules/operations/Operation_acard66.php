@@ -3,24 +3,28 @@
 declare(strict_types=1);
 
 require_once "AbsOperationTile.php";
-
-class Operation_acard66 extends  AbsOperationTile {
+// Land Claim
+class Operation_acard66 extends AbsOperationTile {
     function getTileType(): int {
         return 0;
     }
 
     function checkPlacement($color, $location, $info, $map) {
-        if (isset($info['reserved'])) return MA_ERR_RESERVED;
-        if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        if (isset($info["reserved"])) {
+            return MA_ERR_RESERVED;
+        }
+        if (isset($info["ocean"])) {
+            return MA_ERR_RESERVED;
+        }
         return 0;
     }
 
     function effect(string $owner, int $inc): int {
-        $object = $this->getCheckedArg('target');
+        $object = $this->getCheckedArg("target");
         $this->game->checkColor($owner);
         $player_id = $this->game->getPlayerIdByColor($owner);
         $marker = $this->game->createPlayerMarker($owner);
-        $this->game->dbSetTokenLocation($marker, $object, 0, '', [], $player_id);
+        $this->game->dbSetTokenLocation($marker, $object, 0, "", [], $player_id);
         return $inc;
     }
 
@@ -29,6 +33,6 @@ class Operation_acard66 extends  AbsOperationTile {
     }
 
     protected function getOpName() {
-        return clienttranslate('Claim land');
+        return clienttranslate("Claim land");
     }
 }

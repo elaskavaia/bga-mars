@@ -13,25 +13,29 @@ abstract class AbsOperationTile extends AbsOperation {
         return $this->game->createArgInfo($color, $keys, function ($color, $hex) use ($map) {
             $info = $map[$hex];
             $rc = $this->checkOccupied($info);
-            if ($rc) return $rc;
+            if ($rc) {
+                return $rc;
+            }
             return $this->checkPlacement($color, $hex, $info, $map);
         });
     }
 
     function getPrimaryArgType() {
-        return 'token';
+        return "token";
     }
 
     function arg() {
         $result = parent::arg();
-        $result['object'] = $this->getTileId();
+        $result["object"] = $this->getTileId();
         return $result;
     }
 
     function checkOccupied($info) {
         $color = $this->color;
-        if (array_key_exists('tile', $info)) return MA_ERR_OCCUPIED;
-        $claimer = array_get($info, 'claimed');
+        if (array_key_exists("tile", $info)) {
+            return MA_ERR_OCCUPIED;
+        }
+        $claimer = array_get($info, "claimed");
         if ($claimer && $claimer !== $color) {
             return MA_ERR_RESERVED;
         }
@@ -56,8 +60,10 @@ abstract class AbsOperationTile extends AbsOperation {
             $this->game->tokens->createToken("tile_{$type}_$count");
             $tile = $this->game->tokens->getTokenOfTypeInLocation("tile_{$type}_", null, 0);
         }
-        if (!$tile) throw new BgaSystemException("Cannot find tile of type $type");
-        $this->tile_id = $tile['key'];
+        if (!$tile) {
+            throw new BgaSystemException("Cannot find tile of type $type");
+        }
+        $this->tile_id = $tile["key"];
         //$this->game->prof_point("tileid","end");
         return $this->tile_id;
     }
@@ -74,25 +80,31 @@ abstract class AbsOperationTile extends AbsOperation {
         return $this->game->getAdjecentHexesOfType($what, $towhat, $ownwer);
     }
 
-
     protected function checkAdjRulesPasses($ohex, $color, $rule) {
-        if (!$rule) return true;
+        if (!$rule) {
+            return true;
+        }
         $count = $this->game->evaluateAdj($color, $ohex, $rule);
-        if (!$count) return false;
+        if (!$count) {
+            return false;
+        }
         return true;
     }
 
-
     protected function findReservedAreas($names): array {
         $res = [];
-        if (!$names) return $res;
+        if (!$names) {
+            return $res;
+        }
         $map = $this->getPlanetMap();
-        $names_arr = explode(',', $names);
+        $names_arr = explode(",", $names);
         foreach ($names_arr as $name) {
             $nname = trim($name);
-            if (!$nname) continue;
+            if (!$nname) {
+                continue;
+            }
             foreach ($map as $hex => $hexinfo) {
-                if (array_get($hexinfo, 'name') === $nname) {
+                if (array_get($hexinfo, "name") === $nname) {
                     $res[] = $hex;
                     break;
                 }
@@ -102,37 +114,76 @@ abstract class AbsOperationTile extends AbsOperation {
     }
 
     function checkPlacement($color, $location, $info, $planetmap) {
-        $tile = $this->getStateArg('object');
-        $tt = $this->game->getRulesFor($tile, 'tt');
+        $tile = $this->getStateArg("object");
+        $tt = $this->game->getRulesFor($tile, "tt");
 
         if ($tt == MA_TILE_CITY) {
             // have to do it here because city operation is not only one who can do city
-            return $this->checkCityPlacement($color, $location, $info, $planetmap);
+            $ret = $this->checkCityPlacement($color, $location, $info, $planetmap);
+            if ($ret) {
+                return $ret;
+            }
         }
 
-        if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        if (isset($info["ocean"])) {
+            return MA_ERR_RESERVED;
+        }
+        // now check if can afford the tile "bonus" payment
+        if ($this->checkMandatoryEffect($color, $location)) {
+            return MA_ERR_MANDATORYEFFECT;
+        }
+        return 0;
+    }
+
+    function checkMandatoryEffect($color, $location) {
+        $rules = $this->game->getRulesFor($location, "r");
+        if ($rules) {
+            $op = $this->game->getOperationInstanceFromType("$rules", $color, 1);
+            if ($op->isVoid()) {
+                // its void because of ME payment however if we have oceans adjusted it can compensate
+                // ocean bonus
+                $oceans = $this->getAdjecentHexesOfType($location, MA_TILE_OCEAN);
+                $c = count($oceans);
+                if ($c > 0) {
+                    // not totally cosher but better then before
+                    return MA_OK;
+                }
+                return MA_ERR_MANDATORYEFFECT;
+            }
+        }
         return 0;
     }
 
     function checkCityPlacement($color, $ohex, $info, $map) {
-        if (isset($info['ocean'])) return MA_ERR_RESERVED;
+        if (isset($info["ocean"])) {
+            return MA_ERR_RESERVED;
+        }
         $reservename = $this->getReservedArea();
-        if ($reservename == 'vol') {
+        if ($reservename == "vol") {
             if ($this->game->getMapNumber() != MA_OPTVALUE_MAP_HELLAS) {
-                if (!isset($info['vol'])) return MA_ERR_NOTRESERVED;
-                else  return MA_OK;
+                if (!isset($info["vol"])) {
+                    return MA_ERR_NOTRESERVED;
+                } else {
+                    return MA_OK;
+                }
             }
-            $reservename = '';
+            $reservename = "";
         }
         if (!$reservename) {
-            if (isset($info['reserved'])) return MA_ERR_RESERVED;
-            $others = count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));;
-            if ($others > 0) return MA_ERR_CITYPLACEMENT;
+            if (isset($info["reserved"])) {
+                return MA_ERR_RESERVED;
+            }
+            $others = count($this->getAdjecentHexesOfType($ohex, MA_TILE_CITY));
+            if ($others > 0) {
+                return MA_ERR_CITYPLACEMENT;
+            }
         } else {
             $reshexes = $this->findReservedAreas($reservename);
             if (count($reshexes) == 0) {
                 // if reserved area not on the map - generic rules apply
-                if (isset($info['reserved'])) return MA_ERR_RESERVED;
+                if (isset($info["reserved"])) {
+                    return MA_ERR_RESERVED;
+                }
                 if ($this->checkAdjRulesPasses($ohex, $color, $reservename)) {
                     return MA_OK;
                 }
@@ -148,21 +199,21 @@ abstract class AbsOperationTile extends AbsOperation {
     abstract function getTileType(): int;
 
     function effect_placeTile() {
-        $hex = $this->getCheckedArg('target');
-        $object = $this->getStateArg('object');
+        $hex = $this->getCheckedArg("target");
+        $object = $this->getStateArg("object");
         $owner = $this->getOwner();
 
         $tile = $this->game->effect_placeTile($owner, $object, $hex);
-        $tt = $this->game->getRulesFor($tile, 'tt');
+        $tt = $this->game->getRulesFor($tile, "tt");
 
         if ($tt == MA_TILE_CITY) {
             // the effect triggered here because its not only "city" operation that can place cities
-            $this->game->incTrackerValue($owner, 'city');
-            $this->game->triggerEffect($owner, 'place_city', $tile);
+            $this->game->incTrackerValue($owner, "city");
+            $this->game->triggerEffect($owner, "place_city", $tile);
 
-            if (!$this->game->getRulesFor($hex, 'inspace')) {
-                $this->game->incTrackerValue($owner, 'cityonmars');
-                $this->game->triggerEffect($owner, 'place_cityonmars', $tile);
+            if (!$this->game->getRulesFor($hex, "inspace")) {
+                $this->game->incTrackerValue($owner, "cityonmars");
+                $this->game->triggerEffect($owner, "place_cityonmars", $tile);
             }
         }
 

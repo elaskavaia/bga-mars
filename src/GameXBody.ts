@@ -3344,6 +3344,10 @@ awarded.`);
       // propagate to parent
       this.onToken_playerTurnChoice(($(tid).parentNode as HTMLElement).id);
     } else {
+      const inactive = this.currentOperation.opInfo?.args?.info?.[tid];
+      if (inactive && inactive.q != 0) {
+        this.showError(_("Cannot choose this target") + ": " + this.getTokenName("err_" + inactive.q));
+      }
       return false;
     }
     return true;
