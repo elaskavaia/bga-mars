@@ -140,7 +140,7 @@ abstract class AbsOperationTile extends AbsOperation {
         if ($rules) {
             $op = $this->game->getOperationInstanceFromType("$rules", $color, 1);
             if ($op->isVoid()) {
-                // its void because of ME payment however if we have oceans adjusted it can compensate
+                // its void because of ME payment however if we have oceans adjacent it can compensate
                 // ocean bonus
                 $oceans = $this->getAdjecentHexesOfType($location, MA_TILE_OCEAN);
                 $c = count($oceans);

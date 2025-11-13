@@ -528,8 +528,8 @@
 
 /*card bg ratio : 1.40658174*/
 #ebd-body {
-  --card-width: calc(var(--localsetting_cardsize)*.15vh);
-  --card-height: calc(var(--card-width)*1.40658174);
+  --card-width: calc(var(--localsetting_cardsize) * 0.15vh);
+  --card-height: calc(var(--card-width) * 1.40658174);
 }
 
 .card {
@@ -3811,7 +3811,17 @@
 }
 
 .mcompact .card.card_main_C21 .card_effect {
-  top: 74%;
+  top: 64%;
+}
+.mcompact .card.card_main_C21 .card_effect .card_icono {
+  display: unset;
+}
+.mcompact .card.card_main_C21 .card_effect .card_icono .production_line > * {
+  display: none;
+}
+.mcompact .card.card_main_C21 .card_effect .card_icono .outer_production {
+  background-image: unset;
+  align-items: center;
 }
 
 .mcompact .card.card_main_C22 .card_effect {
