@@ -12537,6 +12537,17 @@ html[lang=ar].mcompact #ebd-body.mobile_portrait .award_label {
   background-size: cover;
 }
 
+.colony {
+  background-image: url("img/colonies/colony.png");
+  background-position: 0 0;
+  background-size: cover;
+}
+
+.card_vp .colony {
+  height: var(--resourcesize);
+  width: var(--resourcesize);
+}
+
 .tracker_resCamp {
   background-image: url("img/colonies/colo_cards_main_bg.jpg");
   background-position: 0 0;

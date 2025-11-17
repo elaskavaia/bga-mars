@@ -12,7 +12,7 @@ class CustomRenders {
     ocean: { classes: "token_img tracker_w" },
     discard: { classes: "token_img cardback", before: "-" },
     draw: { classes: "token_img cardback" },
-    drawdis: { classes: "token_img cardback", before: "+",after: "-"},
+    drawdis: { classes: "token_img cardback", before: "+", after: "-" },
     tile: { classes: "tracker micon tile_%card_number%" },
     tagScience: { classes: "tracker badge tracker_tagScience" },
     tagEnergy: { classes: "tracker badge tracker_tagEnergy" },
@@ -651,6 +651,10 @@ class CustomRenders {
 
   private static customcard_vp_8() {
     return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("w", 0), 1) + '<div class="vp_qty">*</div>';
+  }
+
+  private static customcard_vp_C40() {
+    return '<div class="vp_qty">1/</div>2' + this.parseSingleItemToHTML(this.getParse("colony", 0), 1);
   }
   private static customcard_vp_12() {
     return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("tagJovian", 0), 1);

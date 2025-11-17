@@ -4364,8 +4364,9 @@ $this->token_types = [
   'tags' => 'Jovian',
   'vp' => 'resCard/2',
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.'),
+  'text' => clienttranslate('Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card.'),
   'text_action' => clienttranslate('Spend 1 titanium to add 2 floaters here.'),
+  'text_vp' => clienttranslate('1 VP per 2 floaters here.'),
     'holds' => 'Floater',
 ],
  'card_main_C19' => [  //
@@ -4694,7 +4695,8 @@ $this->token_types = [
   'tags' => 'Space',
   'vp' => 'all_colony/2',
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1 VP per 2 colonies in play.'),
+  'text' => clienttranslate('Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet.'),
+  'text_vp' => clienttranslate('1 VP per 2 colonies in play.'),
 ],
  'card_main_C41' => [  //
   'location' => 'deck_main',
@@ -4726,8 +4728,9 @@ $this->token_types = [
   'tags' => 'Animal',
   'vp' => 'resCard/2',
   'deck' => 'Colonies',
-  'text' => clienttranslate('Requires -6°C or warmer. Decrease any plant production 1 step. 1 VP per 2 animals on this card.'),
+  'text' => clienttranslate('Requires -6°C or warmer. Decrease any plant production 1 step.'),
   'text_action' => clienttranslate('Add 1 animal to this card.'),
+  'text_vp' => clienttranslate('1 VP per 2 animals on this card.'),
     'holds' => 'Animal',
 ],
  'card_main_C43' => [  //

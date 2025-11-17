@@ -3060,6 +3060,9 @@ var CustomRenders = /** @class */ (function () {
     CustomRenders.customcard_vp_8 = function () {
         return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("w", 0), 1) + '<div class="vp_qty">*</div>';
     };
+    CustomRenders.customcard_vp_C40 = function () {
+        return '<div class="vp_qty">1/</div>2' + this.parseSingleItemToHTML(this.getParse("colony", 0), 1);
+    };
     CustomRenders.customcard_vp_12 = function () {
         return '<div class="vp_qty">1/</div>' + this.parseSingleItemToHTML(this.getParse("tagJovian", 0), 1);
     };

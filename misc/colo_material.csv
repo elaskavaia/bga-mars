@@ -25,7 +25,7 @@ C14|Heavy Taxation|1|2pm,4m|||3|tagEarth>=2|Earth|-1|Colonies|Requires 2 Earth t
 C15|Ice Moon Colony|1|colony+w|||23||Space|0|Colonies|Place 1 colony and 1 ocean tile.||||
 C16|Impactor Swarm|3|2np_Any,12h|||11|tagJovian>=2|Space Event|0|Colonies|Requries 2 Jovian tags. Gain 12 heat. Remove up to 2 plants from any player.||||
 C17|Interplanetary Colony Ship|3|colony|||12||Space Earth Event|0|Colonies|Place a colony.||||
-C18|Jovian Lanterns|2|2ores(Floater),tr|nu:2res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. 1 VP per 2 floaters here.|Spend 1 titanium to add 2 floaters here.|||  'holds' => 'Floater'
+C18|Jovian Lanterns|2|2ores(Floater),tr|nu:2res||20|tagJovian>=1|Jovian|resCard/2|Colonies|Requires 1 Jovian tag. Increase your TR 1 step. Add 2 floaters to ANY card. |Spend 1 titanium to add 2 floaters here.||1 VP per 2 floaters here.|  'holds' => 'Floater'
 C19|Jupiter Floating Station|2||ores(Floater,Jovian)/(counter(resCard,null,4):m)||9|tagScience>=3|Jovian|1|Colonies|Requires 3 science tags.|Add 1 floater to a JOVIAN CARD, or gain 1 M€ for every floater here (Max 4).|||  'holds' => 'Floater'
 C20|Luna Governor|1|2pm|||4|tagEarth>=3|Earth Earth|0|Colonies|Requires 3 Earch tags. Increase your M€ production 2 steps.||||
 C21|Lunar Exports|1|5pm/2pp|||19||Space Earth|0|Colonies|Increase your plant production 2 steps, or increase your M€ production 5 steps.||||
@@ -47,9 +47,9 @@ C36|Sky Docks|2|tradefleet||onPay_card:m|18|tagEarth>=2|Space Earth|2|Colonies|R
 C37|Solar Probe|3|counter('(tagScience+1)/3'):draw|||9||Science Space Event|1|Colonies|Draw 1 card for every 3 science tags you have, including this.||||
 C38|Solar Reflectors|1|5ph|||23||Space|0|Colonies|Increase your heat production 5 steps.||||
 C39|Space Port|1|1npe,city,tradefleet,4pm|||22|colony>=1|Building City|0|Colonies|Requires 1 colony. Gain 1 Trade Fleet. Place a city tile. Decrease your energy production 1 step, and increase your M€ production 4 steps.||||
-C40|Space Port Colony|1|colony(double),tradefleet|||27|colony>=1|Space|all_colony/2|Colonies|Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. 1 VP per 2 colonies in play.||||
+C40|Space Port Colony|1|colony(double),tradefleet|||27|colony>=1|Space|all_colony/2|Colonies|Requires 1 colony. Place a colony. MAY BE PLACED ON A COLONY TILE WHERE YOU ALREADY HAVE A COLONY. Gain 1 Trade Fleet. |||1 VP per 2 colonies in play.|
 C41|Spin-Off Department|2|2pm||play_card:(counter('cost>=20'):draw):that|10||Building|0|Colonies|Increase your M€ production 2 steps.||When playing a card with a basic cost of 20 M€ or more, draw a card||
-C42|Sub-Zero Salt Fish|2|1npp_Any|res||5|t>=-6|Animal|resCard/2|Colonies|Requires -6°C or warmer. Decrease any plant production 1 step. 1 VP per 2 animals on this card.|Add 1 animal to this card.|||  'holds' => 'Animal'
+C42|Sub-Zero Salt Fish|2|1npp_Any|res||5|t>=-6|Animal|resCard/2|Colonies|Requires -6°C or warmer. Decrease any plant production 1 step. |Add 1 animal to this card.||1 VP per 2 animals on this card.|  'holds' => 'Animal'
 C43|Titan Air-Scrapping|2||(nu:2res)/(2nres:tr)||21||Jovian|2|Colonies||Spend 1 titanium to add 2 floaters to this card, or spend 2 floaters here to increase your TR 1 step.|||  'holds' => 'Floater'
 C44|Titan Floating Launch-Pad|2|2ores(Floater,Jovian)|ores(Floater,Jovian)/(nres:trade(free))||18||Jovian|1|Colonies|Add 2 foaters to ANY JOVIAN CARD.|Add 1 floater to ANY JOVIAN CARD, or spend 1 floater here to trade for free|||  'holds' => 'Floater'
 C45|Titan Shuttles|2||(2ores(Floater,Jovian))/(counter(resCard,1):(nres,u))||23||Space Jovian|1|Colonies||Add 2 floaters to ANY JOVIAN CARD, or spend any number of floaters here to gain the same number of titanium.|||  'holds' => 'Floater'
