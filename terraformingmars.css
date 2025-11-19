@@ -66,6 +66,10 @@
   width: calc(100% - 10px) !important;
 }
 
+#page-title {
+  display: block !important;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1) !important;
