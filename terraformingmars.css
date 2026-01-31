@@ -7773,15 +7773,19 @@
 }
 
 .roundedbox.player-board.spectator-mode * {
-  background-color: #9E9E9E;
+  background-color: #9e9e9e;
 }
 
 .player-board {
-  background-color: #9E9E9E;
+  background-color: #9e9e9e;
 }
 
 .player-board.roundedboxdisabled {
   background-color: rgba(134, 134, 134, 0.831372549);
+}
+
+#player_board_config {
+  grid-column: 1/-1;
 }
 
 .mcompact .player_area {

@@ -13,47 +13,38 @@ abstract class AbsOperation {
     protected ?array $user_args; // data sent by user during action
 
     public function __construct(string $type, array $opinfo, PGameXBody $game) {
-        $this->mnemonic =  stripslashes($type);
+        $this->mnemonic = stripslashes($type);
         $this->game = $game;
         $this->argresult = null;
         $this->user_args = null;
-        $this->op_info =  $opinfo;
-        $owner =  $opinfo["owner"];
-        $this->color =  is_string($owner) ? $owner  : '0';
-        $this->params =  null;
-    }
-
-    /**
-     * Copy of translation function for conviniene, this can only be user for error message in exceptions
-     */
-    function _($str) {
-        return $this->game->_($str);
+        $this->op_info = $opinfo;
+        $owner = $opinfo["owner"];
+        $this->color = is_string($owner) ? $owner : "0";
+        $this->params = null;
     }
 
     // --------------------- GETTERS AND SETTERS
 
-
     function rules() {
-        return $this->game->getOperationRules($this->mnemonic, '*', []);
+        return $this->game->getOperationRules($this->mnemonic, "*", []);
     }
 
-    function params(string $default = '') {
+    function params(string $default = "") {
         return $this->params ?? $default;
     }
 
-    function getParam(int $index = 0, string $default = '') {
-        $params = $this->params ?? '';
+    function getParam(int $index = 0, string $default = "") {
+        $params = $this->params ?? "";
         $pargs = explode(",", $params);
         return array_get($pargs, $index, $default);
     }
-
 
     public function getMnemonic() {
         return $this->mnemonic;
     }
 
-    protected function  getOwner(): string {
-        return  $this->color;
+    protected function getOwner(): string {
+        return $this->color;
     }
 
     protected function getPlayerNo() {
@@ -70,23 +61,27 @@ abstract class AbsOperation {
     }
 
     protected function getContext($index = 0) {
-        $data = $this->op_info['data'] ?? '';
-        if (!$data) return $data;
-        $split = explode(':', $data);
-        return array_get($split, $index, ''); // context of effect
+        $data = $this->op_info["data"] ?? "";
+        if (!$data) {
+            return $data;
+        }
+        $split = explode(":", $data);
+        return array_get($split, $index, ""); // context of effect
     }
 
     protected function getMinCount(): int {
-        return (int) ($this->op_info['mcount'] ?? $this->getCount());
+        return (int) ($this->op_info["mcount"] ?? $this->getCount());
     }
 
     protected function getCount(): int {
-        $count =  (int) ($this->op_info['count'] ?? 1);
+        $count = (int) ($this->op_info["count"] ?? 1);
         return $count;
     }
 
     function isOptional() {
-        if ($this->getMinCount() == 0)  return true;
+        if ($this->getMinCount() == 0) {
+            return true;
+        }
         return false;
     }
 
@@ -98,7 +93,6 @@ abstract class AbsOperation {
         $this->params = $params;
     }
 
-
     // ---------------------- BEHAVIOR MODIFIERS
 
     function isFullyAutomated() {
@@ -109,15 +103,20 @@ abstract class AbsOperation {
      * When OR choice and action cannot be done it can be skipped, sometime its questionable so operation can opt-out from this
      */
     function canSkipChoice() {
-        if ($this->noValidTargets()) return true;
-        if ($this->isOptional()) return false;
+        if ($this->noValidTargets()) {
+            return true;
+        }
+        if ($this->isOptional()) {
+            return false;
+        }
         return $this->isVoid();
     }
 
     function requireConfirmation() {
         $rules = $this->rules();
-        if (isset($rules['ack']))
+        if (isset($rules["ack"])) {
             return true;
+        }
 
         return false;
     }
@@ -150,28 +149,32 @@ Reason: tile placement may draw cards (information)
 
     */
 
-    /** 
-     * Resolve order 
+    /**
+     * Resolve order
      */
 
     public function order() {
         $rules = $this->rules();
-        $undo = isset($rules['undo']); // no undo actually
+        $undo = isset($rules["undo"]); // no undo actually
         $res = 1;
-        if ($undo) $res += MA_ORDER_NOUNDO;
-        else if (!$this->canFail()) {
-            if (!$this->isFullyAutomated()) $res += MA_ORDER_AUTO;
+        if ($undo) {
+            $res += MA_ORDER_NOUNDO;
+        } elseif (!$this->canFail()) {
+            if (!$this->isFullyAutomated()) {
+                $res += MA_ORDER_AUTO;
+            }
             $res += MA_ORDER_FAIL;
-        } else return $res;
-
-
+        } else {
+            return $res;
+        }
 
         return $res;
     }
 
-
     function canFail() {
-        if ($this->getPrimaryArgType()) return true;
+        if ($this->getPrimaryArgType()) {
+            return true;
+        }
         return false;
     }
 
@@ -182,36 +185,50 @@ Reason: tile placement may draw cards (information)
         return false;
     }
 
-
     function canResolveAutomatically() {
-        if ($this->isOptional() && $this->noValidTargets()) return true;
-        if ($this->requireConfirmation()) return false;
-        if ($this->isOptional()) return false;
-        if ($this->getMinCount() != $this->getCount()) return false;
-        if ($this->isFullyAutomated()) return true;
-        if ($this->isOneChoice()) return true; // can be perf for prompt
+        if ($this->isOptional() && $this->noValidTargets()) {
+            return true;
+        }
+        if ($this->requireConfirmation()) {
+            return false;
+        }
+        if ($this->isOptional()) {
+            return false;
+        }
+        if ($this->getMinCount() != $this->getCount()) {
+            return false;
+        }
+        if ($this->isFullyAutomated()) {
+            return true;
+        }
+        if ($this->isOneChoice()) {
+            return true;
+        } // can be perf for prompt
         return false;
     }
-
 
     /** Operation is void is it has no valid target, however optional operation is never void because it can be skipped */
     function isVoid(): bool {
-        if ($this->isOptional()) return false;
-        if ($this->noValidTargets()) return true;
+        if ($this->isOptional()) {
+            return false;
+        }
+        if ($this->noValidTargets()) {
+            return true;
+        }
         return false;
     }
 
-
     function noValidTargets(): bool {
-        if (!$this->getPrimaryArgType()) return false;
+        if (!$this->getPrimaryArgType()) {
+            return false;
+        }
         $arg = $this->arg();
-        return count($arg['info']) > 0 && count($arg['target']) == 0;
+        return count($arg["info"]) > 0 && count($arg["target"]) == 0;
     }
 
-
     private function isOneChoice(): bool {
-        $result  = $this->arg();
-        return count($result['target']) == 1;
+        $result = $this->arg();
+        return count($result["target"]) == 1;
     }
 
     // --------------------- CLIENT VISUALIZATON
@@ -222,8 +239,8 @@ Reason: tile placement may draw cards (information)
     protected function getVisargs() {
         return [
             "name" => $this->getOpName(),
-            'count' => $this->getCount(),
-            'i18n' => ['name']
+            "count" => $this->getCount(),
+            "i18n" => ["name"],
         ];
     }
 
@@ -232,9 +249,10 @@ Reason: tile placement may draw cards (information)
      */
     abstract function getPrimaryArgType();
 
-
     protected function getButtonName() {
-        if ($this->getCount() == 1) return '${name}';
+        if ($this->getCount() == 1) {
+            return '${name}';
+        }
         return clienttranslate('${name} x ${count}');
     }
 
@@ -244,17 +262,18 @@ Reason: tile placement may draw cards (information)
 
     protected function getOpName() {
         $rules = $this->rules();
-        if ($rules) return $rules['name'];
+        if ($rules) {
+            return $rules["name"];
+        }
         return $this->mnemonic;
     }
 
     protected function getPrompt() {
         $rules = $this->rules();
-        return  array_get($rules, 'prompt') ?? clienttranslate('${you} must confirm');
+        return array_get($rules, "prompt") ?? clienttranslate('${you} must confirm');
     }
 
     // --------------------- PLAYER INPUT
-
 
     function arg() {
         if ($this->argresult) {
@@ -264,7 +283,7 @@ Reason: tile placement may draw cards (information)
         $this->argresult = &$result;
         $result["ttype"] = $this->getPrimaryArgType(); // type of parameter to collect, default is token, can be player or someting else i.e. number
         $result["info"] = $this->argPrimaryDetails(); // detals map of primary param with explanation why it cannot be done, and extra stuff
-        $result['target'] = $this->argPrimary(); // primary list of parameter to choose from in case of emum param (such as token)
+        $result["target"] = $this->argPrimary(); // primary list of parameter to choose from in case of emum param (such as token)
         $isvoid = $this->isVoid();
         if ($isvoid) {
             $result["void"] = $isvoid; // if action requires params but cannot be perform operation is void, depends on engine it either deail breaker or skip
@@ -273,7 +292,9 @@ Reason: tile placement may draw cards (information)
         $result["button"] = $this->getButtonName();
         $result["args"] = $this->getVisargs();
         $reason = $this->getReason();
-        if ($reason) $result["reason"] = $reason;
+        if ($reason) {
+            $result["reason"] = $reason;
+        }
         if ($this->isOptional()) {
             $result["skipname"] = $this->getSkipButtonName();
             $result["nvt"] = $this->noValidTargets();
@@ -301,7 +322,9 @@ Reason: tile placement may draw cards (information)
     function getTargetList(array $details) {
         $res = [];
         foreach ($details as $target => $info) {
-            if ($info['q'] == 0)  $res[] = $target;
+            if ($info["q"] == 0) {
+                $res[] = $target;
+            }
         }
         return $res;
     }
@@ -316,7 +339,9 @@ Reason: tile placement may draw cards (information)
         }
         if ($args && array_key_exists($key, $args)) {
             $target = $args[$key];
-            if ($target === $possible_targets) return $possible_targets;
+            if ($target === $possible_targets) {
+                return $possible_targets;
+            }
             if (is_array($target)) {
                 $multi = $target;
                 $res = [];
@@ -331,12 +356,19 @@ Reason: tile placement may draw cards (information)
                 $this->game->systemAssertTrue("Unauthorized argument $key", $index !== false, "Unchecked $key " . toJson($target));
                 return $possible_targets[$index];
             }
-        } else if ($this->isOneChoice()) {
-            if (is_array($possible_targets)) return array_shift($possible_targets);
+        } elseif ($this->isOneChoice()) {
+            if (is_array($possible_targets)) {
+                return array_shift($possible_targets);
+            }
             return $possible_targets;
         } else {
-            if ($strict)
-                $this->game->userAssertTrue(totranslate("Operation is not allowed by the rules"), false, "Missing user args $key for $type " . toJson($args));
+            if ($strict) {
+                $this->game->userAssertTrue(
+                    totranslate("Operation is not allowed by the rules"),
+                    false,
+                    "Missing user args $key for $type " . toJson($args)
+                );
+            }
             return $def;
         }
     }
@@ -358,26 +390,28 @@ Reason: tile placement may draw cards (information)
 
     function getUserCount(): int {
         $userCount = array_get($this->user_args, "count", null);
-        if ($userCount !== null) return (int) $userCount;
-        return  (int) ($this->op_info["count"] ?? 1);
+        if ($userCount !== null) {
+            return (int) $userCount;
+        }
+        return (int) ($this->op_info["count"] ?? 1);
     }
-
 
     // --------------------- RESOLVING
     /**
      * This is user call, validate all parameters
      */
     function action_resolve(array $args = []): int {
-        $this->user_args =  $args;
+        $this->user_args = $args;
         // the actual acting player
-        $actor =  $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
+        $actor = $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
         $owner = $this->color;
         if ($owner != $actor) {
-            if (!$owner)
+            if (!$owner) {
                 $owner = $actor;
+            }
         }
         $this->argresult = null; // XXX not sure
-        $this->color =  $owner;
+        $this->color = $owner;
         $count = $this->getUserCount();
         $this->checkVoid();
         return $this->effect($owner, $count, $args);
@@ -390,21 +424,23 @@ Reason: tile placement may draw cards (information)
 
     public function checkIntegritySingleton() {
         $c = $this->getUserCount();
-        if ($c === null) $c = $this->getCount();
-        if ($c != 1)
+        if ($c === null) {
+            $c = $this->getCount();
+        }
+        if ($c != 1) {
             throw new feException("Cannot use counter $c for this operation " . $this->mnemonic);
+        }
         return true;
     }
-
 
     function checkVoid() {
         if ($this->isVoid()) {
             $op = $this->mnemonic;
-            $usertarget = $args['target'] ?? '';
-            $this->game->userAssertTrue(totranslate("This move is not allowed by the rules"),  $usertarget, "Operation $op");
-            $info = $this->arg()['target'];
+            $usertarget = $args["target"] ?? "";
+            $this->game->userAssertTrue(totranslate("This move is not allowed by the rules"), $usertarget, "Operation $op");
+            $info = $this->arg()["target"];
             $infotarget = array_get($info, $usertarget);
-            $err = $infotarget['q'];
+            $err = $infotarget["q"];
             $this->game->userAssertTrue("Operation cannot be executed, err code $err"); /// XXX proper strings
         }
     }
@@ -413,9 +449,13 @@ Reason: tile placement may draw cards (information)
         if ($this->isOptional()) {
             if ($this->noValidTargets()) {
                 // skip
-                $this->game->notifyMessage(clienttranslate('${player_name} skips effect ${name}: no valid targets'), [
-                    "name" => $this->getOpName()
-                ], $this->getPlayerId());
+                $this->game->notifyMessage(
+                    clienttranslate('${player_name} skips effect ${name}: no valid targets'),
+                    [
+                        "name" => $this->getOpName(),
+                    ],
+                    $this->getPlayerId()
+                );
                 return true;
             }
         }
@@ -424,7 +464,9 @@ Reason: tile placement may draw cards (information)
 
     function auto(string $owner, int &$count): bool {
         $this->user_args = null;
-        if (!$this->canResolveAutomatically()) return false; // cannot resolve automatically
+        if (!$this->canResolveAutomatically()) {
+            return false;
+        } // cannot resolve automatically
         if ($this->autoSkip()) {
             return true;
         }
@@ -442,12 +484,14 @@ Reason: tile placement may draw cards (information)
     }
 
     function getReason() {
-        $data = $this->op_info['data'] ?? '';
-        if (!$data) return "";
+        $data = $this->op_info["data"] ?? "";
+        if (!$data) {
+            return "";
+        }
         return $this->game->getReason($data);
     }
 
-    function getData(string $def = '') {
-        return $this->op_info['data'] ?? $def;
+    function getData(string $def = "") {
+        return $this->op_info["data"] ?? $def;
     }
 }

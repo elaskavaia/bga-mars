@@ -9,9 +9,11 @@ spl_autoload_register(function ($class_name) {
             break;
         case "APP_GameClass":
         case "APP_Object":
+        case "BgaUserException":
+        case "feException":
             //var_dump($class_name);
             //var_dump(APP_GAMEMODULE_PATH);
-            include APP_GAMEMODULE_PATH . "/module/table/table.game.php";
+            require_once APP_GAMEMODULE_PATH . "/module/table/table.game.php";
             break;
         case "PHPUnit\\Framework\\TestCase":
             if (FAKE_PHPUNIT) {
@@ -20,13 +22,18 @@ spl_autoload_register(function ($class_name) {
             }
             include $class_name . ".php";
             break;
+        case "Deck":
+            //var_dump($class_name);
+            //var_dump(APP_GAMEMODULE_PATH);
+            include APP_GAMEMODULE_PATH . "/module/common/deck.game.php";
+            return;
         case "terraformingmars":
             include "modules/terraformingmars.game.php";
         default:
             if (strpos($class_name, "Operation_") === 0) {
-                include "modules/operations/". $class_name . ".php";
+                include "modules/operations/" . $class_name . ".php";
             } else {
-                include "modules/". $class_name . ".php";
+                include "modules/" . $class_name . ".php";
             }
             break;
     }

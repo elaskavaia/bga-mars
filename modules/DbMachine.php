@@ -50,10 +50,6 @@ class DbMachine extends APP_GameClass {
         $this->pool = $pool;
     }
 
-    function _($text) {
-        return $this->game->_($text);
-    }
-
     function getTableFields() {
         return ["id", "rank", "type", "owner", "count", "mcount", "flags", "parent", "data", "pool"];
     }
@@ -462,7 +458,11 @@ class DbMachine extends APP_GameClass {
             $this->DbQuery("$set rank = rank - $top + 1 WHERE rank >= $top");
         }
     }
-
+    function compact() {
+        $table = $this->table;
+        $sql = "DELETE from $table WHERE rank < 0";
+        $this->DbQuery($sql);
+    }
     /**
      * Remove operations (its not really removed from db, but rank set to -1)
      */
@@ -482,7 +482,7 @@ class DbMachine extends APP_GameClass {
 
     function drop($list, $validate = true) {
         if ($validate && !$this->validateOptional($list)) {
-            throw new BgaUserException(self::_("Cannot decline mandatory action"));
+            throw new BgaUserException(clienttranslate("Cannot decline mandatory action"));
         }
         $this->hide($list);
     }
@@ -514,7 +514,7 @@ class DbMachine extends APP_GameClass {
             $id = $op["id"];
             if ($op["count"] != -1) {
                 if ($validate && $op["count"] < $inc) {
-                    throw new BgaUserException($this->_("Insufficient count"));
+                    throw new BgaUserException(clienttranslate("Insufficient count"));
                 }
                 $this->DbSetField("count", max($op["count"] - $inc, 0), $id);
             }

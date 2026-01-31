@@ -13,13 +13,13 @@ class Operation_research extends AbsOperation {
         $players = $this->game->loadPlayersBasicInfos();
 
         if ($this->game->isSolo() && $this->game->isEndOfGameAchived()) {
-            $this->game->notifyWithName('message_warning',clienttranslate('This is a last generation'));
+            $this->game->notifyWithName("message_warning", clienttranslate("This is a last generation"));
         }
 
         foreach ($players as $player_id => $player) {
             $color = $player["player_color"];
             // unpass
-            $this->game->dbSetTokenState("tracker_passed_{$color}", 0, '');
+            $this->game->dbSetTokenState("tracker_passed_{$color}", 0, "");
             // untap
             $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card", "tableau_{$color}"));
             foreach ($keys as $cardid) {
@@ -27,7 +27,7 @@ class Operation_research extends AbsOperation {
             }
             if ($this->game->isZombiePlayer($player_id)) {
                 // zombie auto-pass
-                $this->game->dbSetTokenState("tracker_passed_{$color}", 1, '');
+                $this->game->dbSetTokenState("tracker_passed_{$color}", 1, "");
             }
         }
         $this->game->effect_queueMultiDraw(4);
@@ -36,9 +36,10 @@ class Operation_research extends AbsOperation {
         $this->game->systemAssertTrue("bom p=$player_id c=$c", $this->game->isRealPlayer($player_id));
         $this->game->queuePlayersTurn($player_id);
         $this->game->undoSavepointWithLabel(clienttranslate("research"), MA_UNDO_BARRIER);
+        $this->game->machine->compact();
     }
 
     function getPrimaryArgType() {
-        return '';
+        return "";
     }
 }

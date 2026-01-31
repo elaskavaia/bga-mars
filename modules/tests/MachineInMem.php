@@ -11,11 +11,9 @@ class MachineInMem extends DbMachine {
     function __construct($game = null, $table = "machine", $pool = "main", &$xtable_ref = null) {
         parent::__construct($game, $table, $pool);
         $this->xtable = [];
-        if ($xtable_ref != null) $this->xtable = &$xtable_ref;
-    }
-
-    function _($text) {
-        return $text;
+        if ($xtable_ref != null) {
+            $this->xtable = &$xtable_ref;
+        }
     }
 
     function escapeStringForDB($string) {
@@ -26,7 +24,7 @@ class MachineInMem extends DbMachine {
         $extrime = $getMax ? 0 : PHP_INT_MAX;
         foreach ($this->xtable as $row) {
             $rank = $row["rank"];
-            if (($owner === null || $row["owner"] === $owner) && ($pool === null ||  $row["pool"] === $pool)) {
+            if (($owner === null || $row["owner"] === $owner) && ($pool === null || $row["pool"] === $pool)) {
                 if ($rank > 0) {
                     if ($getMax) {
                         if ($rank > $extrime) {
@@ -55,14 +53,14 @@ class MachineInMem extends DbMachine {
 
         $arr = $this->xtable;
         return array_filter($arr, function ($elem) use ($rank, $owner, $pool) {
-            return $elem["rank"] == $rank && ($owner === null || $elem["owner"] == $owner) && ($pool === null ||  $elem["pool"] === $pool);
+            return $elem["rank"] == $rank && ($owner === null || $elem["owner"] == $owner) && ($pool === null || $elem["pool"] === $pool);
         });
     }
 
     function DbGetLastId() {
         return count($this->xtable);
     }
-    static public function DbQuery($sql, $specific_db = null, $bMulti = false) {
+    public static function DbQuery($sql, $specific_db = null, $bMulti = false) {
         //echo "dbquery: $sql\n";
         throw new feException("not implemented query");
     }
@@ -76,7 +74,7 @@ class MachineInMem extends DbMachine {
         }
     }
 
-    static public function getCollectionFromDB($sql, $bSingleValue = false, $low_priority_select = false) {
+    public static function getCollectionFromDB($sql, $bSingleValue = false, $low_priority_select = false) {
         throw new feException("not implemented query");
     }
 
@@ -86,8 +84,9 @@ class MachineInMem extends DbMachine {
                 $row["id"] = $this->DbGetLastId() + 1;
             }
             $row["rank"] = $rank;
-            if (!$row['pool'])
+            if (!$row["pool"]) {
                 throw new feException("");
+            }
             $this->xtable[] = $row;
         }
 
@@ -218,7 +217,9 @@ class MachineInMem extends DbMachine {
         foreach ($this->xtable as &$row) {
             if (array_search($row["id"], $ids) !== false) {
                 $row["count"] = $count;
-                if ($mcount !== null)         $row["mcount"] = $mcount;
+                if ($mcount !== null) {
+                    $row["mcount"] = $mcount;
+                }
             }
         }
     }

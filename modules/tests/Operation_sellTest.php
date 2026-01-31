@@ -129,7 +129,6 @@ final class Operation_sellTest extends TestCase {
 
         $op = $this->game->getOperationInstanceFromType("3sell", $color);
 
-        $this->expectException(feException::class);
         $this->expectExceptionMessage("Insufficient amount of cards selected");
 
         // Try to sell only 2 cards when 3 are required

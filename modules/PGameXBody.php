@@ -2149,7 +2149,7 @@ abstract class PGameXBody extends PGameMachine {
             $operations = $this->machine->getTopOperations(null, "main");
         }
         if (count($operations) == 0) {
-            throw new BgaUserException(self::_("Nothing to undo"));
+            throw new BgaUserException(clienttranslate("Nothing to undo"));
         }
         $op = array_shift($operations);
         $optype = $op["type"];
@@ -2174,7 +2174,7 @@ abstract class PGameXBody extends PGameMachine {
                 $this->machineMultiplayerDistpatchPrivate($player_id);
                 return;
             case "setuppick":
-                throw new BgaUserException(self::_("Nothing to undo"));
+                throw new BgaUserException(clienttranslate("Nothing to undo"));
         }
         $this->systemAssertTrue("Cannot undo $optype");
     }

@@ -156,7 +156,7 @@ abstract class PGameBasic extends Table {
             $move = $this->getGameStateValue("playerturn_nbr");
             $this->warn("User Error during move $move: $message $log|");
         }
-        throw new BgaUserException($this->_($message));
+        throw new BgaUserException($message);
     }
 
     /**
@@ -175,13 +175,6 @@ abstract class PGameBasic extends Table {
         }
         $this->dumpError($log);
         throw new BgaUserException("Internal Error. That should not have happened. Reload page and Retry" . " " . $log);
-    }
-
-    /**
-     * This to make it public
-     */
-    public function _($text): string {
-        return parent::_($text);
     }
 
     function dumpError($log) {

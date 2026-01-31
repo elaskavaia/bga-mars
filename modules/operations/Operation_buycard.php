@@ -2,23 +2,27 @@
 
 declare(strict_types=1);
 
-
 class Operation_buycard extends AbsOperation {
     var $effictiveCost = null; // cached cost
 
     function effect(string $color, int $inc): int {
-        $card_ids = $this->getCheckedArg('target');
+        $card_ids = $this->getCheckedArg("target");
         if (!is_array($card_ids)) {
             $card_ids = [$card_ids];
         }
         $count = count($card_ids);
-        $money = $this->game->getTrackerValue($color, 'm');
+
         $cost = $this->getBuyCost();
         $tcost = $cost * $count;
+        $nomoney = $this->game->isVoidSingle("{$tcost}nm", $color);
+        if ($nomoney) {
+            throw new BgaUserException(clienttranslate("You cannot afford to buy this many cards"));
+        }
+        $money = $this->game->getTrackerValue($color, "m");
         if ($money >= $tcost) {
             // use money if can
             //$this->game->executeImmediately($color,"nm",$cost);
-            $this->game->effect_incCount($color, "m", -$tcost, ['reason_tr' => $this->game->getReason("op_buycard")]); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
+            $this->game->effect_incCount($color, "m", -$tcost, ["reason_tr" => $this->game->getReason("op_buycard")]); // direct pay cannot do execute immediatly it fails for Helion trying to ask user
         } else {
             foreach ($card_ids as $card_id) {
                 $this->game->multiplayerpush($color, "{$cost}nm", "$card_id:a");
@@ -52,38 +56,45 @@ class Operation_buycard extends AbsOperation {
         $keys = array_keys($this->game->tokens->getTokensOfTypeInLocation("card_main", "draw_$color"));
         $hasmoney = !$this->game->isVoidSingle("{$cost}nm", $color);
         $q = MA_ERR_COST;
-        if ($hasmoney) $q = MA_OK;
+        if ($hasmoney) {
+            $q = MA_OK;
+        }
         return $this->game->createArgInfo($color, $keys, function ($color, $tokenId) use ($q) {
-            $info = ['q' => $q]; // cannot buy if have no money
+            $info = ["q" => $q]; // cannot buy if have no money
             $this->game->playability($color, $tokenId, $info);
             return $info;
         });
     }
 
     function getPrimaryArgType() {
-        if ($this->getCount() == 1) return 'token';
-        return 'token_array';
+        if ($this->getCount() == 1) {
+            return "token";
+        }
+        return "token_array";
     }
 
     protected function getSkipButtonName() {
-        if ($this->getCount() == 1) return clienttranslate("Discard Card");
+        if ($this->getCount() == 1) {
+            return clienttranslate("Discard Card");
+        }
         return clienttranslate("Discard All");
     }
 
     function getPrompt() {
-        if ($this->getCount() == 1) return clienttranslate('${you} may buy this card for ${cost} M€ or discard');
+        if ($this->getCount() == 1) {
+            return clienttranslate('${you} may buy this card for ${cost} M€ or discard');
+        }
         return clienttranslate('${you} must select up to ${count} card/s to buy for ${cost} M€ each');
     }
 
     protected function getVisargs() {
         return [
             "name" => $this->getOpName(),
-            'count' => $this->getCount(),
-            'cost' => $this->getBuyCost(),
-            'i18n' => ['name']
+            "count" => $this->getCount(),
+            "cost" => $this->getBuyCost(),
+            "i18n" => ["name"],
         ];
     }
-
 
     function undo() {
         $color = $this->color;
@@ -96,10 +107,9 @@ class Operation_buycard extends AbsOperation {
         $my_operations = $this->game->machine->getTopOperations($color);
         $my_op = array_shift($my_operations);
         $this->game->systemAssertTrue("ERR:Operation_buycard:01", $my_op);
-        $optype = array_get($my_op, 'type', null);
+        $optype = array_get($my_op, "type", null);
 
-
-        if ($optype != 'prediscard') {
+        if ($optype != "prediscard") {
             $this->game->userAssertTrue(totranslate("Nothing to undo"));
         }
 
@@ -109,11 +119,10 @@ class Operation_buycard extends AbsOperation {
 
         foreach ($selected as $card_id => $card) {
             $this->game->effect_moveCard($color, $card_id, "draw_$color", MA_CARD_STATE_NORMAL);
-            $this->game->effect_incCount($color, 'm', $cost, ['message' => '']);
+            $this->game->effect_incCount($color, "m", $cost, ["message" => ""]);
         }
 
-
-        $this->game->multiplayerpush($color, $total . '?buycard');
+        $this->game->multiplayerpush($color, $total . "?buycard");
         $this->game->machine->normalize();
     }
 }

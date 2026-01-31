@@ -173,12 +173,7 @@ class DbMultiUndo {
         return $this->game->getNextMoveId();
     }
     function errorCannotUndo(int $move_id = 0) {
-        if ($move_id == 0) {
-            $message = $this->game->_("Nothing to undo");
-        } else {
-            $message = sprintf($this->game->_("Nothing to undo for move %s"), $move_id);
-        }
-        throw new BgaUserException($message);
+        throw new BgaUserException(clienttranslate("Nothing to undo"));
     }
 
     /** Replace custom undo data of move_id into bga system undo tables */
