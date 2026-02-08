@@ -400,10 +400,6 @@ abstract class PGameBasic extends Table {
         return null;
     }
 
-    public function getCurrentPlayerId($bReturnNullIfNotLogged = false) {
-        return parent::getCurrentPlayerId($bReturnNullIfNotLogged);
-    }
-
     function getActivePlayerColor() {
         return $this->getPlayerColorById($this->getActivePlayerId());
     }
