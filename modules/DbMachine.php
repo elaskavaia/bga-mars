@@ -314,7 +314,7 @@ class DbMachine extends APP_GameClass {
         if ($pool) {
             $andpool = " AND pool = '$pool'";
         }
-        $sql = $this->getSelectQueryLimited("$min", "rank > 0 $andowner $andpool");
+        $sql = $this->getSelectQueryLimited("$min", "`rank` > 0 $andowner $andpool");
         $dbres = self::DbQuery($sql);
         $row = mysql_fetch_assoc($dbres);
         if ($row) {
@@ -396,7 +396,7 @@ class DbMachine extends APP_GameClass {
         if ($owner) {
             $andowner = " AND owner = '$owner'";
         }
-        return $this->getCollectionFromDB($this->getSelectQuery("rank = $rank $andowner"));
+        return $this->getCollectionFromDB($this->getSelectQuery("`rank` = $rank $andowner"));
     }
 
     function getOperations($owner = null, $pool = null) {
@@ -408,7 +408,7 @@ class DbMachine extends APP_GameClass {
         if ($pool) {
             $andpool = " AND pool = '$pool'";
         }
-        return $this->getCollectionFromDB($this->getSelectQuery("rank >= 0 $andowner $andpool ORDER BY rank ASC"));
+        return $this->getCollectionFromDB($this->getSelectQuery("`rank` >= 0 $andowner $andpool ORDER BY `rank` ASC"));
     }
 
     function info($op) {
@@ -448,19 +448,19 @@ class DbMachine extends APP_GameClass {
 
     function interrupt($from = 0, $count = 1) {
         $set = $this->getUpdateQuery();
-        $this->DbQuery("$set rank = rank + $count WHERE rank >= $from");
+        $this->DbQuery("$set `rank` = `rank` + $count WHERE `rank` >= $from");
     }
 
     function normalize() {
         $top = $this->getTopRank();
         if ($top > 1) {
             $set = $this->getUpdateQuery();
-            $this->DbQuery("$set rank = rank - $top + 1 WHERE rank >= $top");
+            $this->DbQuery("$set `rank` = `rank` - $top + 1 WHERE `rank` >= $top");
         }
     }
     function compact() {
         $table = $this->table;
-        $sql = "DELETE from $table WHERE rank < 0";
+        $sql = "DELETE from $table WHERE `rank` < 0";
         $this->DbQuery($sql);
     }
     /**
@@ -469,7 +469,7 @@ class DbMachine extends APP_GameClass {
     function hide($list) {
         $set = $this->getUpdateQuery();
         $ids = $this->getIdsWhereExpr($list);
-        $sql = "$set rank = -1 WHERE $ids";
+        $sql = "$set `rank` = -1 WHERE $ids";
         self::DbQuery($sql);
     }
 
@@ -538,7 +538,7 @@ class DbMachine extends APP_GameClass {
 
     function prune() {
         $set = $this->getUpdateQuery();
-        $sql = "$set rank = -1 WHERE count = 0 AND rank >= 0";
+        $sql = "$set `rank` = -1 WHERE count = 0 AND `rank` >= 0";
         self::DbQuery($sql);
     }
 
@@ -558,12 +558,12 @@ class DbMachine extends APP_GameClass {
     function renice($list, $rank) {
         $set = $this->getUpdateQuery();
         $ids = $this->getIdsWhereExpr($list);
-        $this->DbQuery("$set rank = $rank WHERE $ids");
+        $this->DbQuery("$set `rank` = $rank WHERE $ids");
     }
 
     function clear() {
         $set = $this->getUpdateQuery();
-        $this->DbQuery("$set rank = -1 WHERE 1");
+        $this->DbQuery("$set `rank` = -1 WHERE 1");
     }
 
     public function validateOptional($list) {
@@ -759,7 +759,7 @@ class DbMachine extends APP_GameClass {
     /** Debug functions */
 
     function gettablearr() {
-        $arr = $this->getCollectionFromDB($this->getSelectQuery("rank >= 0"));
+        $arr = $this->getCollectionFromDB($this->getSelectQuery("`rank` >= 0"));
         return array_values($arr);
     }
 
