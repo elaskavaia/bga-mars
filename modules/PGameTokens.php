@@ -311,7 +311,7 @@ abstract class PGameTokens extends PGameBasic {
                 }
                 if ($content_type == "private" && $this->isRealPlayer($player_id)) {
                     // content allow only if location of same color
-                    $color = $this->getPlayerColorById($player_id);
+                    $color = $this->custom_getPlayerColorById($player_id);
                     return endsWith($location, $color);
                 }
                 return false;

@@ -279,7 +279,7 @@ abstract class PGameMachine extends PGameTokens {
 
     function arg_multiplayerChoice($player_id) {
         $res = [];
-        $color = $this->getPlayerColorById($player_id);
+        $color = $this->custom_getPlayerColorById($player_id);
         $operations = $this->getTopOperationsMulti($color);
         $res["player_operations"][$player_id] = $this->arg_operations($operations);
         return $res;
@@ -380,7 +380,7 @@ abstract class PGameMachine extends PGameTokens {
     }
 
     function machineMultiplayerDistpatchPrivate($player_id) {
-        $color = $this->getPlayerColorById($player_id);
+        $color = $this->custom_getPlayerColorById($player_id);
         $n = MA_GAME_DISPATCH_MAX;
         for ($i = 0; $i < $n; $i++) {
             $operations = $this->getTopOperationsMulti($color);

@@ -378,7 +378,7 @@ abstract class PGameBasic extends Table {
      *
      * @return string hex color as in players table for the player with $player_id
      */
-    function getPlayerColorById($player_id) {
+    function custom_getPlayerColorById($player_id) {
         $players = $this->loadPlayersBasicInfos();
         if (!isset($players[$player_id])) {
             return "fffff0";
@@ -401,7 +401,7 @@ abstract class PGameBasic extends Table {
     }
 
     function getActivePlayerColor() {
-        return $this->getPlayerColorById($this->getActivePlayerId());
+        return $this->custom_getPlayerColorById($this->getActivePlayerId());
     }
 
     function isRealPlayer($player_id) {
@@ -760,9 +760,7 @@ abstract class PGameBasic extends Table {
     }
 
     public function isMultiActive() {
-        $gamestate = $this->gamestate;
-        $state = $gamestate->states[$gamestate->state_id()];
-        return $state["type"] == "multipleactiveplayer";
+        return $this->gamestate->isMultiactiveState();
     }
 
     /*

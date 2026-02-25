@@ -69,7 +69,7 @@ class GameUT extends terraformingmars {
     }
 
     protected function getCurrentPlayerColor() {
-        return $this->getPlayerColorById($this->curid);
+        return $this->custom_getPlayerColorById($this->curid);
     }
 
     function _getColors() {

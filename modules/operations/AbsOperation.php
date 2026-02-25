@@ -403,7 +403,7 @@ Reason: tile placement may draw cards (information)
     function action_resolve(array $args = []): int {
         $this->user_args = $args;
         // the actual acting player
-        $actor = $this->game->getPlayerColorById($this->game->getCurrentPlayerId());
+        $actor = $this->game->custom_getPlayerColorById($this->game->getCurrentPlayerId());
         $owner = $this->color;
         if ($owner != $actor) {
             if (!$owner) {
