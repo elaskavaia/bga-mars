@@ -46,6 +46,8 @@ abstract class PGameXBody extends PGameMachine {
             "var_xundo" => 106, // multi step undo
             "var_map" => 107, // map number
             "var_colonies" => 108,
+            "var_prelude_corps" => 109,
+            "var_colonies_corps" => 110,
         ]);
         $this->dbUserPrefs = new DbUserPrefs($this);
         $this->tokens->autoreshuffle = true;
@@ -78,6 +80,20 @@ abstract class PGameXBody extends PGameMachine {
             $this->tokens->shuffle("deck_corp");
             $prelude = $this->isPreludeVariant();
             $colonies = $this->isColoniesVariant();
+            if ($prelude && $this->isPreludeCorpsExcluded()) {
+                foreach ($this->token_types as $id => $info) {
+                    if (startsWith($id, "card_corp_") && array_get($info, "deck") == "Prelude") {
+                        $this->tokens->moveToken($id, "limbo", 0);
+                    }
+                }
+            }
+            if ($colonies && $this->isColoniesCorpsExcluded()) {
+                foreach ($this->token_types as $id => $info) {
+                    if (startsWith($id, "card_corp_") && array_get($info, "deck") == "Colonies") {
+                        $this->tokens->moveToken($id, "limbo", 0);
+                    }
+                }
+            }
             if ($prelude) {
                 $this->tokens->shuffle("deck_prelude");
             }
@@ -170,7 +186,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($this->isSolo()) {
                 $this->setupSoloMap();
                 if ($colonies) {
-                    $color = $this->getPlayerColorById($player_id);
+                    $color = $this->custom_getPlayerColorById($player_id);
                     $this->push($color, "colodiscard");
                     $this->notifyWithName("message", clienttranslate("Colonies solo mode starts with descreased megacredit production"));
                     $this->effect_incProduction($color, "pm", -2);
@@ -327,6 +343,14 @@ abstract class PGameXBody extends PGameMachine {
 
     function isColoniesVariant() {
         return $this->getGameStateValue("var_colonies") == 1;
+    }
+
+    function isPreludeCorpsExcluded() {
+        return $this->getGameStateValue("var_prelude_corps") == 1;
+    }
+
+    function isColoniesCorpsExcluded() {
+        return $this->getGameStateValue("var_colonies_corps") == 1;
     }
 
     function isDraftVariant() {
@@ -559,7 +583,7 @@ abstract class PGameXBody extends PGameMachine {
 
         // $player_id = $this->getFirstPlayer();
         // $this->setCurrentStartingPlayer($player_id);
-        // $this->machine->queue("turn", 1, 1, $this->getPlayerColorById($player_id));
+        // $this->machine->queue("turn", 1, 1, $this->custom_getPlayerColorById($player_id));
 
         // $this->dbIncScoreValueAndNotify($player_id, 5, clienttranslate('${player_name} scores ${inc} point/s'), null, [
         //     'target' => 'tile_3_1', // target of score animation
@@ -716,7 +740,7 @@ abstract class PGameXBody extends PGameMachine {
         if (!$player_id) {
             $player_id = $this->getCurrentPlayerId();
         }
-        $color = $this->getPlayerColorById($player_id);
+        $color = $this->custom_getPlayerColorById($player_id);
         $keys = array_keys($this->tokens->getTokensInLocation("hand_$color"));
         return $this->filterPlayable($color, $keys);
     }
@@ -1483,7 +1507,7 @@ abstract class PGameXBody extends PGameMachine {
             }
 
             if ($this->isPlayerAlive($other_id)) {
-                return $this->getPlayerColorById($other_id);
+                return $this->custom_getPlayerColorById($other_id);
             }
             $player_id = $other_id;
         }
@@ -1504,7 +1528,7 @@ abstract class PGameXBody extends PGameMachine {
             } else {
                 $player_id = $this->getPlayerAfter($player_id);
             }
-            if ($this->isPlayerAlive($player_id) && !$this->isPassed($this->getPlayerColorById($player_id))) {
+            if ($this->isPlayerAlive($player_id) && !$this->isPassed($this->custom_getPlayerColorById($player_id))) {
                 return $player_id;
             }
         }
@@ -1765,7 +1789,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function setCurrentStartingPlayer(int $playerId) {
-        $color = $this->getPlayerColorById($playerId);
+        $color = $this->custom_getPlayerColorById($playerId);
         $this->gamestate->changeActivePlayer($playerId);
         if (!$this->isSolo()) {
             $this->dbSetTokenLocation(
@@ -1867,7 +1891,7 @@ abstract class PGameXBody extends PGameMachine {
             $player_id = $this->getCurrentPlayerId();
             //for now there is only one case so not need to check oprations
             //$operations = $this->getTopOperations();
-            $color = $this->getPlayerColorById($player_id);
+            $color = $this->custom_getPlayerColorById($player_id);
             if (!$color) {
                 return;
             } // not a player
@@ -2531,7 +2555,7 @@ abstract class PGameXBody extends PGameMachine {
         $current_player_id = $this->getCurrentStartingPlayer();
         $player_id = $this->getPlayerAfter($current_player_id);
         $this->setCurrentStartingPlayer($player_id);
-        $this->machine->queue("research", 1, 1, $this->getPlayerColorById($player_id));
+        $this->machine->queue("research", 1, 1, $this->custom_getPlayerColorById($player_id));
         return null;
     }
 
@@ -2581,7 +2605,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->notifyAllPlayers("scoringTable", "", ["data" => $this->scoreAllTable(), "show" => true]);
 
         if ($this->isSolo()) {
-            $color = $this->getPlayerColorById($player_id);
+            $color = $this->custom_getPlayerColorById($player_id);
             $win = false;
             $maxgen = $this->getLastGeneration();
             if ($this->getGameStateValue("var_solo_flavour") == 1) {
@@ -3611,7 +3635,7 @@ abstract class PGameXBody extends PGameMachine {
             if ($optype == "card" && $player_id != $curr) {
                 continue;
             }
-            $oparr = $this->machine->createOperationSimple($optype, $this->getPlayerColorById($player_id));
+            $oparr = $this->machine->createOperationSimple($optype, $this->custom_getPlayerColorById($player_id));
             $oparr["flags"] = MACHINE_OP_RESOLVE_DEFAULT;
             $operations[] = $oparr;
         }
@@ -3631,7 +3655,7 @@ abstract class PGameXBody extends PGameMachine {
     function queuePlayersTurn($player_id, $give_time = true, $inc_turn = true) {
         $this->setNextActivePlayerCustom($player_id, $give_time, $inc_turn);
         $this->setGameStateValue("turn_master", $player_id);
-        $color = $this->getPlayerColorById($player_id);
+        $color = $this->custom_getPlayerColorById($player_id);
         //$this->undoSavepoint();
         $this->machine->queue("turn", 1, 1, $color);
     }
@@ -3747,7 +3771,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function zombieTurn($state, $active_player): void {
-        $owner = $this->getPlayerColorById($active_player);
+        $owner = $this->custom_getPlayerColorById($active_player);
         $tops = $this->machine->getOperations($owner);
 
         if ($tops && count($tops) > 0) {

@@ -106,6 +106,72 @@
     },
     "default": 0
   },
+  "109": {
+    "name": "Prelude: Corporations",
+    "$varname": "prelude_corps",
+    "values": {
+      "0": {
+        "name": "Include",
+        "description": "Include Prelude corporations when Prelude expansion is selected"
+      },
+      "1": {
+        "name": "Exclude",
+        "description": "Do not include Prelude corporations even when Prelude expansion is selected",
+        "tmdisplay": "No Prelude Corporations"
+      }
+    },
+    "displaycondition": [
+      {
+        "type": "otheroption",
+        "id": 104,
+        "value": [1]
+      }
+    ],
+    "level": "additional",
+    "default": 0
+  },
+  "108": {
+    "name": "Expansion: Colonies",
+    "$varname": "colonies",
+    "values": {
+      "0": {
+        "name": "Off",
+        "description": "Not including Colonies"
+      },
+      "1": {
+        "name": "On",
+        "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
+        "tmdisplay": "Colonies",
+        "nobeginner": true
+      }
+    },
+    "default": 0
+  },
+
+  "110": {
+    "name": "Colonies: Corporations",
+    "$varname": "colonies_corps",
+    "values": {
+      "0": {
+        "name": "Include",
+        "description": "Include Colonies corporations when Colonies expansion is selected"
+      },
+      "1": {
+        "name": "Exclude",
+        "description": "Do not include Colonies corporations even when Colonies expansion is selected",
+        "tmdisplay": "No Colonies Corporations"
+      }
+    },
+    "displaycondition": [
+      {
+        "type": "otheroption",
+        "id": 108,
+        "value": [1]
+      }
+    ],
+    "level": "additional",
+    "default": 0
+  },
   "105": {
     "name": "Live Scoring",
     "$varname": "live_scoring",
@@ -173,24 +239,6 @@
         "name": "Random",
         "description": "Random standard size map",
         "tmdisplay": "Random"
-      }
-    },
-    "default": 0
-  },
-  "108": {
-    "name": "Expansion: Colonies",
-    "$varname": "colonies",
-    "values": {
-      "0": {
-        "name": "Off",
-        "description": "Not including Colonies"
-      },
-      "1": {
-        "name": "On",
-        "description": "Colonies variant includes Colonies cards and related material, extra project cards and extra corporations",
-        "tmdisplay": "Colonies",
-        "nobeginner": true,
-        "beta": true
       }
     },
     "default": 0
