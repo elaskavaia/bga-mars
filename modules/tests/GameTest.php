@@ -2086,4 +2086,46 @@ final class GameTest extends TestCase {
         $tagsArr = $game->getTagsMap(PCOLOR);
         $this->assertEquals($tagsArr, ["Science" => 2, "Wild" => 1]);
     }
+
+    public function testAdvancedPassUndo() {
+        $game = $this->game();
+        $color = BCOLOR; // inactive player
+        $player_id = $game->getPlayerIdByColor($color);
+
+        // Simulate Advanced Pass was scheduled (tracker_passed = 2)
+        $game->tokens->setTokenState("tracker_passed_$color", 2);
+        $this->assertEquals(2, $game->tokens->getTokenState("tracker_passed_$color"));
+
+        // Switch current player to BCOLOR (they undo out of turn)
+        $game->curid = $player_id;
+        $game->action_passauto_undo();
+
+        // Verify state was reset
+        $this->assertEquals(0, $game->tokens->getTokenState("tracker_passed_$color"));
+    }
+
+    public function testAdvancedPassUndo_FailsWhenNotScheduled() {
+        $game = $this->game();
+        $color = BCOLOR;
+        $player_id = $game->getPlayerIdByColor($color);
+
+        // tracker_passed is 0 (not scheduled)
+        $game->curid = $player_id;
+
+        $this->expectExceptionMessage("Advanced Pass is not scheduled");
+        $game->action_passauto_undo();
+    }
+
+    public function testAdvancedPassUndo_FailsWhenAlreadyPassed() {
+        $game = $this->game();
+        $color = BCOLOR;
+        $player_id = $game->getPlayerIdByColor($color);
+
+        // tracker_passed = 1 means already passed this generation
+        $game->tokens->setTokenState("tracker_passed_$color", 1);
+        $game->curid = $player_id;
+
+        $this->expectExceptionMessage("Advanced Pass is not scheduled");
+        $game->action_passauto_undo();
+    }
 }

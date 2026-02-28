@@ -1195,7 +1195,7 @@ class GameXBody extends GameTokens {
   remoteUserAction(action: string, args?: any, handler?: (err: any) => void) {
     this.gameStatusCleanup();
     console.log(`sending ${action}`, args);
-    if (action === "passauto") {
+    if (action === "passauto" || action === "passauto_undo") {
       return this.remoteCallWrapperUnchecked(action, {}, handler);
     }
     super.remoteUserAction(action, args, handler);
@@ -3296,7 +3296,11 @@ awarded.`);
     }
     if (args?.ooturn && !this.isSpectator) {
       //add buttons for out of turn actions for all players
-      this.addOutOfTurnOperationButtons(args?.ooturn?.player_operations[this.player_id]);
+      const playerOoturn = args?.ooturn?.player_operations[this.player_id];
+      this.addOutOfTurnOperationButtons(playerOoturn);
+      if (playerOoturn?.autopass_scheduled) {
+        this.addActionButtonColor("button_passauto_undo", _("Undo Advanced Pass"), () => this.remoteUserAction("passauto_undo"), "red");
+      }
     }
     var parent = document.querySelector(".debug_section"); // studio only
     if (parent) this.addActionButton("button_rcss", "Reload CSS", () => reloadCss());

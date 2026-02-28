@@ -3422,7 +3422,12 @@ abstract class PGameXBody extends PGameMachine {
                     $oparr["flags"] = MACHINE_OP_RESOLVE_DEFAULT;
                     $operations[] = $oparr;
                 }
-                $result["ooturn"]["player_operations"][$player_id] = $this->arg_operations($operations);
+                $passState = $this->tokens->getTokenState("tracker_passed_$color");
+                $playerOps = $this->arg_operations($operations);
+                if ($passState == 2) {
+                    $playerOps["autopass_scheduled"] = true;
+                }
+                $result["ooturn"]["player_operations"][$player_id] = $playerOps;
             }
         }
 
@@ -3554,14 +3559,31 @@ abstract class PGameXBody extends PGameMachine {
 
     function action_passauto() {
         // current player can auto-pass out of turn
-        if (!$this->isRealPlayer($this->getCurrentPlayerId())) {
+        $player_id = $this->getCurrentPlayerId();
+        if (!$this->isRealPlayer($player_id)) {
             return;
-        } // weird
-        $color = $this->getCurrentPlayerColor();
+        }
+
+        $color = $this->custom_getPlayerColorById($player_id);
         $opinst = $this->getOperationInstanceFromType("passauto", $color);
         $opinst->action_resolve();
         $this->queueremove($color, "passauto");
-        $this->notifyGameStateArgsChange($this->getCurrentPlayerId());
+        $this->notifyGameStateArgsChange($player_id);
+    }
+
+    function action_passauto_undo() {
+        // current player can undo a previously scheduled auto-pass out of turn
+        $player_id = $this->getCurrentPlayerId();
+        if (!$this->isRealPlayer($player_id)) {
+            return;
+        }
+
+        $color = $this->custom_getPlayerColorById($player_id);
+        $state = $this->tokens->getTokenState("tracker_passed_$color");
+        $this->userAssertTrue(clienttranslate("Advanced Pass is not scheduled"), $state == 2);
+        $this->dbSetTokenState("tracker_passed_$color", 0, "", ["_private" => true], $player_id);
+        $this->notifyWithName("message", clienttranslate("Advanced Pass cancelled"), ["_private" => true], $player_id);
+        $this->notifyGameStateArgsChange($player_id);
     }
 
     function saction_resolve($opinfo, $args): int {

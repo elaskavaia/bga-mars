@@ -47,6 +47,12 @@ class action_terraformingmars extends APP_GameAction {
         self::ajaxResponse();
     }
 
+    public function passauto_undo() {
+        self::setAjaxMode();
+        $this->game->action_passauto_undo();
+        self::ajaxResponse();
+    }
+
     public function userAction() {
         self::setAjaxMode();
         $mainaction = self::getArg("call", AT_alphanum, true);

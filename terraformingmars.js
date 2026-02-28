@@ -5183,7 +5183,7 @@ var GameXBody = /** @class */ (function (_super) {
     GameXBody.prototype.remoteUserAction = function (action, args, handler) {
         this.gameStatusCleanup();
         console.log("sending ".concat(action), args);
-        if (action === "passauto") {
+        if (action === "passauto" || action === "passauto_undo") {
             return this.remoteCallWrapperUnchecked(action, {}, handler);
         }
         _super.prototype.remoteUserAction.call(this, action, args, handler);
@@ -7026,6 +7026,7 @@ var GameXBody = /** @class */ (function (_super) {
         this.onUpdateActionButtons_playerTurnChoice(operations);
     };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
+        var _this = this;
         var _a;
         if (this.isCurrentPlayerActive()) {
             // add undo on every state
@@ -7039,7 +7040,11 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if ((args === null || args === void 0 ? void 0 : args.ooturn) && !this.isSpectator) {
             //add buttons for out of turn actions for all players
-            this.addOutOfTurnOperationButtons((_a = args === null || args === void 0 ? void 0 : args.ooturn) === null || _a === void 0 ? void 0 : _a.player_operations[this.player_id]);
+            var playerOoturn = (_a = args === null || args === void 0 ? void 0 : args.ooturn) === null || _a === void 0 ? void 0 : _a.player_operations[this.player_id];
+            this.addOutOfTurnOperationButtons(playerOoturn);
+            if (playerOoturn === null || playerOoturn === void 0 ? void 0 : playerOoturn.autopass_scheduled) {
+                this.addActionButtonColor("button_passauto_undo", _("Undo Advanced Pass"), function () { return _this.remoteUserAction("passauto_undo"); }, "red");
+            }
         }
         var parent = document.querySelector(".debug_section"); // studio only
         if (parent)

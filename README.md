@@ -44,3 +44,37 @@ terraformingmars.css - generated from scss files
 material.inc.php - content generated from csv files in misc directory (some sections, others manually written)
 
 For the game design see DESIGN.md
+
+## Architecture Overview
+
+### Server-side (PHP)
+- `terraformingmars.game.php` - Main BGA game class, entry point
+- `terraformingmars.action.php` - AJAX action handlers (one method per client action)
+- `modules/PGameXBody.php` - Core game logic: state args, action handlers, operation dispatch
+- `modules/PGameBasic.php` - Base class: player color management, token utilities
+- `modules/operations/Operation_*.php` - Individual operation classes (one per game action type)
+
+### Operation / State Machine
+The game uses a custom operation machine (`DbMachine`) to manage the action queue:
+- Operations are queued in the `machine` DB table and processed one by one
+- Each operation class implements `isVoid()`, `effect()`, `getPrompt()`, etc.
+- `arg_playerTurnChoice()` computes what buttons to show the active player and out-of-turn operations for others
+
+### Token System
+Game state is stored in the `tokens` DB table via `DbTokens`:
+- Tokens represent cards, trackers, resources, etc.
+- Key naming convention: `tracker_<name>_<color>` for per-player trackers
+- `tracker_passed_<color>` states: `0`=not passed, `1`=passed this generation, `2`=auto-pass scheduled (Advanced Pass)
+
+### Out-of-Turn Actions
+Non-active players can perform specific actions during another player's turn:
+- `arg_playerTurnChoice()` builds `ooturn.player_operations[player_id]` for each non-active player
+- Client renders these as extra buttons via `addOutOfTurnOperationButtons()`
+- Currently supported: **Advanced Pass** (`passauto`) and its undo (`passauto_undo`)
+- Out-of-turn actions use `remoteCallWrapperUnchecked` (bypasses active-player check)
+
+### Client-side (TypeScript → JS)
+- `src/GameXBody.ts` - Main game UI logic, compiled to `terraformingmars.js`
+- `src/css/*.scss` - Styles, compiled to `terraformingmars.css`
+- Button rendering: `onUpdateActionButtons_after()` adds undo/cancel/ooturn buttons after state-specific buttons
+- Token state changes are intercepted in `onTokenStateChanged()` for visual updates
