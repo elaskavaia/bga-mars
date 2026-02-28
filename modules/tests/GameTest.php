@@ -28,8 +28,8 @@ class GameUT extends terraformingmars {
         $this->xtable = [];
         $this->machine = new MachineInMem($this, "machine", "main", $this->xtable);
         $this->multimachine = new MachineInMem($this, "machine", "multi", $this->xtable);
-        $this->curid = 1;
         $this->_colors = [PCOLOR, BCOLOR];
+        $this->curid = array_key_first($this->loadPlayersBasicInfos());
     }
 
     function init(int $map = 0, int $colonies = 0) {
@@ -37,7 +37,7 @@ class GameUT extends terraformingmars {
         $this->var_colonies = $colonies;
         $this->adjustedMaterial(true);
         $this->createTokens();
-        $this->gamestate->changeActivePlayer(1);
+        $this->gamestate->changeActivePlayer($this->curid);
         $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
         return $this;
     }
@@ -65,6 +65,10 @@ class GameUT extends terraformingmars {
     public $curid;
 
     public function getCurrentPlayerId($bReturnNullIfNotLogged = false): string|int {
+        return $this->curid;
+    }
+
+    public function getActivePlayerId() {
         return $this->curid;
     }
 
