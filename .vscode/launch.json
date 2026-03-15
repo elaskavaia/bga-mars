@@ -20,9 +20,7 @@
       "runtimeArgs": ["-dxdebug.start_with_request=yes"],
       "env": {
         "XDEBUG_MODE": "debug,develop",
-        "XDEBUG_CONFIG": "client_port=${port} idekey=VSCODE",
-
-        "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/"
+        "XDEBUG_CONFIG": "client_port=${port} idekey=VSCODE"
       }
     },
     {
@@ -35,9 +33,7 @@
       "runtimeArgs": ["-dxdebug.start_with_request=yes"],
       "env": {
         "XDEBUG_MODE": "debug,develop",
-        "XDEBUG_CONFIG": "client_port=${port} idekey=VSCODE",
-
-        "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/"
+        "XDEBUG_CONFIG": "client_port=${port} idekey=VSCODE"
       }
     },
     {
@@ -46,10 +42,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/modules/_testpredeploy.php",
       "cwd": "${workspaceFolder}",
-      "port": 0,
-      "env": {
-        "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/"
-      }
+      "port": 0
     },
     {
       "name": "gen options all",

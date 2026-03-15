@@ -2056,7 +2056,7 @@ namespace Bga\GameFramework {
         /**
          * Save the whole game situation inside an "Undo save point".
          */
-        final public function undoSavepoint(): void
+        public function undoSavepoint(): void
         {
             //
         }

@@ -20,10 +20,18 @@ function runClassTests(object $x) {
     foreach ($methods as $method) {
         if (startsWith($method,"test")) {
             //echo("calling $method\n");
+            $x->_expectedExceptionMessage = null;
             try {
             call_user_func_array([$x, $method], []);
+            if ($x->_expectedExceptionMessage !== null) {
+                echo("FAIL: $method expected exception '{$x->_expectedExceptionMessage}' but none was thrown\n");
+                throw new Error();
+            }
             } catch (Exception $e) {
-               echo("FAIL: $method $e\n");  
+               if ($x->_expectedExceptionMessage !== null && str_contains($e->getMessage(), $x->_expectedExceptionMessage)) {
+                   continue; // expected exception
+               }
+               echo("FAIL: $method $e\n");
                throw new Error();
             }
         }

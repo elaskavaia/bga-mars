@@ -25,7 +25,15 @@ class TestCase {
         if ($exp) $this->fail($string);
     }
 
+    function assertNotEquals($expected, $actual, string $message = ''): void {
+        if ($expected == $actual)  $this->fail($message ? $message : "$expected should not equal $actual");
+    }
+
     function assertInstanceOf($clazz, $obj, string $message = ''): void {
         if (!($obj instanceof $clazz))  $this->fail($message);
+    }
+
+    function expectExceptionMessage(string $message): void {
+        $this->_expectedExceptionMessage = $message;
     }
 }

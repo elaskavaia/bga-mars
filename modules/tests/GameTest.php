@@ -7,8 +7,6 @@ use PHPUnit\Framework\TestCase;
 require_once "terraformingmars.game.php";
 require_once "TokensInMem.php";
 
-class GameStateInMem extends GameState {}
-
 define("PCOLOR", "008000");
 define("BCOLOR", "0000ff");
 
@@ -17,19 +15,18 @@ class GameUT extends terraformingmars {
     var $xtable;
     var $map_number = 0;
     var $var_colonies = 0;
-    var $_colors = [];
     function __construct() {
         include "./material.inc.php";
         include "./states.inc.php";
         parent::__construct();
-        $this->gamestate = new GameStateInMem($machinestates);
+        $this->_setPlayerBasicInfoFromColors([PCOLOR, BCOLOR]);
+        $this->gamestate->_setStates($machinestates);
 
         $this->tokens = new TokensInMem();
         $this->xtable = [];
         $this->machine = new MachineInMem($this, "machine", "main", $this->xtable);
         $this->multimachine = new MachineInMem($this, "machine", "multi", $this->xtable);
-        $this->_colors = [PCOLOR, BCOLOR];
-        $this->curid = array_key_first($this->loadPlayersBasicInfos());
+        $this->_setCurrentPlayerId(array_key_first($this->loadPlayersBasicInfos()));
     }
 
     function init(int $map = 0, int $colonies = 0) {
@@ -37,7 +34,7 @@ class GameUT extends terraformingmars {
         $this->var_colonies = $colonies;
         $this->adjustedMaterial(true);
         $this->createTokens();
-        $this->gamestate->changeActivePlayer($this->curid);
+        $this->gamestate->changeActivePlayer((int)$this->getCurrentPlayerId());
         $this->gamestate->jumpToState(STATE_PLAYER_TURN_CHOICE);
         return $this;
     }
@@ -62,23 +59,7 @@ class GameUT extends terraformingmars {
         return $this->multimachine;
     }
 
-    public $curid;
 
-    public function getCurrentPlayerId($bReturnNullIfNotLogged = false): string|int {
-        return $this->curid;
-    }
-
-    public function getActivePlayerId() {
-        return $this->curid;
-    }
-
-    protected function getCurrentPlayerColor() {
-        return $this->custom_getPlayerColorById($this->curid);
-    }
-
-    function _getColors() {
-        return $this->_colors;
-    }
 
     function fakeUserAction($op, $target = null, bool $no_stack = false) {
         $args = ["op_info" => $op];
@@ -940,22 +921,22 @@ final class GameTest extends TestCase {
 
         $this->assertEquals("multiplayerDispatch", $m->gamestate->state()["name"]);
         $m->st_gameDispatchMultiplayer();
-        $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getPrivateState($p1));
-        $m->curid = $p1;
+        $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getCurrentStateId($p1));
+        $m->_setCurrentPlayerId($p1);
         $top1 = $m->machine->getTopOperations();
         $op = array_shift($top1);
         $m->action_resolve(["ops" => [["op" => $op["id"]]]]);
-        $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
+        $this->assertNotEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getCurrentStateId($p1));
         $p2 = $m->getPlayerIdByColor(BCOLOR);
-        $m->curid = $p2;
-        $res = $m->gamestate->getPrivateState($p2);
+        $m->_setCurrentPlayerId($p2);
+        $res = $m->gamestate->getCurrentStateId($p2);
         $this->assertEquals(STATE_MULTIPLAYER_CHOICE, $res);
 
         $top1 = $m->machine->getTopOperations();
         $this->assertEquals(1, count($top1));
         $op = array_shift($top1);
         $m->action_resolve(["ops" => [["op" => $op["id"]]]]);
-        $this->assertEquals(null, $m->gamestate->getPrivateState($p1));
+        $this->assertNotEquals(STATE_MULTIPLAYER_CHOICE, $m->gamestate->getCurrentStateId($p1));
         $m->st_gameDispatchMultiplayer();
         $this->assertEquals("gameDispatch", $m->gamestate->state()["name"]);
     }
@@ -1310,7 +1291,7 @@ final class GameTest extends TestCase {
 
     public function testSteal() {
         $game = $this->game();
-        $game->_colors = [PCOLOR];
+        $game->_setPlayerBasicInfoFromColors([PCOLOR]);
         $this->assertTrue($game->isSolo());
 
         $optype = "steal_s";
@@ -2097,7 +2078,7 @@ final class GameTest extends TestCase {
         $this->assertEquals(2, $game->tokens->getTokenState("tracker_passed_$color"));
 
         // Switch current player to BCOLOR (they undo out of turn)
-        $game->curid = $player_id;
+        $game->_setCurrentPlayerId($player_id);
         $game->action_passauto_undo();
 
         // Verify state was reset
@@ -2110,7 +2091,7 @@ final class GameTest extends TestCase {
         $player_id = $game->getPlayerIdByColor($color);
 
         // tracker_passed is 0 (not scheduled)
-        $game->curid = $player_id;
+        $game->_setCurrentPlayerId($player_id);
 
         $this->expectExceptionMessage("Advanced Pass is not scheduled");
         $game->action_passauto_undo();
@@ -2123,7 +2104,7 @@ final class GameTest extends TestCase {
 
         // tracker_passed = 1 means already passed this generation
         $game->tokens->setTokenState("tracker_passed_$color", 1);
-        $game->curid = $player_id;
+        $game->_setCurrentPlayerId($player_id);
 
         $this->expectExceptionMessage("Advanced Pass is not scheduled");
         $game->action_passauto_undo();

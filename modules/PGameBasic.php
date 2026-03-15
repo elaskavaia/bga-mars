@@ -14,8 +14,10 @@
  </code>
  *
  */
+
+use Bga\GameFramework\Table;
+
 define("GS_PLAYER_TURN_NUMBER", "playerturn_nbr");
-require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
 
 abstract class PGameBasic extends Table {
     protected $undoSaveOnMoveEndDup = false;
@@ -767,7 +769,7 @@ abstract class PGameBasic extends Table {
      * @Override
      * - have to override to track second copy of var flag as original one is private
      */
-    function undoSavepoint() {
+    function undoSavepoint(): void {
         //parent::undoSavepoint(); // do not set the original flag - it cannot be unset
         $this->setUndoSavepoint(true);
         //$this->statelog("undoSavepoint");
@@ -827,7 +829,7 @@ abstract class PGameBasic extends Table {
         }
     }
 
-    function undoRestorePoint() {
+    function undoRestorePoint(): void {
         $this->bgaUndoRestorePoint();
     }
 

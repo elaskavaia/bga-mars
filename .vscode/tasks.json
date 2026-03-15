@@ -10,7 +10,6 @@
       "options": {
         "cwd": "${workspaceFolder}",
         "env": {
-          "APP_GAMEMODULE_PATH": "${userHome}/git/bga-sharedcode/misc/",
           "XDEBUG_CONFIG": "idekey=VSCODE",
           "XDEBUG_MODE": "off"
         }
