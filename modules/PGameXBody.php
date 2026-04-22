@@ -2396,9 +2396,7 @@ abstract class PGameXBody extends PGameMachine {
     }
 
     function notifyScoringUpdate() {
-        if (!$this->isLiveScoringDisabled()) {
-            $this->notifyAllPlayers("scoringTable", "", ["data" => $this->scoreAllTable()]);
-        }
+        $this->notifyAllPlayers("scoringTable", "", ["data" => $this->scoreAllTable()]);
     }
 
     function effect_incTerraformingRank(string $owner, int $inc, array $options = []) {
