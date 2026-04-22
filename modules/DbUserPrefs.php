@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
  *
  */
 
-class DbUserPrefs extends APP_GameClass {
+class DbUserPrefs extends APP_DbObject {
     var $table;
     public PGameXBody $game; // game ref
     function __construct(PGameXBody $game) {

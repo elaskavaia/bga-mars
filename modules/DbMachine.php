@@ -39,7 +39,7 @@ define("MACHINE_OP_LAND", MACHINE_FLAG_UNIQUE | MACHINE_FLAG_SHARED_COUNTER);
 define("MACHINE_OP_AND", MACHINE_FLAG_UNIQUE);
 define("MACHINE_OP_SEQ", MACHINE_FLAG_ORDERED);
 
-class DbMachine extends APP_GameClass {
+class DbMachine extends APP_DbObject {
     var $table;
     var $game;
     public $pool;
