@@ -511,6 +511,22 @@ abstract class PGameXBody extends PGameMachine {
         $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
     }
 
+    function debug_setupUplayablePreludes() {
+        // put 2 preludes that cannot be played in the hand and drop money to 0, so
+        // neither is playable: selling one for 15 M€ then makes the other affordable
+        $color = $this->getCurrentPlayerColor();
+        $this->setTrackerValue($color, "m", 0);
+        // clear any preludes already in hand so only the 2 unplayable ones remain
+        foreach ($this->tokens->getTokensOfTypeInLocation("card_prelude_", "hand_$color") as $card_id => $card) {
+            $this->effect_moveCard($color, $card_id, "deck_prelude", 0);
+        }
+        // Business Empire needs 6 M€, Galilean Mining needs 5 M€
+        foreach (["card_prelude_P06", "card_prelude_P13"] as $card_id) {
+            $this->effect_moveCard($color, $card_id, "hand_$color", MA_CARD_STATE_SELECTED, "", ["_private" => true]);
+        }
+        $this->gamestate->jumpToState(STATE_GAME_DISPATCH);
+    }
+
     function debug_optionDraft(int $draft = 1) {
         $this->setGameStateValue("var_draft", $draft);
     }

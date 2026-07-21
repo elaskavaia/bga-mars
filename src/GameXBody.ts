@@ -2591,7 +2591,7 @@ awarded.`);
         const showAsButtons = hex ? opTargets.length <= MAGIC_HEX_BUTTONS_NUMBER : opTargets.length <= MAGIC_BUTTONS_NUMBER;
 
         if (showAsButtons) {
-          this.addTargetButtons(opId, opTargets);
+          this.addTargetButtons(opId, opTargets, paramInfo);
         } else if (!hex) {
           // people confused when buttons are not shown, add button with explanations
           const name = this.format_string_recursive(_("Where are my ${x} buttons?"), { x: opTargets.length });
@@ -2601,7 +2601,7 @@ awarded.`);
             () => {
               this.removeTooltip("button_x");
               dojo.destroy("button_x");
-              this.addTargetButtons(opId, opTargets);
+              this.addTargetButtons(opId, opTargets, paramInfo);
             },
             "orange"
           );
@@ -2777,14 +2777,18 @@ awarded.`);
     };
   }
 
-  addTargetButtons(opId: number, opTargets: string[]) {
+  addTargetButtons(opId: number, opTargets: string[], paramInfo: any = {}) {
     if (opTargets.length == 0) {
       this.addActionButtonColor("button_0", _("No valid targets"), () => this.sendActionResolveWithCount(opId, 0), "orange");
     }
     opTargets.forEach((tid: string) => {
+      const label = paramInfo?.[tid]?.name;
+      const buttonName = label
+        ? this.format_string_recursive(_(label), { token_name: this.getTokenName(tid) })
+        : this.getTokenName(tid);
       this.addActionButtonColor(
         "button_" + tid,
-        this.getTokenName(tid),
+        buttonName,
         () => {
           this.sendActionResolve(opId, { target: tid });
         },

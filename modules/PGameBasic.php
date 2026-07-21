@@ -877,6 +877,10 @@ abstract class PGameBasic extends Table {
             if (startsWith($table, $prefix)) {
                 // Save point => must be restored
                 $original = substr($table, strlen($prefix));
+                if (startsWith($original, "bga_")) {
+                    // do not need to restore this
+                    continue;
+                }
                 $copy = $table;
                 $fields = self::getFieldsListOfTable($original);
                 if ($original == "gamelog") {
@@ -930,7 +934,7 @@ abstract class PGameBasic extends Table {
             if (substr($table, 0, strlen($prefix)) == $prefix) {
                 // Save point => do not copy
             } elseif (substr($table, 0, strlen($other_prefix)) == $other_prefix) {
-            } elseif ($table == "replaysavepoint" || $table == "bga_user_preferences") {
+            } elseif ($table == "replaysavepoint" || startsWith($table, "bga_")) {
             } else {
                 // This table must be saved into its copy
                 $copy = $prefix . $table;

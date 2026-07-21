@@ -6391,7 +6391,7 @@ var GameXBody = /** @class */ (function (_super) {
                 var hex = firstTarget_1.startsWith("hex");
                 var showAsButtons = hex ? opTargets.length <= MAGIC_HEX_BUTTONS_NUMBER : opTargets.length <= MAGIC_BUTTONS_NUMBER;
                 if (showAsButtons) {
-                    this.addTargetButtons(opId, opTargets);
+                    this.addTargetButtons(opId, opTargets, paramInfo);
                 }
                 else if (!hex) {
                     // people confused when buttons are not shown, add button with explanations
@@ -6399,7 +6399,7 @@ var GameXBody = /** @class */ (function (_super) {
                     this.addActionButtonColor("button_x", name_6, function () {
                         _this.removeTooltip("button_x");
                         dojo.destroy("button_x");
-                        _this.addTargetButtons(opId, opTargets);
+                        _this.addTargetButtons(opId, opTargets, paramInfo);
                     }, "orange");
                     this.addTooltip("button_x", _("Buttons are not shows because there are too many choices, click on highlighted element on the game board to select"), _("Click to add buttons"));
                 }
@@ -6558,13 +6558,19 @@ var GameXBody = /** @class */ (function (_super) {
             onUpdate();
         };
     };
-    GameXBody.prototype.addTargetButtons = function (opId, opTargets) {
+    GameXBody.prototype.addTargetButtons = function (opId, opTargets, paramInfo) {
         var _this = this;
+        if (paramInfo === void 0) { paramInfo = {}; }
         if (opTargets.length == 0) {
             this.addActionButtonColor("button_0", _("No valid targets"), function () { return _this.sendActionResolveWithCount(opId, 0); }, "orange");
         }
         opTargets.forEach(function (tid) {
-            _this.addActionButtonColor("button_" + tid, _this.getTokenName(tid), function () {
+            var _a;
+            var label = (_a = paramInfo === null || paramInfo === void 0 ? void 0 : paramInfo[tid]) === null || _a === void 0 ? void 0 : _a.name;
+            var buttonName = label
+                ? _this.format_string_recursive(_(label), { token_name: _this.getTokenName(tid) })
+                : _this.getTokenName(tid);
+            _this.addActionButtonColor("button_" + tid, buttonName, function () {
                 _this.sendActionResolve(opId, { target: tid });
             }, tid == "none" ? "orange" : "targetcolor");
         });
