@@ -13,6 +13,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 // @ts-ignore
 GameGui = /** @class */ (function () {
     function GameGui() { }
@@ -59,7 +70,7 @@ var GameBasics = /** @class */ (function (_super) {
         console.log("onEnteringState: " + stateName, args);
         this.laststate = stateName;
         // Call appropriate method
-        args = args ? args.args : null; // this method has extra wrapper for args for some reason
+        args = args ? this.mergePrivateArgs(args.args) : null; // this method has extra wrapper for args for some reason
         var methodName = "onEnteringState_" + stateName;
         this.onEnteringState_before(stateName, args);
         this.callfn(methodName, args);
@@ -69,6 +80,18 @@ var GameBasics = /** @class */ (function (_super) {
     };
     GameBasics.prototype.onEnteringState_before = function (stateName, args) {
         // to override
+    };
+    /**
+     * Server sends anything that must not be public under _private, holding only this player's slice.
+     * Flatten it into args so state handlers do not care if a value came in public or private.
+     */
+    GameBasics.prototype.mergePrivateArgs = function (args) {
+        var priv = args === null || args === void 0 ? void 0 : args._private;
+        if (!priv || typeof priv !== "object")
+            return args;
+        var merged = __assign(__assign({}, args), priv);
+        delete merged._private;
+        return merged;
     };
     GameBasics.prototype.onLeavingState = function (stateName) {
         console.log("onLeavingState: " + stateName);
@@ -84,6 +107,7 @@ var GameBasics = /** @class */ (function (_super) {
             return;
         }
         this.pendingUpdate = false;
+        args = this.mergePrivateArgs(args);
         this.onUpdateActionButtons_before(stateName, args);
         if (this.isCurrentPlayerActive()) {
             console.log("onUpdateActionButtons: " + stateName, args);
@@ -4150,17 +4174,6 @@ var GameTokens = /** @class */ (function (_super) {
     };
     return GameTokens;
 }(GameBasics));
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -7033,7 +7046,6 @@ var GameXBody = /** @class */ (function (_super) {
     };
     GameXBody.prototype.onUpdateActionButtons_after = function (stateName, args) {
         var _this = this;
-        var _a;
         if (this.isCurrentPlayerActive()) {
             // add undo on every state
             if (this.on_client_state)
@@ -7046,7 +7058,7 @@ var GameXBody = /** @class */ (function (_super) {
         }
         if ((args === null || args === void 0 ? void 0 : args.ooturn) && !this.isSpectator) {
             //add buttons for out of turn actions for all players
-            var playerOoturn = (_a = args === null || args === void 0 ? void 0 : args.ooturn) === null || _a === void 0 ? void 0 : _a.player_operations[this.player_id];
+            var playerOoturn = args.ooturn;
             this.addOutOfTurnOperationButtons(playerOoturn);
             if (playerOoturn === null || playerOoturn === void 0 ? void 0 : playerOoturn.autopass_scheduled) {
                 this.addActionButtonColor("button_passauto_undo", _("Undo Advanced Pass"), function () { return _this.remoteUserAction("passauto_undo"); }, "red");

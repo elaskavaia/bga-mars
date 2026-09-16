@@ -54,7 +54,7 @@ class GameBasics extends GameGui {
     this.laststate = stateName;
 
     // Call appropriate method
-    args = args ? args.args : null; // this method has extra wrapper for args for some reason
+    args = args ? this.mergePrivateArgs(args.args) : null; // this method has extra wrapper for args for some reason
     var methodName = "onEnteringState_" + stateName;
     this.onEnteringState_before(stateName, args);
     this.callfn(methodName, args);
@@ -65,6 +65,18 @@ class GameBasics extends GameGui {
   }
   onEnteringState_before(stateName: string, args: any) {
     // to override
+  }
+
+  /**
+   * Server sends anything that must not be public under _private, holding only this player's slice.
+   * Flatten it into args so state handlers do not care if a value came in public or private.
+   */
+  mergePrivateArgs(args: any): any {
+    const priv = args?._private;
+    if (!priv || typeof priv !== "object") return args;
+    const merged = { ...args, ...priv };
+    delete merged._private;
+    return merged;
   }
 
   onLeavingState(stateName: string): void {
@@ -82,6 +94,7 @@ class GameBasics extends GameGui {
       return;
     }
     this.pendingUpdate = false;
+    args = this.mergePrivateArgs(args);
     this.onUpdateActionButtons_before(stateName, args);
     if (this.isCurrentPlayerActive()) {
       console.log("onUpdateActionButtons: " + stateName, args);

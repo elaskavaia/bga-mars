@@ -3300,7 +3300,7 @@ awarded.`);
     }
     if (args?.ooturn && !this.isSpectator) {
       //add buttons for out of turn actions for all players
-      const playerOoturn = args?.ooturn?.player_operations[this.player_id];
+      const playerOoturn = args.ooturn;
       this.addOutOfTurnOperationButtons(playerOoturn);
       if (playerOoturn?.autopass_scheduled) {
         this.addActionButtonColor("button_passauto_undo", _("Undo Advanced Pass"), () => this.remoteUserAction("passauto_undo"), "red");

@@ -112,6 +112,34 @@ final class GameTest extends TestCase {
         $this->assertTrue($info["a"]["q"] == 0);
     }
 
+    public function testStateArgsKeepHandPrivate() {
+        $m = $this->game();
+        $cardId = "card_main_1";
+        $m->tokens->moveToken($cardId, "hand_" . PCOLOR, 1);
+        $m->machine->queue("sell", 1, 1, PCOLOR);
+
+        $args = $m->arg_playerTurnChoice();
+        $active_player_id = (int) $m->getActivePlayerId();
+        $other_player_id = 0;
+        foreach (array_keys($m->loadPlayersBasicInfos()) as $player_id) {
+            if ($player_id != $active_player_id) {
+                $other_player_id = $player_id;
+            }
+        }
+
+        $this->assertArrayHasKey("operations", $args["_private"][$active_player_id]);
+        $this->assertArrayHasKey("ooturn", $args["_private"][$other_player_id]);
+        $this->assertArrayNotHasKey("operations", $args);
+        $this->assertArrayNotHasKey("ooturn", $args);
+
+        unset($args["_private"]);
+        $this->assertStringNotContainsString($cardId, toJson($args));
+
+        $public = $m->privateArgsFor($m->arg_playerTurnChoice(), $other_player_id);
+        $this->assertArrayHasKey("ooturn", $public["_private"]);
+        $this->assertStringNotContainsString($cardId, toJson($public));
+    }
+
     public function testEvalute() {
         $m = $this->game();
 

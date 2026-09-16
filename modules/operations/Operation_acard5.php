@@ -18,7 +18,6 @@ class Operation_acard5 extends AbsOperation {
             $this->game->effect_moveCard($color, $rc, "discard_main", 0);
             $this->game->putInEffectPool($color, "res", $this->getContext());
         }
-        $this->game->debugConsole("requireConfirmation " . $this->requireConfirmation());
         return 1;
     }
     function getPrimaryArgType() {

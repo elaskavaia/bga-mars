@@ -131,10 +131,23 @@ abstract class PGameBasic extends Table {
                 throw new feException("Invalid 'args' method for state $curr_id");
             }
 
-            $state_args["args"] = $this->{$gamestate["args"]}();
+            $state_args["args"] = $this->privateArgsFor($this->{$gamestate["args"]}(), $player_id);
         }
 
         $this->notifyPlayer($player_id, "gameStateChange", "", $state_args);
+    }
+
+    /**
+     * Collapse the _private map of state args down to the slice of one player, the way the framework
+     * does when it sends state args itself. Needed because gameStateChange is built by hand.
+     */
+    public function privateArgsFor(array $args, $player_id): array {
+        if (!array_key_exists("_private", $args)) {
+            return $args;
+        }
+        $private = $args["_private"];
+        $args["_private"] = array_get($private, $player_id, []);
+        return $args;
     }
 
     // ------ ERROR HANDLING ----------

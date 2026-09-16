@@ -3421,12 +3421,15 @@ abstract class PGameXBody extends PGameMachine {
         if ($this->getGameStateValue("gamestage") == MA_STAGE_GAME) {
             $result = ["master" => $this->getTurnMaster()];
         }
+        $active_player_id = $this->getActivePlayerId();
+        // operations expose hand/draw/draft card ids, they must not be broadcast
+        $private = [$active_player_id => $this->arg_operations()];
 
         if (!$this->isSolo()) {
             $players = $this->loadPlayersBasicInfos();
             $ops = ["passauto"];
             foreach ($players as $player_id => $player) {
-                if ($player_id == $this->getActivePlayerId()) {
+                if ($player_id == $active_player_id) {
                     continue;
                 } //do not show for current active player
                 $color = $player["player_color"];
@@ -3441,11 +3444,12 @@ abstract class PGameXBody extends PGameMachine {
                 if ($passState == 2) {
                     $playerOps["autopass_scheduled"] = true;
                 }
-                $result["ooturn"]["player_operations"][$player_id] = $playerOps;
+                $private[$player_id] = ["ooturn" => $playerOps];
             }
         }
 
-        return $result + $this->arg_operations();
+        $result["_private"] = $private;
+        return $result;
     }
 
     function arg_multiplayerTurnChoice() {
