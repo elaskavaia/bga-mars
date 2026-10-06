@@ -1361,6 +1361,7 @@ namespace Bga\GameFramework {
         public $bIndependantMultiactiveTable = false;
         var $player_preferences;
         public $debugLastNotif = null;
+        public array $debugNotifs = [];
 
 
         public function __construct() {
@@ -1939,6 +1940,7 @@ namespace Bga\GameFramework {
                 'args' => $notificationArgs,
                 'player_id' => 0
             ];
+            $this->debugNotifs[] = $this->debugLastNotif;
         }
 
         /**
@@ -1953,6 +1955,7 @@ namespace Bga\GameFramework {
                 'args' => $notificationArgs,
                 'player_id' => $playerId
             ];
+            $this->debugNotifs[] = $this->debugLastNotif;
         }
 
         function sendNotifications() {

@@ -5836,6 +5836,15 @@ $this->token_types = [
   'counter' => 'hidden',
   'content' => 'hidden',
 ],
+ 'deck_prelude' => [  //
+  'type' => 'location',
+  'showtooltip' => 0,
+  'name' => clienttranslate('Prelude Deck'),
+  'location' => 'limbo',
+  'scope' => 'global',
+  'counter' => 'hidden',
+  'content' => 'hidden',
+],
  'discard_main' => [  //
   'type' => 'location',
   'showtooltip' => 0,
@@ -5843,6 +5852,15 @@ $this->token_types = [
   'location' => 'main_area',
   'scope' => 'global',
   'counter' => 'public',
+  'content' => 'hidden',
+],
+ 'discard_prelude' => [  //
+  'type' => 'location',
+  'showtooltip' => 0,
+  'name' => clienttranslate('Prelude Discard'),
+  'location' => 'limbo',
+  'scope' => 'global',
+  'counter' => 'hidden',
   'content' => 'hidden',
 ],
  'hand' => [  //

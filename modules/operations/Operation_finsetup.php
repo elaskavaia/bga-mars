@@ -29,12 +29,12 @@ class Operation_finsetup extends AbsOperation {
         // discard second corp
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_corp_", "draw_{$color}");
         foreach ($rest as $card_id => $card) {
-            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '', ["_private" => true]);
         }
         // discard remainning prelude
         $rest =  $this->game->tokens->getTokensOfTypeInLocation("card_prelude_", "draw_{$color}");
         foreach ($rest as $card_id => $card) {
-            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '');
+            $this->game->effect_moveCard($color, $card_id, "limbo", 0, '', ["_private" => true]);
         }
 
         // discard unbough cards

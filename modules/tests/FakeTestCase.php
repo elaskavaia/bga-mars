@@ -33,6 +33,18 @@ class TestCase {
         if (!($obj instanceof $clazz))  $this->fail($message);
     }
 
+    function assertArrayHasKey($key, $array, string $message = ''): void {
+        if (!array_key_exists($key, $array)) $this->fail($message ? $message : "missing key $key");
+    }
+
+    function assertArrayNotHasKey($key, $array, string $message = ''): void {
+        if (array_key_exists($key, $array)) $this->fail($message ? $message : "unexpected key $key");
+    }
+
+    function assertStringNotContainsString(string $needle, string $haystack, string $message = ''): void {
+        if (str_contains($haystack, $needle)) $this->fail($message ? $message : "unexpected '$needle'");
+    }
+
     function expectExceptionMessage(string $message): void {
         $this->_expectedExceptionMessage = $message;
     }

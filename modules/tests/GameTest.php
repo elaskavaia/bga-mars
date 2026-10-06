@@ -77,7 +77,6 @@ class GameUT extends terraformingmars {
     function getAllDatasForTest() {
         return $this->getAllDatas();
     }
-
     // override/stub methods here that access db and stuff
 }
 
@@ -152,6 +151,31 @@ final class GameTest extends TestCase {
         $data = $m->getAllDatasForTest();
         $this->assertArrayNotHasKey($cardId, $data["tokens"]);
         $this->assertEquals(1, $data["counters"]["counter_discard_main"]["counter_value"]);
+    }
+
+    public function testAllDatasHidesPreludeDeckAndDiscard() {
+        $m = $this->game();
+        $m->tokens->createToken("card_prelude_P11", "deck_prelude", 0);
+        $m->tokens->createToken("card_prelude_P12", "discard_prelude", 0);
+
+        $data = $m->getAllDatasForTest();
+        $this->assertArrayNotHasKey("card_prelude_P11", $data["tokens"]);
+        $this->assertArrayNotHasKey("card_prelude_P12", $data["tokens"]);
+    }
+
+    public function testFinsetupDiscardsCorpAndPreludePrivately() {
+        $m = $this->game();
+        $m->tokens->moveToken("card_corp_1", "hand_" . PCOLOR, 0);
+        $m->tokens->moveToken("card_corp_2", "draw_" . PCOLOR, 0);
+        $m->tokens->createToken("card_prelude_P11", "draw_" . PCOLOR, 0);
+
+        $m->getOperationInstanceFromType("finsetup", PCOLOR)->action_resolve([]);
+
+        $this->assertEquals("limbo", $m->tokens->getTokenLocation("card_corp_2"));
+        $this->assertEquals("limbo", $m->tokens->getTokenLocation("card_prelude_P11"));
+        $public = toJson(array_filter($m->debugNotifs, fn($notif) => $notif["player_id"] == 0));
+        $this->assertStringNotContainsString("card_corp_2", $public);
+        $this->assertStringNotContainsString("card_prelude_P11", $public);
     }
 
     public function testEvalute() {
