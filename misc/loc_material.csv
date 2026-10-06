@@ -3,7 +3,7 @@ id|name|location|scope|counter|content|php
 #set showtooltip=0
 deck_main|Deck|main_area|global|public|hidden|'auto_resuffle'=>'discard_main'
 deck_corp|Corporations Deck|limbo|global|hidden|hidden|
-discard_main|Discard|main_area|global|public|public|
+discard_main|Discard|main_area|global|public|hidden|
 hand|Hand|hand_area|player|public|private|
 draw|Draw|hand_area|player|hidden|private|
 draft|Draft|hand_area|player|hidden|private|

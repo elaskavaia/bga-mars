@@ -74,6 +74,10 @@ class GameUT extends terraformingmars {
         return $count;
     }
 
+    function getAllDatasForTest() {
+        return $this->getAllDatas();
+    }
+
     // override/stub methods here that access db and stuff
 }
 
@@ -138,6 +142,16 @@ final class GameTest extends TestCase {
         $public = $m->privateArgsFor($m->arg_playerTurnChoice(), $other_player_id);
         $this->assertArrayHasKey("ooturn", $public["_private"]);
         $this->assertStringNotContainsString($cardId, toJson($public));
+    }
+
+    public function testAllDatasHidesDiscard() {
+        $m = $this->game();
+        $cardId = "card_main_1";
+        $m->tokens->moveToken($cardId, "discard_main", 0);
+
+        $data = $m->getAllDatasForTest();
+        $this->assertArrayNotHasKey($cardId, $data["tokens"]);
+        $this->assertEquals(1, $data["counters"]["counter_discard_main"]["counter_value"]);
     }
 
     public function testEvalute() {
