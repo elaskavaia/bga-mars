@@ -24,10 +24,11 @@
       }
     },
     {
-      "name": "PHP: debug predeploy",
+      "name": "PHP: debug phpunit",
       "type": "php",
       "request": "launch",
-      "program": "${workspaceFolder}/modules/_testpredeploy.php",
+      "program": "${userHome}/php-composer/vendor/bin/phpunit",
+      "args": ["--colors=never"],
       "cwd": "${workspaceFolder}",
       "port": 0,
       "runtimeArgs": ["-dxdebug.start_with_request=yes"],
@@ -35,14 +36,6 @@
         "XDEBUG_MODE": "debug,develop",
         "XDEBUG_CONFIG": "client_port=${port} idekey=VSCODE"
       }
-    },
-    {
-      "name": "PHP: predeploy",
-      "type": "php",
-      "request": "launch",
-      "program": "${workspaceFolder}/modules/_testpredeploy.php",
-      "cwd": "${workspaceFolder}",
-      "port": 0
     },
     {
       "name": "gen options all",

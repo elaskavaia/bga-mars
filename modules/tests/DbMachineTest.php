@@ -154,7 +154,7 @@ final class DbMachineTest extends TestCase {
 
     public function testExpand() {
         $m = new MachineInMem();
-        $op = $m->insertMC("m,p", 1, 1, 1, PCOLOR, MACHINE_OP_SEQ, "", 0, "multi");
+        $op = $m->insertMC("m,p", 1, 1, 1, "008000", MACHINE_OP_SEQ, "", 0, "multi");
         $m->expandOp($op);
         $tops = $m->getTopOperations();
         $this->assertEquals(2, count($tops));

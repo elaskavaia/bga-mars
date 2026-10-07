@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-require_once "terraformingmars.game.php";
-require_once "TokensInMem.php";
-
 final class Operation_discardTest extends TestCase {
     private GameUT $game;
 

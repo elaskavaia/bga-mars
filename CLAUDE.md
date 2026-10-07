@@ -21,15 +21,13 @@ Read [README.md](README.md) (project structure, architecture overview) and [DESI
 - `npm run build:ts` / `npm run watch:ts` - compile `src/*.ts` into `terraformingmars.js`
 - `npm run build:scss` - compile `src/css/GameXBody.scss` into `terraformingmars.css`
 - `npm run build:material` - regenerate `material.inc.php` sections from `misc/*.csv`
-- `npm run test` - full PHPUnit suite in `modules/tests` (fast, ~2s)
+- `npm run test` - full PHPUnit suite in `modules/tests` (fast, ~2s), config in `phpunit.xml`
 - `npm run test -- --filter Operation_sellTest` - one test class
 - `npm run test -- --filter testSellSingleCard` - one test method
-  - Do NOT pass a single test file path: `GameUT` is defined in `GameTest.php` and only loads when
-    the whole directory is run, so a lone file fails with `Class "GameUT" not found`.
+- `npm run test -- modules/tests/Operation_sellTest.php` - one test file
 - `npm run jstest` - mocha tests in `tests/*.spec.ts`
-- `npm run predeploy` - runs `modules/_testpredeploy.php` with a fake PHPUnit; covers only
-  MathExpression, OpExpression, DbMachine and Game tests (not `Operation_*Test`). Run `npm run test`
-  too before committing.
+- `npm run lint:php` - `php -l` on all server PHP files
+- `npm run predeploy` - build, lint:php, test, jstest; run before committing
 - `npm run add:colonies` / `npm run remove:colonies` - toggle Colonies expansion material/options
 
 ## Generated Files - do not edit directly
@@ -78,8 +76,8 @@ Hidden info (hands, decks, discard, prelude/setup picks) must not leak via state
 
 - Tests run against in-memory stubs: `TokensInMem`, `MachineInMem`, and BGA framework stubs embedded
   at [misc/BgaFrameworkStubs.php](misc/BgaFrameworkStubs.php) (loaded by `modules/_autoload.php`).
-- `GameUT` (in `modules/tests/GameTest.php`) is the test game subclass; `init($map, $colonies)` sets
-  up a 2-player game (colors `PCOLOR`, `BCOLOR`).
+- `GameUT` (in `modules/tests/GameUT.php`, autoloaded) is the test game subclass;
+  `init($map, $colonies)` sets up a 2-player game (colors `PCOLOR`, `BCOLOR`).
 - Per-operation tests live in `modules/tests/Operation_<type>Test.php`.
 
 ## Changelog

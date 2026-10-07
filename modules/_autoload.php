@@ -7,12 +7,8 @@ spl_autoload_register(function ($class_name) {
         case "MachineInMem":
             include "tests/MachineInMem.php";
             break;
-        case "PHPUnit\\Framework\\TestCase":
-            if (FAKE_PHPUNIT) {
-                include "tests/FakeTestCase.php";
-                break;
-            }
-            include $class_name . ".php";
+        case "GameUT":
+            include "tests/GameUT.php";
             break;
         case "terraformingmars":
             include "modules/terraformingmars.game.php";

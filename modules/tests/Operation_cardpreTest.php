@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-require_once "terraformingmars.game.php";
-require_once "TokensInMem.php";
-
 /**
  * Prelude resolution: the player always chooses which prelude to handle next.
  * Picking one plays it if playable right now, otherwise sells it for 15 M€

@@ -116,3 +116,4 @@ src/css/*.map
 **/*.swp
 
 tests/out.jsa
+.phpunit.result.cache
