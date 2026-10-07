@@ -1133,30 +1133,70 @@ final class GameTest extends TestCase {
         $this->assertEquals(21, $m->tokens->getTokenState("tracker_tr_$color"));
     }
 
-    public function testLavaFlowsHellas() {
-        $m = $this->game(2);
-        $color = PCOLOR;
-        $m->tokens->setTokenState("tracker_t", +6);
+    private function playLavaFlowsRules(GameUT $m, int $temp) {
+        $m->tokens->setTokenState("tracker_t", $temp);
         $card_id = $m->mtFindByName("Lava Flows");
-        $r = $m->getRulesFor($card_id);
-        $m->putInEffectPool(PCOLOR, $r, $card_id);
+        $m->putInEffectPool(PCOLOR, $m->getRulesFor($card_id), $card_id);
         $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
         $m->st_gameDispatch();
         $tops = $m->machine->getTopOperations();
+        $this->assertEqualsCanonicalizing(["tile(vol)", "2t"], array_column($tops, "type"));
         foreach ($tops as $op) {
-            if ($op["type"] == "tile(vol)") {
-                continue;
-            }
-            if ($op["type"] == "2t") {
-                continue;
-            }
-            $this->assertTrue(false, "Unexpected operation " . $op["type"]);
+            $this->assertFalse($m->machine->isOrdered($op), "player must be able to pick 2t first");
         }
+        return $tops;
+    }
+
+    public function testLavaFlowsHellas() {
+        $m = $this->game(2);
+        $this->playLavaFlowsRules($m, 6);
+        $card_id = $m->mtFindByName("Lava Flows");
+        $r = $m->getRulesFor($card_id);
         $op = $m->getOperationInstanceFromType("tile(vol)", PCOLOR, 1, $card_id);
         $this->assertEquals(true, !$op->isVoid());
         /** @var ComplexOperation */
         $op = $m->getOperationInstanceFromType($r, PCOLOR, 1, $card_id);
         $this->assertEquals(true, !$op->isVoid());
+    }
+
+    private function occupyVolcanos(GameUT $m, int $leaveFree = 0) {
+        $volcanos = array_keys(array_filter($m->getPlanetMap(), fn($info) => isset($info["vol"])));
+        $this->assertGreaterThan($leaveFree, count($volcanos));
+        foreach (array_slice($volcanos, $leaveFree) as $i => $hex) {
+            $m->tokens->moveToken("tile_2_" . ($i + 1), $hex, 0);
+        }
+        $m->clean_cache();
+        return array_slice($volcanos, 0, $leaveFree);
+    }
+
+    public function testLavaFlowsPlayableWithFreeVolcano() {
+        $m = $this->game();
+        $card_id = $m->mtFindByName("Lava Flows");
+        $free = $this->occupyVolcanos($m, 1);
+        $this->assertOperationTargetStatus("tile(vol)", $free[0]);
+        $m->playability(PCOLOR, $card_id, $info);
+        $this->assertEquals(MA_OK, $info["m"]);
+    }
+
+    public function testLavaFlowsVoidWhenNoVolcano() {
+        $m = $this->game();
+        $card_id = $m->mtFindByName("Lava Flows");
+        $this->occupyVolcanos($m);
+        $this->assertTrue($m->isVoidSingle("tile(vol)", PCOLOR, 1, $card_id));
+        $this->assertTrue($m->isVoidSingle($m->getRulesFor($card_id), PCOLOR, 1, $card_id));
+        $m->playability(PCOLOR, $card_id, $info);
+        $this->assertEquals(MA_ERR_MANDATORYEFFECT, $info["m"]);
+    }
+
+    public function testLavaFlowsTempBeforeTile() {
+        $m = $this->game();
+        $tops = $this->playLavaFlowsRules($m, -4); // 2t hits 0 which gives ocean bonus
+        $temp = array_values(array_filter($tops, fn($op) => $op["type"] == "2t"))[0];
+        $m->executeOperationSingle($temp);
+        $m->gamestate->jumpToState(STATE_GAME_DISPATCH);
+        $m->st_gameDispatch();
+        $this->assertEquals(["w"], array_column($m->machine->getTopOperations(), "type"));
+        $this->assertEquals(["tile(vol)"], array_column($m->machine->getOperationsByRank(2), "type"));
     }
 
     public function testLavaTubeSettlementHellas() {
