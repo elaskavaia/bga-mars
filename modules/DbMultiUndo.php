@@ -1,5 +1,7 @@
 <?php
 
+require_once "PGameUtils.php";
+
 /*
  * This is a generic class to manage multi-step undo.
  *

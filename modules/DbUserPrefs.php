@@ -1,7 +1,9 @@
 <?php
 
+require_once "PGameUtils.php";
+
 /*
- * This is a generic class to manage game user prefrences (needed if some of them control server behavior).
+ * This is a generic class to manage game user preferences (needed if some of them control server behavior).
  *
  *
  *

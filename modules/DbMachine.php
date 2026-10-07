@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once "OpExpression.php";
+require_once "PGameUtils.php";
 /*
  * This is a generic class to manage game operation machine.
  *

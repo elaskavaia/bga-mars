@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once "PGameUtils.php";
+
 /** Operators:
  * / regular or (multiple operands)
  * + unordered and (multiple operands)
