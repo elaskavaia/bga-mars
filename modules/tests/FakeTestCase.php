@@ -21,6 +21,14 @@ class TestCase {
     function assertEquals($expected, $actual, string $message = ''): void {
         if ($expected != $actual)  $this->fail($message ? $message : "$expected <> $actual");
     }
+    function assertEqualsCanonicalizing(array $expected, array $actual, string $message = ''): void {
+        sort($expected);
+        sort($actual);
+        if ($expected != $actual) $this->fail($message ? $message : json_encode($expected) . " <> " . json_encode($actual));
+    }
+    function assertGreaterThan($expected, $actual, string $message = ''): void {
+        if (!($actual > $expected)) $this->fail($message ? $message : "$actual is not greater than $expected");
+    }
     function assertFalse($exp, $string = null) {
         if ($exp) $this->fail($string);
     }
