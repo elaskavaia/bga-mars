@@ -43,7 +43,7 @@ terraformingmars.js - main game file generated from typescript from src dir
 terraformingmars.css - generated from scss files
 material.inc.php - content generated from csv files in misc directory (some sections, others manually written)
 
-For the game design see DESIGN.md
+For the game design see [DESIGN.md](misc/docs/DESIGN.md)
 
 ## Architecture Overview
 

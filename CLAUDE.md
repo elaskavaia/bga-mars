@@ -11,7 +11,7 @@ Uses the **legacy, non-namespaced** BGA framework (`Table`, `APP_DbObject`, `*.a
 `gameinfos.inc.php`, `states.inc.php`), unlike the newer namespaced template in `../bga-euro`.
 The operation-machine / token-store architecture is the same family as `../bga-euro`
 
-Read [README.md](README.md) (project structure, architecture overview) and [DESIGN.md](DESIGN.md)
+Read [README.md](README.md) (project structure, architecture overview) and [DESIGN.md](misc/docs/DESIGN.md)
 (token naming, locations, op/math expressions) before non-trivial work. Machine internals:
 [modules/DbMachine.md](modules/DbMachine.md).
 
@@ -70,7 +70,7 @@ Read [README.md](README.md) (project structure, architecture overview) and [DESI
 ### Private info
 
 Hidden info (hands, decks, discard, prelude/setup picks) must not leak via state args or
-`notifyAllPlayers`. State args use `_private`; see the known leak noted in [TODO.md](TODO.md).
+`notifyAllPlayers`. State args use `_private`; see the known leak noted in [TODO.md](misc/docs/TODO.md).
 
 ## Testing
 
@@ -84,3 +84,8 @@ Hidden info (hands, decks, discard, prelude/setup picks) must not leak via state
 
 [CHANGELOG.md](CHANGELOG.md) has user-facing entries per deployed version (`## <date> (v<version>)`),
 committed as `docs: change log for v<version>`.
+
+## Bugs
+
+BGA bug tracker: https://boardgamearena.com/bugs?game=1924 (game id 1924), single report
+`https://boardgamearena.com/bug?id=<id>`.
