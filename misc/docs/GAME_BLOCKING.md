@@ -171,3 +171,19 @@ into the deck.
 - A with the optimistic guard as the main fix, players already know the postpone rule.
 - C as a universal safety net for whatever slips through, including future expansions.
 - B stays an option if the forced order of A turns out to annoy players.
+
+## Open questions
+
+### Forced actions: a soft block is really a hard block
+
+A soft block assumes undo leads to a different choice. When the action itself is forced, undo only
+returns to the same forced play, so the player is stuck anyway.
+
+- Preludes must be played. The only escape is the designer ruling "a prelude that cannot be played
+  is sold for 15 M", and `Operation_cardpre` offers the sell only when the prelude is not playable.
+- Aquifer Turbines (BGA #173222): reordering `2pe,3nm,w` to `w+2pe+3nm` makes it playable with
+  0-2 MC (the ocean adjacency may pay), but that also removes the sell option. A player who really
+  cannot reach 3 MC is then hard blocked. Reverted, the card stays refused and sellable
+  (`testAquiferTurbinesRefused`, `testAquiferTurbinesCanBeSold`).
+- `GameUT::isSoftBlocked()` does not know about forced actions, so tests report these as soft.
+- To check: other forced actions, e.g. corporation first actions (Tharsis city, Poseidon colony).
