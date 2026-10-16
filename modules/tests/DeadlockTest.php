@@ -211,39 +211,23 @@ final class DeadlockTest extends TestCase {
         return $card;
     }
 
-    /** BGA #173222: rules w+2pe+3nm, isVoid looks at w first, the old order 2pe,3nm,w was void */
-    public function testAquiferTurbinesAllowed() {
-        $card = $this->aquifer(0);
-        $m = $this->game;
-        $m->playability(PCOLOR, $card, $info);
-        $this->assertEquals(MA_OK, $info["m"]);
-        $this->assertTrue($m->isVoidSingle("2pe,3nm,w", PCOLOR));
-    }
-
-    public function testAquiferOceanOnDrawHexSoftBlocked() {
-        $card = $this->aquifer(0);
-        $m = $this->game;
-        $this->startChain();
-        $m->putInEffectPool(PCOLOR, $m->getRulesFor($card), "$card:r");
-        $this->dispatch();
-        $this->resolve("w", "hex_6_1"); // draw bonus, no adjacent ocean
-        $this->assertContains("draw", array_column($m->machine->getTopOperations(), "type"));
-        $this->resolve("2pe");
-        $this->assertTrue($m->isSoftBlocked(), "3nm void, draw postponed");
-    }
-
-    public function testAquiferOceanPays() {
+    /**
+     * BGA #173222: legal play refused, ocean next to an ocean gives 2, enough for 3nm.
+     * Kept refused on purpose: a playable prelude cannot be sold for 15 M, so reordering to
+     * w+2pe+3nm would hard block a player who cannot pay, see GAME_BLOCKING.md
+     */
+    public function testAquiferTurbinesRefused() {
         $card = $this->aquifer(1);
         $m = $this->game;
         $this->placeOceans(["hex_5_5"]); // hex_4_5 is a free ocean hex next to it
-        $this->startChain();
-        $m->putInEffectPool(PCOLOR, $m->getRulesFor($card), "$card:r");
-        $this->dispatch();
-        $this->resolve("w", "hex_4_5");
-        $this->assertEquals(3, $m->getTrackerValue(PCOLOR, "m"));
-        $this->resolve("3nm");
-        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, "m"));
-        $this->assertFalse($m->isStuck());
+        $m->playability(PCOLOR, $card, $info);
+        $this->assertEquals(MA_ERR_MANDATORYEFFECT, $info["m"], "BUG: should be MA_OK");
+    }
+
+    public function testAquiferTurbinesCanBeSold() {
+        $card = $this->aquifer(1);
+        $op = $this->game->getOperationInstanceFromType("cardpre", PCOLOR);
+        $this->assertNotEquals(MA_OK, $op->argPrimaryDetails()[$card]["playable"] ?? MA_OK, "sell for 15 offered");
     }
 
     /** t+4nm can fail, so the Mars U swap waits until 4nm is paid */
