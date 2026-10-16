@@ -398,7 +398,7 @@ abstract class PGameXBody extends PGameMachine {
         return $info;
     }
 
-    function debug_drawCard(string $fuzzy_card, string $loc = null) {
+    function debug_drawCard(string $fuzzy_card, ?string $loc = null) {
         $color = $this->getCurrentPlayerColor();
 
         if (!$loc) {
@@ -464,7 +464,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         return $token;
     }
-    function debug_discardCard(string $fuzzy_card, string $color = null) {
+    function debug_discardCard(string $fuzzy_card, ?string $color = null) {
         if ($color === null) {
             $color = $this->getCurrentPlayerColor();
         }
@@ -974,7 +974,7 @@ abstract class PGameXBody extends PGameMachine {
     /**
      * Checks if can afford payment, if 4th arg is passed sets field $info['payop'] to payment operation
      */
-    function canAfford($color, $tokenid, $cost = null, &$info = null, string $extracontext = null) {
+    function canAfford($color, $tokenid, $cost = null, &$info = null, ?string $extracontext = null) {
         if ($info == null) {
             $info = [];
         }
@@ -992,7 +992,7 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
-    function evaluatePrecondition($cond, $owner, $tokenid, string $extracontext = null) {
+    function evaluatePrecondition($cond, $owner, $tokenid, ?string $extracontext = null) {
         if ($cond) {
             $valid = $this->evaluateExpression($cond, $owner, $tokenid, ["wilds" => []]);
             if (!$valid) {
@@ -1017,7 +1017,7 @@ abstract class PGameXBody extends PGameMachine {
         return true;
     }
 
-    function precondition($owner, $tokenid, string $extracontext = null) {
+    function precondition($owner, $tokenid, ?string $extracontext = null) {
         // check precondition
         $cond = $this->getRulesFor($tokenid, "pre");
         if ($cond) {
@@ -1452,7 +1452,7 @@ abstract class PGameXBody extends PGameMachine {
         }
         $this->dbSetTokenLocation($card_id, $place_id, $state, $notif, $args, $this->getPlayerIdByColor($owner));
     }
-    function effect_moveResource($owner, $res_id, $place_id, $state = null, $notif = "", $card_id) {
+    function effect_moveResource($owner, $res_id, $place_id, $state, $notif, $card_id) {
         $holds = $this->getRulesFor($card_id, "holds", "");
 
         $this->dbSetTokenLocation(
@@ -1600,7 +1600,7 @@ abstract class PGameXBody extends PGameMachine {
         return false;
     }
 
-    function collectDiscounts($owner, $card_id, string $extracontext = null) {
+    function collectDiscounts($owner, $card_id, ?string $extracontext = null) {
         // event will be onPay_card or similar
         // load all active effect listeners
         $discount = 0;
@@ -1625,7 +1625,7 @@ abstract class PGameXBody extends PGameMachine {
         return $discount;
     }
 
-    function collectListeners($owner, $events, $card_context = null, string $extracontext = null) {
+    function collectListeners($owner, $events, $card_context = null, ?string $extracontext = null) {
         // load all active effect listeners
         $cards = $this->getActiveEventListeners();
 
@@ -1758,7 +1758,7 @@ abstract class PGameXBody extends PGameMachine {
         return $match;
     }
 
-    function getPayment($color, $card_id, string $extracontext = null): string {
+    function getPayment($color, $card_id, ?string $extracontext = null): string {
         $costm = $this->getRulesFor($card_id, "cost", 0);
 
         $discount = $this->collectDiscounts($color, $card_id, $extracontext);
@@ -2667,7 +2667,7 @@ abstract class PGameXBody extends PGameMachine {
         return $table;
     }
 
-    function scoreAll(array &$table = null) {
+    function scoreAll(?array &$table = null) {
         $players = $this->loadPlayersBasicInfos();
         if ($table !== null) {
             foreach ($players as $player_id => $player) {
@@ -2769,7 +2769,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function scoreMilestone(string $loc, string $id, array &$table = null) {
+    function scoreMilestone(string $loc, string $id, ?array &$table = null) {
         $commit = $table === null; // only record the data, do not update the score or send notif
 
         $color = getPart($id, 1, true);
@@ -2794,7 +2794,7 @@ abstract class PGameXBody extends PGameMachine {
         $this->scoreTableVp($table, $player_id, $score_category, $loc, $points);
     }
 
-    function scoreAward(string $award, array &$table = null) {
+    function scoreAward(string $award, ?array &$table = null) {
         $commit = $table === null; // only record the data, do not update the score or send notif
 
         $expr = $this->getRulesFor($award, "r");
@@ -3297,7 +3297,7 @@ abstract class PGameXBody extends PGameMachine {
         return $count;
     }
 
-    function scoreMap(string $owner, array &$table = null) {
+    function scoreMap(string $owner, ?array &$table = null) {
         $commit = $table === null; // only record the data, do not update the score or send notif
 
         $map = $this->getPlanetMap();
@@ -3353,7 +3353,7 @@ abstract class PGameXBody extends PGameMachine {
         }
     }
 
-    function scoreCards(string $owner, array &$table = null) {
+    function scoreCards(string $owner, ?array &$table = null) {
         $commit = $table === null; // only record the data, do not update the score or send notif
 
         // get all cards, calculate VP field
