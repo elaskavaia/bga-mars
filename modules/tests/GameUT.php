@@ -73,5 +73,37 @@ class GameUT extends terraformingmars {
     function getAllDatasForTest() {
         return $this->getAllDatas();
     }
+
+    var $barriers = [];
+    function undoSavepointWithLabel($label = "", $barrier = 1) {
+        if ($barrier) {
+            $this->barriers[] = $label;
+        }
+        parent::undoSavepointWithLabel($label, $barrier);
+    }
+
+    /** every top op is postponed or mandatory and void, i.e. resolve, skip and decline all fail */
+    function isStuck(): bool {
+        $tops = $this->machine->getTopOperations();
+        if (!$tops) {
+            return false;
+        }
+        $args = $this->arg_operations($tops)["operations"];
+        foreach ($tops as $i => $op) {
+            if (array_get($args[$i], "args.postpone")) {
+                continue;
+            }
+            $inst = $this->getOperationInstance($op);
+            if ($inst->isOptional() || !$inst->isVoid()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** stuck after an undo barrier, so undo cannot get out of it */
+    function isDeadlock(): bool {
+        return count($this->barriers) > 0 && $this->isStuck();
+    }
     // override/stub methods here that access db and stuff
 }
