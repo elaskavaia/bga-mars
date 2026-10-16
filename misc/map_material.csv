@@ -151,7 +151,7 @@ x|y|r|name|ocean|php
 
 3|9||
 4|9|2h|
-5|9|6nm+w|South Pole
+5|9|w+6nm|South Pole
 6|9|2h|
 7|9||
 
@@ -282,7 +282,7 @@ x|y|r|name|ocean|php
 2|5||
 3|5|p||1
 4|5|2p|
-5|5|4nm,t|
+5|5|t+4nm|
 6|5|2p||1
 7|5|2p||1
 8|5|2p||1

@@ -53,59 +53,79 @@ final class DeadlockTest extends TestCase {
         $this->game->clean_cache();
     }
 
-    public function testSouthPoleOceanOnDrawHexStuckBeforeBarrier() {
-        $m = $this->game(2); // Hellas, south pole hex_5_9 is 6nm+w
+    public function testSouthPoleOceanOnDrawHexSoftBlocked() {
+        $m = $this->game(2); // Hellas, south pole hex_5_9 is w+6nm
         $m->setTrackerValue(PCOLOR, "m", 3);
-        // adjacent ocean lets checkMandatoryEffect pass, adjacency bonus gives only 2
-        $this->placeOceans(["hex_5_8"]);
+        $this->placeOceans(["hex_5_8"]); // adjacency bonus gives only 2
         $m->putInEffectPool(PCOLOR, "city");
         $this->dispatch();
         $this->startChain();
         $this->resolve("city", "hex_5_9");
         $this->assertEquals(5, $m->getTrackerValue(PCOLOR, "m"));
         $this->resolve("w", "hex_6_5"); // ocean hex with draw bonus
-        $this->assertTrue($m->isStuck(), "6nm void, draw postponed");
-        $this->assertFalse($m->isDeadlock(), "draw was not resolved, undo still works");
+        $this->assertTrue($m->isSoftBlocked(), "6nm void, draw postponed");
     }
 
-    public function testSummedCostsStuckBeforeBarrier() {
+    public function testSummedCostsSoftBlocked() {
         $m = $this->game();
         $m->setTrackerValue(PCOLOR, "m", 4);
         $m->putInEffectPool(PCOLOR, "3nm+3nm+draw");
         $this->dispatch();
         $this->startChain();
         $this->resolve("3nm");
-        $this->assertTrue($m->isStuck());
-        $this->assertFalse($m->isDeadlock());
+        $this->assertTrue($m->isSoftBlocked());
     }
 
-    /** documents buggy behavior BGA #202081 #168636, flip asserts when fixed */
-    public function testNuclearZoneFullMapPointLunaDeadlock() {
+    private function inPlay(string $name) {
+        $m = $this->game;
+        $card = $m->mtFindByName($name);
+        $m->tokens->moveToken($card, "tableau_" . PCOLOR, MA_CARD_STATE_TAGUP);
+        $m->clearEventListenerCache();
+        return $card;
+    }
+
+    private function isPostponed(string $type): bool {
+        return $this->game->isPostponed($type);
+    }
+
+    /** BGA #202081 #168636: tile+2t, isVoid sees tile, so the card is refused on a full map */
+    public function testNuclearZoneFullMapPointLuna() {
         $m = $this->game();
-        $m->effect_playCorporation(PCOLOR, $m->mtFindByName("Point Luna"), false);
-        $this->dispatch();
-        $this->resolve("draw");
+        $this->inPlay("Point Luna");
         $this->fillMap();
         $card = $m->mtFindByName("Nuclear Zone");
         $m->playability(PCOLOR, $card, $info);
-        $this->assertEquals(MA_OK, $info["m"], "BUG: should be MA_ERR_MANDATORYEFFECT, map is full");
+        $this->assertEquals(MA_ERR_MANDATORYEFFECT, $info["m"]);
         $this->startChain();
-        $m->effect_playCard(PCOLOR, $card);
+        $m->effect_playCard(PCOLOR, $card); // play anyway
         $this->dispatch();
-        $this->resolve("draw"); // BUG: should be postponed, 2t,tile can fail
-        $this->resolve("2t,tile");
-        $this->assertEquals(["tile"], array_column($m->machine->getTopOperations(), "type"));
-        $this->assertTrue($m->isDeadlock(), "BUG: tile is void after draw barrier");
+        $this->assertTrue($this->isPostponed("draw"), "tile+2t can fail");
+        $this->assertTrue($m->isSoftBlocked(), "tile+2t void, draw postponed");
     }
 
-    /** Vastitas Borealis hex_5_5 bonus as 4nm+t: t reaches 0C, ocean bonus adjacency pays 4nm */
+    /** Nuclear Zone tile+2t: 2t crosses 0C, ocean bonus lands on a draw hex */
+    public function testNuclearZoneTempOceanDrawSoftBlocked() {
+        $m = $this->game();
+        $this->fillMap(["hex_6_1"]); // ocean hex with draw bonus
+        $m->tokens->setTokenState("tracker_t", -4);
+        $card = $m->mtFindByName("Nuclear Zone");
+        $this->startChain();
+        $m->putInEffectPool(PCOLOR, $m->getRulesFor($card), "$card:r");
+        $this->dispatch();
+        $this->resolve("2t");
+        $this->resolve("w", "hex_6_1");
+        $this->assertEqualsCanonicalizing(["tile", "draw"], array_column($m->machine->getTopOperations(), "type"));
+        $this->assertTrue($m->isSoftBlocked(), "tile void, draw postponed");
+    }
+
+    /** Vastitas Borealis hex_5_5 bonus t+4nm: t reaches 0C, ocean bonus adjacency pays 4nm */
     private function payPoleFromTempOcean(int $money, array $oceans, string $hex) {
         $m = $this->game(3);
         $m->setTrackerValue(PCOLOR, "m", $money);
         $m->tokens->setTokenState("tracker_t", -2);
         $this->placeOceans($oceans);
         $this->startChain();
-        $m->putInEffectPool(PCOLOR, "4nm+t");
+        $m->putInEffectPool(PCOLOR, $m->getRulesFor("hex_5_5", "r"));
         $this->dispatch();
         $this->resolve("t");
         $this->resolve("w", $hex);
@@ -123,61 +143,126 @@ final class DeadlockTest extends TestCase {
         $this->payPoleFromTempOcean(2, ["hex_4_4"], "hex_3_5");
     }
 
-    /** documents current material 4nm,t: pay first, so the same play is refused; flip when it becomes 4nm+t */
-    public function testPoleOrderedPayFirstRefused() {
-        $m = $this->game(3);
-        $m->setTrackerValue(PCOLOR, "m", 0);
-        $m->tokens->setTokenState("tracker_t", -2);
-        $this->placeOceans(["hex_3_3", "hex_4_3"]);
-        $this->startChain();
-        $m->putInEffectPool(PCOLOR, $m->getRulesFor("hex_5_5", "r"));
-        $this->dispatch();
-        $this->assertTrue($m->isStuck(), "4nm must be paid before t");
-        $this->assertFalse($m->isDeadlock());
+    private function cityStatus(string $hex): int {
+        return $this->game->getOperationInstanceFromType("city", PCOLOR)->argPrimaryDetails()[$hex]["q"];
     }
-
-    private function inPlay(string $name) {
-        $m = $this->game;
-        $card = $m->mtFindByName($name);
-        $m->tokens->moveToken($card, "tableau_" . PCOLOR, MA_CARD_STATE_TAGUP);
-        $m->clearEventListenerCache();
-        return $card;
-    }
-
-    private function isPostponed(string $type): bool {
-        $m = $this->game;
-        $tops = $m->machine->getTopOperations();
-        $args = $m->arg_operations($tops)["operations"];
-        foreach ($tops as $i => $op) {
-            if ($op["type"] == $type) {
-                return (bool) array_get($args[$i], "args.postpone");
-            }
-        }
-        $this->fail("no top op $type");
-    }
-
-    // Legal plays refused today. Tests assert current behavior and fail when fixed, then flip them.
 
     /** BGA #220016: Tharsis place_city 3m covers 6nm */
-    public function testSouthPoleTharsisRefused() {
+    public function testSouthPoleTharsisAllowed() {
         $m = $this->game(2);
         $this->inPlay("Tharsis Republic");
         $m->setTrackerValue(PCOLOR, "m", 4);
         $card = $m->mtFindByName("Research Outpost");
         $op = $m->getOperationInstanceFromType("city(adj_no)", PCOLOR, 1, $card);
-        $this->assertEquals(MA_ERR_MANDATORYEFFECT, $op->argPrimaryDetails()["hex_5_9"]["q"], "BUG: should be MA_OK");
+        $this->assertEquals(MA_OK, $op->argPrimaryDetails()["hex_5_9"]["q"]);
     }
 
-    /** BGA #173222: ocean next to an ocean gives 2, enough for 3nm */
-    public function testAquiferTurbinesRefused() {
-        $m = $this->game();
+    /** Hellas south pole w+6nm: bonus ocean next to two oceans gives 4 */
+    public function testSouthPoleBonusOceanRebateAllowed() {
+        $m = $this->game(2);
+        $this->placeOceans(["hex_7_5", "hex_8_5"]);
+        $m->setTrackerValue(PCOLOR, "m", 2);
+        $this->assertEquals(MA_OK, $this->cityStatus("hex_5_9"));
+    }
+
+    /** cannot pay even with the rebate, still allowed, ends in a soft block */
+    public function testSouthPoleNotEnoughAllowed() {
+        $m = $this->game(2);
+        $this->placeOceans(["hex_7_5", "hex_8_5"]);
         $m->setTrackerValue(PCOLOR, "m", 1);
-        $this->placeOceans(["hex_5_5"]); // hex_4_5 is a free ocean hex next to it
+        $this->assertEquals(MA_OK, $this->cityStatus("hex_5_9"));
+    }
+
+    /** Vastitas Borealis hex_5_5 t+4nm: t reaches 0C, temperature ocean next to two oceans gives 4 */
+    public function testPoleTempOceanRebateAllowed() {
+        $m = $this->game(3);
+        $this->placeOceans(["hex_8_5", "hex_7_6"]); // hex_7_5 is a free ocean hex next to both
+        $m->tokens->setTokenState("tracker_t", -2);
+        $m->setTrackerValue(PCOLOR, "m", 0);
+        $this->assertEquals(MA_OK, $this->cityStatus("hex_5_5"));
+    }
+
+    /** temperature does not reach the ocean bonus, still allowed, ends in a soft block */
+    public function testPoleTempOceanNotReachedAllowed() {
+        $m = $this->game(3);
+        $this->placeOceans(["hex_8_5", "hex_7_6"]);
+        $m->tokens->setTokenState("tracker_t", -4);
+        $m->setTrackerValue(PCOLOR, "m", 0);
+        $this->assertEquals(MA_OK, $this->cityStatus("hex_5_5"));
+    }
+
+    /** reordering like w+6nm relies on global parameter ops never being void, even when maxed */
+    public function testParamOpsNotVoidAtMax() {
+        $m = $this->game();
+        $m->tokens->setTokenState("tracker_w", 9);
+        $m->tokens->setTokenState("tracker_t", 8);
+        $m->tokens->setTokenState("tracker_o", 14);
+        $m->setTrackerValue(PCOLOR, "m", 0);
+        foreach (["w", "t", "o", "w+6nm", "t+4nm"] as $rule) {
+            $this->assertFalse($m->isVoidSingle($rule, PCOLOR), $rule);
+        }
+    }
+
+    private function aquifer(int $money) {
+        $m = $this->game();
+        $m->setTrackerValue(PCOLOR, "m", $money);
         $card = $m->mtFindByName("Aquifer Turbines");
         $m->tokens->moveToken($card, "hand_" . PCOLOR, 0);
-        $m->playability(PCOLOR, $card, $info);
-        $this->assertEquals(MA_ERR_MANDATORYEFFECT, $info["m"], "BUG: should be MA_OK");
+        return $card;
     }
+
+    /** BGA #173222: rules w+2pe+3nm, isVoid looks at w first, the old order 2pe,3nm,w was void */
+    public function testAquiferTurbinesAllowed() {
+        $card = $this->aquifer(0);
+        $m = $this->game;
+        $m->playability(PCOLOR, $card, $info);
+        $this->assertEquals(MA_OK, $info["m"]);
+        $this->assertTrue($m->isVoidSingle("2pe,3nm,w", PCOLOR));
+    }
+
+    public function testAquiferOceanOnDrawHexSoftBlocked() {
+        $card = $this->aquifer(0);
+        $m = $this->game;
+        $this->startChain();
+        $m->putInEffectPool(PCOLOR, $m->getRulesFor($card), "$card:r");
+        $this->dispatch();
+        $this->resolve("w", "hex_6_1"); // draw bonus, no adjacent ocean
+        $this->assertContains("draw", array_column($m->machine->getTopOperations(), "type"));
+        $this->resolve("2pe");
+        $this->assertTrue($m->isSoftBlocked(), "3nm void, draw postponed");
+    }
+
+    public function testAquiferOceanPays() {
+        $card = $this->aquifer(1);
+        $m = $this->game;
+        $this->placeOceans(["hex_5_5"]); // hex_4_5 is a free ocean hex next to it
+        $this->startChain();
+        $m->putInEffectPool(PCOLOR, $m->getRulesFor($card), "$card:r");
+        $this->dispatch();
+        $this->resolve("w", "hex_4_5");
+        $this->assertEquals(3, $m->getTrackerValue(PCOLOR, "m"));
+        $this->resolve("3nm");
+        $this->assertEquals(0, $m->getTrackerValue(PCOLOR, "m"));
+        $this->assertFalse($m->isStuck());
+    }
+
+    /** t+4nm can fail, so the Mars U swap waits until 4nm is paid */
+    public function testPoleMarsUSwapSoftBlocked() {
+        $m = $this->game(3);
+        $this->inPlay("Mars University");
+        $m->tokens->moveToken("card_main_1", "hand_" . PCOLOR, 0);
+        $m->setTrackerValue(PCOLOR, "m", 0);
+        $this->startChain();
+        $m->effect_playCard(PCOLOR, $m->mtFindByName("Research Outpost"));
+        $this->dispatch();
+        $this->resolve("city(adj_no)", "hex_5_5");
+        $this->assertTrue($this->isPostponed("?(discard:draw)"), "4nm can fail");
+        $this->resolve("t+4nm");
+        $this->resolve("t");
+        $this->assertTrue($m->isSoftBlocked(), "4nm void, swap postponed");
+    }
+
+    // Legal plays refused today. Tests assert current behavior and fail when fixed, then flip them.
 
     /** BGA #225898: Poseidon place_colony pm compensates 2npm */
     public function testMinorityRefugePoseidonRefused() {
@@ -207,21 +292,5 @@ final class DeadlockTest extends TestCase {
         $m->effect_playCard(PCOLOR, $m->mtFindByName("Robotic Workforce"));
         $this->dispatch();
         $this->assertTrue($this->isPostponed("?(discard:draw)"), "BUG: swap first is legal");
-    }
-
-    /** Nuclear Zone as 2t+tile instead of 2t,tile: 2t crosses 0C, ocean bonus lands on a draw hex */
-    public function testUnorderedTempOceanDrawStuckBeforeBarrier() {
-        $m = $this->game();
-        $this->fillMap(["hex_6_1"]); // ocean hex with draw bonus
-        $m->tokens->setTokenState("tracker_t", -4);
-        $card = $m->mtFindByName("Nuclear Zone");
-        $this->startChain();
-        $m->putInEffectPool(PCOLOR, "2t+tile", "$card:r");
-        $this->dispatch();
-        $this->resolve("2t");
-        $this->resolve("w", "hex_6_1");
-        $this->assertEqualsCanonicalizing(["tile", "draw"], array_column($m->machine->getTopOperations(), "type"));
-        $this->assertTrue($m->isStuck(), "tile void, draw postponed");
-        $this->assertFalse($m->isDeadlock());
     }
 }

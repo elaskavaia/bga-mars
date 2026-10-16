@@ -77,6 +77,10 @@ class DelegatedOperation extends AbsOperation {
         return $this->delegate->canFail();
     }
 
+    public function order() {
+        return $this->delegate->order();
+    }
+
     function hasNoSideEffects(): bool {
         return $this->delegate->hasNoSideEffects();
     }

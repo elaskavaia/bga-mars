@@ -119,7 +119,13 @@ class ComplexOperation extends AbsOperation {
 
     function canFail() {
         if ($this->isOptional()) return false;
-        return true;
+        $or = $this->operation == '/';
+        foreach ($this->delegates as $sub) {
+            $subfail = $sub->canFail();
+            if ($or && !$subfail) return false; // one safe option is enough
+            if (!$or && $subfail) return true; // one failing part is enough
+        }
+        return $or;
     }
 
 
@@ -200,6 +206,10 @@ class ComplexOperation extends AbsOperation {
         foreach ($this->delegates as $i => $sub) {
             $subvalue = $sub->order();
             $total |= $subvalue;
+        }
+        if ($this->canFail()) {
+            // so draws get postponed after it
+            $total &= ~MA_ORDER_FAIL;
         }
         return $total;
     }

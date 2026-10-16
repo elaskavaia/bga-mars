@@ -105,7 +105,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 94|Mass Converter|2|6pe||onPay_cardSpace:2m|8|tagScience>=5|Science Energy|0|Corporate|Increase your energy production 6 steps.; Effect: When you play a space card, you pay 2 M€ less for it.||||
 95|Physics Complex|2||6ne:res||12||Science Building|resCard*2|Corporate||Spend 6 energy to add a science resource to this card.||2 VP for each science resource on this card.|'holds' => 'Science'
 96|Greenhouses|1|counter(all_city) p|||6||Building Plant|0|Basic|Gain 1 plant for each city tile in play.||||
-97|Nuclear Zone|1|2t,tile|||10||Earth|-2|Basic|Place [the nuclear zone] tile and raise the temperature 2 steps.||||
+97|Nuclear Zone|1|tile+2t|||10||Earth|-2|Basic|Place [the nuclear zone] tile and raise the temperature 2 steps.||||
 98|Tropical Resort|1|2nph,3pm|||13||Building|2|Corporate|Decrease your heat production 2 steps and increase your M€ production 3 steps.||||
 99|Toll Station|1|counter(opp_tagSpace) pm|||12||Space|0|Corporate|Increase your M€ production 1 step for each space tag your OPPONENTS have.||||
 100|Fueled Generators|1|1npm,pe|||1||Building Energy|0|Basic|Decrease your M€ production 1 step and increase your energy production 1 step.||||
@@ -224,7 +224,7 @@ num|name|t|r|a|e|cost|pre|tags|vp|deck|text|text_action|text_effect|text_vp|php
 #set location=deck_prelude
 #set type=card prelude
 P01|Allied Bank|5|4pm,3m|||0||Earth|0|Prelude|Increase your M€ production 4 steps. Gain 3 M€.||||'bc'=>-3
-P02|Aquifer Turbines|5|2pe,3nm,w|||0||Energy|0|Prelude|Place an ocean tile. Increase your energy production 2 steps. Remove 3 M€.||||'bc'=>3
+P02|Aquifer Turbines|5|w+2pe+3nm|||0||Energy|0|Prelude|Place an ocean tile. Increase your energy production 2 steps. Remove 3 M€.||||'bc'=>3
 P03|Biofuels|5|pp,pe,2p|||0||Microbe|0|Prelude|Increase your plant production and energy production 1 step each. Gain 2 plants.||||
 P04|Biolabs|5|pp,3draw|||0||Science|0|Prelude|Increase your plant production 1 step. Draw 3 cards.||||
 P05|Biosphere Support|5|1npm,2pp|||0||Plant|0|Prelude|Decrease your M€ production 1 step. Increase your plant production 2 steps.||||

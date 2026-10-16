@@ -101,8 +101,25 @@ class GameUT extends terraformingmars {
         return true;
     }
 
+    /** top op of this type carries the postpone mark, fails the test when it is not on top */
+    function isPostponed(string $type): bool {
+        $tops = $this->machine->getTopOperations();
+        $args = $this->arg_operations($tops)["operations"];
+        foreach ($tops as $i => $op) {
+            if ($op["type"] == $type) {
+                return (bool) array_get($args[$i], "args.postpone");
+            }
+        }
+        throw new BgaSystemException("no top op $type");
+    }
+
+    /** stuck, but no undo barrier crossed, so undo gets out of it */
+    function isSoftBlocked(): bool {
+        return count($this->barriers) == 0 && $this->isStuck();
+    }
+
     /** stuck after an undo barrier, so undo cannot get out of it */
-    function isDeadlock(): bool {
+    function isHardBlocked(): bool {
         return count($this->barriers) > 0 && $this->isStuck();
     }
     // override/stub methods here that access db and stuff
