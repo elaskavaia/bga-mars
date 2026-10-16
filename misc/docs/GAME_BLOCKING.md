@@ -7,7 +7,12 @@ The game can hard block. This is how it happens.
 Some effects are mandatory: when you play a card you must be able to execute all of its effects.
 Effects can depend on each other, which creates a chain of effects (the operation pool), so at any
 given moment it is impossible to tell whether all mandatory effects can be resolved. Since some
-effects cannot be undone, the game can end up in a deadlock.
+effects cannot be undone, the game can end up in a hard block.
+
+Terms:
+
+- Soft block: stuck, but undo gets out of it (no undo barrier crossed since the action started).
+- Hard block: stuck after an undo barrier (e.g. card draw), undo cannot get out of it.
 
 Example: you play a card and start executing its effects. One effect draws a card, another pays money.
 You draw the card first, then find you have no money to pay. You cannot undo the draw, so you are stuck.
@@ -58,7 +63,7 @@ Draw ordering, the postpone hack blocks legal plays:
 - #173222 (confirmed): Aquifer Turbines (`2pe,3nm,w`) unplayable with 0-2 MC although ocean
   adjacency would pay for it (pay-first `,` hack).
 
-Deadlock after a draw:
+Hard block after a draw:
 
 - #202081 (confirmed, block), duplicate of #168636 (confirmed): Nuclear Zone played on a full map,
   Point Luna earth tag draw resolved first, tile cannot be placed, no undo. Player got the forfeit
@@ -92,6 +97,19 @@ Same family:
 All alternatives below work on op type metadata and machine state, not on parsing specific cards.
 They can be combined.
 
+Principle: let the player try, and make sure trying is always undoable. Feasibility of a mandatory
+chain cannot be computed statically, and runtime lookahead (a backtracking solver over an in-memory
+copy of the db) is far too expensive.
+
+- Optimistic guard: playability and placement checks refuse only what is certainly impossible
+  (e.g. full map). Not implemented yet: `ComplexOperation::isVoid` still returns the verdict of the
+  first sub op with side effects, so for now the card data puts the never-void op first
+  (`w+6nm`, `tile+2t`, `w+2pe+3nm`, `t+4nm`). The real guard would make `+` void only if all its
+  sub ops are void, so the order in the data stops mattering.
+- Irreversible ops never run while a fallible op of the chain is pending (A), so a wrong optimistic
+  guess ends in a soft block and normal undo works.
+- No runtime lookahead. The in-memory solver is only useful in tests, to find hard blocks offline.
+
 ### A. Irreversible last (generalize the postpone hack)
 
 Each op type declares whether it is irreversible (creates a barrier) and whether it can fail
@@ -104,13 +122,20 @@ pending; the irreversible op is re-queued at the end of the chain instead.
   something the irreversible op produces.
 - Long lasting part: derive the irreversible flag from the same place that creates the barrier
   (single source of truth), so new ops cannot forget it.
+- Fixed gap (found by `DeadlockTest`): the postpone check uses `o < MA_ORDER_FAIL`, and
+  `ComplexOperation::order` used to OR the bits of its sub ops, so `2t,tile` reported >= 32 and its
+  fallible `tile` was missed (BGA #202081). Now `ComplexOperation::canFail` looks at the sub ops
+  (`+` fails if any part can fail, `/` only if all options can) and `order` clears
+  `MA_ORDER_FAIL` when `canFail()`.
+- With the optimistic guard in place, the `checkMandatoryEffect` ocean hack and the `,` pay-first
+  ordering in card data can go.
 
 ### B. Irreversible gate (void while a fallible op is void)
 
 Same metadata as A, but instead of reordering, an irreversible op is void while any mandatory
 fallible op of the same chain is currently void. The player keeps full choice of order; the draw
 is only blocked when the game can already see a payment is impossible. If the player gets stuck,
-it happens before the barrier, so normal undo works.
+it is a soft block, so normal undo works.
 
 South pole example (`6nm+w`, 4 MC, Tharsis): player picks `w`, places an ocean on a hex with a
 draw bonus. The draw is void while `6nm` is void. Player resolves the Tharsis `3m` trigger, `6nm`
@@ -143,5 +168,6 @@ into the deck.
 
 ## Recommendation
 
-- B as the main fix, it keeps the order free and moves every stuck state before the barrier.
+- A with the optimistic guard as the main fix, players already know the postpone rule.
 - C as a universal safety net for whatever slips through, including future expansions.
+- B stays an option if the forced order of A turns out to annoy players.
