@@ -44,14 +44,18 @@ Dev reply: "most likely won't be fixed", fixing it brings back the hard locks. R
 ## Related bugs
 
 Tracker: https://boardgamearena.com/bugs?game=1924, report `https://boardgamearena.com/bug?id=<id>`.
-Status as of 2026-10-15.
+Status as of 2026-10-18.
 
 South pole:
 
 - #171254 (confirmed): Experimental Forest greenery on Hellas (5,9) with 5 MC draws cards, then
   6 MC cannot be paid and there is no undo. Dev found it is legal if ocean adjacency brings you to
-  6 MC.
-- #220016 (open): see above.
+  6 MC. Not fixed by the `w+6nm` reorder, possibly worse: the rule `2draw(Plant),forest` reveals
+  before the greenery is placed, so the undo barrier comes before the 6 MC payment, and the pole
+  is now selectable even when the payment cannot be reached. Suspected hard block, no test yet.
+- #220016 (fixed in v261018-2203): see above.
+- #189092 (fixed in v261018-2203): Restricted Area on the south pole with Mars U and 5 MC,
+  refused although the ocean adjacency would pay.
 
 Draw ordering, the postpone hack blocks legal plays:
 
@@ -65,7 +69,7 @@ Draw ordering, the postpone hack blocks legal plays:
 
 Hard block after a draw:
 
-- #202081 (confirmed, block), duplicate of #168636 (confirmed): Nuclear Zone played on a full map,
+- #202081 (fixed in v261018-2203, block), duplicate of #168636 (fixed in v261018-2203): Nuclear Zone played on a full map,
   Point Luna earth tag draw resolved first, tile cannot be placed, no undo. Player got the forfeit
   penalty.
 
