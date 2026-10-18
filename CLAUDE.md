@@ -88,4 +88,5 @@ committed as `docs: change log for v<version>`.
 ## Bugs
 
 BGA bug tracker: https://boardgamearena.com/bugs?game=1924 (game id 1924), single report
-`https://boardgamearena.com/bug?id=<id>`.
+`https://boardgamearena.com/bug?id=<id>`. Triage config, tracked bugs and run log:
+[misc/docs/BUG_TRIAGE.md](misc/docs/BUG_TRIAGE.md).
