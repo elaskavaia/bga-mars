@@ -86,9 +86,10 @@ class GameBasics extends GameGui {
   }
 
   onUpdateActionButtons(stateName: string, args: any) {
-    if (this.laststate != stateName && args != null) {
-      // if args is null it is game state, they are not fired consistencly with onEnter
-      // delay firing this until onEnteringState is called so they always called in same order
+    const noArgs = args == null || (typeof args === "object" && Object.keys(args).length == 0);
+    if (this.laststate != stateName && !noArgs) {
+      // empty args: game or parent multiactive state, onEnteringState may never follow so do not defer
+      // otherwise delay until onEnteringState so they are always called in same order
       this.pendingUpdate = true;
       this.restoreMainBar();
       return;
