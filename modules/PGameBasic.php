@@ -403,7 +403,7 @@ abstract class PGameBasic extends Table {
         return $players[$player_id]["player_color"];
     }
 
-    function getPlayerColorByNo(int $no) {
+    function custom_getPlayerColorByNo(int $no) {
         $players = $this->loadPlayersBasicInfos();
         foreach ($players as $player_id => $player_info) {
             if ($player_info["player_no"] == $no) {

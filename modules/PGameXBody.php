@@ -797,7 +797,7 @@ abstract class PGameXBody extends PGameMachine {
             } else {
                 $res[$loc]["tile"] = $key;
                 $res[$loc]["owno"] = $rec["state"]; // for now XXX
-                $res[$loc]["owner"] = $this->getPlayerColorByNo($res[$loc]["owno"]);
+                $res[$loc]["owner"] = $this->custom_getPlayerColorByNo($res[$loc]["owno"]);
             }
         }
         $this->map = $res; // only cache full map
